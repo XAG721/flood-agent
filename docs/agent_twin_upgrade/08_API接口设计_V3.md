@@ -4,7 +4,8 @@
 
 1. 新接口统一使用 `/api/v3/*`。
 2. 与当前 `/v2/*` 并行存在。
-3. `V3` 负责“分析与生成前链路”，`V2` 继续承接 proposal、通知、执行和审计闭环。
+3. `V3` 负责分析与生成前链路，`V2` 继续承接 proposal、通知、执行和审计闭环。
+4. 接口设计应支持“数字孪生智能体洪水预警系统前端”的主屏联动与对话控制。
 
 ## 2. 天气事件解析
 
@@ -24,7 +25,7 @@
 ```json
 {
   "weather_event_id": "WEA-001",
-  "hazard_type": "强降雨",
+  "hazard_type": "heavy_rain",
   "warning_level": "yellow",
   "affected_area": ["A街道"],
   "time_window": "未来3小时",
@@ -94,7 +95,7 @@
 }
 ```
 
-## 6. proposal 生成与衔接
+## 6. proposal 生成与桥接
 
 ### `POST /api/v3/events/{event_id}/proposals/generate`
 
@@ -138,7 +139,17 @@
 - 生成事件复盘摘要
 - 更新经验与知识库
 
-## 9. SSE / WebSocket 事件建议
+## 9. 面向前端的接口要求
+
+为了支撑“数字孪生智能体洪水预警系统前端”，接口还应满足以下要求：
+
+1. 能支持总览主屏加载态势、对象和风险层数据。
+2. 能支持点击对象后的详情联动。
+3. 能支持智能体对话控制请求与返回。
+4. 能支持 proposal 状态实时刷新。
+5. 能支持分众预警内容回显与版本切换。
+
+## 10. SSE / WebSocket 事件建议
 
 ### SSE 事件类型
 
@@ -148,8 +159,15 @@
 - `proposal_generated`
 - `warnings_ready`
 - `audit_blocked`
+- `twin_overview_updated`
+- `focus_object_updated`
 
-## 10. 错误码建议
+其中：
+
+- `twin_overview_updated` 用于刷新数字孪生主屏态势
+- `focus_object_updated` 用于刷新当前焦点对象联动区域
+
+## 11. 错误码建议
 
 | 错误码 | 含义 |
 |---|---|
@@ -159,7 +177,7 @@
 | `V3_PERMISSION_BLOCKED` | 权限边界阻断 |
 | `V3_INCONSISTENT_MESSAGES` | 分众消息不一致 |
 
-## 11. 与现有 V2 的兼容建议
+## 12. 与现有 V2 的兼容建议
 
 1. 审批仍走现有：
    - `POST /v2/proposals/{proposal_id}/approve`
