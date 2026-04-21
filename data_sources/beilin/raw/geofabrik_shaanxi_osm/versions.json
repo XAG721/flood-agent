@@ -1,0 +1,33 @@
+[
+  {
+    "fetched_at": "2026-04-15T14:07:59.022498+08:00",
+    "source_id": "geofabrik_shaanxi_osm",
+    "cache_status": "cached",
+    "artifact_count": 2,
+    "downloaded_artifact_count": 2,
+    "failed_artifact_count": 0,
+    "artifacts": [
+      {
+        "artifact_name": "source_ref",
+        "status": "downloaded",
+        "local_path": "data_sources\\beilin\\raw\\geofabrik_shaanxi_osm\\source_ref.html",
+        "file_hash": "05046d2ecd97fff5e88379e3bb1ecf817171169c7149df10913e9f7f07cc93fe",
+        "used_by_parser": false
+      },
+      {
+        "artifact_name": "source_ref_text",
+        "status": "generated",
+        "local_path": "data_sources\\beilin\\raw\\geofabrik_shaanxi_osm\\source_ref.html.txt",
+        "file_hash": "2dd1b50e208b8db92fb8cc95a9acd4694ffaa41351528983f5bfa2f698de9d92",
+        "used_by_parser": false
+      },
+      {
+        "artifact_name": "download",
+        "status": "downloaded",
+        "local_path": "data_sources\\beilin\\raw\\geofabrik_shaanxi_osm\\download.pbf",
+        "file_hash": "9d663f44cbe4074a5d329162a7a4bb12aca37e15ca2510c1f976a5ba243861cf",
+        "used_by_parser": false
+      }
+    ]
+  }
+]

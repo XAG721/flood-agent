@@ -1,0 +1,7 @@
+﻿observed_at,source_type,source_name,village,rainfall_mm,water_level_m,road_blocked,citizen_reports,is_synthetic,notes
+2026-07-10T13:20:00+08:00,weather_station,市级气象站,长安路街道,42,4.8,True,12,False,强对流降雨已覆盖碑林核心城区。
+2026-07-10T13:40:00+08:00,pump_station,南门地铁泵站,南院门街道,58,5.6,True,24,False,南门广场已进入高风险积水状态。
+2026-07-10T14:00:00+08:00,camera_alert,文艺路小学北门摄像头,文艺路街道,67,6.1,True,36,False,积水已经超过儿童安全步行阈值。
+2026-07-10T14:20:00+08:00,mall_ops,李家村地下商场运营席,柏树林街道,79,6.6,True,45,True,回流水已经到达地下一层入口。
+2026-07-10T14:50:00+08:00,community_grid,建设路社区网格,建国路片区,92,7.1,True,55,True,地下室和老院落开始出现回流水。
+2026-07-10T15:20:00+08:00,district_command,碑林区防汛值守席,太乙路街道,111,7.8,True,83,True,和平门医养中心的安全转移窗口正在缩小。

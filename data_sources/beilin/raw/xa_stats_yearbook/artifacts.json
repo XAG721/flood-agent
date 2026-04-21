@@ -1,0 +1,16 @@
+[
+  {
+    "source_id": "xa_stats_yearbook",
+    "artifact_name": "source_ref",
+    "source_url": "https://tjj.xa.gov.cn/tjsj/tjsj/ndsj/1.html",
+    "local_path": "data_sources\\beilin\\raw\\xa_stats_yearbook\\source_ref.html",
+    "file_size_bytes": 0,
+    "file_hash": "",
+    "content_type": "text/html",
+    "fetched_at": "2026-04-15T14:08:13.817464+08:00",
+    "status": "failed",
+    "used_by_parser": false,
+    "normalized_targets": [],
+    "error": "HTTP Error 403: Forbidden"
+  }
+]

@@ -1,0 +1,2 @@
+﻿area_id,vehicle_count,staff_count,supply_kits,rescue_boats,ambulance_count,drone_count,portable_pumps,power_generators,medical_staff_count,volunteer_count,satellite_phones,notes,source_type,source_ref,is_synthetic
+beilin_10km2,18,64,420,2,6,4,9,7,28,110,12,面向十万人级值班场景的保守型合成资源基线。,synthetic,beilin_profile_rules_v1,True

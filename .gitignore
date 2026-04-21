@@ -1,0 +1,17 @@
+api_key.txt
+data/
+.pytest_cache/
+__pycache__/
+*.tsbuildinfo
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+3D_visual/node_modules/
+3D_visual/dist/
+3D_visual/.vite/
+frontend/vite.config.js
+frontend/vite.config.d.ts
+3D_visual/cesium_token.txt
+tmp-edge/
+tmp-edge-debug/
+data_sources/beilin/raw/geofabrik_shaanxi_osm/download.pbf

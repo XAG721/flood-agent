@@ -1,0 +1,5 @@
+﻿observed_at,source_type,source_name,village,rainfall_mm,water_level_m,road_blocked,citizen_reports,is_synthetic,notes
+2026-07-10T13:20:00+08:00,weather_station,市级气象站,长安路街道,28,3.6,False,4,False,持续降雨已激活多个低洼监测点。
+2026-07-10T13:40:00+08:00,pump_station,南门地铁泵站,南院门街道,39,4.1,True,8,False,南门广场积水加深，车辆已开始绕行。
+2026-07-10T14:00:00+08:00,camera_alert,文艺路小学北门摄像头,文艺路街道,44,4.7,True,11,False,建议把放学分流切换到东侧高地校门。
+2026-07-10T14:20:00+08:00,community_grid,李家村商圈网格,柏树林街道,51,5.1,True,16,True,地下商场入口已出现明显倒灌风险。

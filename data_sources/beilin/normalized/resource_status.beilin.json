@@ -1,0 +1,25 @@
+{
+  "area_id": "beilin_10km2",
+  "vehicle_count": 18,
+  "staff_count": 64,
+  "supply_kits": 420,
+  "rescue_boats": 2,
+  "ambulance_count": 6,
+  "drone_count": 4,
+  "portable_pumps": 9,
+  "power_generators": 7,
+  "medical_staff_count": 28,
+  "volunteer_count": 110,
+  "satellite_phones": 12,
+  "notes": "面向十万人级值班场景的保守型合成资源基线。",
+  "source_type": "synthetic",
+  "source_ref": "beilin_profile_rules_v1",
+  "is_synthetic": true,
+  "source_trace": {
+    "source_ids": [
+      "synthetic_resource_baseline"
+    ],
+    "fallback_to_synthetic": true,
+    "artifacts": []
+  }
+}

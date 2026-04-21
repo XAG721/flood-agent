@@ -1,0 +1,8 @@
+{
+  "doc_id": "case_beilin_underpass_response",
+  "title": "碑林区下穿通道积水处置案例",
+  "region": "西安市碑林区",
+  "stage": "Response",
+  "scenario_type": "road_blocked",
+  "outcome_label": "successful"
+}

@@ -1,0 +1,7 @@
+﻿verification_id,area_id,claim_or_asset_id,record_type,verified_by,verified_at,onsite_result,priority_level,recommendation,follow_up_action
+BL-VF-001,beilin_10km2,BL-CL-001,household,碑林街道核查组,2026-07-23T10:20:00+08:00,属实,高,纳入首批补偿审核,补充银行账户信息
+BL-VF-002,beilin_10km2,BL-CL-003,household,文艺路社区工作站,2026-07-23T11:05:00+08:00,部分属实,中,待补材料后再审,补交房产证明
+BL-VF-003,beilin_10km2,BL-CL-005,household,残联联合核查组,2026-07-23T11:40:00+08:00,属实,高,优先补偿并安排回访,核验辅助器具受损情况
+BL-VF-004,beilin_10km2,BL-ASSET-001,asset,区城管局现场组,2026-07-23T13:00:00+08:00,属实,高,进入专项补偿与修复通道,补充排水设备检修单
+BL-VF-005,beilin_10km2,BL-ASSET-003,asset,区卫健局联合组,2026-07-23T14:15:00+08:00,属实,高,纳入医疗设施应急修复,补充停诊影响说明
+BL-VF-006,beilin_10km2,BL-ASSET-004,asset,区教育局后勤组,2026-07-23T15:10:00+08:00,基本属实,中,列入常规修复补助,补拍设备间受损照片

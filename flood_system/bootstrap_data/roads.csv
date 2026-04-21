@@ -1,0 +1,7 @@
+﻿area_id,road_id,name,from_village,to_location,accessible,risk_note,start_longitude,start_latitude,end_longitude,end_latitude,source_type,source_ref,is_synthetic
+beilin_10km2,beilin_road_1,南门地铁至体育学院转移通道,南院门街道,西安体育学院避难点,True,持续降雨期间应重点排查南门地铁至体育学院转移通道附近的低洼点和地下入口。,108.9472,34.2393,108.9536,34.2388,open_map,geofabrik_shaanxi_osm,False
+beilin_10km2,beilin_road_2,文艺路至南门连接线,文艺路街道,南门地铁入口,True,持续降雨期间应重点排查文艺路至南门连接线附近的低洼点和地下入口。,108.9658,34.2402,108.9534,34.2396,open_map,geofabrik_shaanxi_osm,False
+beilin_10km2,beilin_road_3,东大街至李家村通道,东关南街街道,李家村商圈,True,持续降雨期间应重点排查东大街至李家村通道附近的低洼点和地下入口。,108.9648,34.2574,108.9739,34.2447,open_map,geofabrik_shaanxi_osm,False
+beilin_10km2,beilin_road_4,长安路社区转移路线,长安路街道,南门广场,True,持续降雨期间应重点排查长安路社区转移路线附近的低洼点和地下入口。,108.9483,34.2326,108.9472,34.2394,open_map,geofabrik_shaanxi_osm,False
+beilin_10km2,beilin_road_5,建国路至和平门路线,建国路片区,和平门避难点,True,持续降雨期间应重点排查建国路至和平门路线附近的低洼点和地下入口。,108.9801,34.2571,108.9712,34.2578,open_map,geofabrik_shaanxi_osm,False
+beilin_10km2,beilin_road_6,柏树林至东大街排水走廊,柏树林街道,东大街集结点,True,持续降雨期间应重点排查柏树林至东大街排水走廊附近的低洼点和地下入口。,108.9661,34.2608,108.9624,34.2598,open_map,geofabrik_shaanxi_osm,False

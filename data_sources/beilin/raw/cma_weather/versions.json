@@ -1,0 +1,19 @@
+[
+  {
+    "fetched_at": "2026-04-15T14:08:15.445894+08:00",
+    "source_id": "cma_weather",
+    "cache_status": "download_failed",
+    "artifact_count": 1,
+    "downloaded_artifact_count": 0,
+    "failed_artifact_count": 1,
+    "artifacts": [
+      {
+        "artifact_name": "source_ref",
+        "status": "failed",
+        "local_path": "data_sources\\beilin\\raw\\cma_weather\\source_ref.cn",
+        "file_hash": "",
+        "used_by_parser": false
+      }
+    ]
+  }
+]

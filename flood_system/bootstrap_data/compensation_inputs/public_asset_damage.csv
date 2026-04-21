@@ -1,0 +1,7 @@
+﻿asset_case_id,area_id,asset_name,asset_type,village,damage_level,service_interruption_hours,estimated_loss_cny,manual_review_required,responsible_unit,notes
+BL-ASSET-001,beilin_10km2,南稍门下穿通道,交通设施,南稍门,严重,14,420000,true,区城管局,抽排与封控持续时间长
+BL-ASSET-002,beilin_10km2,东大街泵站,排水设施,东大街,中等,6,180000,true,市政排水公司,两台泵组连续超负荷运行
+BL-ASSET-003,beilin_10km2,碑林区医院后勤配电室,医疗设施,东大街,中等,4,260000,true,区卫健局,备用供电切换后恢复
+BL-ASSET-004,beilin_10km2,文艺路学校地下设备间,教育设施,文艺路,轻度,3,96000,false,区教育局,局部渗水影响配电箱
+BL-ASSET-005,beilin_10km2,李家村地下商业街入口,商业公共设施,李家村,严重,10,310000,true,街道办,倒灌导致扶梯停运和围挡设置
+BL-ASSET-006,beilin_10km2,和平门地铁口排水井,交通设施,和平门,中等,5,135000,true,轨道公司,排水能力不足需联合核损

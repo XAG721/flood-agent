@@ -1,0 +1,26 @@
+[
+  {
+    "fetched_at": "2026-04-15T14:07:56.535686+08:00",
+    "source_id": "xa_emergency_shelters_2025",
+    "cache_status": "download_failed",
+    "artifact_count": 2,
+    "downloaded_artifact_count": 0,
+    "failed_artifact_count": 2,
+    "artifacts": [
+      {
+        "artifact_name": "source_ref",
+        "status": "failed",
+        "local_path": "data_sources\\beilin\\raw\\xa_emergency_shelters_2025\\source_ref.html",
+        "file_hash": "",
+        "used_by_parser": false
+      },
+      {
+        "artifact_name": "download",
+        "status": "failed",
+        "local_path": "data_sources\\beilin\\raw\\xa_emergency_shelters_2025\\download.pdf",
+        "file_hash": "",
+        "used_by_parser": false
+      }
+    ]
+  }
+]

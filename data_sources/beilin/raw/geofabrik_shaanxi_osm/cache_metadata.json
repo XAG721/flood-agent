@@ -1,0 +1,31 @@
+{
+  "source_id": "geofabrik_shaanxi_osm",
+  "cache_status": "cached",
+  "last_fetched_at": "2026-04-15T14:07:59.022498+08:00",
+  "parser_kind": "osm_bundle",
+  "artifact_count": 2,
+  "downloaded_artifact_count": 2,
+  "failed_artifact_count": 0,
+  "progress_percent": 100,
+  "last_error": null,
+  "parsed_summary": {},
+  "latest_fetch_details": [
+    {
+      "source_id": "geofabrik_shaanxi_osm",
+      "artifact": "source_ref",
+      "status": "downloaded",
+      "url": "https://download.geofabrik.de/asia/china/shaanxi.html",
+      "target_path": "data_sources\\beilin\\raw\\geofabrik_shaanxi_osm\\source_ref.html",
+      "fetched_at": "2026-04-15T14:07:59.022498+08:00"
+    },
+    {
+      "source_id": "geofabrik_shaanxi_osm",
+      "artifact": "download",
+      "status": "downloaded",
+      "url": "https://download.geofabrik.de/asia/china/shaanxi-latest.osm.pbf",
+      "target_path": "data_sources\\beilin\\raw\\geofabrik_shaanxi_osm\\download.pbf",
+      "fetched_at": "2026-04-15T14:07:59.022498+08:00"
+    }
+  ],
+  "artifacts_manifest_path": "data_sources\\beilin\\raw\\geofabrik_shaanxi_osm\\artifacts.json"
+}

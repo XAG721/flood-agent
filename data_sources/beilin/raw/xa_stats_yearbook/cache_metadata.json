@@ -1,0 +1,24 @@
+{
+  "source_id": "xa_stats_yearbook",
+  "cache_status": "download_failed",
+  "last_fetched_at": "2026-04-15T14:08:13.817464+08:00",
+  "parser_kind": "html_digest",
+  "artifact_count": 1,
+  "downloaded_artifact_count": 0,
+  "failed_artifact_count": 1,
+  "progress_percent": 0,
+  "last_error": "HTTP Error 403: Forbidden",
+  "parsed_summary": {},
+  "latest_fetch_details": [
+    {
+      "source_id": "xa_stats_yearbook",
+      "artifact": "source_ref",
+      "status": "failed",
+      "url": "https://tjj.xa.gov.cn/tjsj/tjsj/ndsj/1.html",
+      "target_path": "data_sources\\beilin\\raw\\xa_stats_yearbook\\source_ref.html",
+      "error": "HTTP Error 403: Forbidden",
+      "fetched_at": "2026-04-15T14:08:13.817464+08:00"
+    }
+  ],
+  "artifacts_manifest_path": "data_sources\\beilin\\raw\\xa_stats_yearbook\\artifacts.json"
+}

@@ -1,0 +1,16 @@
+[
+  {
+    "source_id": "cma_weather",
+    "artifact_name": "source_ref",
+    "source_url": "https://weather.cma.cn/",
+    "local_path": "data_sources\\beilin\\raw\\cma_weather\\source_ref.cn",
+    "file_size_bytes": 0,
+    "file_hash": "",
+    "content_type": "application/octet-stream",
+    "fetched_at": "2026-04-15T14:08:15.445894+08:00",
+    "status": "failed",
+    "used_by_parser": false,
+    "normalized_targets": [],
+    "error": "<urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)>"
+  }
+]

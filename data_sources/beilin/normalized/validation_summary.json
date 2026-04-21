@@ -1,0 +1,25 @@
+{
+  "area_count": 1,
+  "resource_area_count": 1,
+  "shelter_count": 6,
+  "road_count": 6,
+  "entity_profile_count": 8,
+  "observation_counts": {
+    "mild": 3,
+    "warning": 4,
+    "extreme": 6
+  },
+  "rag_document_count": 9,
+  "rag_query_hit_count": 6,
+  "raw_ready": false,
+  "raw_completeness_percent": 25,
+  "missing_required_sources": [
+    "xa_emergency_shelters_2025",
+    "geofabrik_shaanxi_osm",
+    "xa_stats_yearbook",
+    "cma_weather"
+  ],
+  "shelter_source_parsed": false,
+  "osm_source_parsed": false,
+  "has_real_raw_artifacts": false
+}

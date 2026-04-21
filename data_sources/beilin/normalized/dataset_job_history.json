@@ -1,0 +1,29 @@
+[
+  {
+    "job_id": "dataset_job_3504bc3f445a",
+    "action": "fetch_sources",
+    "status": "completed",
+    "progress_percent": 100,
+    "current_step": "completed",
+    "message": "Fetched raw source caches for 2 source(s).",
+    "source_ids": [],
+    "request_payload": {
+      "download": true,
+      "source_ids": [],
+      "force_refresh": false
+    },
+    "attempt_count": 1,
+    "max_attempts": 2,
+    "auto_retry_enabled": true,
+    "retry_count": 0,
+    "retry_of_job_id": null,
+    "cancel_requested": false,
+    "started_at": "2026-04-15T06:07:56.520686Z",
+    "updated_at": "2026-04-15T06:08:27.568456Z",
+    "completed_at": "2026-04-15T06:08:27.568456Z",
+    "cancel_requested_at": null,
+    "canceled_at": null,
+    "error": null,
+    "result_summary": "Fetched raw source caches for 2 source(s)."
+  }
+]

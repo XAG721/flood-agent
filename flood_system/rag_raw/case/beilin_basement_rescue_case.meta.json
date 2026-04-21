@@ -1,0 +1,8 @@
+{
+  "doc_id": "case_beilin_basement_rescue",
+  "title": "碑林区地下空间倒灌救援案例",
+  "region": "西安市碑林区",
+  "stage": "Response",
+  "scenario_type": "basement_inflow",
+  "outcome_label": "review_required"
+}

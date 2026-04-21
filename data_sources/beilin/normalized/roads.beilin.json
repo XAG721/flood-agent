@@ -1,0 +1,128 @@
+[
+  {
+    "area_id": "beilin_10km2",
+    "road_id": "beilin_road_1",
+    "name": "南门地铁至体育学院转移通道",
+    "from_village": "南院门街道",
+    "to_location": "西安体育学院避难点",
+    "accessible": true,
+    "risk_note": "持续降雨期间应重点排查南门地铁至体育学院转移通道附近的低洼点和地下入口。",
+    "start_longitude": 108.9472,
+    "start_latitude": 34.2393,
+    "end_longitude": 108.9536,
+    "end_latitude": 34.2388,
+    "source_type": "open_map",
+    "source_ref": "geofabrik_shaanxi_osm",
+    "is_synthetic": false,
+    "source_trace": {
+      "source_id": "geofabrik_shaanxi_osm",
+      "artifacts": [],
+      "fallback_to_synthetic": true
+    }
+  },
+  {
+    "area_id": "beilin_10km2",
+    "road_id": "beilin_road_2",
+    "name": "文艺路至南门连接线",
+    "from_village": "文艺路街道",
+    "to_location": "南门地铁入口",
+    "accessible": true,
+    "risk_note": "持续降雨期间应重点排查文艺路至南门连接线附近的低洼点和地下入口。",
+    "start_longitude": 108.9658,
+    "start_latitude": 34.2402,
+    "end_longitude": 108.9534,
+    "end_latitude": 34.2396,
+    "source_type": "open_map",
+    "source_ref": "geofabrik_shaanxi_osm",
+    "is_synthetic": false,
+    "source_trace": {
+      "source_id": "geofabrik_shaanxi_osm",
+      "artifacts": [],
+      "fallback_to_synthetic": true
+    }
+  },
+  {
+    "area_id": "beilin_10km2",
+    "road_id": "beilin_road_3",
+    "name": "东大街至李家村通道",
+    "from_village": "东关南街街道",
+    "to_location": "李家村商圈",
+    "accessible": true,
+    "risk_note": "持续降雨期间应重点排查东大街至李家村通道附近的低洼点和地下入口。",
+    "start_longitude": 108.9648,
+    "start_latitude": 34.2574,
+    "end_longitude": 108.9739,
+    "end_latitude": 34.2447,
+    "source_type": "open_map",
+    "source_ref": "geofabrik_shaanxi_osm",
+    "is_synthetic": false,
+    "source_trace": {
+      "source_id": "geofabrik_shaanxi_osm",
+      "artifacts": [],
+      "fallback_to_synthetic": true
+    }
+  },
+  {
+    "area_id": "beilin_10km2",
+    "road_id": "beilin_road_4",
+    "name": "长安路社区转移路线",
+    "from_village": "长安路街道",
+    "to_location": "南门广场",
+    "accessible": true,
+    "risk_note": "持续降雨期间应重点排查长安路社区转移路线附近的低洼点和地下入口。",
+    "start_longitude": 108.9483,
+    "start_latitude": 34.2326,
+    "end_longitude": 108.9472,
+    "end_latitude": 34.2394,
+    "source_type": "open_map",
+    "source_ref": "geofabrik_shaanxi_osm",
+    "is_synthetic": false,
+    "source_trace": {
+      "source_id": "geofabrik_shaanxi_osm",
+      "artifacts": [],
+      "fallback_to_synthetic": true
+    }
+  },
+  {
+    "area_id": "beilin_10km2",
+    "road_id": "beilin_road_5",
+    "name": "建国路至和平门路线",
+    "from_village": "建国路片区",
+    "to_location": "和平门避难点",
+    "accessible": true,
+    "risk_note": "持续降雨期间应重点排查建国路至和平门路线附近的低洼点和地下入口。",
+    "start_longitude": 108.9801,
+    "start_latitude": 34.2571,
+    "end_longitude": 108.9712,
+    "end_latitude": 34.2578,
+    "source_type": "open_map",
+    "source_ref": "geofabrik_shaanxi_osm",
+    "is_synthetic": false,
+    "source_trace": {
+      "source_id": "geofabrik_shaanxi_osm",
+      "artifacts": [],
+      "fallback_to_synthetic": true
+    }
+  },
+  {
+    "area_id": "beilin_10km2",
+    "road_id": "beilin_road_6",
+    "name": "柏树林至东大街排水走廊",
+    "from_village": "柏树林街道",
+    "to_location": "东大街集结点",
+    "accessible": true,
+    "risk_note": "持续降雨期间应重点排查柏树林至东大街排水走廊附近的低洼点和地下入口。",
+    "start_longitude": 108.9661,
+    "start_latitude": 34.2608,
+    "end_longitude": 108.9624,
+    "end_latitude": 34.2598,
+    "source_type": "open_map",
+    "source_ref": "geofabrik_shaanxi_osm",
+    "is_synthetic": false,
+    "source_trace": {
+      "source_id": "geofabrik_shaanxi_osm",
+      "artifacts": [],
+      "fallback_to_synthetic": true
+    }
+  }
+]

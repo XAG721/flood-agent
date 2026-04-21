@@ -1,0 +1,74 @@
+[
+  {
+    "observed_at": "2026-07-10T13:20:00+08:00",
+    "source_type": "weather_station",
+    "source_name": "市级气象站",
+    "village": "长安路街道",
+    "rainfall_mm": 42,
+    "water_level_m": 4.8,
+    "road_blocked": true,
+    "citizen_reports": 12,
+    "is_synthetic": false,
+    "notes": "强对流降雨已覆盖碑林核心城区。"
+  },
+  {
+    "observed_at": "2026-07-10T13:40:00+08:00",
+    "source_type": "pump_station",
+    "source_name": "南门地铁泵站",
+    "village": "南院门街道",
+    "rainfall_mm": 58,
+    "water_level_m": 5.6,
+    "road_blocked": true,
+    "citizen_reports": 24,
+    "is_synthetic": false,
+    "notes": "南门广场已进入高风险积水状态。"
+  },
+  {
+    "observed_at": "2026-07-10T14:00:00+08:00",
+    "source_type": "camera_alert",
+    "source_name": "文艺路小学北门摄像头",
+    "village": "文艺路街道",
+    "rainfall_mm": 67,
+    "water_level_m": 6.1,
+    "road_blocked": true,
+    "citizen_reports": 36,
+    "is_synthetic": false,
+    "notes": "积水已经超过儿童安全步行阈值。"
+  },
+  {
+    "observed_at": "2026-07-10T14:20:00+08:00",
+    "source_type": "mall_ops",
+    "source_name": "李家村地下商场运营席",
+    "village": "柏树林街道",
+    "rainfall_mm": 79,
+    "water_level_m": 6.6,
+    "road_blocked": true,
+    "citizen_reports": 45,
+    "is_synthetic": true,
+    "notes": "回流水已经到达地下一层入口。"
+  },
+  {
+    "observed_at": "2026-07-10T14:50:00+08:00",
+    "source_type": "community_grid",
+    "source_name": "建设路社区网格",
+    "village": "建国路片区",
+    "rainfall_mm": 92,
+    "water_level_m": 7.1,
+    "road_blocked": true,
+    "citizen_reports": 55,
+    "is_synthetic": true,
+    "notes": "地下室和老院落开始出现回流水。"
+  },
+  {
+    "observed_at": "2026-07-10T15:20:00+08:00",
+    "source_type": "district_command",
+    "source_name": "碑林区防汛值守席",
+    "village": "太乙路街道",
+    "rainfall_mm": 111,
+    "water_level_m": 7.8,
+    "road_blocked": true,
+    "citizen_reports": 83,
+    "is_synthetic": true,
+    "notes": "和平门医养中心的安全转移窗口正在缩小。"
+  }
+]

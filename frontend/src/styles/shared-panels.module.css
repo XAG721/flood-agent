@@ -1,0 +1,315 @@
+.metricCard,
+.priorityPanel,
+.signalPanel,
+.situationPanel,
+.statusSignal,
+.insightPanel {
+  border: 1px solid rgba(170, 190, 209, 0.08);
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(9, 18, 28, 0.88), rgba(7, 15, 24, 0.76)),
+    radial-gradient(circle at 100% 0%, rgba(233, 142, 72, 0.06), transparent 24%);
+  box-shadow: var(--shadow-soft);
+}
+
+.metricCard {
+  display: grid;
+  gap: 10px;
+  min-height: 138px;
+  padding: 18px 0 0;
+  border: 0;
+  border-top: 1px solid rgba(170, 190, 209, 0.16);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.metricCard span,
+.metricCard small,
+.panelKicker,
+.priorityTopline span,
+.signalTitleRow span,
+.statusSignalLabel {
+  color: var(--fg-muted);
+}
+
+.metricCard strong {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3vw, 42px);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+}
+
+.metricRisk {
+  border-color: rgba(255, 103, 103, 0.3);
+}
+
+.metricWarning {
+  border-color: rgba(247, 178, 73, 0.28);
+}
+
+.metricSuccess {
+  border-color: rgba(84, 199, 146, 0.26);
+}
+
+.priorityPanel,
+.signalPanel,
+.situationPanel,
+.insightPanel {
+  padding: 22px 24px;
+}
+
+.panelTitleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.panelTitleRow h3 {
+  margin: 2px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(24px, 2.3vw, 36px);
+  line-height: 1.06;
+  letter-spacing: -0.04em;
+}
+
+.panelKicker {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.panelCount {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 0 0 14px;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fg-secondary);
+  font-size: 12px;
+  border-left: 1px solid rgba(170, 190, 209, 0.12);
+}
+
+.priorityList,
+.signalTimeline {
+  display: grid;
+  gap: 0;
+}
+
+.priorityCard {
+  display: grid;
+  gap: 10px;
+  padding: 18px 0 18px 18px;
+  border: 0;
+  border-left: 1px solid rgba(170, 190, 209, 0.1);
+  border-bottom: 1px solid rgba(170, 190, 209, 0.08);
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease,
+    padding-left 160ms ease;
+}
+
+.priorityCard:hover {
+  transform: translateY(-1px);
+  border-left-color: rgba(233, 142, 72, 0.48);
+  background: linear-gradient(90deg, rgba(233, 142, 72, 0.08), transparent 62%);
+}
+
+.priorityCardActive {
+  padding-left: 22px;
+  border-left-color: rgba(233, 142, 72, 0.82);
+  background: linear-gradient(90deg, rgba(233, 142, 72, 0.14), transparent 66%);
+}
+
+.priorityTopline {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: start;
+}
+
+.priorityTopline strong,
+.signalTitleRow strong {
+  display: block;
+  font-size: 16px;
+}
+
+.riskBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.riskNeutral {
+  background: rgba(140, 154, 166, 0.16);
+  color: #d7dee4;
+}
+
+.riskBlue {
+  background: rgba(71, 129, 255, 0.14);
+  color: #7eb8ff;
+}
+
+.riskYellow {
+  background: rgba(247, 178, 73, 0.16);
+  color: #ffd782;
+}
+
+.riskOrange {
+  background: rgba(247, 132, 54, 0.18);
+  color: #ffb27c;
+}
+
+.riskRed {
+  background: rgba(255, 103, 103, 0.18);
+  color: #ff9f9f;
+}
+
+.signalRow {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding: 16px 0;
+}
+
+.signalDot {
+  width: 12px;
+  height: 12px;
+  margin-top: 6px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.02);
+}
+
+.signalInfo {
+  background: #6fbbff;
+}
+
+.signalWarning {
+  background: #f7b249;
+}
+
+.signalCritical {
+  background: #ff6767;
+}
+
+.signalNeutral {
+  background: #97a9b9;
+}
+
+.signalContent {
+  padding-bottom: 0;
+  border-bottom: 1px solid rgba(170, 190, 209, 0.08);
+}
+
+.signalTitleRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.signalContent p {
+  margin: 6px 0 0;
+  color: var(--fg-secondary);
+  line-height: 1.66;
+}
+
+.emptyText {
+  margin: 0;
+  color: var(--fg-muted);
+  line-height: 1.66;
+}
+
+.statusSignal {
+  min-width: 112px;
+  padding: 10px 12px;
+  border-radius: 18px;
+  background: rgba(8, 16, 25, 0.5);
+  box-shadow: none;
+}
+
+.statusSignalLabel {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 12px;
+}
+
+.statusSignalValue {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.situationHero {
+  display: grid;
+  gap: 18px;
+  padding: 28px;
+}
+
+.situationHero h3 {
+  max-width: 720px;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(36px, 4vw, 58px);
+  line-height: 0.96;
+  letter-spacing: -0.06em;
+}
+
+.situationLead {
+  display: grid;
+  grid-template-columns: 1.45fr 1fr;
+  gap: 20px;
+  align-items: end;
+}
+
+.situationLead p {
+  margin: 0;
+  color: var(--fg-secondary);
+  line-height: 1.75;
+}
+
+.situationMeta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.situationMeta article {
+  padding: 16px;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid rgba(170, 190, 209, 0.12);
+}
+
+.situationMeta span {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--fg-muted);
+  font-size: 12px;
+}
+
+.situationMeta strong {
+  font-size: 16px;
+}
+
+@media (max-width: 1280px) {
+  .situationLead {
+    grid-template-columns: 1fr;
+  }
+
+  .metricCard {
+    min-height: auto;
+  }
+}

@@ -1,0 +1,110 @@
+[
+  {
+    "doc_id": "beilin_public_message_rule",
+    "corpus": "policy",
+    "title": "碑林区公众预警与避险规则卡",
+    "content": "当碑林区低洼街巷、地铁广场和地下空间持续积水时，公众消息应明确指出受影响区域，提醒群众避免进入下穿通道和地下商业空间，并提示老人家庭尽早联系社区网格员。",
+    "metadata": {
+      "region": "西安市碑林区",
+      "source_type": "official",
+      "source_ref": "https://cbip.xa.gov.cn/zwgk/yjgl/yjbncs/2000390465122770945.html",
+      "updated_at": "2026-04-03T00:00:00+08:00"
+    }
+  },
+  {
+    "doc_id": "beilin_warning_response_guidance",
+    "corpus": "policy",
+    "title": "碑林区强降雨响应指引",
+    "content": "当南门地铁、学校校门、地下商业入口和和平门下穿通道同时进入高风险状态时，应优先保障学校放学分流、医养居民协助转移以及医院急救通道连续可达。",
+    "metadata": {
+      "region": "西安市碑林区",
+      "source_type": "official",
+      "source_ref": "https://weather.cma.cn/",
+      "updated_at": "2026-04-03T00:00:00+08:00"
+    }
+  },
+  {
+    "doc_id": "beilin_metro_hub_response_rule",
+    "corpus": "policy",
+    "title": "南门地铁换乘枢纽处置规则",
+    "content": "如果南门换乘枢纽入口积水快速加深，应先关闭低洼出入口，再把客流引导至高位出口；若缺少实时交通数据，应避免将转移人群导向地下商业入口。",
+    "metadata": {
+      "region": "西安市碑林区",
+      "source_type": "mixed",
+      "source_ref": "https://lbs.amap.com/api/webservice/summary/",
+      "updated_at": "2026-04-03T00:00:00+08:00"
+    }
+  },
+  {
+    "doc_id": "beilin_school_dismissal_case",
+    "corpus": "case",
+    "title": "文艺路小学放学积水案例卡",
+    "content": "当校门口积水深度超过儿童安全步行阈值时，任由家长聚集在接送道路会进一步加剧拥堵。更稳妥的做法是在东侧预置车辆，并通过较高地势校门分批放行学生。",
+    "metadata": {
+      "region": "西安市碑林区",
+      "source_type": "mixed",
+      "source_ref": "geofabrik_shaanxi_osm",
+      "updated_at": "2026-04-03T00:00:00+08:00"
+    }
+  },
+  {
+    "doc_id": "beilin_basement_rescue_case",
+    "corpus": "case",
+    "title": "李家村地下商场倒灌案例卡",
+    "content": "当 B1 入口开始回流水时，应先清空 B2 设备间和行动迟缓商铺，再根据集水井和入口水位是否继续上涨决定是否扩大封控范围。",
+    "metadata": {
+      "region": "西安市碑林区",
+      "source_type": "mixed",
+      "source_ref": "geofabrik_shaanxi_osm",
+      "updated_at": "2026-04-03T00:00:00+08:00"
+    }
+  },
+  {
+    "doc_id": "beilin_vulnerable_transfer_case",
+    "corpus": "case",
+    "title": "和平门医养转移案例卡",
+    "content": "卧床老人和吸氧老人不应等到主干道完全阻断后再转移，应在橙色风险窗口内提前启动分批协助转运。",
+    "metadata": {
+      "region": "西安市碑林区",
+      "source_type": "mixed",
+      "source_ref": "xa_stats_yearbook",
+      "updated_at": "2026-04-03T00:00:00+08:00"
+    }
+  },
+  {
+    "doc_id": "beilin_shelter_network_profile",
+    "corpus": "profile",
+    "title": "碑林区避难网络画像",
+    "content": "碑林区避难体系更适合采用分布式网络，而不是单一大型安置点。南门、体育学院、和平门和建国路小学应形成分层接纳网络。",
+    "metadata": {
+      "region": "西安市碑林区",
+      "source_type": "official",
+      "source_ref": "https://cbip.xa.gov.cn/zwgk/yjgl/yjbncs/2000390465122770945.html",
+      "updated_at": "2026-04-03T00:00:00+08:00"
+    }
+  },
+  {
+    "doc_id": "beilin_medical_support_profile",
+    "corpus": "profile",
+    "title": "碑林区医疗保障画像",
+    "content": "强降雨期间，碑林中心医院和市第九医院的后勤入口仍然是关键生命线，任何绕行方案都不能挤占急救通道。",
+    "metadata": {
+      "region": "西安市碑林区",
+      "source_type": "official",
+      "source_ref": "https://tjj.xa.gov.cn/tjsj/tjsj/ndsj/1.html",
+      "updated_at": "2026-04-03T00:00:00+08:00"
+    }
+  },
+  {
+    "doc_id": "beilin_urban_profile",
+    "corpus": "profile",
+    "title": "碑林区城市脆弱性画像",
+    "content": "碑林区属于高密度老城区，地下空间、医养设施和学校分布集中，决策时应优先关注低洼点位、地下入口和放学窗口，而不能只看平均降雨量。",
+    "metadata": {
+      "region": "西安市碑林区",
+      "source_type": "official",
+      "source_ref": "https://tjj.xa.gov.cn/tjsj/tjsj/ndsj/1.html",
+      "updated_at": "2026-04-03T00:00:00+08:00"
+    }
+  }
+]

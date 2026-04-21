@@ -1,0 +1,15 @@
+[
+  {
+    "source_id": "amap_webservice",
+    "artifact_name": "source_ref",
+    "source_url": "https://lbs.amap.com/api/webservice/summary/",
+    "local_path": "data_sources\\beilin\\raw\\amap_webservice\\source_ref.bin",
+    "file_size_bytes": 125645,
+    "file_hash": "7fb0f6349ce0781b6affa5c8ae2fc8b6d6996216bfeb1199235fcc8ac8a57aa5",
+    "content_type": "application/octet-stream",
+    "fetched_at": "2026-04-15T14:08:22.932306+08:00",
+    "status": "downloaded",
+    "used_by_parser": false,
+    "normalized_targets": []
+  }
+]

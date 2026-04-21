@@ -1,0 +1,38 @@
+.pageStack {
+  display: grid;
+  gap: 18px;
+}
+
+.overviewHero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(340px, 420px);
+  gap: 18px;
+}
+
+.overviewSituation,
+.overviewPriority,
+.primaryContent,
+.sideRail {
+  display: grid;
+  gap: 18px;
+}
+
+.overviewGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 18px;
+}
+
+.primaryWithRail {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(320px, 420px);
+  gap: 18px;
+}
+
+@media (max-width: 1280px) {
+  .overviewHero,
+  .overviewGrid,
+  .primaryWithRail {
+    grid-template-columns: 1fr;
+  }
+}

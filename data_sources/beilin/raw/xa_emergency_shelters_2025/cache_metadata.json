@@ -1,0 +1,33 @@
+{
+  "source_id": "xa_emergency_shelters_2025",
+  "cache_status": "download_failed",
+  "last_fetched_at": "2026-04-15T14:07:56.535686+08:00",
+  "parser_kind": "pdf_html_table",
+  "artifact_count": 2,
+  "downloaded_artifact_count": 0,
+  "failed_artifact_count": 2,
+  "progress_percent": 0,
+  "last_error": "HTTP Error 403: Forbidden",
+  "parsed_summary": {},
+  "latest_fetch_details": [
+    {
+      "source_id": "xa_emergency_shelters_2025",
+      "artifact": "source_ref",
+      "status": "failed",
+      "url": "https://cbip.xa.gov.cn/zwgk/yjgl/yjbncs/2000390465122770945.html",
+      "target_path": "data_sources\\beilin\\raw\\xa_emergency_shelters_2025\\source_ref.html",
+      "error": "HTTP Error 403: Forbidden",
+      "fetched_at": "2026-04-15T14:07:56.535686+08:00"
+    },
+    {
+      "source_id": "xa_emergency_shelters_2025",
+      "artifact": "download",
+      "status": "failed",
+      "url": "https://cbip.xa.gov.cn/web_files/itl/file/2025/12/15/202512151019424757730.pdf",
+      "target_path": "data_sources\\beilin\\raw\\xa_emergency_shelters_2025\\download.pdf",
+      "error": "HTTP Error 403: Forbidden",
+      "fetched_at": "2026-04-15T14:07:56.535686+08:00"
+    }
+  ],
+  "artifacts_manifest_path": "data_sources\\beilin\\raw\\xa_emergency_shelters_2025\\artifacts.json"
+}

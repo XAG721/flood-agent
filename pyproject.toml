@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "flood-warning-system"
+version = "0.1.0"
+description = "Event-driven flood warning and personalized response platform"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.128.0",
+  "pydantic>=2.8.2",
+  "uvicorn>=0.30.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["flood_system*"]

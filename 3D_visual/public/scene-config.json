@@ -1,0 +1,46 @@
+{
+  "modelUrl": "/models/cityengine_scene.glb",
+  "anchorLon": 108.94921153512861,
+  "anchorLat": 34.24624474240188,
+  "anchorHeight": 404.3599853515625,
+  "scale": 1,
+  "heading": -1.4,
+  "pitch": 0,
+  "roll": 0,
+  "offsetEast": -422,
+  "offsetNorth": 478,
+  "offsetUp": 0,
+  "verticalScale": 1,
+  "sourceFrame": {
+    "east": "x",
+    "north": "-z",
+    "up": "y"
+  },
+  "sourceCenterMode": "bounds-center",
+  "terrainAnchorMode": "sample-most-detailed",
+  "cameraPresets": {
+    "overview": {
+      "heading": 20,
+      "pitch": -42,
+      "range": 2400,
+      "fitWholeModel": true
+    },
+    "oblique": {
+      "heading": 38,
+      "pitch": -24,
+      "range": 950,
+      "focusRadius": 180
+    },
+    "close": {
+      "heading": 12,
+      "pitch": -14,
+      "range": 320,
+      "focusRadius": 80
+    }
+  },
+  "debug": {
+    "showAnchor": true,
+    "showBoundingSphere": false,
+    "brightMaterial": true
+  }
+}

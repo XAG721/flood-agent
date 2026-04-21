@@ -1,0 +1,24 @@
+{
+  "source_id": "cma_weather",
+  "cache_status": "download_failed",
+  "last_fetched_at": "2026-04-15T14:08:15.445894+08:00",
+  "parser_kind": "html_digest",
+  "artifact_count": 1,
+  "downloaded_artifact_count": 0,
+  "failed_artifact_count": 1,
+  "progress_percent": 0,
+  "last_error": "<urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)>",
+  "parsed_summary": {},
+  "latest_fetch_details": [
+    {
+      "source_id": "cma_weather",
+      "artifact": "source_ref",
+      "status": "failed",
+      "url": "https://weather.cma.cn/",
+      "target_path": "data_sources\\beilin\\raw\\cma_weather\\source_ref.cn",
+      "error": "<urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)>",
+      "fetched_at": "2026-04-15T14:08:15.445894+08:00"
+    }
+  ],
+  "artifacts_manifest_path": "data_sources\\beilin\\raw\\cma_weather\\artifacts.json"
+}

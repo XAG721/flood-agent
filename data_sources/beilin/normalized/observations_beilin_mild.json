@@ -1,0 +1,38 @@
+[
+  {
+    "observed_at": "2026-07-10T13:20:00+08:00",
+    "source_type": "weather_station",
+    "source_name": "市级气象站",
+    "village": "南院门街道",
+    "rainfall_mm": 12,
+    "water_level_m": 1.8,
+    "road_blocked": false,
+    "citizen_reports": 1,
+    "is_synthetic": false,
+    "notes": "短时对流降雨，排水系统暂时正常。"
+  },
+  {
+    "observed_at": "2026-07-10T13:40:00+08:00",
+    "source_type": "pump_station",
+    "source_name": "南门地铁泵站",
+    "village": "南院门街道",
+    "rainfall_mm": 18,
+    "water_level_m": 2.3,
+    "road_blocked": false,
+    "citizen_reports": 2,
+    "is_synthetic": false,
+    "notes": "地铁广场周边已出现浅层积水。"
+  },
+  {
+    "observed_at": "2026-07-10T14:00:00+08:00",
+    "source_type": "camera_alert",
+    "source_name": "文艺路校门摄像头",
+    "village": "文艺路街道",
+    "rainfall_mm": 22,
+    "water_level_m": 2.6,
+    "road_blocked": false,
+    "citizen_reports": 3,
+    "is_synthetic": false,
+    "notes": "校门侧路开始持续积水。"
+  }
+]

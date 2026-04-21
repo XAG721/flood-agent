@@ -1,0 +1,116 @@
+[
+  {
+    "area_id": "beilin_10km2",
+    "shelter_id": "beilin_shelter_tiyu",
+    "name": "西安体育学院避难点",
+    "village": "长安路街道",
+    "capacity": 3500,
+    "available_capacity": 2800,
+    "accessible": true,
+    "longitude": 108.9476,
+    "latitude": 34.2399,
+    "source_type": "official",
+    "source_ref": "xa_emergency_shelters_2025",
+    "is_synthetic": false,
+    "source_trace": {
+      "source_id": "xa_emergency_shelters_2025",
+      "artifacts": [],
+      "fallback_to_synthetic": true
+    }
+  },
+  {
+    "area_id": "beilin_10km2",
+    "shelter_id": "beilin_shelter_wenyi_school",
+    "name": "文艺路学校避难点",
+    "village": "文艺路街道",
+    "capacity": 1800,
+    "available_capacity": 1200,
+    "accessible": true,
+    "longitude": 108.9665,
+    "latitude": 34.2396,
+    "source_type": "mixed",
+    "source_ref": "xa_emergency_shelters_2025",
+    "is_synthetic": false,
+    "source_trace": {
+      "source_id": "xa_emergency_shelters_2025",
+      "artifacts": [],
+      "fallback_to_synthetic": true
+    }
+  },
+  {
+    "area_id": "beilin_10km2",
+    "shelter_id": "beilin_shelter_lijiacun",
+    "name": "李家村文化广场避难点",
+    "village": "柏树林街道",
+    "capacity": 900,
+    "available_capacity": 650,
+    "accessible": true,
+    "longitude": 108.9738,
+    "latitude": 34.2449,
+    "source_type": "mixed",
+    "source_ref": "xa_emergency_shelters_2025",
+    "is_synthetic": false,
+    "source_trace": {
+      "source_id": "xa_emergency_shelters_2025",
+      "artifacts": [],
+      "fallback_to_synthetic": true
+    }
+  },
+  {
+    "area_id": "beilin_10km2",
+    "shelter_id": "beilin_shelter_hepingmen",
+    "name": "和平门小学避难点",
+    "village": "太乙路街道",
+    "capacity": 1500,
+    "available_capacity": 960,
+    "accessible": true,
+    "longitude": 108.9714,
+    "latitude": 34.2577,
+    "source_type": "mixed",
+    "source_ref": "xa_emergency_shelters_2025",
+    "is_synthetic": false,
+    "source_trace": {
+      "source_id": "xa_emergency_shelters_2025",
+      "artifacts": [],
+      "fallback_to_synthetic": true
+    }
+  },
+  {
+    "area_id": "beilin_10km2",
+    "shelter_id": "beilin_shelter_changan",
+    "name": "长安路社区避难点",
+    "village": "长安路街道",
+    "capacity": 1100,
+    "available_capacity": 720,
+    "accessible": true,
+    "longitude": 108.9498,
+    "latitude": 34.2368,
+    "source_type": "mixed",
+    "source_ref": "xa_emergency_shelters_2025",
+    "is_synthetic": false,
+    "source_trace": {
+      "source_id": "xa_emergency_shelters_2025",
+      "artifacts": [],
+      "fallback_to_synthetic": true
+    }
+  },
+  {
+    "area_id": "beilin_10km2",
+    "shelter_id": "beilin_shelter_jianguo_school",
+    "name": "建国路小学避难点",
+    "village": "建国路片区",
+    "capacity": 1400,
+    "available_capacity": 980,
+    "accessible": true,
+    "longitude": 108.9805,
+    "latitude": 34.2578,
+    "source_type": "mixed",
+    "source_ref": "xa_emergency_shelters_2025",
+    "is_synthetic": false,
+    "source_trace": {
+      "source_id": "xa_emergency_shelters_2025",
+      "artifacts": [],
+      "fallback_to_synthetic": true
+    }
+  }
+]

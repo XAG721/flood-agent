@@ -1,0 +1,7 @@
+﻿area_id,shelter_id,name,village,capacity,available_capacity,accessible,longitude,latitude,source_type,source_ref,is_synthetic
+beilin_10km2,beilin_shelter_tiyu,西安体育学院避难点,长安路街道,3500,2800,True,108.9476,34.2399,official,xa_emergency_shelters_2025,False
+beilin_10km2,beilin_shelter_wenyi_school,文艺路学校避难点,文艺路街道,1800,1200,True,108.9665,34.2396,mixed,xa_emergency_shelters_2025,False
+beilin_10km2,beilin_shelter_lijiacun,李家村文化广场避难点,柏树林街道,900,650,True,108.9738,34.2449,mixed,xa_emergency_shelters_2025,False
+beilin_10km2,beilin_shelter_hepingmen,和平门小学避难点,太乙路街道,1500,960,True,108.9714,34.2577,mixed,xa_emergency_shelters_2025,False
+beilin_10km2,beilin_shelter_changan,长安路社区避难点,长安路街道,1100,720,True,108.9498,34.2368,mixed,xa_emergency_shelters_2025,False
+beilin_10km2,beilin_shelter_jianguo_school,建国路小学避难点,建国路片区,1400,980,True,108.9805,34.2578,mixed,xa_emergency_shelters_2025,False

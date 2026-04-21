@@ -1,0 +1,377 @@
+[
+  {
+    "entity_id": "resident_elderly_ls1",
+    "area_id": "beilin_10km2",
+    "entity_type": "resident",
+    "name": "李阿姨老人家庭",
+    "village": "柏树林街道",
+    "location_hint": "李家村北侧老院落 17 号楼",
+    "resident_count": 2,
+    "current_occupancy": 2,
+    "vulnerability_tags": [
+      "elderly",
+      "limited_mobility",
+      "chronic_disease"
+    ],
+    "mobility_constraints": [
+      "stairs",
+      "needs_assistance"
+    ],
+    "key_assets": [
+      "轮椅",
+      "慢性病药品"
+    ],
+    "inventory_summary": "",
+    "continuity_requirement": "",
+    "preferred_transport_mode": "assisted",
+    "notification_preferences": [
+      "sms",
+      "community_call"
+    ],
+    "emergency_contacts": [
+      {
+        "name": "社区网格员陈",
+        "phone": "13800000001",
+        "role": "grid_worker"
+      }
+    ],
+    "custom_attributes": {
+      "wheelchair": true,
+      "medication_window_minutes": 40,
+      "provenance": "synthetic",
+      "source_type": "mixed",
+      "source_ref": "xa_stats_yearbook"
+    },
+    "source_trace": {
+      "source_id": "geofabrik_shaanxi_osm",
+      "artifacts": [],
+      "fallback_to_synthetic": true
+    }
+  },
+  {
+    "entity_id": "school_wyl_primary",
+    "area_id": "beilin_10km2",
+    "entity_type": "school",
+    "name": "文艺路小学",
+    "village": "文艺路街道",
+    "location_hint": "文艺路小学北门及东侧支路",
+    "resident_count": 860,
+    "current_occupancy": 820,
+    "vulnerability_tags": [
+      "children",
+      "dismissal_peak"
+    ],
+    "mobility_constraints": [],
+    "key_assets": [
+      "校车",
+      "校门安保",
+      "教学设备"
+    ],
+    "inventory_summary": "",
+    "continuity_requirement": "放学分流必须保证北门与东侧高地路线持续可用。",
+    "preferred_transport_mode": "walk",
+    "notification_preferences": [
+      "dashboard",
+      "sms"
+    ],
+    "emergency_contacts": [
+      {
+        "name": "韩校长",
+        "phone": "13800000002",
+        "role": "principal"
+      }
+    ],
+    "custom_attributes": {
+      "school_bus_count": 6,
+      "after_school_peak": true,
+      "provenance": "real_poi",
+      "source_type": "open_map",
+      "source_ref": "geofabrik_shaanxi_osm"
+    },
+    "source_trace": {
+      "source_id": "geofabrik_shaanxi_osm",
+      "artifacts": [],
+      "fallback_to_synthetic": true
+    }
+  },
+  {
+    "entity_id": "factory_wyr_bio",
+    "area_id": "beilin_10km2",
+    "entity_type": "factory",
+    "name": "文艺路生物制剂厂",
+    "village": "文艺路街道",
+    "location_hint": "下沉式装卸月台附近仓库",
+    "resident_count": 120,
+    "current_occupancy": 74,
+    "vulnerability_tags": [
+      "inventory",
+      "hazmat_sensitive"
+    ],
+    "mobility_constraints": [],
+    "key_assets": [
+      "冷库",
+      "试剂库存",
+      "备用发电机组"
+    ],
+    "inventory_summary": "冷链试剂和恒温耗材约 3200 箱。",
+    "continuity_requirement": "一旦停电超过 2 小时，冷链完整性将受到明显影响。",
+    "preferred_transport_mode": "vehicle",
+    "notification_preferences": [
+      "dashboard",
+      "phone"
+    ],
+    "emergency_contacts": [
+      {
+        "name": "赵安全主管",
+        "phone": "13800000003",
+        "role": "safety_officer"
+      }
+    ],
+    "custom_attributes": {
+      "inventory_value_cny": 6800000,
+      "hazardous_material": true,
+      "provenance": "mixed",
+      "source_type": "mixed",
+      "source_ref": "geofabrik_shaanxi_osm"
+    },
+    "source_trace": {
+      "source_id": "geofabrik_shaanxi_osm",
+      "artifacts": [],
+      "fallback_to_synthetic": true
+    }
+  },
+  {
+    "entity_id": "hospital_bl_central",
+    "area_id": "beilin_10km2",
+    "entity_type": "hospital",
+    "name": "碑林中心医院",
+    "village": "东关南街街道",
+    "location_hint": "急诊通道与后勤入口之间",
+    "resident_count": 650,
+    "current_occupancy": 480,
+    "vulnerability_tags": [
+      "critical_service",
+      "patients"
+    ],
+    "mobility_constraints": [],
+    "key_assets": [
+      "急诊大厅",
+      "重症监护单元",
+      "后备供电入口"
+    ],
+    "inventory_summary": "",
+    "continuity_requirement": "ICU 与急诊通道必须保持可达。",
+    "preferred_transport_mode": "vehicle",
+    "notification_preferences": [
+      "dashboard",
+      "phone"
+    ],
+    "emergency_contacts": [
+      {
+        "name": "周值班主任",
+        "phone": "13800000004",
+        "role": "duty_director"
+      }
+    ],
+    "custom_attributes": {
+      "icu_beds": 18,
+      "backup_power_hours": 3,
+      "provenance": "real_poi",
+      "source_type": "open_map",
+      "source_ref": "geofabrik_shaanxi_osm"
+    },
+    "source_trace": {
+      "source_id": "geofabrik_shaanxi_osm",
+      "artifacts": [],
+      "fallback_to_synthetic": true
+    }
+  },
+  {
+    "entity_id": "nursing_home_hpm",
+    "area_id": "beilin_10km2",
+    "entity_type": "nursing_home",
+    "name": "和平门医养中心",
+    "village": "太乙路街道",
+    "location_hint": "一号楼与三号楼之间连廊",
+    "resident_count": 140,
+    "current_occupancy": 128,
+    "vulnerability_tags": [
+      "elderly",
+      "bedridden",
+      "medical_support"
+    ],
+    "mobility_constraints": [
+      "stretcher",
+      "oxygen_support"
+    ],
+    "key_assets": [
+      "床位",
+      "吸氧设备",
+      "急救药品"
+    ],
+    "inventory_summary": "",
+    "continuity_requirement": "卧床老人和吸氧老人需要分批次协助转移。",
+    "preferred_transport_mode": "assisted",
+    "notification_preferences": [
+      "dashboard",
+      "phone"
+    ],
+    "emergency_contacts": [
+      {
+        "name": "孙护理主任",
+        "phone": "13800000005",
+        "role": "nursing_director"
+      }
+    ],
+    "custom_attributes": {
+      "bedridden_count": 22,
+      "oxygen_patients": 9,
+      "provenance": "real_poi",
+      "source_type": "open_map",
+      "source_ref": "geofabrik_shaanxi_osm"
+    },
+    "source_trace": {
+      "source_id": "geofabrik_shaanxi_osm",
+      "artifacts": [],
+      "fallback_to_synthetic": true
+    }
+  },
+  {
+    "entity_id": "metro_nsm_hub",
+    "area_id": "beilin_10km2",
+    "entity_type": "metro_station",
+    "name": "南门地铁换乘枢纽",
+    "village": "南院门街道",
+    "location_hint": "B/C 出入口与地下换乘大厅",
+    "resident_count": 1800,
+    "current_occupancy": 1250,
+    "vulnerability_tags": [
+      "underground",
+      "commuter_peak"
+    ],
+    "mobility_constraints": [],
+    "key_assets": [
+      "出入口",
+      "换乘大厅",
+      "地面广场"
+    ],
+    "inventory_summary": "",
+    "continuity_requirement": "低洼入口必须在回流水进入站厅前关闭。",
+    "preferred_transport_mode": "walk",
+    "notification_preferences": [
+      "dashboard",
+      "broadcast"
+    ],
+    "emergency_contacts": [
+      {
+        "name": "王站长",
+        "phone": "13800000006",
+        "role": "station_manager"
+      }
+    ],
+    "custom_attributes": {
+      "platform_depth_m": 14,
+      "entrance_count": 6,
+      "provenance": "real_poi",
+      "source_type": "open_map",
+      "source_ref": "geofabrik_shaanxi_osm"
+    },
+    "source_trace": {
+      "source_id": "geofabrik_shaanxi_osm",
+      "artifacts": [],
+      "fallback_to_synthetic": true
+    }
+  },
+  {
+    "entity_id": "underground_wyl_mall",
+    "area_id": "beilin_10km2",
+    "entity_type": "underground_space",
+    "name": "李家村地下商场",
+    "village": "柏树林街道",
+    "location_hint": "中庭、南侧入口与地下二层设备区",
+    "resident_count": 540,
+    "current_occupancy": 410,
+    "vulnerability_tags": [
+      "underground",
+      "complex_egress"
+    ],
+    "mobility_constraints": [],
+    "key_assets": [
+      "中庭",
+      "商铺通道",
+      "地下二层设备间"
+    ],
+    "inventory_summary": "",
+    "continuity_requirement": "集水井达到临界阈值前，地下二层必须完成清空。",
+    "preferred_transport_mode": "walk",
+    "notification_preferences": [
+      "dashboard",
+      "broadcast"
+    ],
+    "emergency_contacts": [
+      {
+        "name": "刘运营主管",
+        "phone": "13800000007",
+        "role": "operations_manager"
+      }
+    ],
+    "custom_attributes": {
+      "exit_count": 5,
+      "basement_levels": 2,
+      "provenance": "real_poi",
+      "source_type": "open_map",
+      "source_ref": "geofabrik_shaanxi_osm"
+    },
+    "source_trace": {
+      "source_id": "geofabrik_shaanxi_osm",
+      "artifacts": [],
+      "fallback_to_synthetic": true
+    }
+  },
+  {
+    "entity_id": "community_jsl_grid",
+    "area_id": "beilin_10km2",
+    "entity_type": "community",
+    "name": "建设路低洼网格三组",
+    "village": "建国路片区",
+    "location_hint": "带地下车库的老旧院落带",
+    "resident_count": 2300,
+    "current_occupancy": 2300,
+    "vulnerability_tags": [
+      "low_lying",
+      "basement",
+      "mixed_population"
+    ],
+    "mobility_constraints": [],
+    "key_assets": [
+      "地下车库",
+      "老旧楼栋",
+      "社区服务站"
+    ],
+    "inventory_summary": "",
+    "continuity_requirement": "",
+    "preferred_transport_mode": "walk",
+    "notification_preferences": [
+      "dashboard",
+      "sms"
+    ],
+    "emergency_contacts": [
+      {
+        "name": "刘社区书记",
+        "phone": "13800000008",
+        "role": "community_secretary"
+      }
+    ],
+    "custom_attributes": {
+      "basement_buildings": 11,
+      "provenance": "synthetic",
+      "source_type": "mixed",
+      "source_ref": "xa_stats_yearbook"
+    },
+    "source_trace": {
+      "source_id": "geofabrik_shaanxi_osm",
+      "artifacts": [],
+      "fallback_to_synthetic": true
+    }
+  }
+]

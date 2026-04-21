@@ -1,0 +1,19 @@
+[
+  {
+    "fetched_at": "2026-04-15T14:08:22.932306+08:00",
+    "source_id": "amap_webservice",
+    "cache_status": "cached",
+    "artifact_count": 1,
+    "downloaded_artifact_count": 1,
+    "failed_artifact_count": 0,
+    "artifacts": [
+      {
+        "artifact_name": "source_ref",
+        "status": "downloaded",
+        "local_path": "data_sources\\beilin\\raw\\amap_webservice\\source_ref.bin",
+        "file_hash": "7fb0f6349ce0781b6affa5c8ae2fc8b6d6996216bfeb1199235fcc8ac8a57aa5",
+        "used_by_parser": false
+      }
+    ]
+  }
+]

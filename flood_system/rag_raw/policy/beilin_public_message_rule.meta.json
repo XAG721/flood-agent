@@ -1,0 +1,9 @@
+{
+  "doc_id": "policy_beilin_public_message_rule",
+  "title": "碑林区公众预警信息规范",
+  "region": "西安市碑林区",
+  "stage": "Warning",
+  "risk_level": "Yellow",
+  "audience": "public",
+  "section_number": "4.5"
+}

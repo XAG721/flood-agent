@@ -1,0 +1,4 @@
+﻿observed_at,source_type,source_name,village,rainfall_mm,water_level_m,road_blocked,citizen_reports,is_synthetic,notes
+2026-07-10T13:20:00+08:00,weather_station,市级气象站,南院门街道,12,1.8,False,1,False,短时对流降雨，排水系统暂时正常。
+2026-07-10T13:40:00+08:00,pump_station,南门地铁泵站,南院门街道,18,2.3,False,2,False,地铁广场周边已出现浅层积水。
+2026-07-10T14:00:00+08:00,camera_alert,文艺路校门摄像头,文艺路街道,22,2.6,False,3,False,校门侧路开始持续积水。

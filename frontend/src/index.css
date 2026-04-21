@@ -1,0 +1,86 @@
+:root {
+  color-scheme: dark;
+  font-family:
+    "IBM Plex Sans",
+    "Segoe UI",
+    "PingFang SC",
+    "Microsoft YaHei",
+    sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  background: #07111c;
+  color: #f2f5f8;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  --bg-canvas: #050c13;
+  --bg-panel: rgba(9, 17, 26, 0.92);
+  --bg-panel-elevated: rgba(8, 16, 24, 0.84);
+  --bg-highlight: rgba(233, 142, 72, 0.12);
+  --line-soft: rgba(170, 190, 209, 0.1);
+  --line-strong: rgba(233, 142, 72, 0.34);
+  --fg-primary: #f5f7fa;
+  --fg-secondary: #c5d0da;
+  --fg-muted: #90a4b7;
+  --signal-risk: #ff8e84;
+  --signal-warning: #e9b15c;
+  --signal-success: #67c99b;
+  --signal-info: #7aaac7;
+  --signal-neutral: #97a9b9;
+  --shadow-panel: 0 24px 58px rgba(0, 0, 0, 0.26);
+  --shadow-soft: 0 12px 28px rgba(0, 0, 0, 0.16);
+  --font-display:
+    "IBM Plex Serif",
+    "Noto Serif SC",
+    "Source Han Serif SC",
+    "Songti SC",
+    Georgia,
+    serif;
+  --font-body:
+    "IBM Plex Sans",
+    "Segoe UI",
+    "PingFang SC",
+    "Microsoft YaHei",
+    sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100vh;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--bg-canvas);
+  font-family: var(--font-body);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 600;
+}
+
+::selection {
+  background: rgba(231, 140, 51, 0.28);
+  color: #f2f5f8;
+}

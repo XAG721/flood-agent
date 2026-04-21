@@ -1,0 +1,57 @@
+[
+  {
+    "source_id": "xa_emergency_shelters_2025",
+    "title": "西安市应急避难场所公示",
+    "category": "shelters",
+    "source_type": "official",
+    "source_ref": "https://cbip.xa.gov.cn/zwgk/yjgl/yjbncs/2000390465122770945.html",
+    "download_url": "https://cbip.xa.gov.cn/web_files/itl/file/2025/12/15/202512151019424757730.pdf",
+    "last_verified_at": "2026-04-03T00:00:00+08:00",
+    "notes": "碑林区避难场所主数据源。",
+    "parser_kind": "pdf_html_table"
+  },
+  {
+    "source_id": "geofabrik_shaanxi_osm",
+    "title": "Geofabrik 陕西 OSM 提取包",
+    "category": "roads_poi",
+    "source_type": "open_map",
+    "source_ref": "https://download.geofabrik.de/asia/china/shaanxi.html",
+    "download_url": "https://download.geofabrik.de/asia/china/shaanxi-latest.osm.pbf",
+    "last_verified_at": "2026-04-03T00:00:00+08:00",
+    "notes": "用于提取道路、学校、医院、地铁站等基础地理对象。",
+    "parser_kind": "osm_bundle"
+  },
+  {
+    "source_id": "xa_stats_yearbook",
+    "title": "西安市统计年鉴",
+    "category": "area_profile",
+    "source_type": "official",
+    "source_ref": "https://tjj.xa.gov.cn/tjsj/tjsj/ndsj/1.html",
+    "download_url": "",
+    "last_verified_at": "2026-04-03T00:00:00+08:00",
+    "notes": "人口、老年人、儿童和脆弱群体基线数据。",
+    "parser_kind": "html_digest"
+  },
+  {
+    "source_id": "cma_weather",
+    "title": "中国气象局天气网",
+    "category": "observations",
+    "source_type": "official",
+    "source_ref": "https://weather.cma.cn/",
+    "download_url": "",
+    "last_verified_at": "2026-04-03T00:00:00+08:00",
+    "notes": "降雨基线与城市级天气背景信息。",
+    "parser_kind": "html_digest"
+  },
+  {
+    "source_id": "amap_webservice",
+    "title": "高德开放平台 Web 服务",
+    "category": "traffic",
+    "source_type": "official_api",
+    "source_ref": "https://lbs.amap.com/api/webservice/summary/",
+    "download_url": "",
+    "last_verified_at": "2026-04-03T00:00:00+08:00",
+    "notes": "可选的实时交通增强数据源。",
+    "parser_kind": "api_reference"
+  }
+]

@@ -1,0 +1,23 @@
+{
+  "source_id": "amap_webservice",
+  "cache_status": "cached",
+  "last_fetched_at": "2026-04-15T14:08:22.932306+08:00",
+  "parser_kind": "api_reference",
+  "artifact_count": 1,
+  "downloaded_artifact_count": 1,
+  "failed_artifact_count": 0,
+  "progress_percent": 100,
+  "last_error": null,
+  "parsed_summary": {},
+  "latest_fetch_details": [
+    {
+      "source_id": "amap_webservice",
+      "artifact": "source_ref",
+      "status": "downloaded",
+      "url": "https://lbs.amap.com/api/webservice/summary/",
+      "target_path": "data_sources\\beilin\\raw\\amap_webservice\\source_ref.bin",
+      "fetched_at": "2026-04-15T14:08:22.932306+08:00"
+    }
+  ],
+  "artifacts_manifest_path": "data_sources\\beilin\\raw\\amap_webservice\\artifacts.json"
+}

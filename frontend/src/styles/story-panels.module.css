@@ -1,0 +1,547 @@
+.heroPanel,
+.focusPanel,
+.contextPanel,
+.flowBoard,
+.toolSummary {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(170, 190, 209, 0.08);
+  border-radius: 34px;
+  background:
+    linear-gradient(180deg, rgba(8, 16, 24, 0.9), rgba(7, 14, 21, 0.76)),
+    radial-gradient(circle at 100% 0%, rgba(233, 142, 72, 0.08), transparent 26%);
+  box-shadow: var(--shadow-panel);
+}
+
+.heroPanel {
+  min-height: min(62vh, 760px);
+  padding: 38px;
+}
+
+.heroPanel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 0, rgba(255, 255, 255, 0.035) 1px, transparent 1px, transparent 118px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 88px);
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.2), transparent 76%);
+  pointer-events: none;
+}
+
+.heroGlow {
+  position: absolute;
+  inset: auto -10% -34% auto;
+  width: 360px;
+  height: 360px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(233, 142, 72, 0.28), transparent 68%);
+  pointer-events: none;
+}
+
+.heroGrid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.88fr);
+  gap: 28px;
+  min-height: 100%;
+}
+
+.heroCopy {
+  display: grid;
+  align-content: space-between;
+  gap: 22px;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--fg-muted);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.heroTitle,
+.contextHeader h3,
+.flowHeader h3,
+.toolHeader h3,
+.focusHeader h3 {
+  font-family: var(--font-display);
+}
+
+.heroTitle {
+  margin: 0;
+  max-width: 8ch;
+  font-size: clamp(52px, 7vw, 104px);
+  line-height: 0.88;
+  letter-spacing: -0.09em;
+}
+
+.heroSummary {
+  max-width: 58ch;
+  margin: 0;
+  color: var(--fg-secondary);
+  font-size: 18px;
+  line-height: 1.85;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.heroPrimaryMeta {
+  display: grid;
+  gap: 14px;
+  align-content: end;
+}
+
+.heroMetaCard,
+.heroSideNote {
+  padding: 20px 20px 22px;
+  border-radius: 24px;
+  border: 1px solid rgba(170, 190, 209, 0.1);
+  background: rgba(8, 16, 25, 0.5);
+  backdrop-filter: blur(10px);
+}
+
+.heroMetaLabel,
+.sideNoteLabel {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--fg-muted);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.heroMetaValue {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(30px, 3.2vw, 46px);
+  line-height: 1.02;
+  letter-spacing: -0.05em;
+}
+
+.heroMetaHint,
+.sideNoteBody {
+  margin: 10px 0 0;
+  color: var(--fg-secondary);
+  line-height: 1.78;
+}
+
+.heroKeyline {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.heroKeyline article {
+  padding-top: 16px;
+  border-top: 1px solid rgba(170, 190, 209, 0.12);
+}
+
+.heroKeyline span,
+.focusMetrics span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--fg-muted);
+  font-size: 12px;
+}
+
+.heroKeyline strong {
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+.focusPanel {
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+}
+
+.focusHeader,
+.contextHeader,
+.flowHeader,
+.toolHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: start;
+}
+
+.focusHeader h3,
+.contextHeader h3,
+.flowHeader h3,
+.toolHeader h3 {
+  margin: 4px 0 0;
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+}
+
+.focusSummary,
+.flowHeader p,
+.toolHeader p {
+  max-width: 60ch;
+  margin: 10px 0 0;
+  color: var(--fg-secondary);
+  line-height: 1.8;
+}
+
+.reasonListCompact {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reasonListCompact li {
+  padding-left: 16px;
+  border-left: 1px solid rgba(233, 142, 72, 0.42);
+  color: var(--fg-secondary);
+  line-height: 1.68;
+}
+
+.focusMetrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.focusMetrics article {
+  padding-top: 14px;
+  border-top: 1px solid rgba(170, 190, 209, 0.12);
+}
+
+.focusMetrics strong {
+  font-size: 18px;
+}
+
+.contextPanel {
+  display: grid;
+  gap: 20px;
+  padding: 24px;
+}
+
+.contextBar {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) repeat(3, minmax(0, 0.8fr));
+  gap: 10px;
+}
+
+.contextLead,
+.contextPill {
+  padding: 16px 0 0;
+  border-top: 1px solid rgba(170, 190, 209, 0.12);
+  background: transparent;
+}
+
+.contextLead strong,
+.contextPill strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 19px;
+}
+
+.contextLead p,
+.contextPill p {
+  margin: 10px 0 0;
+  color: var(--fg-secondary);
+  line-height: 1.72;
+}
+
+.contextLead span,
+.contextPill span {
+  color: var(--fg-muted);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.contextSection {
+  display: grid;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(170, 190, 209, 0.08);
+}
+
+.contextSectionHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.contextSectionHeader h4 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.contextSectionHeader p {
+  margin: 0;
+  color: var(--fg-muted);
+  font-size: 13px;
+}
+
+.evidenceStack {
+  display: grid;
+  gap: 12px;
+}
+
+.evidenceCard {
+  display: grid;
+  gap: 8px;
+  padding: 14px 0 0 14px;
+  border-left: 1px solid rgba(170, 190, 209, 0.12);
+}
+
+.evidenceMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--fg-muted);
+}
+
+.evidenceCard h4 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.evidenceCard p {
+  margin: 0;
+  color: var(--fg-secondary);
+  line-height: 1.65;
+}
+
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip,
+.flowStats span,
+.toolMeta span {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #ddd3c5;
+  font-size: 12px;
+}
+
+.flowBoard {
+  display: grid;
+  gap: 24px;
+  padding: 30px;
+}
+
+.flowStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.flowChain {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+}
+
+.flowStep {
+  display: grid;
+  gap: 18px;
+  min-height: 240px;
+  padding: 18px 18px 20px;
+  border-top: 1px solid rgba(170, 190, 209, 0.12);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 70%);
+}
+
+.flowMarker {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.flowIndex {
+  min-width: 24px;
+  color: var(--fg-muted);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+}
+
+.flowDot {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: rgba(164, 176, 191, 0.4);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.02);
+}
+
+.flowDotComplete {
+  background: rgba(103, 201, 155, 0.96);
+}
+
+.flowDotActive {
+  background: rgba(233, 142, 72, 0.96);
+}
+
+.flowLine {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(233, 142, 72, 0.44), rgba(170, 190, 209, 0.1));
+}
+
+.flowContent {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.flowTopline {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+}
+
+.flowTopline strong {
+  font-size: 22px;
+  line-height: 1.1;
+}
+
+.flowStatus,
+.toolStatus {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #ded3c4;
+  font-size: 12px;
+}
+
+.flowSummary {
+  margin: 0;
+  color: var(--fg-primary);
+  line-height: 1.66;
+}
+
+.flowDetail {
+  margin: 0;
+  color: var(--fg-secondary);
+  line-height: 1.72;
+}
+
+.toolSummary {
+  display: grid;
+  gap: 16px;
+  padding: 24px 26px;
+}
+
+.toolList {
+  display: grid;
+  gap: 12px;
+}
+
+.toolCard {
+  display: grid;
+  gap: 10px;
+  padding: 16px 0 0;
+  border-top: 1px solid rgba(170, 190, 209, 0.1);
+}
+
+.toolTopline {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+}
+
+.toolTopline strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.toolTopline p {
+  max-width: 60ch;
+  margin: 0;
+  color: var(--fg-secondary);
+  line-height: 1.7;
+}
+
+.toolStatusSuccess {
+  background: rgba(103, 201, 155, 0.16);
+  color: #aef0ce;
+}
+
+.toolStatusFailed {
+  background: rgba(225, 100, 92, 0.18);
+  color: #ffb0a8;
+}
+
+.toolStatusSkipped {
+  background: rgba(160, 174, 192, 0.14);
+  color: #d8e1ea;
+}
+
+.toolStatusTimeout {
+  background: rgba(233, 142, 72, 0.18);
+  color: #ffc08f;
+}
+
+.toolMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+
+@media (max-width: 1180px) {
+  .heroGrid,
+  .contextBar,
+  .focusMetrics,
+  .heroKeyline {
+    grid-template-columns: 1fr;
+  }
+
+  .flowStats {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 780px) {
+  .heroPanel,
+  .focusPanel,
+  .contextPanel,
+  .flowBoard,
+  .toolSummary {
+    padding: 22px 20px;
+    border-radius: 24px;
+  }
+
+  .heroActions,
+  .flowHeader,
+  .toolHeader,
+  .focusHeader,
+  .contextHeader,
+  .flowTopline,
+  .contextSectionHeader,
+  .toolTopline {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .heroTitle {
+    max-width: none;
+  }
+
+  .flowChain {
+    grid-template-columns: 1fr;
+  }
+}

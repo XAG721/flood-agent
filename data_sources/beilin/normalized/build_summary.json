@@ -1,0 +1,367 @@
+{
+  "fetch": {
+    "area_id": "beilin_10km2",
+    "raw_dir": "D:\\graduation_project\\data_sources\\beilin\\raw",
+    "normalized_dir": "D:\\graduation_project\\data_sources\\beilin\\normalized",
+    "bootstrap_dir": "D:\\graduation_project\\flood_system\\bootstrap_data",
+    "runtime_rag_path": "D:\\graduation_project\\data\\rag_documents.runtime.json",
+    "source_count": 5,
+    "cached_source_count": 0,
+    "failed_source_count": 0,
+    "cached_file_count": 0,
+    "raw_ready": false,
+    "raw_completeness_percent": 25,
+    "missing_required_sources": [
+      "xa_emergency_shelters_2025",
+      "geofabrik_shaanxi_osm",
+      "xa_stats_yearbook",
+      "cma_weather"
+    ],
+    "stale_sources": [],
+    "sources": [
+      {
+        "source_id": "xa_emergency_shelters_2025",
+        "title": "西安市应急避难场所公示",
+        "category": "shelters",
+        "source_type": "official",
+        "source_ref": "https://cbip.xa.gov.cn/zwgk/yjgl/yjbncs/2000390465122770945.html",
+        "download_url": "https://cbip.xa.gov.cn/web_files/itl/file/2025/12/15/202512151019424757730.pdf",
+        "cache_status": "missing",
+        "cached_files": [],
+        "notes": "碑林区避难场所主数据源。",
+        "last_fetched_at": null,
+        "parser_kind": "pdf_html_table",
+        "artifact_count": 2,
+        "downloaded_artifact_count": 0,
+        "failed_artifact_count": 0,
+        "progress_percent": 0,
+        "retryable": true,
+        "last_error": null,
+        "parsed_summary": {},
+        "latest_fetch_details": [],
+        "completeness_status": "manifest_only",
+        "artifacts_manifest_path": null,
+        "versions_manifest_path": null,
+        "parsed": false,
+        "required": true,
+        "missing_artifact_types": [
+          "source_ref",
+          "download"
+        ],
+        "raw_file_count": 0,
+        "artifacts": []
+      },
+      {
+        "source_id": "geofabrik_shaanxi_osm",
+        "title": "Geofabrik 陕西 OSM 提取包",
+        "category": "roads_poi",
+        "source_type": "open_map",
+        "source_ref": "https://download.geofabrik.de/asia/china/shaanxi.html",
+        "download_url": "https://download.geofabrik.de/asia/china/shaanxi-latest.osm.pbf",
+        "cache_status": "missing",
+        "cached_files": [],
+        "notes": "用于提取道路、学校、医院、地铁站等基础地理对象。",
+        "last_fetched_at": null,
+        "parser_kind": "osm_bundle",
+        "artifact_count": 2,
+        "downloaded_artifact_count": 0,
+        "failed_artifact_count": 0,
+        "progress_percent": 0,
+        "retryable": true,
+        "last_error": null,
+        "parsed_summary": {},
+        "latest_fetch_details": [],
+        "completeness_status": "manifest_only",
+        "artifacts_manifest_path": null,
+        "versions_manifest_path": null,
+        "parsed": false,
+        "required": true,
+        "missing_artifact_types": [
+          "source_ref",
+          "download"
+        ],
+        "raw_file_count": 0,
+        "artifacts": []
+      },
+      {
+        "source_id": "xa_stats_yearbook",
+        "title": "西安市统计年鉴",
+        "category": "area_profile",
+        "source_type": "official",
+        "source_ref": "https://tjj.xa.gov.cn/tjsj/tjsj/ndsj/1.html",
+        "download_url": "",
+        "cache_status": "missing",
+        "cached_files": [],
+        "notes": "人口、老年人、儿童和脆弱群体基线数据。",
+        "last_fetched_at": null,
+        "parser_kind": "html_digest",
+        "artifact_count": 1,
+        "downloaded_artifact_count": 0,
+        "failed_artifact_count": 0,
+        "progress_percent": 0,
+        "retryable": true,
+        "last_error": null,
+        "parsed_summary": {},
+        "latest_fetch_details": [],
+        "completeness_status": "manifest_only",
+        "artifacts_manifest_path": null,
+        "versions_manifest_path": null,
+        "parsed": false,
+        "required": true,
+        "missing_artifact_types": [
+          "source_ref"
+        ],
+        "raw_file_count": 0,
+        "artifacts": []
+      },
+      {
+        "source_id": "cma_weather",
+        "title": "中国气象局天气网",
+        "category": "observations",
+        "source_type": "official",
+        "source_ref": "https://weather.cma.cn/",
+        "download_url": "",
+        "cache_status": "missing",
+        "cached_files": [],
+        "notes": "降雨基线与城市级天气背景信息。",
+        "last_fetched_at": null,
+        "parser_kind": "html_digest",
+        "artifact_count": 1,
+        "downloaded_artifact_count": 0,
+        "failed_artifact_count": 0,
+        "progress_percent": 0,
+        "retryable": true,
+        "last_error": null,
+        "parsed_summary": {},
+        "latest_fetch_details": [],
+        "completeness_status": "manifest_only",
+        "artifacts_manifest_path": null,
+        "versions_manifest_path": null,
+        "parsed": false,
+        "required": true,
+        "missing_artifact_types": [
+          "source_ref"
+        ],
+        "raw_file_count": 0,
+        "artifacts": []
+      },
+      {
+        "source_id": "amap_webservice",
+        "title": "高德开放平台 Web 服务",
+        "category": "traffic",
+        "source_type": "official_api",
+        "source_ref": "https://lbs.amap.com/api/webservice/summary/",
+        "download_url": "",
+        "cache_status": "missing",
+        "cached_files": [],
+        "notes": "可选的实时交通增强数据源。",
+        "last_fetched_at": null,
+        "parser_kind": "api_reference",
+        "artifact_count": 1,
+        "downloaded_artifact_count": 0,
+        "failed_artifact_count": 0,
+        "progress_percent": 0,
+        "retryable": true,
+        "last_error": null,
+        "parsed_summary": {},
+        "latest_fetch_details": [],
+        "completeness_status": "manifest_only",
+        "artifacts_manifest_path": null,
+        "versions_manifest_path": null,
+        "parsed": false,
+        "required": false,
+        "missing_artifact_types": [
+          "source_ref"
+        ],
+        "raw_file_count": 0,
+        "artifacts": []
+      }
+    ],
+    "raw_cache_health": [
+      {
+        "source_id": "xa_emergency_shelters_2025",
+        "title": "西安市应急避难场所公示",
+        "completeness_status": "manifest_only",
+        "cache_status": "missing",
+        "parsed": false,
+        "required": true,
+        "raw_file_count": 0,
+        "downloaded_artifact_count": 0,
+        "failed_artifact_count": 0,
+        "last_fetched_at": null,
+        "missing_artifact_types": [
+          "source_ref",
+          "download"
+        ],
+        "last_error": null
+      },
+      {
+        "source_id": "geofabrik_shaanxi_osm",
+        "title": "Geofabrik 陕西 OSM 提取包",
+        "completeness_status": "manifest_only",
+        "cache_status": "missing",
+        "parsed": false,
+        "required": true,
+        "raw_file_count": 0,
+        "downloaded_artifact_count": 0,
+        "failed_artifact_count": 0,
+        "last_fetched_at": null,
+        "missing_artifact_types": [
+          "source_ref",
+          "download"
+        ],
+        "last_error": null
+      },
+      {
+        "source_id": "xa_stats_yearbook",
+        "title": "西安市统计年鉴",
+        "completeness_status": "manifest_only",
+        "cache_status": "missing",
+        "parsed": false,
+        "required": true,
+        "raw_file_count": 0,
+        "downloaded_artifact_count": 0,
+        "failed_artifact_count": 0,
+        "last_fetched_at": null,
+        "missing_artifact_types": [
+          "source_ref"
+        ],
+        "last_error": null
+      },
+      {
+        "source_id": "cma_weather",
+        "title": "中国气象局天气网",
+        "completeness_status": "manifest_only",
+        "cache_status": "missing",
+        "parsed": false,
+        "required": true,
+        "raw_file_count": 0,
+        "downloaded_artifact_count": 0,
+        "failed_artifact_count": 0,
+        "last_fetched_at": null,
+        "missing_artifact_types": [
+          "source_ref"
+        ],
+        "last_error": null
+      },
+      {
+        "source_id": "amap_webservice",
+        "title": "高德开放平台 Web 服务",
+        "completeness_status": "manifest_only",
+        "cache_status": "missing",
+        "parsed": false,
+        "required": false,
+        "raw_file_count": 0,
+        "downloaded_artifact_count": 0,
+        "failed_artifact_count": 0,
+        "last_fetched_at": null,
+        "missing_artifact_types": [
+          "source_ref"
+        ],
+        "last_error": null
+      }
+    ],
+    "latest_download_log": [],
+    "latest_fetch_summary": {
+      "artifact_count": 7,
+      "downloaded_artifact_count": 0,
+      "failed_artifact_count": 0,
+      "progress_percent": 0,
+      "latest_run_at": null
+    },
+    "latest_build_summary": {},
+    "latest_validation": {},
+    "normalized_files": [
+      "area_profile.beilin.json",
+      "entity_profiles.beilin.json",
+      "observations_beilin_extreme.json",
+      "observations_beilin_mild.json",
+      "observations_beilin_warning.json",
+      "rag_documents.beilin.json",
+      "resource_status.beilin.json",
+      "roads.beilin.json",
+      "shelters.beilin.json"
+    ],
+    "bootstrap_files": [
+      "area_profiles.csv",
+      "compensation_inputs",
+      "entity_profiles.beilin_10km2.json",
+      "observations_beilin_extreme.csv",
+      "observations_beilin_mild.csv",
+      "observations_beilin_warning.csv",
+      "observations_mild.csv",
+      "observations_warning.csv",
+      "resource_status.csv",
+      "roads.csv",
+      "shelters.csv"
+    ]
+  },
+  "normalize": {
+    "normalized_dir": "D:\\graduation_project\\data_sources\\beilin\\normalized",
+    "files": [
+      "area_profile.beilin.json",
+      "entity_profiles.beilin.json",
+      "observations_beilin_extreme.json",
+      "observations_beilin_mild.json",
+      "observations_beilin_warning.json",
+      "osm_extract.beilin.json",
+      "rag_documents.beilin.json",
+      "resource_status.beilin.json",
+      "roads.beilin.json",
+      "shelters.beilin.json",
+      "source_cache_summary.json"
+    ],
+    "parsed_shelter_count": 0,
+    "parsed_osm_road_count": 0,
+    "parsed_osm_poi_count": 0,
+    "entity_profile_count": 8
+  },
+  "profiles": {
+    "bootstrap_dir": "D:\\graduation_project\\flood_system\\bootstrap_data",
+    "area_count": 1,
+    "shelter_count": 6,
+    "road_count": 6,
+    "entity_profile_count": 8
+  },
+  "observations": {
+    "observation_files": {
+      "mild": "D:\\graduation_project\\flood_system\\bootstrap_data\\observations_beilin_mild.csv",
+      "warning": "D:\\graduation_project\\flood_system\\bootstrap_data\\observations_beilin_warning.csv",
+      "extreme": "D:\\graduation_project\\flood_system\\bootstrap_data\\observations_beilin_extreme.csv"
+    }
+  },
+  "rag": {
+    "runtime_path": "D:\\graduation_project\\data\\rag_documents.runtime.json",
+    "document_count": 9
+  },
+  "sync_demo_db": {
+    "db_path": "D:\\graduation_project\\data\\flood_warning_system_v2.db",
+    "synced_entity_profiles": 8,
+    "synced_resource_areas": 1
+  },
+  "validation": {
+    "area_count": 1,
+    "resource_area_count": 1,
+    "shelter_count": 6,
+    "road_count": 6,
+    "entity_profile_count": 8,
+    "observation_counts": {
+      "mild": 3,
+      "warning": 4,
+      "extreme": 6
+    },
+    "rag_document_count": 9,
+    "rag_query_hit_count": 6,
+    "raw_ready": false,
+    "raw_completeness_percent": 25,
+    "missing_required_sources": [
+      "xa_emergency_shelters_2025",
+      "geofabrik_shaanxi_osm",
+      "xa_stats_yearbook",
+      "cma_weather"
+    ],
+    "shelter_source_parsed": false,
+    "osm_source_parsed": false,
+    "has_real_raw_artifacts": false
+  }
+}

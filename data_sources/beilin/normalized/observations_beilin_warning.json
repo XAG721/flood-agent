@@ -1,0 +1,50 @@
+[
+  {
+    "observed_at": "2026-07-10T13:20:00+08:00",
+    "source_type": "weather_station",
+    "source_name": "市级气象站",
+    "village": "长安路街道",
+    "rainfall_mm": 28,
+    "water_level_m": 3.6,
+    "road_blocked": false,
+    "citizen_reports": 4,
+    "is_synthetic": false,
+    "notes": "持续降雨已激活多个低洼监测点。"
+  },
+  {
+    "observed_at": "2026-07-10T13:40:00+08:00",
+    "source_type": "pump_station",
+    "source_name": "南门地铁泵站",
+    "village": "南院门街道",
+    "rainfall_mm": 39,
+    "water_level_m": 4.1,
+    "road_blocked": true,
+    "citizen_reports": 8,
+    "is_synthetic": false,
+    "notes": "南门广场积水加深，车辆已开始绕行。"
+  },
+  {
+    "observed_at": "2026-07-10T14:00:00+08:00",
+    "source_type": "camera_alert",
+    "source_name": "文艺路小学北门摄像头",
+    "village": "文艺路街道",
+    "rainfall_mm": 44,
+    "water_level_m": 4.7,
+    "road_blocked": true,
+    "citizen_reports": 11,
+    "is_synthetic": false,
+    "notes": "建议把放学分流切换到东侧高地校门。"
+  },
+  {
+    "observed_at": "2026-07-10T14:20:00+08:00",
+    "source_type": "community_grid",
+    "source_name": "李家村商圈网格",
+    "village": "柏树林街道",
+    "rainfall_mm": 51,
+    "water_level_m": 5.1,
+    "road_blocked": true,
+    "citizen_reports": 16,
+    "is_synthetic": true,
+    "notes": "地下商场入口已出现明显倒灌风险。"
+  }
+]

@@ -1,0 +1,9 @@
+﻿claim_id,area_id,village,household_id,claimant_name,resident_count,elderly_count,children_count,disabled_count,primary_residence,basement_inflow,water_depth_cm,estimated_loss_cny,temporary_relocation_days,documents_submitted,claim_status,notes
+BL-CL-001,beilin_10km2,南稍门,NSM-1208,王丽,4,1,1,0,true,true,35,18000,5,户口本|房产证明|现场照片,待审核,首层住户厨房和卧室进水
+BL-CL-002,beilin_10km2,李家村,LJC-0442,张建国,3,0,1,1,true,true,60,26500,7,身份证|物业证明|现场照片,待审核,地下储物间和电表箱受损
+BL-CL-003,beilin_10km2,文艺路,WYL-2016,刘敏,2,1,0,0,true,false,18,9200,2,身份证|照片,待补材料,仅客厅地面积水需补房产信息
+BL-CL-004,beilin_10km2,和平门,HPM-0311,陈爱华,5,2,1,0,true,true,42,21400,6,户口本|房产证明|社区证明,待审核,老旧小区一层与地下室均进水
+BL-CL-005,beilin_10km2,建国路,JGL-1780,李楠,3,0,0,1,true,true,55,30800,8,身份证|残疾证明|照片,优先复核,残障居民家庭需优先安排补偿
+BL-CL-006,beilin_10km2,东大街,DDJ-0875,赵强,6,1,2,0,true,false,12,6800,1,身份证|照片,待审核,门面房兼住房受轻度积水影响
+BL-CL-007,beilin_10km2,柏树林,BSL-0660,周霞,2,1,0,0,true,true,27,14500,3,户口本|照片|社区证明,待审核,临街低洼住户家具受损
+BL-CL-008,beilin_10km2,长安路,CAL-0903,高飞,4,0,2,0,true,false,10,5300,0,身份证|照片,待审核,儿童房地板受潮

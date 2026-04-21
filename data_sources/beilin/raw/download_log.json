@@ -1,0 +1,62 @@
+[
+  {
+    "source_id": "xa_emergency_shelters_2025",
+    "artifact": "source_ref",
+    "status": "failed",
+    "url": "https://cbip.xa.gov.cn/zwgk/yjgl/yjbncs/2000390465122770945.html",
+    "target_path": "data_sources\\beilin\\raw\\xa_emergency_shelters_2025\\source_ref.html",
+    "error": "HTTP Error 403: Forbidden",
+    "fetched_at": "2026-04-15T14:07:56.535686+08:00"
+  },
+  {
+    "source_id": "xa_emergency_shelters_2025",
+    "artifact": "download",
+    "status": "failed",
+    "url": "https://cbip.xa.gov.cn/web_files/itl/file/2025/12/15/202512151019424757730.pdf",
+    "target_path": "data_sources\\beilin\\raw\\xa_emergency_shelters_2025\\download.pdf",
+    "error": "HTTP Error 403: Forbidden",
+    "fetched_at": "2026-04-15T14:07:56.535686+08:00"
+  },
+  {
+    "source_id": "geofabrik_shaanxi_osm",
+    "artifact": "source_ref",
+    "status": "downloaded",
+    "url": "https://download.geofabrik.de/asia/china/shaanxi.html",
+    "target_path": "data_sources\\beilin\\raw\\geofabrik_shaanxi_osm\\source_ref.html",
+    "fetched_at": "2026-04-15T14:07:59.022498+08:00"
+  },
+  {
+    "source_id": "geofabrik_shaanxi_osm",
+    "artifact": "download",
+    "status": "downloaded",
+    "url": "https://download.geofabrik.de/asia/china/shaanxi-latest.osm.pbf",
+    "target_path": "data_sources\\beilin\\raw\\geofabrik_shaanxi_osm\\download.pbf",
+    "fetched_at": "2026-04-15T14:07:59.022498+08:00"
+  },
+  {
+    "source_id": "xa_stats_yearbook",
+    "artifact": "source_ref",
+    "status": "failed",
+    "url": "https://tjj.xa.gov.cn/tjsj/tjsj/ndsj/1.html",
+    "target_path": "data_sources\\beilin\\raw\\xa_stats_yearbook\\source_ref.html",
+    "error": "HTTP Error 403: Forbidden",
+    "fetched_at": "2026-04-15T14:08:13.817464+08:00"
+  },
+  {
+    "source_id": "cma_weather",
+    "artifact": "source_ref",
+    "status": "failed",
+    "url": "https://weather.cma.cn/",
+    "target_path": "data_sources\\beilin\\raw\\cma_weather\\source_ref.cn",
+    "error": "<urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)>",
+    "fetched_at": "2026-04-15T14:08:15.445894+08:00"
+  },
+  {
+    "source_id": "amap_webservice",
+    "artifact": "source_ref",
+    "status": "downloaded",
+    "url": "https://lbs.amap.com/api/webservice/summary/",
+    "target_path": "data_sources\\beilin\\raw\\amap_webservice\\source_ref.bin",
+    "fetched_at": "2026-04-15T14:08:22.932306+08:00"
+  }
+]
