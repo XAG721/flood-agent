@@ -15,3 +15,4 @@ frontend/vite.config.d.ts
 tmp-edge/
 tmp-edge-debug/
 data_sources/beilin/raw/geofabrik_shaanxi_osm/download.pbf
+3D_visual/public/models/*.glb
