@@ -11,6 +11,11 @@
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
+    "paths": {
+      "cesium": ["../3D_visual/node_modules/cesium"],
+      "@cesium/engine": ["../3D_visual/node_modules/@cesium/engine"],
+      "@cesium/widgets": ["../3D_visual/node_modules/@cesium/widgets"]
+    },
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,

@@ -6,6 +6,10 @@ import type {
   ArchiveStatusView,
   AuditRecord,
   Advisory,
+  AgentDialogRequest,
+  AgentDialogResponse,
+  AgentCouncilView,
+  AudienceWarningDraft,
   DecisionReportView,
   DatasetJobView,
   DatasetPipelineStatusView,
@@ -29,15 +33,21 @@ import type {
   ResourceStatus,
   ResourceStatusView,
   SimulationUpdateRequest,
+  FocusObjectView,
   LongTermMemoryView,
   MemoryBundleView,
+  ProposalGenerationRequest,
+  ProposalGenerationResponse,
   SharedMemorySnapshot,
   SupervisorLoopStatus,
   SupervisorRunRecord,
+  TwinOverviewView,
+  TwinStreamEvent,
   TriggerEvent,
   V2CopilotSessionView,
   V2EventRecord,
   V2EventSnapshot,
+  WarningGenerationResponse,
 } from "../types/api";
 
 const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL ?? "/api").replace(/\/$/, "");
@@ -266,6 +276,64 @@ export const api = {
     source.onmessage = (event) => {
       const snapshot = JSON.parse(event.data) as RegionalProposalQueueSnapshot;
       handlers.onSnapshot(snapshot);
+    };
+    source.onerror = () => {
+      handlers.onError?.();
+    };
+    return source;
+  },
+
+  getV3TwinOverview(eventId: string): Promise<TwinOverviewView> {
+    return request(`/v3/events/${eventId}/twin-overview`, { method: "GET" });
+  },
+
+  getV3FocusObject(eventId: string, objectId: string): Promise<FocusObjectView> {
+    return request(`/v3/events/${eventId}/objects/${objectId}`, { method: "GET" });
+  },
+
+  sendV3Dialog(eventId: string, payload: AgentDialogRequest): Promise<AgentDialogResponse> {
+    return request(`/v3/events/${eventId}/dialog`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  getV3AgentCouncil(eventId: string): Promise<AgentCouncilView> {
+    return request(`/v3/events/${eventId}/agent-council`, { method: "GET" });
+  },
+
+  generateV3Proposals(
+    eventId: string,
+    payload: ProposalGenerationRequest,
+  ): Promise<ProposalGenerationResponse> {
+    return request(`/v3/events/${eventId}/proposals/generate`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  generateV3Warnings(proposalId: string): Promise<WarningGenerationResponse> {
+    return request(`/v3/proposals/${proposalId}/warnings/generate`, {
+      method: "POST",
+    });
+  },
+
+  openV3TwinStream(
+    eventId: string,
+    handlers: {
+      onEvent: (event: TwinStreamEvent) => void;
+      onError?: () => void;
+    },
+    objectId?: string,
+  ): EventSource {
+    const streamUrl = new URL(buildUrl(`/v3/events/${eventId}/stream`), window.location.origin);
+    if (objectId) {
+      streamUrl.searchParams.set("object_id", objectId);
+    }
+    const source = new EventSource(streamUrl.toString());
+    source.onmessage = (event) => {
+      const payload = JSON.parse(event.data) as TwinStreamEvent;
+      handlers.onEvent(payload);
     };
     source.onerror = () => {
       handlers.onError?.();

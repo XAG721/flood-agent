@@ -8,6 +8,7 @@ from .data_pipeline.service import BeilinDatasetService
 from .rag_runtime import RAGService, RuntimeRAGDocumentProvider
 from .repository import SQLiteRepository
 from .sample_data import build_area_profiles, build_rag_documents, build_resource_status
+from .v3.service import AgentTwinService
 from .v2.bootstrap import build_entity_profiles
 from .v2.multi_agent import HousekeepingService, SupervisorLoopService
 from .v2.platform import ProductionPlatform
@@ -32,6 +33,10 @@ class FloodWarningSystem:
             area_profiles=self.area_profiles,
             bootstrap_resource_status=self.bootstrap_resource_status,
             llm_gateway=llm_gateway,
+        )
+        self.agent_twin = AgentTwinService(
+            platform=self.production_platform,
+            repository=self.repository,
         )
         self.dataset_service = BeilinDatasetService(
             repo_root=self.db_path.parent.parent,

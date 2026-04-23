@@ -1432,3 +1432,90 @@ def test_rbac_blocks_low_privilege_control_actions(tmp_path: Path):
             headers={"X-Operator-Role": "district_operator"},
         )
         assert supervisor_denied.status_code == 403
+
+
+def test_v3_api_exposes_twin_overview_dialog_and_stream(tmp_path: Path):
+    system = build_system(tmp_path)
+    event_id = seed_event(system)
+    production = system.production_platform
+    production.ingest_simulation_update(event_id, sample_simulation_update())
+
+    with bound_test_client(system) as client:
+        overview_response = client.get(f"/v3/events/{event_id}/twin-overview")
+        assert overview_response.status_code == 200
+        overview_payload = overview_response.json()
+        assert overview_payload["event_id"] == event_id
+        assert overview_payload["focus_objects"]
+        assert "pending_proposal_count" in overview_payload
+        assert overview_payload["map_layers"]
+
+        object_id = overview_payload["focus_objects"][0]["object_id"]
+        focus_response = client.get(f"/v3/events/{event_id}/objects/{object_id}")
+        assert focus_response.status_code == 200
+        assert focus_response.json()["object_id"] == object_id
+        assert focus_response.json()["recommended_actions"]
+
+        council_response = client.get(f"/v3/events/{event_id}/agent-council")
+        assert council_response.status_code == 200
+        council_payload = council_response.json()
+        assert council_payload["roles"]
+        assert council_payload["audit_decision"]["status"] in {"blocked", "approved_for_review"}
+
+        dialog_response = client.post(
+            f"/v3/events/{event_id}/dialog",
+            json={"object_id": object_id, "message": "请解释当前对象的影响链并给出处置建议。"},
+        )
+        assert dialog_response.status_code == 200
+        dialog_payload = dialog_response.json()
+        assert dialog_payload["object_id"] == object_id
+        assert dialog_payload["answer"]
+        assert dialog_payload["recommended_actions"]
+        stream_events = system.agent_twin.build_stream_events(event_id, focus_object_id=object_id)
+        assert {item.event_type for item in stream_events} >= {
+            "twin_overview_updated",
+            "focus_object_updated",
+            "agent_council_updated",
+            "proposal_status_changed",
+            "warnings_generated",
+            "proposal_generated",
+        }
+
+
+def test_v3_proposal_generation_and_warning_bridge_reuses_v2_closure(tmp_path: Path):
+    system = build_system(tmp_path)
+    event_id = seed_event(system)
+    production = system.production_platform
+    production.ingest_simulation_update(event_id, sample_simulation_update())
+
+    with bound_test_client(system) as client:
+        proposal_response = client.post(
+            f"/v3/events/{event_id}/proposals/generate",
+            json={"object_ids": []},
+        )
+        assert proposal_response.status_code == 200
+        proposal_payload = proposal_response.json()
+        assert proposal_payload["blocked"] is False
+        assert proposal_payload["proposals"]
+
+        proposal_id = proposal_payload["proposals"][0]["proposal"]["proposal"]["proposal_id"]
+        approve_response = client.post(
+            f"/v2/proposals/{proposal_id}/approve",
+            json={
+                "operator_id": "shift_commander",
+                "operator_role": "commander",
+                "note": "approve from v3 contract test",
+            },
+        )
+        assert approve_response.status_code == 200
+        assert approve_response.json()["proposal"]["status"] == "approved"
+
+        warnings_response = client.post(f"/v3/proposals/{proposal_id}/warnings/generate")
+        assert warnings_response.status_code == 200
+        warnings_payload = warnings_response.json()
+        assert warnings_payload["proposal_id"] == proposal_id
+        assert warnings_payload["warnings"]
+
+        notification_drafts = production.repository.list_v2_notification_drafts(event_id)
+        assert any(item.proposal_id == proposal_id for item in notification_drafts)
+        v3_warning_rows = production.repository.list_v3_audience_warnings(event_id, proposal_id=proposal_id)
+        assert v3_warning_rows

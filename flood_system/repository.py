@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Iterator
 
 from .models import ResourceStatus
+from .v3.models import AudienceWarningDraft
 from .v2.models import (
     AgentResult,
     AgentMetricsView,
@@ -306,6 +307,14 @@ class SQLiteRepository:
                     payload TEXT NOT NULL
                 );
 
+                CREATE TABLE IF NOT EXISTS v3_audience_warnings (
+                    warning_id TEXT PRIMARY KEY,
+                    event_id TEXT NOT NULL,
+                    proposal_id TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    payload TEXT NOT NULL
+                );
+
                 CREATE TABLE IF NOT EXISTS v2_experience_records (
                     experience_id TEXT PRIMARY KEY,
                     event_id TEXT NOT NULL,
@@ -388,6 +397,8 @@ class SQLiteRepository:
                 CREATE INDEX IF NOT EXISTS idx_v2_archived_records_source ON v2_archived_records(source_table, created_at);
                 CREATE INDEX IF NOT EXISTS idx_v2_notification_event_id ON v2_notification_drafts(event_id, created_at);
                 CREATE INDEX IF NOT EXISTS idx_v2_execution_event_id ON v2_execution_logs(event_id, created_at);
+                CREATE INDEX IF NOT EXISTS idx_v3_audience_warnings_event_id ON v3_audience_warnings(event_id, created_at);
+                CREATE INDEX IF NOT EXISTS idx_v3_audience_warnings_proposal_id ON v3_audience_warnings(proposal_id, created_at);
                 CREATE INDEX IF NOT EXISTS idx_v2_entity_profiles_area_id ON v2_entity_profiles(area_id);
                 CREATE INDEX IF NOT EXISTS idx_v2_event_resource_area_id ON v2_event_resource_status(area_id);
                 CREATE INDEX IF NOT EXISTS idx_v2_experience_event_id ON v2_experience_records(event_id, created_at);
@@ -2084,3 +2095,43 @@ class SQLiteRepository:
                 (event_id,),
             ).fetchall()
         return [ExecutionLogEntry.model_validate_json(row["payload"]) for row in rows]
+
+    def save_v3_audience_warning(self, warning: AudienceWarningDraft) -> None:
+        with self._connect() as conn:
+            conn.execute(
+                """
+                INSERT INTO v3_audience_warnings (warning_id, event_id, proposal_id, created_at, payload)
+                VALUES (?, ?, ?, ?, ?)
+                ON CONFLICT(warning_id) DO UPDATE SET
+                    event_id = excluded.event_id,
+                    proposal_id = excluded.proposal_id,
+                    created_at = excluded.created_at,
+                    payload = excluded.payload
+                """,
+                (
+                    warning.warning_id,
+                    warning.event_id,
+                    warning.proposal_id,
+                    warning.created_at.isoformat(),
+                    warning.model_dump_json(),
+                ),
+            )
+
+    def list_v3_audience_warnings(
+        self,
+        event_id: str,
+        *,
+        proposal_id: str | None = None,
+    ) -> list[AudienceWarningDraft]:
+        query = """
+            SELECT payload FROM v3_audience_warnings
+            WHERE event_id = ?
+        """
+        params: list[object] = [event_id]
+        if proposal_id is not None:
+            query += " AND proposal_id = ?"
+            params.append(proposal_id)
+        query += " ORDER BY created_at DESC, warning_id DESC"
+        with self._connect() as conn:
+            rows = conn.execute(query, params).fetchall()
+        return [AudienceWarningDraft.model_validate_json(row["payload"]) for row in rows]

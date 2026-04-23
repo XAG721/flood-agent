@@ -274,6 +274,181 @@ export interface RegionalAnalysisPackageView {
   updated_at: string;
 }
 
+export interface TwinFocusObjectSummary {
+  object_id: string;
+  name: string;
+  entity_type: EntityType;
+  village: string;
+  risk_level: RiskLevel;
+  time_to_impact_minutes: number;
+  summary: string;
+  recommended_action: string;
+  pending_proposal_ids: string[];
+  canvas_position: Record<string, number>;
+}
+
+export interface TwinObjectMapLayer {
+  object_id: string;
+  name: string;
+  risk_level: RiskLevel;
+  entity_type: EntityType;
+  east_offset_m: number;
+  north_offset_m: number;
+  height_offset_m: number;
+  proposal_state: string;
+  is_lead: boolean;
+}
+
+export interface TwinSignalView {
+  signal_id: string;
+  title: string;
+  detail: string;
+  severity: string;
+  created_at: string;
+}
+
+export interface TwinOverviewView {
+  event_id: string;
+  area_id: string;
+  event_title: string;
+  generated_at: string;
+  overall_risk_level: RiskLevel;
+  trend: string;
+  summary: string;
+  lead_object_id: string | null;
+  lead_object_name: string | null;
+  focus_objects: TwinFocusObjectSummary[];
+  map_layers: TwinObjectMapLayer[];
+  pending_proposal_count: number;
+  approved_proposal_count: number;
+  warning_draft_count: number;
+  active_alert_count: number;
+  recommended_actions: string[];
+  signals: TwinSignalView[];
+  recent_warning_drafts: AudienceWarningDraft[];
+}
+
+export interface FocusObjectView {
+  event_id: string;
+  object_id: string;
+  object_name: string;
+  entity_type: EntityType;
+  village: string;
+  risk_level: RiskLevel;
+  time_to_impact_minutes: number;
+  summary: string;
+  risk_reasons: string[];
+  recommended_actions: string[];
+  risk_reminders: string[];
+  evidence: EvidenceItem[];
+  related_proposals: RegionalProposalView[];
+}
+
+export interface AgentDialogRequest {
+  object_id?: string | null;
+  message: string;
+}
+
+export interface V3ProposalDraft {
+  blocked: boolean;
+  block_reason?: string | null;
+  proposal: RegionalProposalView | null;
+}
+
+export interface AgentDialogResponse {
+  event_id: string;
+  object_id: string;
+  object_name: string;
+  message: string;
+  answer: string;
+  impact_summary: string[];
+  evidence: EvidenceItem[];
+  recommended_actions: string[];
+  risk_reminders: string[];
+  follow_up_prompts: string[];
+  grounding_summary: string;
+  proposal_entry: V3ProposalDraft | null;
+  response_source: string;
+  generated_at: string;
+}
+
+export interface AgentCouncilRoleView {
+  role: string;
+  label: string;
+  status: string;
+  summary: string;
+  confidence?: number | null;
+  evidence_count: number;
+  recommended_action?: string | null;
+}
+
+export interface AuditDecisionView {
+  status: string;
+  summary: string;
+  rationale: string;
+  risk_flags: string[];
+  approval_required: boolean;
+}
+
+export interface AgentCouncilView {
+  event_id: string;
+  generated_at: string;
+  overall_summary: string;
+  decision_path: string[];
+  open_questions: string[];
+  blocked_by: string[];
+  roles: AgentCouncilRoleView[];
+  audit_decision: AuditDecisionView;
+  recent_result_ids: string[];
+}
+
+export interface ProposalGenerationRequest {
+  object_ids: string[];
+}
+
+export interface ProposalGenerationResponse {
+  event_id: string;
+  queue_version: string;
+  generated_at: string;
+  blocked: boolean;
+  block_reason?: string | null;
+  proposals: V3ProposalDraft[];
+}
+
+export interface AudienceWarningDraft {
+  warning_id: string;
+  event_id: string;
+  proposal_id: string;
+  audience: string;
+  channel: string;
+  content: string;
+  grounding_summary: string;
+  created_at: string;
+  source_draft_id?: string | null;
+}
+
+export interface WarningGenerationResponse {
+  event_id: string;
+  proposal_id: string;
+  generated_at: string;
+  warnings: AudienceWarningDraft[];
+}
+
+export interface TwinStreamEvent {
+  event_type: string;
+  version: string;
+  created_at: string;
+  payload: Record<string, unknown>;
+}
+
+export interface AgentDialogTranscriptEntry {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  created_at: string;
+  response?: AgentDialogResponse;
+}
+
 export interface ToolTraceStep {
   tool_name: string;
   summary: string;

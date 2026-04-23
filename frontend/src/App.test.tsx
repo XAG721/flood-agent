@@ -63,7 +63,18 @@ class FakeEventSource {
   }
 
   static emit(snapshot: unknown) {
-    const instance = FakeEventSource.instances[FakeEventSource.instances.length - 1];
+    const payload = snapshot as { queue_version?: string; event_type?: string };
+    const instance = [...FakeEventSource.instances]
+      .reverse()
+      .find((candidate) => {
+        if (payload.queue_version) {
+          return candidate.url.includes("/api/v2/proposals/stream");
+        }
+        if (payload.event_type) {
+          return candidate.url.includes("/api/v3/events/");
+        }
+        return true;
+      });
     if (!instance?.onmessage) {
       throw new Error("No active EventSource listener.");
     }
@@ -287,6 +298,21 @@ function buildImpact(entityId: string, name: string, entityType: string, village
         priority: 0,
       },
     ],
+    recent_warning_drafts: [
+      {
+        warning_id: "warning_public_1",
+        proposal_id: "regional_dispatch_approved",
+        event_id: "event_demo",
+        audience: "public",
+        title: "北部片区积涝提醒",
+        summary: "请沿北侧通道有序避让，避免进入低洼路段。",
+        content: "北部片区未来 30 分钟积涝风险继续上升，请公众远离下穿通道和低洼道路。",
+        tone: "warning",
+        channels: ["sms", "broadcast"],
+        evidence_summary: "基于当前 hazard tiles 与对象影响评估生成。",
+        created_at: "2026-04-01T12:06:20Z",
+      },
+    ],
   };
 }
 
@@ -298,6 +324,148 @@ const knownImpacts: Record<string, ReturnType<typeof buildImpact>> = {
   metro_nsm_hub: buildImpact("metro_nsm_hub", "南门地铁换乘枢纽", "metro_station", "南门片区"),
   community_jsl_grid: buildImpact("community_jsl_grid", "建设里社区网格三组", "community", "建设里片区"),
 };
+
+function createTwinOverviewPayload() {
+  const focusIds = ["resident_elderly_ls1", "school_wyl_primary", "community_jsl_grid"];
+  const focusObjects = focusIds.map((objectId, index) => {
+    const impact = knownImpacts[objectId];
+    return {
+      object_id: objectId,
+      name: impact.entity.name,
+      entity_type: impact.entity.entity_type,
+      village: impact.entity.village,
+      risk_level: impact.risk_level,
+      time_to_impact_minutes: impact.time_to_impact_minutes,
+      summary: impact.risk_reason[0],
+      recommended_action: index === 0 ? "优先协助转移并保持北侧通道畅通。" : "继续跟踪并准备联动处置。",
+      pending_proposal_ids: [],
+      canvas_position: {
+        left: 24 + index * 22,
+        top: 30 + index * 18,
+      },
+    };
+  });
+  const mapLayers = focusIds.map((objectId, index) => {
+    const impact = knownImpacts[objectId];
+    return {
+      object_id: objectId,
+      name: impact.entity.name,
+      risk_level: impact.risk_level,
+      is_lead: index === 0,
+      east_offset_m: -240 + index * 180,
+      north_offset_m: 150 - index * 120,
+      height_offset_m: 18 + index * 4,
+      status_label: index === 0 ? "priority_focus" : "tracking",
+    };
+  });
+
+  return {
+    event_id: "event_demo",
+    area_id: "beilin_10km2",
+    event_title: eventPayload.title,
+    generated_at: "2026-04-01T12:06:20Z",
+    overall_risk_level: "Orange",
+    trend: "rapidly_rising",
+    summary: "主屏已汇聚重点对象、影响链与待审批动作，可直接进入智能体追问与审批闭环。",
+    lead_object_id: focusObjects[0].object_id,
+    lead_object_name: focusObjects[0].name,
+    focus_objects: focusObjects,
+    pending_proposal_count: 0,
+    approved_proposal_count: 1,
+    warning_draft_count: 0,
+    active_alert_count: 2,
+    map_layers: mapLayers,
+    recommended_actions: ["优先追问首要影响对象。", "准备区域联动通知。"],
+    signals: [
+      {
+        signal_id: "signal_water_1",
+        title: "上游水位继续上涨",
+        detail: "未来 30 分钟内北部片区积涝风险仍在抬升。",
+        severity: "warning",
+        created_at: "2026-04-01T12:05:30Z",
+      },
+      {
+        signal_id: "signal_route_1",
+        title: "北侧通道可达",
+        detail: "当前仍可作为优先转移通道，但需保持持续监测。",
+        severity: "info",
+        created_at: "2026-04-01T12:05:50Z",
+      },
+    ],
+  };
+}
+
+function createAgentCouncilPayload() {
+  return {
+    event_id: "event_demo",
+    generated_at: "2026-04-01T12:06:20Z",
+    roles: [
+      {
+        role_id: "impact_agent",
+        role_name: "Impact Agent",
+        status: "ready",
+        summary: "识别北部片区学校、社区与独居老人是当前最优先关注对象。",
+        evidence: ["实时风险栅格抬升", "对象脆弱性标签命中"],
+        recommended_actions: ["优先追问学校与社区联动动作"],
+        open_questions: ["学校离校人数是否已确认"],
+      },
+      {
+        role_id: "action_agent",
+        role_name: "Action Agent",
+        status: "ready",
+        summary: "建议先锁定北侧转移通道并准备区域提醒。",
+        evidence: ["北侧通道当前可达", "现有抽排资源仍可调度"],
+        recommended_actions: ["生成区域通知 proposal"],
+        open_questions: [],
+      },
+      {
+        role_id: "warning_agent",
+        role_name: "Warning Agent",
+        status: "ready",
+        summary: "已准备公众版和部门版预警草稿模版。",
+        evidence: ["通知模板可复用", "SOP 约束已满足"],
+        recommended_actions: ["审批后直接生成 warning drafts"],
+        open_questions: [],
+      },
+      {
+        role_id: "audit_agent",
+        role_name: "Audit Agent",
+        status: "ready",
+        summary: "当前建议进入人工审批，不建议自动执行。",
+        evidence: ["区域请示链仍需指挥长确认"],
+        recommended_actions: ["保留 human gate"],
+        open_questions: ["请确认最终批准角色"],
+      },
+    ],
+    audit_decision: {
+      status: "approved_for_review",
+      rationale: "证据充分，但涉及区域通知，仍需人工放行。",
+      blocking_reasons: [],
+      required_actions: ["等待指挥长审批 proposal"],
+    },
+    proposal_ids: ["regional_notification_1"],
+    warning_ids: ["warning_public_1"],
+  };
+}
+
+function createFocusObjectPayload(objectId: string) {
+  const impact = knownImpacts[objectId] ?? knownImpacts.resident_elderly_ls1;
+  return {
+    event_id: "event_demo",
+    object_id: impact.entity.entity_id,
+    object_name: impact.entity.name,
+    entity_type: impact.entity.entity_type,
+    village: impact.entity.village,
+    risk_level: impact.risk_level,
+    time_to_impact_minutes: impact.time_to_impact_minutes,
+    summary: impact.risk_reason[0],
+    risk_reasons: impact.risk_reason,
+    recommended_actions: ["优先联动现场值守人员。", "检查转移通道与到点时间。"],
+    risk_reminders: ["当前趋势仍在上升。", "处置延后会增加对象暴露时间。"],
+    evidence: impact.evidence,
+    related_proposals: [approvedHistoryItem],
+  };
+}
 
 function createRegionalProposal(overrides?: Partial<ActionProposalV2>): ActionProposalV2 {
   return {
@@ -490,6 +658,61 @@ function installFetchMock(options?: {
 
     if (url.pathname === "/api/v2/events/event_demo/hazard-state" && method === "GET") {
       return jsonResponse(hazardPayload);
+    }
+
+    if (url.pathname === "/api/v3/events/event_demo/twin-overview" && method === "GET") {
+      return jsonResponse(createTwinOverviewPayload());
+    }
+
+    if (url.pathname === "/api/v3/events/event_demo/agent-council" && method === "GET") {
+      return jsonResponse(createAgentCouncilPayload());
+    }
+
+    if (url.pathname.match(/^\/api\/v3\/events\/event_demo\/objects\/[^/]+$/) && method === "GET") {
+      const objectId = url.pathname.split("/")[6];
+      return jsonResponse(createFocusObjectPayload(objectId));
+    }
+
+    if (url.pathname === "/api/v3/events/event_demo/dialog" && method === "POST") {
+      const objectId = body?.object_id ?? "resident_elderly_ls1";
+      const focusObject = createFocusObjectPayload(objectId);
+      return jsonResponse({
+        event_id: "event_demo",
+        object_id: focusObject.object_id,
+        object_name: focusObject.object_name,
+        message: body?.message ?? "",
+        answer: "建议先锁定高风险对象并确认最短转移路径。",
+        impact_summary: focusObject.risk_reasons,
+        evidence: focusObject.evidence,
+        recommended_actions: focusObject.recommended_actions,
+        risk_reminders: focusObject.risk_reminders,
+        follow_up_prompts: ["请继续说明执行顺序。", "请说明需要人工确认的边界。"],
+        grounding_summary: "基于对象画像、实时栅格和区域历史建议生成。",
+        proposal_entry: null,
+        response_source: "fixture",
+        generated_at: "2026-04-01T12:06:40Z",
+      });
+    }
+
+    if (url.pathname === "/api/v3/events/event_demo/proposals/generate" && method === "POST") {
+      return jsonResponse({
+        event_id: "event_demo",
+        queue_version: "queue_v3_fixture",
+        generated_at: "2026-04-01T12:06:40Z",
+        blocked: false,
+        block_reason: null,
+        proposals: [],
+      });
+    }
+
+    if (url.pathname.match(/^\/api\/v3\/proposals\/[^/]+\/warnings\/generate$/) && method === "POST") {
+      const proposalId = url.pathname.split("/")[4];
+      return jsonResponse({
+        event_id: "event_demo",
+        proposal_id: proposalId,
+        generated_at: "2026-04-01T12:06:40Z",
+        warnings: [],
+      });
     }
 
     if (url.pathname.startsWith("/api/v2/entities/") && url.pathname.endsWith("/impact") && method === "GET") {
@@ -923,21 +1146,22 @@ describe("App", () => {
     installFetchMock();
     renderApp("/");
 
-    expect(await screen.findByText("全局风险态势总览")).toBeInTheDocument();
+    expect((await screen.findAllByRole("heading", { name: /数字孪生智能体洪水预警系统/ })).length).toBeGreaterThan(0);
     expect(screen.getByRole("link", { name: "风险总览" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "影响问答" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "协同处置" })).toBeInTheDocument();
     expect(screen.getAllByText("碑林区积涝演练事件").length).toBeGreaterThan(0);
     expect(screen.getAllByText("李阿姨").length).toBeGreaterThan(0);
-    expect(screen.getByText("待审批动作数")).toBeInTheDocument();
-    expect(screen.getByText("1 条已闭环")).toBeInTheDocument();
+    expect(screen.getByText("数字孪生智能体洪水预警主屏")).toBeInTheDocument();
+    expect(screen.getByText("重点对象")).toBeInTheDocument();
+    expect(screen.getByText(/1 条.*已完成闭环/)).toBeInTheDocument();
   });
 
   it("智能问答页可以发送问题并展示结构化回答，且不会注入新的审批弹框", async () => {
     const { fetchMock } = installFetchMock();
     renderApp("/copilot");
 
-    expect(await screen.findByRole("heading", { name: "围绕重点对象开展自由提问" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: /对话查看研判、请示与总结/ })).toBeInTheDocument();
     fireEvent.click(await screen.findByRole("button", { name: /低洼区老人/i }));
 
     await waitFor(() => {
@@ -972,10 +1196,10 @@ describe("App", () => {
     });
     renderApp("/operations");
 
-    expect(await screen.findByText("智能体协同处置")).toBeInTheDocument();
+    expect((await screen.findAllByRole("heading", { name: /协同处置/ })).length).toBeGreaterThan(0);
     expect(screen.getByText("完成区域资源调度")).toBeInTheDocument();
     expect(screen.getByText("规划区域转移建议")).toBeInTheDocument();
-    expect(screen.getByText("协作时间线")).toBeInTheDocument();
+    expect(screen.getAllByText(/时间线/).length).toBeGreaterThan(0);
     expect(screen.queryByLabelText("approve-proposal-proposal_school_1")).not.toBeInTheDocument();
   });
 
@@ -983,7 +1207,7 @@ describe("App", () => {
     const { fetchMock } = installFetchMock();
     renderApp("/operations");
 
-    expect(await screen.findByText("智能体协同处置")).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: /协同处置/ })).toBeInTheDocument();
     expect(screen.queryByText("智能体主动请示")).not.toBeInTheDocument();
 
     const pendingItem = createRegionalView();
@@ -1011,7 +1235,7 @@ describe("App", () => {
     const { fetchMock, getQueueSnapshot } = installFetchMock();
     renderApp("/operations");
 
-    expect(await screen.findByText("智能体协同处置")).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: /协同处置/ })).toBeInTheDocument();
 
     await act(async () => {
       FakeEventSource.emit(createQueueSnapshot([createRegionalView()], "queue_stream_approve"));
@@ -1045,7 +1269,7 @@ describe("App", () => {
     installFetchMock();
     renderApp("/operations");
 
-    expect(await screen.findByText("智能体协同处置")).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: /协同处置/ })).toBeInTheDocument();
 
     await act(async () => {
       FakeEventSource.emit(createQueueSnapshot([createRegionalView()], "queue_stream_2"));
@@ -1068,7 +1292,7 @@ describe("App", () => {
     installFetchMock();
     renderApp("/operations");
 
-    expect(await screen.findByText("智能体协同处置")).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: /协同处置/ })).toBeInTheDocument();
 
     await act(async () => {
       FakeEventSource.emit(

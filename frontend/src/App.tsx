@@ -4,13 +4,12 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import styles from "./App.module.css";
 import { AppShell } from "./components/AppShell";
 import { CommandCenterPage } from "./components/CommandCenterPage";
+import { DigitalTwinImpactScreen } from "./components/DigitalTwinImpactScreen";
 import { ExecutionFlowBoard } from "./components/ExecutionFlowBoard";
 import { GlobalRegionalProposalDialog } from "./components/GlobalRegionalProposalDialog";
 import { MetricStrip } from "./components/MetricStrip";
 import { MultiAgentDesk } from "./components/MultiAgentDesk";
 import { AdvisoryCard } from "./components/OperationPanel";
-import { OverviewHero } from "./components/OverviewHero";
-import { PriorityObjectPanel } from "./components/PriorityObjectPanel";
 import { RegionalAnalysisPackageHistoryPanel } from "./components/RegionalAnalysisPackageHistoryPanel";
 import { RegionalProposalHistoryPanel } from "./components/RegionalProposalHistoryPanel";
 import { ReliabilityAuditDesk } from "./components/ReliabilityAuditDesk";
@@ -34,22 +33,19 @@ import {
   riskText,
   travelModeOptions,
 } from "./config/consoleConfig";
-import { useV2OperatorConsole } from "./hooks/useV2OperatorConsole";
+import { useAgentTwinConsole } from "./hooks/useAgentTwinConsole";
 import { AgentsPage } from "./pages/AgentsPage";
 import { DataPage } from "./pages/DataPage";
 import { OperationsPage } from "./pages/OperationsPage";
-import { OverviewPage } from "./pages/OverviewPage";
 import { ReliabilityPage } from "./pages/ReliabilityPage";
 import panelStyles from "./styles/shared-panels.module.css";
 import {
   appShellText,
   buildAgentTimelineFallback,
   buildExecutionFlowStats,
-  buildOverviewSummary,
   executionFlowText,
   formatTrendLabel,
   formatPendingMetricHint,
-  overviewPageText,
   overviewMetricText,
   operationsPageText,
 } from "./lib/appText";
@@ -1207,7 +1203,7 @@ function AdminDesk(props: AdminDeskProps) {
 export default function App() {
   const location = useLocation();
   const navigate = useNavigate();
-  const consoleState = useV2OperatorConsole();
+  const consoleState = useAgentTwinConsole();
   const [input, setInput] = useState("");
   const capabilityMap = consoleState.operatorCapabilities?.capabilities ?? {};
   const canEditRuntimeAdmin = Boolean(capabilityMap.runtime_admin_write);
@@ -1217,7 +1213,7 @@ export default function App() {
   const canRunEvaluation = Boolean(capabilityMap.evaluation_run);
   const canRunArchive = Boolean(capabilityMap.archive_run);
 
-  const topRisk = consoleState.hazardState?.overall_risk_level ?? "None";
+  const topRisk = consoleState.twinOverview?.overall_risk_level ?? consoleState.hazardState?.overall_risk_level ?? "None";
   const selectedImpact = consoleState.selectedImpact as EntityImpactView;
   const leadImpact = useMemo(() => consoleState.topImpacts[0] ?? null, [consoleState.topImpacts]);
   const currentPage = pageMeta[location.pathname as keyof typeof pageMeta];
@@ -1247,20 +1243,38 @@ export default function App() {
   const isAgentsPage = location.pathname === "/agents";
   const isReliabilityPage = location.pathname === "/reliability";
 
-  const trendLabel = formatTrendLabel(consoleState.hazardState?.trend);
-  const highPriorityCount = consoleState.topImpacts.filter((impact) => impact.risk_level !== "None").length;
-  const approvedProposalCount = consoleState.proposals.filter((item) => item.status === "approved").length;
+  const trendLabel = formatTrendLabel(consoleState.twinOverview?.trend ?? consoleState.hazardState?.trend);
+  const highPriorityCount =
+    consoleState.twinOverview?.focus_objects.length ??
+    consoleState.topImpacts.filter((impact) => impact.risk_level !== "None").length;
+  const approvedProposalCount =
+    consoleState.twinOverview?.approved_proposal_count ??
+    consoleState.proposals.filter((item) => item.status === "approved").length;
+  const pendingProposalCount = consoleState.twinOverview?.pending_proposal_count ?? consoleState.pendingProposals.length;
+  const warningDraftCount = consoleState.twinOverview?.warning_draft_count ?? 0;
   const latestToolExecutions = consoleState.latestAnswer?.tool_executions ?? [];
+  const councilRoles = consoleState.agentCouncil?.roles ?? [];
+  const latestWarningDrafts =
+    consoleState.warningDrafts.length > 0
+      ? consoleState.warningDrafts
+      : consoleState.twinOverview?.recent_warning_drafts ?? [];
+  const agentDecisionPath = consoleState.agentCouncil?.decision_path ?? [];
+  const agentOpenQuestions = consoleState.agentCouncil?.open_questions ?? [];
+  const agentBlockedBy = consoleState.agentCouncil?.blocked_by ?? [];
+  const recentCouncilResults = consoleState.recentAgentResults.slice(0, 4);
+  const evidenceCompareResults = recentCouncilResults.filter(
+    (result) => result.evidence_refs.length > 0 || result.missing_slots.length > 0 || result.handoff_recommendations.length > 0,
+  );
 
-  const primaryPaths = new Set(["/", "/copilot", "/operations"]);
+  const primaryPaths = new Set(["/", "/operations", "/agents"]);
   const navigation = Object.entries(pageMeta)
     .filter(([path]) => primaryPaths.has(path))
     .map(([path, meta]) => ({ path, label: meta.label }));
   const utilityNavigation = Object.entries(pageMeta)
     .filter(([path]) => !primaryPaths.has(path))
     .map(([path, meta]) => ({ path, label: meta.label }));
-  const shellCurrentPageLabel = isOverviewPage ? appShellText.overviewPageLabel : currentPage.label;
-  const shellCurrentPageTitle = isOverviewPage ? appShellText.overviewPageTitle : currentPage.title;
+  const shellCurrentPageLabel = isOverviewPage ? "数字孪生主屏" : currentPage.label;
+  const shellCurrentPageTitle = isOverviewPage ? "数字孪生智能体洪水预警系统" : currentPage.title;
   const shellCurrentPageDescription = isOverviewPage ? undefined : currentPage.description;
 
   const pageMetricItems = isOverviewPage
@@ -1268,7 +1282,7 @@ export default function App() {
         {
           label: overviewMetricText.riskLabel,
           value: riskText[topRisk],
-          hint: consoleState.event?.title ?? overviewMetricText.riskHintFallback,
+          hint: consoleState.twinOverview?.event_title ?? consoleState.event?.title ?? overviewMetricText.riskHintFallback,
           tone: topRisk === "Red" || topRisk === "Orange" ? ("risk" as const) : topRisk === "Yellow" ? ("warning" as const) : ("success" as const),
         },
         {
@@ -1285,9 +1299,11 @@ export default function App() {
         },
         {
           label: overviewMetricText.pendingLabel,
-          value: `${consoleState.pendingProposals.length}`,
-          hint: formatPendingMetricHint(approvedProposalCount),
-          tone: consoleState.pendingProposals.length ? ("warning" as const) : ("success" as const),
+          value: `${pendingProposalCount}`,
+          hint: warningDraftCount
+            ? `已生成 ${warningDraftCount} 条分众预警草稿`
+            : formatPendingMetricHint(approvedProposalCount),
+          tone: pendingProposalCount ? ("warning" as const) : ("success" as const),
         },
       ]
     : isOperationsPage
@@ -1390,12 +1406,6 @@ export default function App() {
           : ("info" as const),
   }));
 
-  const overviewSummary = buildOverviewSummary({
-    highRisk: topRisk === "Red" || topRisk === "Orange",
-    riskLabel: riskText[topRisk],
-    trendLabel,
-  });
-
   const executionFlowSteps = [
     {
       id: "sense",
@@ -1462,7 +1472,7 @@ export default function App() {
   return (
     <>
       <GlobalRegionalProposalDialog
-        open={!isOverviewPage && !isCopilotPage && consoleState.regionalProposalModalOpen}
+        open={!isCopilotPage && consoleState.regionalProposalModalOpen}
         busy={consoleState.isBusy}
         snapshot={consoleState.regionalProposalQueueSnapshot}
         onApprove={(proposalId, note) => consoleState.resolveProposal(proposalId, "approve", note)}
@@ -1471,7 +1481,7 @@ export default function App() {
         onSnooze={consoleState.snoozeRegionalProposalModal}
       />
       <AppShell
-        brandTitle="多智能体洪水预警系统"
+        brandTitle="数字孪生智能体洪水预警系统"
         currentPageLabel={shellCurrentPageLabel}
         currentPageTitle={shellCurrentPageTitle}
         currentPageDescription={shellCurrentPageDescription}
@@ -1519,27 +1529,25 @@ export default function App() {
         }
         metrics={<MetricStrip items={pageMetricItems} />}
       >
-        {isOverviewPage || isCopilotPage ? (
+        {isCopilotPage ? (
           <>
-            {isCopilotPage ? (
-              <div className={styles.panelFrame}>
-                <div className={styles.panelHeaderCompact}>
-                  <div>
-                    <p className={styles.sectionLabel}>对话指挥</p>
-                    <h2>通过对话查看研判、请示与总结</h2>
-                  </div>
-                </div>
-                <p className={styles.emptyState}>
-                  在这里可以查看智能体的多轮分析、审批请求、日报和高风险复盘，并继续追问对象风险、联动建议和执行策略。
-                </p>
-                <div className={styles.routeSummary}>
-                  <div>
-                    <span>使用方式</span>
-                    <strong>输入问题或使用快捷提示，系统会结合事件上下文持续生成建议。</strong>
-                  </div>
+            <div className={styles.panelFrame}>
+              <div className={styles.panelHeaderCompact}>
+                <div>
+                  <p className={styles.sectionLabel}>对话指挥</p>
+                  <h2>通过对话查看研判、请示与总结</h2>
                 </div>
               </div>
-            ) : null}
+              <p className={styles.emptyState}>
+                在这里可以查看智能体的多轮分析、审批请求、日报和高风险复盘，并继续追问对象风险、联动建议和执行策略。
+              </p>
+              <div className={styles.routeSummary}>
+                <div>
+                  <span>使用方式</span>
+                  <strong>输入问题或使用快捷提示，系统会结合事件上下文持续生成建议。</strong>
+                </div>
+              </div>
+            </div>
             <CommandCenterPage
               agentStatus={consoleState.agentStatus}
               agentTasks={consoleState.agentTasks}
@@ -1573,94 +1581,26 @@ export default function App() {
         ) : null}
 
         {isOverviewPage ? (
-          <OverviewPage
-            situation={
-              <OverviewHero
-                eventTitle={consoleState.event?.title ?? appShellText.unnamedEvent}
-                riskLabel={riskText[topRisk]}
-                trendLabel={trendLabel}
-                summary={overviewSummary}
-                agentSummary={normalizeAgentTerminology(consoleState.agentStatus?.latest_summary) || appShellText.defaultAgentSummary}
-                leadImpactLabel={
-                  leadImpact
-                    ? `${leadImpact.entity.name} · ${leadImpact.time_to_impact_minutes} 分钟`
-                    : overviewPageText.unidentifiedLeadImpact
-                }
-                highPriorityCount={highPriorityCount || consoleState.topImpacts.length}
-                pendingProposalCount={consoleState.pendingProposals.length}
-                onPrimaryAction={() => navigate("/copilot")}
-                onSecondaryAction={() => navigate("/operations")}
-                isBusy={consoleState.isBusy}
-                primaryButtonClassName={styles.primaryButton}
-                secondaryButtonClassName={styles.secondaryButton}
-              />
-            }
-            priority={
-              <PriorityObjectPanel
-                title={overviewPageText.priorityPanelTitle}
-                subtitle={overviewPageText.priorityPanelSubtitle}
-                items={priorityItems}
-                selectedId={consoleState.selectedEntityId}
-                onSelect={(id) => void consoleState.selectEntity(id)}
-              />
-            }
-            summary={
-              <motion.div
-                className={styles.panelFrame}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.08, duration: 0.35 }}
-              >
-                <div className={styles.panelHeaderCompact}>
-                  <div>
-                    <p className={styles.sectionLabel}>{overviewPageText.objectPreviewSectionLabel}</p>
-                    <h3>{selectedImpact?.entity.name ?? overviewPageText.waitingSelectObject}</h3>
-                  </div>
-                  {selectedImpact ? (
-                    <span className={`${styles.statusPill} ${riskTone(selectedImpact.risk_level)}`}>
-                      {riskText[selectedImpact.risk_level]}
-                    </span>
-                  ) : null}
-                </div>
-                {selectedImpact ? (
-                  <>
-                    <div className={styles.routeSummary}>
-                      <div>
-                        <span>{overviewPageText.objectTypeLabel}</span>
-                        <strong>{entityText[selectedImpact.entity.entity_type]}</strong>
-                      </div>
-                      <div>
-                        <span>{overviewPageText.impactTimeLabel}</span>
-                        <strong>{selectedImpact.time_to_impact_minutes} 分钟</strong>
-                      </div>
-                    </div>
-                    <p className={styles.emptyState}>
-                      {selectedImpact.risk_reason[0] ?? overviewPageText.objectPreviewFallback}
-                    </p>
-                    <div className={styles.operationActions}>
-                      <button
-                        type="button"
-                        className={styles.primaryButton}
-                        disabled={consoleState.isBusy}
-                        onClick={() => navigate("/copilot")}
-                      >
-                        {overviewPageText.askAboutObjectAction}
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  <p className={styles.emptyState}>{overviewPageText.objectPreviewEmpty}</p>
-                )}
-              </motion.div>
-            }
-            signals={
-              <SignalTimeline
-                title={overviewPageText.signalTimelineTitle}
-                subtitle={overviewPageText.signalTimelineSubtitle}
-                items={overviewSignalItems}
-                emptyText={overviewPageText.signalTimelineEmpty}
-              />
-            }
+          <DigitalTwinImpactScreen
+            overview={consoleState.twinOverview}
+            focusObject={consoleState.focusObject}
+            pendingProposals={consoleState.pendingProposals}
+            approvedProposals={consoleState.approvedProposals}
+            dialogEntries={consoleState.dialogEntries}
+            dialogOpen={consoleState.dialogOpen}
+            dialogBusy={consoleState.dialogBusy}
+            streamStatus={consoleState.twinStreamStatus}
+            onSelectObject={(objectId) => void consoleState.selectTwinObject(objectId)}
+            onOpenDialog={() => consoleState.setDialogOpen(true)}
+            onCloseDialog={() => consoleState.setDialogOpen(false)}
+            onSendDialog={(message, objectId) => void consoleState.sendAgentDialog(message, objectId)}
+            onGenerateProposals={() => void consoleState.generateTwinProposals()}
+            onGenerateWarnings={(proposalId) => void consoleState.generateAudienceWarnings(proposalId)}
+            onResolveProposal={(proposalId, decision, note) => void consoleState.resolveProposal(proposalId, decision, note)}
+            onOpenProposalQueue={consoleState.openProposalQueue}
+            onOpenOperations={() => navigate("/operations")}
+            actionBusy={consoleState.isBusy}
+            twinBusy={consoleState.twinBusy}
           />
         ) : null}
 
@@ -1719,6 +1659,26 @@ export default function App() {
                   />
                 </div>
                 <div className={styles.panelFrame}>
+                  <div className={styles.panelHeaderCompact}>
+                    <div>
+                      <p className={styles.sectionLabel}>Warning Drafts</p>
+                      <h3>分众预警草稿</h3>
+                    </div>
+                  </div>
+                  <div className={styles.answerList}>
+                    {latestWarningDrafts.slice(0, 4).map((draft) => (
+                      <article key={draft.warning_id} className={styles.metricBlock}>
+                        <span>{draft.audience}</span>
+                        <strong>{`${draft.audience} warning`}</strong>
+                        <small>{draft.grounding_summary || draft.content}</small>
+                      </article>
+                    ))}
+                    {!latestWarningDrafts.length ? (
+                      <div className={styles.emptyState}>当前还没有新的分众预警草稿，proposal 审批后会在这里出现。</div>
+                    ) : null}
+                  </div>
+                </div>
+                <div className={styles.panelFrame}>
                   <AdvisoryCard advisory={consoleState.activeAdvisory} />
                 </div>
               </div>
@@ -1763,43 +1723,271 @@ export default function App() {
 
         {isAgentsPage ? (
           <AgentsPage
-            overview={
-              <SignalTimeline
-                title="智能体时间线"
-                subtitle="最近触发与任务变化"
-                items={agentTimelineItems}
-                emptyText="当前没有新的智能体时间线记录。"
-              />
+            briefing={
+              <div className={styles.primaryColumn}>
+                <div className={styles.panelFrame}>
+                  <div className={styles.panelHeaderCompact}>
+                    <div>
+                      <p className={styles.sectionLabel}>Agent Council</p>
+                      <h3>多智能体会商摘要</h3>
+                    </div>
+                  </div>
+                  <div className={styles.answerList}>
+                    {(councilRoles.length ? councilRoles : []).map((role) => (
+                      <article key={role.role} className={styles.metricBlock}>
+                        <span>{role.label}</span>
+                        <strong>{role.summary}</strong>
+                        <small>
+                          {role.recommended_action ?? "等待新的任务或证据输入。"} / 证据 {role.evidence_count} 条
+                        </small>
+                      </article>
+                    ))}
+                    {!councilRoles.length ? (
+                      <div className={styles.emptyState}>当前还没有可展示的智能体会商摘要。</div>
+                    ) : null}
+                  </div>
+                  <div className={styles.answerTags}>
+                    <span>审计状态：{consoleState.agentCouncil?.audit_decision.status ?? "unknown"}</span>
+                    <span>开放问题：{consoleState.agentCouncil?.open_questions.length ?? 0}</span>
+                    <span>阻断项：{consoleState.agentCouncil?.blocked_by.length ?? 0}</span>
+                  </div>
+                </div>
+                <div className={styles.panelFrame}>
+                  <div className={styles.panelHeaderCompact}>
+                    <div>
+                      <p className={styles.sectionLabel}>Difference Matrix</p>
+                      <h3>角色差异与分歧</h3>
+                    </div>
+                  </div>
+                  <div className={styles.answerList}>
+                    {recentCouncilResults.length ? (
+                      recentCouncilResults.map((result) => (
+                        <article key={result.result_id} className={styles.metricBlock}>
+                          <span>{result.agent_name}</span>
+                          <strong>{result.summary}</strong>
+                          <small>
+                            置信度 {Math.round(result.confidence * 100)}% / 证据 {result.evidence_refs.length} 条 /
+                            建议 {result.recommended_next_tasks?.length ?? 0} 项
+                          </small>
+                        </article>
+                      ))
+                    ) : (
+                      <div className={styles.emptyState}>当前没有足够的 recent results 来展示角色差异。</div>
+                    )}
+                  </div>
+                  <div className={styles.answerTags}>
+                    {agentOpenQuestions.slice(0, 4).map((item) => (
+                      <span key={item}>{item}</span>
+                    ))}
+                    {!agentOpenQuestions.length ? <span>当前没有新的 open questions</span> : null}
+                  </div>
+                </div>
+                <div className={styles.panelFrame}>
+                  <div className={styles.panelHeaderCompact}>
+                    <div>
+                      <p className={styles.sectionLabel}>Evidence Compare</p>
+                      <h3>证据对照板</h3>
+                    </div>
+                  </div>
+                  <div className={styles.answerList}>
+                    {evidenceCompareResults.length ? (
+                      evidenceCompareResults.map((result) => (
+                        <article key={`${result.result_id}-evidence`} className={styles.metricBlock}>
+                          <span>{result.agent_name}</span>
+                          <strong>
+                            引用 {result.evidence_refs.length} 条 / 缺口 {result.missing_slots.length} 项
+                          </strong>
+                          <small>
+                            {result.evidence_refs.slice(0, 3).join(" | ") || "当前没有明确证据引用"}
+                            {result.missing_slots.length
+                              ? ` / 缺口：${result.missing_slots.slice(0, 2).join(" | ")}`
+                              : ""}
+                            {result.handoff_recommendations.length
+                              ? ` / 建议移交：${result.handoff_recommendations.slice(0, 2).join(" | ")}`
+                              : ""}
+                          </small>
+                        </article>
+                      ))
+                    ) : (
+                      <div className={styles.emptyState}>当前还没有足够的证据引用差异可以展示。</div>
+                    )}
+                  </div>
+                </div>
+              </div>
             }
-            timeline={
-              <div className={styles.panelFrame}>
-                <MultiAgentDesk
-                  eventId={consoleState.event?.event_id}
-                  agentStatus={consoleState.agentStatus}
-                  agentTasks={consoleState.agentTasks}
-                  sessionMemoryView={consoleState.sessionMemoryView}
-                  sharedMemorySnapshot={consoleState.sharedMemorySnapshot}
-                  episodeSummaries={consoleState.episodeSummaries}
-                  triggerEvents={consoleState.triggerEvents}
-                  agentTimeline={consoleState.agentTimeline}
-                  supervisorRuns={consoleState.supervisorRuns}
-                  supervisorLoopStatus={consoleState.supervisorLoopStatus}
-                  recentAgentResults={consoleState.recentAgentResults}
-                  experienceContext={consoleState.experienceContext}
-                  decisionReport={consoleState.decisionReport}
-                  agentMetrics={consoleState.agentMetrics}
-                  evaluationBenchmarks={consoleState.evaluationBenchmarks}
-                  latestEvaluationReport={consoleState.latestEvaluationReport}
-                  busy={consoleState.isBusy}
-                  canControlSupervisor={canControlSupervisor}
-                  canReplayTask={canReplayTask}
-                  canRunEvaluation={canRunEvaluation}
-                  onRunSupervisor={consoleState.runSupervisorNow}
-                  onTickSupervisor={consoleState.tickSupervisor}
-                  onReplayTask={consoleState.replayAgentTask}
-                  onRunEvaluation={consoleState.runEvaluation}
-                  onReplayEvaluationReport={consoleState.replayEvaluationReport}
-                />
+            chamber={
+              <div className={styles.primaryColumn}>
+                <div className={styles.panelFrame}>
+                  <div className={styles.panelHeaderCompact}>
+                    <div>
+                      <p className={styles.sectionLabel}>Conference View</p>
+                      <h3>会商室主桌面</h3>
+                    </div>
+                  </div>
+                  <MultiAgentDesk
+                    eventId={consoleState.event?.event_id}
+                    agentStatus={consoleState.agentStatus}
+                    agentTasks={consoleState.agentTasks}
+                    sessionMemoryView={consoleState.sessionMemoryView}
+                    sharedMemorySnapshot={consoleState.sharedMemorySnapshot}
+                    episodeSummaries={consoleState.episodeSummaries}
+                    triggerEvents={consoleState.triggerEvents}
+                    agentTimeline={consoleState.agentTimeline}
+                    supervisorRuns={consoleState.supervisorRuns}
+                    supervisorLoopStatus={consoleState.supervisorLoopStatus}
+                    recentAgentResults={consoleState.recentAgentResults}
+                    experienceContext={consoleState.experienceContext}
+                    decisionReport={consoleState.decisionReport}
+                    agentMetrics={consoleState.agentMetrics}
+                    evaluationBenchmarks={consoleState.evaluationBenchmarks}
+                    latestEvaluationReport={consoleState.latestEvaluationReport}
+                    busy={consoleState.isBusy}
+                    canControlSupervisor={canControlSupervisor}
+                    canReplayTask={canReplayTask}
+                    canRunEvaluation={canRunEvaluation}
+                    onRunSupervisor={consoleState.runSupervisorNow}
+                    onTickSupervisor={consoleState.tickSupervisor}
+                    onReplayTask={consoleState.replayAgentTask}
+                    onRunEvaluation={consoleState.runEvaluation}
+                    onReplayEvaluationReport={consoleState.replayEvaluationReport}
+                  />
+                </div>
+              </div>
+            }
+            orchestration={
+              <div className={styles.primaryColumn}>
+                <div className={styles.panelFrame}>
+                  <div className={styles.panelHeaderCompact}>
+                    <div>
+                      <p className={styles.sectionLabel}>Supervisor Orchestration</p>
+                      <h3>编排结果与审计边界</h3>
+                    </div>
+                  </div>
+                  <div className={styles.answerList}>
+                    <article className={styles.metricBlock}>
+                      <span>Audit rationale</span>
+                      <strong>{consoleState.agentCouncil?.audit_decision.rationale ?? "等待新的 supervisor 编排结果。"}</strong>
+                      <small>
+                        {consoleState.agentCouncil?.audit_decision.approval_required
+                          ? "当前仍要求人工审批后放行。"
+                          : "当前编排允许自动推进。"}
+                      </small>
+                    </article>
+                    <article className={styles.metricBlock}>
+                      <span>Decision path</span>
+                      <strong>{agentDecisionPath[0] ?? "waiting"}</strong>
+                      <small>{agentDecisionPath.slice(1, 4).join(" -> ") || "当前还没有完整的 decision path。"}</small>
+                    </article>
+                  </div>
+                  <div className={styles.answerTags}>
+                    {agentDecisionPath.slice(0, 4).map((item) => (
+                      <span key={item}>{item}</span>
+                    ))}
+                    {!agentDecisionPath.length ? <span>当前还没有 supervisor decision path</span> : null}
+                    {agentBlockedBy.slice(0, 3).map((item) => (
+                      <span key={item}>{item}</span>
+                    ))}
+                  </div>
+                </div>
+                <div className={styles.panelFrame}>
+                  <SignalTimeline
+                    title="智能体时间线"
+                    subtitle="最近触发与任务变化"
+                    items={agentTimelineItems}
+                    emptyText="当前没有新的智能体时间线记录。"
+                  />
+                </div>
+                <div className={styles.panelFrame}>
+                  <div className={styles.panelHeaderCompact}>
+                    <div>
+                      <p className={styles.sectionLabel}>Closure Readiness</p>
+                      <h3>会商到闭环的推进状态</h3>
+                    </div>
+                  </div>
+                  <div className={styles.answerList}>
+                    <article className={styles.metricBlock}>
+                      <span>Pending proposals</span>
+                      <strong>{pendingProposalCount}</strong>
+                      <small>待审批 proposal 仍需人工放行后才能进入 warning 生成。</small>
+                    </article>
+                    <article className={styles.metricBlock}>
+                      <span>Approved proposals</span>
+                      <strong>{approvedProposalCount}</strong>
+                      <small>已批准 proposal 可以直接进入 audience warnings 和执行留痕。</small>
+                    </article>
+                    <article className={styles.metricBlock}>
+                      <span>Warning drafts</span>
+                      <strong>{warningDraftCount || latestWarningDrafts.length}</strong>
+                      <small>warning drafts 数量可以帮助判断闭环是否已经落地。</small>
+                    </article>
+                  </div>
+                </div>
+              </div>
+            }
+            governance={
+              <div className={styles.sideColumn}>
+                <div className={styles.panelFrame}>
+                  <div className={styles.panelHeaderCompact}>
+                    <div>
+                      <p className={styles.sectionLabel}>Open Questions</p>
+                      <h3>未解决问题</h3>
+                    </div>
+                  </div>
+                  <div className={styles.answerList}>
+                    {agentOpenQuestions.length ? (
+                      agentOpenQuestions.map((item) => (
+                        <article key={item} className={styles.metricBlock}>
+                          <span>question</span>
+                          <strong>{item}</strong>
+                          <small>该问题尚未被会商链完整关闭，需要继续追问或补证。</small>
+                        </article>
+                      ))
+                    ) : (
+                      <div className={styles.emptyState}>当前没有新的 open questions。</div>
+                    )}
+                  </div>
+                </div>
+                <div className={styles.panelFrame}>
+                  <div className={styles.panelHeaderCompact}>
+                    <div>
+                      <p className={styles.sectionLabel}>Blocked By</p>
+                      <h3>放行阻断项</h3>
+                    </div>
+                  </div>
+                  <div className={styles.answerList}>
+                    {agentBlockedBy.length ? (
+                      agentBlockedBy.map((item) => (
+                        <article key={item} className={styles.metricBlock}>
+                          <span>blocked</span>
+                          <strong>{item}</strong>
+                          <small>当前会商结论被此边界限制，不能直接自动推进。</small>
+                        </article>
+                      ))
+                    ) : (
+                      <div className={styles.emptyState}>当前没有新的阻断项，会商结果可继续推进。</div>
+                    )}
+                  </div>
+                </div>
+                <div className={styles.panelFrame}>
+                  <div className={styles.panelHeaderCompact}>
+                    <div>
+                      <p className={styles.sectionLabel}>Closure Link</p>
+                      <h3>闭环出口</h3>
+                    </div>
+                  </div>
+                  <div className={styles.answerList}>
+                    {latestWarningDrafts.slice(0, 3).map((draft) => (
+                      <article key={draft.warning_id} className={styles.metricBlock}>
+                        <span>{draft.audience}</span>
+                        <strong>{draft.channel}</strong>
+                        <small>{draft.grounding_summary || draft.content}</small>
+                      </article>
+                    ))}
+                    {!latestWarningDrafts.length ? (
+                      <div className={styles.emptyState}>当前还没有新的 warning draft，会商结果将在批准 proposal 后进入这里。</div>
+                    ) : null}
+                  </div>
+                </div>
               </div>
             }
           />
@@ -1808,26 +1996,125 @@ export default function App() {
         {isReliabilityPage ? (
           <ReliabilityPage
             health={
-              <div className={styles.panelFrame}>
-                <ReliabilityAuditDesk
-                  eventId={consoleState.event?.event_id}
-                  supervisorLoopStatus={consoleState.supervisorLoopStatus}
-                  alerts={consoleState.openAlerts}
-                  auditRecords={consoleState.auditRecords}
-                  archiveStatus={consoleState.archiveStatus}
-                  busy={consoleState.reliabilityBusy || consoleState.isBusy}
-                  canRunArchive={canRunArchive}
-                  onQueryAudit={consoleState.queryAuditRecords}
-                  onRunArchive={consoleState.runArchiveCycle}
-                />
+              <div className={styles.primaryColumn}>
+                <div className={styles.panelFrame}>
+                  <div className={styles.panelHeaderCompact}>
+                    <div>
+                      <p className={styles.sectionLabel}>Agent Council Audit</p>
+                      <h3>会商与审计判定</h3>
+                    </div>
+                  </div>
+                  <div className={styles.answerList}>
+                    {(councilRoles.length ? councilRoles : []).map((role) => (
+                      <article key={role.role} className={styles.metricBlock}>
+                        <span>{role.label}</span>
+                        <strong>{role.summary}</strong>
+                        <small>{role.recommended_action ?? "等待新的审计结论或治理动作。"}</small>
+                      </article>
+                    ))}
+                    {!councilRoles.length ? (
+                      <div className={styles.emptyState}>当前没有新的会商摘要，系统将继续等待触发和证据汇聚。</div>
+                    ) : null}
+                  </div>
+                  <div className={styles.answerTags}>
+                    <span>Audit: {consoleState.agentCouncil?.audit_decision.status ?? "unknown"}</span>
+                    <span>Open questions: {consoleState.agentCouncil?.open_questions.length ?? 0}</span>
+                    <span>Blocked by: {consoleState.agentCouncil?.blocked_by.length ?? 0}</span>
+                  </div>
+                </div>
+                <div className={styles.panelFrame}>
+                  <ReliabilityAuditDesk
+                    eventId={consoleState.event?.event_id}
+                    supervisorLoopStatus={consoleState.supervisorLoopStatus}
+                    alerts={consoleState.openAlerts}
+                    auditRecords={consoleState.auditRecords}
+                    archiveStatus={consoleState.archiveStatus}
+                    busy={consoleState.reliabilityBusy || consoleState.isBusy}
+                    canRunArchive={canRunArchive}
+                    onQueryAudit={consoleState.queryAuditRecords}
+                    onRunArchive={consoleState.runArchiveCycle}
+                  />
+                </div>
               </div>
             }
             governance={
-              <SecurityDesk
-                operatorRole={consoleState.operatorRole}
-                operatorCapabilities={consoleState.operatorCapabilities}
-                onChangeRole={consoleState.setOperatorRole}
-              />
+              <div className={styles.sideColumn}>
+                <div className={styles.panelFrame}>
+                  <div className={styles.panelHeaderCompact}>
+                    <div>
+                      <p className={styles.sectionLabel}>Decision Boundary</p>
+                      <h3>权限与阻断边界</h3>
+                    </div>
+                  </div>
+                  <div className={styles.answerList}>
+                    <article className={styles.metricBlock}>
+                      <span>Rationale</span>
+                      <strong>{consoleState.agentCouncil?.audit_decision.rationale ?? "等待新的审计说明。"}</strong>
+                      <small>
+                        {(consoleState.agentCouncil?.audit_decision.risk_flags ?? []).join(" / ") || "当前没有额外风险标记。"}
+                      </small>
+                    </article>
+                  </div>
+                  <div className={styles.answerTags}>
+                    <span>审批要求：{consoleState.agentCouncil?.audit_decision.approval_required ? "需要人工放行" : "可自动推进"}</span>
+                    <span>SSE：{consoleState.twinStreamStatus}</span>
+                  </div>
+                </div>
+                <SecurityDesk
+                  operatorRole={consoleState.operatorRole}
+                  operatorCapabilities={consoleState.operatorCapabilities}
+                  onChangeRole={consoleState.setOperatorRole}
+                />
+              </div>
+            }
+            closure={
+              <div className={styles.primaryColumn}>
+                <div className={styles.panelFrame}>
+                  <div className={styles.panelHeaderCompact}>
+                    <div>
+                      <p className={styles.sectionLabel}>Closure Snapshot</p>
+                      <h3>审批与预警闭环</h3>
+                    </div>
+                  </div>
+                  <div className={styles.answerList}>
+                    <article className={styles.metricBlock}>
+                      <span>Pending proposals</span>
+                      <strong>{pendingProposalCount}</strong>
+                      <small>等待审批的人机协同动作仍在主链路中。</small>
+                    </article>
+                    <article className={styles.metricBlock}>
+                      <span>Approved proposals</span>
+                      <strong>{approvedProposalCount}</strong>
+                      <small>已批准动作可继续生成 audience warnings 并进入执行留痕。</small>
+                    </article>
+                    <article className={styles.metricBlock}>
+                      <span>Warning drafts</span>
+                      <strong>{warningDraftCount || latestWarningDrafts.length}</strong>
+                      <small>分众预警草稿已与 proposal 闭环关联。</small>
+                    </article>
+                  </div>
+                </div>
+                <div className={styles.panelFrame}>
+                  <div className={styles.panelHeaderCompact}>
+                    <div>
+                      <p className={styles.sectionLabel}>Latest Outputs</p>
+                      <h3>最新闭环产物</h3>
+                    </div>
+                  </div>
+                  <div className={styles.answerList}>
+                    {latestWarningDrafts.slice(0, 4).map((draft) => (
+                      <article key={draft.warning_id} className={styles.metricBlock}>
+                        <span>{draft.audience}</span>
+                        <strong>{draft.channel}</strong>
+                        <small>{draft.grounding_summary || draft.content}</small>
+                      </article>
+                    ))}
+                    {!latestWarningDrafts.length ? (
+                      <div className={styles.emptyState}>当前还没有新的 warning draft，批准 proposal 后会在这里形成闭环结果。</div>
+                    ) : null}
+                  </div>
+                </div>
+              </div>
             }
           />
         ) : null}

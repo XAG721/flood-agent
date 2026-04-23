@@ -28,6 +28,7 @@ from .v2.models import (
     V2CopilotMessageRequest,
     V2CopilotSessionRequest,
 )
+from .v3.models import AgentDialogRequest, ProposalGenerationRequest
 from .v2.security import AuthorizationError, ensure_operator_role, list_operator_capabilities, normalize_operator_role
 
 
@@ -372,6 +373,74 @@ async def stream_v2_pending_regional_proposals():
             if snapshot.queue_version != last_version:
                 last_version = snapshot.queue_version
                 yield f"data: {json.dumps(snapshot.model_dump(mode='json'), ensure_ascii=False)}\n\n"
+            await asyncio.sleep(1.0)
+
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+
+@app.get("/v3/events/{event_id}/twin-overview")
+def get_v3_twin_overview(event_id: str):
+    try:
+        return system.agent_twin.get_twin_overview(event_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@app.get("/v3/events/{event_id}/objects/{object_id}")
+def get_v3_focus_object(event_id: str, object_id: str):
+    try:
+        return system.agent_twin.get_focus_object(event_id, object_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@app.post("/v3/events/{event_id}/dialog")
+def run_v3_agent_dialog(event_id: str, request: AgentDialogRequest):
+    try:
+        return system.agent_twin.run_dialog(event_id, request)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@app.get("/v3/events/{event_id}/agent-council")
+def get_v3_agent_council(event_id: str):
+    try:
+        return system.agent_twin.get_agent_council(event_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@app.post("/v3/events/{event_id}/proposals/generate")
+def generate_v3_proposals(event_id: str, request: ProposalGenerationRequest):
+    try:
+        return system.agent_twin.generate_proposals(event_id, request)
+    except LLMGenerationError as exc:
+        raise HTTPException(status_code=503, detail=f"{exc.code}: {exc}") from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@app.post("/v3/proposals/{proposal_id}/warnings/generate")
+def generate_v3_warnings(proposal_id: str):
+    try:
+        return system.agent_twin.generate_warnings(proposal_id)
+    except LLMGenerationError as exc:
+        raise HTTPException(status_code=503, detail=f"{exc.code}: {exc}") from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@app.get("/v3/events/{event_id}/stream")
+async def stream_v3_event_updates(event_id: str, object_id: str | None = None):
+    async def event_generator():
+        last_versions: dict[str, str] = {}
+        while True:
+            for event in system.agent_twin.build_stream_events(event_id, focus_object_id=object_id):
+                previous = last_versions.get(event.event_type)
+                if previous == event.version:
+                    continue
+                last_versions[event.event_type] = event.version
+                yield f"data: {json.dumps(event.model_dump(mode='json'), ensure_ascii=False)}\n\n"
             await asyncio.sleep(1.0)
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
