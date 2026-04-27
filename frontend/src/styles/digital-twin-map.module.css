@@ -13,6 +13,31 @@
     linear-gradient(180deg, rgba(6, 18, 31, 0.96), rgba(5, 13, 23, 0.94));
 }
 
+.canvasShell::before,
+.canvasShell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.canvasShell::before {
+  background:
+    radial-gradient(circle at 50% 50%, transparent 0 28%, rgba(108, 195, 255, 0.08) 29%, transparent 31%),
+    conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(105, 220, 255, 0.18) 22deg, transparent 54deg);
+  mix-blend-mode: screen;
+  animation: radarSweep 9s linear infinite;
+}
+
+.canvasShell::after {
+  background:
+    linear-gradient(115deg, transparent 0 34%, rgba(80, 180, 255, 0.1) 35%, transparent 37% 100%),
+    radial-gradient(circle at 22% 72%, rgba(255, 173, 66, 0.12), transparent 24%),
+    radial-gradient(circle at 72% 38%, rgba(246, 111, 157, 0.12), transparent 20%);
+  opacity: 0.72;
+}
+
 .viewerHost {
   position: absolute;
   inset: 0;
@@ -28,6 +53,42 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
   pointer-events: none;
+}
+
+.overlayActions {
+  position: absolute;
+  top: 112px;
+  left: 18px;
+  z-index: 3;
+}
+
+.overlayActions button {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid rgba(132, 220, 255, 0.34);
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(8, 27, 48, 0.88), rgba(16, 51, 74, 0.68));
+  color: #f4fbff;
+  box-shadow: 0 12px 36px rgba(14, 129, 190, 0.22);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition:
+    border-color 180ms ease,
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.overlayActions button:hover:not(:disabled) {
+  border-color: rgba(255, 173, 66, 0.74);
+  transform: translateY(-1px);
+}
+
+.overlayActions button:disabled {
+  cursor: default;
+  opacity: 0.58;
 }
 
 .overlayLegend {
@@ -225,15 +286,35 @@
   background-size: 64px 64px;
 }
 
-.fallbackNode {
+.fallbackObject {
   position: absolute;
   z-index: 1;
+  transform: translate(-50%, -50%);
+}
+
+.fallbackHalo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 120px;
+  height: 78px;
+  border: 1px solid color-mix(in srgb, var(--node-color) 72%, transparent);
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--node-color) 24%, transparent), transparent 64%);
+  transform: translate(-50%, -50%);
+  animation: riskPulse 2.6s ease-in-out infinite;
+}
+
+.fallbackNode {
+  position: relative;
+  z-index: 2;
   padding: 10px 12px;
   border-radius: 999px;
-  border: 1px solid rgba(126, 160, 183, 0.18);
-  background: rgba(7, 18, 30, 0.84);
+  border: 1px solid color-mix(in srgb, var(--node-color) 48%, rgba(126, 160, 183, 0.18));
+  background: linear-gradient(135deg, rgba(7, 18, 30, 0.88), color-mix(in srgb, var(--node-color) 18%, rgba(7, 18, 30, 0.8)));
   color: #f4fbff;
   cursor: pointer;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
 }
 
 .fallbackNodeActive {
@@ -241,9 +322,37 @@
   box-shadow: 0 0 0 1px rgba(255, 166, 72, 0.24);
 }
 
+@keyframes radarSweep {
+  from {
+    transform: rotate(0deg) scale(1.12);
+  }
+
+  to {
+    transform: rotate(360deg) scale(1.12);
+  }
+}
+
+@keyframes riskPulse {
+  0%,
+  100% {
+    opacity: 0.42;
+    transform: translate(-50%, -50%) scale(0.78);
+  }
+
+  50% {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(1.12);
+  }
+}
+
 @media (max-width: 960px) {
   .overlayHud {
     grid-template-columns: 1fr;
+  }
+
+  .overlayActions {
+    position: static;
+    margin: 16px 18px 0;
   }
 
   .overlayLegend {

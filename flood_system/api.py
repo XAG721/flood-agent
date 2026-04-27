@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -32,7 +33,8 @@ from .v3.models import AgentDialogRequest, ProposalGenerationRequest
 from .v2.security import AuthorizationError, ensure_operator_role, list_operator_capabilities, normalize_operator_role
 
 
-DB_PATH = Path(__file__).resolve().parent.parent / "data" / "flood_warning_system_v2.db"
+DEFAULT_DB_PATH = Path(__file__).resolve().parent.parent / "data" / "flood_warning_system_v2.db"
+DB_PATH = Path(os.getenv("FLOOD_DB_PATH", str(DEFAULT_DB_PATH))).expanduser().resolve()
 
 
 @asynccontextmanager

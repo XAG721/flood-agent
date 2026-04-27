@@ -27,6 +27,10 @@
 - AgentTwin 前端编排：`frontend/src/hooks/useAgentTwinConsole.ts`
 - 数字孪生主屏：`frontend/src/components/DigitalTwinImpactScreen.tsx`
 - Cesium 画布：`frontend/src/components/DigitalTwinCesiumCanvas.tsx`
+- 三维校准公共模块：`frontend/src/lib/cityengineCalibration.ts`
+- 演示主库重建：`scripts/rebuild_demo_db.py`
+- 演示主库检查：`scripts/inspect_demo_db.py`
+- 一键演示启动：`scripts/start-demo.ps1`
 
 `3D_visual` 不再作为长期并行产品，而是作为 Cesium 场景、模型资源和空间配置的迁移来源。
 
@@ -45,6 +49,9 @@
 11. [`11_前端实施拆解.md`](./11_前端实施拆解.md)
 12. [`12_开发任务清单.md`](./12_开发任务清单.md)
 13. [`13_按模块实施顺序.md`](./13_按模块实施顺序.md)
+14. [`14_数据库问题清单与修复建议.md`](./14_数据库问题清单与修复建议.md)
+15. [`15_演示主库重建方案.md`](./15_演示主库重建方案.md)
+16. [`16_甲方演示脚本.md`](./16_甲方演示脚本.md)
 
 ## 4. 生产级 Demo 验收口径
 
@@ -61,19 +68,43 @@
 
 - 第一眼必须像“数字孪生指挥台”，而不是普通后台。
 - 中央必须是空间主画布，当前实现已接入真实 Cesium 画布。
+- 三维画布必须复用 `3D_visual` 的模型校准口径，当前已抽出 `cityengineCalibration.ts` 承接 GLB 源坐标解析、归一化矩阵和模型焦点计算。
+- 三维展示层需要服务“看懂态势”，当前已增加风险热区、扩散圈、发光联动路径、proposal / warning 状态标识和 `Command flythrough` 指挥巡航。
 - 左侧用于态势解释，右侧用于 action / approval / warning 闭环。
 - 智能体对话不是普通聊天，而是“会商、解释、追问、生成 proposal”的控制入口。
 - `/agents` 展示多智能体会商差异、证据对照、supervisor 编排和治理边界。
 - `/reliability` 展示审计、状态、故障恢复、闭环复盘，而不是只做健康监控。
 
-## 6. 推荐阅读顺序
+## 6. 当前演示运行方式
+
+推荐使用一键脚本启动：
+
+```powershell
+.\scripts\start-demo.ps1
+```
+
+该脚本会完成：
+
+- 重建 `data/flood_warning_system_demo.db`
+- 运行 `inspect_demo_db.py` 验证闭环数据
+- 使用 `FLOOD_DB_PATH` 指向演示库启动后端
+- 启动 `frontend` 开发服务
+- 打开首页进入数字孪生智能体主屏
+
+如需保留现有演示库，可执行：
+
+```powershell
+.\scripts\start-demo.ps1 -SkipRebuild
+```
+
+## 7. 推荐阅读顺序
 
 - 产品和演示范围：`01 + 02 + 09`
 - 后端和接口实现：`03 + 04 + 06 + 07 + 08`
 - 前端重做和展示：`09 + 11 + 13`
-- 联调和验收：`08 + 10 + 12`
+- 联调和验收：`08 + 10 + 12 + 14 + 15 + 16`
 
-## 7. 版本说明
+## 8. 版本说明
 
 - 当前实现目标：`V3 / AgentTwin production-grade demo`
 - 当前实现策略：保留 `V2` 审批、通知、审计闭环，新增 `V3` 聚合读模型和智能体会商能力。

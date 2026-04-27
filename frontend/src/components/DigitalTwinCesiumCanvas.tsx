@@ -1,26 +1,26 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import "cesium/Build/Cesium/Widgets/widgets.css";
+import {
+  buildCalibratedModelMatrix,
+  buildSimpleModelMatrix,
+  computeModelFocusSphere,
+  loadSourceMetadata,
+  normalizeSceneConfig,
+  resolveModelAssetUrl,
+  type SceneConfig,
+  type SourceMetadata,
+} from "../lib/cityengineCalibration";
 import type { RiskLevel, TwinObjectMapLayer } from "../types/api";
 import styles from "../styles/digital-twin-map.module.css";
 
 type CesiumModule = typeof import("cesium");
-
-interface SceneConfig {
-  modelUrl: string;
-  anchorLon: number;
-  anchorLat: number;
-  anchorHeight: number;
-  scale: number;
-  heading: number;
-  pitch: number;
-  roll: number;
-  offsetEast: number;
-  offsetNorth: number;
-  offsetUp: number;
-  cameraPresets?: {
-    overview?: { heading: number; pitch: number; range: number };
-  };
-}
+type TwinEntityBundle = {
+  marker: any;
+  heat?: any;
+  pulse?: any;
+  route?: any;
+};
 
 interface DigitalTwinCesiumCanvasProps {
   eventTitle?: string;
@@ -58,27 +58,23 @@ function stateColor(proposalState: string) {
   }[proposalState] ?? "#5cc8ff";
 }
 
-function isJsdomRuntime() {
-  return typeof navigator !== "undefined" && /jsdom/i.test(navigator.userAgent);
+function riskRadius(riskLevel?: RiskLevel | null, proposalState?: string) {
+  const base = {
+    None: 52,
+    Blue: 72,
+    Yellow: 96,
+    Orange: 124,
+    Red: 156,
+  }[riskLevel ?? "None"];
+  return base + (proposalState === "pending" ? 26 : proposalState === "warning_generated" ? 38 : 0);
 }
 
-function normalizeConfig(raw: Partial<SceneConfig>): SceneConfig {
-  return {
-    modelUrl: raw.modelUrl ?? "/agent-twin-assets/models/cityengine_scene.glb",
-    anchorLon: raw.anchorLon ?? 108.94921153512861,
-    anchorLat: raw.anchorLat ?? 34.24624474240188,
-    anchorHeight: raw.anchorHeight ?? 404.36,
-    scale: raw.scale ?? 1,
-    heading: raw.heading ?? 0,
-    pitch: raw.pitch ?? 0,
-    roll: raw.roll ?? 0,
-    offsetEast: raw.offsetEast ?? 0,
-    offsetNorth: raw.offsetNorth ?? 0,
-    offsetUp: raw.offsetUp ?? 0,
-    cameraPresets: raw.cameraPresets ?? {
-      overview: { heading: 20, pitch: -42, range: 2400 },
-    },
-  };
+function extractObjectId(entityId?: string) {
+  return entityId?.split(":")[0] ?? "";
+}
+
+function isJsdomRuntime() {
+  return typeof navigator !== "undefined" && /jsdom/i.test(navigator.userAgent);
 }
 
 export function DigitalTwinCesiumCanvas({
@@ -91,11 +87,13 @@ export function DigitalTwinCesiumCanvas({
   const hostRef = useRef<HTMLDivElement | null>(null);
   const viewerRef = useRef<any>(null);
   const handlerRef = useRef<any>(null);
-  const entityMapRef = useRef<Map<string, { point?: { outlineWidth?: number; pixelSize?: number } }>>(new Map());
+  const entityMapRef = useRef<Map<string, TwinEntityBundle>>(new Map());
+  const tourTimersRef = useRef<number[]>([]);
   const cesiumRef = useRef<CesiumModule | null>(null);
   const [status, setStatus] = useState("Loading digital twin canvas");
   const [error, setError] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
+  const [tourRunning, setTourRunning] = useState(false);
   const [hoveredObjectId, setHoveredObjectId] = useState<string | null>(null);
 
   const leadLayer = useMemo(
@@ -119,6 +117,51 @@ export function DigitalTwinCesiumCanvas({
     null;
   const toneClass = toneClassName(selectedRiskLevel ?? spotlightLayer?.risk_level ?? leadLayer?.risk_level ?? "None");
 
+  const runCommandFlythrough = () => {
+    const viewer = viewerRef.current;
+    const Cesium = cesiumRef.current;
+    if (!viewer || !Cesium || layers.length === 0) {
+      return;
+    }
+
+    for (const timer of tourTimersRef.current) {
+      window.clearTimeout(timer);
+    }
+    tourTimersRef.current = [];
+    setTourRunning(true);
+
+    const priorityLayers = [
+      ...(leadLayer ? [leadLayer] : []),
+      ...layers.filter((item) => item.object_id !== leadLayer?.object_id && item.proposal_state !== "monitoring"),
+      ...layers.filter((item) => item.object_id !== leadLayer?.object_id && item.proposal_state === "monitoring"),
+    ].slice(0, 5);
+
+    priorityLayers.forEach((layer, index) => {
+      const timer = window.setTimeout(() => {
+        const bundle = entityMapRef.current.get(layer.object_id);
+        if (!bundle?.marker) {
+          return;
+        }
+        onSelectObject(layer.object_id);
+        viewer.flyTo(bundle.marker, {
+          duration: 1.1,
+          offset: new Cesium.HeadingPitchRange(
+            Cesium.Math.toRadians(38),
+            Cesium.Math.toRadians(-28),
+            layer.proposal_state === "warning_generated" ? 560 : 430,
+          ),
+        });
+      }, index * 1500);
+      tourTimersRef.current.push(timer);
+    });
+
+    const stopTimer = window.setTimeout(() => {
+      setTourRunning(false);
+      tourTimersRef.current = [];
+    }, priorityLayers.length * 1500 + 700);
+    tourTimersRef.current.push(stopTimer);
+  };
+
   useEffect(() => {
     if (!hostRef.current || isJsdomRuntime()) {
       return;
@@ -137,7 +180,7 @@ export function DigitalTwinCesiumCanvas({
           throw new Error(`scene-config.json returned ${response.status}`);
         }
 
-        const sceneConfig = normalizeConfig((await response.json()) as Partial<SceneConfig>);
+        const sceneConfig = normalizeSceneConfig((await response.json()) as Partial<SceneConfig>);
         const {
           BoundingSphere,
           Cartesian2,
@@ -145,14 +188,13 @@ export function DigitalTwinCesiumCanvas({
           Color,
           EllipsoidTerrainProvider,
           HeadingPitchRange,
-          HeadingPitchRoll,
           HorizontalOrigin,
           Ion,
           IonWorldImageryStyle,
           Math: CesiumMath,
           Matrix4,
           Model,
-          Quaternion,
+          PolylineGlowMaterialProperty,
           ScreenSpaceEventHandler,
           ScreenSpaceEventType,
           Transforms,
@@ -211,23 +253,22 @@ export function DigitalTwinCesiumCanvas({
         }
         viewerRef.current = viewer;
 
+        setStatus("Analyzing CityEngine source coordinates");
+        let sourceMetadata: SourceMetadata | null = null;
+        try {
+          sourceMetadata = await loadSourceMetadata(Cesium, sceneConfig);
+        } catch (metadataError) {
+          console.warn("Falling back to simple CityEngine placement", metadataError);
+        }
+
         const anchor = Cartesian3.fromDegrees(sceneConfig.anchorLon, sceneConfig.anchorLat, anchorHeight);
         const anchorFrame = Transforms.eastNorthUpToFixedFrame(anchor);
-        const modelTransform = Matrix4.fromTranslationQuaternionRotationScale(
-          new Cartesian3(sceneConfig.offsetEast, sceneConfig.offsetNorth, sceneConfig.offsetUp),
-          Quaternion.fromHeadingPitchRoll(
-            new HeadingPitchRoll(
-              CesiumMath.toRadians(sceneConfig.heading),
-              CesiumMath.toRadians(sceneConfig.pitch),
-              CesiumMath.toRadians(sceneConfig.roll),
-            ),
-          ),
-          new Cartesian3(sceneConfig.scale, sceneConfig.scale, sceneConfig.scale),
-        );
-        const modelMatrix = Matrix4.multiply(anchorFrame, modelTransform, new Matrix4());
+        const modelMatrix = sourceMetadata
+          ? buildCalibratedModelMatrix(Cesium, sceneConfig, sourceMetadata, anchorHeight)
+          : buildSimpleModelMatrix(Cesium, sceneConfig, anchorHeight);
 
         const model = await Model.fromGltfAsync({
-          url: sceneConfig.modelUrl.replace("/models/", "/agent-twin-assets/models/"),
+          url: resolveModelAssetUrl(sceneConfig.modelUrl),
           modelMatrix,
           color: Color.WHITE.withAlpha(0.96),
           silhouetteColor: Color.fromCssColorString("#ff9a4a"),
@@ -238,19 +279,51 @@ export function DigitalTwinCesiumCanvas({
         }
 
         entityMapRef.current.clear();
+        const layerPositions = new Map<string, any>();
         for (const layer of layers) {
           const position = Matrix4.multiplyByPoint(
             anchorFrame,
             new Cartesian3(layer.east_offset_m, layer.north_offset_m, layer.height_offset_m),
             new Cartesian3(),
           );
-          const entity = viewer.entities.add({
+          layerPositions.set(layer.object_id, position);
+        }
+
+        for (const layer of layers) {
+          const position = layerPositions.get(layer.object_id);
+          const color = Color.fromCssColorString(stateColor(layer.proposal_state));
+          const radius = riskRadius(layer.risk_level, layer.proposal_state);
+          const heat = viewer.entities.add({
+            id: `${layer.object_id}:risk-heat`,
+            name: `${layer.name} risk heat`,
+            position,
+            ellipse: {
+              semiMajorAxis: radius,
+              semiMinorAxis: radius * 0.72,
+              material: color.withAlpha(layer.proposal_state === "monitoring" ? 0.12 : 0.2),
+              outline: true,
+              outlineColor: color.withAlpha(0.38),
+            },
+          });
+          const pulse = viewer.entities.add({
+            id: `${layer.object_id}:risk-pulse`,
+            name: `${layer.name} command pulse`,
+            position,
+            ellipse: {
+              semiMajorAxis: radius * 1.22,
+              semiMinorAxis: radius * 0.9,
+              material: color.withAlpha(layer.proposal_state === "monitoring" ? 0.04 : 0.1),
+              outline: layer.proposal_state !== "monitoring",
+              outlineColor: color.withAlpha(0.62),
+            },
+          });
+          const marker = viewer.entities.add({
             id: layer.object_id,
             name: layer.name,
             position,
             point: {
               pixelSize: layer.proposal_state === "warning_generated" ? 20 : layer.is_lead ? 18 : 14,
-              color: Color.fromCssColorString(stateColor(layer.proposal_state)),
+              color,
               outlineColor: Color.fromCssColorString("#081425"),
               outlineWidth: layer.proposal_state === "approved" || layer.proposal_state === "warning_generated" ? 4 : 3,
             },
@@ -264,29 +337,65 @@ export function DigitalTwinCesiumCanvas({
               verticalOrigin: VerticalOrigin.BOTTOM,
               horizontalOrigin: HorizontalOrigin.CENTER,
             },
-          }) as { point?: { outlineWidth?: number; pixelSize?: number } };
-          entityMapRef.current.set(layer.object_id, entity);
+          });
+          entityMapRef.current.set(layer.object_id, { marker, heat, pulse });
+        }
+
+        const leadPosition = leadLayer ? layerPositions.get(leadLayer.object_id) : undefined;
+        if (leadPosition) {
+          for (const layer of layers) {
+            if (layer.object_id === leadLayer?.object_id) {
+              continue;
+            }
+            const targetPosition = layerPositions.get(layer.object_id);
+            if (!targetPosition) {
+              continue;
+            }
+            const color = Color.fromCssColorString(stateColor(layer.proposal_state));
+            const route = viewer.entities.add({
+              id: `${layer.object_id}:command-link`,
+              name: `${layer.name} command link`,
+              polyline: {
+                positions: [leadPosition, targetPosition],
+                width: layer.proposal_state === "monitoring" ? 2 : 4,
+                material: new PolylineGlowMaterialProperty({
+                  glowPower: layer.proposal_state === "monitoring" ? 0.12 : 0.28,
+                  color: color.withAlpha(layer.proposal_state === "monitoring" ? 0.28 : 0.74),
+                }),
+              },
+            });
+            const bundle = entityMapRef.current.get(layer.object_id);
+            if (bundle) {
+              bundle.route = route;
+            }
+          }
         }
 
         const handler = new ScreenSpaceEventHandler(viewer.scene.canvas);
         handlerRef.current = handler;
         handler.setInputAction((movement: { position: any }) => {
           const picked = viewer.scene.pick(movement.position) as { id?: { id?: string } } | undefined;
-          if (defined(picked) && picked?.id?.id) {
-            onSelectObject(String(picked.id.id));
+          const objectId = extractObjectId(String(picked?.id?.id ?? ""));
+          if (defined(picked) && objectId) {
+            onSelectObject(objectId);
           }
         }, ScreenSpaceEventType.LEFT_CLICK);
         handler.setInputAction((movement: { endPosition: any }) => {
           const picked = viewer.scene.pick(movement.endPosition) as { id?: { id?: string } } | undefined;
-          if (defined(picked) && picked?.id?.id) {
-            setHoveredObjectId(String(picked.id.id));
+          const objectId = extractObjectId(String(picked?.id?.id ?? ""));
+          if (defined(picked) && objectId) {
+            setHoveredObjectId(objectId);
             return;
           }
           setHoveredObjectId(null);
         }, ScreenSpaceEventType.MOUSE_MOVE);
 
-        const preset = sceneConfig.cameraPresets?.overview ?? { heading: 20, pitch: -42, range: 2400 };
-        viewer.camera.flyToBoundingSphere(new BoundingSphere(anchor, 1600), {
+        const preset = sceneConfig.cameraPresets?.overview ?? { heading: 20, pitch: -42, range: 2400, fitWholeModel: true };
+        const cameraTarget =
+          sourceMetadata && preset.fitWholeModel !== false
+            ? computeModelFocusSphere(Cesium, sceneConfig, sourceMetadata, anchorHeight)
+            : new BoundingSphere(anchor, 1600);
+        viewer.camera.flyToBoundingSphere(cameraTarget, {
           duration: 0,
           offset: new HeadingPitchRange(
             CesiumMath.toRadians(preset.heading),
@@ -317,6 +426,10 @@ export function DigitalTwinCesiumCanvas({
       viewerRef.current?.destroy();
       viewerRef.current = null;
       entityMapRef.current.clear();
+      for (const timer of tourTimersRef.current) {
+        window.clearTimeout(timer);
+      }
+      tourTimersRef.current = [];
     };
   }, [layers, onSelectObject]);
 
@@ -326,42 +439,53 @@ export function DigitalTwinCesiumCanvas({
       return;
     }
 
-    entityMapRef.current.forEach((entity, objectId) => {
+    entityMapRef.current.forEach((bundle, objectId) => {
       const layer = layerById.get(objectId);
       const basePixelSize = layer?.proposal_state === "warning_generated" ? 20 : layer?.is_lead ? 18 : 14;
       const baseOutlineWidth =
         layer?.proposal_state === "approved" || layer?.proposal_state === "warning_generated" ? 4 : 3;
-      if (!entity.point) {
+      if (!bundle.marker?.point) {
         return;
       }
-      entity.point.outlineWidth = objectId === selectedObjectId ? baseOutlineWidth + 1 : baseOutlineWidth;
-      entity.point.pixelSize = objectId === selectedObjectId ? basePixelSize + 4 : basePixelSize;
+      bundle.marker.point.outlineWidth = objectId === selectedObjectId ? baseOutlineWidth + 2 : baseOutlineWidth;
+      bundle.marker.point.pixelSize = objectId === selectedObjectId ? basePixelSize + 5 : basePixelSize;
+      if (bundle.pulse?.ellipse) {
+        bundle.pulse.show = objectId === selectedObjectId || layer?.proposal_state !== "monitoring";
+      }
     });
 
-    const selectedEntity = selectedObjectId ? entityMapRef.current.get(selectedObjectId) : undefined;
-    if (selectedEntity) {
+    const selectedEntity = selectedObjectId ? entityMapRef.current.get(selectedObjectId)?.marker : undefined;
+    if (selectedEntity && !tourRunning) {
       viewer.flyTo(selectedEntity, { duration: 0.9 });
     }
     viewer.scene.requestRender();
-  }, [layerById, selectedObjectId]);
+  }, [layerById, selectedObjectId, tourRunning]);
 
   if (isJsdomRuntime()) {
     return (
       <div className={styles.fallbackShell} aria-label="digital-twin-canvas">
         <div className={styles.fallbackGrid} />
         {layers.map((layer) => (
-          <button
+          <div
             key={layer.object_id}
-            type="button"
-            className={`${styles.fallbackNode} ${selectedObjectId === layer.object_id ? styles.fallbackNodeActive : ""}`}
-            style={{
-              left: `${18 + (layer.east_offset_m + 340) / 9}%`,
-              top: `${22 + (260 - layer.north_offset_m) / 8}%`,
-            }}
-            onClick={() => onSelectObject(layer.object_id)}
+            className={styles.fallbackObject}
+            style={
+              {
+                "--node-color": stateColor(layer.proposal_state),
+                left: `${18 + (layer.east_offset_m + 340) / 9}%`,
+                top: `${22 + (260 - layer.north_offset_m) / 8}%`,
+              } as CSSProperties
+            }
           >
-            {`${layer.name} / ${stateLabel(layer.proposal_state)}`}
-          </button>
+            <span className={styles.fallbackHalo} />
+            <button
+              type="button"
+              className={`${styles.fallbackNode} ${selectedObjectId === layer.object_id ? styles.fallbackNodeActive : ""}`}
+              onClick={() => onSelectObject(layer.object_id)}
+            >
+              {`${layer.name} / ${stateLabel(layer.proposal_state)}`}
+            </button>
+          </div>
         ))}
       </div>
     );
@@ -383,6 +507,11 @@ export function DigitalTwinCesiumCanvas({
           <span className={styles.hudLabel}>Objects</span>
           <strong>{layers.length}</strong>
         </div>
+      </div>
+      <div className={styles.overlayActions}>
+        <button type="button" onClick={runCommandFlythrough} disabled={!ready || tourRunning}>
+          {tourRunning ? "Command flythrough running" : "Command flythrough"}
+        </button>
       </div>
       <div className={styles.overlayLegend}>
         <div className={styles.legendRow}>
