@@ -1,4 +1,4 @@
-import { api } from "../lib/api";
+import { buildUrl, request } from "../lib/httpClient";
 import type {
   AgentDialogRequest,
   AgentDialogResponse,
@@ -14,27 +14,35 @@ import type {
 
 export const agentTwinApi = {
   getOverview(eventId: string): Promise<TwinOverviewView> {
-    return api.getV3TwinOverview(eventId);
+    return request(`/v3/events/${eventId}/twin-overview`, { method: "GET" });
   },
 
   getFocusObject(eventId: string, objectId: string): Promise<FocusObjectView> {
-    return api.getV3FocusObject(eventId, objectId);
+    return request(`/v3/events/${eventId}/objects/${objectId}`, { method: "GET" });
   },
 
   sendDialog(eventId: string, payload: AgentDialogRequest): Promise<AgentDialogResponse> {
-    return api.sendV3Dialog(eventId, payload);
+    return request(`/v3/events/${eventId}/dialog`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
   },
 
   getCouncil(eventId: string): Promise<AgentCouncilView> {
-    return api.getV3AgentCouncil(eventId);
+    return request(`/v3/events/${eventId}/agent-council`, { method: "GET" });
   },
 
   generateProposals(eventId: string, payload: ProposalGenerationRequest): Promise<ProposalGenerationResponse> {
-    return api.generateV3Proposals(eventId, payload);
+    return request(`/v3/events/${eventId}/proposals/generate`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
   },
 
   generateWarnings(proposalId: string): Promise<WarningGenerationResponse> {
-    return api.generateV3Warnings(proposalId);
+    return request(`/v3/proposals/${proposalId}/warnings/generate`, {
+      method: "POST",
+    });
   },
 
   openTwinStream(
@@ -45,6 +53,18 @@ export const agentTwinApi = {
     },
     objectId?: string,
   ): EventSource {
-    return api.openV3TwinStream(eventId, handlers, objectId);
+    const streamUrl = new URL(buildUrl(`/v3/events/${eventId}/stream`), window.location.origin);
+    if (objectId) {
+      streamUrl.searchParams.set("object_id", objectId);
+    }
+    const source = new EventSource(streamUrl.toString());
+    source.onmessage = (event) => {
+      const payload = JSON.parse(event.data) as TwinStreamEvent;
+      handlers.onEvent(payload);
+    };
+    source.onerror = () => {
+      handlers.onError?.();
+    };
+    return source;
   },
 };
