@@ -61,6 +61,25 @@ const config: any = {
       },
     },
   },
+  build: {
+    chunkSizeWarningLimit: 6200,
+    rollupOptions: {
+      output: {
+        manualChunks(id: string) {
+          if (id.includes("node_modules/cesium") || id.includes("node_modules/@cesium")) {
+            return "cesium-runtime";
+          }
+          if (id.includes("framer-motion")) {
+            return "motion-runtime";
+          }
+          if (id.includes("node_modules/react") || id.includes("node_modules/react-router")) {
+            return "react-runtime";
+          }
+          return undefined;
+        },
+      },
+    },
+  },
   test: {
     environment: "jsdom",
     setupFiles: "./src/test/setup.ts",

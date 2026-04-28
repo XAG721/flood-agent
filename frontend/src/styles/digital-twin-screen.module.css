@@ -173,7 +173,8 @@
 }
 
 .valueSummaryStrip,
-.degradationBanner {
+.degradationBanner,
+.sourcePanel {
   display: grid;
   grid-template-columns: minmax(240px, 0.7fr) minmax(0, 1.6fr);
   gap: 14px;
@@ -189,7 +190,9 @@
 
 .valueSummaryIntro,
 .degradationLead,
+.sourceIntro,
 .valueSummaryItem,
+.sourceCard,
 .closureSummaryCard {
   padding: 14px 16px;
   border-radius: 20px;
@@ -199,7 +202,9 @@
 
 .valueSummaryIntro span,
 .degradationLead span,
+.sourceIntro span,
 .valueSummaryItem span,
+.sourceCard span,
 .closureSummaryCard span {
   display: block;
   color: var(--fg-muted);
@@ -209,7 +214,8 @@
 }
 
 .valueSummaryIntro strong,
-.degradationLead strong {
+.degradationLead strong,
+.sourceIntro strong {
   display: block;
   margin-top: 8px;
   color: var(--fg-primary);
@@ -221,7 +227,9 @@
 
 .valueSummaryIntro p,
 .degradationLead p,
+.sourceIntro p,
 .valueSummaryItem small,
+.sourceCard small,
 .closureSummaryCard small {
   display: block;
   margin: 8px 0 0;
@@ -230,19 +238,48 @@
 }
 
 .valueSummaryGrid,
-.degradationList {
+.degradationList,
+.sourceGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
 }
 
 .valueSummaryItem strong,
+.sourceCard strong,
 .closureSummaryCard strong {
   display: block;
   margin-top: 8px;
   color: #f4fbff;
   font-size: 22px;
   line-height: 1.2;
+}
+
+.sourceCard {
+  display: grid;
+  gap: 8px;
+  min-height: 138px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--tone-glow) 22%, transparent), transparent 44%),
+    color-mix(in srgb, var(--tone-surface) 88%, transparent);
+}
+
+.sourceCard small {
+  width: fit-content;
+  padding: 5px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--tone-border);
+  background: rgba(7, 18, 30, 0.74);
+  color: var(--tone-accent);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sourceCard p {
+  margin: 0;
+  color: var(--fg-secondary);
+  line-height: 1.55;
 }
 
 .demoProofIntro,
@@ -435,6 +472,51 @@
   min-height: 760px;
 }
 
+.canvasSkeleton {
+  position: relative;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 12px;
+  min-height: 520px;
+  overflow: hidden;
+  border-radius: 28px;
+  border: 1px solid var(--tone-border);
+  background:
+    radial-gradient(circle at 48% 42%, var(--tone-glow), transparent 28%),
+    linear-gradient(180deg, rgba(6, 18, 31, 0.96), rgba(5, 13, 23, 0.94));
+}
+
+.canvasSkeletonGrid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 66px 66px;
+  mask-image: radial-gradient(circle at center, black, transparent 72%);
+}
+
+.canvasSkeleton strong,
+.canvasSkeleton p {
+  position: relative;
+  z-index: 1;
+  max-width: 420px;
+  text-align: center;
+}
+
+.canvasSkeleton strong {
+  font-family: var(--font-display);
+  font-size: 28px;
+  letter-spacing: -0.04em;
+}
+
+.canvasSkeleton p {
+  margin: 0;
+  color: var(--fg-secondary);
+  line-height: 1.7;
+}
+
 .canvasHeader {
   display: flex;
   justify-content: space-between;
@@ -597,6 +679,88 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
   margin-top: 18px;
+}
+
+.impactGraphPanel {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(126, 160, 183, 0.12);
+  background:
+    linear-gradient(90deg, rgba(53, 135, 195, 0.08), transparent 46%),
+    rgba(7, 18, 30, 0.62);
+}
+
+.impactGraph {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.graphNode {
+  position: relative;
+  min-height: 178px;
+  padding: 14px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--tone-border);
+  background:
+    radial-gradient(circle at 100% 0%, var(--tone-glow), transparent 32%),
+    color-mix(in srgb, var(--tone-surface) 92%, transparent);
+}
+
+.graphNode span {
+  display: block;
+  color: var(--fg-muted);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.graphNode strong {
+  display: block;
+  margin-top: 8px;
+  color: #f4fbff;
+  font-size: 18px;
+}
+
+.graphNodeItems {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.graphNodeItems p {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 14px;
+  border: 1px solid var(--tone-border);
+  background: rgba(7, 18, 30, 0.66);
+  color: var(--fg-secondary);
+  line-height: 1.45;
+}
+
+.graphConnector {
+  position: absolute;
+  top: 50%;
+  right: -18px;
+  z-index: 2;
+  width: 26px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--tone-accent), transparent);
+}
+
+.graphConnector::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: -4px;
+  width: 9px;
+  height: 9px;
+  border-top: 2px solid var(--tone-accent);
+  border-right: 2px solid var(--tone-accent);
+  transform: rotate(45deg);
 }
 
 .footerCard {
@@ -1062,15 +1226,18 @@
 
   .heroInner,
   .canvasFooter,
+  .impactGraph,
   .demoProofStrip,
   .valueSummaryStrip,
-  .degradationBanner {
+  .degradationBanner,
+  .sourcePanel {
     grid-template-columns: 1fr;
   }
 
   .demoProofGrid,
   .valueSummaryGrid,
-  .degradationList {
+  .degradationList,
+  .sourceGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -1106,7 +1273,8 @@
   }
 
   .valueSummaryGrid,
-  .degradationList {
+  .degradationList,
+  .sourceGrid {
     grid-template-columns: 1fr;
   }
 }

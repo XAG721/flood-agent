@@ -12,6 +12,7 @@ import {
   formatTriggerType,
 } from "../lib/displayText";
 import { formatPercent, formatTimestamp } from "../lib/consoleFormatting";
+import { buildAgentDivergenceRows } from "../state/agentTwinSelectors";
 import { AccessPolicyNotice, actionRequiredRoleText } from "./SecurityDesk";
 import type {
   AgentMetricsView,
@@ -112,6 +113,12 @@ export function MultiAgentDesk({
   const [replayReason, setReplayReason] = useState("");
   const latestEpisodeSummary = episodeSummaries[0] ?? null;
   const latestLongTermMemory = experienceContext?.long_term_memories[0] ?? null;
+  const divergenceRows = buildAgentDivergenceRows({
+    recentResults: recentAgentResults,
+    sharedMemorySnapshot,
+    decisionReport,
+    maxRows: 5,
+  });
 
   return (
     <div className={styles.agentDesk}>
@@ -149,6 +156,30 @@ export function MultiAgentDesk({
         {metric("调度运行", `${supervisorRuns.length}`, supervisorRuns[0]?.trigger_type ? formatTriggerType(supervisorRuns[0].trigger_type) : "暂无运行记录")}
         {metric("决策路径", `${decisionReport?.active_decision_path.length ?? 0}`, decisionReport?.blocked_by?.[0] ?? "当前没有阻塞原因")}
         {metric("后台巡检", supervisorLoopStatus ? (supervisorLoopStatus.running ? "运行中" : "已停止") : "--", supervisorLoopStatus ? `每 ${supervisorLoopStatus.interval_seconds} 秒一次` : "暂无巡检状态")}
+      </div>
+
+      <div className={styles.adminCard}>
+        <div className={styles.adminCardHeader}>
+          <div><p className={styles.sectionLabel}>会商差异</p><h3>Agent 分歧点与 supervisor 采纳理由</h3></div>
+        </div>
+        <div className={styles.executionList}>
+          {divergenceRows.length ? (
+            divergenceRows.map((row) => (
+              <article key={`${row.result.result_id}-divergence`} className={styles.executionCard}>
+                <div className={styles.executionTopline}>
+                  <strong>{agentText[row.result.agent_name]} / {row.disposition}</strong>
+                  <span>{Math.round(row.confidence * 100)}%</span>
+                </div>
+                <p>{normalizeAgentTerminology(row.result.summary)}</p>
+                <div className={styles.executionMeta}>
+                  <span>分歧点：{row.disagreement}</span>
+                  <span>证据 {row.result.evidence_refs.length} 条</span>
+                </div>
+                <small>编排理由：{row.rationale}</small>
+              </article>
+            ))
+          ) : <p className={styles.emptyState}>当前还没有足够的 agent result 来比较分歧与采纳理由。</p>}
+        </div>
       </div>
 
       <div className={styles.agentGrid}>

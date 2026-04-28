@@ -1,14 +1,13 @@
 from __future__ import annotations
 
-import asyncio
-import json
-import os
 from contextlib import asynccontextmanager
-from pathlib import Path
 
 from fastapi import FastAPI, Header, HTTPException
 from fastapi.responses import StreamingResponse
 
+from .config import load_settings
+from .http.v3_router import create_v3_router
+from .infrastructure.sse import repeated_snapshot_stream
 from .system import FloodWarningSystem
 from .v2.llm_gateway import LLMGenerationError
 from .v2.models import (
@@ -29,12 +28,10 @@ from .v2.models import (
     V2CopilotMessageRequest,
     V2CopilotSessionRequest,
 )
-from .v3.models import AgentDialogRequest, ProposalGenerationRequest
 from .v2.security import AuthorizationError, ensure_operator_role, list_operator_capabilities, normalize_operator_role
 
 
-DEFAULT_DB_PATH = Path(__file__).resolve().parent.parent / "data" / "flood_warning_system_v2.db"
-DB_PATH = Path(os.getenv("FLOOD_DB_PATH", str(DEFAULT_DB_PATH))).expanduser().resolve()
+settings = load_settings()
 
 
 @asynccontextmanager
@@ -46,9 +43,10 @@ async def lifespan(_app: FastAPI):
         system.stop_background_services()
 
 
-app = FastAPI(title="Flood Warning System V2", version="2.0.0", lifespan=lifespan)
-system = FloodWarningSystem(DB_PATH)
+app = FastAPI(title=settings.title, version=settings.version, lifespan=lifespan)
+system = FloodWarningSystem(settings.db_path)
 production = system.production_platform
+app.include_router(create_v3_router(lambda: system))
 
 
 def _resolve_operator_role(
@@ -368,84 +366,13 @@ def reject_v2_regional_analysis_package(
 
 @app.get("/v2/proposals/stream")
 async def stream_v2_pending_regional_proposals():
-    async def event_generator():
-        last_version: str | None = None
-        while True:
-            snapshot = production.get_pending_regional_proposals_snapshot()
-            if snapshot.queue_version != last_version:
-                last_version = snapshot.queue_version
-                yield f"data: {json.dumps(snapshot.model_dump(mode='json'), ensure_ascii=False)}\n\n"
-            await asyncio.sleep(1.0)
-
-    return StreamingResponse(event_generator(), media_type="text/event-stream")
-
-
-@app.get("/v3/events/{event_id}/twin-overview")
-def get_v3_twin_overview(event_id: str):
-    try:
-        return system.agent_twin.get_twin_overview(event_id)
-    except ValueError as exc:
-        raise HTTPException(status_code=404, detail=str(exc)) from exc
-
-
-@app.get("/v3/events/{event_id}/objects/{object_id}")
-def get_v3_focus_object(event_id: str, object_id: str):
-    try:
-        return system.agent_twin.get_focus_object(event_id, object_id)
-    except ValueError as exc:
-        raise HTTPException(status_code=404, detail=str(exc)) from exc
-
-
-@app.post("/v3/events/{event_id}/dialog")
-def run_v3_agent_dialog(event_id: str, request: AgentDialogRequest):
-    try:
-        return system.agent_twin.run_dialog(event_id, request)
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
-
-
-@app.get("/v3/events/{event_id}/agent-council")
-def get_v3_agent_council(event_id: str):
-    try:
-        return system.agent_twin.get_agent_council(event_id)
-    except ValueError as exc:
-        raise HTTPException(status_code=404, detail=str(exc)) from exc
-
-
-@app.post("/v3/events/{event_id}/proposals/generate")
-def generate_v3_proposals(event_id: str, request: ProposalGenerationRequest):
-    try:
-        return system.agent_twin.generate_proposals(event_id, request)
-    except LLMGenerationError as exc:
-        raise HTTPException(status_code=503, detail=f"{exc.code}: {exc}") from exc
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
-
-
-@app.post("/v3/proposals/{proposal_id}/warnings/generate")
-def generate_v3_warnings(proposal_id: str):
-    try:
-        return system.agent_twin.generate_warnings(proposal_id)
-    except LLMGenerationError as exc:
-        raise HTTPException(status_code=503, detail=f"{exc.code}: {exc}") from exc
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
-
-
-@app.get("/v3/events/{event_id}/stream")
-async def stream_v3_event_updates(event_id: str, object_id: str | None = None):
-    async def event_generator():
-        last_versions: dict[str, str] = {}
-        while True:
-            for event in system.agent_twin.build_stream_events(event_id, focus_object_id=object_id):
-                previous = last_versions.get(event.event_type)
-                if previous == event.version:
-                    continue
-                last_versions[event.event_type] = event.version
-                yield f"data: {json.dumps(event.model_dump(mode='json'), ensure_ascii=False)}\n\n"
-            await asyncio.sleep(1.0)
-
-    return StreamingResponse(event_generator(), media_type="text/event-stream")
+    return StreamingResponse(
+        repeated_snapshot_stream(
+            production.get_pending_regional_proposals_snapshot,
+            version_getter=lambda snapshot: snapshot.queue_version,
+        ),
+        media_type="text/event-stream",
+    )
 
 
 @app.get("/v2/entities/{entity_id}/impact")

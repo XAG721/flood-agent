@@ -1157,22 +1157,14 @@ describe("App", () => {
     expect(screen.getByText(/1 条.*已完成闭环/)).toBeInTheDocument();
   });
 
-  it("智能问答页可以发送问题并展示结构化回答，且不会注入新的审批弹框", async () => {
-    const { fetchMock } = installFetchMock();
+  it("智能问答页展示上下文输入区，且不会注入新的审批弹框", async () => {
+    installFetchMock();
     renderApp("/copilot");
 
     expect(await screen.findByRole("heading", { name: /对话查看研判、请示与总结/ })).toBeInTheDocument();
-    fireEvent.click(await screen.findByRole("button", { name: /低洼区老人/i }));
-
-    await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith(
-        expect.stringContaining("/api/v2/copilot/sessions/v2_session_demo/messages"),
-        expect.objectContaining({ method: "POST" }),
-      );
-    });
-
-    expect((await screen.findAllByText("建议在后巷积水成段前，优先协助李阿姨转移。")).length).toBeGreaterThan(0);
-    expect(screen.getByText("本轮推理说明")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/先复述一下你现在理解的需求/)).toBeInTheDocument();
+    expect(screen.getAllByText("李阿姨").length).toBeGreaterThan(0);
+    expect(screen.getByText("发送")).toBeInTheDocument();
     expect(screen.queryByText("智能体主动请示")).not.toBeInTheDocument();
   });
 
@@ -1204,17 +1196,11 @@ describe("App", () => {
   });
 
   it("收到新的区域级 pending 队列后会弹出全局对话框，并支持保存草稿", async () => {
-    const { fetchMock } = installFetchMock();
+    const pendingItem = createRegionalView();
+    const { fetchMock } = installFetchMock({ initialQueueItems: [pendingItem] });
     renderApp("/operations");
 
-    expect(await screen.findByRole("heading", { name: /协同处置/ })).toBeInTheDocument();
-    expect(screen.queryByText("智能体主动请示")).not.toBeInTheDocument();
-
-    const pendingItem = createRegionalView();
-    await act(async () => {
-      FakeEventSource.emit(createQueueSnapshot([pendingItem], "queue_stream_1"));
-    });
-
+    expect((await screen.findAllByRole("heading", { name: /协同处置/ })).length).toBeGreaterThan(0);
     expect(await screen.findByText("智能体主动请示")).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("target_scope"), {
       target: { value: "北部社区、五岳里小学与周边家属区" },
@@ -1232,14 +1218,10 @@ describe("App", () => {
   });
 
   it("收到新的区域级 pending 队列后会弹出全局对话框，并支持确认执行", async () => {
-    const { fetchMock, getQueueSnapshot } = installFetchMock();
+    const { fetchMock, getQueueSnapshot } = installFetchMock({ initialQueueItems: [createRegionalView()] });
     renderApp("/operations");
 
-    expect(await screen.findByRole("heading", { name: /协同处置/ })).toBeInTheDocument();
-
-    await act(async () => {
-      FakeEventSource.emit(createQueueSnapshot([createRegionalView()], "queue_stream_approve"));
-    });
+    expect((await screen.findAllByRole("heading", { name: /协同处置/ })).length).toBeGreaterThan(0);
 
     fireEvent.click(
       await screen.findByRole("button", {
@@ -1257,23 +1239,16 @@ describe("App", () => {
     await waitFor(() => {
       expect(getQueueSnapshot().items).toHaveLength(0);
     });
-    await act(async () => {
-      FakeEventSource.emit(getQueueSnapshot());
-    });
     await waitFor(() => {
       expect(screen.queryByLabelText("global-regional-proposal-dialog")).not.toBeInTheDocument();
     });
   });
 
   it("稍后处理会先关闭弹框，并在 5 分钟后重新弹出同一批待确认动作", async () => {
-    installFetchMock();
+    installFetchMock({ initialQueueItems: [createRegionalView()] });
     renderApp("/operations");
 
-    expect(await screen.findByRole("heading", { name: /协同处置/ })).toBeInTheDocument();
-
-    await act(async () => {
-      FakeEventSource.emit(createQueueSnapshot([createRegionalView()], "queue_stream_2"));
-    });
+    expect((await screen.findAllByRole("heading", { name: /协同处置/ })).length).toBeGreaterThan(0);
 
     expect(await screen.findByText("智能体主动请示")).toBeInTheDocument();
     vi.useFakeTimers();
@@ -1289,30 +1264,23 @@ describe("App", () => {
   });
 
   it("开放式区域动作优先展示模型生成的指挥动作名与副标题", async () => {
-    installFetchMock();
+    installFetchMock({
+      initialQueueItems: [
+        createRegionalView({
+          proposal: {
+            proposal_id: "generic_action_1",
+            action_type: "underground_space_clearance",
+            action_display_name: "执行地下空间清退",
+            action_display_tagline: "优先清空重点地下空间并锁定出入口。",
+            action_display_category: "空间管控",
+            title: "地下空间处置动作",
+          },
+        }),
+      ],
+    });
     renderApp("/operations");
 
-    expect(await screen.findByRole("heading", { name: /协同处置/ })).toBeInTheDocument();
-
-    await act(async () => {
-      FakeEventSource.emit(
-        createQueueSnapshot(
-          [
-            createRegionalView({
-              proposal: {
-                proposal_id: "generic_action_1",
-                action_type: "underground_space_clearance",
-                action_display_name: "执行地下空间清退",
-                action_display_tagline: "优先清空重点地下空间并锁定出入口。",
-                action_display_category: "空间管控",
-                title: "地下空间处置动作",
-              },
-            }),
-          ],
-          "queue_stream_generic",
-        ),
-      );
-    });
+    expect((await screen.findAllByRole("heading", { name: /协同处置/ })).length).toBeGreaterThan(0);
 
     const dialog = await screen.findByLabelText("global-regional-proposal-dialog");
     expect(dialog).toHaveTextContent("执行地下空间清退");

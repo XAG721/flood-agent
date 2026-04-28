@@ -91,6 +91,19 @@
   opacity: 0.58;
 }
 
+.overlayActions p {
+  max-width: 320px;
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(132, 220, 255, 0.18);
+  background: rgba(6, 19, 39, 0.74);
+  color: rgba(224, 242, 255, 0.86);
+  font-size: 12px;
+  line-height: 1.5;
+  box-shadow: 0 12px 36px rgba(14, 129, 190, 0.16);
+}
+
 .overlayLegend {
   position: absolute;
   left: 18px;

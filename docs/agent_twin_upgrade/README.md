@@ -20,10 +20,19 @@
 
 - 后端唯一服务入口：`flood_system/api.py`
 - 应用装配入口：`flood_system/system.py`
+- 运行配置：`flood_system/config.py`
+- V3 HTTP 路由：`flood_system/http/v3_router.py`
+- SSE 基础设施：`flood_system/infrastructure/sse.py`
+- Router schema import surface：`flood_system/schemas/`
 - 运行时存储：`flood_system/repository.py`
+- 运行时表结构：`flood_system/storage/schema.py`
 - 现有审批、通知、审计闭环：`flood_system/v2/`
+- V2 平台审计边界：`flood_system/v2/platform_audit.py`
 - 新增 AgentTwin 聚合能力：`flood_system/v3/`
 - 正式前端入口：`frontend/src/App.tsx`
+- V3 API 门面：`frontend/src/api/agentTwinApi.ts`
+- 数据维护模型工厂：`frontend/src/features/dataManagement/dataModels.ts`
+- AgentTwin 派生状态：`frontend/src/state/agentTwinSelectors.ts`
 - AgentTwin 前端编排：`frontend/src/hooks/useAgentTwinConsole.ts`
 - 数字孪生主屏：`frontend/src/components/DigitalTwinImpactScreen.tsx`
 - Cesium 画布：`frontend/src/components/DigitalTwinCesiumCanvas.tsx`
@@ -52,6 +61,7 @@
 14. [`14_数据库问题清单与修复建议.md`](./14_数据库问题清单与修复建议.md)
 15. [`15_演示主库重建方案.md`](./15_演示主库重建方案.md)
 16. [`16_甲方演示脚本.md`](./16_甲方演示脚本.md)
+17. [`17_可交付重构说明.md`](./17_可交付重构说明.md)
 
 ## 4. 生产级 Demo 验收口径
 

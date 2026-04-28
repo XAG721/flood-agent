@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { api } from "../lib/api";
+import { agentTwinApi } from "../api/agentTwinApi";
 import type {
   AgentCouncilView,
   AgentDialogTranscriptEntry,
@@ -31,6 +31,13 @@ export function useAgentTwinConsole() {
   const [twinBusy, setTwinBusy] = useState(false);
   const [twinStreamStatus, setTwinStreamStatus] = useState<TwinStreamStatus>("closed");
   const twinStreamRef = useRef<EventSource | null>(null);
+  const baseEventRef = useRef(base.event);
+  const refreshRegionalProposalDataRef = useRef(base.refreshRegionalProposalData);
+
+  useEffect(() => {
+    baseEventRef.current = base.event;
+    refreshRegionalProposalDataRef.current = base.refreshRegionalProposalData;
+  }, [base.event, base.refreshRegionalProposalData]);
 
   const refreshTwinOverview = useCallback(async () => {
     if (!currentEventId) {
@@ -40,7 +47,7 @@ export function useAgentTwinConsole() {
 
     setTwinBusy(true);
     try {
-      const overview = await api.getV3TwinOverview(currentEventId);
+      const overview = await agentTwinApi.getOverview(currentEventId);
       setTwinOverview(overview);
       setWarningDrafts(overview.recent_warning_drafts ?? []);
     } catch (error) {
@@ -50,7 +57,7 @@ export function useAgentTwinConsole() {
     } finally {
       setTwinBusy(false);
     }
-  }, [base, currentEventId]);
+  }, [currentEventId]);
 
   const refreshAgentCouncil = useCallback(async () => {
     if (!currentEventId) {
@@ -59,7 +66,7 @@ export function useAgentTwinConsole() {
     }
 
     try {
-      const council = await api.getV3AgentCouncil(currentEventId);
+      const council = await agentTwinApi.getCouncil(currentEventId);
       setAgentCouncil(council);
     } catch (error) {
       setAgentCouncil((current) => current);
@@ -73,7 +80,7 @@ export function useAgentTwinConsole() {
         setFocusObject(null);
         return null;
       }
-      const payload = await api.getV3FocusObject(currentEventId, objectId);
+      const payload = await agentTwinApi.getFocusObject(currentEventId, objectId);
       setFocusObject(payload);
       return payload;
     },
@@ -113,7 +120,7 @@ export function useAgentTwinConsole() {
     }
 
     setTwinStreamStatus("connecting");
-    const stream = api.openV3TwinStream(
+    const stream = agentTwinApi.openTwinStream(
       currentEventId,
       {
         onEvent: (event: TwinStreamEvent) => {
@@ -140,8 +147,8 @@ export function useAgentTwinConsole() {
             return;
           }
           if (event.event_type === "proposal_generated" || event.event_type === "proposal_status_changed") {
-            if (base.event) {
-              void base.refreshRegionalProposalData(base.event);
+            if (baseEventRef.current) {
+              void refreshRegionalProposalDataRef.current(baseEventRef.current);
             }
             void refreshTwinOverview();
             void refreshAgentCouncil();
@@ -167,7 +174,7 @@ export function useAgentTwinConsole() {
       stream.close();
       twinStreamRef.current = null;
     };
-  }, [base, currentEventId, focusObject?.object_id, refreshAgentCouncil, refreshTwinOverview, twinOverview?.lead_object_id]);
+  }, [currentEventId, focusObject?.object_id, refreshAgentCouncil, refreshTwinOverview, twinOverview?.lead_object_id]);
 
   const selectTwinObject = useCallback(
     async (objectId: string) => {
@@ -201,7 +208,7 @@ export function useAgentTwinConsole() {
       ]);
 
       try {
-        const response = await api.sendV3Dialog(currentEventId, {
+        const response = await agentTwinApi.sendDialog(currentEventId, {
           object_id: targetObjectId,
           message: message.trim(),
         });
@@ -238,7 +245,7 @@ export function useAgentTwinConsole() {
       }
       setTwinBusy(true);
       try {
-        const response: ProposalGenerationResponse = await api.generateV3Proposals(currentEventId, {
+        const response: ProposalGenerationResponse = await agentTwinApi.generateProposals(currentEventId, {
           object_ids:
             objectIds && objectIds.length
               ? objectIds
@@ -262,7 +269,7 @@ export function useAgentTwinConsole() {
 
   const generateAudienceWarnings = useCallback(
     async (proposalId: string) => {
-      const response: WarningGenerationResponse = await api.generateV3Warnings(proposalId);
+      const response: WarningGenerationResponse = await agentTwinApi.generateWarnings(proposalId);
       setWarningDrafts(response.warnings);
       await refreshTwinOverview();
       return response;

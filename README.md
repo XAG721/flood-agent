@@ -17,11 +17,20 @@
 - `/v2/*` 继续承接人工审批、通知、执行日志和审计落库，避免重写已有闭环内核。
 - 演示主库可通过脚本重建，固定支撑 `event_demo_beilin_primary` 主链路。
 
-## 主要目录
+## 主要目录与结构边界
 
-- `flood_system/api.py`：FastAPI 统一入口，支持 `FLOOD_DB_PATH` 指向演示库。
+- `flood_system/api.py`：FastAPI 统一装配入口，保留 V2 兼容路由并挂载 V3 router。
+- `flood_system/config.py`：运行配置与 `FLOOD_DB_PATH` 解析。
+- `flood_system/http/v3_router.py`：AgentTwin/V3 HTTP 路由层。
+- `flood_system/infrastructure/sse.py`：V2/V3 SSE 编码与流式基础设施。
+- `flood_system/schemas/`：HTTP router 使用的 schema import surface。
+- `flood_system/storage/schema.py`：SQLite 运行时表结构与索引定义，避免 `repository.py` 继续承载建表大块文本。
 - `flood_system/v2/`：现有审批、通知、审计、执行和多智能体运行基础。
+- `flood_system/v2/platform_audit.py`：V2 平台审计与告警操作 mixin。
 - `flood_system/v3/`：AgentTwin 聚合读模型、影响链、会商、proposal 与 warning 前链路。
+- `frontend/src/api/agentTwinApi.ts`：前端 V3 API 门面。
+- `frontend/src/features/dataManagement/dataModels.ts`：数据维护页使用的空档案、空资源状态工厂。
+- `frontend/src/state/agentTwinSelectors.ts`：主屏多源态势、影响链图谱和 Agent 差异对照的派生状态。
 - `frontend/src/components/DigitalTwinImpactScreen.tsx`：数字孪生智能体主屏。
 - `frontend/src/components/DigitalTwinCesiumCanvas.tsx`：Cesium 三维画布与业务点位联动。
 - `frontend/src/lib/cityengineCalibration.ts`：CityEngine GLB 源坐标解析、归一化和校准矩阵。
@@ -124,3 +133,4 @@ npx.cmd vitest run src/App.test.tsx -t "方案处置页" --reporter=basic --test
 - [文档索引](./docs/README.md)
 - [AgentTwin/V3 文档包](./docs/agent_twin_upgrade/README.md)
 - [甲方演示脚本](./docs/agent_twin_upgrade/16_甲方演示脚本.md)
+- [可交付重构说明](./docs/agent_twin_upgrade/17_可交付重构说明.md)

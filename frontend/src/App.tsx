@@ -38,6 +38,7 @@ import { AgentsPage } from "./pages/AgentsPage";
 import { DataPage } from "./pages/DataPage";
 import { OperationsPage } from "./pages/OperationsPage";
 import { ReliabilityPage } from "./pages/ReliabilityPage";
+import { buildAgentDivergenceRows } from "./state/agentTwinSelectors";
 import panelStyles from "./styles/shared-panels.module.css";
 import {
   appShellText,
@@ -59,6 +60,7 @@ import {
   formatDatasetStep,
   formatParserKind,
 } from "./lib/datasetUiText";
+import { createBlankProfile, createBlankResourceStatus } from "./features/dataManagement/dataModels";
 import { normalizeAgentTerminology } from "./lib/agentUiText";
 import {
   formatAgentTaskEventType,
@@ -93,7 +95,6 @@ import type {
   RAGDocument,
   ResourceStatus,
   ResourceStatusView,
-  RiskLevel,
   TravelMode,
 } from "./types/api";
 
@@ -107,16 +108,6 @@ function completenessClass(status: string) {
   }[status] ?? styles.executionSkipped;
 }
 
-function riskTone(risk: RiskLevel) {
-  return {
-    None: styles.riskNone,
-    Blue: styles.riskBlue,
-    Yellow: styles.riskYellow,
-    Orange: styles.riskOrange,
-    Red: styles.riskRed,
-  }[risk];
-}
-
 function metric(label: string, value: string, hint?: string) {
   return (
     <div className={styles.metricBlock}>
@@ -125,46 +116,6 @@ function metric(label: string, value: string, hint?: string) {
       {hint ? <small>{hint}</small> : null}
     </div>
   );
-}
-
-function blankProfile(areaId: string): EntityProfile {
-  return {
-    entity_id: "",
-    area_id: areaId,
-    entity_type: "resident",
-    name: "",
-    village: "",
-    location_hint: "",
-    resident_count: 0,
-    current_occupancy: 0,
-    vulnerability_tags: [],
-    mobility_constraints: [],
-    key_assets: [],
-    inventory_summary: "",
-    continuity_requirement: "",
-    preferred_transport_mode: "walk",
-    notification_preferences: [],
-    emergency_contacts: [],
-    custom_attributes: {},
-  };
-}
-
-function blankResourceStatus(areaId: string): ResourceStatus {
-  return {
-    area_id: areaId,
-    vehicle_count: 0,
-    staff_count: 0,
-    supply_kits: 0,
-    rescue_boats: 0,
-    ambulance_count: 0,
-    drone_count: 0,
-    portable_pumps: 0,
-    power_generators: 0,
-    medical_staff_count: 0,
-    volunteer_count: 0,
-    satellite_phones: 0,
-    notes: "",
-  };
 }
 
 interface ProfileEditorProps {
@@ -178,11 +129,11 @@ interface ProfileEditorProps {
 
 function ProfileEditor({ areaId, profiles, busy, onSave, onDelete, onInspect }: ProfileEditorProps) {
   const [selectedProfileId, setSelectedProfileId] = useState<string>("__new__");
-  const [draft, setDraft] = useState<EntityProfile>(() => blankProfile(areaId));
+  const [draft, setDraft] = useState<EntityProfile>(() => createBlankProfile(areaId));
 
   useEffect(() => {
     if (selectedProfileId === "__new__") {
-      setDraft(blankProfile(areaId));
+      setDraft(createBlankProfile(areaId));
       return;
     }
     const selectedProfile = profiles.find((item) => item.entity_id === selectedProfileId);
@@ -191,7 +142,7 @@ function ProfileEditor({ areaId, profiles, busy, onSave, onDelete, onInspect }: 
       return;
     }
     setSelectedProfileId("__new__");
-    setDraft(blankProfile(areaId));
+    setDraft(createBlankProfile(areaId));
   }, [areaId, profiles, selectedProfileId]);
 
   const isNewProfile = selectedProfileId === "__new__";
@@ -414,10 +365,10 @@ interface ResourceStatusEditorProps {
 }
 
 function ResourceStatusEditor({ title, label, view, areaId, busy, saveLabel, onSave, onClear }: ResourceStatusEditorProps) {
-  const [draft, setDraft] = useState<ResourceStatus>(() => blankResourceStatus(areaId));
+  const [draft, setDraft] = useState<ResourceStatus>(() => createBlankResourceStatus(areaId));
 
   useEffect(() => {
-    setDraft(view?.resource_status ?? blankResourceStatus(areaId));
+    setDraft(view?.resource_status ?? createBlankResourceStatus(areaId));
   }, [areaId, view]);
 
   return (
@@ -1265,6 +1216,13 @@ export default function App() {
   const evidenceCompareResults = recentCouncilResults.filter(
     (result) => result.evidence_refs.length > 0 || result.missing_slots.length > 0 || result.handoff_recommendations.length > 0,
   );
+  const agentDivergenceRows = buildAgentDivergenceRows({
+    recentResults: recentCouncilResults,
+    sharedMemorySnapshot: consoleState.sharedMemorySnapshot,
+    decisionReport: consoleState.decisionReport,
+    agentCouncil: consoleState.agentCouncil,
+    maxRows: 4,
+  });
 
   const primaryPaths = new Set(["/", "/operations", "/agents"]);
   const navigation = Object.entries(pageMeta)
@@ -1586,6 +1544,9 @@ export default function App() {
             focusObject={consoleState.focusObject}
             pendingProposals={consoleState.pendingProposals}
             approvedProposals={consoleState.approvedProposals}
+            hazardState={consoleState.hazardState}
+            areaResourceStatusView={consoleState.areaResourceStatusView}
+            eventResourceStatusView={consoleState.eventResourceStatusView}
             dialogEntries={consoleState.dialogEntries}
             dialogOpen={consoleState.dialogOpen}
             dialogBusy={consoleState.dialogBusy}
@@ -1760,15 +1721,16 @@ export default function App() {
                     </div>
                   </div>
                   <div className={styles.answerList}>
-                    {recentCouncilResults.length ? (
-                      recentCouncilResults.map((result) => (
-                        <article key={result.result_id} className={styles.metricBlock}>
-                          <span>{result.agent_name}</span>
-                          <strong>{result.summary}</strong>
+                    {agentDivergenceRows.length ? (
+                      agentDivergenceRows.map((row) => (
+                        <article key={row.result.result_id} className={styles.metricBlock}>
+                          <span>{row.result.agent_name} / {row.disposition}</span>
+                          <strong>{normalizeAgentTerminology(row.result.summary)}</strong>
                           <small>
-                            置信度 {Math.round(result.confidence * 100)}% / 证据 {result.evidence_refs.length} 条 /
-                            建议 {result.recommended_next_tasks?.length ?? 0} 项
+                            分歧点：{row.disagreement} / 置信度 {Math.round(row.confidence * 100)}% / 证据{" "}
+                            {row.result.evidence_refs.length} 条
                           </small>
+                          <small>编排理由：{row.rationale}</small>
                         </article>
                       ))
                     ) : (

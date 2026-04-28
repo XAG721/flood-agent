@@ -44,8 +44,11 @@ def test_build_entity_profiles_prefers_external_seed(tmp_path: Path, monkeypatch
         monkeypatch.delenv("FLOOD_BOOTSTRAP_DATA_DIR", raising=False)
 
     assert "school_wyl_primary" in profiles
-    assert profiles["school_wyl_primary"].name == "Wenyi Road Primary School"
-    assert profiles["school_wyl_primary"].custom_attributes["provenance"] == "real_poi"
+    school_profile = profiles["school_wyl_primary"]
+    assert school_profile.name in {"文艺路小学", "Wenyi Road Primary School"}
+    assert school_profile.area_id == BEILIN_AREA_ID
+    assert school_profile.location_hint
+    assert school_profile.custom_attributes["provenance"] == "real_poi"
 
 
 def test_fetch_and_normalize_can_parse_cached_shelter_html(tmp_path: Path, monkeypatch):

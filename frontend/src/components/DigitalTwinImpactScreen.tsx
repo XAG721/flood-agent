@@ -1,23 +1,32 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { FormEvent, useEffect, useMemo, useState } from "react";
-import { DigitalTwinCesiumCanvas } from "./DigitalTwinCesiumCanvas";
+import { FormEvent, lazy, Suspense, useEffect, useMemo, useState } from "react";
 import styles from "../styles/digital-twin-screen.module.css";
+import { buildImpactGraphColumns, buildSituationSourceItems } from "../state/agentTwinSelectors";
 import type {
   ActionProposalV2,
   AgentDialogResponse,
   AgentDialogTranscriptEntry,
   FocusObjectView,
+  HazardStateV2,
+  ResourceStatusView,
   RiskLevel,
   TwinOverviewView,
 } from "../types/api";
 
 type StreamStatus = "closed" | "connecting" | "open" | "error";
 
+const DigitalTwinCesiumCanvas = lazy(() =>
+  import("./DigitalTwinCesiumCanvas").then((module) => ({ default: module.DigitalTwinCesiumCanvas })),
+);
+
 interface DigitalTwinImpactScreenProps {
   overview: TwinOverviewView | null;
   focusObject: FocusObjectView | null;
   pendingProposals: ActionProposalV2[];
   approvedProposals: ActionProposalV2[];
+  hazardState?: HazardStateV2 | null;
+  areaResourceStatusView?: ResourceStatusView | null;
+  eventResourceStatusView?: ResourceStatusView | null;
   dialogEntries: AgentDialogTranscriptEntry[];
   dialogOpen: boolean;
   dialogBusy: boolean;
@@ -100,6 +109,9 @@ export function DigitalTwinImpactScreen({
   focusObject,
   pendingProposals,
   approvedProposals,
+  hazardState,
+  areaResourceStatusView,
+  eventResourceStatusView,
   dialogEntries,
   dialogOpen,
   dialogBusy,
@@ -126,6 +138,7 @@ export function DigitalTwinImpactScreen({
   const focusObjects = overview?.focus_objects ?? [];
   const mapLayers = overview?.map_layers ?? [];
   const recentWarningDrafts = (overview?.recent_warning_drafts ?? []).slice(0, 4);
+  const resourceView = eventResourceStatusView ?? areaResourceStatusView ?? null;
   const selectedObjectId = focusObject?.object_id ?? overview?.lead_object_id ?? null;
   const selectedRiskLevel = focusObject?.risk_level ?? overview?.overall_risk_level ?? "None";
   const toneClass = toneClassName(selectedRiskLevel);
@@ -318,6 +331,25 @@ export function DigitalTwinImpactScreen({
   const degradationLead =
     degradedCount > 0 ? `当前有 ${degradedCount} 个子系统处于降级或恢复态` : "所有关键子系统均已准备好进行主链路演示";
 
+  const dataSourceItems = buildSituationSourceItems({
+    hazardState,
+    resourceView,
+    signals: focusSignals,
+    activeAlertCount: overview?.active_alert_count ?? focusSignals.length,
+    streamStatusLabel: streamStatusLabel(streamStatus),
+  });
+  const impactGraphColumns = buildImpactGraphColumns({
+    overview,
+    hazardState,
+    focusObjects,
+    focusObject,
+    resourceView,
+    primaryProposalTitle: selectedPendingProposal?.title ?? linkedApprovedProposal?.title ?? null,
+    warningDraftCount: recentWarningDrafts.length,
+    closureStatus,
+    riskReminders: commandRiskReminders,
+  });
+
   useEffect(() => {
     setSelectedPendingProposalId((current) => {
       if (current && linkedPendingProposals.some((proposal) => proposal.proposal_id === current)) {
@@ -447,6 +479,26 @@ export function DigitalTwinImpactScreen({
         </div>
       </section>
 
+      <section className={styles.sourcePanel}>
+        <div className={styles.sourceIntro}>
+          <span>Multi-source operation feed</span>
+          <strong>多源数据接入面板</strong>
+          <p>把雨量、水位、道路、网格员上报、群众报险和资源状态放在同一个运行面板里，展示系统不是静态大屏，而是持续吸收现场信号。</p>
+        </div>
+        <div className={styles.sourceGrid}>
+          {dataSourceItems.map((item) => (
+            <article key={item.label} className={`${styles.sourceCard} ${toneClass}`}>
+              <div>
+                <span>{item.label}</span>
+                <strong>{item.value}</strong>
+              </div>
+              <small>{item.status}</small>
+              <p>{item.detail}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <div className={styles.mainGrid}>
         <aside className={styles.rail}>
           <section className={styles.railSection}>
@@ -526,13 +578,47 @@ export function DigitalTwinImpactScreen({
             </div>
           </div>
 
-          <DigitalTwinCesiumCanvas
-            eventTitle={overview?.event_title}
-            layers={overview?.map_layers ?? []}
-            selectedObjectId={selectedObjectId}
-            selectedRiskLevel={selectedRiskLevel}
-            onSelectObject={(objectId) => void onSelectObject(objectId)}
-          />
+          <Suspense
+            fallback={
+              <div className={`${styles.canvasSkeleton} ${toneClass}`} aria-label="digital-twin-canvas-loading">
+                <div className={styles.canvasSkeletonGrid} />
+                <strong>正在加载三维数字孪生态势场</strong>
+                <p>Cesium、城市模型和态势覆盖层已拆成独立资源包加载，主屏其余指挥信息会先行可见。</p>
+              </div>
+            }
+          >
+            <DigitalTwinCesiumCanvas
+              eventTitle={overview?.event_title}
+              layers={overview?.map_layers ?? []}
+              selectedObjectId={selectedObjectId}
+              selectedRiskLevel={selectedRiskLevel}
+              onSelectObject={(objectId) => void onSelectObject(objectId)}
+            />
+          </Suspense>
+
+          <section className={styles.impactGraphPanel}>
+            <div className={styles.sectionTitle}>
+              <div>
+                <span>Impact graph</span>
+                <h4>影响链图谱视图</h4>
+              </div>
+              <span className={styles.statusPill}>{closureStatus}</span>
+            </div>
+            <div className={styles.impactGraph}>
+              {impactGraphColumns.map((column, index) => (
+                <article key={column.title} className={`${styles.graphNode} ${toneClass}`}>
+                  <span>{column.subtitle}</span>
+                  <strong>{column.title}</strong>
+                  <div className={styles.graphNodeItems}>
+                    {(column.items.length ? column.items : [column.fallback ?? "等待数据"]).map((item) => (
+                      <p key={item}>{item}</p>
+                    ))}
+                  </div>
+                  {index < impactGraphColumns.length - 1 ? <i className={styles.graphConnector} aria-hidden="true" /> : null}
+                </article>
+              ))}
+            </div>
+          </section>
 
           <div className={styles.canvasFooter}>
             <article className={`${styles.footerCard} ${toneClass}`}>

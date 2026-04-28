@@ -31,6 +31,7 @@
 2. [`docs/agent_twin_upgrade/14_数据库问题清单与修复建议.md`](./agent_twin_upgrade/14_数据库问题清单与修复建议.md)
 3. [`docs/agent_twin_upgrade/15_演示主库重建方案.md`](./agent_twin_upgrade/15_演示主库重建方案.md)
 4. [`docs/agent_twin_upgrade/16_甲方演示脚本.md`](./agent_twin_upgrade/16_甲方演示脚本.md)
+5. [`docs/agent_twin_upgrade/17_可交付重构说明.md`](./agent_twin_upgrade/17_可交付重构说明.md)
 
 ## 3. 维护约定
 

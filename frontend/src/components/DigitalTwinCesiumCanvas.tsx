@@ -20,6 +20,12 @@ type TwinEntityBundle = {
   heat?: any;
   pulse?: any;
   route?: any;
+  water?: any;
+  waterColumn?: any;
+  roadClosure?: any;
+  evacuationRoute?: any;
+  resourceVehicle?: any;
+  warningSpread?: any;
 };
 
 interface DigitalTwinCesiumCanvasProps {
@@ -69,6 +75,17 @@ function riskRadius(riskLevel?: RiskLevel | null, proposalState?: string) {
   return base + (proposalState === "pending" ? 26 : proposalState === "warning_generated" ? 38 : 0);
 }
 
+function waterDepthCm(riskLevel?: RiskLevel | null, proposalState?: string) {
+  const base = {
+    None: 8,
+    Blue: 18,
+    Yellow: 34,
+    Orange: 58,
+    Red: 86,
+  }[riskLevel ?? "None"];
+  return base + (proposalState === "pending" ? 12 : proposalState === "warning_generated" ? 18 : 0);
+}
+
 function extractObjectId(entityId?: string) {
   return entityId?.split(":")[0] ?? "";
 }
@@ -90,10 +107,12 @@ export function DigitalTwinCesiumCanvas({
   const entityMapRef = useRef<Map<string, TwinEntityBundle>>(new Map());
   const tourTimersRef = useRef<number[]>([]);
   const cesiumRef = useRef<CesiumModule | null>(null);
+  const sceneFocusRef = useRef<any>(null);
   const [status, setStatus] = useState("Loading digital twin canvas");
   const [error, setError] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   const [tourRunning, setTourRunning] = useState(false);
+  const [tourNarrative, setTourNarrative] = useState("Ready for command flythrough");
   const [hoveredObjectId, setHoveredObjectId] = useState<string | null>(null);
 
   const leadLayer = useMemo(
@@ -129,36 +148,111 @@ export function DigitalTwinCesiumCanvas({
     }
     tourTimersRef.current = [];
     setTourRunning(true);
+    setTourNarrative("Opening with full-city flood posture");
 
-    const priorityLayers = [
-      ...(leadLayer ? [leadLayer] : []),
-      ...layers.filter((item) => item.object_id !== leadLayer?.object_id && item.proposal_state !== "monitoring"),
-      ...layers.filter((item) => item.object_id !== leadLayer?.object_id && item.proposal_state === "monitoring"),
-    ].slice(0, 5);
+    const riskSource =
+      leadLayer ??
+      layers.find((item) => item.risk_level === "Red" || item.risk_level === "Orange") ??
+      layers[0];
+    const focusLayer = selectedObjectId ? layerById.get(selectedObjectId) ?? riskSource : riskSource;
+    const routeLayer =
+      layers.find((item) => item.object_id !== riskSource?.object_id && item.proposal_state === "approved") ??
+      layers.find((item) => item.object_id !== riskSource?.object_id && item.proposal_state === "pending") ??
+      layers.find((item) => item.object_id !== riskSource?.object_id) ??
+      riskSource;
+    const approvalLayer =
+      layers.find((item) => item.proposal_state === "approved") ??
+      layers.find((item) => item.proposal_state === "pending") ??
+      focusLayer;
+    const warningLayer =
+      layers.find((item) => item.proposal_state === "warning_generated") ??
+      layers.find((item) => item.proposal_state === "approved") ??
+      approvalLayer;
 
-    priorityLayers.forEach((layer, index) => {
+    const flySteps = [
+      {
+        label: "全局城市态势：先看积水面、风险热区和多源信号。",
+        layer: null,
+        entity: sceneFocusRef.current,
+        kind: "overview",
+        duration: 1.1,
+      },
+      {
+        label: "风险源：定位最高风险积水与影响起点。",
+        layer: riskSource,
+        entity: riskSource ? entityMapRef.current.get(riskSource.object_id)?.waterColumn ?? entityMapRef.current.get(riskSource.object_id)?.marker : null,
+        kind: "entity",
+        duration: 1.2,
+      },
+      {
+        label: "重点对象：切换到当前指挥焦点。",
+        layer: focusLayer,
+        entity: focusLayer ? entityMapRef.current.get(focusLayer.object_id)?.marker : null,
+        kind: "entity",
+        duration: 1.1,
+      },
+      {
+        label: "处置路线：沿疏散箭头和资源车辆查看行动路径。",
+        layer: routeLayer,
+        entity: routeLayer
+          ? entityMapRef.current.get(routeLayer.object_id)?.evacuationRoute ??
+            entityMapRef.current.get(routeLayer.object_id)?.resourceVehicle ??
+            entityMapRef.current.get(routeLayer.object_id)?.marker
+          : null,
+        kind: "route",
+        duration: 1.25,
+      },
+      {
+        label: "审批闭环：查看待审批或已批准 proposal 的空间落点。",
+        layer: approvalLayer,
+        entity: approvalLayer ? entityMapRef.current.get(approvalLayer.object_id)?.marker : null,
+        kind: "entity",
+        duration: 1.1,
+      },
+      {
+        label: "Warning 扩散：查看多受众预警触达范围。",
+        layer: warningLayer,
+        entity: warningLayer
+          ? entityMapRef.current.get(warningLayer.object_id)?.warningSpread ?? entityMapRef.current.get(warningLayer.object_id)?.marker
+          : sceneFocusRef.current,
+        kind: "warning",
+        duration: 1.3,
+      },
+    ];
+
+    flySteps.forEach((step, index) => {
       const timer = window.setTimeout(() => {
-        const bundle = entityMapRef.current.get(layer.object_id);
-        if (!bundle?.marker) {
+        setTourNarrative(step.label);
+        if (step.layer) {
+          onSelectObject(step.layer.object_id);
+        }
+        if (!step.entity) {
           return;
         }
-        onSelectObject(layer.object_id);
-        viewer.flyTo(bundle.marker, {
-          duration: 1.1,
+        if (step.kind === "overview") {
+          viewer.camera.flyToBoundingSphere(step.entity, {
+            duration: step.duration,
+            offset: new Cesium.HeadingPitchRange(Cesium.Math.toRadians(22), Cesium.Math.toRadians(-42), 2600),
+          });
+          return;
+        }
+        viewer.flyTo(step.entity, {
+          duration: step.duration,
           offset: new Cesium.HeadingPitchRange(
-            Cesium.Math.toRadians(38),
-            Cesium.Math.toRadians(-28),
-            layer.proposal_state === "warning_generated" ? 560 : 430,
+            Cesium.Math.toRadians(step.kind === "route" ? 72 : 38),
+            Cesium.Math.toRadians(step.kind === "warning" ? -36 : -28),
+            step.kind === "warning" ? 680 : step.kind === "route" ? 740 : 430,
           ),
         });
-      }, index * 1500);
+      }, index * 1600);
       tourTimersRef.current.push(timer);
     });
 
     const stopTimer = window.setTimeout(() => {
       setTourRunning(false);
+      setTourNarrative("Narrative flythrough complete");
       tourTimersRef.current = [];
-    }, priorityLayers.length * 1500 + 700);
+    }, flySteps.length * 1600 + 700);
     tourTimersRef.current.push(stopTimer);
   };
 
@@ -194,6 +288,7 @@ export function DigitalTwinCesiumCanvas({
           Math: CesiumMath,
           Matrix4,
           Model,
+          PolylineArrowMaterialProperty,
           PolylineGlowMaterialProperty,
           ScreenSpaceEventHandler,
           ScreenSpaceEventType,
@@ -293,6 +388,23 @@ export function DigitalTwinCesiumCanvas({
           const position = layerPositions.get(layer.object_id);
           const color = Color.fromCssColorString(stateColor(layer.proposal_state));
           const radius = riskRadius(layer.risk_level, layer.proposal_state);
+          const depthCm = waterDepthCm(layer.risk_level, layer.proposal_state);
+          const columnHeight = Math.max(24, depthCm * 0.95);
+          const elevatedPosition = Matrix4.multiplyByPoint(
+            anchorFrame,
+            new Cartesian3(layer.east_offset_m, layer.north_offset_m, layer.height_offset_m + columnHeight / 2 + 4),
+            new Cartesian3(),
+          );
+          const closureStart = Matrix4.multiplyByPoint(
+            anchorFrame,
+            new Cartesian3(layer.east_offset_m - radius * 0.62, layer.north_offset_m - radius * 0.18, layer.height_offset_m + 6),
+            new Cartesian3(),
+          );
+          const closureEnd = Matrix4.multiplyByPoint(
+            anchorFrame,
+            new Cartesian3(layer.east_offset_m + radius * 0.62, layer.north_offset_m + radius * 0.18, layer.height_offset_m + 6),
+            new Cartesian3(),
+          );
           const heat = viewer.entities.add({
             id: `${layer.object_id}:risk-heat`,
             name: `${layer.name} risk heat`,
@@ -303,6 +415,43 @@ export function DigitalTwinCesiumCanvas({
               material: color.withAlpha(layer.proposal_state === "monitoring" ? 0.12 : 0.2),
               outline: true,
               outlineColor: color.withAlpha(0.38),
+            },
+          });
+          const water = viewer.entities.add({
+            id: `${layer.object_id}:flood-water`,
+            name: `${layer.name} flood water surface`,
+            position,
+            ellipse: {
+              semiMajorAxis: radius * 1.06,
+              semiMinorAxis: radius * 0.58,
+              material: Color.fromCssColorString("#48c8ff").withAlpha(
+                layer.risk_level === "Red" || layer.risk_level === "Orange" ? 0.26 : 0.13,
+              ),
+              outline: true,
+              outlineColor: Color.fromCssColorString("#a9edff").withAlpha(0.28),
+            },
+          });
+          const waterColumn = viewer.entities.add({
+            id: `${layer.object_id}:water-column`,
+            name: `${layer.name} water level column`,
+            position: elevatedPosition,
+            cylinder: {
+              length: columnHeight,
+              topRadius: 7,
+              bottomRadius: 11,
+              material: Color.fromCssColorString("#6fe5ff").withAlpha(0.44),
+              outline: true,
+              outlineColor: Color.fromCssColorString("#e4fbff").withAlpha(0.48),
+            },
+            label: {
+              text: `${depthCm}cm`,
+              showBackground: true,
+              backgroundColor: Color.fromCssColorString("rgba(8,20,37,0.76)"),
+              fillColor: Color.WHITE,
+              font: "700 11px 'Segoe UI'",
+              pixelOffset: new Cartesian2(0, -18),
+              verticalOrigin: VerticalOrigin.BOTTOM,
+              horizontalOrigin: HorizontalOrigin.CENTER,
             },
           });
           const pulse = viewer.entities.add({
@@ -317,6 +466,36 @@ export function DigitalTwinCesiumCanvas({
               outlineColor: color.withAlpha(0.62),
             },
           });
+          const roadClosure =
+            layer.proposal_state !== "monitoring" || layer.risk_level === "Red" || layer.risk_level === "Orange"
+              ? viewer.entities.add({
+                  id: `${layer.object_id}:road-closure`,
+                  name: `${layer.name} road closure line`,
+                  polyline: {
+                    positions: [closureStart, closureEnd],
+                    width: layer.risk_level === "Red" ? 7 : 5,
+                    material: new PolylineGlowMaterialProperty({
+                      glowPower: 0.22,
+                      color: Color.fromCssColorString("#ff5b52").withAlpha(0.86),
+                    }),
+                  },
+                })
+              : undefined;
+          const warningSpread =
+            layer.proposal_state === "warning_generated"
+              ? viewer.entities.add({
+                  id: `${layer.object_id}:warning-spread`,
+                  name: `${layer.name} warning spread zone`,
+                  position,
+                  ellipse: {
+                    semiMajorAxis: radius * 1.88,
+                    semiMinorAxis: radius * 1.32,
+                    material: Color.fromCssColorString("#ff5f9f").withAlpha(0.08),
+                    outline: true,
+                    outlineColor: Color.fromCssColorString("#ff9fc4").withAlpha(0.62),
+                  },
+                })
+              : undefined;
           const marker = viewer.entities.add({
             id: layer.object_id,
             name: layer.name,
@@ -338,7 +517,15 @@ export function DigitalTwinCesiumCanvas({
               horizontalOrigin: HorizontalOrigin.CENTER,
             },
           });
-          entityMapRef.current.set(layer.object_id, { marker, heat, pulse });
+          entityMapRef.current.set(layer.object_id, {
+            marker,
+            heat,
+            pulse,
+            water,
+            waterColumn,
+            roadClosure,
+            warningSpread,
+          });
         }
 
         const leadPosition = leadLayer ? layerPositions.get(leadLayer.object_id) : undefined;
@@ -352,11 +539,12 @@ export function DigitalTwinCesiumCanvas({
               continue;
             }
             const color = Color.fromCssColorString(stateColor(layer.proposal_state));
+            const routePositions = [leadPosition, targetPosition];
             const route = viewer.entities.add({
               id: `${layer.object_id}:command-link`,
               name: `${layer.name} command link`,
               polyline: {
-                positions: [leadPosition, targetPosition],
+                positions: routePositions,
                 width: layer.proposal_state === "monitoring" ? 2 : 4,
                 material: new PolylineGlowMaterialProperty({
                   glowPower: layer.proposal_state === "monitoring" ? 0.12 : 0.28,
@@ -364,9 +552,57 @@ export function DigitalTwinCesiumCanvas({
                 }),
               },
             });
+            const evacuationRoute =
+              layer.proposal_state !== "monitoring"
+                ? viewer.entities.add({
+                    id: `${layer.object_id}:evacuation-route`,
+                    name: `${layer.name} evacuation route arrow`,
+                    polyline: {
+                      positions: routePositions,
+                      width: 7,
+                      material: new PolylineArrowMaterialProperty(
+                        Color.fromCssColorString(layer.proposal_state === "approved" ? "#9be36f" : "#ffd166").withAlpha(0.82),
+                      ),
+                    },
+                  })
+                : undefined;
+            const resourceVehicle =
+              layer.proposal_state === "pending" || layer.proposal_state === "approved" || layer.proposal_state === "warning_generated"
+                ? viewer.entities.add({
+                    id: `${layer.object_id}:resource-vehicle`,
+                    name: `${layer.name} resource vehicle`,
+                    position: Matrix4.multiplyByPoint(
+                      anchorFrame,
+                      new Cartesian3(
+                        (layer.east_offset_m + (leadLayer?.east_offset_m ?? 0)) / 2 + 24,
+                        (layer.north_offset_m + (leadLayer?.north_offset_m ?? 0)) / 2 - 18,
+                        Math.max(layer.height_offset_m, leadLayer?.height_offset_m ?? 0) + 10,
+                      ),
+                      new Cartesian3(),
+                    ),
+                    point: {
+                      pixelSize: 11,
+                      color: Color.fromCssColorString("#f4fbff"),
+                      outlineColor: color,
+                      outlineWidth: 4,
+                    },
+                    label: {
+                      text: layer.proposal_state === "approved" ? "Rescue convoy" : "Resource unit",
+                      showBackground: true,
+                      backgroundColor: Color.fromCssColorString("rgba(8,20,37,0.78)"),
+                      fillColor: Color.WHITE,
+                      font: "700 11px 'Segoe UI'",
+                      pixelOffset: new Cartesian2(0, -20),
+                      verticalOrigin: VerticalOrigin.BOTTOM,
+                      horizontalOrigin: HorizontalOrigin.CENTER,
+                    },
+                  })
+                : undefined;
             const bundle = entityMapRef.current.get(layer.object_id);
             if (bundle) {
               bundle.route = route;
+              bundle.evacuationRoute = evacuationRoute;
+              bundle.resourceVehicle = resourceVehicle;
             }
           }
         }
@@ -395,6 +631,7 @@ export function DigitalTwinCesiumCanvas({
           sourceMetadata && preset.fitWholeModel !== false
             ? computeModelFocusSphere(Cesium, sceneConfig, sourceMetadata, anchorHeight)
             : new BoundingSphere(anchor, 1600);
+        sceneFocusRef.current = cameraTarget;
         viewer.camera.flyToBoundingSphere(cameraTarget, {
           duration: 0,
           offset: new HeadingPitchRange(
@@ -430,6 +667,7 @@ export function DigitalTwinCesiumCanvas({
         window.clearTimeout(timer);
       }
       tourTimersRef.current = [];
+      sceneFocusRef.current = null;
     };
   }, [layers, onSelectObject]);
 
@@ -510,8 +748,9 @@ export function DigitalTwinCesiumCanvas({
       </div>
       <div className={styles.overlayActions}>
         <button type="button" onClick={runCommandFlythrough} disabled={!ready || tourRunning}>
-          {tourRunning ? "Command flythrough running" : "Command flythrough"}
+          {tourRunning ? "Narrative flythrough running" : "Command narrative flythrough"}
         </button>
+        <p>{tourNarrative}</p>
       </div>
       <div className={styles.overlayLegend}>
         <div className={styles.legendRow}>
