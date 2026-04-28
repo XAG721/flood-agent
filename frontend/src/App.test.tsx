@@ -1155,6 +1155,11 @@ describe("App", () => {
     expect(screen.getByText("数字孪生智能体洪水预警主屏")).toBeInTheDocument();
     expect(screen.getByText("重点对象")).toBeInTheDocument();
     expect(screen.getByText(/1 条.*已完成闭环/)).toBeInTheDocument();
+    expect(await screen.findByLabelText("digital-twin-canvas")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Play command story/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /City overview/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Warning spread/i })).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: /李阿姨|五河里小学|建设里社区网格三组/ }).length).toBeGreaterThan(0);
   });
 
   it("智能问答页展示上下文输入区，且不会注入新的审批弹框", async () => {

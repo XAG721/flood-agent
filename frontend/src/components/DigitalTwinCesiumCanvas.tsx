@@ -26,7 +26,56 @@ type TwinEntityBundle = {
   evacuationRoute?: any;
   resourceVehicle?: any;
   warningSpread?: any;
+  warningRings?: any[];
 };
+
+type NarrativeStepKey = "overview" | "risk" | "water" | "route" | "closure" | "warning";
+
+type NarrativeStep = {
+  key: NarrativeStepKey;
+  shortLabel: string;
+  title: string;
+  narrative: string;
+};
+
+const NARRATIVE_STEPS: NarrativeStep[] = [
+  {
+    key: "overview",
+    shortLabel: "01",
+    title: "City overview",
+    narrative: "Full-city flood posture: model, heat zones, signals and command focus.",
+  },
+  {
+    key: "risk",
+    shortLabel: "02",
+    title: "Risk source",
+    narrative: "Locate the highest-risk source and its upstream impact trigger.",
+  },
+  {
+    key: "water",
+    shortLabel: "03",
+    title: "Water posture",
+    narrative: "Read the animated inundation surface and water-level column around the focus object.",
+  },
+  {
+    key: "route",
+    shortLabel: "04",
+    title: "Response route",
+    narrative: "Highlight evacuation paths, blocked roads and resource vehicle movement.",
+  },
+  {
+    key: "closure",
+    shortLabel: "05",
+    title: "Closure loop",
+    narrative: "Focus on proposal approval status and the spatial object where the loop closes.",
+  },
+  {
+    key: "warning",
+    shortLabel: "06",
+    title: "Warning spread",
+    narrative: "Show warning diffusion rings after approved actions produce audience drafts.",
+  },
+];
 
 interface DigitalTwinCesiumCanvasProps {
   eventTitle?: string;
@@ -46,22 +95,24 @@ function toneClassName(riskLevel?: RiskLevel | null) {
   }[riskLevel ?? "None"];
 }
 
-function stateLabel(proposalState: string) {
+function stateLabel(proposalState?: string | null) {
+  const normalizedState = proposalState ?? "monitoring";
   return {
     monitoring: "Monitoring",
     pending: "Pending proposal",
     approved: "Approved action",
     warning_generated: "Warnings ready",
-  }[proposalState] ?? proposalState;
+  }[normalizedState] ?? normalizedState;
 }
 
-function stateColor(proposalState: string) {
+function stateColor(proposalState?: string | null) {
+  const normalizedState = proposalState ?? "monitoring";
   return {
     monitoring: "#5cc8ff",
     pending: "#ffad42",
     approved: "#9be36f",
     warning_generated: "#f66f9d",
-  }[proposalState] ?? "#5cc8ff";
+  }[normalizedState] ?? "#5cc8ff";
 }
 
 function riskRadius(riskLevel?: RiskLevel | null, proposalState?: string) {
@@ -84,6 +135,30 @@ function waterDepthCm(riskLevel?: RiskLevel | null, proposalState?: string) {
     Red: 86,
   }[riskLevel ?? "None"];
   return base + (proposalState === "pending" ? 12 : proposalState === "warning_generated" ? 18 : 0);
+}
+
+function riskMotionIntensity(riskLevel?: RiskLevel | null, proposalState?: string) {
+  const base = {
+    None: 0.35,
+    Blue: 0.55,
+    Yellow: 0.72,
+    Orange: 0.92,
+    Red: 1.14,
+  }[riskLevel ?? "None"];
+  return base + (proposalState === "pending" ? 0.16 : proposalState === "warning_generated" ? 0.24 : 0);
+}
+
+function objectPhaseSeed(objectId: string) {
+  return (
+    objectId.split("").reduce((total, char, index) => total + char.charCodeAt(0) * (index + 3), 0) % 628
+  ) / 100;
+}
+
+function nowSeconds() {
+  if (typeof performance !== "undefined") {
+    return performance.now() / 1000;
+  }
+  return Date.now() / 1000;
 }
 
 function extractObjectId(entityId?: string) {
@@ -114,6 +189,7 @@ export function DigitalTwinCesiumCanvas({
   const [tourRunning, setTourRunning] = useState(false);
   const [tourNarrative, setTourNarrative] = useState("Ready for command flythrough");
   const [hoveredObjectId, setHoveredObjectId] = useState<string | null>(null);
+  const [activeNarrativeStep, setActiveNarrativeStep] = useState<NarrativeStepKey>("overview");
 
   const leadLayer = useMemo(
     () => layers.find((item) => item.object_id === selectedObjectId) ?? layers.find((item) => item.is_lead) ?? layers[0] ?? null,
@@ -135,6 +211,104 @@ export function DigitalTwinCesiumCanvas({
     leadLayer ??
     null;
   const toneClass = toneClassName(selectedRiskLevel ?? spotlightLayer?.risk_level ?? leadLayer?.risk_level ?? "None");
+  const narrativeStepIndex = NARRATIVE_STEPS.findIndex((item) => item.key === activeNarrativeStep);
+  const narrativeLayers = useMemo(() => {
+    const riskSource =
+      leadLayer ??
+      layers.find((item) => item.risk_level === "Red" || item.risk_level === "Orange") ??
+      layers[0] ??
+      null;
+    const focusLayer = selectedObjectId ? layerById.get(selectedObjectId) ?? riskSource : riskSource;
+    const routeLayer =
+      layers.find((item) => item.object_id !== riskSource?.object_id && item.proposal_state === "approved") ??
+      layers.find((item) => item.object_id !== riskSource?.object_id && item.proposal_state === "pending") ??
+      layers.find((item) => item.object_id !== riskSource?.object_id) ??
+      riskSource;
+    const closureLayer =
+      layers.find((item) => item.proposal_state === "pending") ??
+      layers.find((item) => item.proposal_state === "approved") ??
+      focusLayer;
+    const warningLayer =
+      layers.find((item) => item.proposal_state === "warning_generated") ??
+      layers.find((item) => item.proposal_state === "approved") ??
+      closureLayer;
+
+    return {
+      overview: null,
+      risk: riskSource,
+      water: focusLayer,
+      route: routeLayer,
+      closure: closureLayer,
+      warning: warningLayer,
+    } satisfies Record<NarrativeStepKey, TwinObjectMapLayer | null>;
+  }, [layerById, layers, leadLayer, selectedObjectId]);
+
+  const resolveNarrativeEntity = (stepKey: NarrativeStepKey) => {
+    const layer = narrativeLayers[stepKey];
+    if (stepKey === "overview") {
+      return { layer, entity: sceneFocusRef.current, kind: "overview" as const };
+    }
+    if (!layer) {
+      return { layer: null, entity: sceneFocusRef.current, kind: "overview" as const };
+    }
+
+    const bundle = entityMapRef.current.get(layer.object_id);
+    if (stepKey === "risk") {
+      return { layer, entity: bundle?.waterColumn ?? bundle?.water ?? bundle?.marker, kind: "entity" as const };
+    }
+    if (stepKey === "water") {
+      return { layer, entity: bundle?.waterColumn ?? bundle?.water ?? bundle?.marker, kind: "water" as const };
+    }
+    if (stepKey === "route") {
+      return {
+        layer,
+        entity: bundle?.evacuationRoute ?? bundle?.resourceVehicle ?? bundle?.route ?? bundle?.marker,
+        kind: "route" as const,
+      };
+    }
+    if (stepKey === "closure") {
+      return { layer, entity: bundle?.marker ?? bundle?.roadClosure, kind: "entity" as const };
+    }
+    return {
+      layer,
+      entity: bundle?.warningSpread ?? bundle?.warningRings?.[0] ?? bundle?.marker,
+      kind: "warning" as const,
+    };
+  };
+
+  const flyToNarrativeStep = (stepKey: NarrativeStepKey, options?: { duration?: number; autoSelect?: boolean }) => {
+    const step = NARRATIVE_STEPS.find((item) => item.key === stepKey);
+    if (!step) {
+      return;
+    }
+    setActiveNarrativeStep(stepKey);
+    setTourNarrative(step.narrative);
+
+    const viewer = viewerRef.current;
+    const Cesium = cesiumRef.current;
+    const target = resolveNarrativeEntity(stepKey);
+    if (target.layer && options?.autoSelect !== false) {
+      onSelectObject(target.layer.object_id);
+    }
+    if (!viewer || !Cesium || !target.entity) {
+      return;
+    }
+    if (target.kind === "overview") {
+      viewer.camera.flyToBoundingSphere(target.entity, {
+        duration: options?.duration ?? 1.1,
+        offset: new Cesium.HeadingPitchRange(Cesium.Math.toRadians(22), Cesium.Math.toRadians(-42), 2600),
+      });
+      return;
+    }
+    viewer.flyTo(target.entity, {
+      duration: options?.duration ?? 1.1,
+      offset: new Cesium.HeadingPitchRange(
+        Cesium.Math.toRadians(target.kind === "route" ? 72 : 38),
+        Cesium.Math.toRadians(target.kind === "warning" ? -36 : -28),
+        target.kind === "warning" ? 680 : target.kind === "route" ? 740 : 430,
+      ),
+    });
+  };
 
   const runCommandFlythrough = () => {
     const viewer = viewerRef.current;
@@ -148,111 +322,18 @@ export function DigitalTwinCesiumCanvas({
     }
     tourTimersRef.current = [];
     setTourRunning(true);
-    setTourNarrative("Opening with full-city flood posture");
-
-    const riskSource =
-      leadLayer ??
-      layers.find((item) => item.risk_level === "Red" || item.risk_level === "Orange") ??
-      layers[0];
-    const focusLayer = selectedObjectId ? layerById.get(selectedObjectId) ?? riskSource : riskSource;
-    const routeLayer =
-      layers.find((item) => item.object_id !== riskSource?.object_id && item.proposal_state === "approved") ??
-      layers.find((item) => item.object_id !== riskSource?.object_id && item.proposal_state === "pending") ??
-      layers.find((item) => item.object_id !== riskSource?.object_id) ??
-      riskSource;
-    const approvalLayer =
-      layers.find((item) => item.proposal_state === "approved") ??
-      layers.find((item) => item.proposal_state === "pending") ??
-      focusLayer;
-    const warningLayer =
-      layers.find((item) => item.proposal_state === "warning_generated") ??
-      layers.find((item) => item.proposal_state === "approved") ??
-      approvalLayer;
-
-    const flySteps = [
-      {
-        label: "全局城市态势：先看积水面、风险热区和多源信号。",
-        layer: null,
-        entity: sceneFocusRef.current,
-        kind: "overview",
-        duration: 1.1,
-      },
-      {
-        label: "风险源：定位最高风险积水与影响起点。",
-        layer: riskSource,
-        entity: riskSource ? entityMapRef.current.get(riskSource.object_id)?.waterColumn ?? entityMapRef.current.get(riskSource.object_id)?.marker : null,
-        kind: "entity",
-        duration: 1.2,
-      },
-      {
-        label: "重点对象：切换到当前指挥焦点。",
-        layer: focusLayer,
-        entity: focusLayer ? entityMapRef.current.get(focusLayer.object_id)?.marker : null,
-        kind: "entity",
-        duration: 1.1,
-      },
-      {
-        label: "处置路线：沿疏散箭头和资源车辆查看行动路径。",
-        layer: routeLayer,
-        entity: routeLayer
-          ? entityMapRef.current.get(routeLayer.object_id)?.evacuationRoute ??
-            entityMapRef.current.get(routeLayer.object_id)?.resourceVehicle ??
-            entityMapRef.current.get(routeLayer.object_id)?.marker
-          : null,
-        kind: "route",
-        duration: 1.25,
-      },
-      {
-        label: "审批闭环：查看待审批或已批准 proposal 的空间落点。",
-        layer: approvalLayer,
-        entity: approvalLayer ? entityMapRef.current.get(approvalLayer.object_id)?.marker : null,
-        kind: "entity",
-        duration: 1.1,
-      },
-      {
-        label: "Warning 扩散：查看多受众预警触达范围。",
-        layer: warningLayer,
-        entity: warningLayer
-          ? entityMapRef.current.get(warningLayer.object_id)?.warningSpread ?? entityMapRef.current.get(warningLayer.object_id)?.marker
-          : sceneFocusRef.current,
-        kind: "warning",
-        duration: 1.3,
-      },
-    ];
-
-    flySteps.forEach((step, index) => {
+    flyToNarrativeStep("overview", { duration: 1.1, autoSelect: false });
+    NARRATIVE_STEPS.slice(1).forEach((step, index) => {
       const timer = window.setTimeout(() => {
-        setTourNarrative(step.label);
-        if (step.layer) {
-          onSelectObject(step.layer.object_id);
-        }
-        if (!step.entity) {
-          return;
-        }
-        if (step.kind === "overview") {
-          viewer.camera.flyToBoundingSphere(step.entity, {
-            duration: step.duration,
-            offset: new Cesium.HeadingPitchRange(Cesium.Math.toRadians(22), Cesium.Math.toRadians(-42), 2600),
-          });
-          return;
-        }
-        viewer.flyTo(step.entity, {
-          duration: step.duration,
-          offset: new Cesium.HeadingPitchRange(
-            Cesium.Math.toRadians(step.kind === "route" ? 72 : 38),
-            Cesium.Math.toRadians(step.kind === "warning" ? -36 : -28),
-            step.kind === "warning" ? 680 : step.kind === "route" ? 740 : 430,
-          ),
-        });
-      }, index * 1600);
+        flyToNarrativeStep(step.key, { duration: step.key === "warning" ? 1.3 : 1.15 });
+      }, (index + 1) * 1600);
       tourTimersRef.current.push(timer);
     });
-
     const stopTimer = window.setTimeout(() => {
       setTourRunning(false);
-      setTourNarrative("Narrative flythrough complete");
+      setTourNarrative("Command story complete: impact, route, approval and warning loop are aligned.");
       tourTimersRef.current = [];
-    }, flySteps.length * 1600 + 700);
+    }, NARRATIVE_STEPS.length * 1600 + 700);
     tourTimersRef.current.push(stopTimer);
   };
 
@@ -277,9 +358,11 @@ export function DigitalTwinCesiumCanvas({
         const sceneConfig = normalizeSceneConfig((await response.json()) as Partial<SceneConfig>);
         const {
           BoundingSphere,
+          CallbackProperty,
           Cartesian2,
           Cartesian3,
           Color,
+          ColorMaterialProperty,
           EllipsoidTerrainProvider,
           HeadingPitchRange,
           HorizontalOrigin,
@@ -342,7 +425,7 @@ export function DigitalTwinCesiumCanvas({
           viewer.scene.skyAtmosphere.show = true;
         }
         viewer.scene.fog.enabled = false;
-        viewer.scene.requestRenderMode = true;
+        viewer.scene.requestRenderMode = false;
         if (imageryProvider) {
           viewer.imageryLayers.addImageryProvider(imageryProvider);
         }
@@ -390,11 +473,8 @@ export function DigitalTwinCesiumCanvas({
           const radius = riskRadius(layer.risk_level, layer.proposal_state);
           const depthCm = waterDepthCm(layer.risk_level, layer.proposal_state);
           const columnHeight = Math.max(24, depthCm * 0.95);
-          const elevatedPosition = Matrix4.multiplyByPoint(
-            anchorFrame,
-            new Cartesian3(layer.east_offset_m, layer.north_offset_m, layer.height_offset_m + columnHeight / 2 + 4),
-            new Cartesian3(),
-          );
+          const intensity = riskMotionIntensity(layer.risk_level, layer.proposal_state);
+          const phaseSeed = objectPhaseSeed(layer.object_id);
           const closureStart = Matrix4.multiplyByPoint(
             anchorFrame,
             new Cartesian3(layer.east_offset_m - radius * 0.62, layer.north_offset_m - radius * 0.18, layer.height_offset_m + 6),
@@ -422,26 +502,62 @@ export function DigitalTwinCesiumCanvas({
             name: `${layer.name} flood water surface`,
             position,
             ellipse: {
-              semiMajorAxis: radius * 1.06,
-              semiMinorAxis: radius * 0.58,
-              material: Color.fromCssColorString("#48c8ff").withAlpha(
-                layer.risk_level === "Red" || layer.risk_level === "Orange" ? 0.26 : 0.13,
+              semiMajorAxis: new CallbackProperty(
+                () => radius * (1.06 + Math.sin(nowSeconds() * 1.45 + phaseSeed) * 0.035 * intensity),
+                false,
+              ),
+              semiMinorAxis: new CallbackProperty(
+                () => radius * (0.58 + Math.cos(nowSeconds() * 1.38 + phaseSeed) * 0.028 * intensity),
+                false,
+              ),
+              material: new ColorMaterialProperty(
+                new CallbackProperty(
+                  () =>
+                    Color.fromCssColorString("#48c8ff").withAlpha(
+                      (layer.risk_level === "Red" || layer.risk_level === "Orange" ? 0.26 : 0.13) +
+                        Math.max(0, Math.sin(nowSeconds() * 1.35 + phaseSeed)) * 0.06 * intensity,
+                    ),
+                  false,
+                ),
               ),
               outline: true,
-              outlineColor: Color.fromCssColorString("#a9edff").withAlpha(0.28),
+              outlineColor: new CallbackProperty(
+                () => Color.fromCssColorString("#a9edff").withAlpha(0.22 + Math.max(0, Math.sin(nowSeconds() * 1.2 + phaseSeed)) * 0.2),
+                false,
+              ),
             },
           });
           const waterColumn = viewer.entities.add({
             id: `${layer.object_id}:water-column`,
             name: `${layer.name} water level column`,
-            position: elevatedPosition,
+            position: new CallbackProperty(
+              () =>
+                Matrix4.multiplyByPoint(
+                  anchorFrame,
+                  new Cartesian3(
+                    layer.east_offset_m,
+                    layer.north_offset_m,
+                    layer.height_offset_m + columnHeight / 2 + 4 + Math.sin(nowSeconds() * 1.65 + phaseSeed) * (1.8 + intensity),
+                  ),
+                  new Cartesian3(),
+                ),
+              false,
+            ) as any,
             cylinder: {
               length: columnHeight,
               topRadius: 7,
               bottomRadius: 11,
-              material: Color.fromCssColorString("#6fe5ff").withAlpha(0.44),
+              material: new ColorMaterialProperty(
+                new CallbackProperty(
+                  () => Color.fromCssColorString("#6fe5ff").withAlpha(0.36 + Math.max(0, Math.sin(nowSeconds() * 2.05 + phaseSeed)) * 0.18),
+                  false,
+                ),
+              ),
               outline: true,
-              outlineColor: Color.fromCssColorString("#e4fbff").withAlpha(0.48),
+              outlineColor: new CallbackProperty(
+                () => Color.fromCssColorString("#e4fbff").withAlpha(0.34 + Math.max(0, Math.cos(nowSeconds() * 1.8 + phaseSeed)) * 0.24),
+                false,
+              ),
             },
             label: {
               text: `${depthCm}cm`,
@@ -481,21 +597,38 @@ export function DigitalTwinCesiumCanvas({
                   },
                 })
               : undefined;
-          const warningSpread =
+          const warningRings =
             layer.proposal_state === "warning_generated"
-              ? viewer.entities.add({
-                  id: `${layer.object_id}:warning-spread`,
-                  name: `${layer.name} warning spread zone`,
-                  position,
-                  ellipse: {
-                    semiMajorAxis: radius * 1.88,
-                    semiMinorAxis: radius * 1.32,
-                    material: Color.fromCssColorString("#ff5f9f").withAlpha(0.08),
-                    outline: true,
-                    outlineColor: Color.fromCssColorString("#ff9fc4").withAlpha(0.62),
-                  },
-                })
-              : undefined;
+              ? [0, 1, 2].map((ringIndex) =>
+                  viewer.entities.add({
+                    id: `${layer.object_id}:warning-spread-${ringIndex + 1}`,
+                    name: `${layer.name} warning spread ring ${ringIndex + 1}`,
+                    position,
+                    ellipse: {
+                      semiMajorAxis: new CallbackProperty(() => {
+                        const cycle = (nowSeconds() * 0.42 + ringIndex / 3 + phaseSeed * 0.03) % 1;
+                        return radius * (1.24 + cycle * (1.28 + intensity * 0.16));
+                      }, false),
+                      semiMinorAxis: new CallbackProperty(() => {
+                        const cycle = (nowSeconds() * 0.42 + ringIndex / 3 + phaseSeed * 0.03) % 1;
+                        return radius * (0.86 + cycle * (0.92 + intensity * 0.12));
+                      }, false),
+                      material: new ColorMaterialProperty(
+                        new CallbackProperty(() => {
+                          const cycle = (nowSeconds() * 0.42 + ringIndex / 3 + phaseSeed * 0.03) % 1;
+                          return Color.fromCssColorString("#ff5f9f").withAlpha(Math.max(0.02, 0.14 * (1 - cycle)));
+                        }, false),
+                      ),
+                      outline: true,
+                      outlineColor: new CallbackProperty(() => {
+                        const cycle = (nowSeconds() * 0.42 + ringIndex / 3 + phaseSeed * 0.03) % 1;
+                        return Color.fromCssColorString("#ff9fc4").withAlpha(Math.max(0.12, 0.72 * (1 - cycle)));
+                      }, false),
+                    },
+                  }),
+                )
+              : [];
+          const warningSpread = warningRings[0];
           const marker = viewer.entities.add({
             id: layer.object_id,
             name: layer.name,
@@ -525,6 +658,7 @@ export function DigitalTwinCesiumCanvas({
             waterColumn,
             roadClosure,
             warningSpread,
+            warningRings,
           });
         }
 
@@ -676,19 +810,50 @@ export function DigitalTwinCesiumCanvas({
     if (!viewer) {
       return;
     }
+    const Cesium = cesiumRef.current;
 
     entityMapRef.current.forEach((bundle, objectId) => {
       const layer = layerById.get(objectId);
       const basePixelSize = layer?.proposal_state === "warning_generated" ? 20 : layer?.is_lead ? 18 : 14;
       const baseOutlineWidth =
         layer?.proposal_state === "approved" || layer?.proposal_state === "warning_generated" ? 4 : 3;
+      const focused = objectId === selectedObjectId || objectId === hoveredObjectId;
+      const routeStory = activeNarrativeStep === "route";
+      const closureStory = activeNarrativeStep === "closure";
+      const warningStory = activeNarrativeStep === "warning";
       if (!bundle.marker?.point) {
         return;
       }
-      bundle.marker.point.outlineWidth = objectId === selectedObjectId ? baseOutlineWidth + 2 : baseOutlineWidth;
-      bundle.marker.point.pixelSize = objectId === selectedObjectId ? basePixelSize + 5 : basePixelSize;
+      bundle.marker.point.outlineWidth = focused || (closureStory && layer?.proposal_state !== "monitoring") ? baseOutlineWidth + 2 : baseOutlineWidth;
+      bundle.marker.point.pixelSize = focused || (closureStory && layer?.proposal_state !== "monitoring") ? basePixelSize + 5 : basePixelSize;
       if (bundle.pulse?.ellipse) {
-        bundle.pulse.show = objectId === selectedObjectId || layer?.proposal_state !== "monitoring";
+        bundle.pulse.show = focused || layer?.proposal_state !== "monitoring" || warningStory;
+      }
+      if (Cesium && layer && bundle.route?.polyline) {
+        const routeFocused = focused || (routeStory && layer.proposal_state !== "monitoring");
+        const color = Cesium.Color.fromCssColorString(stateColor(layer.proposal_state));
+        bundle.route.polyline.width = routeFocused ? 7 : layer.proposal_state === "monitoring" ? 2 : 4;
+        bundle.route.polyline.material = new Cesium.PolylineGlowMaterialProperty({
+          glowPower: routeFocused ? 0.34 : 0.14,
+          color: color.withAlpha(routeStory && !routeFocused ? 0.18 : routeFocused ? 0.86 : 0.46),
+        });
+      }
+      if (bundle.evacuationRoute?.polyline) {
+        const routeFocused = focused || routeStory;
+        bundle.evacuationRoute.polyline.width = routeFocused ? 10 : 7;
+        bundle.evacuationRoute.show = !routeStory || routeFocused || layer?.proposal_state !== "monitoring";
+      }
+      if (bundle.resourceVehicle?.point) {
+        const routeFocused = focused || routeStory;
+        bundle.resourceVehicle.point.pixelSize = routeFocused ? 15 : 11;
+      }
+      if (bundle.roadClosure?.polyline && Cesium) {
+        bundle.roadClosure.polyline.width = focused || closureStory ? 8 : layer?.risk_level === "Red" ? 7 : 5;
+      }
+      if (bundle.warningRings?.length) {
+        bundle.warningRings.forEach((ring) => {
+          ring.show = warningStory || focused || layer?.proposal_state === "warning_generated";
+        });
       }
     });
 
@@ -697,12 +862,32 @@ export function DigitalTwinCesiumCanvas({
       viewer.flyTo(selectedEntity, { duration: 0.9 });
     }
     viewer.scene.requestRender();
-  }, [layerById, selectedObjectId, tourRunning]);
+  }, [activeNarrativeStep, hoveredObjectId, layerById, selectedObjectId, tourRunning]);
 
   if (isJsdomRuntime()) {
     return (
       <div className={styles.fallbackShell} aria-label="digital-twin-canvas">
         <div className={styles.fallbackGrid} />
+        <div className={styles.fallbackNarrative} aria-label="narrative-camera-controls">
+          <button type="button" className={styles.narrativePlayButton} onClick={runCommandFlythrough}>
+            Play command story
+          </button>
+          <div className={styles.narrativeStepGrid}>
+            {NARRATIVE_STEPS.map((step) => (
+              <button
+                key={step.key}
+                type="button"
+                className={`${styles.narrativeStepButton} ${
+                  activeNarrativeStep === step.key ? styles.narrativeStepActive : ""
+                }`}
+                onClick={() => flyToNarrativeStep(step.key)}
+              >
+                <span>{step.shortLabel}</span>
+                {step.title}
+              </button>
+            ))}
+          </div>
+        </div>
         {layers.map((layer) => (
           <div
             key={layer.object_id}
@@ -747,10 +932,54 @@ export function DigitalTwinCesiumCanvas({
         </div>
       </div>
       <div className={styles.overlayActions}>
-        <button type="button" onClick={runCommandFlythrough} disabled={!ready || tourRunning}>
-          {tourRunning ? "Narrative flythrough running" : "Command narrative flythrough"}
-        </button>
+        <div className={styles.narrativeTopline}>
+          <button
+            type="button"
+            className={styles.narrativePlayButton}
+            onClick={runCommandFlythrough}
+            disabled={!ready || tourRunning}
+          >
+            {tourRunning ? "Story running" : "Play command story"}
+          </button>
+          <span>
+            Step {Math.max(1, narrativeStepIndex + 1)} / {NARRATIVE_STEPS.length}
+          </span>
+        </div>
+        <div className={styles.narrativeStepGrid} aria-label="narrative-camera-controls">
+          {NARRATIVE_STEPS.map((step) => (
+            <button
+              key={step.key}
+              type="button"
+              className={`${styles.narrativeStepButton} ${
+                activeNarrativeStep === step.key ? styles.narrativeStepActive : ""
+              }`}
+              onClick={() => flyToNarrativeStep(step.key)}
+              disabled={!ready || tourRunning}
+            >
+              <span>{step.shortLabel}</span>
+              {step.title}
+            </button>
+          ))}
+        </div>
         <p>{tourNarrative}</p>
+        <div className={styles.tacticalLegend} aria-label="tactical-map-legend">
+          <span className={styles.tacticalLegendItem}>
+            <i className={styles.tacticalSwatchWater} />
+            Water
+          </span>
+          <span className={styles.tacticalLegendItem}>
+            <i className={styles.tacticalSwatchRoute} />
+            Route
+          </span>
+          <span className={styles.tacticalLegendItem}>
+            <i className={styles.tacticalSwatchWarning} />
+            Warning
+          </span>
+          <span className={styles.tacticalLegendItem}>
+            <i className={styles.tacticalSwatchClosure} />
+            Closure
+          </span>
+        </div>
       </div>
       <div className={styles.overlayLegend}>
         <div className={styles.legendRow}>
