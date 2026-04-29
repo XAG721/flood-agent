@@ -1,5 +1,5 @@
 api_key.txt
-data/
+/data/
 .pytest_cache/
 __pycache__/
 *.tsbuildinfo
@@ -11,6 +11,8 @@ frontend/.vite/
 3D_visual/.vite/
 frontend/vite.config.js
 frontend/vite.config.d.ts
+3D_visual/vite.config.js
+3D_visual/vite.config.d.ts
 3D_visual/cesium_token.txt
 tmp-edge/
 tmp-edge-debug/

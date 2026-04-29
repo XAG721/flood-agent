@@ -289,8 +289,6 @@
       "observations_beilin_extreme.csv",
       "observations_beilin_mild.csv",
       "observations_beilin_warning.csv",
-      "observations_mild.csv",
-      "observations_warning.csv",
       "resource_status.csv",
       "roads.csv",
       "shelters.csv"
