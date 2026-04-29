@@ -91,6 +91,15 @@ function mapStateRank(proposalState: string) {
   }[proposalState] ?? 0;
 }
 
+function mapStateClassName(proposalState: string) {
+  return {
+    monitoring: styles.mapStateMonitoring,
+    pending: styles.mapStatePending,
+    approved: styles.mapStateApproved,
+    warning_generated: styles.mapStateWarning,
+  }[proposalState] ?? styles.mapStateMonitoring;
+}
+
 function formatTimestamp(timestamp: string) {
   return new Intl.DateTimeFormat("zh-CN", {
     month: "2-digit",
@@ -229,6 +238,17 @@ export function DigitalTwinImpactScreen({
       : linkedPendingProposals.length
         ? "待指挥员审批"
         : "待生成 proposal";
+  const closureComplete = recentWarningDrafts.length > 0;
+  const selectedMapLayer = mapLayers.find((item) => item.object_id === selectedObjectId) ?? mapLayers.find((item) => item.is_lead) ?? null;
+  const selectedMapState = selectedMapLayer ? mapStateLabel(selectedMapLayer.proposal_state) : "等待空间对象";
+  const selectedMapStateClass = selectedMapLayer ? mapStateClassName(selectedMapLayer.proposal_state) : styles.mapStateMonitoring;
+  const syncPulseText = closureComplete
+    ? "地图 warning 扩散、右侧闭环卡片和分众预警列表已同步点亮。"
+    : linkedApprovedProposal
+      ? "地图 approved 对象已高亮，可直接生成 warning 扩散。"
+      : linkedPendingProposals.length
+        ? "地图 pending 对象与右侧审批微流程已同步。"
+        : "选中对象后，地图态势与右侧指挥台会同步切换。";
   const closureStatusDetail = recentWarningDrafts.length
     ? `${recentWarningDrafts.length} 条 audience warning 已完成闭环`
     : linkedApprovedProposal
@@ -645,7 +665,7 @@ export function DigitalTwinImpactScreen({
                     <button
                       key={item.object_id}
                       type="button"
-                      className={`${styles.spatialRow} ${toneClassName(item.risk_level)} ${
+                      className={`${styles.spatialRow} ${toneClassName(item.risk_level)} ${mapStateClassName(item.proposal_state)} ${
                         selectedObjectId === item.object_id ? styles.spatialRowActive : ""
                       }`}
                       onClick={() => void onSelectObject(item.object_id)}
@@ -657,7 +677,7 @@ export function DigitalTwinImpactScreen({
                           {item.timeToImpactMinutes !== undefined ? ` / ${item.timeToImpactMinutes} min` : ""}
                         </p>
                       </div>
-                      <span className={styles.mapStateBadge}>{item.label}</span>
+                      <span className={`${styles.mapStateBadge} ${mapStateClassName(item.proposal_state)}`}>{item.label}</span>
                     </button>
                   ))
                 ) : (
@@ -675,13 +695,21 @@ export function DigitalTwinImpactScreen({
                 <span>Command deck</span>
                 <h3 className={styles.objectTitle}>{focusObject?.object_name ?? "等待焦点对象"}</h3>
               </div>
-              {focusObject ? (
-                <span className={`${styles.statusPill} ${riskClassName(focusObject.risk_level)}`}>{focusObject.risk_level}</span>
-              ) : null}
+              <div className={styles.deckBadgeStack}>
+                {focusObject ? (
+                  <span className={`${styles.statusPill} ${riskClassName(focusObject.risk_level)}`}>{focusObject.risk_level}</span>
+                ) : null}
+                <span className={`${styles.commandDeckBadge} ${selectedMapStateClass}`}>{selectedMapState}</span>
+              </div>
             </div>
             <p className={styles.objectSummary}>
               {focusObject?.summary ?? "选中一个重点对象后，这里会解锁影响链、证据阶梯、审批微流程和 warning 入口。"}
             </p>
+            <div className={`${styles.commandSyncStrip} ${toneClass}`}>
+              <span>Map + command sync</span>
+              <strong>{selectedMapLayer?.name ?? focusObject?.object_name ?? "等待空间联动"}</strong>
+              <small>{syncPulseText}</small>
+            </div>
             <div className={styles.commandGrid}>
               {commandStatusItems.map((item) => (
                 <article key={item.label} className={`${styles.commandCard} ${toneClass}`}>
@@ -777,10 +805,11 @@ export function DigitalTwinImpactScreen({
                 <h4>Proposal 与 warning 闭环</h4>
               </div>
             </div>
-            <article className={`${styles.closureSummaryCard} ${toneClass}`}>
+            <article className={`${styles.closureSummaryCard} ${toneClass} ${closureComplete ? styles.closureCompleteCard : ""}`}>
               <span>Closure state</span>
               <strong>{closureStatus}</strong>
               <small>{closureStatusDetail}</small>
+              {closureComplete ? <em>Closed loop visible on map</em> : null}
             </article>
             <div className={styles.microFlow}>
               <div className={styles.microFlowStage}>
@@ -880,7 +909,7 @@ export function DigitalTwinImpactScreen({
                 {recentWarningDrafts.length ? (
                   <div className={styles.warningList}>
                     {recentWarningDrafts.map((draft) => (
-                      <article key={draft.warning_id} className={styles.warningCard}>
+                      <article key={draft.warning_id} className={`${styles.warningCard} ${styles.warningCardLive}`}>
                         <div className={styles.warningMeta}>
                           <span>{draft.audience}</span>
                           <span>{draft.channel}</span>

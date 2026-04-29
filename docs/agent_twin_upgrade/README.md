@@ -31,6 +31,7 @@
 - 新增 AgentTwin 聚合能力：`flood_system/v3/`
 - 正式前端入口：`frontend/src/App.tsx`
 - V3 API 门面：`frontend/src/api/agentTwinApi.ts`
+- 演示模式 fixture：`frontend/src/fixtures/agentTwinDemoMode.ts`
 - 数据维护模型工厂：`frontend/src/features/dataManagement/dataModels.ts`
 - AgentTwin 派生状态：`frontend/src/state/agentTwinSelectors.ts`
 - AgentTwin 前端编排：`frontend/src/hooks/useAgentTwinConsole.ts`
@@ -79,7 +80,8 @@
 - 第一眼必须像“数字孪生指挥台”，而不是普通后台。
 - 中央必须是空间主画布，当前实现已接入真实 Cesium 画布。
 - 三维画布必须复用 `3D_visual` 的模型校准口径，当前已抽出 `cityengineCalibration.ts` 承接 GLB 源坐标解析、归一化矩阵和模型焦点计算。
-- 三维展示层需要服务“看懂态势”，当前已增加风险热区、扩散圈、发光联动路径、proposal / warning 状态标识和 `Command flythrough` 指挥巡航。
+- 三维展示层需要服务“看懂态势”，当前已增加风险热区、动态积水面、水位柱、扩散圈、发光联动路径、proposal / warning 状态标识和 6 段式 `Play command story` 指挥叙事镜头。
+- 主屏右侧指挥台会与地图对象状态同色系联动，pending / approved / warning 状态会同步影响空间台账、闭环卡片和 warning 草稿列表。
 - 左侧用于态势解释，右侧用于 action / approval / warning 闭环。
 - 智能体对话不是普通聊天，而是“会商、解释、追问、生成 proposal”的控制入口。
 - `/agents` 展示多智能体会商差异、证据对照、supervisor 编排和治理边界。
@@ -99,12 +101,19 @@
 - 运行 `inspect_demo_db.py` 验证闭环数据
 - 使用 `FLOOD_DB_PATH` 指向演示库启动后端
 - 启动 `frontend` 开发服务
+- 默认设置 `VITE_DEMO_MODE=true`，前端使用固定演示快照保证现场稳定性
 - 打开首页进入数字孪生智能体主屏
 
 如需保留现有演示库，可执行：
 
 ```powershell
 .\scripts\start-demo.ps1 -SkipRebuild
+```
+
+如需关闭前端固定演示态，完全使用实时后端数据，可执行：
+
+```powershell
+.\scripts\start-demo.ps1 -LiveData
 ```
 
 ## 7. 推荐阅读顺序

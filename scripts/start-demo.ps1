@@ -1,6 +1,7 @@
 param(
   [switch]$SkipRebuild,
   [switch]$NoBrowser,
+  [switch]$LiveData,
   [int]$BackendPort = 8000,
   [int]$FrontendPort = 5173,
   [string]$PythonPath = "C:\Users\Administrator\anaconda3\python.exe"
@@ -11,6 +12,7 @@ $ErrorActionPreference = "Stop"
 $RepoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 $DemoDb = Join-Path $RepoRoot "data\flood_warning_system_demo.db"
 $FrontendDir = Join-Path $RepoRoot "frontend"
+$FrontendDemoMode = if ($LiveData) { "false" } else { "true" }
 
 if (-not (Test-Path $PythonPath)) {
   $PythonPath = "python"
@@ -40,6 +42,7 @@ Set-Location '$RepoRoot'
 "@
 
 $FrontendCommand = @"
+`$env:VITE_DEMO_MODE = '$FrontendDemoMode'
 Set-Location '$FrontendDir'
 npm.cmd run dev -- --host 127.0.0.1 --port $FrontendPort
 "@
@@ -54,6 +57,7 @@ Write-Host ""
 Write-Host "[AgentTwin Demo] Open: http://127.0.0.1:$FrontendPort" -ForegroundColor Cyan
 Write-Host "[AgentTwin Demo] Event ID: event_demo_beilin_primary" -ForegroundColor Cyan
 Write-Host "[AgentTwin Demo] Backend env FLOOD_DB_PATH is pinned to the demo database." -ForegroundColor Cyan
+Write-Host "[AgentTwin Demo] Frontend VITE_DEMO_MODE=$FrontendDemoMode. Use -LiveData to consume live V3/V2 data only." -ForegroundColor Cyan
 
 if (-not $NoBrowser) {
   Start-Process "http://127.0.0.1:$FrontendPort"

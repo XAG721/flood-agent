@@ -355,6 +355,12 @@ export default function App() {
                 {consoleState.supervisorLoopStatus?.running ? appShellText.supervisorRunning : appShellText.supervisorStopped}
               </strong>
             </div>
+            {consoleState.demoMode ? (
+              <div className={panelStyles.statusSignal}>
+                <span className={panelStyles.statusSignalLabel}>Demo Mode</span>
+                <strong className={panelStyles.statusSignalValue}>Locked</strong>
+              </div>
+            ) : null}
           </>
         }
         metrics={<MetricStrip items={pageMetricItems} />}

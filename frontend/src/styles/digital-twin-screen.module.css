@@ -363,6 +363,27 @@
   align-items: baseline;
 }
 
+.deckBadgeStack {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.commandDeckBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--tone-border-strong);
+  background: rgba(7, 18, 30, 0.84);
+  color: #f4fbff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .railHeader h3,
 .dialogHeader h3,
 .sectionTitle h3,
@@ -814,6 +835,12 @@
   background: color-mix(in srgb, var(--tone-surface) 84%, var(--tone-glow) 16%);
 }
 
+.spatialRowActive {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--tone-accent) 28%, transparent),
+    0 14px 34px rgba(0, 0, 0, 0.2);
+}
+
 .spatialRow strong {
   display: block;
   font-size: 15px;
@@ -837,6 +864,49 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   white-space: nowrap;
+}
+
+.mapStateMonitoring {
+  --state-accent: #5cc8ff;
+  --state-glow: rgba(92, 200, 255, 0.18);
+}
+
+.mapStatePending {
+  --state-accent: #ffad42;
+  --state-glow: rgba(255, 173, 66, 0.24);
+}
+
+.mapStateApproved {
+  --state-accent: #9be36f;
+  --state-glow: rgba(155, 227, 111, 0.22);
+}
+
+.mapStateWarning {
+  --state-accent: #f66f9d;
+  --state-glow: rgba(246, 111, 157, 0.26);
+}
+
+.spatialRow.mapStatePending,
+.spatialRow.mapStateApproved,
+.spatialRow.mapStateWarning {
+  border-color: color-mix(in srgb, var(--state-accent) 42%, var(--tone-border));
+  background:
+    radial-gradient(circle at 100% 50%, var(--state-glow), transparent 48%),
+    color-mix(in srgb, var(--tone-surface) 90%, transparent);
+}
+
+.mapStateBadge.mapStatePending,
+.mapStateBadge.mapStateApproved,
+.mapStateBadge.mapStateWarning,
+.commandDeckBadge.mapStatePending,
+.commandDeckBadge.mapStateApproved,
+.commandDeckBadge.mapStateWarning {
+  border-color: color-mix(in srgb, var(--state-accent) 52%, transparent);
+  background:
+    radial-gradient(circle at 20% 50%, var(--state-glow), transparent 52%),
+    rgba(7, 18, 30, 0.9);
+  color: #f4fbff;
+  box-shadow: 0 0 20px var(--state-glow);
 }
 
 .objectTitle {
@@ -870,6 +940,35 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
+}
+
+.commandSyncStrip {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--tone-border-strong);
+  background:
+    linear-gradient(90deg, var(--tone-glow), transparent 54%),
+    color-mix(in srgb, var(--tone-surface) 88%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--tone-accent) 16%, transparent);
+}
+
+.commandSyncStrip span {
+  color: var(--fg-muted);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.commandSyncStrip strong {
+  color: #f4fbff;
+  font-size: 18px;
+}
+
+.commandSyncStrip small {
+  color: var(--fg-secondary);
+  line-height: 1.55;
 }
 
 .commandCard,
@@ -1010,6 +1109,37 @@
 .closureSummaryCard {
   display: grid;
   gap: 4px;
+}
+
+.closureSummaryCard em {
+  width: fit-content;
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(155, 227, 111, 0.34);
+  background: rgba(155, 227, 111, 0.1);
+  color: #d7ffc8;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.closureCompleteCard {
+  border-color: rgba(155, 227, 111, 0.34);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(155, 227, 111, 0.18), transparent 34%),
+    color-mix(in srgb, var(--tone-surface) 90%, transparent);
+  animation: closureBreath 3.8s ease-in-out infinite;
+}
+
+.warningCardLive {
+  border-left-color: rgba(246, 111, 157, 0.62);
+  background:
+    linear-gradient(90deg, rgba(246, 111, 157, 0.1), transparent 42%),
+    rgba(8, 18, 28, 0.38);
+  animation: warningSoftPulse 3.6s ease-in-out infinite;
 }
 
 .railButton:disabled,
@@ -1217,6 +1347,28 @@
   --tone-soft: rgba(119, 28, 37, 0.26);
   --tone-accent: #ff8278;
   --tone-glow: rgba(167, 48, 57, 0.24);
+}
+
+@keyframes closureBreath {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(155, 227, 111, 0);
+  }
+
+  50% {
+    box-shadow: 0 0 28px rgba(155, 227, 111, 0.14);
+  }
+}
+
+@keyframes warningSoftPulse {
+  0%,
+  100% {
+    box-shadow: inset 0 0 0 rgba(246, 111, 157, 0);
+  }
+
+  50% {
+    box-shadow: inset 0 0 28px rgba(246, 111, 157, 0.08);
+  }
 }
 
 @media (max-width: 1360px) {

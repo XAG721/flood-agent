@@ -1,6 +1,24 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { agentTwinApi } from "../api/agentTwinApi";
+import {
+  agentTwinDemoModeEnabled,
+  buildDemoDialogResponse,
+  buildDemoOverview,
+  buildDemoQueueSnapshot,
+  buildDemoRegionalView,
+  buildDemoWarnings,
+  demoAgentCouncil,
+  demoAlerts,
+  demoApprovedProposalSeed,
+  demoEvent,
+  demoHazardState,
+  demoPendingProposalSeed,
+  demoResourceStatusView,
+  demoWarningDraftSeed,
+  findDemoFocusObject,
+} from "../fixtures/agentTwinDemoMode";
 import type {
+  ActionProposalV2,
   AgentCouncilView,
   AgentDialogTranscriptEntry,
   AudienceWarningDraft,
@@ -20,11 +38,15 @@ function nowIso() {
 
 export function useAgentTwinConsole() {
   const base = useV2OperatorConsole();
-  const currentEventId = base.event?.event_id ?? null;
+  const currentEventId = agentTwinDemoModeEnabled ? demoEvent.event_id : base.event?.event_id ?? null;
   const [twinOverview, setTwinOverview] = useState<TwinOverviewView | null>(null);
   const [focusObject, setFocusObject] = useState<FocusObjectView | null>(null);
   const [agentCouncil, setAgentCouncil] = useState<AgentCouncilView | null>(null);
   const [warningDrafts, setWarningDrafts] = useState<AudienceWarningDraft[]>([]);
+  const [demoFocusObjectId, setDemoFocusObjectId] = useState("community_jsl_grid");
+  const [demoPendingProposals, setDemoPendingProposals] = useState<ActionProposalV2[]>(demoPendingProposalSeed);
+  const [demoApprovedProposals, setDemoApprovedProposals] = useState<ActionProposalV2[]>(demoApprovedProposalSeed);
+  const [demoWarningDrafts, setDemoWarningDrafts] = useState<AudienceWarningDraft[]>(demoWarningDraftSeed);
   const [dialogEntries, setDialogEntries] = useState<AgentDialogTranscriptEntry[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogBusy, setDialogBusy] = useState(false);
@@ -33,6 +55,21 @@ export function useAgentTwinConsole() {
   const twinStreamRef = useRef<EventSource | null>(null);
   const baseEventRef = useRef(base.event);
   const refreshRegionalProposalDataRef = useRef(base.refreshRegionalProposalData);
+  const demoTwinOverview = useMemo(
+    () =>
+      buildDemoOverview({
+        pendingProposals: demoPendingProposals,
+        approvedProposals: demoApprovedProposals,
+        warningDrafts: demoWarningDrafts,
+      }),
+    [demoApprovedProposals, demoPendingProposals, demoWarningDrafts],
+  );
+  const demoFocusObject = useMemo(() => findDemoFocusObject(demoFocusObjectId), [demoFocusObjectId]);
+  const demoQueueSnapshot = useMemo(() => buildDemoQueueSnapshot(demoPendingProposals), [demoPendingProposals]);
+  const demoRegionalProposalHistory = useMemo(
+    () => demoApprovedProposals.map(buildDemoRegionalView),
+    [demoApprovedProposals],
+  );
 
   useEffect(() => {
     baseEventRef.current = base.event;
@@ -40,6 +77,13 @@ export function useAgentTwinConsole() {
   }, [base.event, base.refreshRegionalProposalData]);
 
   const refreshTwinOverview = useCallback(async () => {
+    if (agentTwinDemoModeEnabled) {
+      setTwinOverview(demoTwinOverview);
+      setWarningDrafts(demoWarningDrafts);
+      setTwinBusy(false);
+      setTwinStreamStatus("open");
+      return;
+    }
     if (!currentEventId) {
       setTwinOverview(null);
       return;
@@ -57,9 +101,13 @@ export function useAgentTwinConsole() {
     } finally {
       setTwinBusy(false);
     }
-  }, [currentEventId]);
+  }, [currentEventId, demoTwinOverview, demoWarningDrafts]);
 
   const refreshAgentCouncil = useCallback(async () => {
+    if (agentTwinDemoModeEnabled) {
+      setAgentCouncil(demoAgentCouncil);
+      return;
+    }
     if (!currentEventId) {
       setAgentCouncil(null);
       return;
@@ -76,6 +124,12 @@ export function useAgentTwinConsole() {
 
   const loadFocusObject = useCallback(
     async (objectId: string) => {
+      if (agentTwinDemoModeEnabled) {
+        setDemoFocusObjectId(objectId);
+        const payload = findDemoFocusObject(objectId);
+        setFocusObject(payload);
+        return payload;
+      }
       if (!currentEventId) {
         setFocusObject(null);
         return null;
@@ -113,6 +167,10 @@ export function useAgentTwinConsole() {
     if (twinStreamRef.current) {
       twinStreamRef.current.close();
       twinStreamRef.current = null;
+    }
+    if (agentTwinDemoModeEnabled) {
+      setTwinStreamStatus("open");
+      return;
     }
     if (!currentEventId) {
       setTwinStreamStatus("closed");
@@ -178,6 +236,12 @@ export function useAgentTwinConsole() {
 
   const selectTwinObject = useCallback(
     async (objectId: string) => {
+      if (agentTwinDemoModeEnabled) {
+        setDemoFocusObjectId(objectId);
+        const payload = findDemoFocusObject(objectId);
+        setFocusObject(payload);
+        return payload;
+      }
       await base.selectEntity(objectId);
       return loadFocusObject(objectId);
     },
@@ -191,6 +255,32 @@ export function useAgentTwinConsole() {
       }
 
       const targetObjectId = objectId ?? focusObject?.object_id ?? twinOverview?.lead_object_id ?? undefined;
+      if (agentTwinDemoModeEnabled) {
+        const response = buildDemoDialogResponse(message.trim(), targetObjectId ?? demoFocusObjectId);
+        setDemoFocusObjectId(response.object_id);
+        setFocusObject(findDemoFocusObject(response.object_id));
+        setDialogOpen(true);
+        setDialogBusy(true);
+        const createdAt = nowIso();
+        setDialogEntries((current) => [
+          ...current,
+          {
+            id: `dialog_user_${Date.now()}`,
+            role: "user",
+            content: message.trim(),
+            created_at: createdAt,
+          },
+          {
+            id: `dialog_assistant_${Date.now()}`,
+            role: "assistant",
+            content: response.answer,
+            created_at: response.generated_at,
+            response,
+          },
+        ]);
+        setDialogBusy(false);
+        return response;
+      }
       if (targetObjectId) {
         await selectTwinObject(targetObjectId);
       }
@@ -240,6 +330,22 @@ export function useAgentTwinConsole() {
 
   const generateTwinProposals = useCallback(
     async (objectIds?: string[]) => {
+      if (agentTwinDemoModeEnabled) {
+        setTwinBusy(true);
+        setDemoPendingProposals((current) => (current.length ? current : demoPendingProposalSeed));
+        setDialogOpen(true);
+        setTwinBusy(false);
+        return {
+          event_id: demoEvent.event_id,
+          queue_version: `demo_generated_${Date.now()}`,
+          generated_at: nowIso(),
+          blocked: false,
+          proposals: demoPendingProposalSeed.map((proposal) => ({
+            blocked: false,
+            proposal: buildDemoRegionalView(proposal),
+          })),
+        };
+      }
       if (!currentEventId) {
         return null;
       }
@@ -269,6 +375,12 @@ export function useAgentTwinConsole() {
 
   const generateAudienceWarnings = useCallback(
     async (proposalId: string) => {
+      if (agentTwinDemoModeEnabled) {
+        const response = buildDemoWarnings(proposalId);
+        setDemoWarningDrafts(response.warnings);
+        setWarningDrafts(response.warnings);
+        return response;
+      }
       const response: WarningGenerationResponse = await agentTwinApi.generateWarnings(proposalId);
       setWarningDrafts(response.warnings);
       await refreshTwinOverview();
@@ -279,6 +391,27 @@ export function useAgentTwinConsole() {
 
   const resolveTwinProposal = useCallback(
     async (proposalId: string, decision: "approve" | "reject", note: string) => {
+      if (agentTwinDemoModeEnabled) {
+        setDemoPendingProposals((current) => {
+          const target = current.find((proposal) => proposal.proposal_id === proposalId);
+          if (decision === "approve" && target) {
+            setDemoApprovedProposals((approvedCurrent) => [
+              {
+                ...target,
+                status: "approved",
+                resolved_at: nowIso(),
+                resolved_by: "frontend_console",
+                resolution_note: note || "演示模式主屏内批准。",
+                updated_at: nowIso(),
+              },
+              ...approvedCurrent.filter((proposal) => proposal.proposal_id !== proposalId),
+            ]);
+          }
+          return current.filter((proposal) => proposal.proposal_id !== proposalId);
+        });
+        setTwinStreamStatus("open");
+        return;
+      }
       await base.resolveProposal(proposalId, decision, note);
       await refreshTwinOverview();
       await refreshAgentCouncil();
@@ -294,6 +427,7 @@ export function useAgentTwinConsole() {
     () => base.proposals.filter((item) => item.status === "approved"),
     [base.proposals],
   );
+  const resolvedApprovedProposals = agentTwinDemoModeEnabled ? demoApprovedProposals : approvedProposals;
 
   const fallbackTwinOverview = useMemo<TwinOverviewView | null>(() => {
     if (twinOverview || !base.event) {
@@ -333,7 +467,7 @@ export function useAgentTwinConsole() {
       lead_object_name: fallbackFocusObjects[0]?.name ?? null,
       focus_objects: fallbackFocusObjects,
       pending_proposal_count: base.pendingProposals.length,
-      approved_proposal_count: approvedProposals.length,
+      approved_proposal_count: resolvedApprovedProposals.length,
       warning_draft_count: 0,
       active_alert_count: base.openAlerts.length,
       map_layers: fallbackFocusObjects.map((item, index) => ({
@@ -357,7 +491,7 @@ export function useAgentTwinConsole() {
       })),
       recent_warning_drafts: [],
     };
-  }, [approvedProposals.length, base.agentStatus?.latest_summary, base.event, base.hazardState?.overall_risk_level, base.hazardState?.trend, base.latestAnswer?.recommended_actions, base.openAlerts, base.pendingProposals, base.topImpacts, twinOverview]);
+  }, [resolvedApprovedProposals.length, base.agentStatus?.latest_summary, base.event, base.hazardState?.overall_risk_level, base.hazardState?.trend, base.latestAnswer?.recommended_actions, base.openAlerts, base.pendingProposals, base.topImpacts, twinOverview]);
 
   const fallbackFocusObject = useMemo<FocusObjectView | null>(() => {
     if (focusObject || !base.selectedImpact) {
@@ -393,17 +527,32 @@ export function useAgentTwinConsole() {
 
   return {
     ...base,
-    twinOverview: fallbackTwinOverview,
-    focusObject: fallbackFocusObject,
-    agentCouncil,
-    warningDrafts,
+    demoMode: agentTwinDemoModeEnabled,
+    event: agentTwinDemoModeEnabled ? demoEvent : base.event,
+    healthState: agentTwinDemoModeEnabled ? "online" : base.healthState,
+    bootState: agentTwinDemoModeEnabled ? "ready" : base.bootState,
+    executionStatus: agentTwinDemoModeEnabled ? "idle" : base.executionStatus,
+    errorMessage: agentTwinDemoModeEnabled ? null : base.errorMessage,
+    hazardState: agentTwinDemoModeEnabled ? demoHazardState : base.hazardState,
+    areaResourceStatusView: agentTwinDemoModeEnabled ? demoResourceStatusView : base.areaResourceStatusView,
+    eventResourceStatusView: agentTwinDemoModeEnabled ? demoResourceStatusView : base.eventResourceStatusView,
+    openAlerts: agentTwinDemoModeEnabled ? demoAlerts : base.openAlerts,
+    proposals: agentTwinDemoModeEnabled ? demoApprovedProposals : base.proposals,
+    pendingProposals: agentTwinDemoModeEnabled ? demoPendingProposals : base.pendingProposals,
+    regionalProposalQueueSnapshot: agentTwinDemoModeEnabled ? demoQueueSnapshot : base.regionalProposalQueueSnapshot,
+    regionalProposalHistory: agentTwinDemoModeEnabled ? demoRegionalProposalHistory : base.regionalProposalHistory,
+    proposalStreamStatus: agentTwinDemoModeEnabled ? "open" : base.proposalStreamStatus,
+    twinOverview: agentTwinDemoModeEnabled ? demoTwinOverview : fallbackTwinOverview,
+    focusObject: agentTwinDemoModeEnabled ? demoFocusObject : fallbackFocusObject,
+    agentCouncil: agentTwinDemoModeEnabled ? demoAgentCouncil : agentCouncil,
+    warningDrafts: agentTwinDemoModeEnabled ? demoWarningDrafts : warningDrafts,
     dialogEntries,
     dialogOpen,
     dialogBusy,
     twinBusy,
-    twinStreamStatus,
-    approvedProposals,
-    isBusy: base.isBusy || dialogBusy || twinBusy,
+    twinStreamStatus: agentTwinDemoModeEnabled ? "open" : twinStreamStatus,
+    approvedProposals: resolvedApprovedProposals,
+    isBusy: agentTwinDemoModeEnabled ? dialogBusy || twinBusy : base.isBusy || dialogBusy || twinBusy,
     setDialogOpen,
     refreshTwinOverview,
     selectTwinObject,

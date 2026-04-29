@@ -12,7 +12,8 @@
 
 - 首页 `/` 已重构为数字孪生智能体指挥主屏，包含左侧态势带、中央 Cesium 三维画布、右侧 proposal / warning 闭环指挥台和智能体对话抽屉。
 - 三维画布已接入 `3D_visual` 的 CityEngine GLB 模型资源，并抽出 `frontend/src/lib/cityengineCalibration.ts` 复用源坐标归一化和模型校准逻辑。
-- 三维展示层已支持风险热区、扩散圈、发光联动路径、proposal / warning 状态标识，以及 `Command flythrough` 指挥巡航。
+- 三维展示层已支持风险热区、动态积水面、水位柱、发光联动路径、proposal / warning 状态标识，以及 6 段式 `Play command story` 指挥叙事镜头。
+- 前端支持 `VITE_DEMO_MODE=true` 演示模式，可固定首页事件、对象、proposal、warning 和会商结果，降低现场数据波动对展示的影响。
 - 后端新增 `/v3/*` 聚合接口，承接 twin overview、focus object、agent council、dialog、proposal 生成、warning 生成和 SSE 实时事件。
 - `/v2/*` 继续承接人工审批、通知、执行日志和审计落库，避免重写已有闭环内核。
 - 演示主库可通过脚本重建，固定支撑 `event_demo_beilin_primary` 主链路。
@@ -29,6 +30,7 @@
 - `flood_system/v2/platform_audit.py`：V2 平台审计与告警操作 mixin。
 - `flood_system/v3/`：AgentTwin 聚合读模型、影响链、会商、proposal 与 warning 前链路。
 - `frontend/src/api/agentTwinApi.ts`：前端 V3 API 门面。
+- `frontend/src/fixtures/agentTwinDemoMode.ts`：前端演示模式固定数据与结构化降级样例。
 - `frontend/src/features/dataManagement/dataModels.ts`：数据维护页使用的空档案、空资源状态工厂。
 - `frontend/src/state/agentTwinSelectors.ts`：主屏多源态势、影响链图谱和 Agent 差异对照的派生状态。
 - `frontend/src/components/DigitalTwinImpactScreen.tsx`：数字孪生智能体主屏。
@@ -56,11 +58,18 @@
 - 启动后端 `http://127.0.0.1:8000`
 - 启动前端 `http://127.0.0.1:5173`
 - 打开首页
+- 默认设置 `VITE_DEMO_MODE=true`，让前端优先使用固定演示快照
 
 如需保留现有演示库：
 
 ```powershell
 .\scripts\start-demo.ps1 -SkipRebuild
+```
+
+如需关闭前端固定演示态、完全消费实时 V2/V3 数据：
+
+```powershell
+.\scripts\start-demo.ps1 -LiveData
 ```
 
 ## 手动运行
@@ -89,6 +98,7 @@ C:\Users\Administrator\anaconda3\python.exe -m uvicorn flood_system.api:app --ho
 ```powershell
 Set-Location d:\graduation_project\frontend
 npm.cmd install
+$env:VITE_DEMO_MODE="true"
 npm.cmd run dev
 ```
 
