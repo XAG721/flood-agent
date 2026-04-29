@@ -1,4 +1,4 @@
-import { request } from "../lib/httpClient";
+﻿import { request } from "../lib/httpClient";
 import type {
   EntityProfile,
   RAGDocument,
@@ -19,14 +19,14 @@ export const adminApi = {
       query.set("entity_type", params.entityType);
     }
     const suffix = query.toString() ? `?${query.toString()}` : "";
-    return request(`/v2/admin/entity-profiles${suffix}`, { method: "GET" });
+    return request(`/platform/admin/entity-profiles${suffix}`, { method: "GET" });
   },
 
   createV2EntityProfile(
     profile: EntityProfile,
     payload?: { operator_id?: string; operator_role?: string },
   ): Promise<EntityProfile> {
-    return request("/v2/admin/entity-profiles", {
+    return request("/platform/admin/entity-profiles", {
       method: "POST",
       body: JSON.stringify({
         profile,
@@ -40,7 +40,7 @@ export const adminApi = {
     profile: EntityProfile,
     payload?: { operator_id?: string; operator_role?: string },
   ): Promise<EntityProfile> {
-    return request(`/v2/admin/entity-profiles/${profile.entity_id}`, {
+    return request(`/platform/admin/entity-profiles/${profile.entity_id}`, {
       method: "PUT",
       body: JSON.stringify({
         profile,
@@ -51,13 +51,13 @@ export const adminApi = {
   },
 
   deleteV2EntityProfile(entityId: string): Promise<{ status: string; entity_id: string }> {
-    return request(`/v2/admin/entity-profiles/${entityId}`, {
+    return request(`/platform/admin/entity-profiles/${entityId}`, {
       method: "DELETE",
     });
   },
 
   getAreaResourceStatus(areaId: string): Promise<ResourceStatusView> {
-    return request(`/v2/admin/areas/${areaId}/resource-status`, {
+    return request(`/platform/admin/areas/${areaId}/resource-status`, {
       method: "GET",
     });
   },
@@ -67,7 +67,7 @@ export const adminApi = {
     resourceStatus: ResourceStatus,
     payload?: { operator_id?: string; operator_role?: string },
   ): Promise<ResourceStatusView> {
-    return request(`/v2/admin/areas/${areaId}/resource-status`, {
+    return request(`/platform/admin/areas/${areaId}/resource-status`, {
       method: "PUT",
       body: JSON.stringify({
         resource_status: resourceStatus,
@@ -78,7 +78,7 @@ export const adminApi = {
   },
 
   getEventResourceStatus(eventId: string): Promise<ResourceStatusView> {
-    return request(`/v2/admin/events/${eventId}/resource-status`, {
+    return request(`/platform/admin/events/${eventId}/resource-status`, {
       method: "GET",
     });
   },
@@ -88,7 +88,7 @@ export const adminApi = {
     resourceStatus: ResourceStatus,
     payload?: { operator_id?: string; operator_role?: string },
   ): Promise<ResourceStatusView> {
-    return request(`/v2/admin/events/${eventId}/resource-status`, {
+    return request(`/platform/admin/events/${eventId}/resource-status`, {
       method: "PUT",
       body: JSON.stringify({
         resource_status: resourceStatus,
@@ -99,20 +99,20 @@ export const adminApi = {
   },
 
   deleteEventResourceStatus(eventId: string): Promise<{ status: string; event_id: string }> {
-    return request(`/v2/admin/events/${eventId}/resource-status`, {
+    return request(`/platform/admin/events/${eventId}/resource-status`, {
       method: "DELETE",
     });
   },
 
   listV2RagDocuments(): Promise<RAGDocument[]> {
-    return request("/v2/admin/rag-documents", { method: "GET" });
+    return request("/platform/admin/rag-documents", { method: "GET" });
   },
 
   importV2RagDocuments(
     documents: RAGDocument[],
     payload?: { operator_id?: string; operator_role?: string },
   ): Promise<{ status: string; document_count: number; documents: RAGDocument[] }> {
-    return request("/v2/admin/rag-documents/import", {
+    return request("/platform/admin/rag-documents/import", {
       method: "POST",
       body: JSON.stringify({
         documents,
@@ -123,7 +123,7 @@ export const adminApi = {
   },
 
   reloadV2RagDocuments(): Promise<{ status: string; document_count: number; documents: RAGDocument[] }> {
-    return request("/v2/admin/rag-documents/reload", {
+    return request("/platform/admin/rag-documents/reload", {
       method: "POST",
     });
   },

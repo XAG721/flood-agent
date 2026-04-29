@@ -57,7 +57,7 @@ Write-Host ""
 Write-Host "[AgentTwin Demo] Open: http://127.0.0.1:$FrontendPort" -ForegroundColor Cyan
 Write-Host "[AgentTwin Demo] Event ID: event_demo_beilin_primary" -ForegroundColor Cyan
 Write-Host "[AgentTwin Demo] Backend env FLOOD_DB_PATH is pinned to the demo database." -ForegroundColor Cyan
-Write-Host "[AgentTwin Demo] Frontend VITE_DEMO_MODE=$FrontendDemoMode. Use -LiveData to consume live V3/V2 data only." -ForegroundColor Cyan
+Write-Host "[AgentTwin Demo] Frontend VITE_DEMO_MODE=$FrontendDemoMode. Use -LiveData to consume live platform data only." -ForegroundColor Cyan
 
 if (-not $NoBrowser) {
   Start-Process "http://127.0.0.1:$FrontendPort"

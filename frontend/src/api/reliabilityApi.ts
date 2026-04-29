@@ -1,4 +1,4 @@
-import { request } from "../lib/httpClient";
+﻿import { request } from "../lib/httpClient";
 import type { ArchiveStatusView, AuditRecord, OperationalAlert } from "../types/api";
 
 interface ReliabilityQuery {
@@ -23,18 +23,18 @@ function buildReliabilityQuery(payload?: ReliabilityQuery): string {
 
 export const reliabilityApi = {
   listV2Alerts(payload?: ReliabilityQuery): Promise<OperationalAlert[]> {
-    return request(`/v2/alerts${buildReliabilityQuery(payload)}`, { method: "GET" });
+    return request(`/platform/alerts${buildReliabilityQuery(payload)}`, { method: "GET" });
   },
 
   listV2AuditRecords(payload?: ReliabilityQuery): Promise<AuditRecord[]> {
-    return request(`/v2/audit/records${buildReliabilityQuery(payload)}`, { method: "GET" });
+    return request(`/platform/audit/records${buildReliabilityQuery(payload)}`, { method: "GET" });
   },
 
   getV2ArchiveStatus(): Promise<ArchiveStatusView> {
-    return request("/v2/archive/status", { method: "GET" });
+    return request("/platform/archive/status", { method: "GET" });
   },
 
   runV2ArchiveCycle(): Promise<ArchiveStatusView> {
-    return request("/v2/archive/run", { method: "POST" });
+    return request("/platform/archive/run", { method: "POST" });
   },
 };

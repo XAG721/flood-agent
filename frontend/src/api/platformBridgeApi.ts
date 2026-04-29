@@ -1,4 +1,4 @@
-import { buildUrl, getApiOperatorContext, request } from "../lib/httpClient";
+﻿import { buildUrl, getApiOperatorContext, request } from "../lib/httpClient";
 import type {
   Advisory,
   DailyReportView,
@@ -19,10 +19,10 @@ import type {
   V2EventSnapshot,
 } from "../types/api";
 
-export const v2BridgeApi = {
+export const platformBridgeApi = {
   getV2OperatorCapabilities(operatorRole?: OperatorRole): Promise<OperatorCapabilitiesView> {
     const suffix = operatorRole ? `?operator_role=${encodeURIComponent(operatorRole)}` : "";
-    return request(`/v2/security/capabilities${suffix}`, { method: "GET" });
+    return request(`/platform/security/capabilities${suffix}`, { method: "GET" });
   },
 
   health(): Promise<{ status: string }> {
@@ -36,7 +36,7 @@ export const v2BridgeApi = {
     operator?: string;
     metadata?: Record<string, unknown>;
   }): Promise<V2EventRecord> {
-    return request("/v2/events", {
+    return request("/platform/events", {
       method: "POST",
       body: JSON.stringify(payload),
     });
@@ -49,7 +49,7 @@ export const v2BridgeApi = {
       observations: ObservationIngestItem[];
     },
   ): Promise<V2EventSnapshot> {
-    return request(`/v2/events/${eventId}/observations`, {
+    return request(`/platform/events/${eventId}/observations`, {
       method: "POST",
       body: JSON.stringify(payload),
     });
@@ -68,20 +68,20 @@ export const v2BridgeApi = {
     llm_status?: "ok" | "failed";
     llm_error?: string | null;
   }> {
-    return request(`/v2/events/${eventId}/simulation-updates`, {
+    return request(`/platform/events/${eventId}/simulation-updates`, {
       method: "POST",
       body: JSON.stringify(payload),
     });
   },
 
   getV2HazardState(eventId: string): Promise<HazardStateV2> {
-    return request(`/v2/events/${eventId}/hazard-state`, {
+    return request(`/platform/events/${eventId}/hazard-state`, {
       method: "GET",
     });
   },
 
   listPendingRegionalProposals(): Promise<RegionalProposalQueueSnapshot> {
-    return request("/v2/proposals/pending", { method: "GET" });
+    return request("/platform/proposals/pending", { method: "GET" });
   },
 
   listRegionalProposalsByEvent(
@@ -89,25 +89,25 @@ export const v2BridgeApi = {
     status?: string,
   ): Promise<RegionalProposalView[]> {
     const suffix = status ? `?status=${encodeURIComponent(status)}` : "";
-    return request(`/v2/events/${eventId}/regional-proposals${suffix}`, { method: "GET" });
+    return request(`/platform/events/${eventId}/regional-proposals${suffix}`, { method: "GET" });
   },
 
   listV2DailyReports(eventId: string): Promise<DailyReportView[]> {
-    return request(`/v2/events/${eventId}/daily-reports`, { method: "GET" });
+    return request(`/platform/events/${eventId}/daily-reports`, { method: "GET" });
   },
 
   listV2EpisodeSummaries(eventId: string): Promise<EventEpisodeSummaryView[]> {
-    return request(`/v2/events/${eventId}/episode-summaries`, { method: "GET" });
+    return request(`/platform/events/${eventId}/episode-summaries`, { method: "GET" });
   },
 
   listV2LongTermMemory(eventId: string): Promise<LongTermMemoryView[]> {
-    return request(`/v2/events/${eventId}/long-term-memory`, { method: "GET" });
+    return request(`/platform/events/${eventId}/long-term-memory`, { method: "GET" });
   },
 
   getPendingRegionalAnalysisPackage(
     eventId: string,
   ): Promise<RegionalAnalysisPackageView | null> {
-    return request(`/v2/events/${eventId}/regional-analysis-packages/pending`, { method: "GET" });
+    return request(`/platform/events/${eventId}/regional-analysis-packages/pending`, { method: "GET" });
   },
 
   listRegionalAnalysisPackages(
@@ -116,7 +116,7 @@ export const v2BridgeApi = {
   ): Promise<RegionalAnalysisPackageView[]> {
     const includePending = options?.includePending ?? true;
     return request(
-      `/v2/events/${eventId}/regional-analysis-packages?include_pending=${includePending ? "true" : "false"}`,
+      `/platform/events/${eventId}/regional-analysis-packages?include_pending=${includePending ? "true" : "false"}`,
       { method: "GET" },
     );
   },
@@ -125,7 +125,7 @@ export const v2BridgeApi = {
     proposalId: string,
     payload: ProposalDraftUpdateRequest,
   ): Promise<RegionalProposalView> {
-    return request(`/v2/proposals/${proposalId}/draft`, {
+    return request(`/platform/proposals/${proposalId}/draft`, {
       method: "PATCH",
       body: JSON.stringify(payload),
     });
@@ -139,7 +139,7 @@ export const v2BridgeApi = {
       note?: string;
     },
   ): Promise<RegionalProposalView> {
-    return request(`/v2/proposals/${proposalId}/approve`, {
+    return request(`/platform/proposals/${proposalId}/approve`, {
       method: "POST",
       body: JSON.stringify(payload),
     });
@@ -153,7 +153,7 @@ export const v2BridgeApi = {
       note?: string;
     },
   ): Promise<RegionalProposalView> {
-    return request(`/v2/proposals/${proposalId}/reject`, {
+    return request(`/platform/proposals/${proposalId}/reject`, {
       method: "POST",
       body: JSON.stringify(payload),
     });
@@ -167,7 +167,7 @@ export const v2BridgeApi = {
       note?: string;
     },
   ): Promise<RegionalAnalysisPackageView> {
-    return request(`/v2/regional-analysis-packages/${packageId}/approve`, {
+    return request(`/platform/regional-analysis-packages/${packageId}/approve`, {
       method: "POST",
       body: JSON.stringify(payload),
     });
@@ -181,7 +181,7 @@ export const v2BridgeApi = {
       note?: string;
     },
   ): Promise<RegionalAnalysisPackageView> {
-    return request(`/v2/regional-analysis-packages/${packageId}/reject`, {
+    return request(`/platform/regional-analysis-packages/${packageId}/reject`, {
       method: "POST",
       body: JSON.stringify(payload),
     });
@@ -191,7 +191,7 @@ export const v2BridgeApi = {
     onSnapshot: (snapshot: RegionalProposalQueueSnapshot) => void;
     onError?: () => void;
   }): EventSource {
-    const streamUrl = new URL(buildUrl("/v2/proposals/stream"), window.location.origin);
+    const streamUrl = new URL(buildUrl("/platform/proposals/stream"), window.location.origin);
     streamUrl.searchParams.set("operator_role", getApiOperatorContext().role);
     const source = new EventSource(streamUrl.toString());
     source.onmessage = (event) => {
@@ -209,7 +209,7 @@ export const v2BridgeApi = {
     eventId: string,
   ): Promise<EntityImpactView> {
     return request(
-      `/v2/entities/${entityId}/impact?event_id=${encodeURIComponent(eventId)}`,
+      `/platform/entities/${entityId}/impact?event_id=${encodeURIComponent(eventId)}`,
       { method: "GET" },
     );
   },
@@ -223,7 +223,7 @@ export const v2BridgeApi = {
     operator_role?: string;
     profile_overrides?: Record<string, unknown>;
   }): Promise<Advisory> {
-    return request("/v2/advisories/generate", {
+    return request("/platform/advisories/generate", {
       method: "POST",
       body: JSON.stringify(payload),
     });
@@ -233,14 +233,14 @@ export const v2BridgeApi = {
     event_id: string;
     operator_role?: string;
   }): Promise<V2CopilotSessionView> {
-    return request("/v2/copilot/sessions/bootstrap", {
+    return request("/platform/copilot/sessions/bootstrap", {
       method: "POST",
       body: JSON.stringify(payload),
     });
   },
 
   getV2CopilotSession(sessionId: string): Promise<V2CopilotSessionView> {
-    return request(`/v2/copilot/sessions/${sessionId}`, {
+    return request(`/platform/copilot/sessions/${sessionId}`, {
       method: "GET",
     });
   },
@@ -249,7 +249,7 @@ export const v2BridgeApi = {
     sessionId: string,
     content: string,
   ): Promise<V2CopilotSessionView> {
-    return request(`/v2/copilot/sessions/${sessionId}/messages`, {
+    return request(`/platform/copilot/sessions/${sessionId}/messages`, {
       method: "POST",
       body: JSON.stringify({ content }),
     });
@@ -264,7 +264,7 @@ export const v2BridgeApi = {
       note?: string;
     },
   ): Promise<V2CopilotSessionView> {
-    return request(`/v2/copilot/sessions/${sessionId}/proposals/${proposalId}/approve`, {
+    return request(`/platform/copilot/sessions/${sessionId}/proposals/${proposalId}/approve`, {
       method: "POST",
       body: JSON.stringify(payload),
     });
@@ -279,7 +279,7 @@ export const v2BridgeApi = {
       note?: string;
     },
   ): Promise<V2CopilotSessionView> {
-    return request(`/v2/copilot/sessions/${sessionId}/proposals/${proposalId}/reject`, {
+    return request(`/platform/copilot/sessions/${sessionId}/proposals/${proposalId}/reject`, {
       method: "POST",
       body: JSON.stringify(payload),
     });
@@ -294,7 +294,7 @@ export const v2BridgeApi = {
       note?: string;
     },
   ): Promise<V2CopilotSessionView> {
-    return request(`/v2/copilot/sessions/${sessionId}/proposals/batch-approve`, {
+    return request(`/platform/copilot/sessions/${sessionId}/proposals/batch-approve`, {
       method: "POST",
       body: JSON.stringify(payload),
     });
@@ -309,7 +309,7 @@ export const v2BridgeApi = {
       note?: string;
     },
   ): Promise<V2CopilotSessionView> {
-    return request(`/v2/copilot/sessions/${sessionId}/proposals/batch-reject`, {
+    return request(`/platform/copilot/sessions/${sessionId}/proposals/batch-reject`, {
       method: "POST",
       body: JSON.stringify(payload),
     });

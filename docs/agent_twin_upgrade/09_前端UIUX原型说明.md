@@ -1,4 +1,4 @@
-# AgentTwin Flood 前端 UI/UX 原型说明
+﻿# AgentTwin Flood 前端 UI/UX 原型说明
 
 ## 1. 定位
 
@@ -25,8 +25,8 @@
 
 虽然是 demo，但必须具备生产级测试品的工程边界。
 
-- 接口以 `/v3/*` 聚合读模型为主。
-- 审批、通知和审计继续复用 `/v2/*` 稳定闭环。
+- 接口以 `/agent-twin/*` 聚合读模型为主。
+- 审批、通知和审计继续复用 `/platform/*` 稳定闭环。
 - LLM、SSE、Cesium 或数据失败时要有降级态。
 - 高风险动作必须保留人工审批闸门。
 
@@ -48,7 +48,7 @@
 顶部产品态势区
   - 当前事件
   - 风险等级
-  - V3/SSE/Agent 状态
+  - AgentTwin/SSE/Agent 状态
   - 关键操作入口
 
 生产级 demo proof strip

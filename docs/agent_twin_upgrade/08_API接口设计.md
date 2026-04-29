@@ -1,15 +1,15 @@
-# AgentTwin Flood V3 API 接口设计
+﻿# AgentTwin Flood AgentTwin API 接口设计
 
 ## 1. 设计原则
 
-1. 新接口统一使用 `/api/v3/*`。
-2. 与当前 `/v2/*` 并行存在。
-3. `V3` 负责分析与生成前链路，`V2` 继续承接 proposal、通知、执行和审计闭环。
+1. 新接口统一使用 `/agent-twin/*`。
+2. 与当前 `/platform/*` 并行存在。
+3. `AgentTwin` 负责分析与生成前链路，`现有平台` 继续承接 proposal、通知、执行和审计闭环。
 4. 接口设计应支持“数字孪生智能体洪水预警系统前端”的主屏联动与对话控制。
 
 ## 2. 天气事件解析
 
-### `POST /api/v3/weather-events/parse`
+### `POST /agent-twin/weather-events/parse`
 
 请求：
 
@@ -35,7 +35,7 @@
 
 ## 3. 影响链生成
 
-### `POST /api/v3/events/{event_id}/impact-chains/generate`
+### `POST /agent-twin/events/{event_id}/impact-chains/generate`
 
 响应：
 
@@ -58,7 +58,7 @@
 
 ## 4. 情景方案生成
 
-### `POST /api/v3/events/{event_id}/scenarios/generate`
+### `POST /agent-twin/events/{event_id}/scenarios/generate`
 
 响应：
 
@@ -82,7 +82,7 @@
 
 ## 5. 多智能体会商
 
-### `POST /api/v3/events/{event_id}/agent-council/run`
+### `POST /agent-twin/events/{event_id}/agent-council/run`
 
 响应：
 
@@ -97,11 +97,11 @@
 
 ## 6. proposal 生成与桥接
 
-### `POST /api/v3/events/{event_id}/proposals/generate`
+### `POST /agent-twin/events/{event_id}/proposals/generate`
 
 说明：
 
-- 将 `V3` 分析结果落成 `ActionProposal`
+- 将 `AgentTwin` 分析结果落成 `ActionProposal`
 - 最终仍写入当前 proposal 队列
 
 响应：
@@ -116,7 +116,7 @@
 
 ## 7. 分众预警生成
 
-### `POST /api/v3/proposals/{proposal_id}/warnings/generate`
+### `POST /agent-twin/proposals/{proposal_id}/warnings/generate`
 
 响应：
 
@@ -132,7 +132,7 @@
 
 ## 8. 复盘接口
 
-### `POST /api/v3/events/{event_id}/postmortem/generate`
+### `POST /agent-twin/events/{event_id}/postmortem/generate`
 
 说明：
 
@@ -177,12 +177,12 @@
 | `V3_PERMISSION_BLOCKED` | 权限边界阻断 |
 | `V3_INCONSISTENT_MESSAGES` | 分众消息不一致 |
 
-## 12. 与现有 V2 的兼容建议
+## 12. 与现有 现有平台 的兼容建议
 
 1. 审批仍走现有：
-   - `POST /v2/proposals/{proposal_id}/approve`
-   - `POST /v2/proposals/{proposal_id}/reject`
+   - `POST /platform/proposals/{proposal_id}/approve`
+   - `POST /platform/proposals/{proposal_id}/reject`
 2. 通知与执行日志仍落当前：
    - `NotificationDraft`
    - `ExecutionLogEntry`
-3. `V3` API 只扩展，不破坏当前控制台运行。
+3. `AgentTwin` API 只扩展，不破坏当前控制台运行。

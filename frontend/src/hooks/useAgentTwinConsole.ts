@@ -28,7 +28,7 @@ import type {
   TwinStreamEvent,
   WarningGenerationResponse,
 } from "../types/api";
-import { useV2OperatorConsole } from "./useV2OperatorConsole";
+import { usePlatformOperatorConsole } from "./usePlatformOperatorConsole";
 
 type TwinStreamStatus = "closed" | "connecting" | "open" | "error";
 
@@ -37,7 +37,7 @@ function nowIso() {
 }
 
 export function useAgentTwinConsole() {
-  const base = useV2OperatorConsole();
+  const base = usePlatformOperatorConsole();
   const currentEventId = agentTwinDemoModeEnabled ? demoEvent.event_id : base.event?.event_id ?? null;
   const [twinOverview, setTwinOverview] = useState<TwinOverviewView | null>(null);
   const [focusObject, setFocusObject] = useState<FocusObjectView | null>(null);
@@ -462,7 +462,7 @@ export function useAgentTwinConsole() {
       trend: base.hazardState?.trend ?? "unknown",
       summary:
         base.agentStatus?.latest_summary ??
-        "系统正在使用现有事件与对象态势构建主屏，等待 V3 聚合视图返回更完整的影响链解释。",
+        "系统正在使用现有事件与对象态势构建主屏，等待 AgentTwin 聚合视图返回更完整的影响链解释。",
       lead_object_id: fallbackFocusObjects[0]?.object_id ?? null,
       lead_object_name: fallbackFocusObjects[0]?.name ?? null,
       focus_objects: fallbackFocusObjects,

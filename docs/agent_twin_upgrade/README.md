@@ -1,8 +1,8 @@
-# AgentTwin Flood 生产级 Demo 测试品文档包
+﻿# AgentTwin Flood 生产级 Demo 测试品文档包
 
 ## 1. 文档定位
 
-本目录用于承接 [`AgentTwin-Flood-Requirements.md`](../../AgentTwin-Flood-Requirements.md) 中的升级需求，并把当前项目推进为一个面向甲方演示、联调验证和后续产品化扩展的 **生产级 demo 测试品**。
+本目录用于承接 [`AgentTwin-Flood-Requirements.md`](../../AgentTwin-Flood-Requirements.md) 中的能力增强需求，并把当前项目推进为一个面向甲方演示、联调验证和后续产品化扩展的 **生产级 demo 测试品**。
 
 这里的“生产级 demo”不是最终生产系统，也不是毕业设计原型，而是一个具备真实业务闭环、真实接口边界、真实前端展示效果和明确降级策略的可运行测试品。
 
@@ -10,27 +10,26 @@
 
 - 产品名称：`AgentTwin Flood`
 - 产品形态：数字孪生智能体洪水预警生产级 demo
-- 后端定位：在现有 `V2` 业务闭环上演进出 `V3 / AgentTwin` 聚合能力
+- 后端定位：一套统一的 AgentTwin 服务，覆盖态势聚合、会商推理、审批闭环、通知与审计治理
 - 前端定位：面向甲方展示的数字孪生智能体指挥台
 - 主链路：`事件 -> 数字孪生态势 -> 对象联动 -> 智能体会商 -> proposal 审批 -> 分众预警 -> 审计闭环`
 
 ## 2. 当前代码关系
 
-当前仓库采用“在现有 V2 上演进，不推倒重来”的路线：
+当前仓库采用“一套服务、一套前端、一条闭环”的路线：
 
 - 后端唯一服务入口：`flood_system/api.py`
 - 应用装配入口：`flood_system/system.py`
 - 运行配置：`flood_system/config.py`
-- V3 HTTP 路由：`flood_system/http/v3_router.py`
+- AgentTwin HTTP 路由：`flood_system/http/`
 - SSE 基础设施：`flood_system/infrastructure/sse.py`
 - Router schema import surface：`flood_system/schemas/`
 - 运行时存储：`flood_system/repository.py`
 - 运行时表结构：`flood_system/storage/schema.py`
-- 现有审批、通知、审计闭环：`flood_system/v2/`
-- V2 平台审计边界：`flood_system/v2/platform_audit.py`
-- 新增 AgentTwin 聚合能力：`flood_system/v3/`
+- 审批、通知、审计和执行闭环：`flood_system/`
 - 正式前端入口：`frontend/src/App.tsx`
-- V3 API 门面：`frontend/src/api/agentTwinApi.ts`
+- AgentTwin 主链路 API 门面：`frontend/src/api/agentTwinApi.ts`
+- 平台能力 API 门面：`frontend/src/api/*Api.ts`
 - 演示模式 fixture：`frontend/src/fixtures/agentTwinDemoMode.ts`
 - 数据维护模型工厂：`frontend/src/features/dataManagement/dataModels.ts`
 - AgentTwin 派生状态：`frontend/src/state/agentTwinSelectors.ts`
@@ -53,7 +52,7 @@
 5. [`05_知识图谱与本体设计.md`](./05_知识图谱与本体设计.md)
 6. [`06_智能体设计.md`](./06_智能体设计.md)
 7. [`07_Prompt与工具调用设计.md`](./07_Prompt与工具调用设计.md)
-8. [`08_API接口设计_V3.md`](./08_API接口设计_V3.md)
+8. [`08_API接口设计.md`](./08_API接口设计.md)
 9. [`09_前端UIUX原型说明.md`](./09_前端UIUX原型说明.md)
 10. [`10_测试与评测方案.md`](./10_测试与评测方案.md)
 11. [`11_前端实施拆解.md`](./11_前端实施拆解.md)
@@ -68,7 +67,7 @@
 
 - 可演示：甲方进入首页后能直观看到城市数字孪生态势、重点对象、智能体会商、待审批动作和分众预警闭环。
 - 可操作：主屏内可以完成对象选择、智能体追问、proposal 生成、人工审批和 warning 生成的核心链路。
-- 可联调：前端优先消费 `/v3/*` 聚合接口，保留少量 `/v2/*` 审批桥接接口。
+- 可联调：前端消费统一的 AgentTwin 主链路入口和平台闭环入口。
 - 可降级：Cesium、LLM、SSE 或部分数据失败时，前端不白屏，后端返回结构化降级结果。
 - 可追溯：proposal、warning、审计记录和执行留痕以 `proposal_id` 形成闭环。
 - 可扩展：后续可以继续接入更多城市对象、更多数据源、真实通知网关和更严格的权限体系。
@@ -125,6 +124,6 @@
 
 ## 8. 版本说明
 
-- 当前实现目标：`V3 / AgentTwin production-grade demo`
-- 当前实现策略：保留 `V2` 审批、通知、审计闭环，新增 `V3` 聚合读模型和智能体会商能力。
+- 当前实现目标：`AgentTwin production-grade demo`
+- 当前实现策略：保留稳定审批、通知、审计闭环，并将态势聚合、智能体会商、proposal 生成和分众预警收束到一套 AgentTwin 产品口径中。
 - 当前前端策略：`frontend` 为唯一正式展示入口，`3D_visual` 仅作为迁移来源。

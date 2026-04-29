@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { curatedEntities } from "../data/v2ConsoleSeed";
+import { curatedEntities } from "../data/platformConsoleSeed";
 import { api, setApiOperatorContext } from "../lib/api";
 import type {
   Advisory,
@@ -39,17 +39,17 @@ import type {
 import type { ConsoleBootState, ExecutionStatus } from "../types/ui";
 import {
   getErrorMessage,
-  persistV2,
+  persistPlatformSession,
   riskPriority,
   useConsoleAdminActions,
   useConsoleAgentActions,
   useConsoleBootstrapActions,
   useConsoleRefreshActions,
   useConsoleReliabilityActions,
-} from "./useV2OperatorConsoleSections";
+} from "./usePlatformOperatorConsoleSections";
 
-const V2_SESSION_STORAGE_KEY = "activeV2CopilotSessionId";
-const V2_EVENT_STORAGE_KEY = "activeV2EventId";
+const PLATFORM_SESSION_STORAGE_KEY = "activePlatformCopilotSessionId";
+const PLATFORM_EVENT_STORAGE_KEY = "activePlatformEventId";
 const FRONTEND_OPERATOR_ID = "frontend_console";
 const FRONTEND_OPERATOR_ROLE: OperatorRole = "commander";
 const DEFAULT_AREA_ID = "beilin_10km2";
@@ -58,7 +58,7 @@ type HealthState = "checking" | "online" | "offline";
 type ProposalDecision = "approve" | "reject";
 type ProposalStreamStatus = "closed" | "connecting" | "open" | "error";
 
-export function useV2OperatorConsole() {
+export function usePlatformOperatorConsole() {
   const [bootState, setBootState] = useState<ConsoleBootState>("booting");
   const [healthState, setHealthState] = useState<HealthState>("checking");
   const [executionStatus, setExecutionStatus] = useState<ExecutionStatus>("planning");
@@ -162,8 +162,8 @@ export function useV2OperatorConsole() {
   });
 
   const { bootstrap } = useConsoleBootstrapActions({
-    sessionStorageKey: V2_SESSION_STORAGE_KEY,
-    eventStorageKey: V2_EVENT_STORAGE_KEY,
+    sessionStorageKey: PLATFORM_SESSION_STORAGE_KEY,
+    eventStorageKey: PLATFORM_EVENT_STORAGE_KEY,
     defaultAreaId: DEFAULT_AREA_ID,
     frontendOperatorId: FRONTEND_OPERATOR_ID,
     operatorRole,
@@ -193,7 +193,12 @@ export function useV2OperatorConsole() {
     try {
       const nextSession = await api.getV2CopilotSession(currentSessionId);
       setSessionView(nextSession);
-      persistV2(V2_SESSION_STORAGE_KEY, V2_EVENT_STORAGE_KEY, nextSession.session_id, nextSession.event.event_id);
+      persistPlatformSession(
+        PLATFORM_SESSION_STORAGE_KEY,
+        PLATFORM_EVENT_STORAGE_KEY,
+        nextSession.session_id,
+        nextSession.event.event_id,
+      );
       await Promise.all([
         hydrateEvent(nextSession.event ?? currentEvent),
         refreshAdminData(nextSession.event ?? currentEvent),
@@ -206,7 +211,7 @@ export function useV2OperatorConsole() {
     } catch (error) {
       setBootState("degraded");
       setExecutionStatus("error");
-      setErrorMessage(getErrorMessage(error, "刷新 V2 控制台失败。"));
+      setErrorMessage(getErrorMessage(error, "刷新指挥控制台失败。"));
     }
   }
   async function ask(content: string) {

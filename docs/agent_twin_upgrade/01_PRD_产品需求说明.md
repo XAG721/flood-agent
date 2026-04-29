@@ -1,4 +1,4 @@
-# AgentTwin Flood 产品需求说明
+﻿# AgentTwin Flood 产品需求说明
 
 ## 1. 产品定位
 
@@ -24,11 +24,11 @@
 
 ### 3.1 产品目标
 
-- 形成一个可运行、可演示、可联调的 V3 demo。
+- 形成一个可运行、可演示、可联调的 AgentTwin demo。
 - 首页呈现数字孪生智能体指挥台，而不是普通后台。
 - 主屏内完成 `对象选择 -> 智能体追问 -> proposal 生成 -> 人工审批 -> warning 生成`。
 - 二级页面支持会商透明、行动处置、数据维护和审计复盘。
-- 后端以 `/v3/*` 聚合接口驱动前端，保留 `/v2/*` 审批闭环。
+- 后端以 `/agent-twin/*` 聚合接口驱动前端，保留 `/platform/*` 审批闭环。
 
 ### 3.2 非目标
 
@@ -41,7 +41,7 @@
 
 ```text
 事件输入或预置事件
-  -> V3 twin overview 聚合
+  -> AgentTwin twin overview 聚合
   -> 重点对象空间联动
   -> 智能体会商与追问
   -> proposal 生成
@@ -114,17 +114,17 @@ approved proposal 可以生成多受众 warning drafts。
 
 ## 6. API 要求
 
-前端优先消费 `/v3/*` 聚合接口：
+前端优先消费 `/agent-twin/*` 聚合接口：
 
-- `GET /v3/events/{event_id}/twin-overview`
-- `GET /v3/events/{event_id}/objects/{object_id}`
-- `GET /v3/events/{event_id}/agent-council`
-- `POST /v3/events/{event_id}/dialog`
-- `POST /v3/events/{event_id}/proposals/generate`
-- `POST /v3/proposals/{proposal_id}/warnings/generate`
-- `GET /v3/events/{event_id}/stream`
+- `GET /agent-twin/events/{event_id}/twin-overview`
+- `GET /agent-twin/events/{event_id}/objects/{object_id}`
+- `GET /agent-twin/events/{event_id}/agent-council`
+- `POST /agent-twin/events/{event_id}/dialog`
+- `POST /agent-twin/events/{event_id}/proposals/generate`
+- `POST /agent-twin/proposals/{proposal_id}/warnings/generate`
+- `GET /agent-twin/events/{event_id}/stream`
 
-`/v2/*` 保留用于审批、通知、执行和审计落库。
+`/platform/*` 保留用于审批、通知、执行和审计落库。
 
 ## 7. 演示验收标准
 
@@ -145,5 +145,5 @@ approved proposal 可以生成多受众 warning drafts。
 - 核心定向测试通过。
 - 文档与产品口径一致。
 - 前端具备面向甲方展示的视觉完成度。
-- 后端 V3 聚合接口能驱动主链路。
+- 后端 AgentTwin 聚合接口能驱动主链路。
 - 保留后续产品化扩展路径。

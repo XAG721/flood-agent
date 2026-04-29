@@ -1,5 +1,5 @@
 ﻿import type { Dispatch, MutableRefObject, SetStateAction } from "react";
-import { curatedEntities, v2SeedObservations } from "../data/v2ConsoleSeed";
+import { curatedEntities, platformSeedObservations } from "../data/platformConsoleSeed";
 import { api } from "../lib/api";
 import { formatDatasetAction } from "../lib/datasetUiText";
 import type {
@@ -48,7 +48,12 @@ export function getErrorMessage(error: unknown, fallback: string): string {
   return fallback;
 }
 
-export function persistV2(sessionStorageKey: string, eventStorageKey: string, sessionId: string | null, eventId: string | null) {
+export function persistPlatformSession(
+  sessionStorageKey: string,
+  eventStorageKey: string,
+  sessionId: string | null,
+  eventId: string | null,
+) {
   if (sessionId) {
     window.sessionStorage.setItem(sessionStorageKey, sessionId);
   } else {
@@ -363,7 +368,7 @@ export function useConsoleBootstrapActions(params: BootstrapParams) {
     });
     await api.ingestV2Observations(eventRecord.event_id, {
       operator: params.frontendOperatorId,
-      observations: v2SeedObservations,
+      observations: platformSeedObservations,
     });
     return eventRecord;
   };
@@ -392,7 +397,7 @@ export function useConsoleBootstrapActions(params: BootstrapParams) {
       if (cachedSessionId) {
         nextSession = await api.getV2CopilotSession(cachedSessionId);
         params.setSessionView(nextSession);
-        persistV2(params.sessionStorageKey, params.eventStorageKey, nextSession.session_id, nextSession.event.event_id);
+        persistPlatformSession(params.sessionStorageKey, params.eventStorageKey, nextSession.session_id, nextSession.event.event_id);
         activeEvent = nextSession.event;
       } else {
         const eventRecord = cachedEventId
@@ -403,7 +408,7 @@ export function useConsoleBootstrapActions(params: BootstrapParams) {
           operator_role: params.operatorRole,
         });
         params.setSessionView(nextSession);
-        persistV2(params.sessionStorageKey, params.eventStorageKey, nextSession.session_id, nextSession.event.event_id);
+        persistPlatformSession(params.sessionStorageKey, params.eventStorageKey, nextSession.session_id, nextSession.event.event_id);
         activeEvent = nextSession.event;
       }
       await Promise.all([
@@ -418,7 +423,7 @@ export function useConsoleBootstrapActions(params: BootstrapParams) {
     } catch (error) {
       params.setBootState("error");
       params.setExecutionStatus("error");
-      params.setErrorMessage(getErrorMessage(error, "初始化 V2 控制台失败。"));
+      params.setErrorMessage(getErrorMessage(error, "初始化指挥控制台失败。"));
     }
   };
 

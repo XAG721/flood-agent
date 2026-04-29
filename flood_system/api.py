@@ -49,6 +49,25 @@ production = system.production_platform
 app.include_router(create_v3_router(lambda: system))
 
 
+@app.middleware("http")
+async def rewrite_unified_agent_twin_paths(request, call_next):
+    """Expose unified public prefixes while keeping existing internal routes stable."""
+
+    path = request.scope.get("path", "")
+    alias_pairs = (
+        ("/agent-twin", "/v3"),
+        ("/platform", "/v2"),
+    )
+    for public_prefix, internal_prefix in alias_pairs:
+        if path == public_prefix:
+            request.scope["path"] = internal_prefix
+            break
+        if path.startswith(f"{public_prefix}/"):
+            request.scope["path"] = f"{internal_prefix}{path[len(public_prefix):]}"
+            break
+    return await call_next(request)
+
+
 def _resolve_operator_role(
     *,
     explicit_role: str | None = None,

@@ -1,4 +1,4 @@
-import "@testing-library/jest-dom/vitest";
+﻿import "@testing-library/jest-dom/vitest";
 import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { MemoryRouter } from "react-router-dom";
@@ -68,10 +68,10 @@ class FakeEventSource {
       .reverse()
       .find((candidate) => {
         if (payload.queue_version) {
-          return candidate.url.includes("/api/v2/proposals/stream");
+          return candidate.url.includes("/api/platform/proposals/stream");
         }
         if (payload.event_type) {
-          return candidate.url.includes("/api/v3/events/");
+          return candidate.url.includes("/api/agent-twin/events/");
         }
         return true;
       });
@@ -145,7 +145,7 @@ const decisionReportPayload = {
 };
 
 const sessionPayload = {
-  session_id: "v2_session_demo",
+  session_id: "platform_session_demo",
   event: eventPayload,
   messages: [
     {
@@ -606,7 +606,7 @@ function installFetchMock(options?: {
       return jsonResponse({ status: "ok" });
     }
 
-    if (url.pathname === "/api/v2/security/capabilities" && method === "GET") {
+    if (url.pathname === "/api/platform/security/capabilities" && method === "GET") {
       return jsonResponse({
         operator_role: "commander",
         role_rank: 3,
@@ -636,44 +636,44 @@ function installFetchMock(options?: {
       });
     }
 
-    if (url.pathname === "/api/v2/events" && method === "POST") {
+    if (url.pathname === "/api/platform/events" && method === "POST") {
       return jsonResponse(eventPayload);
     }
 
-    if (url.pathname === "/api/v2/events/event_demo/observations" && method === "POST") {
+    if (url.pathname === "/api/platform/events/event_demo/observations" && method === "POST") {
       return jsonResponse({ event: eventPayload, hazard_state: hazardPayload });
     }
 
-    if (url.pathname === "/api/v2/copilot/sessions/bootstrap" && method === "POST") {
+    if (url.pathname === "/api/platform/copilot/sessions/bootstrap" && method === "POST") {
       return jsonResponse(sessionPayload);
     }
 
-    if (url.pathname === "/api/v2/copilot/sessions/v2_session_demo" && method === "GET") {
+    if (url.pathname === "/api/platform/copilot/sessions/platform_session_demo" && method === "GET") {
       return jsonResponse(sessionPayload);
     }
 
-    if (url.pathname === "/api/v2/copilot/sessions/v2_session_demo/messages" && method === "POST") {
+    if (url.pathname === "/api/platform/copilot/sessions/platform_session_demo/messages" && method === "POST") {
       return jsonResponse(replyPayload);
     }
 
-    if (url.pathname === "/api/v2/events/event_demo/hazard-state" && method === "GET") {
+    if (url.pathname === "/api/platform/events/event_demo/hazard-state" && method === "GET") {
       return jsonResponse(hazardPayload);
     }
 
-    if (url.pathname === "/api/v3/events/event_demo/twin-overview" && method === "GET") {
+    if (url.pathname === "/api/agent-twin/events/event_demo/twin-overview" && method === "GET") {
       return jsonResponse(createTwinOverviewPayload());
     }
 
-    if (url.pathname === "/api/v3/events/event_demo/agent-council" && method === "GET") {
+    if (url.pathname === "/api/agent-twin/events/event_demo/agent-council" && method === "GET") {
       return jsonResponse(createAgentCouncilPayload());
     }
 
-    if (url.pathname.match(/^\/api\/v3\/events\/event_demo\/objects\/[^/]+$/) && method === "GET") {
+    if (url.pathname.match(/^\/api\/agent-twin\/events\/event_demo\/objects\/[^/]+$/) && method === "GET") {
       const objectId = url.pathname.split("/")[6];
       return jsonResponse(createFocusObjectPayload(objectId));
     }
 
-    if (url.pathname === "/api/v3/events/event_demo/dialog" && method === "POST") {
+    if (url.pathname === "/api/agent-twin/events/event_demo/dialog" && method === "POST") {
       const objectId = body?.object_id ?? "resident_elderly_ls1";
       const focusObject = createFocusObjectPayload(objectId);
       return jsonResponse({
@@ -694,10 +694,10 @@ function installFetchMock(options?: {
       });
     }
 
-    if (url.pathname === "/api/v3/events/event_demo/proposals/generate" && method === "POST") {
+    if (url.pathname === "/api/agent-twin/events/event_demo/proposals/generate" && method === "POST") {
       return jsonResponse({
         event_id: "event_demo",
-        queue_version: "queue_v3_fixture",
+        queue_version: "queue_agent_twin_fixture",
         generated_at: "2026-04-01T12:06:40Z",
         blocked: false,
         block_reason: null,
@@ -705,7 +705,7 @@ function installFetchMock(options?: {
       });
     }
 
-    if (url.pathname.match(/^\/api\/v3\/proposals\/[^/]+\/warnings\/generate$/) && method === "POST") {
+    if (url.pathname.match(/^\/api\/agent-twin\/proposals\/[^/]+\/warnings\/generate$/) && method === "POST") {
       const proposalId = url.pathname.split("/")[4];
       return jsonResponse({
         event_id: "event_demo",
@@ -715,18 +715,18 @@ function installFetchMock(options?: {
       });
     }
 
-    if (url.pathname.startsWith("/api/v2/entities/") && url.pathname.endsWith("/impact") && method === "GET") {
+    if (url.pathname.startsWith("/api/platform/entities/") && url.pathname.endsWith("/impact") && method === "GET") {
       const entityId = url.pathname.split("/")[4];
       return jsonResponse(
         knownImpacts[entityId] ?? buildImpact(entityId, entityId, "community", "默认片区"),
       );
     }
 
-    if (url.pathname === "/api/v2/entity-profiles" && method === "GET") {
+    if (url.pathname === "/api/platform/entity-profiles" && method === "GET") {
       return jsonResponse([]);
     }
 
-    if (url.pathname === "/api/v2/areas/beilin_10km2/resources" && method === "GET") {
+    if (url.pathname === "/api/platform/areas/beilin_10km2/resources" && method === "GET") {
       return jsonResponse({
         scope: "area",
         area_id: "beilin_10km2",
@@ -741,7 +741,7 @@ function installFetchMock(options?: {
       });
     }
 
-    if (url.pathname === "/api/v2/events/event_demo/resources" && method === "GET") {
+    if (url.pathname === "/api/platform/events/event_demo/resources" && method === "GET") {
       return jsonResponse({
         scope: "event",
         event_id: "event_demo",
@@ -757,11 +757,11 @@ function installFetchMock(options?: {
       });
     }
 
-    if (url.pathname === "/api/v2/rag/documents" && method === "GET") {
+    if (url.pathname === "/api/platform/rag/documents" && method === "GET") {
       return jsonResponse([]);
     }
 
-    if (url.pathname === "/api/v2/admin/dataset/status" && method === "GET") {
+    if (url.pathname === "/api/platform/admin/dataset/status" && method === "GET") {
       return jsonResponse({
         area_id: "beilin_10km2",
         raw_dir: "data_sources/beilin/raw",
@@ -803,15 +803,15 @@ function installFetchMock(options?: {
       });
     }
 
-    if (url.pathname === "/api/v2/events/event_demo/regional-proposals" && method === "GET") {
+    if (url.pathname === "/api/platform/events/event_demo/regional-proposals" && method === "GET") {
       return jsonResponse(regionalHistoryItems);
     }
 
-    if (url.pathname === "/api/v2/events/event_demo/regional-analysis-packages/pending" && method === "GET") {
+    if (url.pathname === "/api/platform/events/event_demo/regional-analysis-packages/pending" && method === "GET") {
       return jsonResponse(pendingRegionalAnalysisPackage);
     }
 
-    if (url.pathname === "/api/v2/events/event_demo/regional-analysis-packages" && method === "GET") {
+    if (url.pathname === "/api/platform/events/event_demo/regional-analysis-packages" && method === "GET") {
       const includePending = url.searchParams.get("include_pending");
       if (includePending === "false") {
         return jsonResponse(regionalAnalysisPackageHistory);
@@ -823,27 +823,27 @@ function installFetchMock(options?: {
       );
     }
 
-    if (url.pathname === "/api/v2/proposals/pending" && method === "GET") {
+    if (url.pathname === "/api/platform/proposals/pending" && method === "GET") {
       return jsonResponse(buildQueueSnapshot());
     }
 
-    if (url.pathname === "/api/v2/events/event_demo/agent-status" && method === "GET") {
+    if (url.pathname === "/api/platform/events/event_demo/agent-status" && method === "GET") {
       return jsonResponse(agentStatusPayload);
     }
 
-    if (url.pathname === "/api/v2/events/event_demo/agent-tasks" && method === "GET") {
+    if (url.pathname === "/api/platform/events/event_demo/agent-tasks" && method === "GET") {
       return jsonResponse([]);
     }
 
-    if (url.pathname === "/api/v2/events/event_demo/shared-memory" && method === "GET") {
+    if (url.pathname === "/api/platform/events/event_demo/shared-memory" && method === "GET") {
       return jsonResponse(sharedMemoryPayload);
     }
 
-    if (url.pathname === "/api/v2/events/event_demo/supervisor-runs" && method === "GET") {
+    if (url.pathname === "/api/platform/events/event_demo/supervisor-runs" && method === "GET") {
       return jsonResponse([]);
     }
 
-    if (url.pathname === "/api/v2/supervisor/status" && method === "GET") {
+    if (url.pathname === "/api/platform/supervisor/status" && method === "GET") {
       return jsonResponse({
         running: true,
         interval_seconds: 60,
@@ -866,20 +866,20 @@ function installFetchMock(options?: {
       });
     }
 
-    if (url.pathname === "/api/v2/events/event_demo/trigger-events" && method === "GET") {
+    if (url.pathname === "/api/platform/events/event_demo/trigger-events" && method === "GET") {
       return jsonResponse([]);
     }
 
-    if (url.pathname === "/api/v2/events/event_demo/agent-timeline" && method === "GET") {
+    if (url.pathname === "/api/platform/events/event_demo/agent-timeline" && method === "GET") {
       return jsonResponse([]);
     }
 
-    if (url.pathname === "/api/v2/copilot/sessions/v2_session_demo/memory" && method === "GET") {
+    if (url.pathname === "/api/platform/copilot/sessions/platform_session_demo/memory" && method === "GET") {
       return jsonResponse({
         session_memory: {
-          session_id: "v2_session_demo",
+          session_id: "platform_session_demo",
           memory_snapshot: {
-            session_id: "v2_session_demo",
+            session_id: "platform_session_demo",
             focus_entity_id: "school_wyl_primary",
             focus_entity_name: "五岳里小学",
             focus_area_id: "beilin_10km2",
@@ -896,7 +896,7 @@ function installFetchMock(options?: {
       });
     }
 
-    if (url.pathname === "/api/v2/events/event_demo/experience-context" && method === "GET") {
+    if (url.pathname === "/api/platform/events/event_demo/experience-context" && method === "GET") {
       return jsonResponse({
         event_id: "event_demo",
         relevant_records: [],
@@ -905,11 +905,11 @@ function installFetchMock(options?: {
       });
     }
 
-    if (url.pathname === "/api/v2/events/event_demo/decision-report" && method === "GET") {
+    if (url.pathname === "/api/platform/events/event_demo/decision-report" && method === "GET") {
       return jsonResponse(decisionReportPayload);
     }
 
-    if (url.pathname === "/api/v2/agent-metrics" && method === "GET") {
+    if (url.pathname === "/api/platform/agent-metrics" && method === "GET") {
       return jsonResponse({
         generated_at: "2026-04-01T12:07:00Z",
         task_graph_latency_ms: 850,
@@ -922,19 +922,19 @@ function installFetchMock(options?: {
       });
     }
 
-    if (url.pathname === "/api/v2/evaluation/benchmarks" && method === "GET") {
+    if (url.pathname === "/api/platform/evaluation/benchmarks" && method === "GET") {
       return jsonResponse([]);
     }
 
-    if (url.pathname === "/api/v2/alerts" && method === "GET") {
+    if (url.pathname === "/api/platform/alerts" && method === "GET") {
       return jsonResponse([]);
     }
 
-    if (url.pathname === "/api/v2/audit/records" && method === "GET") {
+    if (url.pathname === "/api/platform/audit/records" && method === "GET") {
       return jsonResponse([]);
     }
 
-    if (url.pathname === "/api/v2/archive/status" && method === "GET") {
+    if (url.pathname === "/api/platform/archive/status" && method === "GET") {
       return jsonResponse({
         hot_retention_days: 14,
         archive_retention_days: 180,
@@ -945,7 +945,7 @@ function installFetchMock(options?: {
           status: "completed",
           hot_records_archived: 4,
           expired_archives_deleted: 0,
-          tables_touched: ["v2_agent_tasks"],
+          tables_touched: ["platform_agent_tasks"],
           error_message: null,
           started_at: "2026-04-01T12:07:00Z",
           completed_at: "2026-04-01T12:07:02Z",
@@ -954,7 +954,7 @@ function installFetchMock(options?: {
       });
     }
 
-    if (url.pathname === "/api/v2/advisories/generate" && method === "POST") {
+    if (url.pathname === "/api/platform/advisories/generate" && method === "POST") {
       return jsonResponse({
         advisory_id: "advisory_1",
         event_id: "event_demo",
@@ -972,7 +972,7 @@ function installFetchMock(options?: {
       });
     }
 
-    if (url.pathname.match(/^\/api\/v2\/proposals\/[^/]+\/draft$/) && method === "PATCH") {
+    if (url.pathname.match(/^\/api\/platform\/proposals\/[^/]+\/draft$/) && method === "PATCH") {
       const proposalId = url.pathname.split("/")[4];
       regionalQueueItems = regionalQueueItems.map((item) =>
         item.proposal.proposal_id === proposalId
@@ -1001,7 +1001,7 @@ function installFetchMock(options?: {
       return jsonResponse(regionalQueueItems.find((item) => item.proposal.proposal_id === proposalId));
     }
 
-    if (url.pathname.match(/^\/api\/v2\/proposals\/[^/]+\/approve$/) && method === "POST") {
+    if (url.pathname.match(/^\/api\/platform\/proposals\/[^/]+\/approve$/) && method === "POST") {
       const proposalId = url.pathname.split("/")[4];
       const approvedItem = regionalQueueItems.find((item) => item.proposal.proposal_id === proposalId);
       if (!approvedItem) {
@@ -1024,7 +1024,7 @@ function installFetchMock(options?: {
       return jsonResponse(resolved);
     }
 
-    if (url.pathname.match(/^\/api\/v2\/proposals\/[^/]+\/reject$/) && method === "POST") {
+    if (url.pathname.match(/^\/api\/platform\/proposals\/[^/]+\/reject$/) && method === "POST") {
       const proposalId = url.pathname.split("/")[4];
       const rejectedItem = regionalQueueItems.find((item) => item.proposal.proposal_id === proposalId);
       if (!rejectedItem) {
@@ -1047,7 +1047,7 @@ function installFetchMock(options?: {
       return jsonResponse(resolved);
     }
 
-    if (url.pathname.match(/^\/api\/v2\/regional-analysis-packages\/[^/]+\/approve$/) && method === "POST") {
+    if (url.pathname.match(/^\/api\/platform\/regional-analysis-packages\/[^/]+\/approve$/) && method === "POST") {
       const packageId = url.pathname.split("/")[4];
       if (!pendingRegionalAnalysisPackage || pendingRegionalAnalysisPackage.package_id !== packageId) {
         return jsonResponse({ detail: "not found" }, 404);
@@ -1078,7 +1078,7 @@ function installFetchMock(options?: {
       return jsonResponse(resolvedPackage);
     }
 
-    if (url.pathname.match(/^\/api\/v2\/regional-analysis-packages\/[^/]+\/reject$/) && method === "POST") {
+    if (url.pathname.match(/^\/api\/platform\/regional-analysis-packages\/[^/]+\/reject$/) && method === "POST") {
       const packageId = url.pathname.split("/")[4];
       if (!pendingRegionalAnalysisPackage || pendingRegionalAnalysisPackage.package_id !== packageId) {
         return jsonResponse({ detail: "not found" }, 404);
@@ -1216,7 +1216,7 @@ describe("App", () => {
 
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(
-        expect.stringContaining("/api/v2/proposals/regional_notification_1/draft"),
+        expect.stringContaining("/api/platform/proposals/regional_notification_1/draft"),
         expect.objectContaining({ method: "PATCH" }),
       );
     });
@@ -1236,7 +1236,7 @@ describe("App", () => {
 
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(
-        expect.stringContaining("/api/v2/proposals/regional_notification_1/approve"),
+        expect.stringContaining("/api/platform/proposals/regional_notification_1/approve"),
         expect.objectContaining({ method: "POST" }),
       );
     });

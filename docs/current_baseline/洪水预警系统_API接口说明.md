@@ -1,8 +1,8 @@
-# 洪水预警系统 API 接口说明
+﻿# 洪水预警系统 API 接口说明
 
 ## 1. 说明
 
-当前系统全部以 `/v2/*` 作为正式接口前缀。旧版 `/incidents/*` 和早期原型接口不再作为现行文档维护对象。
+当前系统全部以 `/platform/*` 作为正式接口前缀。旧版 `/incidents/*` 和早期原型接口不再作为现行文档维护对象。
 
 基础地址默认是：
 
@@ -35,7 +35,7 @@ http://127.0.0.1:8000/docs
 
 基础健康检查。
 
-### `GET /v2/supervisor/status`
+### `GET /platform/supervisor/status`
 
 查询 supervisor loop 状态，包括：
 
@@ -51,7 +51,7 @@ http://127.0.0.1:8000/docs
 - `recent_replay_count`
 - `recent_timeline_failure_count`
 
-### `GET /v2/alerts`
+### `GET /platform/alerts`
 
 查询站内运行告警。
 
@@ -64,21 +64,21 @@ http://127.0.0.1:8000/docs
 - `to_ts`
 - `limit`
 
-### `GET /v2/audit/records`
+### `GET /platform/audit/records`
 
 查询审计记录，过滤参数与告警接口一致。
 
-### `GET /v2/archive/status`
+### `GET /platform/archive/status`
 
 查询归档状态。
 
-### `POST /v2/archive/run`
+### `POST /platform/archive/run`
 
 手动触发一次归档周期，需要具备 `archive_run` 权限。
 
 ## 4. 事件、观测与模拟风险
 
-### `POST /v2/events`
+### `POST /platform/events`
 
 创建事件。
 
@@ -93,11 +93,11 @@ http://127.0.0.1:8000/docs
 }
 ```
 
-### `POST /v2/events/{event_id}/observations`
+### `POST /platform/events/{event_id}/observations`
 
 写入观测数据并驱动常规风险更新。
 
-### `POST /v2/events/{event_id}/simulation-updates`
+### `POST /platform/events/{event_id}/simulation-updates`
 
 写入洪水模拟结果。该接口是区域级主动请示的正式入口。
 
@@ -140,15 +140,15 @@ http://127.0.0.1:8000/docs
 }
 ```
 
-### `GET /v2/events/{event_id}/hazard-state`
+### `GET /platform/events/{event_id}/hazard-state`
 
 查询事件当前 hazard state。
 
-### `GET /v2/entities/{entity_id}/impact`
+### `GET /platform/entities/{entity_id}/impact`
 
 查询对象级 impact。
 
-### `POST /v2/advisories/generate`
+### `POST /platform/advisories/generate`
 
 生成对象级 advisory。
 
@@ -159,7 +159,7 @@ http://127.0.0.1:8000/docs
 
 ## 5. 区域级主动请示
 
-### `GET /v2/proposals/pending`
+### `GET /platform/proposals/pending`
 
 返回跨事件的待确认区域 proposal 快照。
 
@@ -169,7 +169,7 @@ http://127.0.0.1:8000/docs
 - `generated_at`
 - `items`
 
-### `GET /v2/events/{event_id}/regional-proposals`
+### `GET /platform/events/{event_id}/regional-proposals`
 
 返回当前事件的区域 proposal 历史。
 
@@ -177,19 +177,19 @@ http://127.0.0.1:8000/docs
 
 - `status`
 
-### `PATCH /v2/proposals/{proposal_id}/draft`
+### `PATCH /platform/proposals/{proposal_id}/draft`
 
 更新区域 proposal 草稿，仅允许 `commander` 编辑 `action_scope`。
 
-### `POST /v2/proposals/{proposal_id}/approve`
+### `POST /platform/proposals/{proposal_id}/approve`
 
 批准区域 proposal。批准后会调用执行材料生成链，落通知稿与执行日志。
 
-### `POST /v2/proposals/{proposal_id}/reject`
+### `POST /platform/proposals/{proposal_id}/reject`
 
 驳回区域 proposal。
 
-### `GET /v2/proposals/stream`
+### `GET /platform/proposals/stream`
 
 SSE 推送跨事件待确认区域 proposal 队列。前端全局对话框依赖此接口。
 
@@ -220,11 +220,11 @@ SSE 推送跨事件待确认区域 proposal 队列。前端全局对话框依赖
 
 ## 6. Copilot 会话接口
 
-### `POST /v2/copilot/sessions/bootstrap`
+### `POST /platform/copilot/sessions/bootstrap`
 
 创建或初始化 Copilot 会话。
 
-### `GET /v2/copilot/sessions/{session_id}`
+### `GET /platform/copilot/sessions/{session_id}`
 
 获取会话视图，包含：
 
@@ -237,20 +237,20 @@ SSE 推送跨事件待确认区域 proposal 队列。前端全局对话框依赖
 - `plan_runs`
 - `recent_tool_executions`
 
-### `GET /v2/copilot/sessions/{session_id}/memory`
+### `GET /platform/copilot/sessions/{session_id}/memory`
 
 获取会话级 memory bundle。
 
-### `POST /v2/copilot/sessions/{session_id}/messages`
+### `POST /platform/copilot/sessions/{session_id}/messages`
 
 向 Copilot 发送消息。当前最终回答正文由 LLM 生成。
 
 ### 会话级 proposal 接口
 
-- `POST /v2/copilot/sessions/{session_id}/proposals/{proposal_id}/approve`
-- `POST /v2/copilot/sessions/{session_id}/proposals/{proposal_id}/reject`
-- `POST /v2/copilot/sessions/{session_id}/proposals/batch-approve`
-- `POST /v2/copilot/sessions/{session_id}/proposals/batch-reject`
+- `POST /platform/copilot/sessions/{session_id}/proposals/{proposal_id}/approve`
+- `POST /platform/copilot/sessions/{session_id}/proposals/{proposal_id}/reject`
+- `POST /platform/copilot/sessions/{session_id}/proposals/batch-approve`
+- `POST /platform/copilot/sessions/{session_id}/proposals/batch-reject`
 
 说明：
 
@@ -261,29 +261,29 @@ SSE 推送跨事件待确认区域 proposal 队列。前端全局对话框依赖
 
 ### 对象画像
 
-- `GET /v2/admin/entity-profiles`
-- `GET /v2/admin/entity-profiles/{entity_id}`
-- `POST /v2/admin/entity-profiles`
-- `PUT /v2/admin/entity-profiles/{entity_id}`
-- `DELETE /v2/admin/entity-profiles/{entity_id}`
+- `GET /platform/admin/entity-profiles`
+- `GET /platform/admin/entity-profiles/{entity_id}`
+- `POST /platform/admin/entity-profiles`
+- `PUT /platform/admin/entity-profiles/{entity_id}`
+- `DELETE /platform/admin/entity-profiles/{entity_id}`
 
 ### 资源状态
 
-- `GET /v2/admin/areas/{area_id}/resource-status`
-- `PUT /v2/admin/areas/{area_id}/resource-status`
-- `GET /v2/admin/events/{event_id}/resource-status`
-- `PUT /v2/admin/events/{event_id}/resource-status`
-- `DELETE /v2/admin/events/{event_id}/resource-status`
+- `GET /platform/admin/areas/{area_id}/resource-status`
+- `PUT /platform/admin/areas/{area_id}/resource-status`
+- `GET /platform/admin/events/{event_id}/resource-status`
+- `PUT /platform/admin/events/{event_id}/resource-status`
+- `DELETE /platform/admin/events/{event_id}/resource-status`
 
 ### RAG 文档
 
-- `GET /v2/admin/rag-documents`
-- `POST /v2/admin/rag-documents/import`
-- `POST /v2/admin/rag-documents/reload`
+- `GET /platform/admin/rag-documents`
+- `POST /platform/admin/rag-documents/import`
+- `POST /platform/admin/rag-documents/reload`
 
 ## 8. Dataset Pipeline
 
-### `GET /v2/admin/dataset/status`
+### `GET /platform/admin/dataset/status`
 
 查询数据管线状态，包含：
 
@@ -298,38 +298,38 @@ SSE 推送跨事件待确认区域 proposal 队列。前端全局对话框依赖
 
 ### 数据任务接口
 
-- `POST /v2/admin/dataset/fetch`
-- `POST /v2/admin/dataset/build`
-- `POST /v2/admin/dataset/validate`
-- `POST /v2/admin/dataset/sync-demo-db`
-- `GET /v2/admin/dataset/jobs`
-- `POST /v2/admin/dataset/jobs/{job_id}/cancel`
-- `POST /v2/admin/dataset/jobs/{job_id}/retry`
+- `POST /platform/admin/dataset/fetch`
+- `POST /platform/admin/dataset/build`
+- `POST /platform/admin/dataset/validate`
+- `POST /platform/admin/dataset/sync-demo-db`
+- `GET /platform/admin/dataset/jobs`
+- `POST /platform/admin/dataset/jobs/{job_id}/cancel`
+- `POST /platform/admin/dataset/jobs/{job_id}/retry`
 
 ## 9. Multi-Agent、经验与评测
 
 ### 多代理与协作
 
-- `GET /v2/events/{event_id}/agent-status`
-- `GET /v2/events/{event_id}/agent-tasks`
-- `GET /v2/events/{event_id}/agent-timeline`
-- `GET /v2/events/{event_id}/trigger-events`
-- `GET /v2/events/{event_id}/shared-memory`
-- `GET /v2/events/{event_id}/supervisor-runs`
-- `POST /v2/supervisor/tick`
-- `POST /v2/events/{event_id}/supervisor/run`
-- `POST /v2/agent-tasks/{task_id}/replay`
+- `GET /platform/events/{event_id}/agent-status`
+- `GET /platform/events/{event_id}/agent-tasks`
+- `GET /platform/events/{event_id}/agent-timeline`
+- `GET /platform/events/{event_id}/trigger-events`
+- `GET /platform/events/{event_id}/shared-memory`
+- `GET /platform/events/{event_id}/supervisor-runs`
+- `POST /platform/supervisor/tick`
+- `POST /platform/events/{event_id}/supervisor/run`
+- `POST /platform/agent-tasks/{task_id}/replay`
 
 ### 经验与评测
 
-- `GET /v2/events/{event_id}/experience-context`
-- `GET /v2/entities/{entity_id}/strategy-history`
-- `GET /v2/agent-metrics`
-- `GET /v2/events/{event_id}/decision-report`
-- `GET /v2/evaluation/benchmarks`
-- `POST /v2/evaluation/run`
-- `GET /v2/evaluation/reports/{report_id}`
-- `POST /v2/evaluation/reports/{report_id}/replay`
+- `GET /platform/events/{event_id}/experience-context`
+- `GET /platform/entities/{entity_id}/strategy-history`
+- `GET /platform/agent-metrics`
+- `GET /platform/events/{event_id}/decision-report`
+- `GET /platform/evaluation/benchmarks`
+- `POST /platform/evaluation/run`
+- `GET /platform/evaluation/reports/{report_id}`
+- `POST /platform/evaluation/reports/{report_id}/replay`
 
 ## 10. RBAC
 
@@ -340,7 +340,7 @@ SSE 推送跨事件待确认区域 proposal 队列。前端全局对话框依赖
 - `district_operator`
 - `commander`
 
-### `GET /v2/security/capabilities`
+### `GET /platform/security/capabilities`
 
 返回当前角色的能力矩阵，用于前端区块和动作级权限控制。
 

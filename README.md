@@ -1,6 +1,6 @@
 # AgentTwin Flood 生产级 Demo 测试品
 
-`AgentTwin Flood` 是一套面向甲方演示、联调验证和后续产品化扩展的数字孪生智能体洪水预警 demo。当前实现路线是在现有 V2 业务闭环上演进 V3 聚合能力：后端仍以 `flood_system` 为唯一服务进程，前端以 `frontend` 为唯一正式入口，`3D_visual` 作为 Cesium 模型、场景配置和校准逻辑来源。
+`AgentTwin Flood` 是一套面向甲方演示、联调验证和后续产品化扩展的数字孪生智能体洪水预警 demo。当前项目已经统一为一套 AgentTwin 平台：后端仍以 `flood_system` 为唯一服务进程，前端以 `frontend` 为唯一正式入口，`3D_visual` 只作为 Cesium 模型、场景配置和校准逻辑来源。
 
 核心演示链路：
 
@@ -14,22 +14,21 @@
 - 三维画布已接入 `3D_visual` 的 CityEngine GLB 模型资源，并抽出 `frontend/src/lib/cityengineCalibration.ts` 复用源坐标归一化和模型校准逻辑。
 - 三维展示层已支持风险热区、动态积水面、水位柱、发光联动路径、proposal / warning 状态标识，以及 6 段式 `Play command story` 指挥叙事镜头。
 - 前端支持 `VITE_DEMO_MODE=true` 演示模式，可固定首页事件、对象、proposal、warning 和会商结果，降低现场数据波动对展示的影响。
-- 后端新增 `/v3/*` 聚合接口，承接 twin overview、focus object、agent council、dialog、proposal 生成、warning 生成和 SSE 实时事件。
-- `/v2/*` 继续承接人工审批、通知、执行日志和审计落库，避免重写已有闭环内核。
+- 后端提供统一的 AgentTwin 能力入口：`/agent-twin/*` 负责主屏聚合、对象聚焦、智能体会商、对话、proposal 生成、warning 生成和 SSE 实时事件。
+- 后端提供统一的平台能力入口：`/platform/*` 负责审批、通知、执行日志、审计、数据维护和可靠性治理。
 - 演示主库可通过脚本重建，固定支撑 `event_demo_beilin_primary` 主链路。
 
 ## 主要目录与结构边界
 
-- `flood_system/api.py`：FastAPI 统一装配入口，保留 V2 兼容路由并挂载 V3 router。
+- `flood_system/api.py`：FastAPI 统一装配入口，并提供 `/agent-twin/*` 与 `/platform/*` 两类公开能力入口。
 - `flood_system/config.py`：运行配置与 `FLOOD_DB_PATH` 解析。
-- `flood_system/http/v3_router.py`：AgentTwin/V3 HTTP 路由层。
-- `flood_system/infrastructure/sse.py`：V2/V3 SSE 编码与流式基础设施。
+- `flood_system/http/`：AgentTwin HTTP 路由层。
+- `flood_system/infrastructure/sse.py`：SSE 编码与流式基础设施。
 - `flood_system/schemas/`：HTTP router 使用的 schema import surface。
 - `flood_system/storage/schema.py`：SQLite 运行时表结构与索引定义，避免 `repository.py` 继续承载建表大块文本。
-- `flood_system/v2/`：现有审批、通知、审计、执行和多智能体运行基础。
-- `flood_system/v2/platform_audit.py`：V2 平台审计与告警操作 mixin。
-- `flood_system/v3/`：AgentTwin 聚合读模型、影响链、会商、proposal 与 warning 前链路。
-- `frontend/src/api/agentTwinApi.ts`：前端 V3 API 门面。
+- `flood_system/`：承载审批、通知、审计、执行、多智能体和 AgentTwin 聚合读模型等后端能力。
+- `frontend/src/api/agentTwinApi.ts`：前端 AgentTwin 主链路 API 门面。
+- `frontend/src/api/*Api.ts`：前端平台能力 API 门面。
 - `frontend/src/fixtures/agentTwinDemoMode.ts`：前端演示模式固定数据与结构化降级样例。
 - `frontend/src/features/dataManagement/dataModels.ts`：数据维护页使用的空档案、空资源状态工厂。
 - `frontend/src/state/agentTwinSelectors.ts`：主屏多源态势、影响链图谱和 Agent 差异对照的派生状态。
@@ -40,7 +39,7 @@
 - `scripts/rebuild_demo_db.py`：重建生产级 demo 演示主库。
 - `scripts/inspect_demo_db.py`：检查演示主库闭环完整性。
 - `scripts/start-demo.ps1`：一键重建/检查演示库并启动前后端。
-- `docs/agent_twin_upgrade/`：AgentTwin/V3 设计、实施、测试、演示和数据库治理文档。
+- `docs/agent_twin_upgrade/`：AgentTwin 设计、实施、测试、演示和数据库治理文档。
 
 ## 一键演示
 
@@ -66,7 +65,7 @@
 .\scripts\start-demo.ps1 -SkipRebuild
 ```
 
-如需关闭前端固定演示态、完全消费实时 V2/V3 数据：
+如需关闭前端固定演示态、完全消费实时平台数据：
 
 ```powershell
 .\scripts\start-demo.ps1 -LiveData
@@ -110,30 +109,32 @@ http://127.0.0.1:5173
 
 ## 关键接口边界
 
-- `/v3/events/{event_id}/twin-overview`
-- `/v3/events/{event_id}/objects/{object_id}`
-- `/v3/events/{event_id}/agent-council`
-- `/v3/events/{event_id}/dialog`
-- `/v3/events/{event_id}/proposals/generate`
-- `/v3/proposals/{proposal_id}/warnings/generate`
-- `/v3/events/{event_id}/stream`
+AgentTwin 主链路：
 
-V2 仍保留并承担：
+- `/agent-twin/events/{event_id}/twin-overview`
+- `/agent-twin/events/{event_id}/objects/{object_id}`
+- `/agent-twin/events/{event_id}/agent-council`
+- `/agent-twin/events/{event_id}/dialog`
+- `/agent-twin/events/{event_id}/proposals/generate`
+- `/agent-twin/proposals/{proposal_id}/warnings/generate`
+- `/agent-twin/events/{event_id}/stream`
+
+平台闭环能力：
 
 - proposal 审批/驳回
 - notification draft 与 execution log
 - audit record
 - reliability / closure 追溯
+- 数据维护、RAG 维护和运行健康检查
 
 ## 验证命令
 
 ```powershell
 C:\Users\Administrator\anaconda3\python.exe scripts\inspect_demo_db.py
-C:\Users\Administrator\anaconda3\python.exe -m pytest tests/test_system.py -k "v3_api_exposes_twin_overview_dialog_and_stream or v3_proposal_generation_and_warning_bridge_reuses_v2_closure"
+C:\Users\Administrator\anaconda3\python.exe -m pytest
 Set-Location d:\graduation_project\frontend
 npm.cmd run build
-npx.cmd vitest run src/App.test.tsx -t "总览页" --reporter=basic --testTimeout=10000
-npx.cmd vitest run src/App.test.tsx -t "方案处置页" --reporter=basic --testTimeout=10000
+npm.cmd run test -- --run --reporter=basic --testTimeout=10000
 ```
 
 说明：当前 Cesium 构建仍会提示 chunk 较大，`protobufjs` 也会输出 `eval` 警告，这是三维依赖带来的既有构建警告，不影响当前 demo 功能。
@@ -141,6 +142,6 @@ npx.cmd vitest run src/App.test.tsx -t "方案处置页" --reporter=basic --test
 ## 文档入口
 
 - [文档索引](./docs/README.md)
-- [AgentTwin/V3 文档包](./docs/agent_twin_upgrade/README.md)
+- [AgentTwin 文档包](./docs/agent_twin_upgrade/README.md)
 - [甲方演示脚本](./docs/agent_twin_upgrade/16_甲方演示脚本.md)
 - [可交付重构说明](./docs/agent_twin_upgrade/17_可交付重构说明.md)

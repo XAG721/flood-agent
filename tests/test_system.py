@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
@@ -179,7 +179,7 @@ def bound_test_client(system: FloodWarningSystem):
         api_module.production = original_production
 
 
-def test_v2_event_ingestion_recomputes_hazard_and_exposure(tmp_path: Path):
+def test_platform_event_ingestion_recomputes_hazard_and_exposure(tmp_path: Path):
     system = build_system(tmp_path)
     production = system.production_platform
 
@@ -217,7 +217,7 @@ def test_v2_event_ingestion_recomputes_hazard_and_exposure(tmp_path: Path):
     assert production.list_supervisor_runs(event.event_id)
 
 
-def test_v2_entity_impact_and_advisory_require_confirmation_for_school(tmp_path: Path):
+def test_platform_entity_impact_and_advisory_require_confirmation_for_school(tmp_path: Path):
     system = build_system(tmp_path)
     event_id = seed_event(system)
     production = system.production_platform
@@ -316,7 +316,7 @@ def test_exposure_uses_selected_tile_name_instead_of_entity_village(tmp_path: Pa
     assert impact.evidence[0].title == "碑林区 实时风险栅格"
 
 
-def test_v2_location_based_advisory_supports_profile_overrides(tmp_path: Path):
+def test_platform_location_based_advisory_supports_profile_overrides(tmp_path: Path):
     system = build_system(tmp_path)
     event_id = seed_event(system)
     production = system.production_platform
@@ -346,7 +346,7 @@ def test_v2_location_based_advisory_supports_profile_overrides(tmp_path: Path):
     assert advisory.model_name == "mock-llm"
 
 
-def test_v2_tool_registry_exposes_schema_timeout_and_failure_modes(tmp_path: Path):
+def test_platform_tool_registry_exposes_schema_timeout_and_failure_modes(tmp_path: Path):
     system = build_system(tmp_path)
     registry = system.production_platform.tools
 
@@ -363,7 +363,7 @@ def test_v2_tool_registry_exposes_schema_timeout_and_failure_modes(tmp_path: Pat
     assert invalid.failure_reason.startswith(ToolFailureMode.INVALID_INPUT.value)
 
 
-def test_v2_copilot_returns_explainable_plan_execution_and_proposal(tmp_path: Path):
+def test_platform_copilot_returns_explainable_plan_execution_and_proposal(tmp_path: Path):
     system = build_system(tmp_path)
     event_id = seed_event(system)
     production = system.production_platform
@@ -411,7 +411,7 @@ def test_v2_copilot_returns_explainable_plan_execution_and_proposal(tmp_path: Pa
     assert view.latest_answer.proposal is None
 
 
-def test_v2_route_question_uses_route_traffic_and_shelter_tools(tmp_path: Path):
+def test_platform_route_question_uses_route_traffic_and_shelter_tools(tmp_path: Path):
     system = build_system(tmp_path)
     event_id = seed_event(system)
     production = system.production_platform
@@ -432,7 +432,7 @@ def test_v2_route_question_uses_route_traffic_and_shelter_tools(tmp_path: Path):
     assert "get_shelter_capacity" in execution_names
 
 
-def test_v2_regional_approval_generates_notification_drafts_and_execution_logs(tmp_path: Path):
+def test_platform_regional_approval_generates_notification_drafts_and_execution_logs(tmp_path: Path):
     system = build_system(tmp_path)
     event_id = seed_event(system)
     production = system.production_platform
@@ -467,7 +467,7 @@ def test_v2_regional_approval_generates_notification_drafts_and_execution_logs(t
     assert all(item.generation_source.value == "llm" for item in logs)
 
 
-def test_v2_red_simulation_can_generate_generic_llm_action(tmp_path: Path):
+def test_platform_red_simulation_can_generate_generic_llm_action(tmp_path: Path):
     system = build_system(tmp_path)
     event_id = seed_event(system)
     production = system.production_platform
@@ -497,7 +497,7 @@ def test_v2_red_simulation_can_generate_generic_llm_action(tmp_path: Path):
     assert generic.proposal.action_display_category
 
 
-def test_v2_simulation_update_builds_regional_analysis_package(tmp_path: Path):
+def test_platform_simulation_update_builds_regional_analysis_package(tmp_path: Path):
     system = build_system(tmp_path)
     event_id = seed_event(system)
     production = system.production_platform
@@ -519,7 +519,7 @@ def test_v2_simulation_update_builds_regional_analysis_package(tmp_path: Path):
     assert set(package.proposal_ids) == {item.proposal.proposal_id for item in pending}
 
 
-def test_v2_regional_analysis_package_approve_and_reject(tmp_path: Path):
+def test_platform_regional_analysis_package_approve_and_reject(tmp_path: Path):
     system = build_system(tmp_path)
     event_id = seed_event(system)
     production = system.production_platform
@@ -568,7 +568,7 @@ def test_v2_regional_analysis_package_approve_and_reject(tmp_path: Path):
     assert all(item.proposal.status == ProposalStatus.REJECTED for item in rejected_items)
 
 
-def test_v2_new_risk_stage_creates_new_package_and_preserves_history(tmp_path: Path):
+def test_platform_new_risk_stage_creates_new_package_and_preserves_history(tmp_path: Path):
     system = build_system(tmp_path)
     event_id = seed_event(system)
     production = system.production_platform
@@ -803,7 +803,7 @@ def test_daily_summary_and_postmortem_fallback_without_llm(tmp_path: Path):
     assert production.list_long_term_memories(event.event_id)
 
 
-def test_v2_api_exposes_reports_postmortems_and_long_term_memory(tmp_path: Path):
+def test_platform_api_exposes_reports_postmortems_and_long_term_memory(tmp_path: Path):
     system = build_system(tmp_path)
     production = system.production_platform
     event = production.create_event(
@@ -841,33 +841,33 @@ def test_v2_api_exposes_reports_postmortems_and_long_term_memory(tmp_path: Path)
     system.event_postmortem_service.run_once()
 
     with bound_test_client(system) as client:
-        session_response = client.get(f"/v2/copilot/sessions/{session.session_id}")
+        session_response = client.get(f"/platform/copilot/sessions/{session.session_id}")
         assert session_response.status_code == 200
         assert session_response.json()["daily_reports"]
         assert session_response.json()["episode_summaries"]
 
-        daily_reports = client.get(f"/v2/events/{event.event_id}/daily-reports")
+        daily_reports = client.get(f"/platform/events/{event.event_id}/daily-reports")
         assert daily_reports.status_code == 200
         assert len(daily_reports.json()) == 1
 
-        episode_summaries = client.get(f"/v2/events/{event.event_id}/episode-summaries")
+        episode_summaries = client.get(f"/platform/events/{event.event_id}/episode-summaries")
         assert episode_summaries.status_code == 200
         assert len(episode_summaries.json()) == 1
 
-        long_term_memory = client.get(f"/v2/events/{event.event_id}/long-term-memory")
+        long_term_memory = client.get(f"/platform/events/{event.event_id}/long-term-memory")
         assert long_term_memory.status_code == 200
         assert len(long_term_memory.json()) == 1
 
-        experience_context = client.get(f"/v2/events/{event.event_id}/experience-context")
+        experience_context = client.get(f"/platform/events/{event.event_id}/experience-context")
         assert experience_context.status_code == 200
         assert "long_term_memories" in experience_context.json()
 
 
-def test_v2_api_only_exposes_new_flow_and_supports_regional_proposals(tmp_path: Path):
+def test_platform_api_only_exposes_new_flow_and_supports_regional_proposals(tmp_path: Path):
     system = build_system(tmp_path)
 
     with bound_test_client(system) as client:
-        status_response = client.get("/v2/supervisor/status")
+        status_response = client.get("/platform/supervisor/status")
         assert status_response.status_code == 200
         assert status_response.json()["running"] is True
         assert "pending_trigger_count" in status_response.json()
@@ -876,7 +876,7 @@ def test_v2_api_only_exposes_new_flow_and_supports_regional_proposals(tmp_path: 
         assert legacy.status_code == 404
 
         event_response = client.post(
-            "/v2/events",
+            "/platform/events",
             json={
                 "area_id": "beilin_10km2",
                 "title": "API event",
@@ -888,7 +888,7 @@ def test_v2_api_only_exposes_new_flow_and_supports_regional_proposals(tmp_path: 
         event_id = event_response.json()["event_id"]
 
         ingest_response = client.post(
-            f"/v2/events/{event_id}/observations",
+            f"/platform/events/{event_id}/observations",
             json={
                 "operator": "pytest",
                 "observations": [item.model_dump(mode="json") for item in sample_observations()],
@@ -898,14 +898,14 @@ def test_v2_api_only_exposes_new_flow_and_supports_regional_proposals(tmp_path: 
         wait_for_agent_processing(system, event_id)
 
         session_response = client.post(
-            "/v2/copilot/sessions/bootstrap",
+            "/platform/copilot/sessions/bootstrap",
             json={"event_id": event_id, "operator_role": "commander"},
         )
         assert session_response.status_code == 200
         session_id = session_response.json()["session_id"]
 
         first_reply = client.post(
-            f"/v2/copilot/sessions/{session_id}/messages",
+            f"/platform/copilot/sessions/{session_id}/messages",
             json={"content": "What does this mean for the school right now?"},
         )
         assert first_reply.status_code == 200
@@ -919,62 +919,62 @@ def test_v2_api_only_exposes_new_flow_and_supports_regional_proposals(tmp_path: 
         assert first_reply.json()["recent_agent_results"]
         assert first_reply.json()["autonomy_level"]
 
-        agent_status = client.get(f"/v2/events/{event_id}/agent-status")
+        agent_status = client.get(f"/platform/events/{event_id}/agent-status")
         assert agent_status.status_code == 200
         assert agent_status.json()["completed_task_count"] >= 1
         assert "active_decision_path" in agent_status.json()
         assert "blocked_by" in agent_status.json()
 
-        agent_tasks = client.get(f"/v2/events/{event_id}/agent-tasks")
+        agent_tasks = client.get(f"/platform/events/{event_id}/agent-tasks")
         assert agent_tasks.status_code == 200
         assert agent_tasks.json()
 
-        shared_memory = client.get(f"/v2/events/{event_id}/shared-memory")
+        shared_memory = client.get(f"/platform/events/{event_id}/shared-memory")
         assert shared_memory.status_code == 200
         assert shared_memory.json()["active_agents"]
         assert "active_decision_path" in shared_memory.json()
         assert "open_questions" in shared_memory.json()
 
-        session_memory = client.get(f"/v2/copilot/sessions/{session_id}/memory")
+        session_memory = client.get(f"/platform/copilot/sessions/{session_id}/memory")
         assert session_memory.status_code == 200
         assert session_memory.json()["session_memory"]["session_id"] == session_id
 
-        trigger_feed = client.get(f"/v2/events/{event_id}/trigger-events")
+        trigger_feed = client.get(f"/platform/events/{event_id}/trigger-events")
         assert trigger_feed.status_code == 200
         assert trigger_feed.json()
 
-        timeline = client.get(f"/v2/events/{event_id}/agent-timeline")
+        timeline = client.get(f"/platform/events/{event_id}/agent-timeline")
         assert timeline.status_code == 200
         assert timeline.json()
 
-        supervisor_runs = client.get(f"/v2/events/{event_id}/supervisor-runs")
+        supervisor_runs = client.get(f"/platform/events/{event_id}/supervisor-runs")
         assert supervisor_runs.status_code == 200
         assert supervisor_runs.json()
 
-        manual_run = client.post(f"/v2/events/{event_id}/supervisor/run")
+        manual_run = client.post(f"/platform/events/{event_id}/supervisor/run")
         assert manual_run.status_code == 200
         assert manual_run.json()["trigger_type"] == "manual_run"
 
-        tick = client.post(f"/v2/supervisor/tick?event_id={event_id}")
+        tick = client.post(f"/platform/supervisor/tick?event_id={event_id}")
         assert tick.status_code == 200
         assert len(tick.json()) >= 1
 
         replay = client.post(
-            f"/v2/agent-tasks/{agent_tasks.json()[0]['task_id']}/replay",
+            f"/platform/agent-tasks/{agent_tasks.json()[0]['task_id']}/replay",
             json={"replay_reason": "pytest replay"},
         )
         assert replay.status_code == 200
         assert replay.json()["replayed_from_task_id"] == agent_tasks.json()[0]["task_id"]
 
         second_reply = client.post(
-            f"/v2/copilot/sessions/{session_id}/messages",
+            f"/platform/copilot/sessions/{session_id}/messages",
             json={"content": "What does this mean for the factory right now?"},
         )
         assert second_reply.status_code == 200
         assert second_reply.json()["proposals"] == []
 
         simulation_response = client.post(
-            f"/v2/events/{event_id}/simulation-updates",
+            f"/platform/events/{event_id}/simulation-updates",
             json={
                 "generated_at": datetime.now(timezone.utc).isoformat(),
                 "depth_threshold_m": 0.45,
@@ -983,20 +983,20 @@ def test_v2_api_only_exposes_new_flow_and_supports_regional_proposals(tmp_path: 
             },
         )
         assert simulation_response.status_code == 200
-        pending_snapshot = client.get("/v2/proposals/pending")
+        pending_snapshot = client.get("/platform/proposals/pending")
         assert pending_snapshot.status_code == 200
         pending_items = pending_snapshot.json()["items"]
         assert pending_items
         proposal_id = pending_items[0]["proposal"]["proposal_id"]
-        pending_package_response = client.get(f"/v2/events/{event_id}/regional-analysis-packages/pending")
+        pending_package_response = client.get(f"/platform/events/{event_id}/regional-analysis-packages/pending")
         assert pending_package_response.status_code == 200
         assert pending_package_response.json()["package_id"]
         package_id = pending_package_response.json()["package_id"]
-        package_history_response = client.get(f"/v2/events/{event_id}/regional-analysis-packages?include_pending=false")
+        package_history_response = client.get(f"/platform/events/{event_id}/regional-analysis-packages?include_pending=false")
         assert package_history_response.status_code == 200
 
         draft_update = client.patch(
-            f"/v2/proposals/{proposal_id}/draft",
+            f"/platform/proposals/{proposal_id}/draft",
             json={
                 "operator_id": "shift_commander",
                 "operator_role": "commander",
@@ -1007,7 +1007,7 @@ def test_v2_api_only_exposes_new_flow_and_supports_regional_proposals(tmp_path: 
         assert draft_update.json()["proposal"]["edited_by_commander"] is True
 
         approve_response = client.post(
-            f"/v2/regional-analysis-packages/{package_id}/approve",
+            f"/platform/regional-analysis-packages/{package_id}/approve",
             json={
                 "operator_id": "shift_commander",
                 "operator_role": "commander",
@@ -1017,62 +1017,62 @@ def test_v2_api_only_exposes_new_flow_and_supports_regional_proposals(tmp_path: 
         assert approve_response.status_code == 200
         assert approve_response.json()["status"] == "approved"
 
-        regional_history = client.get(f"/v2/events/{event_id}/regional-proposals")
+        regional_history = client.get(f"/platform/events/{event_id}/regional-proposals")
         assert regional_history.status_code == 200
         assert regional_history.json()
 
-        experience_context = client.get(f"/v2/events/{event_id}/experience-context")
+        experience_context = client.get(f"/platform/events/{event_id}/experience-context")
         assert experience_context.status_code == 200
         assert "relevant_records" in experience_context.json()
         assert "strategy_patterns" in experience_context.json()
 
-        strategy_history = client.get("/v2/entities/factory_wyr_bio/strategy-history")
+        strategy_history = client.get("/platform/entities/factory_wyr_bio/strategy-history")
         assert strategy_history.status_code == 200
         assert strategy_history.json()["entity_id"] == "factory_wyr_bio"
 
-        decision_report = client.get(f"/v2/events/{event_id}/decision-report")
+        decision_report = client.get(f"/platform/events/{event_id}/decision-report")
         assert decision_report.status_code == 200
         assert decision_report.json()["event_id"] == event_id
         assert "active_decision_path" in decision_report.json()
 
-        metrics = client.get("/v2/agent-metrics")
+        metrics = client.get("/platform/agent-metrics")
         assert metrics.status_code == 200
         assert "fanout_count" in metrics.json()
 
-        benchmarks = client.get("/v2/evaluation/benchmarks")
+        benchmarks = client.get("/platform/evaluation/benchmarks")
         assert benchmarks.status_code == 200
         assert len(benchmarks.json()) >= 3
 
-        capabilities = client.get("/v2/security/capabilities?operator_role=observer")
+        capabilities = client.get("/platform/security/capabilities?operator_role=observer")
         assert capabilities.status_code == 200
         assert capabilities.json()["operator_role"] == "observer"
         assert capabilities.json()["capabilities"]["archive_run"] is False
         assert capabilities.json()["capabilities"]["evaluation_run"] is False
 
-        report = client.post("/v2/evaluation/run")
+        report = client.post("/platform/evaluation/run")
         assert report.status_code == 200
         report_id = report.json()["report_id"]
         assert report.json()["scenario_results"]
         assert "hallucination_rate" in report.json()
 
-        report_detail = client.get(f"/v2/evaluation/reports/{report_id}")
+        report_detail = client.get(f"/platform/evaluation/reports/{report_id}")
         assert report_detail.status_code == 200
         assert report_detail.json()["report_id"] == report_id
         assert report_detail.json()["scenario_results"]
 
-        replay = client.post(f"/v2/evaluation/reports/{report_id}/replay")
+        replay = client.post(f"/platform/evaluation/reports/{report_id}/replay")
         assert replay.status_code == 200
         assert replay.json()["report_id"] != report_id
         assert replay.json()["notes"][0].startswith(f"已重放评测报告 {report_id}")
 
 
-def test_v2_api_returns_explicit_llm_errors_without_rule_fallback(tmp_path: Path):
+def test_platform_api_returns_explicit_llm_errors_without_rule_fallback(tmp_path: Path):
     system = FloodWarningSystem(tmp_path / "system.db", llm_gateway=AlwaysFailLLMGateway())
     event_id = seed_event(system)
 
     with bound_test_client(system) as client:
         advisory_response = client.post(
-            "/v2/advisories/generate",
+            "/platform/advisories/generate",
             json={
                 "event_id": event_id,
                 "area_id": "beilin_10km2",
@@ -1084,14 +1084,14 @@ def test_v2_api_returns_explicit_llm_errors_without_rule_fallback(tmp_path: Path
         assert "llm_unavailable" in advisory_response.json()["detail"]
 
         session_response = client.post(
-            "/v2/copilot/sessions/bootstrap",
+            "/platform/copilot/sessions/bootstrap",
             json={"event_id": event_id, "operator_role": "commander"},
         )
         assert session_response.status_code == 200
         session_id = session_response.json()["session_id"]
 
         message_response = client.post(
-            f"/v2/copilot/sessions/{session_id}/messages",
+            f"/platform/copilot/sessions/{session_id}/messages",
             json={"content": "What does this mean for the school right now?"},
         )
         assert message_response.status_code == 503
@@ -1139,7 +1139,7 @@ def test_admin_api_runtime_updates_take_effect_without_restart(tmp_path: Path):
     region = system.production_platform.area_profiles["beilin_10km2"].region
 
     with bound_test_client(system) as client:
-        list_response = client.get("/v2/admin/entity-profiles")
+        list_response = client.get("/platform/admin/entity-profiles")
         assert list_response.status_code == 200
         assert any(item["entity_id"] == "school_wyl_primary" for item in list_response.json())
 
@@ -1166,14 +1166,14 @@ def test_admin_api_runtime_updates_take_effect_without_restart(tmp_path: Path):
             "operator_id": "pytest_admin",
             "operator_role": "commander",
         }
-        update_profile = client.put("/v2/admin/entity-profiles/school_wyl_primary", json=profile_payload)
+        update_profile = client.put("/platform/admin/entity-profiles/school_wyl_primary", json=profile_payload)
         assert update_profile.status_code == 200
-        impact_response = client.get(f"/v2/entities/school_wyl_primary/impact?event_id={event_id}")
+        impact_response = client.get(f"/platform/entities/school_wyl_primary/impact?event_id={event_id}")
         assert impact_response.status_code == 200
         assert impact_response.json()["entity"]["name"] == "WYL Primary School Updated"
 
         area_resource_response = client.put(
-            "/v2/admin/areas/beilin_10km2/resource-status",
+            "/platform/admin/areas/beilin_10km2/resource-status",
             json={
                 "resource_status": {
                     "area_id": "beilin_10km2",
@@ -1198,7 +1198,7 @@ def test_admin_api_runtime_updates_take_effect_without_restart(tmp_path: Path):
         assert area_resource_response.json()["scope"] == "area_default"
 
         event_resource_response = client.put(
-            f"/v2/admin/events/{event_id}/resource-status",
+            f"/platform/admin/events/{event_id}/resource-status",
             json={
                 "resource_status": {
                     "area_id": "beilin_10km2",
@@ -1223,7 +1223,7 @@ def test_admin_api_runtime_updates_take_effect_without_restart(tmp_path: Path):
         assert event_resource_response.json()["scope"] == "event_override"
 
         imported = client.post(
-            "/v2/admin/rag-documents/import",
+            "/platform/admin/rag-documents/import",
             json={
                 "documents": [
                     {
@@ -1245,7 +1245,7 @@ def test_admin_api_runtime_updates_take_effect_without_restart(tmp_path: Path):
         assert any(item["doc_id"] == "policy_school_runtime" for item in imported.json()["documents"])
 
         advisory_response = client.post(
-            "/v2/advisories/generate",
+            "/platform/advisories/generate",
             json={
                 "event_id": event_id,
                 "area_id": "beilin_10km2",
@@ -1258,7 +1258,7 @@ def test_admin_api_runtime_updates_take_effect_without_restart(tmp_path: Path):
         assert "policy_school_runtime" in evidence_ids
 
 
-def test_v2_copilot_carries_focus_memory_across_turns(tmp_path: Path):
+def test_platform_copilot_carries_focus_memory_across_turns(tmp_path: Path):
     system = build_system(tmp_path)
     event_id = seed_event(system)
     production = system.production_platform
@@ -1401,17 +1401,17 @@ def test_archive_status_and_audit_endpoints(tmp_path: Path):
     system.repository.save_v2_supervisor_run(run)
 
     with bound_test_client(system) as client:
-        archive_response = client.post("/v2/archive/run")
+        archive_response = client.post("/platform/archive/run")
         assert archive_response.status_code == 200
         archive_payload = archive_response.json()
         assert archive_payload["archived_record_count"] >= 1
         assert archive_payload["last_archive_run"] is not None
 
-        audit_response = client.get("/v2/audit/records")
+        audit_response = client.get("/platform/audit/records")
         assert audit_response.status_code == 200
         assert any(item["source_type"] == "housekeeping" for item in audit_response.json())
 
-        status_response = client.get("/v2/archive/status")
+        status_response = client.get("/platform/archive/status")
         assert status_response.status_code == 200
         assert status_response.json()["last_archive_run"]["hot_records_archived"] >= 1
 
@@ -1421,27 +1421,27 @@ def test_rbac_blocks_low_privilege_control_actions(tmp_path: Path):
     event_id = seed_event(system)
 
     with bound_test_client(system) as client:
-        archive_denied = client.post("/v2/archive/run", headers={"X-Operator-Role": "observer"})
+        archive_denied = client.post("/platform/archive/run", headers={"X-Operator-Role": "observer"})
         assert archive_denied.status_code == 403
 
-        evaluation_denied = client.post("/v2/evaluation/run", headers={"X-Operator-Role": "street_operator"})
+        evaluation_denied = client.post("/platform/evaluation/run", headers={"X-Operator-Role": "street_operator"})
         assert evaluation_denied.status_code == 403
 
         supervisor_denied = client.post(
-            f"/v2/events/{event_id}/supervisor/run",
+            f"/platform/events/{event_id}/supervisor/run",
             headers={"X-Operator-Role": "district_operator"},
         )
         assert supervisor_denied.status_code == 403
 
 
-def test_v3_api_exposes_twin_overview_dialog_and_stream(tmp_path: Path):
+def test_agent_twin_api_exposes_twin_overview_dialog_and_stream(tmp_path: Path):
     system = build_system(tmp_path)
     event_id = seed_event(system)
     production = system.production_platform
     production.ingest_simulation_update(event_id, sample_simulation_update())
 
     with bound_test_client(system) as client:
-        overview_response = client.get(f"/v3/events/{event_id}/twin-overview")
+        overview_response = client.get(f"/agent-twin/events/{event_id}/twin-overview")
         assert overview_response.status_code == 200
         overview_payload = overview_response.json()
         assert overview_payload["event_id"] == event_id
@@ -1450,19 +1450,19 @@ def test_v3_api_exposes_twin_overview_dialog_and_stream(tmp_path: Path):
         assert overview_payload["map_layers"]
 
         object_id = overview_payload["focus_objects"][0]["object_id"]
-        focus_response = client.get(f"/v3/events/{event_id}/objects/{object_id}")
+        focus_response = client.get(f"/agent-twin/events/{event_id}/objects/{object_id}")
         assert focus_response.status_code == 200
         assert focus_response.json()["object_id"] == object_id
         assert focus_response.json()["recommended_actions"]
 
-        council_response = client.get(f"/v3/events/{event_id}/agent-council")
+        council_response = client.get(f"/agent-twin/events/{event_id}/agent-council")
         assert council_response.status_code == 200
         council_payload = council_response.json()
         assert council_payload["roles"]
         assert council_payload["audit_decision"]["status"] in {"blocked", "approved_for_review"}
 
         dialog_response = client.post(
-            f"/v3/events/{event_id}/dialog",
+            f"/agent-twin/events/{event_id}/dialog",
             json={"object_id": object_id, "message": "请解释当前对象的影响链并给出处置建议。"},
         )
         assert dialog_response.status_code == 200
@@ -1481,7 +1481,7 @@ def test_v3_api_exposes_twin_overview_dialog_and_stream(tmp_path: Path):
         }
 
 
-def test_v3_proposal_generation_and_warning_bridge_reuses_v2_closure(tmp_path: Path):
+def test_agent_twin_proposal_generation_and_warning_bridge_reuses_platform_closure(tmp_path: Path):
     system = build_system(tmp_path)
     event_id = seed_event(system)
     production = system.production_platform
@@ -1489,7 +1489,7 @@ def test_v3_proposal_generation_and_warning_bridge_reuses_v2_closure(tmp_path: P
 
     with bound_test_client(system) as client:
         proposal_response = client.post(
-            f"/v3/events/{event_id}/proposals/generate",
+            f"/agent-twin/events/{event_id}/proposals/generate",
             json={"object_ids": []},
         )
         assert proposal_response.status_code == 200
@@ -1499,17 +1499,17 @@ def test_v3_proposal_generation_and_warning_bridge_reuses_v2_closure(tmp_path: P
 
         proposal_id = proposal_payload["proposals"][0]["proposal"]["proposal"]["proposal_id"]
         approve_response = client.post(
-            f"/v2/proposals/{proposal_id}/approve",
+            f"/platform/proposals/{proposal_id}/approve",
             json={
                 "operator_id": "shift_commander",
                 "operator_role": "commander",
-                "note": "approve from v3 contract test",
+                "note": "approve from AgentTwin contract test",
             },
         )
         assert approve_response.status_code == 200
         assert approve_response.json()["proposal"]["status"] == "approved"
 
-        warnings_response = client.post(f"/v3/proposals/{proposal_id}/warnings/generate")
+        warnings_response = client.post(f"/agent-twin/proposals/{proposal_id}/warnings/generate")
         assert warnings_response.status_code == 200
         warnings_payload = warnings_response.json()
         assert warnings_payload["proposal_id"] == proposal_id
@@ -1517,5 +1517,5 @@ def test_v3_proposal_generation_and_warning_bridge_reuses_v2_closure(tmp_path: P
 
         notification_drafts = production.repository.list_v2_notification_drafts(event_id)
         assert any(item.proposal_id == proposal_id for item in notification_drafts)
-        v3_warning_rows = production.repository.list_v3_audience_warnings(event_id, proposal_id=proposal_id)
-        assert v3_warning_rows
+        agent_twin_warning_rows = production.repository.list_v3_audience_warnings(event_id, proposal_id=proposal_id)
+        assert agent_twin_warning_rows
