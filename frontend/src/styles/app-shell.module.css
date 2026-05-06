@@ -213,6 +213,59 @@
   margin-top: 24px;
 }
 
+.immersiveShell {
+  max-width: none;
+  min-height: 100svh;
+  padding: 0;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(76, 206, 255, 0.2), transparent 30%),
+    radial-gradient(circle at 6% 34%, rgba(255, 139, 57, 0.12), transparent 20%),
+    linear-gradient(180deg, #031022 0%, #050d18 100%);
+}
+
+.immersiveShell .masthead {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.immersiveShell .masthead::before {
+  display: none;
+}
+
+.immersiveShell .topbar {
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 520px);
+  padding: 14px 18px 0;
+}
+
+.immersiveShell .brandBlock h1 {
+  font-size: clamp(28px, 3.2vw, 54px);
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 24px rgba(89, 225, 255, 0.34);
+}
+
+.immersiveShell .brandCopy {
+  display: none;
+}
+
+.immersiveShell .navigationBand {
+  padding: 0 18px 8px;
+}
+
+.immersiveShell .pageHeader,
+.immersiveShell .metricStrip {
+  display: none;
+}
+
+.immersiveShell .pageBody {
+  margin-top: 0;
+}
+
 @media (max-width: 1280px) {
   .appShell {
     padding: 18px;

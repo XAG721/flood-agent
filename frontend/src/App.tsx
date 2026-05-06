@@ -1,5 +1,3 @@
-﻿import { AnimatePresence, motion } from "framer-motion";
-import { useMemo } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import styles from "./App.module.css";
 import { AppShell } from "./components/AppShell";
@@ -9,7 +7,6 @@ import { MetricStrip } from "./components/MetricStrip";
 import { operatorRoleText } from "./components/SecurityDesk";
 import {
   bootStateText,
-  entityText,
   executionStatusText,
   healthStateText,
   pageMeta,
@@ -20,38 +17,14 @@ import { DataPage } from "./pages/DataPage";
 import panelStyles from "./styles/shared-panels.module.css";
 import {
   appShellText,
-  buildAgentTimelineFallback,
-  executionFlowText,
   formatTrendLabel,
   formatPendingMetricHint,
   overviewMetricText,
 } from "./lib/appText";
 import { AdminDesk } from "./features/dataManagement/AdminDesk";
-import { AgentsWorkbench } from "./features/agents/AgentsWorkbench";
-import { CopilotWorkbench } from "./features/copilot/CopilotWorkbench";
-import { OperationsWorkbench } from "./features/operations/OperationsWorkbench";
-import { ReliabilityWorkbench } from "./features/reliability/ReliabilityWorkbench";
-import { normalizeAgentTerminology } from "./lib/agentUiText";
-import {
-  formatAgentTaskEventType,
-  formatExecutionMode,
-  formatProposalStreamStatus,
-  formatRegionalActionType,
-  formatTriggerType,
-} from "./lib/displayText";
-import {
-  coerceDrafts,
-  coerceLogs,
-  coerceStrings,
-  coerceTemplates,
-  formatPercent,
-  formatTimestamp,
-  severityText,
-} from "./lib/consoleFormatting";
-import type {
-  EntityImpactView,
-  OperatorRole,
-} from "./types/api";
+import { CopilotTwinScreen } from "./features/copilot/CopilotTwinScreen";
+import { formatProposalStreamStatus } from "./lib/displayText";
+import type { OperatorRole } from "./types/api";
 
 export default function App() {
   const location = useLocation();
@@ -60,14 +33,8 @@ export default function App() {
   const capabilityMap = consoleState.operatorCapabilities?.capabilities ?? {};
   const canEditRuntimeAdmin = Boolean(capabilityMap.runtime_admin_write);
   const canManageDataset = Boolean(capabilityMap.dataset_manage);
-  const canControlSupervisor = Boolean(capabilityMap.supervisor_control);
-  const canReplayTask = Boolean(capabilityMap.agent_replay);
-  const canRunEvaluation = Boolean(capabilityMap.evaluation_run);
-  const canRunArchive = Boolean(capabilityMap.archive_run);
 
   const topRisk = consoleState.twinOverview?.overall_risk_level ?? consoleState.hazardState?.overall_risk_level ?? "None";
-  const selectedImpact = consoleState.selectedImpact as EntityImpactView;
-  const leadImpact = useMemo(() => consoleState.topImpacts[0] ?? null, [consoleState.topImpacts]);
   const currentPage = pageMeta[location.pathname as keyof typeof pageMeta];
 
   if (!currentPage) {
@@ -80,6 +47,8 @@ export default function App() {
   const isDataPage = location.pathname === "/data";
   const isAgentsPage = location.pathname === "/agents";
   const isReliabilityPage = location.pathname === "/reliability";
+  const isTwinDashboardPage = isOverviewPage || isOperationsPage || isAgentsPage || isReliabilityPage;
+  const isImmersivePage = isTwinDashboardPage || isCopilotPage;
 
   const trendLabel = formatTrendLabel(consoleState.twinOverview?.trend ?? consoleState.hazardState?.trend);
   const highPriorityCount =
@@ -91,23 +60,19 @@ export default function App() {
   const pendingProposalCount = consoleState.twinOverview?.pending_proposal_count ?? consoleState.pendingProposals.length;
   const warningDraftCount = consoleState.twinOverview?.warning_draft_count ?? 0;
   const latestToolExecutions = consoleState.latestAnswer?.tool_executions ?? [];
-  const latestWarningDrafts =
-    consoleState.warningDrafts.length > 0
-      ? consoleState.warningDrafts
-      : consoleState.twinOverview?.recent_warning_drafts ?? [];
 
-  const primaryPaths = new Set(["/", "/operations", "/agents"]);
+  const primaryPaths = new Set(["/", "/copilot", "/operations", "/agents"]);
   const navigation = Object.entries(pageMeta)
     .filter(([path]) => primaryPaths.has(path))
     .map(([path, meta]) => ({ path, label: meta.label }));
   const utilityNavigation = Object.entries(pageMeta)
     .filter(([path]) => !primaryPaths.has(path))
     .map(([path, meta]) => ({ path, label: meta.label }));
-  const shellCurrentPageLabel = isOverviewPage ? "数字孪生主屏" : currentPage.label;
-  const shellCurrentPageTitle = isOverviewPage ? "数字孪生智能体洪水预警系统" : currentPage.title;
-  const shellCurrentPageDescription = isOverviewPage ? undefined : currentPage.description;
+  const shellCurrentPageLabel = isOverviewPage || isCopilotPage ? "数字孪生主屏" : currentPage.label;
+  const shellCurrentPageTitle = isOverviewPage || isCopilotPage ? "数字孪生智能体洪水预警系统" : currentPage.title;
+  const shellCurrentPageDescription = isOverviewPage || isCopilotPage ? undefined : currentPage.description;
 
-  const pageMetricItems = isOverviewPage
+  const pageMetricItems = isOverviewPage || isCopilotPage
     ? [
         {
           label: overviewMetricText.riskLabel,
@@ -178,127 +143,6 @@ export default function App() {
             },
           ];
 
-  const priorityItems = consoleState.curatedEntities.map((entity) => {
-    const impact = consoleState.entityImpacts[entity.id];
-    return {
-      id: entity.id,
-      name: entity.name,
-      typeLabel: entityText[entity.type],
-      village: entity.village,
-      emphasis: entity.emphasis,
-      riskLabel: impact ? riskText[impact.risk_level] : undefined,
-      riskTone: impact
-        ? ({
-            None: "none",
-            Blue: "blue",
-            Yellow: "yellow",
-            Orange: "orange",
-            Red: "red",
-          }[impact.risk_level] as "none" | "blue" | "yellow" | "orange" | "red")
-        : undefined,
-    };
-  });
-
-  const overviewSignalItems = consoleState.openAlerts.length
-    ? consoleState.openAlerts.slice(0, 4).map((alert) => ({
-        id: alert.alert_id,
-        title: alert.summary,
-        detail: alert.details || executionFlowText.alertDetailFallback,
-        meta: formatTimestamp(alert.last_seen_at ?? alert.first_seen_at),
-        tone:
-          alert.severity === "critical"
-            ? ("critical" as const)
-            : alert.severity === "warning"
-              ? ("warning" as const)
-              : ("info" as const),
-      }))
-    : consoleState.supervisorRuns.slice(0, 4).map((run) => ({
-        id: run.supervisor_run_id,
-        title: formatTriggerType(run.trigger_type),
-        detail: run.summary || executionFlowText.supervisorRunFallback,
-        meta: formatTimestamp(run.created_at),
-        tone: run.status === "failed" ? ("critical" as const) : ("info" as const),
-      }));
-
-  const agentTimelineItems = consoleState.agentTimeline.slice(0, 5).map((entry) => ({
-    id: entry.entry_id,
-    title:
-      entry.entry_type === "trigger"
-        ? `触发：${formatTriggerType(entry.trigger_type)}`
-        : `任务：${formatAgentTaskEventType(entry.task_event_type)}`,
-    detail: normalizeAgentTerminology(entry.summary) || buildAgentTimelineFallback(entry.entry_type === "trigger"),
-    meta: formatTimestamp(entry.created_at),
-    tone:
-      entry.entry_type === "trigger"
-        ? ("warning" as const)
-        : String(entry.payload.status ?? "").toLowerCase() === "failed"
-          ? ("critical" as const)
-          : ("info" as const),
-  }));
-
-  const executionFlowSteps = [
-    {
-      id: "sense",
-      title: executionFlowText.senseTitle,
-      summary: consoleState.hazardState
-        ? `已汇聚当前事件水情、路网与监测状态，形成 ${riskText[topRisk]} 风险判断。`
-        : executionFlowText.noHazardStateSummary,
-      detail: consoleState.hazardState
-        ? `趋势判断为 ${trendLabel}，可达路段 ${consoleState.hazardState.road_reachability?.length ?? 0} 条。`
-        : executionFlowText.noHazardStateDetail,
-      status: consoleState.hazardState ? ("complete" as const) : ("pending" as const),
-    },
-    {
-      id: "impact",
-      title: executionFlowText.impactTitle,
-      summary: leadImpact
-        ? `系统已识别 ${leadImpact.entity.name} 为首要影响对象。`
-        : executionFlowText.noLeadImpactSummary,
-      detail: leadImpact
-        ? leadImpact.risk_reason[0] ?? "已结合对象属性、位置和脆弱性形成对象级研判。"
-        : executionFlowText.noLeadImpactDetail,
-      status: leadImpact ? ("complete" as const) : ("pending" as const),
-    },
-    {
-      id: "plan",
-      title: executionFlowText.planTitle,
-      summary: consoleState.latestAnswer?.planner_summary ?? executionFlowText.noPlannerSummary,
-      detail: consoleState.latestAnswer?.planning_layers_summary?.[0] ?? executionFlowText.noPlannerDetail,
-      status: consoleState.latestAnswer ? ("complete" as const) : ("pending" as const),
-    },
-    {
-      id: "tooling",
-      title: executionFlowText.toolingTitle,
-      summary: latestToolExecutions.length
-        ? `本轮已触发 ${latestToolExecutions.length} 次关键能力调用。`
-        : executionFlowText.noToolingSummary,
-      detail: latestToolExecutions[0]?.output_summary ?? executionFlowText.noToolingDetail,
-      status: latestToolExecutions.length ? ("active" as const) : ("pending" as const),
-    },
-    {
-      id: "confirm",
-      title: executionFlowText.confirmTitle,
-      summary: consoleState.pendingProposals.length
-        ? `${consoleState.pendingProposals.length} 条动作等待人工确认。`
-        : executionFlowText.noPendingConfirmationSummary,
-      detail: approvedProposalCount
-        ? `已有 ${approvedProposalCount} 条动作完成批准闭环。`
-        : executionFlowText.noPendingConfirmationDetail,
-      status: consoleState.pendingProposals.length
-        ? ("active" as const)
-        : approvedProposalCount
-          ? ("complete" as const)
-          : ("pending" as const),
-    },
-  ];
-
-  const analysisPackageItems = [
-    ...(consoleState.pendingRegionalAnalysisPackage ? [consoleState.pendingRegionalAnalysisPackage] : []),
-    ...consoleState.regionalAnalysisPackageHistory,
-  ];
-  const proposalHistoryItems = consoleState.regionalProposalHistory;
-  const pendingProposalItems = consoleState.regionalProposalQueueSnapshot?.items ?? [];
-
   return (
     <>
       <GlobalRegionalProposalDialog
@@ -315,6 +159,7 @@ export default function App() {
         currentPageLabel={shellCurrentPageLabel}
         currentPageTitle={shellCurrentPageTitle}
         currentPageDescription={shellCurrentPageDescription}
+        immersive={isImmersivePage}
         navigation={navigation}
         utilityNavigation={utilityNavigation}
         operatorControl={
@@ -357,8 +202,8 @@ export default function App() {
             </div>
             {consoleState.demoMode ? (
               <div className={panelStyles.statusSignal}>
-                <span className={panelStyles.statusSignalLabel}>Demo Mode</span>
-                <strong className={panelStyles.statusSignalValue}>Locked</strong>
+                <span className={panelStyles.statusSignalLabel}>演示模式</span>
+                <strong className={panelStyles.statusSignalValue}>已锁定</strong>
               </div>
             ) : null}
           </>
@@ -366,32 +211,27 @@ export default function App() {
         metrics={<MetricStrip items={pageMetricItems} />}
       >
         {isCopilotPage ? (
-          <CopilotWorkbench
-            agentStatus={consoleState.agentStatus}
-            agentTasks={consoleState.agentTasks}
-            dailyReports={consoleState.dailyReports}
-            episodeSummaries={consoleState.episodeSummaries}
-            isBusy={consoleState.isBusy}
-            latestAnswer={consoleState.latestAnswer}
-            messages={consoleState.messages}
-            pendingRegionalAnalysisPackage={consoleState.pendingRegionalAnalysisPackage}
-            regionalAnalysisPackageHistory={consoleState.regionalAnalysisPackageHistory}
-            pendingProposals={consoleState.pendingRegionalAnalysisPackage ? [] : consoleState.pendingProposals}
-            priorityItems={priorityItems}
-            selectedImpact={selectedImpact}
-            selectedPriorityId={consoleState.selectedEntityId}
-            onAsk={(prompt) => void consoleState.ask(prompt)}
-            onOpenOperations={() => navigate("/operations")}
-            onResolveRegionalAnalysisPackage={(packageId, decision, note) =>
-              void consoleState.resolveRegionalAnalysisPackage(packageId, decision, note)
-            }
-            onResolveProposal={(proposalId, decision, note) => void consoleState.resolveProposal(proposalId, decision, note)}
-            onSelectPriority={(id) => void consoleState.selectEntity(id)}
+          <CopilotTwinScreen
+            overview={consoleState.twinOverview}
+            focusObject={consoleState.focusObject}
+            dialogEntries={consoleState.dialogEntries}
+            busy={consoleState.dialogBusy}
+            onSelectObject={(objectId) => void consoleState.selectTwinObject(objectId)}
+            onAsk={(prompt) => void consoleState.sendAgentDialog(prompt)}
           />
         ) : null}
 
-        {isOverviewPage ? (
+        {isTwinDashboardPage ? (
           <DigitalTwinImpactScreen
+            variant={
+              isOperationsPage
+                ? "risk-warning"
+                : isAgentsPage
+                  ? "impact-analysis"
+                  : isReliabilityPage
+                    ? "event-replay"
+                    : "overview"
+            }
             overview={consoleState.twinOverview}
             focusObject={consoleState.focusObject}
             pendingProposals={consoleState.pendingProposals}
@@ -400,35 +240,14 @@ export default function App() {
             areaResourceStatusView={consoleState.areaResourceStatusView}
             eventResourceStatusView={consoleState.eventResourceStatusView}
             dialogEntries={consoleState.dialogEntries}
-            dialogOpen={consoleState.dialogOpen}
-            dialogBusy={consoleState.dialogBusy}
             streamStatus={consoleState.twinStreamStatus}
             onSelectObject={(objectId) => void consoleState.selectTwinObject(objectId)}
-            onOpenDialog={() => consoleState.setDialogOpen(true)}
-            onCloseDialog={() => consoleState.setDialogOpen(false)}
-            onSendDialog={(message, objectId) => void consoleState.sendAgentDialog(message, objectId)}
             onGenerateProposals={() => void consoleState.generateTwinProposals()}
             onGenerateWarnings={(proposalId) => void consoleState.generateAudienceWarnings(proposalId)}
             onResolveProposal={(proposalId, decision, note) => void consoleState.resolveProposal(proposalId, decision, note)}
-            onOpenProposalQueue={consoleState.openProposalQueue}
             onOpenOperations={() => navigate("/operations")}
             actionBusy={consoleState.isBusy}
             twinBusy={consoleState.twinBusy}
-          />
-        ) : null}
-
-        {isOperationsPage ? (
-          <OperationsWorkbench
-            executionFlowSteps={executionFlowSteps}
-            latestAnswer={consoleState.latestAnswer}
-            pendingProposalCount={consoleState.pendingProposals.length}
-            proposalHistoryItems={proposalHistoryItems}
-            pendingProposalItems={pendingProposalItems}
-            analysisPackageItems={analysisPackageItems}
-            agentTimelineItems={agentTimelineItems}
-            latestWarningDrafts={latestWarningDrafts}
-            activeAdvisory={consoleState.activeAdvisory}
-            toolExecutionCount={latestToolExecutions.length}
           />
         ) : null}
 
@@ -467,64 +286,6 @@ export default function App() {
           </DataPage>
         ) : null}
 
-        {isAgentsPage ? (
-          <AgentsWorkbench
-            agentCouncil={consoleState.agentCouncil}
-            eventId={consoleState.event?.event_id}
-            agentStatus={consoleState.agentStatus}
-            agentTasks={consoleState.agentTasks}
-            sessionMemoryView={consoleState.sessionMemoryView}
-            sharedMemorySnapshot={consoleState.sharedMemorySnapshot}
-            episodeSummaries={consoleState.episodeSummaries}
-            triggerEvents={consoleState.triggerEvents}
-            agentTimeline={consoleState.agentTimeline}
-            agentTimelineItems={agentTimelineItems}
-            supervisorRuns={consoleState.supervisorRuns}
-            supervisorLoopStatus={consoleState.supervisorLoopStatus}
-            recentAgentResults={consoleState.recentAgentResults}
-            experienceContext={consoleState.experienceContext}
-            decisionReport={consoleState.decisionReport}
-            agentMetrics={consoleState.agentMetrics}
-            evaluationBenchmarks={consoleState.evaluationBenchmarks}
-            latestEvaluationReport={consoleState.latestEvaluationReport}
-            busy={consoleState.isBusy}
-            canControlSupervisor={canControlSupervisor}
-            canReplayTask={canReplayTask}
-            canRunEvaluation={canRunEvaluation}
-            onRunSupervisor={consoleState.runSupervisorNow}
-            onTickSupervisor={consoleState.tickSupervisor}
-            onReplayTask={consoleState.replayAgentTask}
-            onRunEvaluation={consoleState.runEvaluation}
-            onReplayEvaluationReport={consoleState.replayEvaluationReport}
-            pendingProposalCount={pendingProposalCount}
-            approvedProposalCount={approvedProposalCount}
-            warningDraftCount={warningDraftCount}
-            latestWarningDrafts={latestWarningDrafts}
-          />
-        ) : null}
-
-        {isReliabilityPage ? (
-          <ReliabilityWorkbench
-            agentCouncil={consoleState.agentCouncil}
-            eventId={consoleState.event?.event_id}
-            supervisorLoopStatus={consoleState.supervisorLoopStatus}
-            alerts={consoleState.openAlerts}
-            auditRecords={consoleState.auditRecords}
-            archiveStatus={consoleState.archiveStatus}
-            busy={consoleState.reliabilityBusy || consoleState.isBusy}
-            canRunArchive={canRunArchive}
-            onQueryAudit={consoleState.queryAuditRecords}
-            onRunArchive={consoleState.runArchiveCycle}
-            operatorRole={consoleState.operatorRole}
-            operatorCapabilities={consoleState.operatorCapabilities}
-            onChangeRole={consoleState.setOperatorRole}
-            pendingProposalCount={pendingProposalCount}
-            approvedProposalCount={approvedProposalCount}
-            warningDraftCount={warningDraftCount}
-            latestWarningDrafts={latestWarningDrafts}
-            twinStreamStatus={consoleState.twinStreamStatus}
-          />
-        ) : null}
       </AppShell>
     </>
   );

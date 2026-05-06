@@ -26,7 +26,7 @@ export const demoEvent: V2EventRecord = {
   area_id: DEMO_AREA_ID,
   title: DEMO_EVENT_TITLE,
   trigger_reason: "production_demo_mode",
-  current_stage: "AgentTwin demo",
+  current_stage: "智能体演示",
   current_risk_level: "Orange",
   status: "active",
   metadata: { demo_mode: true },
@@ -39,7 +39,7 @@ const demoEvidence = [
     evidence_type: "sensor",
     title: "南门雨量站 15 分钟累计雨量",
     source_id: "sensor_rain_nanmen_15m",
-    excerpt: "15 分钟累计雨量 36mm，短临预报显示强回波仍在东移。",
+    excerpt: "15 分钟累计雨量 36 毫米，短临预报显示强回波仍在东移。",
     timestamp: DEMO_NOW,
     priority: 0,
   },
@@ -47,7 +47,7 @@ const demoEvidence = [
     evidence_type: "road",
     title: "建设路低洼段道路通行状态",
     source_id: "road_jsl_underpass",
-    excerpt: "低洼段积水深度已接近 42cm，社区网格员上报非机动车绕行需求。",
+    excerpt: "低洼段积水深度已接近 42 厘米，社区网格员上报非机动车绕行需求。",
     timestamp: DEMO_NOW,
     priority: 1,
   },
@@ -71,8 +71,8 @@ export const demoFocusObjects: FocusObjectView[] = [
     risk_level: "Orange",
     time_to_impact_minutes: 12,
     summary: "低洼网格积水面正在外扩，地下室回流和社区出入口阻断风险同时上升。",
-    risk_reasons: ["建设路低洼段水深接近 42cm。", "网格员连续两次上报地下室回流。", "最近避难路径需绕行北侧支路。"],
-    recommended_actions: ["批准社区网格排涝封控 proposal。", "派出资源车辆沿北侧路线前置抽排设备。", "生成社区版和公众版 warning。"],
+    risk_reasons: ["建设路低洼段水深接近 42 厘米。", "网格员连续两次上报地下室回流。", "最近避难路径需绕行北侧支路。"],
+    recommended_actions: ["批准社区网格排涝封控处置方案。", "派出资源车辆沿北侧路线前置抽排设备。", "生成社区版和公众版预警。"],
     risk_reminders: ["审批前不得自动封控主干道。", "需要保留医院急诊保障通道。"],
     evidence: demoEvidence,
     related_proposals: [],
@@ -87,7 +87,7 @@ export const demoFocusObjects: FocusObjectView[] = [
     time_to_impact_minutes: 18,
     summary: "学校周边道路可能在放学前出现短时积水，建议提前通知家长错峰接送。",
     risk_reasons: ["校门口下穿通道水位抬升。", "学生离校窗口与强降雨重叠。"],
-    recommended_actions: ["预置校门口引导人员。", "生成家长与学校管理方 warning。"],
+    recommended_actions: ["预置校门口引导人员。", "家长车辆沿文艺路北侧临停点接送，避开建设路低洼段。", "生成家长与学校管理方预警。"],
     risk_reminders: ["不要引导家长进入低洼道路。"],
     evidence: demoEvidence.slice(0, 2),
     related_proposals: [],
@@ -102,9 +102,34 @@ export const demoFocusObjects: FocusObjectView[] = [
     time_to_impact_minutes: 15,
     summary: "医院急诊与后勤入口需要保持连续通行，已批准入口保障动作并生成分众预警。",
     risk_reasons: ["急诊入口坡道存在倒灌风险。", "后勤车辆需要避开南侧低洼点。"],
-    recommended_actions: ["维持急诊入口沙袋与排水泵。", "继续发布部门版 warning。"],
+    recommended_actions: ["维持急诊入口沙袋与排水泵。", "救护车和后勤车辆沿北侧保障路线进出，避开南侧低洼点。", "继续发布部门版预警。"],
     risk_reminders: ["医院保障动作优先级高于普通路段封控。"],
     evidence: demoEvidence,
+    related_proposals: [],
+  },
+  {
+    event_id: DEMO_EVENT_ID,
+    object_id: "resident_linnai_home",
+    object_name: "李奶奶（独居老人）",
+    entity_type: "resident",
+    village: "建设路片区",
+    risk_level: "Red",
+    time_to_impact_minutes: 8,
+    summary: "李奶奶住所位于一层低洼院落，出入口积水抬升，需要社区志愿者陪同转移。",
+    risk_reasons: ["院落门前积水预计 8 分钟内超过 30 厘米。", "李奶奶行动不便，独自转移风险较高。", "安全转移路线需绕开建设路低洼段。"],
+    recommended_actions: ["派社区志愿者上门确认李奶奶状态。", "沿文艺路北侧支路转移至南门街道临时安置点。", "同步通知家属和社区网格员。"],
+    risk_reminders: ["不得让老人自行涉水外出。", "转移路线需避开地下空间和低洼下穿通道。"],
+    evidence: [
+      ...demoEvidence.slice(0, 2),
+      {
+        evidence_type: "profile",
+        title: "重点人群关怀名单",
+        source_id: "profile_elder_linnai",
+        excerpt: "李奶奶，独居老人，行动不便，需志愿者或社区工作人员协助转移。",
+        timestamp: DEMO_NOW,
+        priority: 3,
+      },
+    ],
     related_proposals: [],
   },
   {
@@ -117,7 +142,7 @@ export const demoFocusObjects: FocusObjectView[] = [
     time_to_impact_minutes: 24,
     summary: "地铁口客流与积水风险同步上升，需要强化出入口提示和绕行指引。",
     risk_reasons: ["枢纽南侧道路通行效率下降。", "群众报险量增加。"],
-    recommended_actions: ["发布公众绕行 warning。", "安排地铁口临时引导。"],
+    recommended_actions: ["发布公众绕行预警。", "安排地铁口临时引导。"],
     risk_reminders: ["避免把人流引向医院急诊保障通道。"],
     evidence: demoEvidence.slice(1),
     related_proposals: [],
@@ -137,7 +162,7 @@ function createProposal(
     action_display_name: overrides.title,
     action_display_tagline: overrides.summary,
     action_display_category: "空间联动处置",
-    trigger_reason: "AgentTwin demo council",
+    trigger_reason: "智能体会商演示",
     recommendation: overrides.summary,
     evidence_summary: "基于雨量、水位、道路状态、网格员上报和 SOP 约束生成。",
     severity: "Orange",
@@ -152,10 +177,10 @@ function createProposal(
     risk_stage_key: "orange_response",
     system_version_hash: "agent-twin-demo",
     generation_source: "system",
-    model_name: "demo-fixture",
+    model_name: "演示模型",
     prompt_profile: "production_demo",
     grounding_summary: "演示模式固定样例，字段结构与真实接口保持一致。",
-    chat_follow_up_prompt: "请解释该 proposal 为什么需要人工审批。",
+    chat_follow_up_prompt: "请解释该处置方案为什么需要人工审批。",
     source_session_id: "demo_session",
     updated_at: DEMO_NOW,
     edited_by_commander: false,
@@ -173,10 +198,18 @@ function createProposal(
 
 export const demoPendingProposalSeed: ActionProposalV2[] = [
   createProposal({
-    proposal_id: "demo_proposal_community_jsl_grid",
-    title: "建设路低洼网格地下室回流协助与排涝封控",
-    summary: "对社区低洼网格执行临时排涝、地下室回流排查和北侧路线引导。",
+    proposal_id: "demo_proposal_school_wyl_primary",
+    entity_id: "school_wyl_primary",
+    title: "文艺路小学放学避险与家长接送引导",
+    summary: "在放学窗口前设置校门口引导，家长车辆沿北侧临停点接送，避开建设路低洼段。",
     status: "pending",
+    execution_mode: "evacuation_task",
+    action_display_category: "学校避险",
+    high_risk_object_ids: ["school_wyl_primary", "community_jsl_grid"],
+    action_scope: {
+      target_scope: "文艺路小学、北侧临停点、建设路低洼段绕行路线",
+      resource_plan: "2 名校门口引导员、1 组交警联动、1 名社区网格员协同",
+    },
   }),
 ];
 
@@ -210,7 +243,7 @@ export const demoWarningDraftSeed: AudienceWarningDraft[] = [
     proposal_id: "demo_proposal_hospital_bl_center",
     audience: "department",
     channel: "work_order",
-    content: "城管、交警、卫健部门按已批准 proposal 执行入口保障、绕行引导和排水设备前置。",
+    content: "城管、交警、卫健部门按已批准处置方案执行入口保障、绕行引导和排水设备前置。",
     grounding_summary: "部门版：拆解执行主体、路径和资源要求。",
     created_at: DEMO_NOW,
   },
@@ -248,7 +281,7 @@ export function buildDemoOverview(params: {
     generated_at: DEMO_NOW,
     overall_risk_level: "Orange",
     trend: "rapidly_rising",
-    summary: "演示模式已锁定碑林区主事件、重点对象、审批动作与分众 warning，适合甲方现场稳定展示。",
+    summary: "演示模式已锁定碑林区主事件、重点对象、审批动作与分众预警，适合甲方现场稳定展示。",
     lead_object_id: "community_jsl_grid",
     lead_object_name: "建设路低洼网格三组",
     focus_objects: demoFocusObjects.map((item, index) => ({
@@ -271,8 +304,8 @@ export function buildDemoOverview(params: {
       risk_level: item.risk_level,
       entity_type: item.entity_type,
       is_lead: item.object_id === "community_jsl_grid",
-      east_offset_m: [-40, -230, 130, 310][index] ?? 0,
-      north_offset_m: [10, 150, -85, 120][index] ?? 0,
+      east_offset_m: [-40, -230, 130, -115, 310][index] ?? 0,
+      north_offset_m: [10, 150, -85, -165, 120][index] ?? 0,
       height_offset_m: 20 + index * 5,
       proposal_state: warningIds.has(item.object_id)
         ? "warning_generated"
@@ -286,12 +319,12 @@ export function buildDemoOverview(params: {
     approved_proposal_count: params.approvedProposals.length,
     warning_draft_count: params.warningDrafts.length,
     active_alert_count: 6,
-    recommended_actions: ["先处置建设路低洼网格地下室回流。", "保持碑林中心医院急诊入口保障。", "审批后同步生成分众 warning。"],
+    recommended_actions: ["先处置建设路低洼网格地下室回流。", "保障医院急诊入口和学校放学路线。", "优先协助李奶奶等重点人群转移。", "审批后同步生成分众预警。"],
     signals: [
       {
         signal_id: "demo_signal_rain",
         title: "雨量站短时强降雨持续",
-        detail: "南门雨量站 15 分钟累计雨量 36mm，预计 20 分钟内仍有强回波经过。",
+        detail: "南门雨量站 15 分钟累计雨量 36 毫米，预计 20 分钟内仍有强回波经过。",
         severity: "warning",
         created_at: DEMO_NOW,
       },
@@ -317,32 +350,32 @@ export function buildDemoOverview(params: {
 export const demoAgentCouncil: AgentCouncilView = {
   event_id: DEMO_EVENT_ID,
   generated_at: DEMO_NOW,
-  overall_summary: "会商一致认为建设路低洼网格是当前最适合展示闭环处置的焦点对象。",
-  decision_path: ["ImpactAgent 定位社区与医院的联动风险。", "ActionAgent 建议优先排涝封控和路线引导。", "AuditAgent 要求人工审批后再执行高风险动作。"],
-  open_questions: ["是否需要同步学校家长通知？", "医院后勤车辆是否需要二次绕行？"],
-  blocked_by: ["高风险封控动作必须由 commander 审批。"],
+  overall_summary: "会商一致认为建设路低洼网格、学校、医院与李奶奶重点人群可以覆盖客户演示中的不同对象类型。",
+  decision_path: ["影响研判智能体定位社区、学校、医院和独居老人的联动风险。", "行动建议智能体建议优先排涝封控、路线引导和重点人群转移。", "审计智能体要求人工审批后再执行高风险动作。"],
+  open_questions: ["是否需要同步学校家长通知？", "医院后勤车辆是否需要二次绕行？", "李奶奶是否已经完成上门确认？"],
+  blocked_by: ["高风险封控动作必须由指挥长审批。"],
   roles: [
     {
       role: "impact_agent",
-      label: "Impact Agent",
+      label: "影响研判智能体",
       status: "ready",
-      summary: "识别社区低洼网格、医院急诊入口和学校放学窗口的耦合风险。",
+      summary: "识别社区低洼网格、医院急诊入口、学校放学窗口和李奶奶住所的耦合风险。",
       confidence: 0.86,
       evidence_count: 3,
       recommended_action: "先聚焦建设路低洼网格。",
     },
     {
       role: "action_agent",
-      label: "Action Agent",
+      label: "行动建议智能体",
       status: "ready",
       summary: "建议用北侧路线前置资源车辆，并对地下空间进行巡查。",
       confidence: 0.81,
       evidence_count: 3,
-      recommended_action: "生成区域排涝封控 proposal。",
+      recommended_action: "生成区域排涝封控处置方案。",
     },
     {
       role: "audit_agent",
-      label: "Audit Agent",
+      label: "审计智能体",
       status: "gate_required",
       summary: "封控和资源调度影响交通秩序，必须保留人工审批闸门。",
       confidence: 0.9,
@@ -353,7 +386,7 @@ export const demoAgentCouncil: AgentCouncilView = {
   audit_decision: {
     status: "approved_for_review",
     summary: "可进入人工审批，但不能自动执行。",
-    rationale: "证据足够支撑 proposal 生成，动作涉及道路封控和资源调度，需要指挥员确认。",
+    rationale: "证据足够支撑处置方案生成，动作涉及道路封控和资源调度，需要指挥员确认。",
     risk_flags: ["traffic_control", "medical_access", "human_gate_required"],
     approval_required: true,
   },
@@ -463,23 +496,51 @@ export function buildDemoQueueSnapshot(pendingProposals: ActionProposalV2[]): Re
   };
 }
 
+function buildDialogProposalForFocus(focus: FocusObjectView) {
+  if (focus.object_id === "school_wyl_primary") {
+    return demoPendingProposalSeed[0];
+  }
+
+  return createProposal({
+    proposal_id: `demo_dialog_proposal_${focus.object_id}`,
+    entity_id: focus.object_id,
+    title: `${focus.object_name}避险与保障处置`,
+    summary: focus.recommended_actions.slice(0, 2).join("；"),
+    status: "pending",
+    high_risk_object_ids: [focus.object_id],
+    action_scope: {
+      target_scope: `${focus.object_name}及周边安全路线`,
+      resource_plan: focus.entity_type === "resident" ? "1 名网格员、2 名志愿者、1 辆转运车" : "现场引导人员与应急资源前置",
+    },
+    action_display_category:
+      focus.entity_type === "school"
+        ? "学校避险"
+        : focus.entity_type === "hospital"
+          ? "医疗保障"
+          : focus.entity_type === "resident"
+            ? "重点人群转移"
+            : "空间联动处置",
+  });
+}
+
 export function buildDemoDialogResponse(message: string, objectId?: string | null): AgentDialogResponse {
   const focus = findDemoFocusObject(objectId);
+  const dialogProposal = buildDialogProposalForFocus(focus);
   return {
     event_id: DEMO_EVENT_ID,
     object_id: focus.object_id,
     object_name: focus.object_name,
     message,
-    answer: `${focus.object_name} 当前的核心风险是：${focus.summary} 建议先看证据，再进入 proposal 审批。`,
+    answer: `${focus.object_name} 当前的核心风险是：${focus.summary} 建议先看证据，再进入处置方案审批。`,
     impact_summary: focus.risk_reasons,
     evidence: focus.evidence,
     recommended_actions: focus.recommended_actions,
     risk_reminders: focus.risk_reminders,
-    follow_up_prompts: ["为什么这个动作不能自动执行？", "请把影响链拆成风险源、对象、人群和资源。", "审批后应该生成哪些受众版本的 warning？"],
+    follow_up_prompts: ["为什么这个动作不能自动执行？", "请把影响链拆成风险源、对象、人群和资源。", "审批后应该生成哪些受众版本的预警？"],
     grounding_summary: "演示模式结构化回答，固定返回影响链、证据、建议动作和审批入口。",
     proposal_entry: {
       blocked: false,
-      proposal: buildDemoRegionalView(demoPendingProposalSeed[0]),
+      proposal: buildDemoRegionalView(dialogProposal),
     },
     response_source: "demo_fixture",
     generated_at: DEMO_NOW,

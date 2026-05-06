@@ -58,7 +58,7 @@ export function RagImportPanel({ documents, busy, status, onImport, onReload }: 
       <div className={styles.adminCardHeader}>
         <div>
           <p className={styles.sectionLabel}>知识库导入</p>
-          <h3>RAG 文档管理</h3>
+          <h3>知识库文档管理</h3>
         </div>
         <div className={styles.operationCounts}>
           <span>{documents.length} 份运行期文档</span>

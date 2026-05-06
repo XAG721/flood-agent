@@ -9,7 +9,7 @@ export const appShellText = {
   supervisorRunning: "运行中",
   supervisorStopped: "已停止",
   unnamedEvent: "未命名事件",
-  defaultAgentSummary: "多 Agent 正在持续汇总监测、研判和建议。",
+  defaultAgentSummary: "多智能体正在持续汇总监测、研判和建议。",
 } as const;
 
 export const overviewPageText = {
@@ -37,9 +37,9 @@ export const operationsPageText = {
   proposalHistorySectionTitle: "区域请示与动作建议回顾",
   pendingConfirmSectionLabel: "待确认",
   pendingConfirmSectionTitle: "当前待人工确认动作",
-  timelineTitle: "多 Agent 时间线",
+  timelineTitle: "多智能体时间线",
   timelineSubtitle: "查看最新触发、任务推进和监督运行记录",
-  timelineEmpty: "当前没有新的多 Agent 时间线记录。",
+  timelineEmpty: "当前没有新的多智能体时间线记录。",
 } as const;
 
 export const executionFlowText = {
@@ -61,7 +61,7 @@ export const executionFlowText = {
   alertDetailFallback: "告警已触发，请在详情中查看最新处置上下文。",
   supervisorRunFallback: "后台巡检已记录本轮运行，但尚未生成摘要。",
   triggerTimelineFallback: "系统已记录本次触发事件。",
-  taskTimelineFallback: "多 Agent 任务已推进，请查看详情了解最新状态。",
+  taskTimelineFallback: "多智能体任务已推进，请查看详情了解最新状态。",
 } as const;
 
 export const overviewMetricText = {

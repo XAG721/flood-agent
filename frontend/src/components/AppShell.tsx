@@ -26,6 +26,7 @@ interface AppShellProps {
   utilityNavigation?: AppNavItem[];
   metrics: ReactNode;
   children: ReactNode;
+  immersive?: boolean;
 }
 
 export function AppShell({
@@ -40,9 +41,10 @@ export function AppShell({
   utilityNavigation,
   metrics,
   children,
+  immersive = false,
 }: AppShellProps) {
   return (
-    <div className={shellStyles.appShell}>
+    <div className={`${shellStyles.appShell} ${immersive ? shellStyles.immersiveShell : ""}`}>
       <div className={shellStyles.masthead}>
         <header className={shellStyles.topbar}>
           <div className={shellStyles.brandBlock}>

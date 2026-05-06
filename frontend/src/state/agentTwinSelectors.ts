@@ -34,6 +34,24 @@ export interface ImpactGraphColumn {
   fallback?: string;
 }
 
+function formatTrendStatus(value?: string | null) {
+  return {
+    rising: "持续上涨",
+    rapidly_rising: "快速上升",
+    stable: "基本稳定",
+    falling: "逐步回落",
+    unknown: "趋势未知",
+  }[value ?? "unknown"] ?? value ?? "趋势未知";
+}
+
+function formatResourceScope(value?: string | null) {
+  return {
+    event: "事件资源",
+    area: "区域资源",
+    baseline: "资源基线",
+  }[value ?? "baseline"] ?? value ?? "资源基线";
+}
+
 export function buildAgentDivergenceRows(params: {
   recentResults: AgentResult[];
   sharedMemorySnapshot?: SharedMemorySnapshot | null;
@@ -56,7 +74,7 @@ export function buildAgentDivergenceRows(params: {
       ? params.agentCouncil?.overall_summary ||
         params.decisionReport?.latest_summary ||
         params.sharedMemorySnapshot?.latest_summary ||
-        "Supervisor 已把该结果纳入当前编排路径。"
+        "监督编排器已把该结果纳入当前编排路径。"
       : hasEvidenceGap
         ? `证据缺口：${result.missing_slots.slice(0, 2).join(" / ") || "缺少可追溯证据引用"}`
         : confidence < 0.58
@@ -99,26 +117,26 @@ export function buildSituationSourceItems(params: {
   return [
     {
       label: "雨量",
-      value: monitoringPoints.length ? `${Math.round(maxRainfallMm)} mm` : "--",
-      status: monitoringPoints.length ? "Live telemetry" : "Waiting",
+      value: monitoringPoints.length ? `${Math.round(maxRainfallMm)} 毫米` : "--",
+      status: monitoringPoints.length ? "实时遥测" : "等待接入",
       detail: monitoringPoints[0]?.point_name ?? "接入气象站/泵站后显示峰值雨量",
     },
     {
       label: "水位",
-      value: monitoringPoints.length ? `${maxWaterLevelM.toFixed(1)} m` : "--",
-      status: params.hazardState ? params.hazardState.trend : "Snapshot",
-      detail: topHazardTile ? `${topHazardTile.area_name} 预测积水 ${topHazardTile.predicted_water_depth_cm}cm` : "等待水位或积水预测模型输出",
+      value: monitoringPoints.length ? `${maxWaterLevelM.toFixed(1)} 米` : "--",
+      status: params.hazardState ? formatTrendStatus(params.hazardState.trend) : "快照",
+      detail: topHazardTile ? `${topHazardTile.area_name} 预测积水 ${topHazardTile.predicted_water_depth_cm} 厘米` : "等待水位或积水预测模型输出",
     },
     {
       label: "道路",
       value: `${blockedRoads.length}/${roadReachability.length || "--"}`,
-      status: blockedRoads.length ? "Blocked routes" : "Clear",
+      status: blockedRoads.length ? "道路阻断" : "通行正常",
       detail: blockedRoads[0]?.failure_reason || blockedRoads[0]?.name || "道路可达性用于驱动阻断线与处置路线",
     },
     {
       label: "网格上报",
       value: `${params.signals.length}`,
-      status: params.signals.length ? "Active reports" : "No new report",
+      status: params.signals.length ? "现场上报" : "暂无新报",
       detail: params.signals[0]?.title ?? "网格员巡查、现场照片和补充描述会进入信号流",
     },
     {
@@ -130,7 +148,7 @@ export function buildSituationSourceItems(params: {
     {
       label: "资源状态",
       value: resourceStatus ? `${resourceStatus.vehicle_count} 车 / ${resourceStatus.staff_count} 人` : "--",
-      status: params.resourceView?.scope ?? "resource baseline",
+      status: formatResourceScope(params.resourceView?.scope),
       detail: resourceStatus
         ? `泵 ${resourceStatus.portable_pumps} / 舟艇 ${resourceStatus.rescue_boats} / 无人机 ${resourceStatus.drone_count}`
         : "接入区域或事件级资源表后显示调度余量",
@@ -164,26 +182,26 @@ export function buildImpactGraphColumns(params: {
   return [
     {
       title: "风险源",
-      subtitle: "Rain / Water",
+      subtitle: "雨量 / 水位",
       items: [
         params.overview?.event_title ?? "当前洪水事件",
-        topHazardTile ? `${topHazardTile.area_name} ${topHazardTile.predicted_water_depth_cm}cm` : "积水预测等待接入",
+        topHazardTile ? `${topHazardTile.area_name} ${topHazardTile.predicted_water_depth_cm} 厘米` : "积水预测等待接入",
       ],
     },
     {
       title: "传导对象",
-      subtitle: "Road / Facility",
+      subtitle: "道路 / 设施",
       items: affectedRoadNames.length ? affectedRoadNames : ["道路可达性", "下穿/低洼点"],
     },
     {
       title: "对象链路",
-      subtitle: "Community / Hospital / School",
-      items: params.focusObjects.slice(0, 3).map((item) => `${item.name} ${item.time_to_impact_minutes}min`),
+      subtitle: "社区 / 医院 / 学校",
+      items: params.focusObjects.slice(0, 3).map((item) => `${item.name} ${item.time_to_impact_minutes} 分钟`),
       fallback: params.focusObject?.object_name ?? params.overview?.lead_object_name ?? "等待对象画像",
     },
     {
       title: "人群与资源",
-      subtitle: "People / Resources",
+      subtitle: "人群 / 资源",
       items: [
         resourceStatus ? `可调车辆 ${resourceStatus.vehicle_count} / 人员 ${resourceStatus.staff_count}` : "资源基线待接入",
         params.riskReminders[0] ?? "脆弱人群与资源缺口待智能体补证",
@@ -191,10 +209,10 @@ export function buildImpactGraphColumns(params: {
     },
     {
       title: "处置闭环",
-      subtitle: "Proposal / Warning",
+      subtitle: "方案 / 预警",
       items: [
-        params.primaryProposalTitle ?? "等待 proposal 生成",
-        params.warningDraftCount ? `${params.warningDraftCount} 类 warning 已生成` : params.closureStatus,
+        params.primaryProposalTitle ?? "等待处置方案生成",
+        params.warningDraftCount ? `${params.warningDraftCount} 类预警已生成` : params.closureStatus,
       ],
     },
   ];

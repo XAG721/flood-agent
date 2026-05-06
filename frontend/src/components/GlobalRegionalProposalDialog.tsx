@@ -9,6 +9,7 @@ import {
   formatGenerationSource,
   riskLevelText,
 } from "../lib/displayText";
+import { normalizeAgentTerminology } from "../lib/agentUiText";
 import type { RegionalProposalQueueSnapshot } from "../types/api";
 
 interface GlobalRegionalProposalDialogProps {
@@ -23,13 +24,13 @@ interface GlobalRegionalProposalDialogProps {
 
 function normalizeFieldValue(value: unknown) {
   if (Array.isArray(value)) {
-    return value.join(", ");
+    return normalizeAgentTerminology(value.join("、"));
   }
   if (typeof value === "number") {
     return String(value);
   }
   if (typeof value === "string") {
-    return value;
+    return normalizeAgentTerminology(value);
   }
   if (value && typeof value === "object") {
     return JSON.stringify(value);
@@ -158,7 +159,7 @@ export function GlobalRegionalProposalDialog({
                 <div className={styles.routeSummary}>
                   <div>
                     <span>触发原因</span>
-                    <strong>{proposal.trigger_reason || "模型根据当前区域风险生成了新的请示。"}</strong>
+                    <strong>{normalizeAgentTerminology(proposal.trigger_reason || "模型根据当前区域风险生成了新的请示。")}</strong>
                   </div>
                   <div>
                     <span>关联对象</span>
@@ -166,20 +167,20 @@ export function GlobalRegionalProposalDialog({
                   </div>
                   <div>
                     <span>模型</span>
-                    <strong>{proposal.model_name || "未标记"}</strong>
+                    <strong>{normalizeAgentTerminology(proposal.model_name || "未标记")}</strong>
                   </div>
                 </div>
 
                 {proposal.title && proposal.title !== displayName ? (
                   <p className={styles.emptyState} style={{ marginTop: "10px" }}>
-                    系统标题：{proposal.title}
+                    系统标题：{normalizeAgentTerminology(proposal.title)}
                   </p>
                 ) : null}
 
                 <ul className={styles.reasonList}>
-                  <li>{proposal.recommendation || proposal.summary}</li>
-                  <li>{proposal.evidence_summary || "暂无证据摘要"}</li>
-                  {proposal.grounding_summary ? <li>{proposal.grounding_summary}</li> : null}
+                  <li>{normalizeAgentTerminology(proposal.recommendation || proposal.summary)}</li>
+                  <li>{normalizeAgentTerminology(proposal.evidence_summary || "暂无证据摘要")}</li>
+                  {proposal.grounding_summary ? <li>{normalizeAgentTerminology(proposal.grounding_summary)}</li> : null}
                 </ul>
 
                 {scopeEntries.length ? (

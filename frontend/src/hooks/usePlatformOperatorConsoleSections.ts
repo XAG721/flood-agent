@@ -760,7 +760,7 @@ export function useConsoleAgentActions(params: AgentParams) {
         params.setExecutionStatus("idle");
       } catch (error) {
         params.setExecutionStatus("error");
-        params.setErrorMessage(getErrorMessage(error, "重放选中的 agent 任务失败。"));
+        params.setErrorMessage(getErrorMessage(error, "重放选中的智能体任务失败。"));
       }
     },
     runEvaluation: async () => {
@@ -774,7 +774,7 @@ export function useConsoleAgentActions(params: AgentParams) {
         params.setExecutionStatus("idle");
       } catch (error) {
         params.setExecutionStatus("error");
-        params.setErrorMessage(getErrorMessage(error, "运行 agent 评测失败。"));
+        params.setErrorMessage(getErrorMessage(error, "运行智能体评测失败。"));
       }
     },
     replayEvaluationReport: async (reportId: string) => {

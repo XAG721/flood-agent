@@ -22,6 +22,7 @@ type TwinEntityBundle = {
   route?: any;
   water?: any;
   waterColumn?: any;
+  buildingHighlight?: any;
   roadClosure?: any;
   evacuationRoute?: any;
   resourceVehicle?: any;
@@ -42,45 +43,46 @@ const NARRATIVE_STEPS: NarrativeStep[] = [
   {
     key: "overview",
     shortLabel: "01",
-    title: "City overview",
-    narrative: "Full-city flood posture: model, heat zones, signals and command focus.",
+    title: "全域态势",
+    narrative: "展示城市模型、风险热区、信号流和当前指挥焦点。",
   },
   {
     key: "risk",
     shortLabel: "02",
-    title: "Risk source",
-    narrative: "Locate the highest-risk source and its upstream impact trigger.",
+    title: "风险源",
+    narrative: "定位最高风险对象及其上游触发因素。",
   },
   {
     key: "water",
     shortLabel: "03",
-    title: "Water posture",
-    narrative: "Read the animated inundation surface and water-level column around the focus object.",
+    title: "水位态势",
+    narrative: "查看焦点对象周边的动态积水面和水位柱。",
   },
   {
     key: "route",
     shortLabel: "04",
-    title: "Response route",
-    narrative: "Highlight evacuation paths, blocked roads and resource vehicle movement.",
+    title: "处置路线",
+    narrative: "高亮疏散路径、道路阻断线和资源车辆位置。",
   },
   {
     key: "closure",
     shortLabel: "05",
-    title: "Closure loop",
-    narrative: "Focus on proposal approval status and the spatial object where the loop closes.",
+    title: "审批闭环",
+    narrative: "聚焦处置方案审批状态及闭环落点对象。",
   },
   {
     key: "warning",
     shortLabel: "06",
-    title: "Warning spread",
-    narrative: "Show warning diffusion rings after approved actions produce audience drafts.",
+    title: "预警扩散",
+    narrative: "展示动作批准后分众预警在空间上的扩散效果。",
   },
 ];
 
 interface DigitalTwinCesiumCanvasProps {
-  eventTitle?: string;
   layers: TwinObjectMapLayer[];
-  selectedObjectId?: string | null;
+  dialogFocusObjectId?: string | null;
+  dialogFocusSerial?: number;
+  routeHighlightObjectId?: string | null;
   selectedRiskLevel?: RiskLevel | null;
   onSelectObject: (objectId: string) => void;
 }
@@ -98,21 +100,21 @@ function toneClassName(riskLevel?: RiskLevel | null) {
 function stateLabel(proposalState?: string | null) {
   const normalizedState = proposalState ?? "monitoring";
   return {
-    monitoring: "Monitoring",
-    pending: "Pending proposal",
-    approved: "Approved action",
-    warning_generated: "Warnings ready",
+    monitoring: "监测中",
+    pending: "待审批方案",
+    approved: "已批准动作",
+    warning_generated: "预警已生成",
   }[normalizedState] ?? normalizedState;
 }
 
 function stateColor(proposalState?: string | null) {
   const normalizedState = proposalState ?? "monitoring";
   return {
-    monitoring: "#5cc8ff",
-    pending: "#ffad42",
-    approved: "#9be36f",
-    warning_generated: "#f66f9d",
-  }[normalizedState] ?? "#5cc8ff";
+    monitoring: "#28d8ff",
+    pending: "#ff9d38",
+    approved: "#35e6bf",
+    warning_generated: "#ff6b2d",
+  }[normalizedState] ?? "#28d8ff";
 }
 
 function riskRadius(riskLevel?: RiskLevel | null, proposalState?: string) {
@@ -148,6 +150,86 @@ function riskMotionIntensity(riskLevel?: RiskLevel | null, proposalState?: strin
   return base + (proposalState === "pending" ? 0.16 : proposalState === "warning_generated" ? 0.24 : 0);
 }
 
+function buildingHighlightSize(entityType?: string | null) {
+  const dimensions = {
+    community: { width: 92, depth: 72, height: 34 },
+    school: { width: 74, depth: 58, height: 42 },
+    hospital: { width: 82, depth: 62, height: 58 },
+    resident: { width: 38, depth: 34, height: 24 },
+    nursing_home: { width: 66, depth: 54, height: 38 },
+    metro_station: { width: 62, depth: 46, height: 28 },
+    underground_space: { width: 72, depth: 52, height: 22 },
+    factory: { width: 90, depth: 70, height: 40 },
+  }[entityType ?? ""];
+  return dimensions ?? { width: 58, depth: 48, height: 32 };
+}
+
+type RouteAnchor = Pick<TwinObjectMapLayer, "east_offset_m" | "north_offset_m" | "height_offset_m" | "entity_type">;
+type RouteOffsetPoint = { east: number; north: number; height: number };
+
+const ROAD_CORRIDOR_X = [-520, -360, -180, 0, 180, 360, 520];
+const ROAD_CORRIDOR_Y = [-390, -240, -80, 90, 250, 410];
+
+function nearestCorridor(value: number, corridors: number[]) {
+  return corridors.reduce((best, current) => (Math.abs(current - value) < Math.abs(best - value) ? current : best), corridors[0]);
+}
+
+function appendRoutePoint(points: RouteOffsetPoint[], point: RouteOffsetPoint) {
+  const previous = points[points.length - 1];
+  if (
+    previous &&
+    Math.abs(previous.east - point.east) < 1 &&
+    Math.abs(previous.north - point.north) < 1 &&
+    Math.abs(previous.height - point.height) < 1
+  ) {
+    return;
+  }
+  points.push(point);
+}
+
+function roadAccess(anchor: RouteAnchor, height: number) {
+  const nearestX = nearestCorridor(anchor.east_offset_m, ROAD_CORRIDOR_X);
+  const nearestY = nearestCorridor(anchor.north_offset_m, ROAD_CORRIDOR_Y);
+  const size = buildingHighlightSize(anchor.entity_type);
+  const eastGap = Math.abs(anchor.east_offset_m - nearestX);
+  const northGap = Math.abs(anchor.north_offset_m - nearestY);
+
+  if (eastGap <= northGap) {
+    const gateNorth = anchor.north_offset_m + Math.sign(nearestY - anchor.north_offset_m || 1) * Math.max(size.depth * 0.62, 28);
+    return {
+      exit: { east: anchor.east_offset_m, north: gateNorth, height },
+      road: { east: nearestX, north: gateNorth, height },
+      junction: { east: nearestX, north: nearestY, height },
+    };
+  }
+
+  const gateEast = anchor.east_offset_m + Math.sign(nearestX - anchor.east_offset_m || 1) * Math.max(size.width * 0.62, 28);
+  return {
+    exit: { east: gateEast, north: anchor.north_offset_m, height },
+    road: { east: gateEast, north: nearestY, height },
+    junction: { east: nearestX, north: nearestY, height },
+  };
+}
+
+function buildRoadFollowingRoute(source: RouteAnchor, target: RouteAnchor) {
+  const height = Math.max(source.height_offset_m, target.height_offset_m) + 18;
+  const sourceAccess = roadAccess(source, height);
+  const targetAccess = roadAccess(target, height);
+  const route: RouteOffsetPoint[] = [];
+
+  appendRoutePoint(route, { east: source.east_offset_m, north: source.north_offset_m, height });
+  appendRoutePoint(route, sourceAccess.exit);
+  appendRoutePoint(route, sourceAccess.road);
+  appendRoutePoint(route, sourceAccess.junction);
+  appendRoutePoint(route, { east: targetAccess.junction.east, north: sourceAccess.junction.north, height });
+  appendRoutePoint(route, targetAccess.junction);
+  appendRoutePoint(route, targetAccess.road);
+  appendRoutePoint(route, targetAccess.exit);
+  appendRoutePoint(route, { east: target.east_offset_m, north: target.north_offset_m, height });
+
+  return route;
+}
+
 function objectPhaseSeed(objectId: string) {
   return (
     objectId.split("").reduce((total, char, index) => total + char.charCodeAt(0) * (index + 3), 0) % 628
@@ -170,9 +252,10 @@ function isJsdomRuntime() {
 }
 
 export function DigitalTwinCesiumCanvas({
-  eventTitle,
   layers,
-  selectedObjectId,
+  dialogFocusObjectId,
+  dialogFocusSerial = 0,
+  routeHighlightObjectId,
   selectedRiskLevel,
   onSelectObject,
 }: DigitalTwinCesiumCanvasProps) {
@@ -183,17 +266,19 @@ export function DigitalTwinCesiumCanvas({
   const tourTimersRef = useRef<number[]>([]);
   const cesiumRef = useRef<CesiumModule | null>(null);
   const sceneFocusRef = useRef<any>(null);
-  const [status, setStatus] = useState("Loading digital twin canvas");
+  const lastDialogFocusRef = useRef<string | null>(null);
+  const onSelectObjectRef = useRef(onSelectObject);
+  const [status, setStatus] = useState("正在加载数字孪生画布");
   const [error, setError] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   const [tourRunning, setTourRunning] = useState(false);
-  const [tourNarrative, setTourNarrative] = useState("Ready for command flythrough");
+  const [tourNarrative, setTourNarrative] = useState("指挥镜头已就绪");
   const [hoveredObjectId, setHoveredObjectId] = useState<string | null>(null);
   const [activeNarrativeStep, setActiveNarrativeStep] = useState<NarrativeStepKey>("overview");
 
   const leadLayer = useMemo(
-    () => layers.find((item) => item.object_id === selectedObjectId) ?? layers.find((item) => item.is_lead) ?? layers[0] ?? null,
-    [layers, selectedObjectId],
+    () => layers.find((item) => item.is_lead) ?? layers[0] ?? null,
+    [layers],
   );
   const layerStats = useMemo(
     () => ({
@@ -205,9 +290,13 @@ export function DigitalTwinCesiumCanvas({
     [layers],
   );
   const layerById = useMemo(() => new Map(layers.map((item) => [item.object_id, item])), [layers]);
+  useEffect(() => {
+    onSelectObjectRef.current = onSelectObject;
+  }, [onSelectObject]);
   const spotlightLayer =
     (hoveredObjectId ? layerById.get(hoveredObjectId) : undefined) ??
-    (selectedObjectId ? layerById.get(selectedObjectId) : undefined) ??
+    (dialogFocusObjectId ? layerById.get(dialogFocusObjectId) : undefined) ??
+    (routeHighlightObjectId ? layerById.get(routeHighlightObjectId) : undefined) ??
     leadLayer ??
     null;
   const toneClass = toneClassName(selectedRiskLevel ?? spotlightLayer?.risk_level ?? leadLayer?.risk_level ?? "None");
@@ -218,8 +307,9 @@ export function DigitalTwinCesiumCanvas({
       layers.find((item) => item.risk_level === "Red" || item.risk_level === "Orange") ??
       layers[0] ??
       null;
-    const focusLayer = selectedObjectId ? layerById.get(selectedObjectId) ?? riskSource : riskSource;
+    const focusLayer = dialogFocusObjectId ? layerById.get(dialogFocusObjectId) ?? riskSource : riskSource;
     const routeLayer =
+      (routeHighlightObjectId ? layerById.get(routeHighlightObjectId) : undefined) ??
       layers.find((item) => item.object_id !== riskSource?.object_id && item.proposal_state === "approved") ??
       layers.find((item) => item.object_id !== riskSource?.object_id && item.proposal_state === "pending") ??
       layers.find((item) => item.object_id !== riskSource?.object_id) ??
@@ -241,7 +331,7 @@ export function DigitalTwinCesiumCanvas({
       closure: closureLayer,
       warning: warningLayer,
     } satisfies Record<NarrativeStepKey, TwinObjectMapLayer | null>;
-  }, [layerById, layers, leadLayer, selectedObjectId]);
+  }, [dialogFocusObjectId, layerById, layers, leadLayer, routeHighlightObjectId]);
 
   const resolveNarrativeEntity = (stepKey: NarrativeStepKey) => {
     const layer = narrativeLayers[stepKey];
@@ -288,7 +378,7 @@ export function DigitalTwinCesiumCanvas({
     const Cesium = cesiumRef.current;
     const target = resolveNarrativeEntity(stepKey);
     if (target.layer && options?.autoSelect !== false) {
-      onSelectObject(target.layer.object_id);
+      onSelectObjectRef.current(target.layer.object_id);
     }
     if (!viewer || !Cesium || !target.entity) {
       return;
@@ -331,7 +421,7 @@ export function DigitalTwinCesiumCanvas({
     });
     const stopTimer = window.setTimeout(() => {
       setTourRunning(false);
-      setTourNarrative("Command story complete: impact, route, approval and warning loop are aligned.");
+      setTourNarrative("指挥叙事完成：影响、路线、审批与预警闭环已对齐。");
       tourTimersRef.current = [];
     }, NARRATIVE_STEPS.length * 1600 + 700);
     tourTimersRef.current.push(stopTimer);
@@ -348,7 +438,7 @@ export function DigitalTwinCesiumCanvas({
       try {
         const Cesium = await import("cesium");
         cesiumRef.current = Cesium;
-        setStatus("Loading 3D scene configuration");
+        setStatus("正在加载三维场景配置");
 
         const response = await fetch("/agent-twin-assets/scene-config.json", { cache: "no-store" });
         if (!response.ok) {
@@ -395,8 +485,8 @@ export function DigitalTwinCesiumCanvas({
           const sampled = await sampleTerrainMostDetailed(terrainProvider, [
             Cesium.Cartographic.fromDegrees(sceneConfig.anchorLon, sceneConfig.anchorLat),
           ]);
-          if (sampled[0]?.height !== undefined) {
-            anchorHeight = sampled[0].height + sceneConfig.anchorHeight;
+          if (Number.isFinite(sampled[0]?.height)) {
+            anchorHeight = sampled[0].height as number;
           }
         }
 
@@ -404,7 +494,7 @@ export function DigitalTwinCesiumCanvas({
           return;
         }
 
-        setStatus("Starting Cesium viewer");
+        setStatus("正在启动三维地图引擎");
         const viewer = new Viewer(hostRef.current, {
           terrainProvider,
           baseLayer: false,
@@ -431,14 +521,17 @@ export function DigitalTwinCesiumCanvas({
         }
         viewerRef.current = viewer;
 
-        setStatus("Analyzing CityEngine source coordinates");
+        setStatus("正在分析城市建筑模型坐标");
         let sourceMetadata: SourceMetadata | null = null;
-        try {
-          sourceMetadata = await loadSourceMetadata(Cesium, sceneConfig);
-        } catch (metadataError) {
-          console.warn("Falling back to simple CityEngine placement", metadataError);
+        if (sceneConfig.placementMode !== "simple") {
+          try {
+            sourceMetadata = await loadSourceMetadata(Cesium, sceneConfig);
+          } catch (metadataError) {
+            console.warn("城市建筑模型坐标分析失败，切换为锚点定位", metadataError);
+          }
         }
 
+        setStatus("正在恢复城市建筑模型位置");
         const anchor = Cartesian3.fromDegrees(sceneConfig.anchorLon, sceneConfig.anchorLat, anchorHeight);
         const anchorFrame = Transforms.eastNorthUpToFixedFrame(anchor);
         const modelMatrix = sourceMetadata
@@ -448,9 +541,14 @@ export function DigitalTwinCesiumCanvas({
         const model = await Model.fromGltfAsync({
           url: resolveModelAssetUrl(sceneConfig.modelUrl),
           modelMatrix,
-          color: Color.WHITE.withAlpha(0.96),
-          silhouetteColor: Color.fromCssColorString("#ff9a4a"),
+          color: Color.fromCssColorString("#d9f8ff").withAlpha(1),
+          colorBlendMode: Cesium.ColorBlendMode.MIX,
+          colorBlendAmount: 0.08,
+          silhouetteColor: Color.fromCssColorString("#34dcff"),
           silhouetteSize: 0,
+          minimumPixelSize: 0,
+          upAxis: Cesium.Axis.Z,
+          forwardAxis: Cesium.Axis.X,
         });
         if (!disposed) {
           viewer.scene.primitives.add(model);
@@ -473,6 +571,7 @@ export function DigitalTwinCesiumCanvas({
           const radius = riskRadius(layer.risk_level, layer.proposal_state);
           const depthCm = waterDepthCm(layer.risk_level, layer.proposal_state);
           const columnHeight = Math.max(24, depthCm * 0.95);
+          const highlightSize = buildingHighlightSize(layer.entity_type);
           const intensity = riskMotionIntensity(layer.risk_level, layer.proposal_state);
           const phaseSeed = objectPhaseSeed(layer.object_id);
           const closureStart = Matrix4.multiplyByPoint(
@@ -513,7 +612,7 @@ export function DigitalTwinCesiumCanvas({
               material: new ColorMaterialProperty(
                 new CallbackProperty(
                   () =>
-                    Color.fromCssColorString("#48c8ff").withAlpha(
+                    Color.fromCssColorString("#20cfff").withAlpha(
                       (layer.risk_level === "Red" || layer.risk_level === "Orange" ? 0.26 : 0.13) +
                         Math.max(0, Math.sin(nowSeconds() * 1.35 + phaseSeed)) * 0.06 * intensity,
                     ),
@@ -522,7 +621,7 @@ export function DigitalTwinCesiumCanvas({
               ),
               outline: true,
               outlineColor: new CallbackProperty(
-                () => Color.fromCssColorString("#a9edff").withAlpha(0.22 + Math.max(0, Math.sin(nowSeconds() * 1.2 + phaseSeed)) * 0.2),
+                () => Color.fromCssColorString("#9af4ff").withAlpha(0.22 + Math.max(0, Math.sin(nowSeconds() * 1.2 + phaseSeed)) * 0.2),
                 false,
               ),
             },
@@ -549,7 +648,7 @@ export function DigitalTwinCesiumCanvas({
               bottomRadius: 11,
               material: new ColorMaterialProperty(
                 new CallbackProperty(
-                  () => Color.fromCssColorString("#6fe5ff").withAlpha(0.36 + Math.max(0, Math.sin(nowSeconds() * 2.05 + phaseSeed)) * 0.18),
+                  () => Color.fromCssColorString("#5fe7ff").withAlpha(0.36 + Math.max(0, Math.sin(nowSeconds() * 2.05 + phaseSeed)) * 0.18),
                   false,
                 ),
               ),
@@ -560,7 +659,7 @@ export function DigitalTwinCesiumCanvas({
               ),
             },
             label: {
-              text: `${depthCm}cm`,
+              text: `${depthCm} 厘米`,
               showBackground: true,
               backgroundColor: Color.fromCssColorString("rgba(8,20,37,0.76)"),
               fillColor: Color.WHITE,
@@ -570,9 +669,50 @@ export function DigitalTwinCesiumCanvas({
               horizontalOrigin: HorizontalOrigin.CENTER,
             },
           });
+          const buildingHighlight = viewer.entities.add({
+            id: `${layer.object_id}:building-highlight`,
+            name: `${layer.name} building highlight`,
+            show: false,
+            position: Matrix4.multiplyByPoint(
+              anchorFrame,
+              new Cartesian3(
+                layer.east_offset_m,
+                layer.north_offset_m,
+                layer.height_offset_m + highlightSize.height / 2 + 6,
+              ),
+              new Cartesian3(),
+            ),
+            box: {
+              dimensions: new Cartesian3(highlightSize.width, highlightSize.depth, highlightSize.height),
+              material: new ColorMaterialProperty(
+                new CallbackProperty(
+                  () =>
+                    Color.fromCssColorString("#24d8ff").withAlpha(
+                      0.18 + Math.max(0, Math.sin(nowSeconds() * 2.1 + phaseSeed)) * 0.12,
+                    ),
+                  false,
+                ),
+              ),
+              outline: true,
+              outlineColor: new CallbackProperty(
+                () => Color.fromCssColorString("#8af4ff").withAlpha(0.68 + Math.max(0, Math.cos(nowSeconds() * 1.9 + phaseSeed)) * 0.24),
+                false,
+              ),
+            },
+            label: {
+              text: `已聚焦：${layer.name}`,
+              showBackground: true,
+              backgroundColor: Color.fromCssColorString("rgba(4,18,34,0.82)"),
+              fillColor: Color.fromCssColorString("#dffbff"),
+              font: "700 12px 'Segoe UI'",
+              pixelOffset: new Cartesian2(0, -42),
+              verticalOrigin: VerticalOrigin.BOTTOM,
+              horizontalOrigin: HorizontalOrigin.CENTER,
+            },
+          });
           const pulse = viewer.entities.add({
             id: `${layer.object_id}:risk-pulse`,
-            name: `${layer.name} command pulse`,
+            name: `${layer.name} 指挥脉冲`,
             position,
             ellipse: {
               semiMajorAxis: radius * 1.22,
@@ -586,13 +726,13 @@ export function DigitalTwinCesiumCanvas({
             layer.proposal_state !== "monitoring" || layer.risk_level === "Red" || layer.risk_level === "Orange"
               ? viewer.entities.add({
                   id: `${layer.object_id}:road-closure`,
-                  name: `${layer.name} road closure line`,
+                  name: `${layer.name} 道路阻断线`,
                   polyline: {
                     positions: [closureStart, closureEnd],
                     width: layer.risk_level === "Red" ? 7 : 5,
                     material: new PolylineGlowMaterialProperty({
                       glowPower: 0.22,
-                      color: Color.fromCssColorString("#ff5b52").withAlpha(0.86),
+                      color: Color.fromCssColorString("#ff6b2d").withAlpha(0.88),
                     }),
                   },
                 })
@@ -602,7 +742,7 @@ export function DigitalTwinCesiumCanvas({
               ? [0, 1, 2].map((ringIndex) =>
                   viewer.entities.add({
                     id: `${layer.object_id}:warning-spread-${ringIndex + 1}`,
-                    name: `${layer.name} warning spread ring ${ringIndex + 1}`,
+                    name: `${layer.name} 预警扩散圈 ${ringIndex + 1}`,
                     position,
                     ellipse: {
                       semiMajorAxis: new CallbackProperty(() => {
@@ -616,13 +756,13 @@ export function DigitalTwinCesiumCanvas({
                       material: new ColorMaterialProperty(
                         new CallbackProperty(() => {
                           const cycle = (nowSeconds() * 0.42 + ringIndex / 3 + phaseSeed * 0.03) % 1;
-                          return Color.fromCssColorString("#ff5f9f").withAlpha(Math.max(0.02, 0.14 * (1 - cycle)));
+                          return Color.fromCssColorString("#ff8a2a").withAlpha(Math.max(0.02, 0.18 * (1 - cycle)));
                         }, false),
                       ),
                       outline: true,
                       outlineColor: new CallbackProperty(() => {
                         const cycle = (nowSeconds() * 0.42 + ringIndex / 3 + phaseSeed * 0.03) % 1;
-                        return Color.fromCssColorString("#ff9fc4").withAlpha(Math.max(0.12, 0.72 * (1 - cycle)));
+                        return Color.fromCssColorString("#ffc06a").withAlpha(Math.max(0.12, 0.78 * (1 - cycle)));
                       }, false),
                     },
                   }),
@@ -656,6 +796,7 @@ export function DigitalTwinCesiumCanvas({
             pulse,
             water,
             waterColumn,
+            buildingHighlight,
             roadClosure,
             warningSpread,
             warningRings,
@@ -665,15 +806,30 @@ export function DigitalTwinCesiumCanvas({
         const leadPosition = leadLayer ? layerPositions.get(leadLayer.object_id) : undefined;
         if (leadPosition) {
           for (const layer of layers) {
-            if (layer.object_id === leadLayer?.object_id) {
-              continue;
-            }
             const targetPosition = layerPositions.get(layer.object_id);
             if (!targetPosition) {
               continue;
             }
             const color = Color.fromCssColorString(stateColor(layer.proposal_state));
-            const routePositions = [leadPosition, targetPosition];
+            const routeTarget =
+              layer.object_id === leadLayer?.object_id
+                ? {
+                    ...layer,
+                    east_offset_m: layer.east_offset_m + 260,
+                    north_offset_m: layer.north_offset_m + 150,
+                    height_offset_m: layer.height_offset_m,
+                  }
+                : layer;
+            const routeSource = leadLayer ?? layer;
+            const routeOffsets = buildRoadFollowingRoute(routeSource, routeTarget);
+            const routePositions = routeOffsets.map((point) =>
+              Matrix4.multiplyByPoint(
+                anchorFrame,
+                new Cartesian3(point.east, point.north, point.height),
+                new Cartesian3(),
+              ),
+            );
+            const vehicleOffset = routeOffsets[Math.max(1, Math.floor(routeOffsets.length / 2))] ?? routeOffsets[0];
             const route = viewer.entities.add({
               id: `${layer.object_id}:command-link`,
               name: `${layer.name} command link`,
@@ -686,34 +842,24 @@ export function DigitalTwinCesiumCanvas({
                 }),
               },
             });
-            const evacuationRoute =
-              layer.proposal_state !== "monitoring"
-                ? viewer.entities.add({
-                    id: `${layer.object_id}:evacuation-route`,
-                    name: `${layer.name} evacuation route arrow`,
-                    polyline: {
-                      positions: routePositions,
-                      width: 7,
-                      material: new PolylineArrowMaterialProperty(
-                        Color.fromCssColorString(layer.proposal_state === "approved" ? "#9be36f" : "#ffd166").withAlpha(0.82),
-                      ),
-                    },
-                  })
-                : undefined;
+            const evacuationRoute = viewer.entities.add({
+              id: `${layer.object_id}:evacuation-route`,
+              name: `${layer.name} evacuation route arrow`,
+              show: layer.proposal_state !== "monitoring",
+              polyline: {
+                positions: routePositions,
+                width: 7,
+                material: new PolylineArrowMaterialProperty(
+                  Color.fromCssColorString(layer.proposal_state === "approved" ? "#35e6bf" : "#ffb13b").withAlpha(0.84),
+                ),
+              },
+            });
             const resourceVehicle =
               layer.proposal_state === "pending" || layer.proposal_state === "approved" || layer.proposal_state === "warning_generated"
                 ? viewer.entities.add({
                     id: `${layer.object_id}:resource-vehicle`,
                     name: `${layer.name} resource vehicle`,
-                    position: Matrix4.multiplyByPoint(
-                      anchorFrame,
-                      new Cartesian3(
-                        (layer.east_offset_m + (leadLayer?.east_offset_m ?? 0)) / 2 + 24,
-                        (layer.north_offset_m + (leadLayer?.north_offset_m ?? 0)) / 2 - 18,
-                        Math.max(layer.height_offset_m, leadLayer?.height_offset_m ?? 0) + 10,
-                      ),
-                      new Cartesian3(),
-                    ),
+                    position: Matrix4.multiplyByPoint(anchorFrame, new Cartesian3(vehicleOffset.east, vehicleOffset.north, vehicleOffset.height + 6), new Cartesian3()),
                     point: {
                       pixelSize: 11,
                       color: Color.fromCssColorString("#f4fbff"),
@@ -721,7 +867,7 @@ export function DigitalTwinCesiumCanvas({
                       outlineWidth: 4,
                     },
                     label: {
-                      text: layer.proposal_state === "approved" ? "Rescue convoy" : "Resource unit",
+                      text: layer.proposal_state === "approved" ? "救援车队" : "资源单元",
                       showBackground: true,
                       backgroundColor: Color.fromCssColorString("rgba(8,20,37,0.78)"),
                       fillColor: Color.WHITE,
@@ -747,7 +893,7 @@ export function DigitalTwinCesiumCanvas({
           const picked = viewer.scene.pick(movement.position) as { id?: { id?: string } } | undefined;
           const objectId = extractObjectId(String(picked?.id?.id ?? ""));
           if (defined(picked) && objectId) {
-            onSelectObject(objectId);
+            onSelectObjectRef.current(objectId);
           }
         }, ScreenSpaceEventType.LEFT_CLICK);
         handler.setInputAction((movement: { endPosition: any }) => {
@@ -764,7 +910,7 @@ export function DigitalTwinCesiumCanvas({
         const cameraTarget =
           sourceMetadata && preset.fitWholeModel !== false
             ? computeModelFocusSphere(Cesium, sceneConfig, sourceMetadata, anchorHeight)
-            : new BoundingSphere(anchor, 1600);
+            : new BoundingSphere(anchor, Math.max(preset.focusRadius ?? 1600, 1600));
         sceneFocusRef.current = cameraTarget;
         viewer.camera.flyToBoundingSphere(cameraTarget, {
           duration: 0,
@@ -776,7 +922,7 @@ export function DigitalTwinCesiumCanvas({
         });
 
         viewer.scene.requestRender();
-        setStatus("Digital twin canvas is live");
+        setStatus("数字孪生画布运行中");
         setReady(true);
 
         if (disposed) {
@@ -784,8 +930,8 @@ export function DigitalTwinCesiumCanvas({
           viewer.destroy();
         }
       } catch (caught) {
-        setError(caught instanceof Error ? caught.message : "Unknown Cesium error");
-        setStatus("Digital twin canvas switched to fallback mode");
+        setError(caught instanceof Error ? caught.message : "未知三维地图错误");
+        setStatus("数字孪生画布已切换为降级模式");
       }
     }
 
@@ -803,7 +949,7 @@ export function DigitalTwinCesiumCanvas({
       tourTimersRef.current = [];
       sceneFocusRef.current = null;
     };
-  }, [layers, onSelectObject]);
+  }, [layers]);
 
   useEffect(() => {
     const viewer = viewerRef.current;
@@ -817,7 +963,9 @@ export function DigitalTwinCesiumCanvas({
       const basePixelSize = layer?.proposal_state === "warning_generated" ? 20 : layer?.is_lead ? 18 : 14;
       const baseOutlineWidth =
         layer?.proposal_state === "approved" || layer?.proposal_state === "warning_generated" ? 4 : 3;
-      const focused = objectId === selectedObjectId || objectId === hoveredObjectId;
+      const dialogFocused = objectId === dialogFocusObjectId;
+      const focused = dialogFocused || objectId === hoveredObjectId;
+      const routeGuided = objectId === routeHighlightObjectId;
       const routeStory = activeNarrativeStep === "route";
       const closureStory = activeNarrativeStep === "closure";
       const warningStory = activeNarrativeStep === "warning";
@@ -827,24 +975,36 @@ export function DigitalTwinCesiumCanvas({
       bundle.marker.point.outlineWidth = focused || (closureStory && layer?.proposal_state !== "monitoring") ? baseOutlineWidth + 2 : baseOutlineWidth;
       bundle.marker.point.pixelSize = focused || (closureStory && layer?.proposal_state !== "monitoring") ? basePixelSize + 5 : basePixelSize;
       if (bundle.pulse?.ellipse) {
-        bundle.pulse.show = focused || layer?.proposal_state !== "monitoring" || warningStory;
+        bundle.pulse.show = focused || routeGuided || layer?.proposal_state !== "monitoring" || warningStory;
+      }
+      if (bundle.buildingHighlight?.box) {
+        bundle.buildingHighlight.show = dialogFocused;
       }
       if (Cesium && layer && bundle.route?.polyline) {
-        const routeFocused = focused || (routeStory && layer.proposal_state !== "monitoring");
-        const color = Cesium.Color.fromCssColorString(stateColor(layer.proposal_state));
-        bundle.route.polyline.width = routeFocused ? 7 : layer.proposal_state === "monitoring" ? 2 : 4;
+        const routeFocused = focused || routeGuided || (routeStory && layer.proposal_state !== "monitoring");
+        const color = routeGuided
+          ? Cesium.Color.fromCssColorString("#ffb13b")
+          : Cesium.Color.fromCssColorString(stateColor(layer.proposal_state));
+        bundle.route.polyline.width = routeGuided ? 9 : routeFocused ? 7 : layer.proposal_state === "monitoring" ? 2 : 4;
         bundle.route.polyline.material = new Cesium.PolylineGlowMaterialProperty({
-          glowPower: routeFocused ? 0.34 : 0.14,
-          color: color.withAlpha(routeStory && !routeFocused ? 0.18 : routeFocused ? 0.86 : 0.46),
+          glowPower: routeGuided ? 0.46 : routeFocused ? 0.34 : 0.14,
+          color: color.withAlpha(routeStory && !routeFocused ? 0.18 : routeFocused ? 0.92 : 0.46),
         });
       }
       if (bundle.evacuationRoute?.polyline) {
-        const routeFocused = focused || routeStory;
-        bundle.evacuationRoute.polyline.width = routeFocused ? 10 : 7;
-        bundle.evacuationRoute.show = !routeStory || routeFocused || layer?.proposal_state !== "monitoring";
+        const routeFocused = focused || routeGuided || routeStory;
+        bundle.evacuationRoute.polyline.width = routeGuided ? 12 : routeFocused ? 10 : 7;
+        if (Cesium) {
+          bundle.evacuationRoute.polyline.material = new Cesium.PolylineArrowMaterialProperty(
+            Cesium.Color.fromCssColorString(routeGuided ? "#ffb13b" : layer?.proposal_state === "approved" ? "#35e6bf" : "#28d8ff").withAlpha(
+              routeGuided ? 0.96 : 0.78,
+            ),
+          );
+        }
+        bundle.evacuationRoute.show = routeGuided || routeStory || layer?.proposal_state !== "monitoring";
       }
       if (bundle.resourceVehicle?.point) {
-        const routeFocused = focused || routeStory;
+        const routeFocused = focused || routeGuided || routeStory;
         bundle.resourceVehicle.point.pixelSize = routeFocused ? 15 : 11;
       }
       if (bundle.roadClosure?.polyline && Cesium) {
@@ -857,12 +1017,20 @@ export function DigitalTwinCesiumCanvas({
       }
     });
 
-    const selectedEntity = selectedObjectId ? entityMapRef.current.get(selectedObjectId)?.marker : undefined;
-    if (selectedEntity && !tourRunning) {
-      viewer.flyTo(selectedEntity, { duration: 0.9 });
+    const dialogFocusEntity = dialogFocusObjectId
+      ? entityMapRef.current.get(dialogFocusObjectId)?.buildingHighlight ??
+        entityMapRef.current.get(dialogFocusObjectId)?.waterColumn ??
+        entityMapRef.current.get(dialogFocusObjectId)?.marker
+      : undefined;
+    const dialogFocusKey = dialogFocusObjectId ? `${dialogFocusObjectId}:${dialogFocusSerial}` : null;
+    if (dialogFocusEntity && !tourRunning && lastDialogFocusRef.current !== dialogFocusKey) {
+      lastDialogFocusRef.current = dialogFocusKey;
+      const layer = dialogFocusObjectId ? layerById.get(dialogFocusObjectId) : null;
+      setTourNarrative(layer ? `已根据问答定位到 ${layer.name}，空间对象进入高亮研判。` : "已根据问答定位到目标对象。");
+      viewer.flyTo(dialogFocusEntity, { duration: 1.05 });
     }
     viewer.scene.requestRender();
-  }, [activeNarrativeStep, hoveredObjectId, layerById, selectedObjectId, tourRunning]);
+  }, [activeNarrativeStep, dialogFocusObjectId, dialogFocusSerial, hoveredObjectId, layerById, routeHighlightObjectId, tourRunning]);
 
   if (isJsdomRuntime()) {
     return (
@@ -870,7 +1038,7 @@ export function DigitalTwinCesiumCanvas({
         <div className={styles.fallbackGrid} />
         <div className={styles.fallbackNarrative} aria-label="narrative-camera-controls">
           <button type="button" className={styles.narrativePlayButton} onClick={runCommandFlythrough}>
-            Play command story
+            播放指挥镜头
           </button>
           <div className={styles.narrativeStepGrid}>
             {NARRATIVE_STEPS.map((step) => (
@@ -903,8 +1071,10 @@ export function DigitalTwinCesiumCanvas({
             <span className={styles.fallbackHalo} />
             <button
               type="button"
-              className={`${styles.fallbackNode} ${selectedObjectId === layer.object_id ? styles.fallbackNodeActive : ""}`}
-              onClick={() => onSelectObject(layer.object_id)}
+              className={`${styles.fallbackNode} ${
+                dialogFocusObjectId === layer.object_id || routeHighlightObjectId === layer.object_id ? styles.fallbackNodeActive : ""
+              }`}
+              onClick={() => onSelectObjectRef.current(layer.object_id)}
             >
               {`${layer.name} / ${stateLabel(layer.proposal_state)}`}
             </button>
@@ -917,20 +1087,6 @@ export function DigitalTwinCesiumCanvas({
   return (
     <div className={`${styles.canvasShell} ${toneClass}`} aria-label="digital-twin-canvas">
       <div ref={hostRef} className={styles.viewerHost} />
-      <div className={styles.overlayHud}>
-        <div>
-          <span className={styles.hudLabel}>Twin Status</span>
-          <strong>{status}</strong>
-        </div>
-        <div>
-          <span className={styles.hudLabel}>Current Focus</span>
-          <strong>{leadLayer?.name ?? eventTitle ?? "Waiting for focus"}</strong>
-        </div>
-        <div>
-          <span className={styles.hudLabel}>Objects</span>
-          <strong>{layers.length}</strong>
-        </div>
-      </div>
       <div className={styles.overlayActions}>
         <div className={styles.narrativeTopline}>
           <button
@@ -939,10 +1095,10 @@ export function DigitalTwinCesiumCanvas({
             onClick={runCommandFlythrough}
             disabled={!ready || tourRunning}
           >
-            {tourRunning ? "Story running" : "Play command story"}
+            {tourRunning ? "镜头播放中" : "播放指挥镜头"}
           </button>
           <span>
-            Step {Math.max(1, narrativeStepIndex + 1)} / {NARRATIVE_STEPS.length}
+            镜头 {Math.max(1, narrativeStepIndex + 1)} / {NARRATIVE_STEPS.length}
           </span>
         </div>
         <div className={styles.narrativeStepGrid} aria-label="narrative-camera-controls">
@@ -965,19 +1121,19 @@ export function DigitalTwinCesiumCanvas({
         <div className={styles.tacticalLegend} aria-label="tactical-map-legend">
           <span className={styles.tacticalLegendItem}>
             <i className={styles.tacticalSwatchWater} />
-            Water
+            积水
           </span>
           <span className={styles.tacticalLegendItem}>
             <i className={styles.tacticalSwatchRoute} />
-            Route
+            路线
           </span>
           <span className={styles.tacticalLegendItem}>
             <i className={styles.tacticalSwatchWarning} />
-            Warning
+            预警
           </span>
           <span className={styles.tacticalLegendItem}>
             <i className={styles.tacticalSwatchClosure} />
-            Closure
+            闭环
           </span>
         </div>
       </div>
@@ -985,50 +1141,33 @@ export function DigitalTwinCesiumCanvas({
         <div className={styles.legendRow}>
           <span className={styles.legendDotMonitoring} />
           <strong>{layerStats.monitoring}</strong>
-          <small>Monitoring</small>
+          <small>监测中</small>
         </div>
         <div className={styles.legendRow}>
           <span className={styles.legendDotPending} />
           <strong>{layerStats.pending}</strong>
-          <small>Pending</small>
+          <small>待审批</small>
         </div>
         <div className={styles.legendRow}>
           <span className={styles.legendDotApproved} />
           <strong>{layerStats.approved}</strong>
-          <small>Approved</small>
+          <small>已批准</small>
         </div>
         <div className={styles.legendRow}>
           <span className={styles.legendDotWarning} />
           <strong>{layerStats.warningGenerated}</strong>
-          <small>Warnings</small>
+          <small>已预警</small>
         </div>
       </div>
-      {spotlightLayer ? (
-        <div className={`${styles.spotlightPanel} ${toneClass}`}>
-          <div className={styles.spotlightHeader}>
-            <span className={styles.hudLabel}>Spatial spotlight</span>
-            <strong>{spotlightLayer.name}</strong>
-          </div>
-          <p className={styles.spotlightSummary}>
-            {stateLabel(spotlightLayer.proposal_state)} / {spotlightLayer.entity_type} /{" "}
-            {spotlightLayer.is_lead ? "Lead focus" : "Linked object"}
-          </p>
-          <div className={styles.spotlightMeta}>
-            <span>{Math.round(spotlightLayer.east_offset_m)}m east</span>
-            <span>{Math.round(spotlightLayer.north_offset_m)}m north</span>
-            <span>{Math.round(spotlightLayer.height_offset_m)}m vertical</span>
-          </div>
-        </div>
-      ) : null}
       {error ? (
         <div className={styles.errorPanel}>
-          <strong>3D canvas degraded</strong>
+          <strong>三维画布已降级</strong>
           <p>{error}</p>
         </div>
       ) : null}
       {!ready && !error ? (
         <div className={styles.loadingPanel}>
-          <strong>Digital twin canvas</strong>
+          <strong>数字孪生画布</strong>
           <p>{status}</p>
         </div>
       ) : null}

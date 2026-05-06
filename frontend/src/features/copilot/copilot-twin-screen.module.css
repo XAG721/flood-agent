@@ -1,0 +1,258 @@
+.screenFrame {
+  min-height: 100svh;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: clamp(270px, 17vw, 340px) minmax(0, 1fr) clamp(360px, 24vw, 500px);
+  gap: 10px;
+  min-height: calc(100svh - 294px);
+  padding: 0 16px 16px;
+  color: #effaff;
+}
+
+.leftRail,
+.chatRail,
+.mapStage {
+  min-height: 0;
+  border: 1px solid rgba(36, 216, 255, 0.34);
+  background:
+    linear-gradient(145deg, rgba(2, 12, 28, 0.94), rgba(5, 23, 45, 0.88)),
+    radial-gradient(circle at 18% 0%, rgba(36, 216, 255, 0.14), transparent 44%);
+  box-shadow:
+    inset 0 0 28px rgba(36, 216, 255, 0.08),
+    0 22px 70px rgba(0, 5, 18, 0.38);
+}
+
+.leftRail,
+.chatRail {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  overflow: hidden;
+  padding: 14px;
+}
+
+.mapStage {
+  position: relative;
+  overflow: hidden;
+  min-height: 680px;
+}
+
+.panelTitle span,
+.focusCard span,
+.objectList button span,
+.messageList article span {
+  color: rgba(180, 230, 255, 0.72);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.panelTitle {
+  display: grid;
+  gap: 4px;
+}
+
+.panelTitle h2,
+.panelTitle h3 {
+  margin: 0;
+  color: #f5fbff;
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+}
+
+.focusCard,
+.promptPanel,
+.objectList,
+.emptyChat,
+.messageList article {
+  border: 1px solid rgba(36, 216, 255, 0.22);
+  background:
+    linear-gradient(145deg, rgba(2, 14, 32, 0.86), rgba(7, 30, 55, 0.7)),
+    radial-gradient(circle at 0 0, rgba(36, 216, 255, 0.12), transparent 42%);
+  box-shadow: inset 0 0 18px rgba(36, 216, 255, 0.05);
+}
+
+.focusCard {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.focusCard div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid rgba(36, 216, 255, 0.12);
+  padding-bottom: 10px;
+}
+
+.focusCard strong {
+  color: #42e7ff;
+  font-size: 18px;
+}
+
+.focusCard p,
+.emptyChat p,
+.messageList article p {
+  margin: 0;
+  color: rgba(226, 245, 255, 0.86);
+  line-height: 1.58;
+}
+
+.promptPanel,
+.objectList {
+  display: grid;
+  gap: 9px;
+  padding: 12px;
+}
+
+.promptPanel button,
+.objectList button,
+.composer button {
+  border: 1px solid rgba(36, 216, 255, 0.28);
+  background: linear-gradient(135deg, rgba(4, 24, 50, 0.92), rgba(7, 44, 74, 0.7));
+  color: #f4fbff;
+  cursor: pointer;
+  font-weight: 800;
+  transition: border-color 180ms ease, transform 180ms ease, background 180ms ease;
+}
+
+.promptPanel button:hover,
+.objectList button:hover,
+.composer button:hover:not(:disabled) {
+  border-color: rgba(255, 157, 56, 0.8);
+  background: linear-gradient(135deg, rgba(45, 28, 9, 0.95), rgba(5, 44, 72, 0.72));
+  transform: translateY(-1px);
+}
+
+.promptPanel button {
+  min-height: 42px;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.objectList button {
+  display: grid;
+  gap: 4px;
+  min-height: 54px;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.objectList button strong {
+  color: #f7fcff;
+}
+
+.chatRail {
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
+.messageList {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.messageList article {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+}
+
+.userMessage {
+  margin-left: 28px;
+  border-color: rgba(255, 157, 56, 0.3) !important;
+}
+
+.assistantMessage {
+  margin-right: 28px;
+}
+
+.actionList {
+  display: grid;
+  gap: 6px;
+}
+
+.actionList small {
+  padding: 8px 9px;
+  border-left: 2px solid #ff9d38;
+  background: rgba(255, 157, 56, 0.08);
+  color: rgba(255, 239, 214, 0.9);
+}
+
+.emptyChat {
+  padding: 18px;
+}
+
+.emptyChat strong {
+  color: #42e7ff;
+}
+
+.composer {
+  display: grid;
+  gap: 10px;
+}
+
+.composer textarea {
+  min-height: 132px;
+  resize: vertical;
+  border: 1px solid rgba(36, 216, 255, 0.28);
+  background: rgba(2, 12, 28, 0.92);
+  color: #f5fbff;
+  padding: 12px;
+  line-height: 1.55;
+  outline: none;
+}
+
+.composer textarea:focus {
+  border-color: rgba(255, 157, 56, 0.72);
+  box-shadow: 0 0 0 2px rgba(255, 157, 56, 0.12);
+}
+
+.composer button {
+  min-height: 46px;
+}
+
+.composer button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.canvasFallback {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  min-height: 580px;
+  text-align: center;
+  background: radial-gradient(circle at 50% 45%, rgba(36, 216, 255, 0.18), transparent 34%), #020c1c;
+}
+
+.canvasFallback strong {
+  color: #42e7ff;
+  font-size: 20px;
+}
+
+.canvasFallback p {
+  color: rgba(226, 245, 255, 0.74);
+}
+
+@media (max-width: 1320px) {
+  .workspace {
+    grid-template-columns: 260px minmax(0, 1fr) 340px;
+  }
+}
+
+@media (max-width: 980px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .mapStage {
+    min-height: 620px;
+  }
+
+}

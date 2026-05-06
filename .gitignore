@@ -16,5 +16,7 @@ frontend/vite.config.d.ts
 3D_visual/cesium_token.txt
 tmp-edge/
 tmp-edge-debug/
+.playwright-mcp/
+agent-twin-bigscreen-*.png
 data_sources/beilin/raw/geofabrik_shaanxi_osm/download.pbf
 3D_visual/public/models/*.glb

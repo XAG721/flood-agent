@@ -1,16 +1,18 @@
 .canvasShell {
   position: relative;
   overflow: hidden;
-  min-height: 520px;
-  border-radius: 28px;
-  border: 1px solid rgba(126, 160, 183, 0.12);
-  --tone-border: rgba(126, 160, 183, 0.18);
-  --tone-border-strong: rgba(126, 160, 183, 0.22);
-  --tone-overlay: rgba(6, 19, 39, 0.82);
-  --tone-glow: rgba(48, 121, 170, 0.22);
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  border-radius: 0;
+  border: 0;
+  --tone-border: rgba(36, 216, 255, 0.18);
+  --tone-border-strong: rgba(72, 225, 255, 0.32);
+  --tone-overlay: rgba(2, 14, 32, 0.86);
+  --tone-glow: rgba(36, 216, 255, 0.2);
   background:
     radial-gradient(circle at 50% 45%, var(--tone-glow), transparent 28%),
-    linear-gradient(180deg, rgba(6, 18, 31, 0.96), rgba(5, 13, 23, 0.94));
+    linear-gradient(180deg, rgba(3, 18, 39, 0.98), rgba(1, 8, 22, 0.96));
 }
 
 .canvasShell::before,
@@ -24,35 +26,23 @@
 
 .canvasShell::before {
   background:
-    radial-gradient(circle at 50% 50%, transparent 0 28%, rgba(108, 195, 255, 0.08) 29%, transparent 31%),
-    conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(105, 220, 255, 0.18) 22deg, transparent 54deg);
+    radial-gradient(circle at 50% 50%, transparent 0 28%, rgba(36, 216, 255, 0.1) 29%, transparent 31%),
+    conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(36, 216, 255, 0.2) 22deg, transparent 54deg);
   mix-blend-mode: screen;
   animation: radarSweep 9s linear infinite;
 }
 
 .canvasShell::after {
   background:
-    linear-gradient(115deg, transparent 0 34%, rgba(80, 180, 255, 0.1) 35%, transparent 37% 100%),
-    radial-gradient(circle at 22% 72%, rgba(255, 173, 66, 0.12), transparent 24%),
-    radial-gradient(circle at 72% 38%, rgba(246, 111, 157, 0.12), transparent 20%);
+    linear-gradient(115deg, transparent 0 34%, rgba(36, 216, 255, 0.12) 35%, transparent 37% 100%),
+    radial-gradient(circle at 22% 72%, rgba(255, 157, 56, 0.14), transparent 24%),
+    radial-gradient(circle at 72% 38%, rgba(36, 216, 255, 0.1), transparent 20%);
   opacity: 0.72;
 }
 
 .viewerHost {
   position: absolute;
   inset: 0;
-}
-
-.overlayHud {
-  position: absolute;
-  top: 18px;
-  left: 18px;
-  right: 18px;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  pointer-events: none;
 }
 
 .overlayActions {
@@ -63,11 +53,11 @@
   width: min(360px, calc(100% - 36px));
   padding: 12px;
   border-radius: 20px;
-  border: 1px solid rgba(132, 220, 255, 0.2);
+  border: 1px solid rgba(36, 216, 255, 0.22);
   background:
-    linear-gradient(145deg, rgba(6, 19, 39, 0.86), rgba(9, 37, 60, 0.66)),
-    radial-gradient(circle at 12% 12%, rgba(92, 200, 255, 0.2), transparent 42%);
-  box-shadow: 0 18px 48px rgba(3, 8, 18, 0.24);
+    linear-gradient(145deg, rgba(2, 14, 32, 0.9), rgba(5, 31, 58, 0.72)),
+    radial-gradient(circle at 12% 12%, rgba(36, 216, 255, 0.18), transparent 42%);
+  box-shadow: 0 18px 48px rgba(0, 8, 24, 0.34), inset 0 0 20px rgba(36, 216, 255, 0.05);
   backdrop-filter: blur(10px);
 }
 
@@ -78,11 +68,11 @@
   justify-content: center;
   min-height: 38px;
   padding: 0 14px;
-  border: 1px solid rgba(132, 220, 255, 0.34);
+  border: 1px solid rgba(36, 216, 255, 0.34);
   border-radius: 999px;
-  background: linear-gradient(135deg, rgba(8, 27, 48, 0.88), rgba(16, 51, 74, 0.68));
+  background: linear-gradient(135deg, rgba(3, 22, 48, 0.9), rgba(5, 43, 72, 0.72));
   color: #f4fbff;
-  box-shadow: 0 12px 36px rgba(14, 129, 190, 0.22);
+  box-shadow: 0 12px 36px rgba(14, 129, 190, 0.22), inset 0 0 16px rgba(36, 216, 255, 0.06);
   cursor: pointer;
   font-size: 12px;
   font-weight: 700;
@@ -96,7 +86,7 @@
 
 .overlayActions button:hover:not(:disabled),
 .fallbackNarrative button:hover:not(:disabled) {
-  border-color: rgba(255, 173, 66, 0.74);
+  border-color: rgba(255, 157, 56, 0.76);
   transform: translateY(-1px);
 }
 
@@ -111,8 +101,8 @@
   margin: 10px 0 0;
   padding: 10px 12px;
   border-radius: 16px;
-  border: 1px solid rgba(132, 220, 255, 0.18);
-  background: rgba(6, 19, 39, 0.74);
+  border: 1px solid rgba(36, 216, 255, 0.18);
+  background: rgba(2, 14, 32, 0.78);
   color: rgba(224, 242, 255, 0.86);
   font-size: 12px;
   line-height: 1.5;
@@ -219,23 +209,23 @@
 }
 
 .tacticalSwatchWater {
-  color: #6fe5ff;
-  background: #6fe5ff;
+  color: #28d8ff;
+  background: #28d8ff;
 }
 
 .tacticalSwatchRoute {
-  color: #ffd166;
-  background: #ffd166;
+  color: #ffb13b;
+  background: #ffb13b;
 }
 
 .tacticalSwatchWarning {
-  color: #f66f9d;
-  background: #f66f9d;
+  color: #ff6b2d;
+  background: #ff6b2d;
 }
 
 .tacticalSwatchClosure {
-  color: #9be36f;
-  background: #9be36f;
+  color: #35e6bf;
+  background: #35e6bf;
 }
 
 .overlayLegend {
@@ -249,31 +239,14 @@
   pointer-events: none;
 }
 
-.spotlightPanel {
-  position: absolute;
-  top: 112px;
-  right: 18px;
-  z-index: 2;
-  width: min(300px, calc(100% - 36px));
-  padding: 14px 16px;
-  border-radius: 18px;
-  background: var(--tone-overlay);
-  border: 1px solid var(--tone-border-strong);
-  box-shadow: 0 18px 48px rgba(3, 8, 18, 0.22);
-  backdrop-filter: blur(8px);
-  pointer-events: none;
-}
-
-.overlayHud > div,
 .overlayLegend,
-.spotlightPanel,
 .loadingPanel,
 .errorPanel {
   padding: 12px 14px;
   border-radius: 18px;
   background: color-mix(in srgb, var(--tone-overlay) 96%, transparent);
   border: 1px solid var(--tone-border);
-  box-shadow: 0 18px 48px rgba(3, 8, 18, 0.22);
+  box-shadow: 0 18px 48px rgba(0, 8, 24, 0.34), inset 0 0 18px rgba(36, 216, 255, 0.04);
   backdrop-filter: blur(8px);
 }
 
@@ -311,52 +284,21 @@
 }
 
 .legendDotMonitoring {
-  background: #5cc8ff;
+  background: #28d8ff;
 }
 
 .legendDotPending {
-  background: #ffad42;
+  background: #ff9d38;
 }
 
 .legendDotApproved {
-  background: #9be36f;
+  background: #35e6bf;
 }
 
 .legendDotWarning {
-  background: #f66f9d;
+  background: #ff6b2d;
 }
 
-.spotlightHeader strong {
-  display: block;
-  color: #f4fbff;
-  font-size: 18px;
-}
-
-.spotlightSummary {
-  margin: 10px 0 0;
-  color: rgba(214, 230, 255, 0.84);
-  line-height: 1.6;
-}
-
-.spotlightMeta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.spotlightMeta span {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(126, 160, 183, 0.16);
-  color: rgba(214, 230, 255, 0.78);
-  font-size: 11px;
-  letter-spacing: 0.04em;
-}
-
-.overlayHud strong,
 .loadingPanel strong,
 .errorPanel strong {
   color: #f4fbff;
@@ -422,6 +364,22 @@
   --tone-border-strong: rgba(255, 130, 120, 0.42);
   --tone-overlay: rgba(50, 18, 24, 0.84);
   --tone-glow: rgba(171, 52, 64, 0.26);
+}
+
+.canvasShell.toneNone,
+.canvasShell.toneBlue,
+.canvasShell.toneYellow,
+.canvasShell.toneOrange,
+.canvasShell.toneRed,
+.fallbackShell.toneNone,
+.fallbackShell.toneBlue,
+.fallbackShell.toneYellow,
+.fallbackShell.toneOrange,
+.fallbackShell.toneRed {
+  --tone-border: rgba(36, 216, 255, 0.18);
+  --tone-border-strong: rgba(72, 225, 255, 0.32);
+  --tone-overlay: rgba(2, 14, 32, 0.86);
+  --tone-glow: rgba(36, 216, 255, 0.2);
 }
 
 .fallbackGrid {
@@ -508,10 +466,6 @@
 }
 
 @media (max-width: 960px) {
-  .overlayHud {
-    grid-template-columns: 1fr;
-  }
-
   .overlayActions {
     position: static;
     margin: 16px 18px 0;
@@ -537,9 +491,4 @@
     width: auto;
   }
 
-  .spotlightPanel {
-    position: static;
-    width: auto;
-    margin: 16px 18px 0;
-  }
 }

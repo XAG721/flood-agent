@@ -10,6 +10,1265 @@
   --tone-glow: rgba(53, 135, 195, 0.18);
 }
 
+.cityBigScreen {
+  isolation: isolate;
+  min-height: 100svh;
+  gap: 8px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background:
+    linear-gradient(90deg, rgba(84, 211, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(84, 211, 255, 0.04) 1px, transparent 1px),
+    radial-gradient(circle at 50% 18%, rgba(68, 191, 255, 0.22), transparent 26%),
+    radial-gradient(circle at 16% 38%, rgba(255, 139, 57, 0.15), transparent 20%),
+    radial-gradient(circle at 82% 52%, rgba(29, 148, 255, 0.16), transparent 24%),
+    linear-gradient(180deg, #051831 0%, #061224 54%, #030912 100%);
+  background-size: 44px 44px, 44px 44px, auto, auto, auto, auto;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.035),
+    0 24px 80px rgba(0, 0, 0, 0.35);
+}
+
+.cityBigScreen::before,
+.cityBigScreen::after,
+.cityAura {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.cityBigScreen::before {
+  background:
+    linear-gradient(90deg, transparent, rgba(89, 225, 255, 0.12), transparent),
+    radial-gradient(circle at 50% 0%, rgba(87, 209, 255, 0.16), transparent 34%);
+  clip-path: polygon(5% 0, 95% 0, 88% 72px, 12% 72px);
+  opacity: 0.95;
+}
+
+.cityBigScreen::after {
+  background:
+    linear-gradient(180deg, transparent 0 48%, rgba(117, 226, 255, 0.12) 49%, transparent 50% 100%),
+    radial-gradient(circle at 50% 50%, transparent 0 31%, rgba(92, 200, 255, 0.08) 32%, transparent 34%);
+  mix-blend-mode: screen;
+  animation: citySweep 8s linear infinite;
+}
+
+.cityAura {
+  background:
+    radial-gradient(circle at 16% 18%, rgba(66, 196, 255, 0.16), transparent 22%),
+    radial-gradient(circle at 84% 22%, rgba(71, 211, 255, 0.12), transparent 23%),
+    linear-gradient(110deg, transparent 0 42%, rgba(110, 225, 255, 0.08) 44%, transparent 46% 100%);
+  opacity: 0.72;
+}
+
+.cityHeader {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(300px, 0.56fr) minmax(560px, 1.36fr) minmax(460px, 0.94fr);
+  gap: 14px;
+  align-items: stretch;
+  min-height: 94px;
+  padding: 10px 18px 4px;
+}
+
+.cityTitleBlock {
+  position: relative;
+  display: grid;
+  align-content: center;
+  min-width: 0;
+  padding: 0 10px;
+  text-align: center;
+}
+
+.cityTitleBlock::before,
+.cityTitleBlock::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: min(18vw, 280px);
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(89, 225, 255, 0.78), transparent);
+  box-shadow: 0 0 18px rgba(89, 225, 255, 0.45);
+}
+
+.cityTitleBlock::before {
+  right: calc(100% + 18px);
+}
+
+.cityTitleBlock::after {
+  left: calc(100% + 18px);
+}
+
+.cityTitleBlock p,
+.cityHeaderWing span,
+.cityKpiCard span,
+.cityPanelTitle span,
+.cityClosureCard span,
+.cityApprovalBox span,
+.sourceMeterGrid span,
+.opsSnapshot span,
+.commandFocusCard span,
+.commandActionStack span {
+  margin: 0;
+  color: rgba(184, 230, 255, 0.72);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.cityTitleBlock h2 {
+  margin: 2px 0 0;
+  color: #f3fbff;
+  font-family: var(--font-display);
+  font-size: clamp(32px, 2.65vw, 50px);
+  line-height: 1.12;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  text-shadow:
+    0 0 12px rgba(94, 215, 255, 0.46),
+    0 0 34px rgba(20, 141, 255, 0.34);
+}
+
+.cityTitleBlock small,
+.cityHeaderWing strong {
+  display: block;
+  margin-top: 6px;
+  color: rgba(238, 249, 255, 0.88);
+  line-height: 1.28;
+}
+
+.cityHeaderWing {
+  position: relative;
+  min-width: 0;
+  min-height: 66px;
+  padding: 11px 14px;
+  border: 1px solid rgba(92, 200, 255, 0.2);
+  background:
+    linear-gradient(90deg, rgba(14, 58, 96, 0.72), rgba(7, 22, 45, 0.24)),
+    radial-gradient(circle at 0 0, rgba(92, 200, 255, 0.22), transparent 44%);
+  box-shadow: inset 0 0 24px rgba(92, 200, 255, 0.06);
+}
+
+.cityHeaderWing:last-child {
+  text-align: right;
+  background:
+    linear-gradient(270deg, rgba(14, 58, 96, 0.72), rgba(7, 22, 45, 0.24)),
+    radial-gradient(circle at 100% 0, rgba(92, 200, 255, 0.22), transparent 44%);
+}
+
+.cityBrandWing {
+  display: grid;
+  grid-template-columns: 46px minmax(128px, max-content) max-content;
+  gap: 12px;
+  align-items: center;
+  justify-content: start;
+  max-width: 410px;
+}
+
+.cityBrandWing > div,
+.cityStatusWing div {
+  min-width: 0;
+}
+
+.cityBrandWing strong,
+.cityBrandWing span,
+.cityBrandWing em {
+  white-space: nowrap;
+}
+
+.cityBrandWing em {
+  align-self: center;
+  padding: 5px 9px;
+  border: 1px solid rgba(104, 217, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(6, 26, 50, 0.62);
+  color: #bdefff;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  margin-left: 12px;
+}
+
+.cityLogoMark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(111, 224, 255, 0.4);
+  background:
+    radial-gradient(circle at 36% 28%, rgba(255, 255, 255, 0.7), transparent 10%),
+    conic-gradient(from 180deg, rgba(41, 214, 255, 0.2), rgba(41, 214, 255, 0.82), rgba(20, 85, 150, 0.46));
+  color: #f2fbff;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 900;
+  box-shadow:
+    inset 0 0 18px rgba(10, 35, 60, 0.58),
+    0 0 24px rgba(75, 215, 255, 0.24);
+}
+
+.cityStatusWing {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(118px, 1fr));
+  gap: 12px;
+  align-items: center;
+}
+
+.cityStatusWing div {
+  display: grid;
+  justify-items: end;
+  gap: 2px;
+  padding-left: 10px;
+  border-left: 1px solid rgba(36, 216, 255, 0.12);
+}
+
+.cityStatusWing div:first-child {
+  border-left: 0;
+}
+
+.cityStatusWing span,
+.cityStatusWing strong,
+.cityStatusWing small {
+  max-width: 100%;
+  overflow: visible;
+  line-height: 1.24;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+.cityStatusWing small {
+  display: block;
+  margin-top: 4px;
+  color: rgba(181, 231, 255, 0.62);
+  font-size: 11px;
+}
+
+.cityModuleTabs {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 22px 4px;
+}
+
+.cityModuleTabs a {
+  min-width: 128px;
+  padding: 9px 18px;
+  border: 1px solid rgba(92, 200, 255, 0.18);
+  background:
+    linear-gradient(180deg, rgba(13, 54, 92, 0.58), rgba(5, 19, 39, 0.68)),
+    radial-gradient(circle at 50% 0, rgba(92, 200, 255, 0.12), transparent 60%);
+  color: rgba(218, 241, 255, 0.72);
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-decoration: none;
+  clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 12px 100%, 0 50%);
+  transition:
+    color 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.cityModuleTabs a:hover,
+.cityModuleTabs a[aria-current="page"] {
+  transform: translateY(-1px);
+  border-color: rgba(79, 218, 255, 0.72);
+  color: #f3fbff;
+  box-shadow:
+    inset 0 -2px 0 rgba(79, 218, 255, 0.72),
+    0 0 24px rgba(79, 218, 255, 0.22);
+}
+
+.cityModeBanner {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(220px, 0.68fr) minmax(360px, 1fr) minmax(360px, 0.86fr);
+  align-items: center;
+  gap: 16px;
+  margin: 0 22px 8px;
+  padding: 9px 16px;
+  border: 1px solid rgba(79, 218, 255, 0.22);
+  background:
+    linear-gradient(90deg, rgba(4, 18, 38, 0.26), rgba(8, 54, 92, 0.58), rgba(4, 18, 38, 0.26)),
+    radial-gradient(circle at 50% 0, rgba(79, 218, 255, 0.2), transparent 58%);
+  box-shadow:
+    inset 0 0 24px rgba(79, 218, 255, 0.08),
+    0 0 26px rgba(79, 218, 255, 0.08);
+  color: #eaf9ff;
+}
+
+.cityModeBanner span,
+.cityModeBanner small {
+  min-width: 0;
+  color: rgba(184, 230, 255, 0.72);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  line-height: 1.35;
+}
+
+.cityModeBanner strong {
+  justify-self: center;
+  color: #f8fdff;
+  font-family: var(--font-display);
+  font-size: clamp(17px, 1.6vw, 26px);
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-shadow: 0 0 18px rgba(79, 218, 255, 0.38);
+}
+
+.cityModeBanner small {
+  justify-self: end;
+  text-align: right;
+}
+
+.cityKpiRibbon {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0 22px;
+}
+
+.cityKpiCard {
+  position: relative;
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 11px;
+  align-items: center;
+  overflow: hidden;
+  min-height: 72px;
+  padding: 10px 14px 10px 12px;
+  border: 1px solid rgba(92, 200, 255, 0.18);
+  background:
+    linear-gradient(180deg, rgba(16, 67, 108, 0.42), rgba(6, 20, 42, 0.74)),
+    radial-gradient(circle at 90% 18%, rgba(92, 200, 255, 0.22), transparent 38%);
+  box-shadow:
+    inset 0 0 24px rgba(92, 200, 255, 0.07),
+    0 14px 28px rgba(0, 0, 0, 0.18);
+}
+
+.cityKpiCard i {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 1px solid rgba(96, 207, 255, 0.3);
+  background:
+    radial-gradient(circle at 42% 32%, rgba(255, 255, 255, 0.54), transparent 12%),
+    radial-gradient(circle, rgba(67, 191, 255, 0.36), rgba(13, 62, 110, 0.52));
+  color: transparent;
+  font-size: 0;
+  font-style: normal;
+  font-weight: 950;
+  text-shadow: 0 0 12px rgba(98, 218, 255, 0.56);
+  box-shadow:
+    inset 0 0 18px rgba(48, 190, 255, 0.16),
+    0 0 22px rgba(48, 190, 255, 0.14);
+}
+
+.cityKpiCard i::before,
+.cityKpiCard i::after {
+  content: "";
+  position: absolute;
+  display: block;
+  box-sizing: border-box;
+}
+
+.cityKpiCard i::before {
+  width: 21px;
+  height: 21px;
+  border: 2px solid rgba(126, 236, 255, 0.9);
+  border-radius: 7px;
+  box-shadow:
+    0 0 12px rgba(36, 216, 255, 0.34),
+    inset 0 0 12px rgba(36, 216, 255, 0.16);
+}
+
+.cityKpiCard i::after {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #78ecff;
+  box-shadow: 0 0 14px rgba(120, 236, 255, 0.72);
+}
+
+.cityKpiCard:nth-child(1) i {
+  border-color: rgba(255, 157, 56, 0.58);
+  background:
+    radial-gradient(circle at 42% 32%, rgba(255, 255, 255, 0.5), transparent 12%),
+    radial-gradient(circle, rgba(255, 157, 56, 0.34), rgba(82, 39, 16, 0.62));
+  box-shadow:
+    inset 0 0 18px rgba(255, 157, 56, 0.18),
+    0 0 24px rgba(255, 157, 56, 0.2);
+}
+
+.cityKpiCard:nth-child(1) i::before {
+  width: 0;
+  height: 0;
+  border-right: 12px solid transparent;
+  border-bottom: 22px solid rgba(255, 157, 56, 0.95);
+  border-left: 12px solid transparent;
+  border-top: 0;
+  border-radius: 4px;
+  box-shadow: 0 0 14px rgba(255, 157, 56, 0.42);
+}
+
+.cityKpiCard:nth-child(1) i::after {
+  width: 3px;
+  height: 12px;
+  border-radius: 2px;
+  background: #fff2d2;
+  box-shadow: 0 9px 0 -1px #fff2d2;
+}
+
+.cityKpiCard:nth-child(2) i::before {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+}
+
+.cityKpiCard:nth-child(2) i::after {
+  width: 20px;
+  height: 10px;
+  border: 2px solid rgba(120, 236, 255, 0.9);
+  border-top: 0;
+  border-radius: 0 0 20px 20px;
+  background: transparent;
+  transform: translateY(2px);
+}
+
+.cityKpiCard:nth-child(3) i::before {
+  width: 9px;
+  height: 9px;
+  border: 0;
+  border-radius: 50%;
+  background: #78ecff;
+  box-shadow:
+    -8px 5px 0 -1px rgba(120, 236, 255, 0.76),
+    8px 5px 0 -1px rgba(120, 236, 255, 0.76),
+    0 0 14px rgba(120, 236, 255, 0.62);
+}
+
+.cityKpiCard:nth-child(3) i::after {
+  width: 28px;
+  height: 13px;
+  border: 2px solid rgba(120, 236, 255, 0.78);
+  border-top: 0;
+  border-radius: 0 0 14px 14px;
+  background: transparent;
+  transform: translateY(8px);
+}
+
+.cityKpiCard:nth-child(4) i::before {
+  width: 24px;
+  height: 14px;
+  border-radius: 999px;
+  transform: rotate(-18deg);
+}
+
+.cityKpiCard:nth-child(4) i::after {
+  width: 24px;
+  height: 14px;
+  border: 2px solid rgba(120, 236, 255, 0.88);
+  border-radius: 999px;
+  background: transparent;
+  transform: rotate(18deg);
+}
+
+.cityKpiCard:nth-child(5) i::before {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.cityKpiCard:nth-child(5) i::after {
+  width: 15px;
+  height: 8px;
+  border-right: 3px solid #78ecff;
+  border-bottom: 3px solid #78ecff;
+  border-radius: 2px;
+  background: transparent;
+  transform: rotate(42deg) translate(-1px, -2px);
+}
+
+.cityKpiCard:nth-child(6) i::before {
+  width: 11px;
+  height: 18px;
+  border-radius: 4px 0 0 4px;
+  border-color: rgba(255, 157, 56, 0.92);
+  transform: translateX(-5px);
+}
+
+.cityKpiCard:nth-child(6) i::after {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 157, 56, 0.78);
+  border-left: 0;
+  border-radius: 0 18px 18px 0;
+  background: transparent;
+  transform: translateX(5px);
+}
+
+.cityKpiCard::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 8px;
+  height: 2px;
+  background: linear-gradient(90deg, #46d8ff, rgba(70, 216, 255, 0.1));
+}
+
+.cityKpiCard strong {
+  display: block;
+  margin-top: 8px;
+  color: #f6fbff;
+  font-family: var(--font-display);
+  font-size: clamp(24px, 2vw, 36px);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+
+.cityKpiCard small {
+  display: block;
+  margin-top: 6px;
+  color: rgba(198, 231, 255, 0.72);
+}
+
+.cityDashboardGrid {
+  position: relative;
+  display: grid;
+  grid-template-columns:
+    clamp(230px, 15vw, 300px)
+    minmax(0, 1fr)
+    clamp(260px, 17vw, 340px);
+  grid-template-rows: minmax(540px, calc(100svh - 316px));
+  gap: 12px;
+  align-items: stretch;
+  padding: 0 18px 0;
+}
+
+.citySidePanel,
+.cityMapDeck,
+.cityBottomPanel {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(92, 200, 255, 0.18);
+  background:
+    linear-gradient(180deg, rgba(8, 35, 67, 0.78), rgba(3, 13, 30, 0.78)),
+    radial-gradient(circle at 12% 0%, rgba(92, 200, 255, 0.18), transparent 32%);
+  box-shadow:
+    inset 0 0 36px rgba(92, 200, 255, 0.07),
+    0 22px 52px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(12px);
+}
+
+.citySidePanel::before,
+.cityMapDeck::before,
+.cityBottomPanel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, 0.035);
+  pointer-events: none;
+}
+
+.citySidePanel {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  z-index: 5;
+  max-height: calc(100svh - 316px);
+  min-height: 0;
+  padding: 14px;
+  margin: 0;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+.cityLeftPanel {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.cityRightPanel {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.cityPanelSection {
+  display: grid;
+  gap: 12px;
+}
+
+.cityPanelTitle {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: baseline;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(92, 200, 255, 0.18);
+}
+
+.cityPanelTitle h3 {
+  margin: 0;
+  color: #f3fbff;
+  font-size: 19px;
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 18px rgba(92, 200, 255, 0.34);
+}
+
+.situationGauge {
+  display: grid;
+  grid-template-columns: 118px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+}
+
+.situationGaugeRing {
+  display: grid;
+  place-items: center;
+  width: 118px;
+  height: 118px;
+  border-radius: 999px;
+  border: 10px solid rgba(32, 177, 255, 0.24);
+  background:
+    radial-gradient(circle, rgba(255, 173, 66, 0.18), transparent 42%),
+    conic-gradient(from 40deg, rgba(78, 220, 255, 0.18), rgba(255, 173, 66, 0.82), rgba(78, 220, 255, 0.18));
+  box-shadow:
+    inset 0 0 28px rgba(0, 0, 0, 0.48),
+    0 0 36px rgba(63, 204, 255, 0.24);
+  animation: gaugeBreath 4.8s ease-in-out infinite;
+}
+
+.situationGaugeRing strong,
+.situationGaugeRing span {
+  grid-area: 1 / 1;
+}
+
+.situationGaugeRing strong {
+  color: #fff3d6;
+  font-family: var(--font-display);
+  font-size: 22px;
+}
+
+.situationGaugeRing span {
+  margin-top: 42px;
+  color: rgba(226, 245, 255, 0.74);
+  font-size: 12px;
+}
+
+.situationGauge p,
+.signalFeed p,
+.commandTimeline p,
+.cityApprovalBox p,
+.cityEmpty {
+  margin: 0;
+  color: rgba(214, 233, 248, 0.74);
+  line-height: 1.62;
+}
+
+.riskDistributionMini {
+  display: grid;
+  gap: 7px;
+}
+
+.riskDistributionMini article {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  min-height: 25px;
+  padding: 4px 7px;
+  border: 1px solid rgba(92, 200, 255, 0.1);
+  background: rgba(6, 24, 46, 0.34);
+}
+
+.riskDistributionMini i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 0 12px currentColor;
+}
+
+.riskDistributionMini span {
+  overflow: hidden;
+  color: rgba(214, 234, 248, 0.72);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.riskDistributionMini strong {
+  color: #f6fbff;
+  font-family: var(--font-display);
+  font-size: 16px;
+}
+
+.citySituationSummary {
+  margin: 0;
+  padding: 9px 10px;
+  border-left: 2px solid rgba(89, 225, 255, 0.42);
+  background: linear-gradient(90deg, rgba(38, 175, 255, 0.09), transparent);
+}
+
+.cityObjectList,
+.signalFeed,
+.commandActionStack {
+  display: grid;
+  gap: 8px;
+}
+
+.cityObjectRow {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  min-height: 58px;
+  padding: 10px 12px;
+  border: 1px solid rgba(92, 200, 255, 0.14);
+  background: linear-gradient(90deg, rgba(16, 64, 104, 0.42), rgba(7, 24, 48, 0.42));
+  color: #effaff;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.cityObjectRow:hover,
+.cityObjectRowActive {
+  transform: translateX(3px);
+  border-color: rgba(255, 173, 66, 0.56);
+  box-shadow:
+    inset 3px 0 0 rgba(255, 173, 66, 0.82),
+    0 0 22px rgba(255, 173, 66, 0.13);
+}
+
+.cityObjectRow i {
+  width: 10px;
+  height: 34px;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 0 16px currentColor;
+}
+
+.cityObjectRow strong {
+  display: block;
+  font-size: 14px;
+}
+
+.cityObjectRow small,
+.cityObjectRow em {
+  color: rgba(194, 226, 245, 0.68);
+  font-size: 12px;
+  font-style: normal;
+}
+
+.signalFeed article,
+.commandActionStack article {
+  padding: 10px 12px;
+  border-left: 2px solid rgba(75, 215, 255, 0.62);
+  background: rgba(6, 24, 46, 0.54);
+}
+
+.signalFeed article span {
+  color: rgba(158, 218, 255, 0.72);
+  font-size: 11px;
+}
+
+.signalFeed article strong,
+.commandActionStack article strong {
+  display: block;
+  margin-top: 4px;
+  color: #f5fbff;
+  font-size: 14px;
+}
+
+.signalFeed article p {
+  margin-top: 5px;
+  font-size: 12px;
+}
+
+.cityMapDeck {
+  grid-column: 2;
+  grid-row: 1;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  min-height: 100%;
+  border-color: rgba(92, 200, 255, 0.24);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(57, 173, 255, 0.16), transparent 34%),
+    linear-gradient(180deg, rgba(4, 20, 42, 0.56), rgba(1, 8, 20, 0.72));
+}
+
+.cityMapCanvasFrame {
+  position: relative;
+  min-height: calc(100svh - 302px);
+}
+
+.cityMapCanvasFrame :global(.cesium-widget),
+.cityMapCanvasFrame :global(.cesium-widget canvas) {
+  filter: saturate(1.18) contrast(1.06);
+}
+
+.cityMapBottomOverlay {
+  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  padding: 10px 12px 12px;
+  border-top: 1px solid rgba(92, 200, 255, 0.18);
+  background: linear-gradient(180deg, rgba(2, 12, 28, 0.28), rgba(4, 16, 34, 0.82));
+}
+
+.cityMapStatusChip {
+  min-height: 58px;
+  padding: 9px 11px;
+  border: 1px solid rgba(92, 200, 255, 0.16);
+  background:
+    radial-gradient(circle at 100% 0, var(--state-glow, rgba(92, 200, 255, 0.12)), transparent 42%),
+    rgba(7, 26, 50, 0.74);
+  color: #effaff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cityMapStatusChip span {
+  color: var(--state-accent, #5cc8ff);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.cityMapStatusChip strong {
+  display: block;
+  margin-top: 5px;
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cityMapStatusChipActive {
+  border-color: var(--state-accent, #5cc8ff);
+  box-shadow: 0 0 20px var(--state-glow, rgba(92, 200, 255, 0.2));
+}
+
+.commandFocusCard,
+.cityClosureCard,
+.cityApprovalBox {
+  display: grid;
+  gap: 10px;
+  padding: 13px 14px;
+  border: 1px solid rgba(92, 200, 255, 0.16);
+  background:
+    radial-gradient(circle at 100% 0, var(--tone-glow), transparent 36%),
+    rgba(6, 24, 46, 0.68);
+}
+
+.commandFocusCard {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+}
+
+.commandFocusCard strong,
+.cityClosureCard strong,
+.cityApprovalBox strong {
+  display: block;
+  margin-top: 6px;
+  color: #f4fbff;
+  font-size: 18px;
+}
+
+.commandFocusCard small,
+.cityClosureCard small {
+  display: block;
+  margin-top: 6px;
+  color: rgba(211, 235, 251, 0.7);
+  line-height: 1.5;
+}
+
+.commandTimeline {
+  display: grid;
+  gap: 8px;
+  counter-reset: command-chain;
+}
+
+.commandTimeline p {
+  position: relative;
+  padding: 9px 10px 9px 32px;
+  border: 1px solid rgba(92, 200, 255, 0.13);
+  background: rgba(6, 24, 46, 0.52);
+}
+
+.commandTimeline p::before {
+  counter-increment: command-chain;
+  content: counter(command-chain, decimal-leading-zero);
+  position: absolute;
+  left: 9px;
+  top: 10px;
+  color: #55d9ff;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.cityClosureComplete {
+  border-color: rgba(53, 230, 191, 0.42);
+  background:
+    radial-gradient(circle at 100% 0, rgba(53, 230, 191, 0.2), transparent 38%),
+    rgba(6, 24, 46, 0.72);
+  box-shadow: 0 0 26px rgba(53, 230, 191, 0.14);
+}
+
+.cityApprovalBox textarea {
+  width: 100%;
+  min-height: 74px;
+  padding: 10px 12px;
+  border: 1px solid rgba(92, 200, 255, 0.18);
+  background: rgba(2, 12, 28, 0.64);
+  color: #effaff;
+  resize: vertical;
+}
+
+.cityActionButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cityActionButtons button,
+.opsOpenButton {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid rgba(92, 200, 255, 0.24);
+  background: linear-gradient(180deg, rgba(18, 82, 130, 0.78), rgba(8, 30, 58, 0.84));
+  color: #f4fbff;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  transition:
+    transform 0.16s ease,
+    border-color 0.16s ease,
+    opacity 0.16s ease;
+}
+
+.cityActionButtons button:hover:not(:disabled),
+.opsOpenButton:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 173, 66, 0.62);
+}
+
+.cityActionButtons button:disabled {
+  cursor: default;
+  opacity: 0.46;
+}
+
+.cityTelemetryDock {
+  position: relative;
+  z-index: 7;
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 8px;
+  min-height: 64px;
+  margin: 2px 18px 12px;
+  padding: 8px 10px;
+  border: 1px solid rgba(92, 200, 255, 0.2);
+  background:
+    linear-gradient(90deg, rgba(5, 24, 48, 0.86), rgba(8, 44, 78, 0.72), rgba(5, 24, 48, 0.86)),
+    radial-gradient(circle at 50% 0, rgba(84, 220, 255, 0.14), transparent 58%);
+  box-shadow:
+    inset 0 0 28px rgba(92, 200, 255, 0.08),
+    0 -10px 30px rgba(0, 0, 0, 0.18);
+}
+
+.cityTelemetryDock article {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2px;
+  min-width: 0;
+  padding: 4px 10px 4px 14px;
+  border-right: 1px solid rgba(92, 200, 255, 0.13);
+}
+
+.cityTelemetryDock article::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 12px;
+  width: 6px;
+  height: 24px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #47dfff, rgba(71, 223, 255, 0.14));
+  box-shadow: 0 0 14px rgba(71, 223, 255, 0.36);
+}
+
+.cityTelemetryDock span {
+  overflow: hidden;
+  color: rgba(184, 230, 255, 0.68);
+  font-size: 11px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cityTelemetryDock strong {
+  overflow: hidden;
+  color: #5ee7ff;
+  font-family: var(--font-display);
+  font-size: clamp(18px, 1.2vw, 24px);
+  line-height: 1.05;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow: 0 0 16px rgba(94, 231, 255, 0.32);
+}
+
+.cityTelemetryDock small {
+  overflow: hidden;
+  color: rgba(210, 236, 252, 0.64);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cityBottomGrid {
+  position: relative;
+  z-index: 6;
+  display: none;
+  grid-template-columns: minmax(300px, 0.9fr) minmax(520px, 1.64fr) minmax(300px, 0.9fr);
+  gap: 12px;
+  margin-top: -156px;
+  padding: 0 22px 14px;
+  pointer-events: none;
+}
+
+.cityBottomPanel {
+  min-height: 172px;
+  padding: 14px;
+  pointer-events: auto;
+  background:
+    linear-gradient(180deg, rgba(8, 35, 67, 0.72), rgba(3, 13, 30, 0.86)),
+    radial-gradient(circle at 12% 0%, rgba(92, 200, 255, 0.2), transparent 32%);
+}
+
+.sourceMeterGrid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+  align-items: end;
+  min-height: 128px;
+  margin-top: 12px;
+}
+
+.sourceMeterGrid article {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  min-width: 0;
+}
+
+.sourceBarTrack {
+  position: relative;
+  display: flex;
+  align-items: end;
+  width: 100%;
+  height: 72px;
+  border: 1px solid rgba(92, 200, 255, 0.16);
+  background:
+    linear-gradient(180deg, rgba(92, 200, 255, 0.06), rgba(2, 12, 28, 0.48)),
+    repeating-linear-gradient(0deg, transparent 0 13px, rgba(92, 200, 255, 0.14) 14px);
+}
+
+.sourceBarTrack i {
+  display: block;
+  width: 100%;
+  min-height: 18%;
+  background: linear-gradient(180deg, #69e6ff, #157ec4);
+  box-shadow: 0 0 18px rgba(105, 230, 255, 0.42);
+}
+
+.sourceMeterGrid strong {
+  color: #f3fbff;
+  font-size: 13px;
+}
+
+.sourceMeterGrid span {
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cityImpactGraph {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.cityImpactGraph article {
+  position: relative;
+  min-height: 116px;
+  padding: 12px;
+  border: 1px solid rgba(92, 200, 255, 0.15);
+  background: linear-gradient(180deg, rgba(10, 48, 86, 0.58), rgba(6, 22, 45, 0.66));
+}
+
+.cityImpactGraph article span {
+  color: rgba(184, 230, 255, 0.66);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.cityImpactGraph article strong {
+  display: block;
+  margin-top: 6px;
+  color: #f3fbff;
+}
+
+.cityImpactGraph article p {
+  margin: 8px 0 0;
+  color: rgba(213, 235, 250, 0.72);
+  font-size: 12px;
+  line-height: 1.52;
+}
+
+.cityImpactGraph article i {
+  position: absolute;
+  top: 50%;
+  right: -14px;
+  z-index: 2;
+  width: 18px;
+  height: 2px;
+  background: linear-gradient(90deg, #50d9ff, transparent);
+  box-shadow: 0 0 12px rgba(80, 217, 255, 0.5);
+}
+
+.opsSnapshot {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.opsSnapshot article {
+  padding: 12px;
+  border: 1px solid rgba(92, 200, 255, 0.15);
+  background: rgba(6, 24, 46, 0.54);
+}
+
+.opsSnapshot strong {
+  display: block;
+  margin-top: 8px;
+  color: #f3fbff;
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 0.95;
+}
+
+.opsSnapshot small {
+  display: block;
+  margin-top: 8px;
+  color: rgba(213, 235, 250, 0.68);
+}
+
+.opsOpenButton {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.cityInlineAsk {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(92, 200, 255, 0.16);
+  background:
+    radial-gradient(circle at 100% 0, rgba(92, 200, 255, 0.12), transparent 38%),
+    rgba(6, 24, 46, 0.58);
+}
+
+.cityInlineAsk textarea {
+  width: 100%;
+  min-height: 92px;
+  padding: 11px 12px;
+  border: 1px solid rgba(92, 200, 255, 0.2);
+  background: rgba(2, 12, 28, 0.68);
+  color: #effaff;
+  line-height: 1.55;
+  resize: vertical;
+}
+
+.cityInlineAsk textarea::placeholder,
+.cityApprovalBox textarea::placeholder {
+  color: rgba(198, 231, 255, 0.44);
+}
+
+.cityInlineAskActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.cityInlineAskActions button {
+  min-height: 36px;
+  border: 1px solid rgba(92, 200, 255, 0.24);
+  background: linear-gradient(180deg, rgba(18, 82, 130, 0.78), rgba(8, 30, 58, 0.84));
+  color: #f4fbff;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.cityInlineAskActions button:last-child {
+  border-color: rgba(255, 173, 66, 0.42);
+  background: linear-gradient(180deg, rgba(205, 113, 38, 0.82), rgba(110, 52, 28, 0.86));
+}
+
+@keyframes citySweep {
+  from {
+    transform: rotate(0deg) scale(1.15);
+  }
+  to {
+    transform: rotate(360deg) scale(1.15);
+  }
+}
+
+@keyframes gaugeBreath {
+  0%,
+  100% {
+    filter: brightness(1);
+    transform: scale(1);
+  }
+  50% {
+    filter: brightness(1.18);
+    transform: scale(1.025);
+  }
+}
+
 .hero {
   position: relative;
   overflow: hidden;
@@ -867,23 +2126,23 @@
 }
 
 .mapStateMonitoring {
-  --state-accent: #5cc8ff;
-  --state-glow: rgba(92, 200, 255, 0.18);
+  --state-accent: #28d8ff;
+  --state-glow: rgba(40, 216, 255, 0.2);
 }
 
 .mapStatePending {
-  --state-accent: #ffad42;
-  --state-glow: rgba(255, 173, 66, 0.24);
+  --state-accent: #ff9d38;
+  --state-glow: rgba(255, 157, 56, 0.28);
 }
 
 .mapStateApproved {
-  --state-accent: #9be36f;
-  --state-glow: rgba(155, 227, 111, 0.22);
+  --state-accent: #35e6bf;
+  --state-glow: rgba(53, 230, 191, 0.2);
 }
 
 .mapStateWarning {
-  --state-accent: #f66f9d;
-  --state-glow: rgba(246, 111, 157, 0.26);
+  --state-accent: #ff6b2d;
+  --state-glow: rgba(255, 107, 45, 0.3);
 }
 
 .spatialRow.mapStatePending,
@@ -1116,9 +2375,9 @@
   margin-top: 8px;
   padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(155, 227, 111, 0.34);
-  background: rgba(155, 227, 111, 0.1);
-  color: #d7ffc8;
+  border: 1px solid rgba(53, 230, 191, 0.36);
+  background: rgba(53, 230, 191, 0.1);
+  color: #a9fff0;
   font-size: 11px;
   font-style: normal;
   font-weight: 800;
@@ -1127,17 +2386,17 @@
 }
 
 .closureCompleteCard {
-  border-color: rgba(155, 227, 111, 0.34);
+  border-color: rgba(53, 230, 191, 0.36);
   background:
-    radial-gradient(circle at 100% 0%, rgba(155, 227, 111, 0.18), transparent 34%),
+    radial-gradient(circle at 100% 0%, rgba(53, 230, 191, 0.2), transparent 34%),
     color-mix(in srgb, var(--tone-surface) 90%, transparent);
   animation: closureBreath 3.8s ease-in-out infinite;
 }
 
 .warningCardLive {
-  border-left-color: rgba(246, 111, 157, 0.62);
+  border-left-color: rgba(255, 107, 45, 0.72);
   background:
-    linear-gradient(90deg, rgba(246, 111, 157, 0.1), transparent 42%),
+    linear-gradient(90deg, rgba(255, 107, 45, 0.12), transparent 42%),
     rgba(8, 18, 28, 0.38);
   animation: warningSoftPulse 3.6s ease-in-out infinite;
 }
@@ -1292,6 +2551,10 @@
   color: #73b4ff;
 }
 
+.riskGreen {
+  color: #2df3b5;
+}
+
 .riskYellow {
   color: #f0c05e;
 }
@@ -1349,29 +2612,417 @@
   --tone-glow: rgba(167, 48, 57, 0.24);
 }
 
+/* Reference big-screen palette: deep navy glass, electric cyan strokes, restrained amber risk accents. */
+.cityBigScreen {
+  --tone-border: rgba(36, 216, 255, 0.22);
+  --tone-border-strong: rgba(72, 225, 255, 0.38);
+  --tone-surface: rgba(3, 22, 46, 0.86);
+  --tone-soft: rgba(7, 45, 82, 0.28);
+  --tone-accent: #24d8ff;
+  --tone-glow: rgba(36, 216, 255, 0.18);
+  --dash-bg-0: #020917;
+  --dash-bg-1: #03152b;
+  --dash-bg-2: #06254a;
+  --dash-panel: rgba(3, 22, 46, 0.86);
+  --dash-panel-strong: rgba(5, 32, 63, 0.9);
+  --dash-panel-soft: rgba(7, 45, 82, 0.58);
+  --dash-stroke: rgba(31, 190, 255, 0.46);
+  --dash-stroke-soft: rgba(44, 178, 255, 0.22);
+  --dash-cyan: #24d8ff;
+  --dash-cyan-bright: #78ecff;
+  --dash-cyan-dim: rgba(36, 216, 255, 0.16);
+  --dash-blue: #1a8bff;
+  --dash-amber: #ff9d38;
+  --dash-orange: #ff6b3d;
+  --dash-green: #2df3b5;
+  --dash-text: #edf9ff;
+  --dash-muted: rgba(171, 221, 249, 0.72);
+  background:
+    linear-gradient(90deg, rgba(39, 184, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(39, 184, 255, 0.04) 1px, transparent 1px),
+    radial-gradient(circle at 50% 4%, rgba(44, 205, 255, 0.2), transparent 23%),
+    radial-gradient(circle at 48% 48%, rgba(20, 121, 214, 0.18), transparent 30%),
+    linear-gradient(180deg, #061d3a 0%, #03142a 42%, #020816 100%);
+  background-size: 48px 48px, 48px 48px, auto, auto, auto;
+}
+
+.cityBigScreen::before {
+  background:
+    linear-gradient(90deg, transparent, rgba(36, 216, 255, 0.2), transparent),
+    linear-gradient(180deg, rgba(21, 118, 205, 0.28), transparent 70%);
+  clip-path: polygon(10% 0, 90% 0, 84% 84px, 16% 84px);
+}
+
+.cityBigScreen::after {
+  background:
+    linear-gradient(180deg, transparent 0 48%, rgba(40, 218, 255, 0.1) 49%, transparent 50% 100%),
+    radial-gradient(circle at 50% 50%, transparent 0 30%, rgba(36, 216, 255, 0.07) 31%, transparent 34%);
+}
+
+.cityAura {
+  background:
+    radial-gradient(circle at 12% 10%, rgba(36, 216, 255, 0.14), transparent 22%),
+    radial-gradient(circle at 86% 16%, rgba(47, 139, 255, 0.16), transparent 23%),
+    radial-gradient(circle at 50% 70%, rgba(4, 105, 194, 0.18), transparent 34%);
+}
+
+.cityTitleBlock h2 {
+  color: var(--dash-text);
+  text-shadow:
+    0 0 10px rgba(120, 236, 255, 0.78),
+    0 0 28px rgba(36, 216, 255, 0.52),
+    0 0 58px rgba(26, 139, 255, 0.34);
+}
+
+.cityTitleBlock::before,
+.cityTitleBlock::after {
+  background: linear-gradient(90deg, transparent, rgba(36, 216, 255, 0.92), rgba(122, 236, 255, 0.44), transparent);
+  box-shadow: 0 0 22px rgba(36, 216, 255, 0.54);
+}
+
+.cityHeaderWing,
+.cityModeBanner,
+.cityKpiCard,
+.citySidePanel,
+.cityMapDeck,
+.cityBottomPanel,
+.cityTelemetryDock {
+  border-color: var(--dash-stroke);
+  background:
+    linear-gradient(180deg, var(--dash-panel-strong), rgba(2, 12, 28, 0.88)),
+    radial-gradient(circle at 14% 0, var(--dash-cyan-dim), transparent 42%);
+  box-shadow:
+    inset 0 0 0 1px rgba(126, 236, 255, 0.045),
+    inset 0 0 32px rgba(36, 216, 255, 0.08),
+    0 0 28px rgba(2, 8, 20, 0.46);
+}
+
+.cityHeaderWing:last-child {
+  background:
+    linear-gradient(180deg, rgba(5, 31, 62, 0.92), rgba(2, 12, 28, 0.9)),
+    radial-gradient(circle at 100% 0, rgba(36, 216, 255, 0.16), transparent 42%);
+}
+
+.cityBrandWing em,
+.cityModuleTabs a,
+.promptChip,
+.cityInlineAsk,
+.cityActionButtons button,
+.opsOpenButton {
+  border-color: var(--dash-stroke-soft);
+  background: linear-gradient(180deg, rgba(6, 38, 74, 0.76), rgba(3, 18, 39, 0.82));
+  color: var(--dash-muted);
+}
+
+.cityModuleTabs a:hover,
+.cityModuleTabs a[aria-current="page"] {
+  border-color: rgba(36, 216, 255, 0.86);
+  color: var(--dash-text);
+  background:
+    linear-gradient(180deg, rgba(13, 83, 139, 0.82), rgba(4, 31, 68, 0.92)),
+    radial-gradient(circle at 50% 0, rgba(72, 228, 255, 0.28), transparent 68%);
+  box-shadow:
+    inset 0 -2px 0 rgba(36, 216, 255, 0.9),
+    0 0 24px rgba(36, 216, 255, 0.34);
+}
+
+.cityModeBanner {
+  background:
+    linear-gradient(90deg, rgba(2, 12, 28, 0.5), rgba(6, 46, 88, 0.78), rgba(2, 12, 28, 0.5)),
+    radial-gradient(circle at 50% 0, rgba(36, 216, 255, 0.2), transparent 58%);
+}
+
+.cityKpiCard {
+  border-color: rgba(35, 188, 255, 0.58);
+  background:
+    linear-gradient(180deg, rgba(5, 33, 68, 0.82), rgba(1, 12, 30, 0.94)),
+    linear-gradient(90deg, rgba(24, 151, 232, 0.2), transparent 34%, rgba(36, 216, 255, 0.1)),
+    radial-gradient(circle at 9% 50%, rgba(36, 216, 255, 0.2), transparent 28%),
+    radial-gradient(circle at 91% 8%, rgba(36, 216, 255, 0.16), transparent 38%);
+  box-shadow:
+    inset 0 0 0 1px rgba(126, 236, 255, 0.055),
+    inset 0 0 34px rgba(36, 216, 255, 0.07),
+    0 0 0 1px rgba(2, 9, 23, 0.82),
+    0 16px 34px rgba(0, 7, 22, 0.36);
+}
+
+.cityKpiCard::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, var(--dash-cyan), transparent 16%) left top / 38% 1px no-repeat,
+    linear-gradient(90deg, transparent, var(--dash-cyan)) right bottom / 38% 1px no-repeat,
+    linear-gradient(180deg, var(--dash-cyan), transparent 62%) left top / 1px 46% no-repeat,
+    linear-gradient(180deg, transparent, var(--dash-cyan)) right bottom / 1px 46% no-repeat;
+  opacity: 0.62;
+}
+
+.cityKpiCard i,
+.cityLogoMark {
+  border-color: rgba(99, 224, 255, 0.5);
+  background:
+    radial-gradient(circle at 38% 28%, rgba(255, 255, 255, 0.74), transparent 11%),
+    radial-gradient(circle, rgba(55, 189, 255, 0.52), rgba(7, 55, 104, 0.82));
+  box-shadow:
+    inset 0 0 20px rgba(34, 218, 255, 0.2),
+    0 0 26px rgba(34, 218, 255, 0.22);
+}
+
+.cityKpiCard::after {
+  left: 10px;
+  right: 10px;
+  bottom: 7px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--dash-cyan), rgba(36, 216, 255, 0.2) 48%, rgba(36, 216, 255, 0.02));
+  box-shadow: 0 0 14px rgba(36, 216, 255, 0.36);
+}
+
+.cityKpiCard strong,
+.cityTelemetryDock strong {
+  color: var(--dash-cyan-bright);
+  text-shadow: 0 0 18px rgba(36, 216, 255, 0.42);
+}
+
+.cityPanelTitle {
+  border-bottom-color: var(--dash-stroke-soft);
+}
+
+.cityPanelTitle h3 {
+  color: var(--dash-text);
+  text-shadow: 0 0 18px rgba(36, 216, 255, 0.38);
+}
+
+.cityPanelTitle span,
+.cityTitleBlock p,
+.cityHeaderWing span,
+.cityKpiCard span,
+.cityModeBanner span,
+.cityModeBanner small,
+.cityTelemetryDock span {
+  color: rgba(163, 219, 248, 0.76);
+}
+
+.situationGaugeRing {
+  border-color: rgba(36, 216, 255, 0.28);
+  background:
+    radial-gradient(circle, rgba(255, 157, 56, 0.2), transparent 42%),
+    conic-gradient(from 28deg, rgba(36, 216, 255, 0.2), rgba(255, 157, 56, 0.9), rgba(36, 216, 255, 0.2));
+  box-shadow:
+    inset 0 0 30px rgba(0, 0, 0, 0.54),
+    0 0 38px rgba(36, 216, 255, 0.22);
+}
+
+.riskOrange,
+.riskYellow {
+  color: var(--dash-amber);
+}
+
+.riskRed {
+  color: var(--dash-orange);
+}
+
+.riskBlue {
+  color: #31bdff;
+}
+
+.cityObjectRow,
+.signalFeed article,
+.commandActionStack article,
+.riskDistributionMini article,
+.cityApprovalBox,
+.commandFocusCard,
+.cityClosureCard,
+.dialogBriefCard,
+.dialogIntelCard,
+.cityMapStatusChip {
+  border-color: rgba(40, 173, 235, 0.28);
+  background:
+    linear-gradient(90deg, rgba(5, 31, 63, 0.76), rgba(2, 15, 36, 0.82)),
+    radial-gradient(circle at 0 50%, rgba(36, 216, 255, 0.12), transparent 34%);
+  box-shadow:
+    inset 0 0 0 1px rgba(126, 236, 255, 0.035),
+    inset 0 0 18px rgba(36, 216, 255, 0.045),
+    0 8px 20px rgba(0, 8, 24, 0.18);
+}
+
+.cityObjectRow:hover,
+.cityObjectRowActive {
+  border-color: rgba(255, 157, 56, 0.72);
+  box-shadow:
+    inset 3px 0 0 rgba(255, 157, 56, 0.9),
+    0 0 24px rgba(255, 157, 56, 0.16);
+}
+
+.cityMapDeck {
+  border-color: rgba(46, 198, 255, 0.48);
+  background:
+    radial-gradient(circle at 50% 45%, rgba(25, 143, 236, 0.14), transparent 36%),
+    linear-gradient(180deg, rgba(3, 20, 42, 0.46), rgba(1, 8, 18, 0.74));
+}
+
+.cityMapBottomOverlay {
+  background: linear-gradient(90deg, rgba(3, 20, 42, 0.72), rgba(7, 42, 78, 0.76), rgba(3, 20, 42, 0.72));
+  border-color: var(--dash-stroke-soft);
+}
+
+.cityTelemetryDock {
+  background:
+    linear-gradient(90deg, rgba(2, 15, 33, 0.94), rgba(5, 39, 75, 0.86), rgba(2, 15, 33, 0.94)),
+    radial-gradient(circle at 50% 0, rgba(36, 216, 255, 0.16), transparent 62%);
+}
+
+.cityTelemetryDock article::before {
+  background: linear-gradient(180deg, var(--dash-cyan-bright), rgba(36, 216, 255, 0.16));
+  box-shadow: 0 0 16px rgba(36, 216, 255, 0.42);
+}
+
+.cityInlineAsk textarea,
+.cityApprovalBox textarea,
+.dialogComposer textarea {
+  border-color: rgba(44, 178, 255, 0.26);
+  background: rgba(2, 13, 30, 0.72);
+  color: var(--dash-text);
+}
+
+.cityActionButtons button:hover:not(:disabled),
+.opsOpenButton:hover,
+.promptChip:hover {
+  border-color: rgba(255, 157, 56, 0.72);
+  color: #fff1d6;
+  box-shadow: 0 0 18px rgba(255, 157, 56, 0.16);
+}
+
+/* Deepen the visible data containers to match the reference dark-blue glass panels. */
+.cityBigScreen .cityHeaderWing,
+.cityBigScreen .cityModeBanner,
+.cityBigScreen .cityKpiCard,
+.cityBigScreen .citySidePanel,
+.cityBigScreen .cityBottomPanel,
+.cityBigScreen .cityTelemetryDock {
+  border-color: rgba(38, 190, 255, 0.48);
+  background:
+    linear-gradient(180deg, rgba(1, 18, 43, 0.97), rgba(0, 8, 24, 0.985)),
+    radial-gradient(circle at 14% 0%, rgba(36, 216, 255, 0.12), transparent 42%),
+    linear-gradient(90deg, rgba(12, 95, 166, 0.13), transparent 36%, rgba(34, 185, 255, 0.07)) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(132, 238, 255, 0.05),
+    inset 0 0 32px rgba(10, 117, 194, 0.08),
+    0 0 0 1px rgba(0, 7, 19, 0.9),
+    0 14px 34px rgba(0, 6, 19, 0.42);
+}
+
+.cityBigScreen .cityKpiCard {
+  border-color: rgba(48, 202, 255, 0.58);
+  background:
+    linear-gradient(180deg, rgba(1, 20, 48, 0.985), rgba(0, 9, 26, 0.99)),
+    radial-gradient(circle at 12% 50%, rgba(38, 202, 255, 0.14), transparent 28%),
+    radial-gradient(circle at 92% 0%, rgba(38, 202, 255, 0.1), transparent 36%) !important;
+}
+
+.cityBigScreen .cityKpiCard::before {
+  opacity: 0.72;
+}
+
+.cityBigScreen .cityKpiCard::after {
+  background: linear-gradient(90deg, rgba(36, 216, 255, 0.95), rgba(36, 216, 255, 0.22) 46%, rgba(36, 216, 255, 0.02));
+  box-shadow: 0 0 18px rgba(36, 216, 255, 0.42);
+}
+
+.cityBigScreen .cityObjectRow,
+.cityBigScreen .signalFeed article,
+.cityBigScreen .commandActionStack article,
+.cityBigScreen .riskDistributionMini article,
+.cityBigScreen .cityApprovalBox,
+.cityBigScreen .commandFocusCard,
+.cityBigScreen .cityClosureCard,
+.cityBigScreen .dialogBriefCard,
+.cityBigScreen .dialogIntelCard,
+.cityBigScreen .cityMapStatusChip,
+.cityBigScreen .cityInlineAsk,
+.cityBigScreen .promptChip {
+  border-color: rgba(37, 174, 239, 0.28);
+  background:
+    linear-gradient(180deg, rgba(1, 18, 41, 0.9), rgba(0, 9, 25, 0.94)),
+    radial-gradient(circle at 0% 50%, rgba(36, 216, 255, 0.09), transparent 34%) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(132, 238, 255, 0.035),
+    inset 0 0 20px rgba(10, 117, 194, 0.055),
+    0 8px 22px rgba(0, 6, 19, 0.26);
+}
+
+.cityBigScreen .cityMapBottomOverlay {
+  background:
+    linear-gradient(90deg, rgba(0, 9, 25, 0.88), rgba(1, 24, 53, 0.92), rgba(0, 9, 25, 0.88)) !important;
+  border-color: rgba(37, 174, 239, 0.3);
+}
+
+.cityBigScreen .cityTelemetryDock {
+  background:
+    linear-gradient(90deg, rgba(0, 9, 25, 0.98), rgba(1, 23, 52, 0.94), rgba(0, 9, 25, 0.98)),
+    radial-gradient(circle at 50% 0, rgba(36, 216, 255, 0.1), transparent 62%) !important;
+}
+
 @keyframes closureBreath {
   0%,
   100% {
-    box-shadow: 0 0 0 rgba(155, 227, 111, 0);
+    box-shadow: 0 0 0 rgba(53, 230, 191, 0);
   }
 
   50% {
-    box-shadow: 0 0 28px rgba(155, 227, 111, 0.14);
+    box-shadow: 0 0 28px rgba(53, 230, 191, 0.16);
   }
 }
 
 @keyframes warningSoftPulse {
   0%,
   100% {
-    box-shadow: inset 0 0 0 rgba(246, 111, 157, 0);
+    box-shadow: inset 0 0 0 rgba(255, 107, 45, 0);
   }
 
   50% {
-    box-shadow: inset 0 0 28px rgba(246, 111, 157, 0.08);
+    box-shadow: inset 0 0 28px rgba(255, 107, 45, 0.1);
+  }
+}
+
+@media (max-width: 1500px) {
+  .cityHeader {
+    grid-template-columns: minmax(280px, 0.6fr) minmax(420px, 1.22fr) minmax(380px, 0.9fr);
+    gap: 10px;
+    padding-inline: 14px;
+  }
+
+  .cityTitleBlock h2 {
+    font-size: clamp(28px, 2.45vw, 42px);
+    letter-spacing: 0.02em;
+  }
+
+  .cityStatusWing {
+    grid-template-columns: repeat(3, minmax(104px, 1fr));
+    gap: 8px;
+  }
+
+  .cityModeBanner {
+    grid-template-columns: minmax(180px, 0.72fr) minmax(280px, 1fr) minmax(280px, 0.9fr);
   }
 }
 
 @media (max-width: 1360px) {
+  .cityHeader,
+  .cityModeBanner {
+    grid-template-columns: 1fr;
+  }
+
+  .cityHeaderWing:last-child,
+  .cityModeBanner small {
+    text-align: left;
+  }
+
+  .cityStatusWing div {
+    justify-items: start;
+  }
+
   .mainGrid {
     grid-template-columns: 1fr;
   }

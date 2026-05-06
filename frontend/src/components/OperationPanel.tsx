@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import styles from "../App.module.css";
 import { entityText, proposalText, riskText } from "../config/consoleConfig";
 import {
+  formatAudienceLabel,
+  formatChannelLabel,
   formatGenerationSource,
   formatOperatorActor,
   formatOperatorRole,
@@ -235,7 +237,7 @@ export function OperationPanel({
                 <span className={styles.operationLabel}>允许角色</span>
                 <div className={styles.roleTags}>{selectedProposal.required_operator_roles.map((role) => <span key={role}>{formatOperatorRole(role)}</span>)}</div>
               </div>
-              {templatePreviews.length ? <div className={styles.templateList}>{templatePreviews.map((draft) => <article key={`${draft.audience}_${draft.channel}`} className={styles.templateCard}><strong>{draft.audience} / {draft.channel}</strong><p>{draft.content}</p></article>)}</div> : null}
+              {templatePreviews.length ? <div className={styles.templateList}>{templatePreviews.map((draft) => <article key={`${draft.audience}_${draft.channel}`} className={styles.templateCard}><strong>{formatAudienceLabel(draft.audience)} / {formatChannelLabel(draft.channel)}</strong><p>{draft.content}</p></article>)}</div> : null}
               <div className={styles.operationBlock}>
                 <label className={styles.operationLabel} htmlFor="operator-note">值班备注</label>
                 <textarea id="operator-note" aria-label="operator-resolution-note" className={styles.operationNote} value={operatorNote} onChange={(event) => setOperatorNote(event.target.value)} disabled={isBusy || selectedProposal.status !== "pending"} rows={3} placeholder="记录值班安排、口头指令或审批原因。" />
@@ -252,7 +254,7 @@ export function OperationPanel({
                   <p>{selectedProposal.resolution_note || "没有记录值班备注。"}</p>
                 </div>
               )}
-              {drafts.length ? <div className={styles.templateList}>{drafts.map((draft) => <article key={draft.draft_id} className={styles.templateCard}><strong>{draft.audience} / {draft.channel}</strong><p>{draft.content}</p><small>{formatTimestamp(draft.created_at)}</small></article>)}</div> : null}
+              {drafts.length ? <div className={styles.templateList}>{drafts.map((draft) => <article key={draft.draft_id} className={styles.templateCard}><strong>{formatAudienceLabel(draft.audience)} / {formatChannelLabel(draft.channel)}</strong><p>{draft.content}</p><small>{formatTimestamp(draft.created_at)}</small></article>)}</div> : null}
               {logs.length ? <div className={styles.executionList}>{logs.map((entry) => <article key={entry.log_id} className={styles.executionCard}><div className={styles.executionMeta}><strong>{formatRegionalActionType(entry.action_type)}</strong><span>{formatTimestamp(entry.created_at)}</span></div><p>{entry.summary}</p><small>{formatOperatorActor(entry.operator_id)}</small></article>)}</div> : null}
             </div>
           ) : null}

@@ -54,12 +54,12 @@ export const operatorRoleTextMap: Record<OperatorRole, string> = {
 };
 
 export const agentNameTextMap: Record<AgentName, string> = {
-  hazard_agent: "Hazard Agent",
-  exposure_agent: "Exposure Agent",
-  resource_agent: "Resource Agent",
-  planning_agent: "Planning Agent",
-  policy_agent: "Policy Agent",
-  comms_agent: "Comms Agent",
+  hazard_agent: "风险研判智能体",
+  exposure_agent: "暴露分析智能体",
+  resource_agent: "资源调度智能体",
+  planning_agent: "行动规划智能体",
+  policy_agent: "策略审计智能体",
+  comms_agent: "预警沟通智能体",
 };
 
 const regionalActionTypeText: Record<string, string> = {
@@ -132,10 +132,11 @@ const actorText: Record<string, string> = {
 };
 
 const sourceTypeText: Record<string, string> = {
+  sse: "实时推送",
   supervisor_loop: "后台巡检",
   runtime_admin: "运行期数据管理",
   trigger_event: "触发总线",
-  agent_task: "Agent 任务",
+  agent_task: "智能体任务",
   dataset_pipeline: "数据管线",
   notification_gateway: "通知网关",
   proposal_resolution: "请示处置",
@@ -172,10 +173,10 @@ const auditActionText: Record<string, string> = {
   rag_documents_imported: "运行期文档已导入",
   rag_documents_reloaded: "运行期文档已重载",
   trigger_published: "触发事件已发布",
-  agent_task_replayed: "Agent 任务已重放",
+  agent_task_replayed: "智能体任务已重放",
   archive_run_completed: "归档周期已完成",
   archive_run_failed: "归档周期失败",
-  agent_task_failed: "Agent 任务失败",
+  agent_task_failed: "智能体任务失败",
   manual_tick_completed: "人工巡检完成",
   manual_tick_failed: "人工巡检失败",
   manual_run_completed: "人工执行调度完成",
@@ -241,6 +242,39 @@ const notificationPreferenceText: Record<string, string> = {
   broadcast: "广播",
 };
 
+const audienceText: Record<string, string> = {
+  leader: "领导版",
+  department: "部门版",
+  community: "社区版",
+  public: "公众版",
+  school: "学校版",
+  parent: "家长版",
+};
+
+const channelText: Record<string, string> = {
+  dashboard: "指挥大屏",
+  work_order: "工单系统",
+  sms: "短信",
+  app: "移动端",
+  broadcast: "广播",
+  wechat: "政务微信",
+};
+
+const auditDecisionStatusText: Record<string, string> = {
+  blocked: "已阻断",
+  degraded: "降级可用",
+  approved_for_review: "可进入人工复核",
+  approved: "已放行",
+};
+
+const riskFlagText: Record<string, string> = {
+  traffic_control: "交通管制",
+  medical_access: "医疗通道",
+  human_gate_required: "需要人工闸门",
+  evidence_gap: "证据不足",
+  high_risk_action: "高风险动作",
+};
+
 const corpusTypeText: Record<CorpusType, string> = {
   policy: "政策",
   case: "案例",
@@ -253,7 +287,7 @@ const stopReasonText: Record<string, string> = {
   "Regional proposal flow does not require a separate comms terminal step.": "区域请示流程不需要额外的通信终端步骤。",
   "Comms stopped because no communication target was available.": "由于没有可通信目标，沟通草案生成已停止。",
   "The task graph reached the comms terminal step.": "任务图已到达通信终点步骤。",
-  "The requested agent task type is unsupported.": "当前请求的 Agent 任务类型暂不支持。",
+  "The requested agent task type is unsupported.": "当前请求的智能体任务类型暂不支持。",
   "No high-risk target is active.": "当前没有处于高风险的目标对象。",
   "Regional action proposals are awaiting commander confirmation.": "区域动作请示正在等待指挥长确认。",
   "Regional risk remains below the active action threshold.": "区域风险尚未达到动作触发阈值。",
@@ -447,6 +481,34 @@ export function formatAgentHandoffTarget(target?: string | null) {
     return "未指定";
   }
   return agentNameTextMap[target as AgentName] ?? formatAgentTaskType(target);
+}
+
+export function formatAudienceLabel(audience?: string | null) {
+  if (!audience) {
+    return "未标注受众";
+  }
+  return audienceText[audience] ?? "其他受众";
+}
+
+export function formatChannelLabel(channel?: string | null) {
+  if (!channel) {
+    return "未标注渠道";
+  }
+  return channelText[channel] ?? "其他渠道";
+}
+
+export function formatAuditDecisionStatus(status?: string | null) {
+  if (!status) {
+    return "未知";
+  }
+  return auditDecisionStatusText[status] ?? "未识别审计状态";
+}
+
+export function formatRiskFlagLabel(flag?: string | null) {
+  if (!flag) {
+    return "未标注风险";
+  }
+  return riskFlagText[flag] ?? "其他风险标记";
 }
 
 export function formatActionScopeFieldLabel(fieldName: string) {

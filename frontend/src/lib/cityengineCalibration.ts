@@ -1,6 +1,7 @@
 type CesiumModule = typeof import("cesium");
 type SourceAxisToken = "x" | "y" | "z" | "-x" | "-y" | "-z";
 type SourceCenterMode = "root-node-centroid" | "bounds-center";
+type PlacementMode = "simple" | "calibrated";
 
 export type SourceFrame = {
   east: SourceAxisToken;
@@ -23,6 +24,7 @@ export interface SceneConfig {
   verticalScale: number;
   sourceFrame: SourceFrame;
   sourceCenterMode: SourceCenterMode;
+  placementMode: PlacementMode;
   cameraPresets?: {
     overview?: { heading: number; pitch: number; range: number; fitWholeModel?: boolean; focusRadius?: number };
   };
@@ -73,6 +75,7 @@ export function normalizeSceneConfig(raw: Partial<SceneConfig>): SceneConfig {
     verticalScale: raw.verticalScale ?? 1,
     sourceFrame: raw.sourceFrame ?? DEFAULT_SOURCE_FRAME,
     sourceCenterMode: raw.sourceCenterMode ?? "bounds-center",
+    placementMode: raw.placementMode ?? "calibrated",
     cameraPresets: raw.cameraPresets ?? {
       overview: { heading: 20, pitch: -42, range: 2400, fitWholeModel: true },
     },

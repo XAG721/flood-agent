@@ -17,6 +17,7 @@
     "up": "y"
   },
   "sourceCenterMode": "bounds-center",
+  "placementMode": "calibrated",
   "terrainAnchorMode": "sample-most-detailed",
   "cameraPresets": {
     "overview": {

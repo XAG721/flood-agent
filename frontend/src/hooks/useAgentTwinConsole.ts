@@ -28,12 +28,21 @@ import type {
   TwinStreamEvent,
   WarningGenerationResponse,
 } from "../types/api";
+import { buildMentionCandidates, resolveMentionedObjectId } from "../lib/objectMention";
 import { usePlatformOperatorConsole } from "./usePlatformOperatorConsole";
 
 type TwinStreamStatus = "closed" | "connecting" | "open" | "error";
 
 function nowIso() {
   return new Date().toISOString();
+}
+
+function inferDialogObjectId(message: string, overview: TwinOverviewView | null) {
+  if (!message.trim() || !overview) {
+    return null;
+  }
+
+  return resolveMentionedObjectId(message, buildMentionCandidates(overview.focus_objects, overview.map_layers));
 }
 
 export function useAgentTwinConsole() {
@@ -254,7 +263,8 @@ export function useAgentTwinConsole() {
         return null;
       }
 
-      const targetObjectId = objectId ?? focusObject?.object_id ?? twinOverview?.lead_object_id ?? undefined;
+      const inferredObjectId = inferDialogObjectId(message, twinOverview ?? (agentTwinDemoModeEnabled ? demoTwinOverview : null));
+      const targetObjectId = objectId ?? inferredObjectId ?? focusObject?.object_id ?? twinOverview?.lead_object_id ?? undefined;
       if (agentTwinDemoModeEnabled) {
         const response = buildDemoDialogResponse(message.trim(), targetObjectId ?? demoFocusObjectId);
         setDemoFocusObjectId(response.object_id);
@@ -325,7 +335,17 @@ export function useAgentTwinConsole() {
         setDialogBusy(false);
       }
     },
-    [base, currentEventId, focusObject?.object_id, loadFocusObject, refreshAgentCouncil, refreshTwinOverview, selectTwinObject, twinOverview?.lead_object_id],
+    [
+      base,
+      currentEventId,
+      demoTwinOverview,
+      focusObject?.object_id,
+      loadFocusObject,
+      refreshAgentCouncil,
+      refreshTwinOverview,
+      selectTwinObject,
+      twinOverview,
+    ],
   );
 
   const generateTwinProposals = useCallback(
@@ -462,7 +482,7 @@ export function useAgentTwinConsole() {
       trend: base.hazardState?.trend ?? "unknown",
       summary:
         base.agentStatus?.latest_summary ??
-        "系统正在使用现有事件与对象态势构建主屏，等待 AgentTwin 聚合视图返回更完整的影响链解释。",
+        "系统正在使用现有事件与对象态势构建主屏，等待智能体孪生聚合视图返回更完整的影响链解释。",
       lead_object_id: fallbackFocusObjects[0]?.object_id ?? null,
       lead_object_name: fallbackFocusObjects[0]?.name ?? null,
       focus_objects: fallbackFocusObjects,

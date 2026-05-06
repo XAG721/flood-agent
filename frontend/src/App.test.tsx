@@ -1147,18 +1147,18 @@ describe("App", () => {
     renderApp("/");
 
     expect((await screen.findAllByRole("heading", { name: /数字孪生智能体洪水预警系统/ })).length).toBeGreaterThan(0);
-    expect(screen.getByRole("link", { name: "风险总览" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "影响问答" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "协同处置" })).toBeInTheDocument();
+    expect(screen.getAllByRole("link", { name: "态势总览" }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: "智能问答" }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: "风险预警" }).length).toBeGreaterThan(0);
     expect(screen.getAllByText("碑林区积涝演练事件").length).toBeGreaterThan(0);
     expect(screen.getAllByText("李阿姨").length).toBeGreaterThan(0);
-    expect(screen.getByText("数字孪生智能体洪水预警主屏")).toBeInTheDocument();
-    expect(screen.getByText("重点对象")).toBeInTheDocument();
+    expect(screen.getAllByText("数字孪生智能体洪水预警主屏").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("重点对象列表").length).toBeGreaterThan(0);
     expect(screen.getByText(/1 条.*已完成闭环/)).toBeInTheDocument();
     expect(await screen.findByLabelText("digital-twin-canvas")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Play command story/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /City overview/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Warning spread/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /播放指挥镜头/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /全域态势/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /预警扩散/ })).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: /李阿姨|五河里小学|建设里社区网格三组/ }).length).toBeGreaterThan(0);
   });
 
@@ -1166,10 +1166,10 @@ describe("App", () => {
     installFetchMock();
     renderApp("/copilot");
 
-    expect(await screen.findByRole("heading", { name: /对话查看研判、请示与总结/ })).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/先复述一下你现在理解的需求/)).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: /现场追问助手/ })).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/请输入要追问的对象、风险或避险路线/)).toBeInTheDocument();
     expect(screen.getAllByText("李阿姨").length).toBeGreaterThan(0);
-    expect(screen.getByText("发送")).toBeInTheDocument();
+    expect(screen.getByText("发送问题")).toBeInTheDocument();
     expect(screen.queryByText("智能体主动请示")).not.toBeInTheDocument();
   });
 
@@ -1193,10 +1193,10 @@ describe("App", () => {
     });
     renderApp("/operations");
 
-    expect((await screen.findAllByRole("heading", { name: /协同处置/ })).length).toBeGreaterThan(0);
-    expect(screen.getByText("完成区域资源调度")).toBeInTheDocument();
-    expect(screen.getByText("规划区域转移建议")).toBeInTheDocument();
-    expect(screen.getAllByText(/时间线/).length).toBeGreaterThan(0);
+    expect((await screen.findAllByRole("heading", { name: /风险预警/ })).length).toBeGreaterThan(0);
+    expect(screen.getAllByText("风险预警与应急调度平台").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("模型与预警指标").length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: "预警分析" }).length).toBeGreaterThan(0);
     expect(screen.queryByLabelText("approve-proposal-proposal_school_1")).not.toBeInTheDocument();
   });
 
@@ -1205,7 +1205,7 @@ describe("App", () => {
     const { fetchMock } = installFetchMock({ initialQueueItems: [pendingItem] });
     renderApp("/operations");
 
-    expect((await screen.findAllByRole("heading", { name: /协同处置/ })).length).toBeGreaterThan(0);
+    expect((await screen.findAllByRole("heading", { name: /风险预警/ })).length).toBeGreaterThan(0);
     expect(await screen.findByText("智能体主动请示")).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("target_scope"), {
       target: { value: "北部社区、五岳里小学与周边家属区" },
@@ -1226,7 +1226,7 @@ describe("App", () => {
     const { fetchMock, getQueueSnapshot } = installFetchMock({ initialQueueItems: [createRegionalView()] });
     renderApp("/operations");
 
-    expect((await screen.findAllByRole("heading", { name: /协同处置/ })).length).toBeGreaterThan(0);
+    expect((await screen.findAllByRole("heading", { name: /风险预警/ })).length).toBeGreaterThan(0);
 
     fireEvent.click(
       await screen.findByRole("button", {
@@ -1253,7 +1253,7 @@ describe("App", () => {
     installFetchMock({ initialQueueItems: [createRegionalView()] });
     renderApp("/operations");
 
-    expect((await screen.findAllByRole("heading", { name: /协同处置/ })).length).toBeGreaterThan(0);
+    expect((await screen.findAllByRole("heading", { name: /风险预警/ })).length).toBeGreaterThan(0);
 
     expect(await screen.findByText("智能体主动请示")).toBeInTheDocument();
     vi.useFakeTimers();
@@ -1285,7 +1285,7 @@ describe("App", () => {
     });
     renderApp("/operations");
 
-    expect((await screen.findAllByRole("heading", { name: /协同处置/ })).length).toBeGreaterThan(0);
+    expect((await screen.findAllByRole("heading", { name: /风险预警/ })).length).toBeGreaterThan(0);
 
     const dialog = await screen.findByLabelText("global-regional-proposal-dialog");
     expect(dialog).toHaveTextContent("执行地下空间清退");

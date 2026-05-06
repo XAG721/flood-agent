@@ -19,19 +19,19 @@ export const quickPrompts = [
 
 export const pageMeta = {
   "/": {
-    label: "风险总览",
-    title: "全局风险态势总览",
-    description: "围绕当前洪涝事件，集中展示风险等级、变化趋势、重点对象和待处置事项。",
+    label: "态势总览",
+    title: "数字孪生洪水预警态势总览",
+    description: "围绕当前洪涝事件，集中展示预警等级、活动告警、重点对象和闭环状态。",
   },
   "/copilot": {
-    label: "影响问答",
-    title: "影响研判问答",
-    description: "围绕重点对象和当前事件自由提问，查看影响过程、证据依据和下一步建议。",
+    label: "智能问答",
+    title: "智能体问答助手",
+    description: "在专门页面中围绕重点对象、影响链、证据依据和下一步动作进行连续追问。",
   },
   "/operations": {
-    label: "协同处置",
-    title: "多 Agent 协同处置",
-    description: "展示系统如何围绕当前风险任务完成协同、工具调用和方案生成。",
+    label: "风险预警",
+    title: "风险预警与应急调度平台",
+    description: "展示未来高风险区、降雨峰值、风险对象和应急调度建议。",
   },
   "/data": {
     label: "数据管理",
@@ -39,14 +39,14 @@ export const pageMeta = {
     description: "管理画像、资源、知识文档和碑林区数据抓取刷新。",
   },
   "/agents": {
-    label: "多 Agent 协同",
-    title: "多 Agent 协同、共享记忆与评测",
-    description: "查看多 Agent 调度、任务时间线、触发总线、经验上下文和评测结果。",
+    label: "预警分析",
+    title: "洪水预警与影响范围分析平台",
+    description: "展示降雨趋势、积水区域、预警边界和影响范围分析。",
   },
   "/reliability": {
-    label: "可靠性与审计",
-    title: "运行健康、审计与权限策略",
-    description: "查看后台巡检健康、告警、审计、归档状态和当前角色权限。",
+    label: "事件复盘",
+    title: "事件复盘与应急处置效果分析平台",
+    description: "展示事件演进、关键决策、处置效果和预案优化建议。",
   },
 } as const;
 
