@@ -102,7 +102,7 @@ def build_history_event(now: datetime) -> EventRecord:
 def build_hazard_state(event_id: str, now: datetime, *, closed: bool = False) -> HazardState:
     risk_level = RiskLevel.BLUE if closed else RiskLevel.RED
     score_base = 42.0 if closed else 92.0
-    depth_base = 18.0 if closed else 74.0
+    depth_base = 16.0 if closed else 26.0
     trend = "falling" if closed else "rapidly_rising"
     generated_at = now - timedelta(days=5) if closed else now - timedelta(minutes=2)
     villages = [
@@ -155,28 +155,28 @@ def build_hazard_state(event_id: str, now: datetime, *, closed: bool = False) ->
     points = [
         MonitoringPointState(
             point_name="南门地铁泵站",
-            latest_water_level_m=4.62 if not closed else 2.1,
+            latest_water_level_m=0.34 if not closed else 0.16,
             latest_rainfall_mm=32.5 if not closed else 4.0,
             status="严重" if not closed else "恢复",
             updated_at=generated_at,
         ),
         MonitoringPointState(
             point_name="文艺路下穿监测点",
-            latest_water_level_m=4.71 if not closed else 2.0,
+            latest_water_level_m=0.38 if not closed else 0.15,
             latest_rainfall_mm=31.2 if not closed else 3.6,
             status="严重" if not closed else "恢复",
             updated_at=generated_at,
         ),
         MonitoringPointState(
             point_name="李家村集水井",
-            latest_water_level_m=4.54 if not closed else 1.9,
+            latest_water_level_m=0.31 if not closed else 0.14,
             latest_rainfall_mm=28.8 if not closed else 3.1,
             status="警戒" if not closed else "恢复",
             updated_at=generated_at,
         ),
         MonitoringPointState(
             point_name="和平门下穿监测点",
-            latest_water_level_m=4.48 if not closed else 2.2,
+            latest_water_level_m=0.29 if not closed else 0.17,
             latest_rainfall_mm=27.9 if not closed else 2.8,
             status="警戒" if not closed else "恢复",
             updated_at=generated_at,

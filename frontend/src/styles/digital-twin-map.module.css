@@ -47,7 +47,7 @@
 
 .overlayActions {
   position: absolute;
-  top: 112px;
+  top: 18px;
   left: 18px;
   z-index: 3;
   width: min(360px, calc(100% - 36px));

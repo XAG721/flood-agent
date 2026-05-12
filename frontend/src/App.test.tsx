@@ -1158,7 +1158,7 @@ describe("App", () => {
     expect(await screen.findByLabelText("digital-twin-canvas")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /播放指挥镜头/ })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /全域态势/ })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /预警扩散/ })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /预警扩散/ })).not.toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: /李阿姨|五河里小学|建设里社区网格三组/ }).length).toBeGreaterThan(0);
   });
 

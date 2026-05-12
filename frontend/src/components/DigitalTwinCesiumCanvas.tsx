@@ -30,7 +30,7 @@ type TwinEntityBundle = {
   warningRings?: any[];
 };
 
-type NarrativeStepKey = "overview" | "risk" | "water" | "route" | "closure" | "warning";
+type NarrativeStepKey = "overview" | "risk" | "water" | "route" | "closure";
 
 type NarrativeStep = {
   key: NarrativeStepKey;
@@ -69,12 +69,6 @@ const NARRATIVE_STEPS: NarrativeStep[] = [
     shortLabel: "05",
     title: "审批闭环",
     narrative: "聚焦处置方案审批状态及闭环落点对象。",
-  },
-  {
-    key: "warning",
-    shortLabel: "06",
-    title: "预警扩散",
-    narrative: "展示动作批准后分众预警在空间上的扩散效果。",
   },
 ];
 
@@ -130,13 +124,13 @@ function riskRadius(riskLevel?: RiskLevel | null, proposalState?: string) {
 
 function waterDepthCm(riskLevel?: RiskLevel | null, proposalState?: string) {
   const base = {
-    None: 8,
-    Blue: 18,
-    Yellow: 34,
-    Orange: 58,
-    Red: 86,
+    None: 12,
+    Blue: 20,
+    Yellow: 26,
+    Orange: 32,
+    Red: 38,
   }[riskLevel ?? "None"];
-  return base + (proposalState === "pending" ? 12 : proposalState === "warning_generated" ? 18 : 0);
+  return Math.min(40, base + (proposalState === "pending" ? 4 : proposalState === "warning_generated" ? 2 : 0));
 }
 
 function riskMotionIntensity(riskLevel?: RiskLevel | null, proposalState?: string) {
@@ -167,8 +161,11 @@ function buildingHighlightSize(entityType?: string | null) {
 type RouteAnchor = Pick<TwinObjectMapLayer, "east_offset_m" | "north_offset_m" | "height_offset_m" | "entity_type">;
 type RouteOffsetPoint = { east: number; north: number; height: number };
 
-const ROAD_CORRIDOR_X = [-520, -360, -180, 0, 180, 360, 520];
-const ROAD_CORRIDOR_Y = [-390, -240, -80, 90, 250, 410];
+const ROAD_CORRIDOR_X = [-220, 0, 310];
+const ROAD_CORRIDOR_Y = [-165, -70, 150];
+const PRIMARY_ROAD_EAST = 0;
+const PRIMARY_ROAD_NORTH = -70;
+const ROAD_ROUTE_HEIGHT_M = 7;
 
 function nearestCorridor(value: number, corridors: number[]) {
   return corridors.reduce((best, current) => (Math.abs(current - value) < Math.abs(best - value) ? current : best), corridors[0]);
@@ -187,47 +184,82 @@ function appendRoutePoint(points: RouteOffsetPoint[], point: RouteOffsetPoint) {
   points.push(point);
 }
 
-function roadAccess(anchor: RouteAnchor, height: number) {
-  const nearestX = nearestCorridor(anchor.east_offset_m, ROAD_CORRIDOR_X);
-  const nearestY = nearestCorridor(anchor.north_offset_m, ROAD_CORRIDOR_Y);
-  const size = buildingHighlightSize(anchor.entity_type);
-  const eastGap = Math.abs(anchor.east_offset_m - nearestX);
-  const northGap = Math.abs(anchor.north_offset_m - nearestY);
+function appendRoadSegment(points: RouteOffsetPoint[], from: RouteOffsetPoint, to: RouteOffsetPoint) {
+  const sameEast = Math.abs(from.east - to.east) < 1;
+  const sameNorth = Math.abs(from.north - to.north) < 1;
 
-  if (eastGap <= northGap) {
-    const gateNorth = anchor.north_offset_m + Math.sign(nearestY - anchor.north_offset_m || 1) * Math.max(size.depth * 0.62, 28);
-    return {
-      exit: { east: anchor.east_offset_m, north: gateNorth, height },
-      road: { east: nearestX, north: gateNorth, height },
-      junction: { east: nearestX, north: nearestY, height },
-    };
+  if (!sameEast && !sameNorth) {
+    appendRoadSegment(points, from, { east: to.east, north: from.north, height: from.height });
+    appendRoadSegment(points, { east: to.east, north: from.north, height: from.height }, to);
+    return;
   }
 
-  const gateEast = anchor.east_offset_m + Math.sign(nearestX - anchor.east_offset_m || 1) * Math.max(size.width * 0.62, 28);
-  return {
-    exit: { east: gateEast, north: anchor.north_offset_m, height },
-    road: { east: gateEast, north: nearestY, height },
-    junction: { east: nearestX, north: nearestY, height },
-  };
+  appendRoutePoint(points, from);
+
+  if (!sameEast) {
+    const [minEast, maxEast] = from.east < to.east ? [from.east, to.east] : [to.east, from.east];
+    const corridorPoints = ROAD_CORRIDOR_X.filter((east) => east > minEast && east < maxEast);
+    const orderedEast = from.east < to.east ? corridorPoints : [...corridorPoints].reverse();
+    for (const east of orderedEast) {
+      appendRoutePoint(points, { east, north: from.north, height: from.height });
+    }
+  } else if (!sameNorth) {
+    const [minNorth, maxNorth] = from.north < to.north ? [from.north, to.north] : [to.north, from.north];
+    const corridorPoints = ROAD_CORRIDOR_Y.filter((north) => north > minNorth && north < maxNorth);
+    const orderedNorth = from.north < to.north ? corridorPoints : [...corridorPoints].reverse();
+    for (const north of orderedNorth) {
+      appendRoutePoint(points, { east: from.east, north, height: from.height });
+    }
+  }
+
+  appendRoutePoint(points, to);
+}
+
+function targetMainRoadEast(anchor: RouteAnchor) {
+  if (anchor.east_offset_m > 80) {
+    return 310;
+  }
+  if (anchor.east_offset_m < -120) {
+    return -220;
+  }
+  return PRIMARY_ROAD_EAST;
 }
 
 function buildRoadFollowingRoute(source: RouteAnchor, target: RouteAnchor) {
-  const height = Math.max(source.height_offset_m, target.height_offset_m) + 18;
-  const sourceAccess = roadAccess(source, height);
-  const targetAccess = roadAccess(target, height);
+  const height = ROAD_ROUTE_HEIGHT_M;
+  const sourceRoadNorth = nearestCorridor(source.north_offset_m, ROAD_CORRIDOR_Y);
+  const targetRoadNorth = nearestCorridor(target.north_offset_m, ROAD_CORRIDOR_Y);
+  const start = { east: PRIMARY_ROAD_EAST, north: sourceRoadNorth, height };
+  const turn = { east: PRIMARY_ROAD_EAST, north: targetRoadNorth, height };
+  const end = { east: targetMainRoadEast(target), north: targetRoadNorth, height };
   const route: RouteOffsetPoint[] = [];
 
-  appendRoutePoint(route, { east: source.east_offset_m, north: source.north_offset_m, height });
-  appendRoutePoint(route, sourceAccess.exit);
-  appendRoutePoint(route, sourceAccess.road);
-  appendRoutePoint(route, sourceAccess.junction);
-  appendRoutePoint(route, { east: targetAccess.junction.east, north: sourceAccess.junction.north, height });
-  appendRoutePoint(route, targetAccess.junction);
-  appendRoutePoint(route, targetAccess.road);
-  appendRoutePoint(route, targetAccess.exit);
-  appendRoutePoint(route, { east: target.east_offset_m, north: target.north_offset_m, height });
+  appendRoadSegment(route, start, turn);
+  appendRoadSegment(route, turn, end);
+
+  if (route.length < 2) {
+    appendRoutePoint(route, { east: 310, north: sourceRoadNorth, height });
+  }
 
   return route;
+}
+
+function buildRoadClosureRoute(anchor: RouteAnchor, radius: number) {
+  const height = ROAD_ROUTE_HEIGHT_M;
+  const closeOnVerticalRoad = Math.abs(anchor.east_offset_m - PRIMARY_ROAD_EAST) <= Math.abs(anchor.north_offset_m - PRIMARY_ROAD_NORTH);
+  const halfLength = Math.max(36, Math.min(radius * 0.44, 72));
+
+  if (closeOnVerticalRoad) {
+    return [
+      { east: PRIMARY_ROAD_EAST, north: nearestCorridor(anchor.north_offset_m, ROAD_CORRIDOR_Y) - halfLength, height },
+      { east: PRIMARY_ROAD_EAST, north: nearestCorridor(anchor.north_offset_m, ROAD_CORRIDOR_Y) + halfLength, height },
+    ];
+  }
+
+  return [
+    { east: PRIMARY_ROAD_EAST - halfLength, north: PRIMARY_ROAD_NORTH, height },
+    { east: PRIMARY_ROAD_EAST + halfLength, north: PRIMARY_ROAD_NORTH, height },
+  ];
 }
 
 function objectPhaseSeed(objectId: string) {
@@ -249,6 +281,20 @@ function extractObjectId(entityId?: string) {
 
 function isJsdomRuntime() {
   return typeof navigator !== "undefined" && /jsdom/i.test(navigator.userAgent);
+}
+
+function formatCanvasError(caught: unknown) {
+  if (caught instanceof Error) {
+    return caught.message || "未知三维地图错误";
+  }
+  if (typeof caught === "string") {
+    return caught || "未知三维地图错误";
+  }
+  try {
+    return JSON.stringify(caught) || "未知三维地图错误";
+  } catch {
+    return "未知三维地图错误";
+  }
 }
 
 export function DigitalTwinCesiumCanvas({
@@ -318,18 +364,12 @@ export function DigitalTwinCesiumCanvas({
       layers.find((item) => item.proposal_state === "pending") ??
       layers.find((item) => item.proposal_state === "approved") ??
       focusLayer;
-    const warningLayer =
-      layers.find((item) => item.proposal_state === "warning_generated") ??
-      layers.find((item) => item.proposal_state === "approved") ??
-      closureLayer;
-
     return {
       overview: null,
       risk: riskSource,
       water: focusLayer,
       route: routeLayer,
       closure: closureLayer,
-      warning: warningLayer,
     } satisfies Record<NarrativeStepKey, TwinObjectMapLayer | null>;
   }, [dialogFocusObjectId, layerById, layers, leadLayer, routeHighlightObjectId]);
 
@@ -359,11 +399,7 @@ export function DigitalTwinCesiumCanvas({
     if (stepKey === "closure") {
       return { layer, entity: bundle?.marker ?? bundle?.roadClosure, kind: "entity" as const };
     }
-    return {
-      layer,
-      entity: bundle?.warningSpread ?? bundle?.warningRings?.[0] ?? bundle?.marker,
-      kind: "warning" as const,
-    };
+    return { layer, entity: bundle?.marker, kind: "entity" as const };
   };
 
   const flyToNarrativeStep = (stepKey: NarrativeStepKey, options?: { duration?: number; autoSelect?: boolean }) => {
@@ -394,8 +430,8 @@ export function DigitalTwinCesiumCanvas({
       duration: options?.duration ?? 1.1,
       offset: new Cesium.HeadingPitchRange(
         Cesium.Math.toRadians(target.kind === "route" ? 72 : 38),
-        Cesium.Math.toRadians(target.kind === "warning" ? -36 : -28),
-        target.kind === "warning" ? 680 : target.kind === "route" ? 740 : 430,
+        Cesium.Math.toRadians(-28),
+        target.kind === "route" ? 740 : 430,
       ),
     });
   };
@@ -415,13 +451,13 @@ export function DigitalTwinCesiumCanvas({
     flyToNarrativeStep("overview", { duration: 1.1, autoSelect: false });
     NARRATIVE_STEPS.slice(1).forEach((step, index) => {
       const timer = window.setTimeout(() => {
-        flyToNarrativeStep(step.key, { duration: step.key === "warning" ? 1.3 : 1.15 });
+        flyToNarrativeStep(step.key, { duration: 1.15 });
       }, (index + 1) * 1600);
       tourTimersRef.current.push(timer);
     });
     const stopTimer = window.setTimeout(() => {
       setTourRunning(false);
-      setTourNarrative("指挥叙事完成：影响、路线、审批与预警闭环已对齐。");
+      setTourNarrative("指挥叙事完成：影响、路线与审批闭环已对齐。");
       tourTimersRef.current = [];
     }, NARRATIVE_STEPS.length * 1600 + 700);
     tourTimersRef.current.push(stopTimer);
@@ -566,25 +602,23 @@ export function DigitalTwinCesiumCanvas({
         }
 
         for (const layer of layers) {
-          const position = layerPositions.get(layer.object_id);
-          const color = Color.fromCssColorString(stateColor(layer.proposal_state));
-          const radius = riskRadius(layer.risk_level, layer.proposal_state);
-          const depthCm = waterDepthCm(layer.risk_level, layer.proposal_state);
-          const columnHeight = Math.max(24, depthCm * 0.95);
-          const highlightSize = buildingHighlightSize(layer.entity_type);
-          const intensity = riskMotionIntensity(layer.risk_level, layer.proposal_state);
-          const phaseSeed = objectPhaseSeed(layer.object_id);
-          const closureStart = Matrix4.multiplyByPoint(
-            anchorFrame,
-            new Cartesian3(layer.east_offset_m - radius * 0.62, layer.north_offset_m - radius * 0.18, layer.height_offset_m + 6),
-            new Cartesian3(),
-          );
-          const closureEnd = Matrix4.multiplyByPoint(
-            anchorFrame,
-            new Cartesian3(layer.east_offset_m + radius * 0.62, layer.north_offset_m + radius * 0.18, layer.height_offset_m + 6),
-            new Cartesian3(),
-          );
-          const heat = viewer.entities.add({
+          try {
+            const position = layerPositions.get(layer.object_id);
+            const color = Color.fromCssColorString(stateColor(layer.proposal_state));
+            const radius = riskRadius(layer.risk_level, layer.proposal_state);
+            const depthCm = waterDepthCm(layer.risk_level, layer.proposal_state);
+            const columnHeight = Math.max(14, depthCm * 0.55);
+            const highlightSize = buildingHighlightSize(layer.entity_type);
+            const intensity = riskMotionIntensity(layer.risk_level, layer.proposal_state);
+            const phaseSeed = objectPhaseSeed(layer.object_id);
+            const closurePositions = buildRoadClosureRoute(layer, radius).map((point) =>
+              Matrix4.multiplyByPoint(
+                anchorFrame,
+                new Cartesian3(point.east, point.north, point.height),
+                new Cartesian3(),
+              ),
+            );
+            const heat = viewer.entities.add({
             id: `${layer.object_id}:risk-heat`,
             name: `${layer.name} risk heat`,
             position,
@@ -728,7 +762,7 @@ export function DigitalTwinCesiumCanvas({
                   id: `${layer.object_id}:road-closure`,
                   name: `${layer.name} 道路阻断线`,
                   polyline: {
-                    positions: [closureStart, closureEnd],
+                    positions: closurePositions,
                     width: layer.risk_level === "Red" ? 7 : 5,
                     material: new PolylineGlowMaterialProperty({
                       glowPower: 0.22,
@@ -790,17 +824,20 @@ export function DigitalTwinCesiumCanvas({
               horizontalOrigin: HorizontalOrigin.CENTER,
             },
           });
-          entityMapRef.current.set(layer.object_id, {
-            marker,
-            heat,
-            pulse,
-            water,
-            waterColumn,
-            buildingHighlight,
-            roadClosure,
-            warningSpread,
-            warningRings,
-          });
+            entityMapRef.current.set(layer.object_id, {
+              marker,
+              heat,
+              pulse,
+              water,
+              waterColumn,
+              buildingHighlight,
+              roadClosure,
+              warningSpread,
+              warningRings,
+            });
+          } catch (overlayError) {
+            console.warn("数字孪生对象叠加层创建失败，已跳过该对象", layer.object_id, overlayError);
+          }
         }
 
         const leadPosition = leadLayer ? layerPositions.get(leadLayer.object_id) : undefined;
@@ -810,6 +847,7 @@ export function DigitalTwinCesiumCanvas({
             if (!targetPosition) {
               continue;
             }
+            try {
             const color = Color.fromCssColorString(stateColor(layer.proposal_state));
             const routeTarget =
               layer.object_id === leadLayer?.object_id
@@ -822,6 +860,9 @@ export function DigitalTwinCesiumCanvas({
                 : layer;
             const routeSource = leadLayer ?? layer;
             const routeOffsets = buildRoadFollowingRoute(routeSource, routeTarget);
+            if (routeOffsets.length < 2) {
+              continue;
+            }
             const routePositions = routeOffsets.map((point) =>
               Matrix4.multiplyByPoint(
                 anchorFrame,
@@ -835,10 +876,12 @@ export function DigitalTwinCesiumCanvas({
               name: `${layer.name} command link`,
               polyline: {
                 positions: routePositions,
-                width: layer.proposal_state === "monitoring" ? 2 : 4,
+                width: layer.proposal_state === "monitoring" ? 4 : 10,
                 material: new PolylineGlowMaterialProperty({
-                  glowPower: layer.proposal_state === "monitoring" ? 0.12 : 0.28,
-                  color: color.withAlpha(layer.proposal_state === "monitoring" ? 0.28 : 0.74),
+                  glowPower: layer.proposal_state === "monitoring" ? 0.28 : 0.56,
+                  color: Color.fromCssColorString(layer.proposal_state === "approved" ? "#35e6bf" : "#ffb13b").withAlpha(
+                    layer.proposal_state === "monitoring" ? 0.42 : 0.92,
+                  ),
                 }),
               },
             });
@@ -848,9 +891,9 @@ export function DigitalTwinCesiumCanvas({
               show: layer.proposal_state !== "monitoring",
               polyline: {
                 positions: routePositions,
-                width: 7,
+                width: 11,
                 material: new PolylineArrowMaterialProperty(
-                  Color.fromCssColorString(layer.proposal_state === "approved" ? "#35e6bf" : "#ffb13b").withAlpha(0.84),
+                  Color.fromCssColorString(layer.proposal_state === "approved" ? "#43ffd0" : "#ffc247").withAlpha(0.98),
                 ),
               },
             });
@@ -883,6 +926,9 @@ export function DigitalTwinCesiumCanvas({
               bundle.route = route;
               bundle.evacuationRoute = evacuationRoute;
               bundle.resourceVehicle = resourceVehicle;
+            }
+            } catch (routeError) {
+              console.warn("数字孪生处置路线创建失败，已跳过该路线", layer.object_id, routeError);
             }
           }
         }
@@ -930,7 +976,8 @@ export function DigitalTwinCesiumCanvas({
           viewer.destroy();
         }
       } catch (caught) {
-        setError(caught instanceof Error ? caught.message : "未知三维地图错误");
+        console.error("数字孪生三维画布初始化失败", caught);
+        setError(formatCanvasError(caught));
         setStatus("数字孪生画布已切换为降级模式");
       }
     }
@@ -968,36 +1015,35 @@ export function DigitalTwinCesiumCanvas({
       const routeGuided = objectId === routeHighlightObjectId;
       const routeStory = activeNarrativeStep === "route";
       const closureStory = activeNarrativeStep === "closure";
-      const warningStory = activeNarrativeStep === "warning";
       if (!bundle.marker?.point) {
         return;
       }
       bundle.marker.point.outlineWidth = focused || (closureStory && layer?.proposal_state !== "monitoring") ? baseOutlineWidth + 2 : baseOutlineWidth;
       bundle.marker.point.pixelSize = focused || (closureStory && layer?.proposal_state !== "monitoring") ? basePixelSize + 5 : basePixelSize;
       if (bundle.pulse?.ellipse) {
-        bundle.pulse.show = focused || routeGuided || layer?.proposal_state !== "monitoring" || warningStory;
+        bundle.pulse.show = focused || routeGuided || layer?.proposal_state !== "monitoring";
       }
       if (bundle.buildingHighlight?.box) {
         bundle.buildingHighlight.show = dialogFocused;
       }
       if (Cesium && layer && bundle.route?.polyline) {
         const routeFocused = focused || routeGuided || (routeStory && layer.proposal_state !== "monitoring");
-        const color = routeGuided
-          ? Cesium.Color.fromCssColorString("#ffb13b")
-          : Cesium.Color.fromCssColorString(stateColor(layer.proposal_state));
-        bundle.route.polyline.width = routeGuided ? 9 : routeFocused ? 7 : layer.proposal_state === "monitoring" ? 2 : 4;
+        const color = Cesium.Color.fromCssColorString(
+          routeGuided || layer.proposal_state !== "approved" ? "#ffb13b" : "#35e6bf",
+        );
+        bundle.route.polyline.width = routeGuided ? 18 : routeFocused ? 15 : layer.proposal_state === "monitoring" ? 5 : 11;
         bundle.route.polyline.material = new Cesium.PolylineGlowMaterialProperty({
-          glowPower: routeGuided ? 0.46 : routeFocused ? 0.34 : 0.14,
-          color: color.withAlpha(routeStory && !routeFocused ? 0.18 : routeFocused ? 0.92 : 0.46),
+          glowPower: routeGuided ? 0.68 : routeFocused ? 0.58 : 0.42,
+          color: color.withAlpha(routeStory && !routeFocused ? 0.62 : routeFocused ? 0.98 : 0.82),
         });
       }
       if (bundle.evacuationRoute?.polyline) {
         const routeFocused = focused || routeGuided || routeStory;
-        bundle.evacuationRoute.polyline.width = routeGuided ? 12 : routeFocused ? 10 : 7;
+        bundle.evacuationRoute.polyline.width = routeGuided ? 17 : routeFocused ? 14 : 11;
         if (Cesium) {
           bundle.evacuationRoute.polyline.material = new Cesium.PolylineArrowMaterialProperty(
-            Cesium.Color.fromCssColorString(routeGuided ? "#ffb13b" : layer?.proposal_state === "approved" ? "#35e6bf" : "#28d8ff").withAlpha(
-              routeGuided ? 0.96 : 0.78,
+            Cesium.Color.fromCssColorString(routeGuided ? "#ffd166" : layer?.proposal_state === "approved" ? "#43ffd0" : "#ffc247").withAlpha(
+              routeGuided ? 1 : 0.96,
             ),
           );
         }
@@ -1012,7 +1058,7 @@ export function DigitalTwinCesiumCanvas({
       }
       if (bundle.warningRings?.length) {
         bundle.warningRings.forEach((ring) => {
-          ring.show = warningStory || focused || layer?.proposal_state === "warning_generated";
+          ring.show = focused || layer?.proposal_state === "warning_generated";
         });
       }
     });
