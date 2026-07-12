@@ -266,7 +266,7 @@ def migrate_to_postgis(
                         mapping_version
                     ) VALUES (
                         %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, TRUE,
-                        CASE WHEN %s IS NULL THEN NULL ELSE ST_GeomFromText(%s, 4326) END, %s, %s
+                        ST_GeomFromText(%s::text, 4326), %s, %s
                     ) ON CONFLICT(record_type, source_id) DO UPDATE SET
                         source_table=EXCLUDED.source_table, event_id=EXCLUDED.event_id,
                         object_id=EXCLUDED.object_id, task_id=EXCLUDED.task_id, version=EXCLUDED.version,
@@ -288,7 +288,6 @@ def migrate_to_postgis(
                         record["payload_ciphertext"],
                         record["payload_sha256"],
                         record["canonical_payload_sha256"],
-                        record["affected_geometry_wkt"],
                         record["affected_geometry_wkt"],
                         batch_id,
                         mapping_version,
