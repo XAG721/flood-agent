@@ -19,13 +19,16 @@ def test_simulated_response_projection_preserves_hashes_and_postgis_polygon(tmp_
     records, quarantined = build_projection_records(db_path)
 
     assert quarantined == []
-    assert {record["record_type"] for record in records} >= {
+    assert {record["record_type"] for record in records} == {
         "response_event",
         "alert_snapshot",
         "risk_object",
         "risk_object_version",
         "task",
         "task_version",
+        "approval",
+        "feedback",
+        "evidence_package",
         "timeline",
     }
     alert = next(record for record in records if record["record_type"] == "alert_snapshot")
@@ -34,6 +37,9 @@ def test_simulated_response_projection_preserves_hashes_and_postgis_polygon(tmp_
     assert all(len(record["payload_sha256"]) == 64 for record in records)
     assert all(len(record["canonical_payload_sha256"]) == 64 for record in records)
     assert all('"event_id"' not in record["payload_ciphertext"] for record in records)
+    assert sum(record["record_type"] == "approval" for record in records) == 1
+    assert sum(record["record_type"] == "feedback" for record in records) == 1
+    assert sum(record["record_type"] == "evidence_package" for record in records) == 1
 
 
 def test_non_simulated_source_is_quarantined_from_simulation_schema(tmp_path) -> None:

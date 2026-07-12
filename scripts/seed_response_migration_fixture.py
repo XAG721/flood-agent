@@ -1,13 +1,20 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from flood_system.response_workflow.models import (
     AlertInput,
+    ApprovalDecision,
+    ApprovalRequest,
+    EvidenceFieldState,
+    EvidencePackageVersion,
+    EvidenceRole,
     EventCreateRequest,
+    FeedbackRequest,
     GeoPolygon,
     ObjectVerificationStatus,
     OperatorRole,
@@ -15,7 +22,10 @@ from flood_system.response_workflow.models import (
     RiskObjectBatchRequest,
     RiskObjectInput,
     RiskObjectVerificationRequest,
+    TaskActionRequest,
+    TaskAssignmentRequest,
     TaskCreateRequest,
+    TaskEvidenceRef,
 )
 from flood_system.system import FloodWarningSystem
 
@@ -114,6 +124,93 @@ def seed_fixture(db_path: Path) -> dict[str, str]:
             operator_role=OperatorRole.DUTY_OFFICER,
             terminal_id="migration-fixture",
             generated_by_ai=False,
+        ),
+    )
+    evidence = TaskEvidenceRef(
+        source_type="simulated_verified_document",
+        source_id="SIM-POSTGIS-PLAN-001",
+        title="模拟区防汛预案",
+        excerpt="下穿通道达到警戒条件时应现场值守并准备交通管控。",
+        roles=[EvidenceRole.PROCEDURE, EvidenceRole.ATTRIBUTION],
+        document_version="2026-sim",
+        clause="4.2",
+    )
+    evidence_hash = hashlib.sha256(evidence.model_dump_json().encode("utf-8")).hexdigest()
+    system.repository.save_evidence_package(
+        EvidencePackageVersion(
+            package_id="SIM-POSTGIS-EVIDENCE-001",
+            event_id=event_id,
+            object_id="SIM-POSTGIS-TUNNEL-001",
+            status="frozen",
+            retrieval_run_id="SIM-POSTGIS-RETRIEVAL-001",
+            field_states={"action": EvidenceFieldState.SUPPORTED},
+            role_coverage={"procedure": True, "attribution": True},
+            evidence=[evidence],
+            content_hash=evidence_hash,
+            created_by="migration-fixture-reviewer",
+            reviewed_by="migration-fixture-reviewer",
+            frozen_at=now,
+            created_at=now,
+        )
+    )
+    workflow.submit_task(
+        task.task_id,
+        TaskActionRequest(
+            operator_id="migration-fixture-duty",
+            operator_role=OperatorRole.DUTY_OFFICER,
+            terminal_id="migration-fixture",
+        ),
+    )
+    workflow.decide_task(
+        task.task_id,
+        ApprovalRequest(
+            decision=ApprovalDecision.APPROVED,
+            operator_id="migration-fixture-reviewer",
+            operator_role=OperatorRole.REVIEWER,
+            note="模拟迁移演练批准",
+            terminal_id="migration-fixture",
+        ),
+    )
+    workflow.acknowledge_task(
+        task.task_id,
+        TaskActionRequest(
+            operator_id="migration-fixture-liaison",
+            operator_role=OperatorRole.LIAISON,
+            terminal_id="migration-fixture",
+        ),
+    )
+    workflow.assign_task(
+        task.task_id,
+        TaskAssignmentRequest(
+            operator_id="migration-fixture-liaison",
+            operator_role=OperatorRole.LIAISON,
+            assignee_id="migration-fixture-field",
+            assignee_name="模拟现场执行员",
+            assignee_role=OperatorRole.FIELD_OPERATOR,
+            reason="模拟迁移演练分派",
+            terminal_id="migration-fixture",
+        ),
+    )
+    workflow.start_task(
+        task.task_id,
+        TaskActionRequest(
+            operator_id="migration-fixture-field",
+            operator_role=OperatorRole.FIELD_OPERATOR,
+            terminal_id="migration-fixture",
+        ),
+    )
+    workflow.submit_feedback(
+        task.task_id,
+        FeedbackRequest(
+            operator_id="migration-fixture-field",
+            operator_role=OperatorRole.FIELD_OPERATOR,
+            summary="模拟现场处置完成，等待独立核验",
+            evidence=[
+                {"type": "模拟现场照片", "url": "simulated://postgis/photo-001"},
+                {"type": "模拟积水深度", "value": "8cm"},
+            ],
+            completion_percent=100,
+            terminal_id="migration-fixture",
         ),
     )
     return {"db_path": str(db_path), "event_id": event_id, "task_id": task.task_id}
