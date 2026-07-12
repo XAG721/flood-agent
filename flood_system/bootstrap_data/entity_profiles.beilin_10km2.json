@@ -6,6 +6,8 @@
     "name": "李阿姨老人家庭",
     "village": "柏树林街道",
     "location_hint": "李家村北侧老院落 17 号楼",
+    "longitude": 108.963,
+    "latitude": 34.251,
     "resident_count": 2,
     "current_occupancy": 2,
     "vulnerability_tags": [
@@ -50,6 +52,8 @@
     "name": "文艺路小学",
     "village": "文艺路街道",
     "location_hint": "文艺路小学北门及东侧支路",
+    "longitude": 108.958,
+    "latitude": 34.244,
     "resident_count": 860,
     "current_occupancy": 820,
     "vulnerability_tags": [
@@ -91,6 +95,8 @@
     "name": "文艺路生物制剂厂",
     "village": "文艺路街道",
     "location_hint": "下沉式装卸月台附近仓库",
+    "longitude": 108.955,
+    "latitude": 34.242,
     "resident_count": 120,
     "current_occupancy": 74,
     "vulnerability_tags": [
@@ -132,6 +138,8 @@
     "name": "碑林中心医院",
     "village": "东关南街街道",
     "location_hint": "急诊通道与后勤入口之间",
+    "longitude": 108.946,
+    "latitude": 34.249,
     "resident_count": 650,
     "current_occupancy": 480,
     "vulnerability_tags": [
@@ -173,6 +181,8 @@
     "name": "和平门医养中心",
     "village": "太乙路街道",
     "location_hint": "一号楼与三号楼之间连廊",
+    "longitude": 108.970,
+    "latitude": 34.247,
     "resident_count": 140,
     "current_occupancy": 128,
     "vulnerability_tags": [
@@ -218,6 +228,8 @@
     "name": "南门地铁换乘枢纽",
     "village": "南院门街道",
     "location_hint": "B/C 出入口与地下换乘大厅",
+    "longitude": 108.953,
+    "latitude": 34.256,
     "resident_count": 1800,
     "current_occupancy": 1250,
     "vulnerability_tags": [
@@ -259,6 +271,8 @@
     "name": "李家村地下商场",
     "village": "柏树林街道",
     "location_hint": "中庭、南侧入口与地下二层设备区",
+    "longitude": 108.960,
+    "latitude": 34.243,
     "resident_count": 540,
     "current_occupancy": 410,
     "vulnerability_tags": [
@@ -300,6 +314,8 @@
     "name": "建设路低洼网格三组",
     "village": "建国路片区",
     "location_hint": "带地下车库的老旧院落带",
+    "longitude": 108.965,
+    "latitude": 34.238,
     "resident_count": 2300,
     "current_occupancy": 2300,
     "vulnerability_tags": [

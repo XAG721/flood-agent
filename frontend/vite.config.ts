@@ -1,4 +1,5 @@
 import { createReadStream, existsSync, readFileSync, statSync } from "node:fs";
+import { createHmac, randomUUID } from "node:crypto";
 import { extname, relative, resolve } from "node:path";
 import react from "@vitejs/plugin-react";
 import { viteStaticCopy } from "../3D_visual/node_modules/vite-plugin-static-copy/dist/index.js";
@@ -10,6 +11,8 @@ const cesiumWidgetsRoot = resolve(rootDir, "../3D_visual/node_modules/@cesium/wi
 const tokenPath = resolve(rootDir, "../3D_visual/cesium_token.txt");
 const agentTwinAssetRoot = resolve(rootDir, "../3D_visual/public");
 const cesiumToken = existsSync(tokenPath) ? readFileSync(tokenPath, "utf8").trim() : "";
+const trustedIdentitySecret = process.env.FLOOD_TRUSTED_IDENTITY_SECRET
+  ?? "local-development-identity-secret-change-before-production-v1";
 const reactPlugin: any = (react as any)();
 const staticCopyPlugin: any = (viteStaticCopy as any)({
   targets: [
@@ -102,6 +105,35 @@ const config: any = {
         target: "http://127.0.0.1:8000",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
+        configure(proxy: any) {
+          proxy.on("proxyReq", (proxyRequest: any, incomingRequest: any) => {
+            const operatorId = String(incomingRequest.headers["x-operator-id"] ?? "operator_console");
+            const operatorRole = String(incomingRequest.headers["x-operator-role"] ?? "commander");
+            const terminalId = String(incomingRequest.headers["x-operator-terminal"] ?? "district-web-console");
+            const assuranceLevel = ["commander", "reviewer", "admin"].includes(operatorRole) ? "aal2" : "aal1";
+            const timestamp = String(Math.floor(Date.now() / 1000));
+            const nonce = randomUUID().replace(/-/g, "");
+            const path = new URL(proxyRequest.path, "http://127.0.0.1").pathname;
+            const canonical = [
+              operatorId,
+              operatorRole,
+              assuranceLevel,
+              terminalId,
+              timestamp,
+              nonce,
+              String(incomingRequest.method ?? "GET").toUpperCase(),
+              path,
+            ].join("\n");
+            const signature = createHmac("sha256", trustedIdentitySecret).update(canonical).digest("hex");
+            proxyRequest.setHeader("X-Identity-Operator-Id", operatorId);
+            proxyRequest.setHeader("X-Identity-Operator-Role", operatorRole);
+            proxyRequest.setHeader("X-Identity-Assurance-Level", assuranceLevel);
+            proxyRequest.setHeader("X-Identity-Terminal-Id", terminalId);
+            proxyRequest.setHeader("X-Identity-Timestamp", timestamp);
+            proxyRequest.setHeader("X-Identity-Nonce", nonce);
+            proxyRequest.setHeader("X-Identity-Signature", signature);
+          });
+        },
       },
     },
   },

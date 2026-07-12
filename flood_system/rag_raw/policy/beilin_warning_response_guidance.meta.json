@@ -5,5 +5,7 @@
   "stage": "Warning",
   "risk_level": "Orange",
   "audience": "government",
-  "section_number": "3.4"
+  "section_number": "3.4",
+  "document_version": "2026 演示有效版",
+  "evidence_roles": ["condition", "object", "procedure", "attribution"]
 }

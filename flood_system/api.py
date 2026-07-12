@@ -1,14 +1,19 @@
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
+from collections import deque
+import time
+from uuid import uuid4
 
 from fastapi import FastAPI, Header, HTTPException
-from fastapi.responses import StreamingResponse
+from fastapi.responses import PlainTextResponse, StreamingResponse
 
 from .config import load_settings
 from .http.v3_router import create_v3_router
+from .http.response_router import create_response_router
 from .infrastructure.sse import repeated_snapshot_stream
 from .system import FloodWarningSystem
+from .transport_security import TransportSecurityMiddleware
 from .v2.llm_gateway import LLMGenerationError
 from .v2.models import (
     AdvisoryRequest,
@@ -32,6 +37,9 @@ from .v2.security import AuthorizationError, ensure_operator_role, list_operator
 
 
 settings = load_settings()
+api_request_durations_ms: deque[float] = deque(maxlen=2000)
+api_request_total = 0
+api_error_total = 0
 
 
 @asynccontextmanager
@@ -44,19 +52,107 @@ async def lifespan(_app: FastAPI):
 
 
 app = FastAPI(title=settings.title, version=settings.version, lifespan=lifespan)
+app.add_middleware(
+    TransportSecurityMiddleware,
+    require_https=settings.require_https,
+    trust_proxy_headers=settings.trust_proxy_headers,
+)
 system = FloodWarningSystem(settings.db_path)
 production = system.production_platform
 app.include_router(create_v3_router(lambda: system))
+app.include_router(create_response_router(lambda: system))
+
+
+@app.get("/health", tags=["operations"])
+def health():
+    return {"status": "ok", "service": settings.title, "version": settings.version}
+
+
+@app.get("/ready", tags=["operations"])
+def readiness():
+    try:
+        with system.repository._connect() as connection:
+            connection.execute("SELECT 1").fetchone()
+        return {"status": "ready", "database": "ok"}
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail={"code": "DATABASE_NOT_READY", "message": str(exc)}) from exc
+
+
+@app.get("/metrics", response_class=PlainTextResponse, tags=["operations"])
+def metrics():
+    events = system.repository.list_response_events()
+    active = sum(item.status.value != "closed" for item in events)
+    outbox = system.repository.list_outbox_messages(limit=10000)
+    pending = sum(item.status.value == "pending" for item in outbox)
+    failed = sum(item.status.value == "failed" for item in outbox)
+    sent = sum(item.status.value == "sent" for item in outbox)
+    rule_evaluations = system.repository.list_rule_evaluations()
+    rule_pass = sum(item.overall_outcome.value == "PASS" for item in rule_evaluations)
+    rule_warning = sum(item.overall_outcome.value == "SOFT_WARNING" for item in rule_evaluations)
+    rule_block = sum(item.overall_outcome.value == "HARD_BLOCK" for item in rule_evaluations)
+    timeline = [entry for event in events for entry in system.repository.list_timeline_entries(event.event_id)]
+    takeovers = sum(item.action == "task_taken_over" for item in timeline)
+    stale_objects = sum(
+        item.stale for event in events for item in system.repository.list_event_risk_objects(event.event_id)
+    )
+    durations = sorted(api_request_durations_ms)
+    percentile = lambda fraction: durations[min(len(durations) - 1, int((len(durations) - 1) * fraction))] if durations else 0.0
+    return "\n".join(
+        (
+            "# HELP flood_response_events_total Response events persisted by the core workflow.",
+            "# TYPE flood_response_events_total gauge",
+            f"flood_response_events_total {len(events)}",
+            "# HELP flood_response_events_active Active response events.",
+            "# TYPE flood_response_events_active gauge",
+            f"flood_response_events_active {active}",
+            "# HELP flood_response_outbox_pending Pending simulated dispatch messages.",
+            "# TYPE flood_response_outbox_pending gauge",
+            f"flood_response_outbox_pending {pending}",
+            "# HELP flood_response_outbox_failed Failed-closed simulated dispatch messages.",
+            "# TYPE flood_response_outbox_failed gauge",
+            f"flood_response_outbox_failed {failed}",
+            "# HELP flood_response_outbox_sent Successfully processed simulated dispatch messages.",
+            "# TYPE flood_response_outbox_sent gauge",
+            f"flood_response_outbox_sent {sent}",
+            "# HELP flood_response_rule_evaluations Rule outcomes by result.",
+            "# TYPE flood_response_rule_evaluations gauge",
+            f'flood_response_rule_evaluations{{outcome="PASS"}} {rule_pass}',
+            f'flood_response_rule_evaluations{{outcome="SOFT_WARNING"}} {rule_warning}',
+            f'flood_response_rule_evaluations{{outcome="HARD_BLOCK"}} {rule_block}',
+            "# HELP flood_response_manual_takeovers_total Audited manual takeover actions.",
+            "# TYPE flood_response_manual_takeovers_total gauge",
+            f"flood_response_manual_takeovers_total {takeovers}",
+            "# HELP flood_response_stale_objects Current stale event risk objects.",
+            "# TYPE flood_response_stale_objects gauge",
+            f"flood_response_stale_objects {stale_objects}",
+            "# HELP flood_api_requests_total Requests observed by the application middleware.",
+            "# TYPE flood_api_requests_total counter",
+            f"flood_api_requests_total {api_request_total}",
+            "# HELP flood_api_errors_total HTTP 5xx responses observed by the application middleware.",
+            "# TYPE flood_api_errors_total counter",
+            f"flood_api_errors_total {api_error_total}",
+            "# HELP flood_api_latency_ms Recent in-process request latency percentiles.",
+            "# TYPE flood_api_latency_ms gauge",
+            f'flood_api_latency_ms{{quantile="0.50"}} {percentile(0.50):.3f}',
+            f'flood_api_latency_ms{{quantile="0.95"}} {percentile(0.95):.3f}',
+            "",
+        )
+    )
 
 
 @app.middleware("http")
 async def rewrite_unified_agent_twin_paths(request, call_next):
     """Expose unified public prefixes while keeping existing internal routes stable."""
 
+    global api_request_total, api_error_total
+    started = time.perf_counter()
+    correlation_id = request.headers.get("x-correlation-id", "").strip() or uuid4().hex
+    request.state.correlation_id = correlation_id
     path = request.scope.get("path", "")
     alias_pairs = (
         ("/agent-twin", "/v3"),
         ("/platform", "/v2"),
+        ("/api/v1", "/response"),
     )
     for public_prefix, internal_prefix in alias_pairs:
         if path == public_prefix:
@@ -65,7 +161,13 @@ async def rewrite_unified_agent_twin_paths(request, call_next):
         if path.startswith(f"{public_prefix}/"):
             request.scope["path"] = f"{internal_prefix}{path[len(public_prefix):]}"
             break
-    return await call_next(request)
+    response = await call_next(request)
+    api_request_total += 1
+    if response.status_code >= 500:
+        api_error_total += 1
+    api_request_durations_ms.append((time.perf_counter() - started) * 1000)
+    response.headers["X-Correlation-ID"] = correlation_id
+    return response
 
 
 def _resolve_operator_role(
@@ -78,11 +180,6 @@ def _resolve_operator_role(
     if action is not None:
         ensure_operator_role(action, role)
     return role
-
-
-@app.get("/health")
-def health() -> dict[str, str]:
-    return {"status": "ok"}
 
 
 @app.get("/v2/security/capabilities")

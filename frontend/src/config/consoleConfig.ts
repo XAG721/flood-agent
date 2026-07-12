@@ -28,6 +28,11 @@ export const pageMeta = {
     title: "智能体问答助手",
     description: "在专门页面中围绕重点对象、影响链、证据依据和下一步动作进行连续追问。",
   },
+  "/response": {
+    label: "响应闭环",
+    title: "预警响应事件工作台",
+    description: "将专业预警转化为经核验、经审批、可执行、可反馈和可追溯的对象级处置任务。",
+  },
   "/operations": {
     label: "风险预警",
     title: "风险预警与应急调度平台",

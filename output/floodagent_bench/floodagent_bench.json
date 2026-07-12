@@ -1,0 +1,1302 @@
+{
+  "data_card": {
+    "name": "FloodAgent-Bench",
+    "version": "floodagent-bench-v1",
+    "seed": 20260712,
+    "scope": "单一区县、暴雨预警、下穿通道、受控模拟",
+    "can_prove": [
+      "算法与业务闭环在受控模拟场景中的可复现原型验证"
+    ],
+    "cannot_prove": [
+      "真实洪水预测能力",
+      "真实跨部门接入",
+      "全国泛化",
+      "无人值守决策"
+    ],
+    "governance": "全部记录带 is_simulated、source、source_version；按事件、对象和模板家族隔离划分。",
+    "generated_at": "2026-07-01T00:00:00+00:00"
+  },
+  "manifest_sha256": "1ee8e4abe28b81db4a7e697a967bbc71eb74563b635126814094f9cb7fb3874d",
+  "objects": [
+    {
+      "object_id": "SIMOBJ-CD5C37D0631C",
+      "name": "匿名下穿通道 01",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.937869,
+      "latitude": 34.242863,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "history_waterlogging",
+        "traffic_dense"
+      ],
+      "data_completeness": 0.988,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-00",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-E6FBF53D45F9",
+      "name": "匿名下穿通道 02",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.97214,
+      "latitude": 34.275648,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "history_waterlogging",
+        "low_lying"
+      ],
+      "data_completeness": 0.809,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-01",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-4A6F3F0917CA",
+      "name": "匿名下穿通道 03",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.953796,
+      "latitude": 34.223871,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "drainage_limited",
+        "history_waterlogging"
+      ],
+      "data_completeness": 0.842,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-02",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-2A250B03F773",
+      "name": "匿名下穿通道 04",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.985941,
+      "latitude": 34.277013,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "drainage_limited",
+        "traffic_dense"
+      ],
+      "data_completeness": 0.758,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-03",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-559A1B02ECBD",
+      "name": "匿名下穿通道 05",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.969823,
+      "latitude": 34.229898,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "drainage_limited",
+        "history_waterlogging"
+      ],
+      "data_completeness": 0.809,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-04",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-4F38250D7ECD",
+      "name": "匿名下穿通道 06",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.987674,
+      "latitude": 34.2359,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "history_waterlogging",
+        "low_lying"
+      ],
+      "data_completeness": 0.852,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-05",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-1085B2F11CA3",
+      "name": "匿名下穿通道 07",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.963138,
+      "latitude": 34.257541,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "low_lying",
+        "traffic_dense"
+      ],
+      "data_completeness": 0.747,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-06",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-53ADD304B63B",
+      "name": "匿名下穿通道 08",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.94403,
+      "latitude": 34.24778,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "drainage_limited",
+        "history_waterlogging"
+      ],
+      "data_completeness": 0.853,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-07",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-F751A8BA44DD",
+      "name": "匿名下穿通道 09",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.972551,
+      "latitude": 34.24718,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "drainage_limited",
+        "low_lying"
+      ],
+      "data_completeness": 0.894,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-08",
+      "split": "test"
+    },
+    {
+      "object_id": "SIMOBJ-1B9494C46508",
+      "name": "匿名下穿通道 10",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.936422,
+      "latitude": 34.239619,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "drainage_limited",
+        "low_lying"
+      ],
+      "data_completeness": 0.844,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-09",
+      "split": "test"
+    },
+    {
+      "object_id": "SIMOBJ-0CB056EDF4FF",
+      "name": "匿名下穿通道 11",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.961151,
+      "latitude": 34.253616,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "history_waterlogging",
+        "traffic_dense"
+      ],
+      "data_completeness": 0.755,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-00",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-8DC1164F37A3",
+      "name": "匿名下穿通道 12",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.943487,
+      "latitude": 34.252711,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "history_waterlogging",
+        "low_lying"
+      ],
+      "data_completeness": 0.824,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-01",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-AA935B25D3AA",
+      "name": "匿名下穿通道 13",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.959303,
+      "latitude": 34.265432,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "history_waterlogging",
+        "low_lying"
+      ],
+      "data_completeness": 0.898,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-02",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-768D44CDEF55",
+      "name": "匿名下穿通道 14",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.987983,
+      "latitude": 34.234627,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "drainage_limited",
+        "low_lying"
+      ],
+      "data_completeness": 0.932,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-03",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-AB4BBAFB0FF6",
+      "name": "匿名下穿通道 15",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.989421,
+      "latitude": 34.242153,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "history_waterlogging",
+        "traffic_dense"
+      ],
+      "data_completeness": 0.901,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-04",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-E63E9AC221A9",
+      "name": "匿名下穿通道 16",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.935408,
+      "latitude": 34.226194,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "history_waterlogging",
+        "low_lying"
+      ],
+      "data_completeness": 0.776,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-05",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-7E4280E3AEAE",
+      "name": "匿名下穿通道 17",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.976109,
+      "latitude": 34.229139,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "drainage_limited",
+        "traffic_dense"
+      ],
+      "data_completeness": 0.918,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-06",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-672A0662EBFB",
+      "name": "匿名下穿通道 18",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.970171,
+      "latitude": 34.254653,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "history_waterlogging",
+        "traffic_dense"
+      ],
+      "data_completeness": 0.927,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-07",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-127A9C6D363F",
+      "name": "匿名下穿通道 19",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.963441,
+      "latitude": 34.237133,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "drainage_limited",
+        "history_waterlogging"
+      ],
+      "data_completeness": 0.73,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-08",
+      "split": "test"
+    },
+    {
+      "object_id": "SIMOBJ-740A41D85D99",
+      "name": "匿名下穿通道 20",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.982864,
+      "latitude": 34.23719,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "drainage_limited",
+        "history_waterlogging"
+      ],
+      "data_completeness": 0.909,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-09",
+      "split": "test"
+    },
+    {
+      "object_id": "SIMOBJ-63B7C916A7B2",
+      "name": "匿名下穿通道 21",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.950309,
+      "latitude": 34.235229,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "history_waterlogging",
+        "traffic_dense"
+      ],
+      "data_completeness": 0.919,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-00",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-D6E46C8CCF6A",
+      "name": "匿名下穿通道 22",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.941795,
+      "latitude": 34.247486,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "history_waterlogging",
+        "low_lying"
+      ],
+      "data_completeness": 0.879,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-01",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-A0A4E1B30407",
+      "name": "匿名下穿通道 23",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.956714,
+      "latitude": 34.264808,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "history_waterlogging",
+        "low_lying"
+      ],
+      "data_completeness": 0.772,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-02",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-F05CDEC2DC83",
+      "name": "匿名下穿通道 24",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.938339,
+      "latitude": 34.261252,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "history_waterlogging",
+        "traffic_dense"
+      ],
+      "data_completeness": 0.846,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-03",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-4A7BE1632F91",
+      "name": "匿名下穿通道 25",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.933832,
+      "latitude": 34.254704,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "history_waterlogging",
+        "low_lying"
+      ],
+      "data_completeness": 0.912,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-04",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-1B6A1253EF72",
+      "name": "匿名下穿通道 26",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.936027,
+      "latitude": 34.239003,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "drainage_limited",
+        "history_waterlogging"
+      ],
+      "data_completeness": 0.825,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-05",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-8F79390F0F3D",
+      "name": "匿名下穿通道 27",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.975502,
+      "latitude": 34.225296,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "history_waterlogging",
+        "traffic_dense"
+      ],
+      "data_completeness": 0.81,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-06",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-6FF28C119E66",
+      "name": "匿名下穿通道 28",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.952461,
+      "latitude": 34.249519,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "low_lying",
+        "traffic_dense"
+      ],
+      "data_completeness": 0.894,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-07",
+      "split": "train"
+    },
+    {
+      "object_id": "SIMOBJ-D9E5F895292B",
+      "name": "匿名下穿通道 29",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.931045,
+      "latitude": 34.262042,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "drainage_limited",
+        "low_lying"
+      ],
+      "data_completeness": 0.743,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-08",
+      "split": "test"
+    },
+    {
+      "object_id": "SIMOBJ-E4317E526DBA",
+      "name": "匿名下穿通道 30",
+      "object_type": "underpass_tunnel",
+      "area_id": "district-simulation",
+      "longitude": 108.972159,
+      "latitude": 34.237036,
+      "responsible_organization": "模拟区住建部门",
+      "risk_tags": [
+        "drainage_limited",
+        "history_waterlogging"
+      ],
+      "data_completeness": 0.842,
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v1",
+      "is_simulated": true,
+      "family": "tunnel-family-09",
+      "split": "test"
+    }
+  ],
+  "events": [
+    {
+      "event_id": "SIMEVENT-CD5C37D0631C",
+      "warning": {
+        "warning_id": "SIMWARN-CD5C37D0631C",
+        "type": "rainstorm",
+        "level": "yellow",
+        "issued_at": "2026-07-01T00:00:00+00:00",
+        "valid_until": "2026-07-01T03:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-CD5C37D0631C"
+      ],
+      "scenario_family": "storm-template-00",
+      "template_family": "storm-template-00",
+      "split": "validation",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "normal_execution",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-E6FBF53D45F9",
+      "warning": {
+        "warning_id": "SIMWARN-E6FBF53D45F9",
+        "type": "rainstorm",
+        "level": "orange",
+        "issued_at": "2026-07-02T01:00:00+00:00",
+        "valid_until": "2026-07-02T04:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-E6FBF53D45F9",
+        "SIMOBJ-4A6F3F0917CA"
+      ],
+      "scenario_family": "storm-template-01",
+      "template_family": "storm-template-01",
+      "split": "train",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "blocked",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-4A6F3F0917CA",
+      "warning": {
+        "warning_id": "SIMWARN-4A6F3F0917CA",
+        "type": "rainstorm",
+        "level": "red",
+        "issued_at": "2026-07-03T02:00:00+00:00",
+        "valid_until": "2026-07-03T05:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-4A6F3F0917CA",
+        "SIMOBJ-2A250B03F773",
+        "SIMOBJ-559A1B02ECBD"
+      ],
+      "scenario_family": "storm-template-02",
+      "template_family": "storm-template-02",
+      "split": "train",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "partial_completion",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-2A250B03F773",
+      "warning": {
+        "warning_id": "SIMWARN-2A250B03F773",
+        "type": "rainstorm",
+        "level": "yellow",
+        "issued_at": "2026-07-04T03:00:00+00:00",
+        "valid_until": "2026-07-04T06:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-2A250B03F773",
+        "SIMOBJ-559A1B02ECBD",
+        "SIMOBJ-4F38250D7ECD",
+        "SIMOBJ-1085B2F11CA3"
+      ],
+      "scenario_family": "storm-template-03",
+      "template_family": "storm-template-03",
+      "split": "validation",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "deadline_extension",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-559A1B02ECBD",
+      "warning": {
+        "warning_id": "SIMWARN-559A1B02ECBD",
+        "type": "rainstorm",
+        "level": "orange",
+        "issued_at": "2026-07-05T04:00:00+00:00",
+        "valid_until": "2026-07-05T07:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-559A1B02ECBD"
+      ],
+      "scenario_family": "storm-template-04",
+      "template_family": "storm-template-04",
+      "split": "train",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "normal_execution",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-4F38250D7ECD",
+      "warning": {
+        "warning_id": "SIMWARN-4F38250D7ECD",
+        "type": "rainstorm",
+        "level": "red",
+        "issued_at": "2026-07-06T05:00:00+00:00",
+        "valid_until": "2026-07-06T08:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-4F38250D7ECD",
+        "SIMOBJ-1085B2F11CA3"
+      ],
+      "scenario_family": "storm-template-05",
+      "template_family": "storm-template-05",
+      "split": "train",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "blocked",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-1085B2F11CA3",
+      "warning": {
+        "warning_id": "SIMWARN-1085B2F11CA3",
+        "type": "rainstorm",
+        "level": "yellow",
+        "issued_at": "2026-07-07T00:00:00+00:00",
+        "valid_until": "2026-07-07T03:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-1085B2F11CA3",
+        "SIMOBJ-53ADD304B63B",
+        "SIMOBJ-F751A8BA44DD"
+      ],
+      "scenario_family": "storm-template-06",
+      "template_family": "storm-template-06",
+      "split": "train",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "partial_completion",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-53ADD304B63B",
+      "warning": {
+        "warning_id": "SIMWARN-53ADD304B63B",
+        "type": "rainstorm",
+        "level": "orange",
+        "issued_at": "2026-07-08T01:00:00+00:00",
+        "valid_until": "2026-07-08T04:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-53ADD304B63B",
+        "SIMOBJ-F751A8BA44DD",
+        "SIMOBJ-1B9494C46508",
+        "SIMOBJ-0CB056EDF4FF"
+      ],
+      "scenario_family": "storm-template-07",
+      "template_family": "storm-template-07",
+      "split": "train",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "deadline_extension",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-F751A8BA44DD",
+      "warning": {
+        "warning_id": "SIMWARN-F751A8BA44DD",
+        "type": "rainstorm",
+        "level": "red",
+        "issued_at": "2026-07-09T02:00:00+00:00",
+        "valid_until": "2026-07-09T05:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-F751A8BA44DD"
+      ],
+      "scenario_family": "storm-template-00",
+      "template_family": "storm-template-00",
+      "split": "validation",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "normal_execution",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-1B9494C46508",
+      "warning": {
+        "warning_id": "SIMWARN-1B9494C46508",
+        "type": "rainstorm",
+        "level": "yellow",
+        "issued_at": "2026-07-10T03:00:00+00:00",
+        "valid_until": "2026-07-10T06:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-1B9494C46508",
+        "SIMOBJ-0CB056EDF4FF"
+      ],
+      "scenario_family": "storm-template-01",
+      "template_family": "storm-template-01",
+      "split": "train",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "blocked",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-0CB056EDF4FF",
+      "warning": {
+        "warning_id": "SIMWARN-0CB056EDF4FF",
+        "type": "rainstorm",
+        "level": "orange",
+        "issued_at": "2026-07-11T04:00:00+00:00",
+        "valid_until": "2026-07-11T07:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-0CB056EDF4FF",
+        "SIMOBJ-8DC1164F37A3",
+        "SIMOBJ-AA935B25D3AA"
+      ],
+      "scenario_family": "storm-template-02",
+      "template_family": "storm-template-02",
+      "split": "train",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "partial_completion",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-8DC1164F37A3",
+      "warning": {
+        "warning_id": "SIMWARN-8DC1164F37A3",
+        "type": "rainstorm",
+        "level": "red",
+        "issued_at": "2026-07-12T05:00:00+00:00",
+        "valid_until": "2026-07-12T08:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-8DC1164F37A3",
+        "SIMOBJ-AA935B25D3AA",
+        "SIMOBJ-768D44CDEF55",
+        "SIMOBJ-AB4BBAFB0FF6"
+      ],
+      "scenario_family": "storm-template-03",
+      "template_family": "storm-template-03",
+      "split": "validation",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "deadline_extension",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-AA935B25D3AA",
+      "warning": {
+        "warning_id": "SIMWARN-AA935B25D3AA",
+        "type": "rainstorm",
+        "level": "yellow",
+        "issued_at": "2026-07-13T00:00:00+00:00",
+        "valid_until": "2026-07-13T03:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-AA935B25D3AA"
+      ],
+      "scenario_family": "storm-template-04",
+      "template_family": "storm-template-04",
+      "split": "train",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "normal_execution",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-768D44CDEF55",
+      "warning": {
+        "warning_id": "SIMWARN-768D44CDEF55",
+        "type": "rainstorm",
+        "level": "orange",
+        "issued_at": "2026-07-14T01:00:00+00:00",
+        "valid_until": "2026-07-14T04:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-768D44CDEF55",
+        "SIMOBJ-AB4BBAFB0FF6"
+      ],
+      "scenario_family": "storm-template-05",
+      "template_family": "storm-template-05",
+      "split": "train",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "blocked",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-AB4BBAFB0FF6",
+      "warning": {
+        "warning_id": "SIMWARN-AB4BBAFB0FF6",
+        "type": "rainstorm",
+        "level": "red",
+        "issued_at": "2026-07-15T02:00:00+00:00",
+        "valid_until": "2026-07-15T05:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-AB4BBAFB0FF6",
+        "SIMOBJ-E63E9AC221A9",
+        "SIMOBJ-7E4280E3AEAE"
+      ],
+      "scenario_family": "storm-template-06",
+      "template_family": "storm-template-06",
+      "split": "train",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "partial_completion",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-E63E9AC221A9",
+      "warning": {
+        "warning_id": "SIMWARN-E63E9AC221A9",
+        "type": "rainstorm",
+        "level": "yellow",
+        "issued_at": "2026-07-16T03:00:00+00:00",
+        "valid_until": "2026-07-16T06:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-E63E9AC221A9",
+        "SIMOBJ-7E4280E3AEAE",
+        "SIMOBJ-672A0662EBFB",
+        "SIMOBJ-127A9C6D363F"
+      ],
+      "scenario_family": "storm-template-07",
+      "template_family": "storm-template-07",
+      "split": "train",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "deadline_extension",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-7E4280E3AEAE",
+      "warning": {
+        "warning_id": "SIMWARN-7E4280E3AEAE",
+        "type": "rainstorm",
+        "level": "orange",
+        "issued_at": "2026-07-17T04:00:00+00:00",
+        "valid_until": "2026-07-17T07:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-7E4280E3AEAE"
+      ],
+      "scenario_family": "storm-template-00",
+      "template_family": "storm-template-00",
+      "split": "validation",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "normal_execution",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-672A0662EBFB",
+      "warning": {
+        "warning_id": "SIMWARN-672A0662EBFB",
+        "type": "rainstorm",
+        "level": "red",
+        "issued_at": "2026-07-18T05:00:00+00:00",
+        "valid_until": "2026-07-18T08:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-672A0662EBFB",
+        "SIMOBJ-127A9C6D363F"
+      ],
+      "scenario_family": "storm-template-01",
+      "template_family": "storm-template-01",
+      "split": "train",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "blocked",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-127A9C6D363F",
+      "warning": {
+        "warning_id": "SIMWARN-127A9C6D363F",
+        "type": "rainstorm",
+        "level": "yellow",
+        "issued_at": "2026-07-19T00:00:00+00:00",
+        "valid_until": "2026-07-19T03:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-127A9C6D363F",
+        "SIMOBJ-740A41D85D99",
+        "SIMOBJ-63B7C916A7B2"
+      ],
+      "scenario_family": "storm-template-02",
+      "template_family": "storm-template-02",
+      "split": "train",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "partial_completion",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-740A41D85D99",
+      "warning": {
+        "warning_id": "SIMWARN-740A41D85D99",
+        "type": "rainstorm",
+        "level": "orange",
+        "issued_at": "2026-07-20T01:00:00+00:00",
+        "valid_until": "2026-07-20T04:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-740A41D85D99",
+        "SIMOBJ-63B7C916A7B2",
+        "SIMOBJ-D6E46C8CCF6A",
+        "SIMOBJ-A0A4E1B30407"
+      ],
+      "scenario_family": "storm-template-03",
+      "template_family": "storm-template-03",
+      "split": "validation",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "deadline_extension",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-63B7C916A7B2",
+      "warning": {
+        "warning_id": "SIMWARN-63B7C916A7B2",
+        "type": "rainstorm",
+        "level": "red",
+        "issued_at": "2026-07-21T02:00:00+00:00",
+        "valid_until": "2026-07-21T05:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-63B7C916A7B2"
+      ],
+      "scenario_family": "storm-template-04",
+      "template_family": "storm-template-04",
+      "split": "train",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "normal_execution",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-D6E46C8CCF6A",
+      "warning": {
+        "warning_id": "SIMWARN-D6E46C8CCF6A",
+        "type": "rainstorm",
+        "level": "yellow",
+        "issued_at": "2026-07-22T03:00:00+00:00",
+        "valid_until": "2026-07-22T06:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-D6E46C8CCF6A",
+        "SIMOBJ-A0A4E1B30407"
+      ],
+      "scenario_family": "storm-template-05",
+      "template_family": "storm-template-05",
+      "split": "train",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "blocked",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-A0A4E1B30407",
+      "warning": {
+        "warning_id": "SIMWARN-A0A4E1B30407",
+        "type": "rainstorm",
+        "level": "orange",
+        "issued_at": "2026-07-23T04:00:00+00:00",
+        "valid_until": "2026-07-23T07:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-A0A4E1B30407",
+        "SIMOBJ-F05CDEC2DC83",
+        "SIMOBJ-4A7BE1632F91"
+      ],
+      "scenario_family": "storm-template-06",
+      "template_family": "storm-template-06",
+      "split": "train",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "partial_completion",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    },
+    {
+      "event_id": "SIMEVENT-F05CDEC2DC83",
+      "warning": {
+        "warning_id": "SIMWARN-F05CDEC2DC83",
+        "type": "rainstorm",
+        "level": "red",
+        "issued_at": "2026-07-24T05:00:00+00:00",
+        "valid_until": "2026-07-24T08:00:00+00:00",
+        "source_department": "模拟专业预警发布端",
+        "source": "deterministic_simulator",
+        "source_version": "floodagent-bench-v1",
+        "is_simulated": true
+      },
+      "object_ids": [
+        "SIMOBJ-F05CDEC2DC83",
+        "SIMOBJ-4A7BE1632F91",
+        "SIMOBJ-1B6A1253EF72",
+        "SIMOBJ-8F79390F0F3D"
+      ],
+      "scenario_family": "storm-template-07",
+      "template_family": "storm-template-07",
+      "split": "train",
+      "expected_branches": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "deadline_extension",
+        "independent_verification"
+      ],
+      "is_simulated": true
+    }
+  ]
+}

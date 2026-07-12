@@ -51,6 +51,8 @@ class ProductionPlatform(
         self.area_profiles = area_profiles or build_area_profiles()
         self.bootstrap_resource_status = bootstrap_resource_status or build_resource_status()
         self.llm_gateway = llm_gateway or ResponsesLLMGateway()
+        if isinstance(self.llm_gateway, ResponsesLLMGateway):
+            self.llm_gateway.privacy_audit_sink = self._record_model_egress_privacy
         self.route_planner = RoutePlanningService()
         self.hazard_engine = HazardEngine()
         self.exposure_engine = ExposureEngine(self.route_planner)
@@ -65,3 +67,11 @@ class ProductionPlatform(
         self.operational_experience_store = OperationalExperienceStore(self.repository)
         self.long_term_memory_store = LongTermMemoryStore(self.repository, self.rag_service)
         self.event_postmortem_service = None
+
+    def _record_model_egress_privacy(self, details: dict) -> None:
+        self.add_audit_record(
+            source_type="model_egress_privacy",
+            action="sanitize_external_model_payload",
+            summary=f"外部模型出站载荷已执行隐私过滤，脱敏 {details.get('redaction_count', 0)} 项。",
+            details=details,
+        )

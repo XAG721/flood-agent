@@ -1146,9 +1146,10 @@ describe("App", () => {
     installFetchMock();
     renderApp("/");
 
-    expect((await screen.findAllByRole("heading", { name: /数字孪生智能体洪水预警系统/ })).length).toBeGreaterThan(0);
+    expect((await screen.findAllByRole("heading", { name: /面向区县防办的洪水预警响应系统/ })).length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: "态势总览" }).length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: "智能问答" }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: "响应闭环" }).length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: "风险预警" }).length).toBeGreaterThan(0);
     expect(screen.getAllByText("碑林区积涝演练事件").length).toBeGreaterThan(0);
     expect(screen.getAllByText("李阿姨").length).toBeGreaterThan(0);

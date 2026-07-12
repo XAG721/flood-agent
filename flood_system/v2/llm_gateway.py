@@ -7,12 +7,13 @@ import ssl
 from http.client import RemoteDisconnected
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 from urllib import error, request
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from .models import ExecutionMode, LLMErrorCode
+from ..security import OutboundPrivacyFilter
 
 
 class LLMGenerationError(RuntimeError):
@@ -195,6 +196,7 @@ class ResponsesLLMGateway:
     retry_attempts: int = 2
     prompt_profiles_path: str | None = None
     prompt_registry: PromptProfileRegistry = field(init=False)
+    privacy_audit_sink: Callable[[dict[str, Any]], None] | None = None
 
     def __post_init__(self) -> None:
         self.prompt_registry = PromptProfileRegistry(self.prompt_profiles_path)
@@ -319,12 +321,22 @@ class ResponsesLLMGateway:
                 f"{prompt_profile} 阶段无法调用大模型：未配置 OPENAI_API_KEY 或 api_key.txt。",
             )
 
+        privacy_report = OutboundPrivacyFilter.sanitize(payload)
+        safe_payload = dict(privacy_report.sanitized_payload)
+        safe_payload["_privacy_guard"] = {
+            "personal_data_redacted": privacy_report.redaction_count > 0,
+            "redaction_count": privacy_report.redaction_count,
+            "redaction_types": privacy_report.redaction_types,
+        }
+        if self.privacy_audit_sink is not None:
+            self.privacy_audit_sink({"prompt_profile": prompt_profile, **privacy_report.audit_details()})
+
         profile = self.prompt_registry.get(prompt_profile)
         model_name = profile.model_name or self.model_name
         body = self._build_request_body(
             prompt_profile=prompt_profile,
             profile=profile,
-            payload=payload,
+            payload=safe_payload,
             response_model=response_model,
             model_name=model_name,
         )

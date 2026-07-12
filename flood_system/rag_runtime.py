@@ -51,6 +51,28 @@ class RAGService:
     ) -> list[RAGDocument]:
         return self._store.query(corpus, query, filters=filters, top_k=top_k)
 
+    def query_evidence_set(
+        self,
+        corpus: CorpusType,
+        query: str,
+        filters: dict[str, str] | None = None,
+        top_k: int = 3,
+        candidate_k: int = 20,
+        token_budget: int | None = 1200,
+        slots: list[str] | None = None,
+        required_roles: list[str] | None = None,
+    ) -> list[RAGDocument]:
+        return self._store.query_evidence_set(
+            corpus,
+            query,
+            filters=filters,
+            top_k=top_k,
+            candidate_k=candidate_k,
+            token_budget=token_budget,
+            slots=slots,
+            required_roles=required_roles,
+        )
+
     def explain(self, document: RAGDocument) -> dict:
         return self._store.explain(document)
 

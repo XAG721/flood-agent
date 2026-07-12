@@ -1,0 +1,11 @@
+.git
+.cache
+.pytest_cache
+.playwright-mcp
+tmp
+output
+frontend/node_modules
+frontend/dist
+3D_visual/node_modules
+data/*.db*
+api_key.txt

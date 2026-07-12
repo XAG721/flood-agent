@@ -345,6 +345,8 @@ class EntityProfile(V2Model):
     name: str
     village: str
     location_hint: str
+    longitude: float | None = Field(default=None, ge=-180, le=180)
+    latitude: float | None = Field(default=None, ge=-90, le=90)
     resident_count: int = 0
     current_occupancy: int = 0
     vulnerability_tags: list[str] = Field(default_factory=list)

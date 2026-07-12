@@ -1,0 +1,48 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      FLOOD_DB_PATH: /app/data/flood_warning_system.db
+      FLOOD_ENVIRONMENT: development
+      FLOOD_REQUIRE_HTTPS: "0"
+      FLOOD_TRUST_PROXY_HEADERS: "1"
+      FLOOD_ALLOW_DEV_IDENTITY_HEADERS: "1"
+      FLOOD_SUPERVISOR_LOOP_ENABLED: "0"
+    volumes:
+      - flood-data:/app/data
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["python", "scripts/run_response_worker.py", "--interval", "10"]
+    environment:
+      FLOOD_DB_PATH: /app/data/flood_warning_system.db
+      FLOOD_ENVIRONMENT: development
+      FLOOD_SUPERVISOR_LOOP_ENABLED: "0"
+      FLOOD_ALLOW_DEV_IDENTITY_HEADERS: "1"
+    volumes:
+      - flood-data:/app/data
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  flood-data:

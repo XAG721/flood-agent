@@ -1,0 +1,28 @@
+{
+  "package_id": "RAG-ANNOTATION-bb0bb1b8f9996024",
+  "annotator_id": "REPLACE_WITH_ANNOTATOR_B_ID",
+  "decisions": [
+    {
+      "item_id": "underpass_orange_response",
+      "relevant_doc_ids": [],
+      "role_labels": {},
+      "reference_answer": "",
+      "notes": ""
+    },
+    {
+      "item_id": "school_dismissal_response",
+      "relevant_doc_ids": [],
+      "role_labels": {},
+      "reference_answer": "",
+      "notes": ""
+    },
+    {
+      "item_id": "cross_department_control",
+      "relevant_doc_ids": [],
+      "role_labels": {},
+      "reference_answer": "",
+      "notes": ""
+    }
+  ],
+  "submitted_at": "2026-07-11T19:26:07.709844Z"
+}

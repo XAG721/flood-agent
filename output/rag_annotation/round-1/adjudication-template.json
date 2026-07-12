@@ -1,0 +1,28 @@
+{
+  "package_id": "RAG-ANNOTATION-bb0bb1b8f9996024",
+  "adjudicator_id": "REPLACE_WITH_INDEPENDENT_ADJUDICATOR_ID",
+  "resolutions": [
+    {
+      "item_id": "underpass_orange_response",
+      "relevant_doc_ids": [],
+      "role_labels": {},
+      "reference_answer": "",
+      "rationale": "REQUIRED: explain the final evidence decision"
+    },
+    {
+      "item_id": "school_dismissal_response",
+      "relevant_doc_ids": [],
+      "role_labels": {},
+      "reference_answer": "",
+      "rationale": "REQUIRED: explain the final evidence decision"
+    },
+    {
+      "item_id": "cross_department_control",
+      "relevant_doc_ids": [],
+      "role_labels": {},
+      "reference_answer": "",
+      "rationale": "REQUIRED: explain the final evidence decision"
+    }
+  ],
+  "submitted_at": "2026-07-11T19:26:07.710262+00:00"
+}
