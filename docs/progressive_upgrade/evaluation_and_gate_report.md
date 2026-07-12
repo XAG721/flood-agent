@@ -34,6 +34,9 @@ npm.cmd run build
 | 受控 event timeline P95 | 26.953 ms / 预算 200 ms | 通过 |
 | 受控 audit trail P95 | 29.975 ms / 预算 300 ms | 通过 |
 | 受控 API 错误率 | 4 条路径各 40 次采样，均为 0 | 通过 |
+| Python 依赖漏洞 | pip-audit 2.10.1：0 个已知漏洞 | 通过 |
+| 主前端依赖漏洞 | npm audit：0 个漏洞 | 通过 |
+| Cesium 依赖漏洞 | npm audit：0 个漏洞 | 通过 |
 | FloodAgent-Bench | 24 事件、30 对象、固定种子 `20260712` | Gate 0 通过 |
 | Candidate Recall@5 | 1.000000 | 达到 Gate 1 建议值 |
 | 关键对象漏检率 | 0.000000 | 达到 Gate 1 建议值 |
@@ -61,7 +64,7 @@ GitHub Actions Linux 运行 `29196681614` 对同一预算复测通过：event li
 - Gate 1：`GO（受控模拟）`。当前规则候选链达到建议阈值，仍强制人工确认。
 - Gate 2：`NO-GO`。`run_rag_evaluation.py` 现在逐项生成机器可读 `gate_2` 判定；Full 在引用正确率上严格优于 w/o Role 和 w/o Field，引用正确率、无依据率和受控冲突 F1 也达到建议值，但字段覆盖率相对最强 SetR 基线没有达到至少 5 个百分点，且样本仅为 3 条内部工程标注。系统默认保持 `SHADOW`，`DEFAULT/CANARY` 必须由事件级 `feature.frc_rag_formal_enabled` 显式放行。
 - Gate 3：`GO（自动化安全不变量）`。未审批、越权、非法迁移、职责分离、证据/规则/审批/下发哈希和幂等 Outbox 有自动测试。
-- Gate 4：`CONDITIONAL NO-GO`。受控业务闭环、本地恢复和进程内 API 冻结预算通过，但生产网络/并发性能预算、真实 IdP/TLS/KMS、异地主机恢复与高危安全评估尚无外部运行证据。
+- Gate 4：`CONDITIONAL NO-GO`。受控业务闭环、本地恢复、进程内 API 冻结预算和三套已知依赖漏洞审计通过，但生产网络/并发性能预算、真实 IdP/TLS/KMS、异地主机恢复与第三方渗透测试尚无外部运行证据。
 
 ## Migration Gate 判定
 

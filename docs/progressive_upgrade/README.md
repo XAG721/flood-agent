@@ -10,6 +10,7 @@
 - `evaluation_and_gate_report.md`：真实运行的受控模拟指标、Gate 判定和外部 No-Go 边界。
 - `../../infra/postgis/README.md`：SQLite 到 PostGIS 单向影子迁移、空间投影、隔离和对账演练。
 - `../../output/performance/controlled_performance_report.md`：受控关键 API P50/P95、错误率和冻结预算报告。
+- `dependency_security_audit.md`：Python、主前端和 Cesium 依赖漏洞清零及持续 CI 门禁。
 - `api_compatibility_mapping.md`：设计概念、新 Core API 路径、旧接口边界和单写约束。
 
 ## 当前受控场景

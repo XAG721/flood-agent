@@ -57,6 +57,36 @@ jobs:
         run: npm test --prefix frontend -- --run
       - name: Build production frontend
         run: npm run build --prefix frontend
+      - name: Build standalone Cesium frontend
+        run: npm run build --prefix 3D_visual
+
+  security:
+    name: Dependency security audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install audited Python environment
+        run: |
+          python -m pip install --upgrade "pip>=26.1.2"
+          python -m pip install ".[test,postgres]" "pip-audit==2.10.1"
+      - name: Audit Python dependencies
+        run: python -m pip_audit --local
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: |
+            3D_visual/package-lock.json
+            frontend/package-lock.json
+      - name: Audit frontend dependencies
+        run: npm audit --prefix frontend --audit-level=high
+      - name: Audit Cesium dependencies
+        run: npm audit --prefix 3D_visual --audit-level=high
 
   compose:
     name: Compose build and smoke test

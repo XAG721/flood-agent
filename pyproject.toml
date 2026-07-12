@@ -19,7 +19,7 @@ dependencies = [
 test = [
   "httpx2>=2.5,<3",
   "numpy>=1.26,<3",
-  "pytest>=8.4,<9",
+  "pytest>=9.0.3,<10",
 ]
 postgres = [
   "psycopg[binary]>=3.3,<4",
