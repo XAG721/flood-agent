@@ -1,5 +1,5 @@
 import { request } from "../lib/httpClient";
-import type { DistrictScenarioReport, DocumentVersionRecord, EventDashboard, ResponseEvent, RetrievalMode, TaskDraftGenerationResult, WorkflowRole } from "../types/response";
+import type { DispatchCallbackRecord, DistrictScenarioReport, DocumentVersionRecord, EventDashboard, OutboxMessage, ResponseEvent, RetrievalMode, SimulationDispatchScenario, TaskDraftGenerationResult, WorkflowRole } from "../types/response";
 
 const actionPayload = (operatorRole: WorkflowRole, note = "") => ({
   operator_id: `console_${operatorRole}`,
@@ -189,6 +189,20 @@ export const responseWorkflowApi = {
       method: "POST",
       body: JSON.stringify(actionPayload(operatorRole, "人工触发时限巡检")),
     });
+  },
+  processOutbox(messageId: string, scenario: SimulationDispatchScenario, operatorRole: WorkflowRole): Promise<OutboxMessage[]> {
+    return request("/response/dispatch/outbox/process", {
+      method: "POST",
+      body: JSON.stringify({
+        ...actionPayload(operatorRole, `运行受控模拟下发场景：${scenario}`),
+        message_id: messageId,
+        max_messages: 1,
+        simulation_scenario: scenario,
+      }),
+    });
+  },
+  listDispatchCallbacks(messageId: string): Promise<DispatchCallbackRecord[]> {
+    return request(`/response/dispatch/outbox/${messageId}/callbacks`, { method: "GET" });
   },
   closeEvent(eventId: string, operatorRole: WorkflowRole): Promise<unknown> {
     return request(`/response/events/${eventId}/close`, {

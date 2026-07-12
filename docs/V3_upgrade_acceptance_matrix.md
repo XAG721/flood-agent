@@ -48,8 +48,8 @@
 
 ## 当前验证基线
 
-- Python 全量测试：92 项通过（1 条 Starlette TestClient 上游弃用提示）。
-- 前端全量测试：11 项通过。
+- Python 全量测试：155 项通过（1 条 Starlette TestClient 上游弃用提示）。
+- 前端全量测试：13 项通过；Chromium E2E 2 项通过。
 - 前端生产构建：通过。
 - 安全专项测试覆盖：密文落盘、密文篡改拒绝、哈希链校验、不可删除触发器、备份权限、文件哈希、数据库完整性、密钥匹配、跨实例导入、隔离恢复和加密密钥轮换。
 - RAG 专项测试：BM25、Dense、混合、MMR、Rerank、SetR、FRC-Select、神经/公开评测辅助逻辑、消融及独立标注约束共 17 项通过；报告位于 `output/rag_evaluation/`，空白标注包位于 `output/rag_annotation/round-1/`。

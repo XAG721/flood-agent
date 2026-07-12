@@ -324,5 +324,6 @@ npm.cmd run test:e2e
 - [v0.3.0 更新报告](./docs/releases/v0.3.0.md)
 - [v0.2.0 清理与结构重构报告](./docs/releases/v0.2.0.md)
 - [渐进式升级与验收](./docs/progressive_upgrade/README.md)
+- [全目标完成度追溯审计](./docs/progressive_upgrade/completion_traceability_audit.md)
 - [AgentTwin 兼容演示资料](./docs/agent_twin_upgrade/README.md)
 - [甲方演示脚本](./docs/agent_twin_upgrade/16_甲方演示脚本.md)

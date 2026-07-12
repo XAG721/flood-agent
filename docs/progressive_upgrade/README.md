@@ -8,6 +8,7 @@
 - `../releases/v0.2.0.md`：上一版本全仓清理与结构重构报告。
 - `asset_inventory.md`：原系统资产、真实能力、依赖、写状态风险和 REUSE/WRAP/REFACTOR/REBUILD/RETIRE 结论。
 - `implementation_acceptance_matrix.md`：阶段 0—8、最终审查清单和 Go/No-Go 门禁状态。
+- `completion_traceability_audit.md`：按最新设计合同汇总阶段、24 场景、第 18 节切换清单、Gate、交付物和外部 No-Go 的全目标追溯审计。
 - `operations_and_rollback.md`：启动、健康检查、功能开关、备份、回滚和人工接管。
 - `evaluation_and_gate_report.md`：真实运行的受控模拟指标、Gate 判定和外部 No-Go 边界。
 - `../../infra/postgis/README.md`：SQLite 到 PostGIS 单向影子迁移、空间投影、隔离和对账演练。

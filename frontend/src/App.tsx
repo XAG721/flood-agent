@@ -29,6 +29,10 @@ import type { OperatorRole } from "./types/api";
 
 export default function App() {
   const location = useLocation();
+  const responseWorkbenchEnabled = import.meta.env.VITE_RESPONSE_WORKBENCH_ENABLED !== "false";
+  if (location.pathname === "/response" && !responseWorkbenchEnabled) {
+    return <Navigate to="/operations" replace />;
+  }
   return location.pathname === "/response" ? <ResponseApplication /> : <LegacyApplication />;
 }
 

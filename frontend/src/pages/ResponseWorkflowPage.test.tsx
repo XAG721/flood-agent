@@ -27,6 +27,8 @@ vi.mock("../api/responseWorkflowApi", () => ({
     takeOverTask: vi.fn(),
     verifyTask: vi.fn(),
     runDeadlineSweep: vi.fn(),
+    processOutbox: vi.fn(),
+    listDispatchCallbacks: vi.fn(),
     closeEvent: vi.fn(),
     runScenarioEvaluation: vi.fn(),
   },
@@ -174,6 +176,7 @@ describe("ResponseWorkflowPage", () => {
     vi.mocked(responseWorkflowApi.listEvents).mockResolvedValue([dashboard.event]);
     vi.mocked(responseWorkflowApi.listDocuments).mockResolvedValue([]);
     vi.mocked(responseWorkflowApi.getDashboard).mockResolvedValue(dashboard);
+    vi.mocked(responseWorkflowApi.listDispatchCallbacks).mockResolvedValue([]);
   });
 
   it("展示六类证据覆盖和带版本条款的来源", async () => {
@@ -216,6 +219,57 @@ describe("ResponseWorkflowPage", () => {
 
     expect(await screen.findByText(/按 EPSG:4326 预警多边形与对象坐标做点落区筛查/)).toBeInTheDocument();
     expect(screen.getByText(/结果仍须防办人工核验/)).toBeInTheDocument();
+  });
+
+  it("可选择故障场景处理单条 Outbox 并展示乱序回调", async () => {
+    const dispatchDashboard = structuredClone(dashboard);
+    dispatchDashboard.tasks[0].status = "issued";
+    dispatchDashboard.tasks[0].dispatch_message_id = "OUTBOX-1";
+    dispatchDashboard.outbox = [{
+      message_id: "OUTBOX-1",
+      event_id: dispatchDashboard.event.event_id,
+      task_id: dispatchDashboard.tasks[0].task_id,
+      destination: "simulated://member-unit",
+      idempotency_key: "dispatch:TASK-1:v1",
+      payload_hash: "payload-hash",
+      approval_id: "APPROVAL-1",
+      task_version: 1,
+      status: "pending",
+      attempts: 0,
+      simulation_scenario: "normal",
+      callback_count: 1,
+      created_at: "2026-07-11T08:00:00Z",
+      updated_at: "2026-07-11T08:00:00Z",
+    }];
+    vi.mocked(responseWorkflowApi.getDashboard).mockResolvedValue(dispatchDashboard);
+    vi.mocked(responseWorkflowApi.processOutbox).mockResolvedValue([]);
+    vi.mocked(responseWorkflowApi.listDispatchCallbacks).mockResolvedValue([{
+      callback_id: "CALLBACK-1",
+      message_id: "OUTBOX-1",
+      event_id: dispatchDashboard.event.event_id,
+      task_id: dispatchDashboard.tasks[0].task_id,
+      external_id: "SIMDISPATCH-1",
+      source: "deterministic_simulation_gateway",
+      version: 2,
+      event_time: "2026-07-11T08:01:00Z",
+      received_time: "2026-07-11T08:01:01Z",
+      request_id: "SIMREQ-1",
+      trace_id: "SIMTRACE-1",
+      idempotency_key: "callback-1",
+      status: "delivered",
+      sequence_state: "out_of_order",
+      is_simulated: true,
+      created_at: "2026-07-11T08:01:01Z",
+    }]);
+
+    render(<ResponseWorkflowPage />);
+
+    expect(await screen.findByRole("region", { name: "模拟下发场景控制台" })).toBeInTheDocument();
+    expect(await screen.findByText(/乱序 · SIMTRACE-1/)).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("故障注入场景"), { target: { value: "out_of_order_callback" } });
+    fireEvent.click(screen.getByRole("button", { name: "执行受控场景" }));
+
+    await waitFor(() => expect(responseWorkflowApi.processOutbox).toHaveBeenCalledWith("OUTBOX-1", "out_of_order_callback", "commander"));
   });
 
   it("在任务内展示异常备选动作，并在关闭后展示复盘草稿", async () => {

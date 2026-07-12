@@ -65,6 +65,9 @@ export interface AlertSnapshot {
 export interface EventRiskObject {
   event_id: string;
   object_id: string;
+  canonical_object_id?: string | null;
+  aliases?: string[];
+  duplicate_of?: string | null;
   name: string;
   object_type: string;
   location: string;
@@ -100,6 +103,9 @@ export interface EventRiskObject {
   calibrated_confidence?: number | null;
   calibration_version: string;
   association_mode: string;
+  registry_status?: string;
+  registry_valid_from?: string | null;
+  registry_valid_until?: string | null;
 }
 
 export interface RiskObjectVersionSnapshot {
@@ -280,6 +286,14 @@ export interface OutboxMessage {
   updated_at: string;
   sent_at?: string | null;
 }
+
+export type SimulationDispatchScenario =
+  | "normal"
+  | "timeout"
+  | "reject"
+  | "partial_success"
+  | "duplicate_callback"
+  | "out_of_order_callback";
 
 export interface DispatchCallbackRecord {
   callback_id: string;

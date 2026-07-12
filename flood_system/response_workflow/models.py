@@ -221,6 +221,9 @@ class ResponseEvent(WorkflowModel):
 
 class RiskObjectInput(WorkflowModel):
     object_id: str
+    canonical_object_id: str | None = None
+    aliases: list[str] = Field(default_factory=list)
+    duplicate_of: str | None = None
     name: str
     object_type: str
     location: str
@@ -245,6 +248,9 @@ class RiskObjectInput(WorkflowModel):
     calibrated_confidence: float | None = Field(default=None, ge=0, le=1)
     calibration_version: str = "candidate-logistic-v1"
     association_mode: str = "manual"
+    registry_status: str = "active"
+    registry_valid_from: datetime | None = None
+    registry_valid_until: datetime | None = None
 
 
 class RiskObjectBatchRequest(WorkflowModel):

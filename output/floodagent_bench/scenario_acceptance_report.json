@@ -1,0 +1,310 @@
+{
+  "metadata": {
+    "dataset_id": "FloodAgent-Bench",
+    "dataset_version": "floodagent-bench-v2",
+    "manifest_sha256": "fdce9656bcc607ed2bc5ab106535064c8c0c8303bc32cae4be479fd99b3d3efd",
+    "seed": 20260712,
+    "generated_at": "2026-07-01T00:00:00+00:00",
+    "test_command": "python -m pytest -q",
+    "interpretation": "covered 表示场景已绑定到当前存在且由全量 CI 执行的自动测试；测试运行结果以 CI 为准。"
+  },
+  "summary": {
+    "scenario_count": 24,
+    "covered_count": 24,
+    "missing_evidence_count": 0,
+    "status": "PASS"
+  },
+  "scenarios": [
+    {
+      "scenario_id": "SIMSCENARIO-01",
+      "name": "正常预警—对象—任务闭环",
+      "expected_error_codes": [],
+      "automated_evidence": [
+        "tests/test_response_workflow.py::test_full_deterministic_response_loop_and_close"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-02",
+      "name": "对象坐标缺失",
+      "expected_error_codes": [
+        "SPATIAL_DATA_MISSING"
+      ],
+      "automated_evidence": [
+        "tests/test_response_workflow.py::test_candidate_discovery_excludes_missing_coordinates_with_explicit_limitation"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-03",
+      "name": "对象坐标偏移或坐标系错误",
+      "expected_error_codes": [
+        "COORDINATE_SYSTEM_MISMATCH"
+      ],
+      "automated_evidence": [
+        "tests/test_response_policies.py::test_geo_polygon_rejects_wrong_crs_and_out_of_bounds_coordinates"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-04",
+      "name": "对象别名、重名和重复台账",
+      "expected_error_codes": [
+        "DUPLICATE_RISK_OBJECT"
+      ],
+      "automated_evidence": [
+        "tests/test_response_workflow.py::test_risk_object_alias_duplicate_is_merged_and_expired_registry_is_blocked"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-05",
+      "name": "预警覆盖边界对象",
+      "expected_error_codes": [
+        "BOUNDARY_REVIEW_REQUIRED"
+      ],
+      "automated_evidence": [
+        "tests/test_response_policies.py::test_point_in_polygon_includes_boundary_and_excludes_outside_point"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-06",
+      "name": "台账过期",
+      "expected_error_codes": [
+        "STALE_DATA"
+      ],
+      "automated_evidence": [
+        "tests/test_response_workflow.py::test_risk_object_alias_duplicate_is_merged_and_expired_registry_is_blocked"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-07",
+      "name": "台账遗漏后人工补充",
+      "expected_error_codes": [
+        "MANUAL_SUPPLEMENT_REQUIRED"
+      ],
+      "automated_evidence": [
+        "tests/test_response_workflow.py::test_missing_registry_object_can_be_manually_added_and_confirmed"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-08",
+      "name": "新旧预案同时存在",
+      "expected_error_codes": [
+        "DOCUMENT_VERSION_CONFLICT"
+      ],
+      "automated_evidence": [
+        "tests/test_response_workflow.py::test_document_versions_are_clause_indexed_and_superseded_versions_leave_current_retrieval"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-09",
+      "name": "辖区适用性不一致",
+      "expected_error_codes": [
+        "JURISDICTION_CONFLICT"
+      ],
+      "automated_evidence": [
+        "tests/test_response_workflow.py::test_evidence_conflicts_are_separate_from_applicability_and_require_human_resolution"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-10",
+      "name": "数值或时限冲突",
+      "expected_error_codes": [
+        "EVIDENCE_CONFLICT"
+      ],
+      "automated_evidence": [
+        "tests/test_frc_evaluation.py::test_conflict_detection_benchmark_reports_gate_two_metrics"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-11",
+      "name": "责任主体冲突",
+      "expected_error_codes": [
+        "RESPONSIBILITY_CONFLICT"
+      ],
+      "automated_evidence": [
+        "tests/test_response_workflow.py::test_evidence_conflicts_are_separate_from_applicability_and_require_human_resolution"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-12",
+      "name": "条款包含例外条件",
+      "expected_error_codes": [
+        "RULE_EXCEPTION_REVIEW_REQUIRED"
+      ],
+      "automated_evidence": [
+        "tests/test_response_workflow.py::test_grounded_task_draft_covers_all_roles_and_keeps_plan_attribution"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-13",
+      "name": "源文件没有某项任务依据",
+      "expected_error_codes": [
+        "EVIDENCE_MISSING"
+      ],
+      "automated_evidence": [
+        "tests/test_response_workflow.py::test_grounded_task_draft_is_blocked_when_policy_evidence_is_missing"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-14",
+      "name": "OCR错误或文档解析失败",
+      "expected_error_codes": [
+        "DOCUMENT_PARSE_FAILED"
+      ],
+      "automated_evidence": [
+        "tests/test_response_workflow.py::test_document_parse_and_index_dependency_failures_are_isolated"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-15",
+      "name": "向量索引、模型或规则服务中断",
+      "expected_error_codes": [
+        "DEPENDENCY_UNAVAILABLE"
+      ],
+      "automated_evidence": [
+        "tests/test_response_workflow.py::test_document_parse_and_index_dependency_failures_are_isolated",
+        "tests/test_system.py::test_supervisor_loop_retries_and_records_warning"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-16",
+      "name": "AI输出非法JSON或虚构依据编号",
+      "expected_error_codes": [
+        "MODEL_OUTPUT_INVALID"
+      ],
+      "automated_evidence": [
+        "tests/test_system.py::test_platform_api_returns_explicit_llm_errors_without_rule_fallback"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-17",
+      "name": "审批驳回和重新生成",
+      "expected_error_codes": [
+        "APPROVAL_REJECTED"
+      ],
+      "automated_evidence": [
+        "tests/test_response_workflow.py::test_task_versions_keep_complete_immutable_snapshots_and_approval_history"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-18",
+      "name": "并发审批",
+      "expected_error_codes": [
+        "VERSION_CONFLICT"
+      ],
+      "automated_evidence": [
+        "tests/test_response_workflow.py::test_rule_engine_hard_blocks_ungrounded_ai_draft_and_optimistic_lock_conflict"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-19",
+      "name": "重复下发和重复回调",
+      "expected_error_codes": [
+        "IDEMPOTENCY_REPLAY"
+      ],
+      "automated_evidence": [
+        "tests/test_response_workflow.py::test_simulated_dispatch_fault_matrix_is_audited_without_mutating_task_state",
+        "tests/test_response_workflow.py::test_external_service_callback_is_token_bound_idempotent_and_state_safe"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-20",
+      "name": "下发部分成功",
+      "expected_error_codes": [
+        "DISPATCH_PARTIAL_SUCCESS"
+      ],
+      "automated_evidence": [
+        "tests/test_response_workflow.py::test_simulated_dispatch_fault_matrix_is_audited_without_mutating_task_state"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-21",
+      "name": "执行受阻、申请延期和改派",
+      "expected_error_codes": [
+        "TASK_BLOCKED"
+      ],
+      "automated_evidence": [
+        "tests/test_response_workflow.py::test_liaison_assignment_and_reassignment_control_the_field_executor",
+        "tests/test_response_workflow.py::test_deadline_extension_is_independently_approved_without_mutating_approved_payload",
+        "tests/test_response_workflow.py::test_resource_shortage_feedback_creates_escalation_with_alternatives"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-22",
+      "name": "四类时限超时升级",
+      "expected_error_codes": [
+        "DEADLINE_EXCEEDED"
+      ],
+      "automated_evidence": [
+        "tests/test_response_workflow.py::test_all_four_deadline_types_escalate_with_explicit_audit"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-23",
+      "name": "核验退回整改",
+      "expected_error_codes": [
+        "VERIFICATION_REMEDIATION_REQUIRED"
+      ],
+      "automated_evidence": [
+        "tests/test_response_workflow.py::test_verification_can_return_completion_for_rework_without_losing_feedback"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    },
+    {
+      "scenario_id": "SIMSCENARIO-24",
+      "name": "通信中断后人工接管和恢复补录",
+      "expected_error_codes": [
+        "MANUAL_TAKEOVER"
+      ],
+      "automated_evidence": [
+        "tests/test_response_workflow.py::test_manual_takeover_and_commander_cancellation_are_audited_terminal_branches",
+        "tests/test_response_workflow.py::test_simulated_dispatch_timeout_stays_pending_and_recovers_idempotently"
+      ],
+      "missing_evidence_refs": [],
+      "status": "covered"
+    }
+  ]
+}

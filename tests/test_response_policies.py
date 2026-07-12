@@ -1,5 +1,7 @@
 from types import SimpleNamespace
 
+import pytest
+
 from flood_system.response_workflow.candidate_discovery import point_in_polygon
 from flood_system.response_workflow.feedback_policy import (
     build_review_recommendations,
@@ -10,6 +12,7 @@ from flood_system.response_workflow.feedback_policy import (
 from flood_system.response_workflow.models import (
     FeedbackCategory,
     FeedbackRequest,
+    GeoPolygon,
     OperatorRole,
 )
 
@@ -31,6 +34,18 @@ def test_point_in_polygon_includes_boundary_and_excludes_outside_point():
     assert point_in_polygon(108.5, 34.5, ring) is True
     assert point_in_polygon(108.0, 34.5, ring) is True
     assert point_in_polygon(109.5, 34.5, ring) is False
+
+
+def test_geo_polygon_rejects_wrong_crs_and_out_of_bounds_coordinates():
+    ring = [(108.0, 34.0), (109.0, 34.0), (109.0, 35.0), (108.0, 34.0)]
+
+    with pytest.raises(ValueError, match="only EPSG:4326"):
+        GeoPolygon(coordinates=ring, crs="EPSG:3857")
+
+    with pytest.raises(ValueError, match="outside EPSG:4326 bounds"):
+        GeoPolygon(
+            coordinates=[(181.0, 34.0), (109.0, 34.0), (109.0, 35.0), (181.0, 34.0)]
+        )
 
 
 def test_feedback_classification_uses_structured_fields_before_keywords():

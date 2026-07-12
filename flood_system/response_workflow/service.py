@@ -88,6 +88,7 @@ from .models import (
     ResponseEvent,
     ResponseTask,
     RiskObjectBatchRequest,
+    RiskObjectInput,
     RiskObjectVerificationRequest,
     RiskObjectVersionSnapshot,
     ReviewDraftRequest,
@@ -298,10 +299,36 @@ class ResponseWorkflowService:
         self._event(event_id, active=True)
         created: list[EventRiskObject] = []
         for payload in request.objects:
+            change_type = "candidate_added"
+            duplicate_source_id: str | None = None
+            if payload.duplicate_of:
+                canonical = self.repository.get_event_risk_object(event_id, payload.duplicate_of)
+                if canonical is None:
+                    raise ValueError(f"duplicate risk object references unknown canonical object: {payload.duplicate_of}")
+                duplicate_source_id = payload.object_id
+                merged = canonical.model_dump(include=set(RiskObjectInput.model_fields))
+                merged.update(
+                    {
+                        "canonical_object_id": canonical.canonical_object_id or canonical.object_id,
+                        "aliases": sorted(
+                            set(canonical.aliases + payload.aliases + [payload.name, payload.object_id])
+                        ),
+                        "source_refs": list(dict.fromkeys(canonical.source_refs + payload.source_refs)),
+                        "duplicate_of": None,
+                    }
+                )
+                payload = RiskObjectInput(**merged)
+                change_type = "candidate_duplicate_merged"
             existing = self.repository.get_event_risk_object(event_id, payload.object_id)
             now = self._now()
+            registry_expired = (
+                payload.registry_status != "active"
+                or (payload.registry_valid_until is not None and payload.registry_valid_until <= now)
+            )
             item = EventRiskObject(
-                **payload.model_dump(),
+                **payload.model_copy(
+                    update={"canonical_object_id": payload.canonical_object_id or payload.object_id}
+                ).model_dump(),
                 event_id=event_id,
                 verification_status=(
                     ObjectVerificationStatus.PENDING
@@ -316,27 +343,36 @@ class ResponseWorkflowService:
                 created_at=existing.created_at if existing else now,
                 version=(existing.version + 1) if existing else 1,
                 updated_at=now,
-                stale=False,
+                stale=registry_expired,
             )
             self.repository.save_event_risk_object(item)
             self._save_risk_object_version(
                 item,
-                change_type="candidate_updated" if existing else "candidate_added",
+                change_type=change_type if duplicate_source_id else "candidate_updated" if existing else "candidate_added",
                 operator_id=request.operator_id,
                 terminal_id=request.terminal_id,
             )
             created.append(item)
+            action = change_type if duplicate_source_id else "candidate_updated" if existing else "candidate_added"
             self._record(
                 event_id=event_id,
                 object_id=item.object_id,
                 entry_type="risk_object",
-                action="candidate_updated" if existing else "candidate_added",
+                action=action,
                 actor_id=request.operator_id,
                 actor_role=request.operator_role.value,
                 terminal_id=request.terminal_id,
                 before_state={"risk_score": existing.risk_score} if existing else {},
                 after_state={"risk_score": item.risk_score, "verification_status": item.verification_status.value},
-                detail={"risk_score": item.risk_score, "sources": item.source_refs},
+                detail={
+                    "risk_score": item.risk_score,
+                    "sources": item.source_refs,
+                    "canonical_object_id": item.canonical_object_id,
+                    "aliases": item.aliases,
+                    "duplicate_source_id": duplicate_source_id,
+                    "registry_status": item.registry_status,
+                    "registry_valid_until": item.registry_valid_until.isoformat() if item.registry_valid_until else None,
+                },
             )
         return created
 
@@ -473,6 +509,10 @@ class ResponseWorkflowService:
         item = self.repository.get_event_risk_object(event_id, object_id)
         if item is None:
             raise LookupError(f"risk object not found: {object_id}")
+        if item.registry_status != "active" or (
+            item.registry_valid_until is not None and item.registry_valid_until <= self._now()
+        ):
+            raise ValueError("expired or inactive risk-object registry records cannot be confirmed")
         previous_status = item.verification_status
         item = item.model_copy(
             update={

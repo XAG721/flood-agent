@@ -895,6 +895,65 @@ select:focus-visible {
   margin-top: 16px;
 }
 
+.dispatchConsole {
+  margin-top: 14px;
+  padding: 13px;
+  border: 1px solid rgba(236, 170, 79, 0.28);
+  border-radius: 8px;
+  background: rgba(236, 170, 79, 0.06);
+}
+
+.dispatchConsole > header,
+.dispatchControls,
+.callbackList li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dispatchConsole > header p {
+  margin: 3px 0 0;
+}
+
+.dispatchConsole > header > span,
+.dispatchEmpty,
+.callbackList span {
+  color: var(--fg-muted);
+  font-size: 11px;
+}
+
+.dispatchControls {
+  margin-top: 12px;
+  align-items: flex-end;
+}
+
+.dispatchControls label {
+  display: grid;
+  gap: 5px;
+  min-width: min(100%, 260px);
+  color: var(--fg-secondary);
+  font-size: 11px;
+}
+
+.callbackList {
+  display: grid;
+  gap: 7px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.callbackList li {
+  padding-top: 7px;
+  border-top: 1px solid rgba(236, 170, 79, 0.14);
+  font-size: 11px;
+}
+
+.dispatchEmpty {
+  margin: 10px 0 0;
+}
+
 .escalationAdvice {
   margin-top: 14px;
   padding: 12px 13px;

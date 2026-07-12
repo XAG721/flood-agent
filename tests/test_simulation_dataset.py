@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from pathlib import Path
 
 import pytest
 
@@ -11,6 +12,7 @@ from flood_system.simulation_dataset import (
     build_candidate_evaluation_payload,
     build_floodagent_bench,
 )
+from flood_system.scenario_acceptance import build_scenario_acceptance_report
 
 
 def test_floodagent_bench_is_deterministic_traceable_and_family_isolated():
@@ -103,3 +105,17 @@ def test_simulation_gateway_timeout_is_explicit_and_retryable_by_caller():
             scenario=SimulationDispatchScenario.TIMEOUT,
             request_id="SIMREQ-timeout",
         )
+
+
+def test_all_24_simulation_scenarios_have_existing_automated_evidence():
+    repo_root = Path(__file__).resolve().parents[1]
+    report = build_scenario_acceptance_report(repo_root)
+
+    assert report["summary"] == {
+        "scenario_count": 24,
+        "covered_count": 24,
+        "missing_evidence_count": 0,
+        "status": "PASS",
+    }
+    assert all(item["automated_evidence"] for item in report["scenarios"])
+    assert all(not item["missing_evidence_refs"] for item in report["scenarios"])

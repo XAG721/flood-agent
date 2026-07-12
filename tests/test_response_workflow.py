@@ -204,6 +204,80 @@ def test_area_registry_candidate_discovery_is_explainable_and_requires_manual_ve
     assert verified.verification_status == ObjectVerificationStatus.CONFIRMED
 
 
+def test_risk_object_alias_duplicate_is_merged_and_expired_registry_is_blocked(tmp_path):
+    _, workflow, event_id, _ = seed_workflow(tmp_path)
+    canonical = workflow.repository.get_event_risk_object(event_id, "TUNNEL-001")
+    assert canonical is not None
+    base = canonical.model_dump(include=set(RiskObjectInput.model_fields))
+    duplicate = RiskObjectInput(
+        **{
+            **base,
+            "object_id": "TUNNEL-ALIAS-001",
+            "canonical_object_id": None,
+            "duplicate_of": "TUNNEL-001",
+            "name": "测试隧道（旧称）",
+            "aliases": ["测试通道"],
+            "source_refs": ["LEGACY-REGISTRY-1"],
+        }
+    )
+
+    merged = workflow.add_risk_objects(
+        event_id,
+        RiskObjectBatchRequest(
+            objects=[duplicate],
+            operator_id="duty-1",
+            operator_role=OperatorRole.DUTY_OFFICER,
+        ),
+    )[0]
+
+    assert merged.object_id == "TUNNEL-001"
+    assert merged.canonical_object_id == "TUNNEL-001"
+    assert {"测试隧道（旧称）", "测试通道", "TUNNEL-ALIAS-001"} <= set(merged.aliases)
+    assert "LEGACY-REGISTRY-1" in merged.source_refs
+    assert len(workflow.repository.list_event_risk_objects(event_id)) == 1
+    versions = [
+        item
+        for item in workflow.repository.list_risk_object_versions(event_id)
+        if item.object_id == "TUNNEL-001"
+    ]
+    assert versions[-1].change_type == "candidate_duplicate_merged"
+    assert any(
+        item.action == "candidate_duplicate_merged"
+        for item in workflow.repository.list_timeline_entries(event_id)
+    )
+
+    expired = RiskObjectInput(
+        **{
+            **base,
+            "object_id": "TUNNEL-EXPIRED-001",
+            "canonical_object_id": None,
+            "duplicate_of": None,
+            "name": "已过期下穿通道台账",
+            "registry_valid_until": datetime.now(timezone.utc) - timedelta(minutes=1),
+        }
+    )
+    expired_record = workflow.add_risk_objects(
+        event_id,
+        RiskObjectBatchRequest(
+            objects=[expired],
+            operator_id="duty-1",
+            operator_role=OperatorRole.DUTY_OFFICER,
+        ),
+    )[0]
+    assert expired_record.stale is True
+    with pytest.raises(ValueError, match="expired or inactive"):
+        workflow.verify_risk_object(
+            event_id,
+            expired_record.object_id,
+            RiskObjectVerificationRequest(
+                decision=ObjectVerificationStatus.CONFIRMED,
+                note="不应允许确认过期台账",
+                operator_id="reviewer-1",
+                operator_role=OperatorRole.REVIEWER,
+            ),
+        )
+
+
 def test_candidate_discovery_returns_empty_result_when_area_has_no_registered_profiles(tmp_path):
     system = FloodWarningSystem(tmp_path / "candidate-discovery-empty.db")
     workflow = system.response_workflow
@@ -237,6 +311,78 @@ def test_candidate_discovery_returns_empty_result_when_area_has_no_registered_pr
     assert result.scanned_profiles == 0
     assert result.matched_profiles == 0
     assert result.candidates == []
+
+
+def test_missing_registry_object_can_be_manually_added_and_confirmed(tmp_path):
+    system = FloodWarningSystem(tmp_path / "candidate-manual-supplement.db")
+    workflow = system.response_workflow
+    now = datetime.now(timezone.utc)
+    dashboard = workflow.create_event(
+        EventCreateRequest(
+            title="台账缺失对象人工补录",
+            area_id="area-without-profile",
+            alert=AlertInput(
+                alert_id="ALERT-MANUAL-001",
+                source_department="气象部门",
+                disaster_type="暴雨",
+                level="橙色",
+                issued_at=now,
+                affected_area="无台账片区",
+                raw_content="现场发现台账外地下空间",
+            ),
+            operator_id="duty-1",
+            operator_role=OperatorRole.DUTY_OFFICER,
+        )
+    )
+    event_id = dashboard.event.event_id
+    discovered = workflow.discover_risk_objects(
+        event_id,
+        CandidateDiscoveryRequest(
+            operator_id="duty-1",
+            operator_role=OperatorRole.DUTY_OFFICER,
+        ),
+    )
+    assert discovered.candidates == []
+
+    supplemented = workflow.add_risk_objects(
+        event_id,
+        RiskObjectBatchRequest(
+            objects=[
+                RiskObjectInput(
+                    object_id="MANUAL-SPACE-001",
+                    name="现场发现地下空间",
+                    object_type="underground_space",
+                    location="无台账片区临街入口",
+                    responsible_organization="属地街道",
+                    responsible_role="防汛联络员",
+                    trigger_reasons=["现场巡查发现且预警期间存在倒灌风险"],
+                    source_refs=["field_report:REPORT-001"],
+                    vulnerability="地下入口低于路面",
+                    risk_score=72,
+                    system_explanation="台账无记录，按现场报告人工补录，必须由复核岗确认。",
+                    association_mode="manual_supplement",
+                )
+            ],
+            operator_id="duty-1",
+            operator_role=OperatorRole.DUTY_OFFICER,
+        ),
+    )[0]
+    confirmed = workflow.verify_risk_object(
+        event_id,
+        supplemented.object_id,
+        RiskObjectVerificationRequest(
+            decision=ObjectVerificationStatus.CONFIRMED,
+            note="现场照片与属地电话复核通过",
+            operator_id="reviewer-1",
+            operator_role=OperatorRole.REVIEWER,
+        ),
+    )
+
+    assert confirmed.association_mode == "manual_supplement"
+    assert confirmed.verification_status == ObjectVerificationStatus.CONFIRMED
+    actions = [item.action for item in workflow.repository.list_timeline_entries(event_id)]
+    assert "candidate_added" in actions
+    assert "candidate_confirmed" in actions
 
 
 def test_candidate_discovery_uses_epsg4326_point_in_polygon_when_alert_geometry_is_available(tmp_path):
@@ -290,6 +436,59 @@ def test_candidate_discovery_uses_epsg4326_point_in_polygon_when_alert_geometry_
     assert result.candidates[0].trigger_reasons[0] == "对象登记点落入橙色暴雨预警多边形"
     assert "108." not in result.candidates[0].trigger_reasons[0]
     assert result.limitations == []
+
+
+def test_candidate_discovery_excludes_missing_coordinates_with_explicit_limitation(tmp_path):
+    system = FloodWarningSystem(tmp_path / "candidate-discovery-missing-coordinate.db")
+    profile = system.repository.get_v2_entity_profile("school_wyl_primary")
+    assert profile is not None
+    system.repository.save_v2_entity_profile(
+        profile.model_copy(update={"longitude": None, "latitude": None})
+    )
+    workflow = system.response_workflow
+    now = datetime.now(timezone.utc)
+    dashboard = workflow.create_event(
+        EventCreateRequest(
+            title="缺少坐标对象精确筛查",
+            area_id="beilin_10km2",
+            alert=AlertInput(
+                alert_id="ALERT-GIS-MISSING-001",
+                source_department="气象部门",
+                disaster_type="暴雨",
+                level="橙色",
+                issued_at=now,
+                affected_area="文艺路小学周边",
+                affected_geometry=GeoPolygon(
+                    coordinates=[
+                        (108.9565, 34.2425),
+                        (108.9595, 34.2425),
+                        (108.9595, 34.2455),
+                        (108.9565, 34.2455),
+                        (108.9565, 34.2425),
+                    ]
+                ),
+                raw_content="学校周边短时强降雨预警范围",
+            ),
+            operator_id="duty-1",
+            operator_role=OperatorRole.DUTY_OFFICER,
+        )
+    )
+
+    result = workflow.discover_risk_objects(
+        dashboard.event.event_id,
+        CandidateDiscoveryRequest(
+            entity_types=["school"],
+            min_risk_score=45,
+            operator_id="duty-1",
+            operator_role=OperatorRole.DUTY_OFFICER,
+        ),
+    )
+
+    assert result.scanned_profiles == 1
+    assert result.spatially_evaluated_profiles == 0
+    assert result.excluded_unlocated_profiles == 1
+    assert result.candidates == []
+    assert result.limitations == ["1 个对象缺少 EPSG:4326 坐标，未纳入本次精确空间筛查。"]
 
 
 def assign_field_operator(workflow, task_id: str, *, assignee_id: str = "field-1"):
@@ -595,6 +794,60 @@ def test_full_deterministic_response_loop_and_close(tmp_path):
         "completion_verified",
         "event_closed",
     }
+
+
+def test_verification_can_return_completion_for_rework_without_losing_feedback(tmp_path):
+    _, workflow, event_id, task = seed_workflow(
+        tmp_path,
+        approval_policy=ApprovalPolicy.REVIEWER_REQUIRED,
+    )
+    workflow.submit_task(
+        task.task_id,
+        TaskActionRequest(operator_id="duty-1", operator_role=OperatorRole.DUTY_OFFICER),
+    )
+    workflow.decide_task(
+        task.task_id,
+        ApprovalRequest(
+            operator_id="reviewer-1",
+            operator_role=OperatorRole.REVIEWER,
+            decision=ApprovalDecision.APPROVED,
+        ),
+    )
+    workflow.acknowledge_task(
+        task.task_id,
+        TaskActionRequest(operator_id="liaison-1", operator_role=OperatorRole.LIAISON),
+    )
+    assign_field_operator(workflow, task.task_id)
+    workflow.start_task(
+        task.task_id,
+        TaskActionRequest(operator_id="field-1", operator_role=OperatorRole.FIELD_OPERATOR),
+    )
+    workflow.submit_feedback(
+        task.task_id,
+        FeedbackRequest(
+            operator_id="field-1",
+            operator_role=OperatorRole.FIELD_OPERATOR,
+            summary="现场处置完成，提交初次核验",
+            evidence=[
+                {"type": "现场照片", "url": "object://photo-rework"},
+                {"type": "积水深度", "value": "8cm"},
+            ],
+        ),
+    )
+
+    returned = workflow.verify_completion(
+        task.task_id,
+        False,
+        TaskActionRequest(
+            operator_id="reviewer-2",
+            operator_role=OperatorRole.REVIEWER,
+            note="照片缺少时间标记，退回整改",
+        ),
+    )
+
+    assert returned.status == TaskStatus.IN_PROGRESS
+    assert len(workflow.repository.list_task_feedback(task.task_id)) == 1
+    assert workflow.repository.list_timeline_entries(event_id)[-1].action == "completion_returned"
 
 
 def test_closed_event_generates_persisted_district_scenario_report(tmp_path):
@@ -1071,6 +1324,60 @@ def test_overdue_unacknowledged_task_is_escalated(tmp_path):
     assert len(escalated) == 1
     assert escalated[0].status == TaskStatus.ESCALATED
     assert workflow.repository.list_escalations(event_id)[0].reason == "任务超过确认时限仍未确认"
+
+
+@pytest.mark.parametrize(
+    ("status", "deadline_field", "deadline_type", "expected_reason"),
+    [
+        (TaskStatus.ISSUED, "acknowledge_deadline_at", "acknowledge", "任务超过确认时限仍未确认"),
+        (TaskStatus.ACKNOWLEDGED, "start_deadline_at", "start", "任务超过开始时限仍未开始"),
+        (TaskStatus.IN_PROGRESS, "deadline_at", "completion", "任务超过完成时限"),
+        (TaskStatus.PENDING_VERIFICATION, "verification_deadline_at", "verification", "任务超过核验时限"),
+    ],
+)
+def test_all_four_deadline_types_escalate_with_explicit_audit(
+    tmp_path, status, deadline_field, deadline_type, expected_reason
+):
+    _, workflow, event_id, task = seed_workflow(
+        tmp_path,
+        approval_policy=ApprovalPolicy.REVIEWER_REQUIRED,
+    )
+    workflow.submit_task(
+        task.task_id,
+        TaskActionRequest(operator_id="duty-1", operator_role=OperatorRole.DUTY_OFFICER),
+    )
+    issued = workflow.decide_task(
+        task.task_id,
+        ApprovalRequest(
+            operator_id="reviewer-1",
+            operator_role=OperatorRole.REVIEWER,
+            decision=ApprovalDecision.APPROVED,
+        ),
+    )
+    now = datetime.now(timezone.utc)
+    prepared = issued.model_copy(
+        update={
+            "status": status,
+            deadline_field: now - timedelta(minutes=1),
+            "effective_start_deadline_at": None,
+            "effective_completion_deadline_at": None,
+            "effective_verification_deadline_at": None,
+        }
+    )
+    workflow.repository.save_response_task(prepared)
+
+    escalated = workflow.run_deadline_sweep(
+        event_id,
+        TaskActionRequest(operator_id="duty-1", operator_role=OperatorRole.DUTY_OFFICER),
+        now=now,
+    )
+
+    assert [item.task_id for item in escalated] == [task.task_id]
+    assert escalated[0].status == TaskStatus.ESCALATED
+    assert workflow.repository.list_escalations(event_id)[-1].reason == expected_reason
+    entry = workflow.repository.list_timeline_entries(event_id)[-1]
+    assert entry.action == "deadline_escalated"
+    assert entry.detail["deadline_type"] == deadline_type
 
 
 def test_grounded_task_draft_covers_all_roles_and_keeps_plan_attribution(tmp_path):
@@ -1765,6 +2072,33 @@ def test_document_versions_are_clause_indexed_and_superseded_versions_leave_curr
     assert new and all(item.metadata["status"] == "active" for item in new)
     current = workflow._query_task_evidence("红色暴雨 下穿通道 封控")
     assert all(item.metadata.get("document_version_id") != first.version_id for item in current)
+
+
+def test_document_parse_and_index_dependency_failures_are_isolated(tmp_path):
+    system = FloodWarningSystem(tmp_path / "document-failure-isolation.db")
+    workflow = system.response_workflow
+    request = DocumentImportRequest(
+        document_id="PLAN-FAILURE-001",
+        title="不可解析模拟文档",
+        version_label="2026-failure",
+        issuer="模拟区防办",
+        jurisdiction="district-demo",
+        effective_at=datetime.now(timezone.utc),
+        content="        ",
+        operator_id="admin-1",
+        operator_role=OperatorRole.ADMIN,
+    )
+
+    with pytest.raises(ValueError, match="no indexable clauses"):
+        workflow.register_document(request)
+    assert workflow.list_document_versions("PLAN-FAILURE-001") == []
+
+    workflow.rag_service = None
+    with pytest.raises(ValueError, match="indexing service is unavailable"):
+        workflow.register_document(
+            request.model_copy(update={"content": "有效条款：达到橙色预警时应核查下穿通道。"})
+        )
+    assert workflow.list_document_versions("PLAN-FAILURE-001") == []
 
 
 def test_task_creation_idempotency_key_prevents_duplicate_formal_tasks(tmp_path):

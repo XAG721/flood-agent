@@ -8621,6 +8621,35 @@
             "type": "string",
             "title": "Object Id"
           },
+          "canonical_object_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Canonical Object Id"
+          },
+          "aliases": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Aliases"
+          },
+          "duplicate_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duplicate Of"
+          },
           "name": {
             "type": "string",
             "title": "Name"
@@ -8758,6 +8787,35 @@
             "type": "string",
             "title": "Association Mode",
             "default": "manual"
+          },
+          "registry_status": {
+            "type": "string",
+            "title": "Registry Status",
+            "default": "active"
+          },
+          "registry_valid_from": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registry Valid From"
+          },
+          "registry_valid_until": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registry Valid Until"
           }
         },
         "type": "object",

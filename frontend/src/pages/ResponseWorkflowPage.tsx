@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { responseWorkflowApi } from "../api/responseWorkflowApi";
 import { setApiOperatorContext } from "../lib/httpClient";
-import type { DeadlineExtensionRecord, DistrictScenarioReport, DocumentVersionRecord, EscalationRecord, EvidencePackageVersion, EvidenceRole, EventDashboard, EventReviewDraft, OutboxMessage, ResponseTask, ResponseTaskStatus, RetrievalMode, RuleEvaluationRecord, WorkflowRole } from "../types/response";
+import type { DeadlineExtensionRecord, DispatchCallbackRecord, DistrictScenarioReport, DocumentVersionRecord, EscalationRecord, EvidencePackageVersion, EvidenceRole, EventDashboard, EventReviewDraft, OutboxMessage, ResponseTask, ResponseTaskStatus, RetrievalMode, RuleEvaluationRecord, SimulationDispatchScenario, WorkflowRole } from "../types/response";
 import styles from "./response-workflow-page.module.css";
 
 const roleText: Record<WorkflowRole, string> = {
@@ -60,6 +60,15 @@ const actionText: Record<string, string> = {
   event_review_draft_generated: "事件复盘草稿已生成",
   scenario_evaluation_completed: "区县场景评测已完成",
   situation_feedback_recorded: "现场态势更新已记录",
+};
+
+const dispatchScenarioText: Record<SimulationDispatchScenario, string> = {
+  normal: "正常接收与送达",
+  timeout: "网关超时（可重试）",
+  reject: "外部通道拒收",
+  partial_success: "批量部分成功",
+  duplicate_callback: "重复回调",
+  out_of_order_callback: "乱序回调",
 };
 
 const evidenceRoleText: Record<EvidenceRole, string> = {
@@ -384,6 +393,19 @@ export function ResponseWorkflowPage() {
 }
 
 function TaskDetail({ task, escalation, evidencePackage, outboxMessage, ruleEvaluation, deadlineExtension, role, busy, run }: { task: ResponseTask; escalation?: EscalationRecord; evidencePackage?: EvidencePackageVersion; outboxMessage?: OutboxMessage; ruleEvaluation?: RuleEvaluationRecord; deadlineExtension?: DeadlineExtensionRecord; role: WorkflowRole; busy: boolean; run: (label: string, operation: () => Promise<unknown>) => Promise<void> }) {
+  const [dispatchScenario, setDispatchScenario] = useState<SimulationDispatchScenario>("normal");
+  const [dispatchCallbacks, setDispatchCallbacks] = useState<DispatchCallbackRecord[]>([]);
+
+  useEffect(() => {
+    if (!outboxMessage) {
+      setDispatchCallbacks([]);
+      return;
+    }
+    void responseWorkflowApi.listDispatchCallbacks(outboxMessage.message_id)
+      .then(setDispatchCallbacks)
+      .catch(() => setDispatchCallbacks([]));
+  }, [outboxMessage?.message_id, outboxMessage?.callback_count]);
+
   const primaryAction = (() => {
     if (task.status === "issued" || task.status === "escalated") return { label: "确认接收", action: () => responseWorkflowApi.acknowledgeTask(task.task_id, role) };
     if (task.status === "acknowledged" && !task.assignee_id) return { label: "分派现场执行员", action: () => responseWorkflowApi.assignTask(task.task_id, role) };
@@ -420,10 +442,43 @@ function TaskDetail({ task, escalation, evidencePackage, outboxMessage, ruleEval
         <p className={styles.contractLine}>证据包 {evidencePackage.package_id} · V{evidencePackage.version} · {evidencePackage.status} · 哈希 {evidencePackage.content_hash.slice(0, 12)}</p>
       ) : null}
       {outboxMessage ? (
-        <p className={outboxMessage.status === "failed" ? styles.dispatchFailed : styles.contractLine}>
-          模拟下发 {outboxMessage.status === "sent" ? "已送达" : outboxMessage.status === "partially_sent" ? "部分成功，等待人工协调" : outboxMessage.status === "failed" ? "失败并关闭" : outboxMessage.status === "manual_takeover" ? "已转人工接管" : "待处理"}
-          {" · "}场景 {outboxMessage.simulation_scenario} · 回调 {outboxMessage.callback_count} 条 · 尝试 {outboxMessage.attempts} 次 · {outboxMessage.message_id}
-        </p>
+        <section className={styles.dispatchConsole} aria-label="模拟下发场景控制台">
+          <header>
+            <div>
+              <strong>模拟下发场景控制台</strong>
+              <p className={outboxMessage.status === "failed" ? styles.dispatchFailed : styles.contractLine}>
+                {outboxMessage.status === "sent" ? "已送达" : outboxMessage.status === "partially_sent" ? "部分成功，等待人工协调" : outboxMessage.status === "failed" ? "失败并关闭" : outboxMessage.status === "manual_takeover" ? "已转人工接管" : "待处理"}
+                {" · "}场景 {dispatchScenarioText[outboxMessage.simulation_scenario as SimulationDispatchScenario] ?? outboxMessage.simulation_scenario} · 回调 {outboxMessage.callback_count} 条 · 尝试 {outboxMessage.attempts} 次
+              </p>
+            </div>
+            <span>{outboxMessage.message_id}</span>
+          </header>
+          {outboxMessage.status === "pending" ? (
+            <div className={styles.dispatchControls}>
+              <label>
+                <span>故障注入场景</span>
+                <select value={dispatchScenario} onChange={(event) => setDispatchScenario(event.target.value as SimulationDispatchScenario)} disabled={busy}>
+                  {Object.entries(dispatchScenarioText).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                </select>
+              </label>
+              <button
+                type="button"
+                disabled={busy || !["admin", "liaison", "commander"].includes(role)}
+                onClick={() => void run("运行模拟下发场景", () => responseWorkflowApi.processOutbox(outboxMessage.message_id, dispatchScenario, role))}
+              >执行受控场景</button>
+            </div>
+          ) : null}
+          {dispatchCallbacks.length ? (
+            <ol className={styles.callbackList} aria-label="模拟下发回调记录">
+              {dispatchCallbacks.map((callback) => (
+                <li key={callback.callback_id}>
+                  <strong>V{callback.version} · {callback.status}</strong>
+                  <span>{callback.sequence_state === "out_of_order" ? "乱序" : "顺序正常"} · {callback.trace_id}</span>
+                </li>
+              ))}
+            </ol>
+          ) : <p className={styles.dispatchEmpty}>尚无回调；超时场景保持待处理，可切换正常场景重试。</p>}
+        </section>
       ) : null}
       {deadlineExtension ? (
         <p className={styles.contractLine}>

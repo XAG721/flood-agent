@@ -32,6 +32,9 @@ jobs:
       - name: Reproduce controlled acceptance evaluations
         run: |
           python scripts/generate_floodagent_bench.py --output "${RUNNER_TEMP}/acceptance/floodagent_bench.json"
+          python scripts/run_simulation_scenario_acceptance.py --json-output "${RUNNER_TEMP}/acceptance/scenario_acceptance_report.json" --markdown-output "${RUNNER_TEMP}/acceptance/scenario_acceptance_report.md"
+          cmp output/floodagent_bench/scenario_acceptance_report.json "${RUNNER_TEMP}/acceptance/scenario_acceptance_report.json"
+          cmp output/floodagent_bench/scenario_acceptance_report.md "${RUNNER_TEMP}/acceptance/scenario_acceptance_report.md"
           python scripts/run_candidate_evaluation.py --input "${RUNNER_TEMP}/acceptance/candidate_evaluation_input.json" --output "${RUNNER_TEMP}/acceptance/candidate_report.json"
           python scripts/run_rag_evaluation.py --output-dir "${RUNNER_TEMP}/acceptance/rag"
           python scripts/run_controlled_performance.py --db "${RUNNER_TEMP}/controlled-performance.db" --output-dir "${RUNNER_TEMP}/acceptance/performance"
@@ -121,6 +124,14 @@ jobs:
         env:
           PLAYWRIGHT_BASE_URL: http://127.0.0.1:8080
         run: npm run test:e2e --prefix frontend
+      - name: Archive browser acceptance baselines
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: response-browser-acceptance
+          path: tmp/playwright-results
+          if-no-files-found: error
+          retention-days: 30
       - name: Rehearse SQLite to PostGIS shadow migration
         run: |
           docker compose exec -T backend python scripts/seed_response_migration_fixture.py --db /app/data/postgis-source.db
