@@ -96,6 +96,16 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install browser acceptance dependencies
+        run: |
+          npm ci --prefix frontend
+          cd frontend
+          npx playwright install --with-deps chromium
       - name: Validate Compose contract
         run: docker compose config --quiet
       - name: Build simulation environment images
@@ -107,16 +117,6 @@ jobs:
           curl --fail --show-error http://127.0.0.1:8000/ready
           curl --fail --show-error http://127.0.0.1:8080/healthz
           docker compose ps
-      - uses: actions/setup-node@v6
-        with:
-          node-version: "22"
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-      - name: Install browser acceptance dependencies
-        run: |
-          npm ci --prefix frontend
-          cd frontend
-          npx playwright install --with-deps chromium
       - name: Run Chromium response-workflow acceptance
         env:
           PLAYWRIGHT_BASE_URL: http://127.0.0.1:8080
