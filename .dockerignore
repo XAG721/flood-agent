@@ -1,4 +1,6 @@
 .git
+.tools
+.venv
 .cache
 .pytest_cache
 .playwright-mcp

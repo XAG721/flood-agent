@@ -69,7 +69,7 @@ docker compose up --build
 - `flood_system/config.py`：运行配置与 `FLOOD_DB_PATH` 解析。
 - `flood_system/http/`：AgentTwin HTTP 路由层。
 - `flood_system/response_workflow/`：区县防办确定性响应工作流模型与服务。
-- `flood_system/rag_evaluation.py`：BM25、哈希向量 Dense、混合、MMR、Rerank、SetR 和 FRC-Select 的可重复工程评测与消融。
+- `flood_system/rag_evaluation.py`：BM25、哈希向量 Dense、混合、MMR、Rerank、SetR 和 FRC-Select 的可重复工程评测、w/o Role / w/o Field 消融与机器可读 Gate 2 判定。
 - `flood_system/http/response_router.py`：`/response/*` 业务闭环 API。
 - `flood_system/infrastructure/sse.py`：SSE 编码与流式基础设施。
 - `flood_system/schemas/`：HTTP router 使用的 schema import surface。

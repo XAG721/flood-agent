@@ -90,15 +90,7 @@ class RAGBaselineEvaluator:
         if method == "setr":
             return self._setr(documents, case.query, case.required_roles, top_k, token_budget)
         if method == "frc_select":
-            return SimpleRAGStore(documents).query_evidence_set(
-                case.corpus,
-                case.query,
-                top_k=top_k,
-                candidate_k=max(20, len(documents)),
-                token_budget=token_budget,
-                slots=case.slots,
-                required_roles=case.required_roles,
-            )
+            return self._frc_select(documents, case, top_k=top_k, token_budget=token_budget)
         raise ValueError(f"unsupported RAG evaluation method: {method}")
 
     def evaluate(
@@ -154,6 +146,20 @@ class RAGBaselineEvaluator:
     ) -> dict:
         variants = {
             "full_frc_select": lambda case: self.retrieve("frc_select", case, top_k=top_k, token_budget=token_budget),
+            "without_role": lambda case: self._frc_select(
+                [item for item in self.documents if item.corpus == case.corpus],
+                case,
+                top_k=top_k,
+                token_budget=token_budget,
+                include_roles=False,
+            ),
+            "without_field": lambda case: self._frc_select(
+                [item for item in self.documents if item.corpus == case.corpus],
+                case,
+                top_k=top_k,
+                token_budget=token_budget,
+                include_fields=False,
+            ),
             "without_budget": lambda case: self.retrieve("frc_select", case, top_k=top_k, token_budget=None),
             "without_trust_conflict": lambda case: self.retrieve("setr", case, top_k=top_k, token_budget=token_budget),
             "without_set_objective": lambda case: self.retrieve("hybrid", case, top_k=top_k, token_budget=token_budget),
@@ -172,11 +178,33 @@ class RAGBaselineEvaluator:
         return {
             "variants": output,
             "interpretation": {
+                "without_role": "移除功能角色约束，检验角色互补性对证据选择的贡献。",
+                "without_field": "移除任务字段查询约束，检验字段完整性目标的贡献。",
                 "without_budget": "移除证据预算约束，观察覆盖收益与证据成本控制的权衡。",
                 "without_trust_conflict": "使用仅覆盖优先的 SetR，移除 FRC 的可信度与冲突惩罚。",
                 "without_set_objective": "退化为混合 Top-K，移除集合互补性目标。",
             },
         }
+
+    @staticmethod
+    def _frc_select(
+        documents: list[RAGDocument],
+        case: RAGEvaluationCase,
+        *,
+        top_k: int,
+        token_budget: int | None,
+        include_roles: bool = True,
+        include_fields: bool = True,
+    ) -> list[RAGDocument]:
+        return SimpleRAGStore(documents).query_evidence_set(
+            case.corpus,
+            case.query,
+            top_k=top_k,
+            candidate_k=max(20, len(documents)),
+            token_budget=token_budget,
+            slots=case.slots if include_fields else [],
+            required_roles=case.required_roles if include_roles else [],
+        )
 
     @staticmethod
     def _score(case: RAGEvaluationCase, method: str, selected: list[RAGDocument], latency_ms: float) -> RAGMethodResult:
@@ -334,7 +362,11 @@ class RAGBaselineEvaluator:
 
 
 def render_rag_evaluation_markdown(
-    report: dict, ablations: dict, metadata: dict, conflict_report: dict | None = None
+    report: dict,
+    ablations: dict,
+    metadata: dict,
+    conflict_report: dict | None = None,
+    gate_report: dict | None = None,
 ) -> str:
     lines = [
         "# V3 RAG 技术评测报告",
@@ -374,7 +406,62 @@ def render_rag_evaluation_markdown(
                 f"- F1：{conflict_report['f1']:.4f}",
             ]
         )
+    if gate_report:
+        lines.extend(
+            [
+                "",
+                "## Gate 2 判定",
+                "",
+                f"- 状态：{gate_report['status']}",
+                f"- 相对最强基线字段覆盖增益：{gate_report['coverage_gain_percentage_points']:.4f} 个百分点",
+                f"- Full 相对 w/o Role / w/o Field 的引用正确率提升："
+                f"{gate_report['full_vs_without_role_citation_gain']:.4f} / "
+                f"{gate_report['full_vs_without_field_citation_gain']:.4f}",
+            ]
+        )
+        for criterion, passed in gate_report["criteria"].items():
+            lines.append(f"- {'PASS' if passed else 'FAIL'}：{criterion}")
     lines.extend(["", "## 解释与限制", ""])
     lines.extend(f"- {item}" for item in report["limitations"])
     lines.append("- 本报告可复现本地工程选择逻辑；正式论文结论仍需真实神经向量模型、公开基准与独立人工标注。")
     return "\n".join(lines) + "\n"
+
+
+def evaluate_frc_gate(report: dict, ablations: dict, conflict_report: dict) -> dict:
+    """Evaluate the controlled Gate 2 thresholds without overriding a NO-GO result."""
+
+    aggregates = report["aggregates"]
+    full = aggregates["frc_select"]
+    baseline_coverages = [
+        row["task_element_completeness"]
+        for method, row in aggregates.items()
+        if method != "frc_select"
+    ]
+    strongest_baseline = max(baseline_coverages, default=0.0)
+    coverage_gain = round((full["task_element_completeness"] - strongest_baseline) * 100, 4)
+    variants = ablations["variants"]
+    role_gain = round(full["citation_precision"] - variants["without_role"]["citation_precision"], 4)
+    field_gain = round(full["citation_precision"] - variants["without_field"]["citation_precision"], 4)
+    undisclosed_conflicts = sum(
+        len(set(row.get("expected", [])) - set(row.get("predicted", [])))
+        for row in conflict_report.get("rows", [])
+    )
+    criteria = {
+        "核心任务字段覆盖率不低于0.90": full["task_element_completeness"] >= 0.90,
+        "引用支持精度不低于0.95": full["citation_precision"] >= 0.95,
+        "无依据关键字段率为0": full["unsupported_evidence_ratio"] == 0,
+        "冲突检测F1不低于0.85": conflict_report["f1"] >= 0.85,
+        "未披露关键冲突数为0": undisclosed_conflicts == 0,
+        "相同预算下字段覆盖率相对最强基线提高至少5个百分点": coverage_gain >= 5.0,
+        "Full引用正确率严格优于w/o Role和w/o Field": role_gain > 0 and field_gain > 0,
+    }
+    return {
+        "status": "GO" if all(criteria.values()) else "NO-GO",
+        "criteria": criteria,
+        "strongest_baseline_task_element_completeness": strongest_baseline,
+        "frc_task_element_completeness": full["task_element_completeness"],
+        "coverage_gain_percentage_points": coverage_gain,
+        "undisclosed_critical_conflicts": undisclosed_conflicts,
+        "full_vs_without_role_citation_gain": role_gain,
+        "full_vs_without_field_citation_gain": field_gain,
+    }
