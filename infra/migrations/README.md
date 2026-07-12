@@ -2,6 +2,8 @@
 
 响应域采用只向前、幂等建表与版本账本策略。实际 DDL 的单一来源为 `flood_system/storage/schema.py`；`SQLiteRepository` 在事务中执行幂等 DDL，并将完整 DDL 的 SHA-256 写入 `response_schema_migrations`。同一校验和重复启动不会产生重复版本。
 
+PostGIS 试点采用单向影子投影，不与 SQLite 双写。DDL、运行命令、模拟/真实隔离和数量/哈希对账规则见 `../postgis/README.md`。该演练通过前不得把 PostgreSQL 标记为响应域权威源。
+
 执行：
 
 ```powershell

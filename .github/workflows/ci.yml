@@ -74,6 +74,15 @@ jobs:
           curl --fail --show-error http://127.0.0.1:8000/ready
           curl --fail --show-error http://127.0.0.1:8080/healthz
           docker compose ps
+      - name: Rehearse SQLite to PostGIS shadow migration
+        run: |
+          docker compose exec -T backend python scripts/seed_response_migration_fixture.py --db /app/data/postgis-source.db
+          docker compose exec -T backend python scripts/migrate_response_to_postgis.py \
+            --source-db /app/data/postgis-source.db \
+            --dsn "postgresql://flood:simulation-only-change-me@postgis:5432/flood" \
+            --report /app/data/postgis-migration-report.json
+          docker compose exec -T postgis psql -U flood -d flood -v ON_ERROR_STOP=1 -c \
+            "SELECT PostGIS_Version(), count(*) AS projected_records, count(affected_geometry) AS geometries FROM flood_simulation.shadow_records;"
       - name: Capture service logs
         if: failure()
         run: docker compose logs --no-color

@@ -6,9 +6,11 @@
 
 前端：在 `frontend` 目录执行 `npm run dev`。
 
-容器模拟环境：`docker compose up --build`，前端位于 `http://127.0.0.1:8080`，后端位于 `http://127.0.0.1:8000`。
+容器模拟环境：`docker compose up --build`，前端位于 `http://127.0.0.1:8080`，后端位于 `http://127.0.0.1:8000`，PostGIS 影子迁移实例默认绑定 `127.0.0.1:5432`。
 
 Compose 中的 `worker` 独立执行幂等 Outbox 发送和四时限巡检；单次诊断可运行 `python scripts/run_response_worker.py --once`。Worker 只调用确定性工作流服务，异常保持失败关闭并在下一周期重试。
+
+SQLite 到 PostGIS 的演练使用 `scripts/migrate_response_to_postgis.py`，只写 `flood_simulation`，并生成批次、隔离、数量/哈希和空间投影报告。迁移失败或出现隔离项时 SQLite 继续保持权威源，不允许切换。
 
 Compose 演示环境显式设置 `FLOOD_ALLOW_DEV_IDENTITY_HEADERS=1`，让同一容器网络内的前端代理使用模拟岗位头；该分支在 `production/prod` 环境无条件禁用。试点和生产必须删除此配置，并由可信 IdP 网关签发短时 HMAC/OIDC 身份断言。Core API 所有写请求必须带 `Idempotency-Key`，前端同时生成 `X-Correlation-ID`。
 

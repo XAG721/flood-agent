@@ -21,6 +21,9 @@ test = [
   "numpy>=1.26,<3",
   "pytest>=8.4,<9",
 ]
+postgres = [
+  "psycopg[binary]>=3.3,<4",
+]
 rag-evaluation = [
   "numpy>=1.26",
   "huggingface-hub>=0.23",

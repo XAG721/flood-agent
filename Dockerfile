@@ -9,7 +9,8 @@ WORKDIR /app
 COPY pyproject.toml README.md ./
 COPY flood_system ./flood_system
 COPY scripts ./scripts
-RUN pip install --no-cache-dir .
+COPY infra ./infra
+RUN pip install --no-cache-dir ".[postgres]"
 
 RUN useradd --create-home --uid 10001 flood && mkdir -p /app/data && chown -R flood:flood /app
 USER flood

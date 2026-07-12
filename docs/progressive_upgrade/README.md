@@ -8,6 +8,7 @@
 - `implementation_acceptance_matrix.md`：阶段 0—8、最终审查清单和 Go/No-Go 门禁状态。
 - `operations_and_rollback.md`：启动、健康检查、功能开关、备份、回滚和人工接管。
 - `evaluation_and_gate_report.md`：真实运行的受控模拟指标、Gate 判定和外部 No-Go 边界。
+- `../../infra/postgis/README.md`：SQLite 到 PostGIS 单向影子迁移、空间投影、隔离和对账演练。
 - `api_compatibility_mapping.md`：设计概念、新 Core API 路径、旧接口边界和单写约束。
 
 ## 当前受控场景

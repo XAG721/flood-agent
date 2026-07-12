@@ -1,4 +1,22 @@
 services:
+  postgis:
+    image: postgis/postgis:17-3.5
+    environment:
+      POSTGRES_DB: ${FLOOD_POSTGRES_DB:-flood}
+      POSTGRES_USER: ${FLOOD_POSTGRES_USER:-flood}
+      POSTGRES_PASSWORD: ${FLOOD_POSTGRES_PASSWORD:-simulation-only-change-me}
+    ports:
+      - "127.0.0.1:${FLOOD_POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgis-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    restart: unless-stopped
+
   backend:
     build:
       context: .
@@ -57,3 +75,4 @@ services:
 
 volumes:
   flood-data:
+  postgis-data:
