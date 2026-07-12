@@ -31,3 +31,15 @@ rag-evaluation = [
 
 [tool.setuptools.packages.find]
 include = ["flood_system*"]
+
+[tool.setuptools.package-data]
+flood_system = [
+  "bootstrap_data/*.csv",
+  "bootstrap_data/*.json",
+  "bootstrap_data/compensation_inputs/*.csv",
+  "rag_benchmarks/*.json",
+  "rag_raw/*.md",
+  "rag_raw/*/*.docx",
+  "rag_raw/*/*.json",
+  "v2/*.json",
+]

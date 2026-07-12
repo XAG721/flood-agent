@@ -37,11 +37,22 @@ services:
       FLOOD_ENVIRONMENT: development
       FLOOD_SUPERVISOR_LOOP_ENABLED: "0"
       FLOOD_ALLOW_DEV_IDENTITY_HEADERS: "1"
+      FLOOD_RESPONSE_WORKER_HEALTH_FILE: /tmp/response-worker-health.json
     volumes:
       - flood-data:/app/data
     depends_on:
       backend:
         condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import os,time; path='/tmp/response-worker-health.json'; assert os.path.exists(path) and time.time() - os.path.getmtime(path) < 45"
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 20s
     restart: unless-stopped
 
 volumes:
