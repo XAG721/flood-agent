@@ -53,6 +53,8 @@ PostGIS 数值来自 GitHub Actions 受控容器运行 `29196235621`。该结果
 
 受控性能数值来自 Windows 单进程 FastAPI TestClient，包含加密 SQLite、可信身份签名和 nonce 防重放；预算文件为 `benchmarks/controlled_performance_budget.json`，原始报告位于 `output/performance/`。它只冻结仓库回归预算，不包含网络、TLS、反向代理、外部 IdP、生产 PostgreSQL、多主机并发或真实数据规模。
 
+GitHub Actions Linux 运行 `29196681614` 对同一预算复测通过：event list、dashboard、timeline、audit trail 的 P95 分别为 3.647、18.658、28.579、19.848 ms，四条路径错误率均为 0。
+
 ## Gate 判定
 
 - Gate 0：`GO（受控模拟）`。来源、版本、种子、模拟标记及家族隔离均由测试校验。
