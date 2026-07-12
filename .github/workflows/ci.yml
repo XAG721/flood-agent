@@ -85,7 +85,7 @@ jobs:
             --source-db /app/data/postgis-source.db \
             --dsn "postgresql://flood:simulation-only-change-me@postgis:5432/flood" \
             --report /app/data/postgis-migration-rerun-report.json
-          docker compose exec -T backend python -c "import json; from pathlib import Path; first=json.loads(Path('/app/data/postgis-migration-report.json').read_text()); second=json.loads(Path('/app/data/postgis-migration-rerun-report.json').read_text()); assert first['batch_id'] == second['batch_id']; assert first['target_counts'] == second['target_counts']; assert sum(second['target_counts'].values()) == 21; assert second['quarantine_count'] == 0; assert all(item['passed'] for item in second['reconciliations'])"
+          docker compose exec -T backend python -c "import json; from pathlib import Path; first=json.loads(Path('/app/data/postgis-migration-report.json').read_text()); second=json.loads(Path('/app/data/postgis-migration-rerun-report.json').read_text()); assert first['batch_id'] == second['batch_id']; assert first['target_counts'] == second['target_counts']; assert sum(first['source_counts'].values()) == sum(second['target_counts'].values()) > 0; assert second['quarantine_count'] == 0; assert all(item['passed'] for item in second['reconciliations'])"
           docker compose exec -T postgis psql -U flood -d flood -v ON_ERROR_STOP=1 -c \
             "SELECT PostGIS_Version(), count(*) AS projected_records, count(affected_geometry) AS geometries FROM flood_simulation.shadow_records;"
       - name: Capture service logs
