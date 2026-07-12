@@ -58,7 +58,7 @@
 | M0—M3 | GO / 本地模拟 GO | 基线、资产、架构边界和迁移机制完成 |
 | M4 | 机制 GO / 算法 NO-GO | 影子比较完成，FRC 正式切换被 Gate 2 阻断 |
 | M5 | GO | 工作流安全不变量通过 |
-| M6 | CONDITIONAL | 页面/API 回退与模拟路由稳定，本次 GitHub CI 发布后再登记运行证据 |
+| M6 | CONDITIONAL（受控环境已验证） | 页面/API 回退与模拟路由在 GitHub Actions `29202239706` 通过；真实生产路由稳定性仍待 UAT |
 | M7 | NO-GO | 需要真实旧流量归零、在途事件清空、归档恢复和账号撤权 |
 
 ## 6. 第 20 节交付物核对
@@ -79,6 +79,7 @@
 | Node 依赖安全 | 两套工程 `npm audit --audit-level=high` 均为 0 个漏洞 |
 | 受控性能 | 4/4 端点预算通过，160 次请求错误率均为 0 |
 | 场景追溯 | 24/24，`PASS` |
+| GitHub Actions | `29202239706` 对提交 `c62b877` 的后端、前端、安全、Compose/Chromium/PostGIS 4/4 通过 |
 
 唯一 Python 警告来自本机已安装 FastAPI/TestClient 兼容层的上游弃用提示，不是业务断言失败。生产性能、安全和可靠性结论必须以真实环境重新测量。
 

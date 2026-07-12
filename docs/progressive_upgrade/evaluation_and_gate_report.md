@@ -56,7 +56,7 @@ npm.cmd run test:e2e
 
 Candidate 指标来自生成器明确标记的模拟金标准，不能外推为真实业务表现。FRC 指标来自仓库内 3 条小规模工程标注集；它证明实现可复现，但样本规模不足以形成论文级或生产结论。
 
-PostGIS v2 数值和 Chromium 生产路由验收来自 GitHub Actions 受控容器运行 `29200968110`。该结果证明模拟 Schema 的 DDL、空间扩展、12 类单向投影、重复执行、对账及容器化 `/response` 页面可运行，不代表真实生产库已经切换，也不替代生产密钥、权限、性能、恢复或真实岗位验收。
+PostGIS v2 数值、两条 Chromium 生产路由验收和浏览器截图归档来自 GitHub Actions 受控容器运行 `29202239706`（提交 `c62b877`）。该结果证明模拟 Schema 的 DDL、空间扩展、12 类单向投影、重复执行、对账及容器化新版/回退页面可运行，不代表真实生产库已经切换，也不替代生产密钥、权限、性能、恢复或真实岗位验收。
 
 受控性能数值来自 Windows 单进程 FastAPI TestClient，包含加密 SQLite、可信身份签名和 nonce 防重放；预算文件为 `benchmarks/controlled_performance_budget.json`，原始报告位于 `output/performance/`。它只冻结仓库回归预算，不包含网络、TLS、反向代理、外部 IdP、生产 PostgreSQL、多主机并发或真实数据规模。
 
