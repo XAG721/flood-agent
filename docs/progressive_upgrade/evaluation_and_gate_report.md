@@ -18,7 +18,7 @@ npm.cmd run build
 
 | 验收项 | 实测结果 | 结论 |
 |---|---:|---|
-| 后端自动测试 | 122/122 通过 | 通过 |
+| 后端自动测试 | 124/124 通过 | 通过 |
 | 响应工作流专项 | 36/36 通过 | 通过 |
 | 前端测试 | 11/11 通过 | 通过 |
 | 前端生产构建 | Vite 构建成功 | 通过 |
@@ -29,6 +29,11 @@ npm.cmd run build
 | 迁移隔离 | 0 条 | 通过 |
 | 迁移幂等 | 同一源快照连续执行两次，批次 ID 与目标计数不变 | 通过 |
 | 迁移对账 | 10/10 类规范载荷 SHA-256 一致 | 通过 |
+| 受控 event list P95 | 11.875 ms / 预算 150 ms | 通过 |
+| 受控 event dashboard P95 | 28.770 ms / 预算 250 ms | 通过 |
+| 受控 event timeline P95 | 26.953 ms / 预算 200 ms | 通过 |
+| 受控 audit trail P95 | 29.975 ms / 预算 300 ms | 通过 |
+| 受控 API 错误率 | 4 条路径各 40 次采样，均为 0 | 通过 |
 | FloodAgent-Bench | 24 事件、30 对象、固定种子 `20260712` | Gate 0 通过 |
 | Candidate Recall@5 | 1.000000 | 达到 Gate 1 建议值 |
 | 关键对象漏检率 | 0.000000 | 达到 Gate 1 建议值 |
@@ -46,13 +51,15 @@ Candidate 指标来自生成器明确标记的模拟金标准，不能外推为�
 
 PostGIS 数值来自 GitHub Actions 受控容器运行 `29196235621`。该结果证明模拟 Schema 的 DDL、空间扩展、单向投影、重复执行和对账机制可运行，不代表真实生产库已经切换，也不替代生产密钥、权限、性能和恢复验收。
 
+受控性能数值来自 Windows 单进程 FastAPI TestClient，包含加密 SQLite、可信身份签名和 nonce 防重放；预算文件为 `benchmarks/controlled_performance_budget.json`，原始报告位于 `output/performance/`。它只冻结仓库回归预算，不包含网络、TLS、反向代理、外部 IdP、生产 PostgreSQL、多主机并发或真实数据规模。
+
 ## Gate 判定
 
 - Gate 0：`GO（受控模拟）`。来源、版本、种子、模拟标记及家族隔离均由测试校验。
 - Gate 1：`GO（受控模拟）`。当前规则候选链达到建议阈值，仍强制人工确认。
 - Gate 2：`NO-GO`。`run_rag_evaluation.py` 现在逐项生成机器可读 `gate_2` 判定；Full 在引用正确率上严格优于 w/o Role 和 w/o Field，引用正确率、无依据率和受控冲突 F1 也达到建议值，但字段覆盖率相对最强 SetR 基线没有达到至少 5 个百分点，且样本仅为 3 条内部工程标注。系统默认保持 `SHADOW`，`DEFAULT/CANARY` 必须由事件级 `feature.frc_rag_formal_enabled` 显式放行。
 - Gate 3：`GO（自动化安全不变量）`。未审批、越权、非法迁移、职责分离、证据/规则/审批/下发哈希和幂等 Outbox 有自动测试。
-- Gate 4：`CONDITIONAL NO-GO`。受控业务闭环和本地恢复测试通过，但生产性能预算、真实 IdP/TLS/KMS、异地主机恢复与高危安全评估尚无外部运行证据。
+- Gate 4：`CONDITIONAL NO-GO`。受控业务闭环、本地恢复和进程内 API 冻结预算通过，但生产网络/并发性能预算、真实 IdP/TLS/KMS、异地主机恢复与高危安全评估尚无外部运行证据。
 
 ## Migration Gate 判定
 

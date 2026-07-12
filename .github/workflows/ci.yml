@@ -32,6 +32,7 @@ jobs:
           python scripts/generate_floodagent_bench.py --output "${RUNNER_TEMP}/acceptance/floodagent_bench.json"
           python scripts/run_candidate_evaluation.py --input "${RUNNER_TEMP}/acceptance/candidate_evaluation_input.json" --output "${RUNNER_TEMP}/acceptance/candidate_report.json"
           python scripts/run_rag_evaluation.py --output-dir "${RUNNER_TEMP}/acceptance/rag"
+          python scripts/run_controlled_performance.py --db "${RUNNER_TEMP}/controlled-performance.db" --output-dir "${RUNNER_TEMP}/acceptance/performance"
           python scripts/export_openapi.py --output "${RUNNER_TEMP}/openapi.json"
           cmp docs/openapi.json "${RUNNER_TEMP}/openapi.json"
 

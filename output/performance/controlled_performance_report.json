@@ -1,0 +1,93 @@
+{
+  "budget_name": "洪水响应受控进程内 API 预算",
+  "budget_version": "controlled-api-budget-v1",
+  "scope": "单进程 FastAPI TestClient，包含加密 SQLite 与可信身份校验；不作为生产容量声明。",
+  "environment": {
+    "python": "3.13.9",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "processor": "Intel64 Family 6 Model 151 Stepping 2, GenuineIntel"
+  },
+  "results": {
+    "event_list": {
+      "method": "GET",
+      "path": "/response/events",
+      "sample_count": 40,
+      "p50_ms": 10.594,
+      "p95_ms": 11.875,
+      "max_ms": 12.169,
+      "error_count": 0,
+      "error_rate": 0.0
+    },
+    "event_dashboard": {
+      "method": "GET",
+      "path": "/response/events/FLOOD-20260712-620DC9",
+      "sample_count": 40,
+      "p50_ms": 26.355,
+      "p95_ms": 28.77,
+      "max_ms": 29.78,
+      "error_count": 0,
+      "error_rate": 0.0
+    },
+    "event_timeline": {
+      "method": "GET",
+      "path": "/response/events/FLOOD-20260712-620DC9/timeline",
+      "sample_count": 40,
+      "p50_ms": 25.17,
+      "p95_ms": 26.953,
+      "max_ms": 27.886,
+      "error_count": 0,
+      "error_rate": 0.0
+    },
+    "event_audit_trail": {
+      "method": "GET",
+      "path": "/response/events/FLOOD-20260712-620DC9/audit-trail",
+      "sample_count": 40,
+      "p50_ms": 27.827,
+      "p95_ms": 29.975,
+      "max_ms": 30.367,
+      "error_count": 0,
+      "error_rate": 0.0
+    }
+  },
+  "decision": {
+    "status": "PASS",
+    "checks": [
+      {
+        "endpoint_id": "event_list",
+        "passed": true,
+        "actual_p95_ms": 11.875,
+        "max_p95_ms": 150.0,
+        "actual_error_rate": 0.0,
+        "max_error_rate": 0.0
+      },
+      {
+        "endpoint_id": "event_dashboard",
+        "passed": true,
+        "actual_p95_ms": 28.77,
+        "max_p95_ms": 250.0,
+        "actual_error_rate": 0.0,
+        "max_error_rate": 0.0
+      },
+      {
+        "endpoint_id": "event_timeline",
+        "passed": true,
+        "actual_p95_ms": 26.953,
+        "max_p95_ms": 200.0,
+        "actual_error_rate": 0.0,
+        "max_error_rate": 0.0
+      },
+      {
+        "endpoint_id": "event_audit_trail",
+        "passed": true,
+        "actual_p95_ms": 29.975,
+        "max_p95_ms": 300.0,
+        "actual_error_rate": 0.0,
+        "max_error_rate": 0.0
+      }
+    ]
+  },
+  "limitations": [
+    "不包含网络、反向代理、TLS、外部 IdP、生产 PostgreSQL、多主机争用或真实区县数据规模。",
+    "阈值只用于受控 CI 夹具的冻结回归预算；生产 SLO 必须经过试点实测和审批。"
+  ]
+}

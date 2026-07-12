@@ -65,6 +65,14 @@ docker compose up --build
 
 Compose 同时启动模拟专用 PostGIS。SQLite 响应域仍是权威源；执行和验证单向影子迁移的命令见 `infra/postgis/README.md`，在生产迁移 Gate 通过前不得切换权威存储。
 
+运行受控 API 性能回归预算：
+
+```powershell
+python scripts/run_controlled_performance.py --db tmp/performance.db --output-dir output/performance
+```
+
+该命令只验证仓库内单进程回归预算，不能代替生产网络、并发容量或真实数据规模压测。
+
 ## 主要目录与结构边界
 
 - `flood_system/api.py`：FastAPI 统一装配入口，并提供 `/agent-twin/*` 与 `/platform/*` 两类公开能力入口。
