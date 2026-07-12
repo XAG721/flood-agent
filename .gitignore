@@ -5,6 +5,7 @@ api_key.txt
 .pytest_cache/
 __pycache__/
 *.egg-info/
+/build/
 *.tsbuildinfo
 frontend/node_modules/
 frontend/dist/

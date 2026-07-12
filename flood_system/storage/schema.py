@@ -478,6 +478,21 @@ CREATE TABLE IF NOT EXISTS response_outbox (
     payload TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS response_dispatch_callbacks (
+    callback_id TEXT PRIMARY KEY,
+    message_id TEXT NOT NULL,
+    event_id TEXT NOT NULL,
+    task_id TEXT NOT NULL,
+    external_id TEXT NOT NULL,
+    version INTEGER NOT NULL,
+    status TEXT NOT NULL,
+    sequence_state TEXT NOT NULL,
+    idempotency_key TEXT NOT NULL UNIQUE,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    FOREIGN KEY(message_id) REFERENCES response_outbox(message_id)
+);
+
 CREATE TABLE IF NOT EXISTS response_candidate_runs (
     run_id TEXT PRIMARY KEY,
     event_id TEXT NOT NULL,
@@ -743,4 +758,6 @@ CREATE INDEX IF NOT EXISTS idx_response_deadline_extensions_task ON response_dea
 CREATE INDEX IF NOT EXISTS idx_response_migration_batches_version ON response_migration_batches(mapping_version, created_at);
 CREATE INDEX IF NOT EXISTS idx_response_legacy_calls_endpoint ON response_legacy_adapter_calls(legacy_endpoint, created_at);
 CREATE INDEX IF NOT EXISTS idx_response_document_versions ON response_document_versions(document_id, version_number);
+CREATE INDEX IF NOT EXISTS idx_response_dispatch_callbacks
+    ON response_dispatch_callbacks(message_id, external_id, version, created_at);
 """

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
 import os
 import re
@@ -8,6 +9,7 @@ from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
 from ..models import CorpusType, RAGDocument
+from ..simulation_dataset import SimulatedExternalGateway, SimulatedGatewayTimeout
 from .candidate_discovery import build_risk_object_candidate, calculate_profile_risk_score, point_in_polygon
 from .feedback_policy import (
     build_review_recommendations,
@@ -41,11 +43,15 @@ from .models import (
     CandidateDiscoveryRequest,
     CandidateDiscoveryResult,
     CandidateRunRecord,
+    CallbackSequenceState,
     DatabaseBackupRecord,
     DeadlineExtensionDecisionRequest,
     DeadlineExtensionRecord,
     DeadlineExtensionRequest,
     DeadlineExtensionStatus,
+    DispatchCallbackRecord,
+    DispatchCallbackRequest,
+    DispatchCallbackStatus,
     KeyRotationRequest,
     KeyRotationResult,
     LegacyAdapterCallRecord,
@@ -128,9 +134,10 @@ class ResponseWorkflowService:
     WORKFLOW_ENGINE_VERSION = "response-workflow-v2"
     RULE_SET_VERSION = "response-rules-v2"
 
-    def __init__(self, repository, rag_service=None) -> None:
+    def __init__(self, repository, rag_service=None, simulation_gateway=None) -> None:
         self.repository = repository
         self.rag_service = rag_service
+        self.simulation_gateway = simulation_gateway or SimulatedExternalGateway()
 
     @staticmethod
     def _now() -> datetime:
@@ -1605,7 +1612,51 @@ class ResponseWorkflowService:
             messages = [message]
         else:
             messages = self.repository.list_outbox_messages(status=OutboxStatus.PENDING, limit=request.max_messages)
-        return [self._dispatch_outbox_message(item) for item in messages]
+        return [
+            self._dispatch_outbox_message(item, simulation_scenario=request.simulation_scenario)
+            for item in messages
+        ]
+
+    def list_dispatch_callbacks(self, message_id: str) -> list[DispatchCallbackRecord]:
+        if self.repository.get_outbox_message(message_id) is None:
+            raise LookupError(f"outbox message not found: {message_id}")
+        return self.repository.list_dispatch_callbacks(message_id)
+
+    def ingest_simulated_dispatch_callback(self, request: DispatchCallbackRequest) -> DispatchCallbackRecord:
+        self._require_role(
+            request.operator_role,
+            {OperatorRole.EXTERNAL_SERVICE},
+            "submit a simulated dispatch callback",
+        )
+        if os.getenv("FLOOD_ENVIRONMENT", "development").strip().lower() == "production":
+            raise PermissionError("simulated callbacks are disabled in production")
+        expected_token = os.getenv("FLOOD_SIMULATION_MOCK_TOKEN", "simulation-only-change-me")
+        if not hmac.compare_digest(request.mock_token, expected_token):
+            raise PermissionError("invalid simulation callback token")
+        if not request.is_simulated:
+            raise ValueError("callback must be explicitly marked as simulated")
+        message = self.repository.get_outbox_message(request.message_id)
+        if message is None:
+            raise LookupError(f"outbox message not found: {request.message_id}")
+        callback = self._record_dispatch_callback(
+            message,
+            request.model_dump(
+                mode="json",
+                exclude={"operator_id", "operator_role", "terminal_id", "note", "expected_version", "mock_token"},
+            ),
+            actor_id=request.operator_id,
+            actor_role=request.operator_role.value,
+            terminal_id=request.terminal_id,
+        )
+        current = self.repository.get_outbox_message(message.message_id) or message
+        updated = current.model_copy(
+            update={
+                "callback_count": len(self.repository.list_dispatch_callbacks(message.message_id)),
+                "updated_at": self._now(),
+            }
+        )
+        self.repository.save_outbox_message(updated)
+        return callback
 
     @staticmethod
     def _task_payload_hash(task: ResponseTask) -> str:
@@ -1659,8 +1710,18 @@ class ResponseWorkflowService:
         )
         return message
 
-    def _dispatch_outbox_message(self, message: OutboxMessage) -> OutboxMessage:
-        if message.status == OutboxStatus.SENT:
+    def _dispatch_outbox_message(
+        self,
+        message: OutboxMessage,
+        *,
+        simulation_scenario: str = "normal",
+    ) -> OutboxMessage:
+        if message.status in {
+            OutboxStatus.SENT,
+            OutboxStatus.PARTIALLY_SENT,
+            OutboxStatus.FAILED,
+            OutboxStatus.MANUAL_TAKEOVER,
+        }:
             return message
         task = self._task(message.task_id)
         if self._task_payload_hash(task) != message.payload_hash:
@@ -1674,12 +1735,201 @@ class ResponseWorkflowService:
             )
             self.repository.save_outbox_message(failed)
             return failed
+        if os.getenv("FLOOD_ENVIRONMENT", "development").strip().lower() == "production":
+            manual = message.model_copy(
+                update={
+                    "status": OutboxStatus.MANUAL_TAKEOVER,
+                    "attempts": message.attempts + 1,
+                    "last_error": "simulation gateway disabled in production",
+                    "updated_at": self._now(),
+                }
+            )
+            self.repository.save_outbox_message(manual)
+            return manual
         now = self._now()
-        sent = message.model_copy(
-            update={"status": OutboxStatus.SENT, "attempts": message.attempts + 1, "updated_at": now, "sent_at": now}
+        transport_payload = {
+            "event_id": task.event_id,
+            "task_id": task.task_id,
+            "task_version": task.version,
+            "approval_id": message.approval_id,
+            "delivery_targets": [task.responsible_organization, *task.cooperate_roles],
+            "approved_payload_hash": message.payload_hash,
+        }
+        try:
+            result = self.simulation_gateway.dispatch(
+                message.destination,
+                transport_payload,
+                scenario=simulation_scenario,
+                event_time=now,
+                request_id=f"SIMREQ-{message.message_id}",
+                trace_id=f"SIMTRACE-{message.event_id}",
+                idempotency_key=message.idempotency_key,
+            )
+        except SimulatedGatewayTimeout as exc:
+            pending = message.model_copy(
+                update={
+                    "status": OutboxStatus.PENDING,
+                    "attempts": message.attempts + 1,
+                    "simulation_scenario": simulation_scenario,
+                    "gateway_status": "timeout",
+                    "last_error": str(exc),
+                    "updated_at": now,
+                }
+            )
+            self.repository.save_outbox_message(pending)
+            self._record(
+                event_id=message.event_id,
+                task_id=message.task_id,
+                entry_type="dispatch",
+                action="simulated_dispatch_timeout",
+                actor_id="simulated-gateway",
+                actor_role=OperatorRole.EXTERNAL_SERVICE.value,
+                detail={"message_id": message.message_id, "scenario": simulation_scenario},
+            )
+            return pending
+
+        gateway_status = str(result["status"])
+        if gateway_status == "rejected":
+            status = OutboxStatus.FAILED
+        elif gateway_status == "partial_success":
+            status = OutboxStatus.PARTIALLY_SENT
+        else:
+            status = OutboxStatus.SENT
+        for callback_payload in result.get("callbacks", []):
+            self._record_dispatch_callback(message, callback_payload)
+        callbacks = self.repository.list_dispatch_callbacks(message.message_id)
+        dispatched = message.model_copy(
+            update={
+                "status": status,
+                "attempts": message.attempts + 1,
+                "simulation_scenario": simulation_scenario,
+                "gateway_status": gateway_status,
+                "external_request_id": result["request_id"],
+                "trace_id": result["trace_id"],
+                "callback_count": len(callbacks),
+                "last_error": result.get("error_code"),
+                "updated_at": now,
+                "sent_at": now if status in {OutboxStatus.SENT, OutboxStatus.PARTIALLY_SENT} else None,
+            }
         )
-        self.repository.save_outbox_message(sent)
-        return sent
+        self.repository.save_outbox_message(dispatched)
+        self._record(
+            event_id=message.event_id,
+            task_id=message.task_id,
+            entry_type="dispatch",
+            action=f"simulated_dispatch_{gateway_status}",
+            actor_id="simulated-gateway",
+            actor_role=OperatorRole.EXTERNAL_SERVICE.value,
+            before_state={"status": message.status.value},
+            after_state={"status": status.value},
+            detail={
+                "message_id": message.message_id,
+                "scenario": simulation_scenario,
+                "accepted_count": result["accepted_count"],
+                "rejected_count": result["rejected_count"],
+                "callback_count": len(callbacks),
+            },
+        )
+        return dispatched
+
+    def _record_dispatch_callback(
+        self,
+        message: OutboxMessage,
+        payload: dict,
+        *,
+        actor_id: str = "simulated-gateway",
+        actor_role: str = OperatorRole.EXTERNAL_SERVICE.value,
+        terminal_id: str = "simulation-gateway",
+    ) -> DispatchCallbackRecord:
+        idempotency_key = str(payload["idempotency_key"])
+        existing = self.repository.get_dispatch_callback_by_idempotency_key(idempotency_key)
+        if existing is not None:
+            self._record(
+                event_id=message.event_id,
+                task_id=message.task_id,
+                entry_type="dispatch_callback",
+                action="duplicate_dispatch_callback_ignored",
+                actor_id=actor_id,
+                actor_role=actor_role,
+                terminal_id=terminal_id,
+                detail={
+                    "message_id": message.message_id,
+                    "callback_id": existing.callback_id,
+                    "idempotency_key": idempotency_key,
+                },
+            )
+            return existing
+        previous = [
+            item
+            for item in self.repository.list_dispatch_callbacks(message.message_id)
+            if item.external_id == str(payload["external_id"])
+        ]
+        version = int(payload["version"])
+        sequence_state = (
+            CallbackSequenceState.OUT_OF_ORDER
+            if previous and version <= max(item.version for item in previous)
+            else CallbackSequenceState.IN_ORDER
+        )
+        callback = DispatchCallbackRecord(
+            callback_id=self._id("CALLBACK"),
+            message_id=message.message_id,
+            event_id=message.event_id,
+            task_id=message.task_id,
+            external_id=str(payload["external_id"]),
+            source=str(payload["source"]),
+            version=version,
+            event_time=payload["event_time"],
+            received_time=payload.get("received_time") or self._now(),
+            request_id=str(payload["request_id"]),
+            trace_id=str(payload["trace_id"]),
+            idempotency_key=idempotency_key,
+            status=DispatchCallbackStatus(str(payload["status"])),
+            error_code=payload.get("error_code"),
+            sequence_state=sequence_state,
+            created_at=self._now(),
+        )
+        saved = self.repository.save_dispatch_callback(callback)
+        if saved.callback_id != callback.callback_id:
+            self._record(
+                event_id=message.event_id,
+                task_id=message.task_id,
+                entry_type="dispatch_callback",
+                action="duplicate_dispatch_callback_ignored",
+                actor_id=actor_id,
+                actor_role=actor_role,
+                terminal_id=terminal_id,
+                detail={
+                    "message_id": message.message_id,
+                    "callback_id": saved.callback_id,
+                    "idempotency_key": idempotency_key,
+                    "detected_during_insert": True,
+                },
+            )
+            return saved
+        action = (
+            "out_of_order_dispatch_callback_recorded"
+            if saved.sequence_state == CallbackSequenceState.OUT_OF_ORDER
+            else "dispatch_callback_recorded"
+        )
+        self._record(
+            event_id=message.event_id,
+            task_id=message.task_id,
+            entry_type="dispatch_callback",
+            action=action,
+            actor_id=actor_id,
+            actor_role=actor_role,
+            terminal_id=terminal_id,
+            detail={
+                "message_id": message.message_id,
+                "callback_id": saved.callback_id,
+                "external_id": saved.external_id,
+                "version": saved.version,
+                "status": saved.status.value,
+                "sequence_state": saved.sequence_state.value,
+                "formal_task_state_unchanged": True,
+            },
+        )
+        return saved
 
     def start_task(self, task_id: str, request: TaskActionRequest) -> ResponseTask:
         task = self._task(task_id)

@@ -23,6 +23,7 @@ from ..response_workflow.models import (
     BackupImportResult,
     BackupRetentionResult,
     DatabaseBackupRecord,
+    DispatchCallbackRecord,
     KeyRotationResult,
     DistrictScenarioReport,
     EscalationRecord,
@@ -410,6 +411,51 @@ class ResponseRepositoryMixin:
                 f"SELECT payload FROM response_outbox{where} ORDER BY created_at LIMIT ?", values
             ).fetchall()
         return [self._secure_load(OutboxMessage, row["payload"]) for row in rows]
+
+    def save_dispatch_callback(self, record: DispatchCallbackRecord) -> DispatchCallbackRecord:
+        with self._connect() as conn:
+            conn.execute(
+                """INSERT INTO response_dispatch_callbacks(
+                    callback_id, message_id, event_id, task_id, external_id, version, status,
+                    sequence_state, idempotency_key, created_at, payload
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(idempotency_key) DO NOTHING""",
+                (
+                    record.callback_id,
+                    record.message_id,
+                    record.event_id,
+                    record.task_id,
+                    record.external_id,
+                    record.version,
+                    record.status.value,
+                    record.sequence_state.value,
+                    record.idempotency_key,
+                    record.created_at.isoformat(),
+                    self._secure_dump(record),
+                ),
+            )
+            row = conn.execute(
+                "SELECT payload FROM response_dispatch_callbacks WHERE idempotency_key = ?",
+                (record.idempotency_key,),
+            ).fetchone()
+        return self._secure_load(DispatchCallbackRecord, row["payload"])
+
+    def get_dispatch_callback_by_idempotency_key(self, idempotency_key: str) -> DispatchCallbackRecord | None:
+        with self._connect() as conn:
+            row = conn.execute(
+                "SELECT payload FROM response_dispatch_callbacks WHERE idempotency_key = ?",
+                (idempotency_key,),
+            ).fetchone()
+        return self._secure_load(DispatchCallbackRecord, row["payload"]) if row else None
+
+    def list_dispatch_callbacks(self, message_id: str) -> list[DispatchCallbackRecord]:
+        with self._connect() as conn:
+            rows = conn.execute(
+                "SELECT payload FROM response_dispatch_callbacks WHERE message_id = ? "
+                "ORDER BY created_at, callback_id",
+                (message_id,),
+            ).fetchall()
+        return [self._secure_load(DispatchCallbackRecord, row["payload"]) for row in rows]
 
     def save_candidate_run(self, run: CandidateRunRecord) -> None:
         with self._connect() as conn:
@@ -1123,6 +1169,7 @@ class ResponseRepositoryMixin:
             "response_audit_archives",
             "response_feature_flags",
             "response_outbox",
+            "response_dispatch_callbacks",
             "response_candidate_runs",
             "response_evidence_packages",
             "response_rule_evaluations",

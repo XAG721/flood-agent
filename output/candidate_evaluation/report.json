@@ -1,10 +1,13 @@
 {
   "metadata": {
     "name": "FloodAgent-Bench candidate evaluation",
-    "version": "floodagent-bench-v1",
+    "version": "floodagent-bench-v2",
     "seed": 20260712,
+    "dataset_id": "FloodAgent-Bench",
+    "generator_version": "deterministic-simulator-v2",
+    "data_origin": "SYNTHETIC",
     "is_simulated": true,
-    "manifest_sha256": "1ee8e4abe28b81db4a7e697a967bbc71eb74563b635126814094f9cb7fb3874d"
+    "manifest_sha256": "fdce9656bcc607ed2bc5ab106535064c8c0c8303bc32cae4be479fd99b3d3efd"
   },
   "baseline": {
     "case_count": 24,

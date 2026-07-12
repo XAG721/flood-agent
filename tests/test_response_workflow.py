@@ -18,10 +18,13 @@ from flood_system.response_workflow.models import (
     BackupRestoreRequest,
     BackupRetentionRequest,
     CandidateDiscoveryRequest,
+    CallbackSequenceState,
     DeadlineExtensionDecisionRequest,
     DeadlineExtensionRequest,
     DeadlineExtensionStatus,
     DocumentImportRequest,
+    DispatchCallbackRequest,
+    DispatchCallbackStatus,
     EventCloseRequest,
     EventCreateRequest,
     EvidenceConflictResolutionRequest,
@@ -409,6 +412,135 @@ def test_outbox_fails_closed_when_approved_payload_is_tampered(tmp_path, monkeyp
     )
     assert result[0].status == OutboxStatus.FAILED
     assert result[0].last_error == "approved payload hash mismatch"
+
+
+def approve_task_with_pending_outbox(workflow, event_id: str, task):
+    workflow.update_feature_flag(
+        FeatureFlagUpdateRequest(
+            flag_key="feature.simulated_dispatch",
+            enabled=False,
+            environment="development",
+            event_id=event_id,
+            reason="保留下发消息以注入模拟网关故障",
+            operator_id="admin-1",
+            operator_role=OperatorRole.ADMIN,
+            terminal_id="admin-terminal",
+        )
+    )
+    workflow.submit_task(
+        task.task_id,
+        TaskActionRequest(operator_id="duty-1", operator_role=OperatorRole.DUTY_OFFICER),
+    )
+    issued = workflow.decide_task(
+        task.task_id,
+        ApprovalRequest(
+            operator_id="commander-1",
+            operator_role=OperatorRole.COMMANDER,
+            decision=ApprovalDecision.APPROVED,
+            note="批准后执行模拟接口故障矩阵",
+        ),
+    )
+    message = workflow.list_outbox_messages(event_id=event_id)[0]
+    assert message.status == OutboxStatus.PENDING
+    return issued, message
+
+
+@pytest.mark.parametrize(
+    ("scenario", "expected_status", "expected_callbacks"),
+    [
+        ("normal", OutboxStatus.SENT, 2),
+        ("reject", OutboxStatus.FAILED, 1),
+        ("partial_success", OutboxStatus.PARTIALLY_SENT, 1),
+        ("duplicate_callback", OutboxStatus.SENT, 2),
+        ("out_of_order_callback", OutboxStatus.SENT, 2),
+    ],
+)
+def test_simulated_dispatch_fault_matrix_is_audited_without_mutating_task_state(
+    tmp_path, scenario, expected_status, expected_callbacks
+):
+    _, workflow, event_id, task = seed_workflow(tmp_path)
+    issued, message = approve_task_with_pending_outbox(workflow, event_id, task)
+
+    result = workflow.process_outbox(
+        OutboxProcessRequest(
+            message_id=message.message_id,
+            simulation_scenario=scenario,
+            operator_id="liaison-1",
+            operator_role=OperatorRole.LIAISON,
+        )
+    )[0]
+
+    assert result.status == expected_status
+    assert result.simulation_scenario == scenario
+    assert result.callback_count == expected_callbacks
+    assert workflow.get_dashboard(event_id).tasks[0].status == issued.status == TaskStatus.ISSUED
+    callbacks = workflow.list_dispatch_callbacks(message.message_id)
+    assert len(callbacks) == expected_callbacks
+    if scenario == "duplicate_callback":
+        assert any(item.action == "duplicate_dispatch_callback_ignored" for item in workflow.get_dashboard(event_id).timeline)
+    if scenario == "out_of_order_callback":
+        assert [item.version for item in callbacks] == [2, 1]
+        assert callbacks[1].sequence_state == CallbackSequenceState.OUT_OF_ORDER
+
+
+def test_simulated_dispatch_timeout_stays_pending_and_recovers_idempotently(tmp_path):
+    _, workflow, event_id, task = seed_workflow(tmp_path)
+    issued, message = approve_task_with_pending_outbox(workflow, event_id, task)
+
+    timed_out = workflow.process_outbox(
+        OutboxProcessRequest(
+            message_id=message.message_id,
+            simulation_scenario="timeout",
+            operator_id="liaison-1",
+            operator_role=OperatorRole.LIAISON,
+        )
+    )[0]
+    recovered = workflow.process_outbox(
+        OutboxProcessRequest(
+            message_id=message.message_id,
+            simulation_scenario="normal",
+            operator_id="liaison-1",
+            operator_role=OperatorRole.LIAISON,
+        )
+    )[0]
+
+    assert timed_out.status == OutboxStatus.PENDING
+    assert timed_out.gateway_status == "timeout"
+    assert timed_out.attempts == 1
+    assert recovered.status == OutboxStatus.SENT
+    assert recovered.attempts == 2
+    assert recovered.callback_count == 2
+    assert workflow.get_dashboard(event_id).tasks[0].status == issued.status == TaskStatus.ISSUED
+
+
+def test_external_service_callback_is_token_bound_idempotent_and_state_safe(tmp_path):
+    _, workflow, event_id, task = seed_workflow(tmp_path)
+    issued, message = approve_task_with_pending_outbox(workflow, event_id, task)
+    request = DispatchCallbackRequest(
+        message_id=message.message_id,
+        external_id="SIMDISPATCH-EXTERNAL-1",
+        source="deterministic_simulation_gateway",
+        version=1,
+        event_time=datetime.now(timezone.utc),
+        request_id="SIMREQ-external-1",
+        trace_id="SIMTRACE-external-1",
+        idempotency_key="callback-external-1",
+        status=DispatchCallbackStatus.DELIVERED,
+        mock_token="simulation-only-change-me",
+        operator_id="simulation-gateway",
+        operator_role=OperatorRole.EXTERNAL_SERVICE,
+        terminal_id="simulation-gateway-terminal",
+    )
+
+    first = workflow.ingest_simulated_dispatch_callback(request)
+    duplicate = workflow.ingest_simulated_dispatch_callback(request)
+
+    assert duplicate.callback_id == first.callback_id
+    assert len(workflow.list_dispatch_callbacks(message.message_id)) == 1
+    assert workflow.get_dashboard(event_id).tasks[0].status == issued.status == TaskStatus.ISSUED
+    assert any(item.action == "duplicate_dispatch_callback_ignored" for item in workflow.get_dashboard(event_id).timeline)
+    with pytest.raises(PermissionError, match="invalid simulation callback token"):
+        workflow.ingest_simulated_dispatch_callback(request.model_copy(update={"mock_token": "wrong-token"}))
 
 
 def test_full_deterministic_response_loop_and_close(tmp_path):

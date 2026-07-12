@@ -99,3 +99,7 @@ CREATE OR REPLACE VIEW flood_simulation.evidence_packages AS
     SELECT * FROM flood_simulation.shadow_records WHERE record_type = 'evidence_package';
 CREATE OR REPLACE VIEW flood_simulation.timeline AS
     SELECT * FROM flood_simulation.shadow_records WHERE record_type = 'timeline';
+CREATE OR REPLACE VIEW flood_simulation.outbox_messages AS
+    SELECT * FROM flood_simulation.shadow_records WHERE record_type = 'outbox';
+CREATE OR REPLACE VIEW flood_simulation.dispatch_callbacks AS
+    SELECT * FROM flood_simulation.shadow_records WHERE record_type = 'dispatch_callback';

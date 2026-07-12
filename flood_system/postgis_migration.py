@@ -15,8 +15,10 @@ from pydantic import BaseModel
 from .response_workflow.models import (
     AlertSnapshot,
     ApprovalRecord,
+    DispatchCallbackRecord,
     EventRiskObject,
     EvidencePackageVersion,
+    OutboxMessage,
     ResponseEvent,
     ResponseTask,
     RiskObjectVersionSnapshot,
@@ -28,7 +30,7 @@ from .security import DataProtectionError, DataProtector
 
 
 POSTGIS_SCHEMA = "flood_simulation"
-DEFAULT_MAPPING_VERSION = "sqlite-response-to-postgis-shadow-v1"
+DEFAULT_MAPPING_VERSION = "sqlite-response-to-postgis-shadow-v2"
 
 
 @dataclass(frozen=True)
@@ -49,6 +51,10 @@ PROJECTION_SPECS = (
     ProjectionSpec("response_tasks", "task", ("task_id",), ResponseTask),
     ProjectionSpec("response_task_versions", "task_version", ("snapshot_id",), TaskVersionSnapshot),
     ProjectionSpec("response_approvals", "approval", ("approval_id",), ApprovalRecord),
+    ProjectionSpec("response_outbox", "outbox", ("message_id",), OutboxMessage),
+    ProjectionSpec(
+        "response_dispatch_callbacks", "dispatch_callback", ("callback_id",), DispatchCallbackRecord
+    ),
     ProjectionSpec("response_feedback", "feedback", ("feedback_id",), TaskFeedback),
     ProjectionSpec(
         "response_evidence_packages", "evidence_package", ("package_id", "version"), EvidencePackageVersion

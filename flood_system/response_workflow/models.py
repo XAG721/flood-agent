@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import StrEnum
 from typing import Any
 
@@ -19,6 +19,7 @@ class OperatorRole(StrEnum):
     FIELD_OPERATOR = "field_operator"
     AUDITOR = "auditor"
     ADMIN = "admin"
+    EXTERNAL_SERVICE = "external_service"
 
 
 class EventStatus(StrEnum):
@@ -59,8 +60,21 @@ class TaskStatus(StrEnum):
 class OutboxStatus(StrEnum):
     PENDING = "pending"
     SENT = "sent"
+    PARTIALLY_SENT = "partially_sent"
     FAILED = "failed"
     MANUAL_TAKEOVER = "manual_takeover"
+
+
+class DispatchCallbackStatus(StrEnum):
+    ACCEPTED = "accepted"
+    DELIVERED = "delivered"
+    PARTIAL_SUCCESS = "partial_success"
+    REJECTED = "rejected"
+
+
+class CallbackSequenceState(StrEnum):
+    IN_ORDER = "in_order"
+    OUT_OF_ORDER = "out_of_order"
 
 
 class ApprovalPolicy(StrEnum):
@@ -923,7 +937,7 @@ class OutboxMessage(WorkflowModel):
     message_id: str
     event_id: str
     task_id: str
-    destination: str = "simulated-dispatch"
+    destination: str = "simulated://member-unit"
     idempotency_key: str
     payload_hash: str
     approval_id: str
@@ -931,6 +945,11 @@ class OutboxMessage(WorkflowModel):
     status: OutboxStatus = OutboxStatus.PENDING
     attempts: int = 0
     last_error: str | None = None
+    simulation_scenario: str = "normal"
+    gateway_status: str | None = None
+    external_request_id: str | None = None
+    trace_id: str | None = None
+    callback_count: int = 0
     created_at: datetime
     updated_at: datetime
     sent_at: datetime | None = None
@@ -939,6 +958,43 @@ class OutboxMessage(WorkflowModel):
 class OutboxProcessRequest(TaskActionRequest):
     message_id: str | None = None
     max_messages: int = Field(default=50, ge=1, le=500)
+    simulation_scenario: str = "normal"
+
+
+class DispatchCallbackRequest(TaskActionRequest):
+    message_id: str
+    external_id: str
+    source: str = "deterministic_simulation_gateway"
+    version: int = Field(ge=1)
+    event_time: datetime
+    received_time: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    request_id: str
+    trace_id: str
+    idempotency_key: str
+    status: DispatchCallbackStatus
+    error_code: str | None = None
+    mock_token: str
+    is_simulated: bool = True
+
+
+class DispatchCallbackRecord(WorkflowModel):
+    callback_id: str
+    message_id: str
+    event_id: str
+    task_id: str
+    external_id: str
+    source: str
+    version: int
+    event_time: datetime
+    received_time: datetime
+    request_id: str
+    trace_id: str
+    idempotency_key: str
+    status: DispatchCallbackStatus
+    error_code: str | None = None
+    sequence_state: CallbackSequenceState = CallbackSequenceState.IN_ORDER
+    is_simulated: bool = True
+    created_at: datetime
 
 
 class TaskFeedback(WorkflowModel):

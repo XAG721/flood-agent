@@ -18,6 +18,7 @@ from ..response_workflow.models import (
     CandidateDiscoveryRequest,
     DeadlineExtensionDecisionRequest,
     DeadlineExtensionRequest,
+    DispatchCallbackRequest,
     DocumentImportRequest,
     EventCloseRequest,
     EvidenceConflictResolutionRequest,
@@ -32,6 +33,7 @@ from ..response_workflow.models import (
     ScenarioEvaluationRequest,
     KeyRotationRequest,
     LegacyMigrationRequest,
+    OperatorRole,
     OutboxProcessRequest,
     TaskActionRequest,
     TaskAssignmentRequest,
@@ -57,6 +59,18 @@ def create_response_router(system_provider: Callable[[], Any]) -> APIRouter:
                 detail={"code": "UNAUTHORIZED", "message": str(exc), "retryable": False},
             ) from exc
         http_request.state.response_identity = identity
+        callback_path = "/response/simulation/dispatch-callbacks"
+        if identity.operator_role == OperatorRole.EXTERNAL_SERVICE and not (
+            http_request.method.upper() == "POST" and http_request.url.path == callback_path
+        ):
+            raise HTTPException(
+                status_code=403,
+                detail={
+                    "code": "FORBIDDEN",
+                    "message": "external service identities are restricted to the simulation callback endpoint",
+                    "retryable": False,
+                },
+            )
         if http_request.method.upper() in {"POST", "PUT", "PATCH", "DELETE"}:
             idempotency_key = http_request.headers.get("idempotency-key", "").strip()
             if not idempotency_key:
@@ -416,6 +430,25 @@ def create_response_router(system_provider: Callable[[], Any]) -> APIRouter:
     def process_outbox(request: OutboxProcessRequest, http_request: Request):
         bind_payload_identity(http_request, request)
         return invoke(lambda: service().process_outbox(request))
+
+    @router.get("/dispatch/outbox/{message_id}/callbacks")
+    def list_dispatch_callbacks(message_id: str, http_request: Request):
+        return invoke(lambda: service().list_dispatch_callbacks(message_id))
+
+    @router.post("/simulation/dispatch-callbacks")
+    def ingest_simulated_dispatch_callback(request: DispatchCallbackRequest, http_request: Request):
+        bind_payload_identity(http_request, request)
+        header_key = http_request.headers.get("idempotency-key", "").strip()
+        if header_key != request.idempotency_key:
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "code": "VALIDATION_ERROR",
+                    "message": "callback idempotency key must match the Idempotency-Key header",
+                    "retryable": False,
+                },
+            )
+        return invoke(lambda: service().ingest_simulated_dispatch_callback(request))
 
     @router.get("/migration/status")
     def migration_status(http_request: Request):

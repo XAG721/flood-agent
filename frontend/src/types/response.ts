@@ -268,12 +268,37 @@ export interface OutboxMessage {
   payload_hash: string;
   approval_id: string;
   task_version: number;
-  status: "pending" | "sent" | "failed" | "manual_takeover";
+  status: "pending" | "sent" | "partially_sent" | "failed" | "manual_takeover";
   attempts: number;
   last_error?: string | null;
+  simulation_scenario: string;
+  gateway_status?: string | null;
+  external_request_id?: string | null;
+  trace_id?: string | null;
+  callback_count: number;
   created_at: string;
   updated_at: string;
   sent_at?: string | null;
+}
+
+export interface DispatchCallbackRecord {
+  callback_id: string;
+  message_id: string;
+  event_id: string;
+  task_id: string;
+  external_id: string;
+  source: string;
+  version: number;
+  event_time: string;
+  received_time: string;
+  request_id: string;
+  trace_id: string;
+  idempotency_key: string;
+  status: "accepted" | "delivered" | "partial_success" | "rejected";
+  error_code?: string | null;
+  sequence_state: "in_order" | "out_of_order";
+  is_simulated: boolean;
+  created_at: string;
 }
 
 export interface RuleEvaluationRecord {

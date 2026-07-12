@@ -107,6 +107,20 @@ jobs:
           curl --fail --show-error http://127.0.0.1:8000/ready
           curl --fail --show-error http://127.0.0.1:8080/healthz
           docker compose ps
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install browser acceptance dependencies
+        run: |
+          npm ci --prefix frontend
+          cd frontend
+          npx playwright install --with-deps chromium
+      - name: Run Chromium response-workflow acceptance
+        env:
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:8080
+        run: npm run test:e2e --prefix frontend
       - name: Rehearse SQLite to PostGIS shadow migration
         run: |
           docker compose exec -T backend python scripts/seed_response_migration_fixture.py --db /app/data/postgis-source.db

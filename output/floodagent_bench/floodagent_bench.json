@@ -1,7 +1,9 @@
 {
   "data_card": {
     "name": "FloodAgent-Bench",
-    "version": "floodagent-bench-v1",
+    "dataset_id": "FloodAgent-Bench",
+    "version": "floodagent-bench-v2",
+    "generator_version": "deterministic-simulator-v2",
     "seed": 20260712,
     "scope": "单一区县、暴雨预警、下穿通道、受控模拟",
     "can_prove": [
@@ -14,9 +16,13 @@
       "无人值守决策"
     ],
     "governance": "全部记录带 is_simulated、source、source_version；按事件、对象和模板家族隔离划分。",
+    "description": "区县洪水预警响应闭环的确定性合成评测集，仅用于开发与测试。",
+    "checksum": "fdce9656bcc607ed2bc5ab106535064c8c0c8303bc32cae4be479fd99b3d3efd",
+    "data_origin": "SYNTHETIC",
+    "is_simulated": true,
     "generated_at": "2026-07-01T00:00:00+00:00"
   },
-  "manifest_sha256": "1ee8e4abe28b81db4a7e697a967bbc71eb74563b635126814094f9cb7fb3874d",
+  "manifest_sha256": "fdce9656bcc607ed2bc5ab106535064c8c0c8303bc32cae4be479fd99b3d3efd",
   "objects": [
     {
       "object_id": "SIMOBJ-CD5C37D0631C",
@@ -32,7 +38,9 @@
       ],
       "data_completeness": 0.988,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-00",
       "split": "train"
@@ -51,7 +59,9 @@
       ],
       "data_completeness": 0.809,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-01",
       "split": "train"
@@ -70,7 +80,9 @@
       ],
       "data_completeness": 0.842,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-02",
       "split": "train"
@@ -89,7 +101,9 @@
       ],
       "data_completeness": 0.758,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-03",
       "split": "train"
@@ -108,7 +122,9 @@
       ],
       "data_completeness": 0.809,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-04",
       "split": "train"
@@ -127,7 +143,9 @@
       ],
       "data_completeness": 0.852,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-05",
       "split": "train"
@@ -146,7 +164,9 @@
       ],
       "data_completeness": 0.747,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-06",
       "split": "train"
@@ -165,7 +185,9 @@
       ],
       "data_completeness": 0.853,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-07",
       "split": "train"
@@ -184,7 +206,9 @@
       ],
       "data_completeness": 0.894,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-08",
       "split": "test"
@@ -203,7 +227,9 @@
       ],
       "data_completeness": 0.844,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-09",
       "split": "test"
@@ -222,7 +248,9 @@
       ],
       "data_completeness": 0.755,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-00",
       "split": "train"
@@ -241,7 +269,9 @@
       ],
       "data_completeness": 0.824,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-01",
       "split": "train"
@@ -260,7 +290,9 @@
       ],
       "data_completeness": 0.898,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-02",
       "split": "train"
@@ -279,7 +311,9 @@
       ],
       "data_completeness": 0.932,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-03",
       "split": "train"
@@ -298,7 +332,9 @@
       ],
       "data_completeness": 0.901,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-04",
       "split": "train"
@@ -317,7 +353,9 @@
       ],
       "data_completeness": 0.776,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-05",
       "split": "train"
@@ -336,7 +374,9 @@
       ],
       "data_completeness": 0.918,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-06",
       "split": "train"
@@ -355,7 +395,9 @@
       ],
       "data_completeness": 0.927,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-07",
       "split": "train"
@@ -374,7 +416,9 @@
       ],
       "data_completeness": 0.73,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-08",
       "split": "test"
@@ -393,7 +437,9 @@
       ],
       "data_completeness": 0.909,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-09",
       "split": "test"
@@ -412,7 +458,9 @@
       ],
       "data_completeness": 0.919,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-00",
       "split": "train"
@@ -431,7 +479,9 @@
       ],
       "data_completeness": 0.879,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-01",
       "split": "train"
@@ -450,7 +500,9 @@
       ],
       "data_completeness": 0.772,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-02",
       "split": "train"
@@ -469,7 +521,9 @@
       ],
       "data_completeness": 0.846,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-03",
       "split": "train"
@@ -488,7 +542,9 @@
       ],
       "data_completeness": 0.912,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-04",
       "split": "train"
@@ -507,7 +563,9 @@
       ],
       "data_completeness": 0.825,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-05",
       "split": "train"
@@ -526,7 +584,9 @@
       ],
       "data_completeness": 0.81,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-06",
       "split": "train"
@@ -545,7 +605,9 @@
       ],
       "data_completeness": 0.894,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-07",
       "split": "train"
@@ -564,7 +626,9 @@
       ],
       "data_completeness": 0.743,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-08",
       "split": "test"
@@ -583,7 +647,9 @@
       ],
       "data_completeness": 0.842,
       "source": "deterministic_simulator",
-      "source_version": "floodagent-bench-v1",
+      "source_version": "floodagent-bench-v2",
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true,
       "family": "tunnel-family-09",
       "split": "test"
@@ -600,7 +666,9 @@
         "valid_until": "2026-07-01T03:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -616,6 +684,10 @@
         "normal_execution",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -628,7 +700,9 @@
         "valid_until": "2026-07-02T04:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -645,6 +719,10 @@
         "blocked",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -657,7 +735,9 @@
         "valid_until": "2026-07-03T05:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -675,6 +755,10 @@
         "partial_completion",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -687,7 +771,9 @@
         "valid_until": "2026-07-04T06:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -706,6 +792,10 @@
         "deadline_extension",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -718,7 +808,9 @@
         "valid_until": "2026-07-05T07:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -734,6 +826,10 @@
         "normal_execution",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -746,7 +842,9 @@
         "valid_until": "2026-07-06T08:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -763,6 +861,10 @@
         "blocked",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -775,7 +877,9 @@
         "valid_until": "2026-07-07T03:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -793,6 +897,10 @@
         "partial_completion",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -805,7 +913,9 @@
         "valid_until": "2026-07-08T04:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -824,6 +934,10 @@
         "deadline_extension",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -836,7 +950,9 @@
         "valid_until": "2026-07-09T05:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -852,6 +968,10 @@
         "normal_execution",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -864,7 +984,9 @@
         "valid_until": "2026-07-10T06:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -881,6 +1003,10 @@
         "blocked",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -893,7 +1019,9 @@
         "valid_until": "2026-07-11T07:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -911,6 +1039,10 @@
         "partial_completion",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -923,7 +1055,9 @@
         "valid_until": "2026-07-12T08:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -942,6 +1076,10 @@
         "deadline_extension",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -954,7 +1092,9 @@
         "valid_until": "2026-07-13T03:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -970,6 +1110,10 @@
         "normal_execution",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -982,7 +1126,9 @@
         "valid_until": "2026-07-14T04:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -999,6 +1145,10 @@
         "blocked",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -1011,7 +1161,9 @@
         "valid_until": "2026-07-15T05:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -1029,6 +1181,10 @@
         "partial_completion",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -1041,7 +1197,9 @@
         "valid_until": "2026-07-16T06:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -1060,6 +1218,10 @@
         "deadline_extension",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -1072,7 +1234,9 @@
         "valid_until": "2026-07-17T07:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -1088,6 +1252,10 @@
         "normal_execution",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -1100,7 +1268,9 @@
         "valid_until": "2026-07-18T08:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -1117,6 +1287,10 @@
         "blocked",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -1129,7 +1303,9 @@
         "valid_until": "2026-07-19T03:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -1147,6 +1323,10 @@
         "partial_completion",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -1159,7 +1339,9 @@
         "valid_until": "2026-07-20T04:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -1178,6 +1360,10 @@
         "deadline_extension",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -1190,7 +1376,9 @@
         "valid_until": "2026-07-21T05:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -1206,6 +1394,10 @@
         "normal_execution",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -1218,7 +1410,9 @@
         "valid_until": "2026-07-22T06:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -1235,6 +1429,10 @@
         "blocked",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -1247,7 +1445,9 @@
         "valid_until": "2026-07-23T07:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -1265,6 +1465,10 @@
         "partial_completion",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
       "is_simulated": true
     },
     {
@@ -1277,7 +1481,9 @@
         "valid_until": "2026-07-24T08:00:00+00:00",
         "source_department": "模拟专业预警发布端",
         "source": "deterministic_simulator",
-        "source_version": "floodagent-bench-v1",
+        "source_version": "floodagent-bench-v2",
+        "dataset_id": "FloodAgent-Bench",
+        "data_origin": "SYNTHETIC",
         "is_simulated": true
       },
       "object_ids": [
@@ -1296,6 +1502,1304 @@
         "deadline_extension",
         "independent_verification"
       ],
+      "dataset_id": "FloodAgent-Bench",
+      "data_origin": "SYNTHETIC",
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "is_simulated": true
+    }
+  ],
+  "scenario_catalog": [
+    {
+      "scenario_id": "SIMSCENARIO-01",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_01",
+      "name": "正常预警—对象—任务闭环",
+      "input_data": {
+        "event_id": "SIMEVENT-CD5C37D0631C",
+        "object_ids": [
+          "SIMOBJ-CD5C37D0631C"
+        ],
+        "fault_profile": "fault_01"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-CD5C37D0631C"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "SUPPORTED"
+      },
+      "expected_conflicts_or_missing": [],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "normal_execution",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-02",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_02",
+      "name": "对象坐标缺失",
+      "input_data": {
+        "event_id": "SIMEVENT-E6FBF53D45F9",
+        "object_ids": [
+          "SIMOBJ-E6FBF53D45F9",
+          "SIMOBJ-4A6F3F0917CA"
+        ],
+        "fault_profile": "fault_02"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-E6FBF53D45F9",
+        "SIMOBJ-4A6F3F0917CA"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "SPATIAL_DATA_MISSING"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "blocked",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "SPATIAL_DATA_MISSING"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-03",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_03",
+      "name": "对象坐标偏移或坐标系错误",
+      "input_data": {
+        "event_id": "SIMEVENT-4A6F3F0917CA",
+        "object_ids": [
+          "SIMOBJ-4A6F3F0917CA",
+          "SIMOBJ-2A250B03F773",
+          "SIMOBJ-559A1B02ECBD"
+        ],
+        "fault_profile": "fault_03"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-4A6F3F0917CA",
+        "SIMOBJ-2A250B03F773",
+        "SIMOBJ-559A1B02ECBD"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "COORDINATE_SYSTEM_MISMATCH"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "partial_completion",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "COORDINATE_SYSTEM_MISMATCH"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-04",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_04",
+      "name": "对象别名、重名和重复台账",
+      "input_data": {
+        "event_id": "SIMEVENT-2A250B03F773",
+        "object_ids": [
+          "SIMOBJ-2A250B03F773",
+          "SIMOBJ-559A1B02ECBD",
+          "SIMOBJ-4F38250D7ECD",
+          "SIMOBJ-1085B2F11CA3"
+        ],
+        "fault_profile": "fault_04"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-2A250B03F773",
+        "SIMOBJ-559A1B02ECBD",
+        "SIMOBJ-4F38250D7ECD",
+        "SIMOBJ-1085B2F11CA3"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "DUPLICATE_RISK_OBJECT"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "deadline_extension",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "DUPLICATE_RISK_OBJECT"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-05",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_05",
+      "name": "预警覆盖边界对象",
+      "input_data": {
+        "event_id": "SIMEVENT-559A1B02ECBD",
+        "object_ids": [
+          "SIMOBJ-559A1B02ECBD"
+        ],
+        "fault_profile": "fault_05"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-559A1B02ECBD"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "BOUNDARY_REVIEW_REQUIRED"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "normal_execution",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "BOUNDARY_REVIEW_REQUIRED"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-06",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_06",
+      "name": "台账过期",
+      "input_data": {
+        "event_id": "SIMEVENT-4F38250D7ECD",
+        "object_ids": [
+          "SIMOBJ-4F38250D7ECD",
+          "SIMOBJ-1085B2F11CA3"
+        ],
+        "fault_profile": "fault_06"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-4F38250D7ECD",
+        "SIMOBJ-1085B2F11CA3"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "STALE_DATA"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "blocked",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "STALE_DATA"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-07",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_07",
+      "name": "台账遗漏后人工补充",
+      "input_data": {
+        "event_id": "SIMEVENT-1085B2F11CA3",
+        "object_ids": [
+          "SIMOBJ-1085B2F11CA3",
+          "SIMOBJ-53ADD304B63B",
+          "SIMOBJ-F751A8BA44DD"
+        ],
+        "fault_profile": "fault_07"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-1085B2F11CA3",
+        "SIMOBJ-53ADD304B63B",
+        "SIMOBJ-F751A8BA44DD"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "MANUAL_SUPPLEMENT_REQUIRED"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "partial_completion",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "MANUAL_SUPPLEMENT_REQUIRED"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-08",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_08",
+      "name": "新旧预案同时存在",
+      "input_data": {
+        "event_id": "SIMEVENT-53ADD304B63B",
+        "object_ids": [
+          "SIMOBJ-53ADD304B63B",
+          "SIMOBJ-F751A8BA44DD",
+          "SIMOBJ-1B9494C46508",
+          "SIMOBJ-0CB056EDF4FF"
+        ],
+        "fault_profile": "fault_08"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-53ADD304B63B",
+        "SIMOBJ-F751A8BA44DD",
+        "SIMOBJ-1B9494C46508",
+        "SIMOBJ-0CB056EDF4FF"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "DOCUMENT_VERSION_CONFLICT"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "deadline_extension",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "DOCUMENT_VERSION_CONFLICT"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-09",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_09",
+      "name": "辖区适用性不一致",
+      "input_data": {
+        "event_id": "SIMEVENT-F751A8BA44DD",
+        "object_ids": [
+          "SIMOBJ-F751A8BA44DD"
+        ],
+        "fault_profile": "fault_09"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-F751A8BA44DD"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "JURISDICTION_CONFLICT"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "normal_execution",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "JURISDICTION_CONFLICT"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-10",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_10",
+      "name": "数值或时限冲突",
+      "input_data": {
+        "event_id": "SIMEVENT-1B9494C46508",
+        "object_ids": [
+          "SIMOBJ-1B9494C46508",
+          "SIMOBJ-0CB056EDF4FF"
+        ],
+        "fault_profile": "fault_10"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-1B9494C46508",
+        "SIMOBJ-0CB056EDF4FF"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "EVIDENCE_CONFLICT"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "blocked",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "EVIDENCE_CONFLICT"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-11",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_11",
+      "name": "责任主体冲突",
+      "input_data": {
+        "event_id": "SIMEVENT-0CB056EDF4FF",
+        "object_ids": [
+          "SIMOBJ-0CB056EDF4FF",
+          "SIMOBJ-8DC1164F37A3",
+          "SIMOBJ-AA935B25D3AA"
+        ],
+        "fault_profile": "fault_11"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-0CB056EDF4FF",
+        "SIMOBJ-8DC1164F37A3",
+        "SIMOBJ-AA935B25D3AA"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "RESPONSIBILITY_CONFLICT"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "partial_completion",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "RESPONSIBILITY_CONFLICT"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-12",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_12",
+      "name": "条款包含例外条件",
+      "input_data": {
+        "event_id": "SIMEVENT-8DC1164F37A3",
+        "object_ids": [
+          "SIMOBJ-8DC1164F37A3",
+          "SIMOBJ-AA935B25D3AA",
+          "SIMOBJ-768D44CDEF55",
+          "SIMOBJ-AB4BBAFB0FF6"
+        ],
+        "fault_profile": "fault_12"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-8DC1164F37A3",
+        "SIMOBJ-AA935B25D3AA",
+        "SIMOBJ-768D44CDEF55",
+        "SIMOBJ-AB4BBAFB0FF6"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "RULE_EXCEPTION_REVIEW_REQUIRED"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "deadline_extension",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "RULE_EXCEPTION_REVIEW_REQUIRED"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-13",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_13",
+      "name": "源文件没有某项任务依据",
+      "input_data": {
+        "event_id": "SIMEVENT-AA935B25D3AA",
+        "object_ids": [
+          "SIMOBJ-AA935B25D3AA"
+        ],
+        "fault_profile": "fault_13"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-AA935B25D3AA"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "EVIDENCE_MISSING"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "normal_execution",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "EVIDENCE_MISSING"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-14",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_14",
+      "name": "OCR错误或文档解析失败",
+      "input_data": {
+        "event_id": "SIMEVENT-768D44CDEF55",
+        "object_ids": [
+          "SIMOBJ-768D44CDEF55",
+          "SIMOBJ-AB4BBAFB0FF6"
+        ],
+        "fault_profile": "fault_14"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-768D44CDEF55",
+        "SIMOBJ-AB4BBAFB0FF6"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "DOCUMENT_PARSE_FAILED"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "blocked",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "DOCUMENT_PARSE_FAILED"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-15",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_15",
+      "name": "向量索引、模型或规则服务中断",
+      "input_data": {
+        "event_id": "SIMEVENT-AB4BBAFB0FF6",
+        "object_ids": [
+          "SIMOBJ-AB4BBAFB0FF6",
+          "SIMOBJ-E63E9AC221A9",
+          "SIMOBJ-7E4280E3AEAE"
+        ],
+        "fault_profile": "fault_15"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-AB4BBAFB0FF6",
+        "SIMOBJ-E63E9AC221A9",
+        "SIMOBJ-7E4280E3AEAE"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "DEPENDENCY_UNAVAILABLE"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "partial_completion",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "DEPENDENCY_UNAVAILABLE"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-16",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_16",
+      "name": "AI输出非法JSON或虚构依据编号",
+      "input_data": {
+        "event_id": "SIMEVENT-E63E9AC221A9",
+        "object_ids": [
+          "SIMOBJ-E63E9AC221A9",
+          "SIMOBJ-7E4280E3AEAE",
+          "SIMOBJ-672A0662EBFB",
+          "SIMOBJ-127A9C6D363F"
+        ],
+        "fault_profile": "fault_16"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-E63E9AC221A9",
+        "SIMOBJ-7E4280E3AEAE",
+        "SIMOBJ-672A0662EBFB",
+        "SIMOBJ-127A9C6D363F"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "MODEL_OUTPUT_INVALID"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "deadline_extension",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "MODEL_OUTPUT_INVALID"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-17",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_17",
+      "name": "审批驳回和重新生成",
+      "input_data": {
+        "event_id": "SIMEVENT-7E4280E3AEAE",
+        "object_ids": [
+          "SIMOBJ-7E4280E3AEAE"
+        ],
+        "fault_profile": "fault_17"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-7E4280E3AEAE"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "APPROVAL_REJECTED"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "normal_execution",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "APPROVAL_REJECTED"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-18",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_18",
+      "name": "并发审批",
+      "input_data": {
+        "event_id": "SIMEVENT-672A0662EBFB",
+        "object_ids": [
+          "SIMOBJ-672A0662EBFB",
+          "SIMOBJ-127A9C6D363F"
+        ],
+        "fault_profile": "fault_18"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-672A0662EBFB",
+        "SIMOBJ-127A9C6D363F"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "VERSION_CONFLICT"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "blocked",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "VERSION_CONFLICT"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-19",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_19",
+      "name": "重复下发和重复回调",
+      "input_data": {
+        "event_id": "SIMEVENT-127A9C6D363F",
+        "object_ids": [
+          "SIMOBJ-127A9C6D363F",
+          "SIMOBJ-740A41D85D99",
+          "SIMOBJ-63B7C916A7B2"
+        ],
+        "fault_profile": "fault_19"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-127A9C6D363F",
+        "SIMOBJ-740A41D85D99",
+        "SIMOBJ-63B7C916A7B2"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "IDEMPOTENCY_REPLAY"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "partial_completion",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "IDEMPOTENCY_REPLAY"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-20",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_20",
+      "name": "下发部分成功",
+      "input_data": {
+        "event_id": "SIMEVENT-740A41D85D99",
+        "object_ids": [
+          "SIMOBJ-740A41D85D99",
+          "SIMOBJ-63B7C916A7B2",
+          "SIMOBJ-D6E46C8CCF6A",
+          "SIMOBJ-A0A4E1B30407"
+        ],
+        "fault_profile": "fault_20"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-740A41D85D99",
+        "SIMOBJ-63B7C916A7B2",
+        "SIMOBJ-D6E46C8CCF6A",
+        "SIMOBJ-A0A4E1B30407"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "DISPATCH_PARTIAL_SUCCESS"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "deadline_extension",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "DISPATCH_PARTIAL_SUCCESS"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-21",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_21",
+      "name": "执行受阻、申请延期和改派",
+      "input_data": {
+        "event_id": "SIMEVENT-63B7C916A7B2",
+        "object_ids": [
+          "SIMOBJ-63B7C916A7B2"
+        ],
+        "fault_profile": "fault_21"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-63B7C916A7B2"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "TASK_BLOCKED"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "normal_execution",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "TASK_BLOCKED"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-22",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_22",
+      "name": "四类时限超时升级",
+      "input_data": {
+        "event_id": "SIMEVENT-D6E46C8CCF6A",
+        "object_ids": [
+          "SIMOBJ-D6E46C8CCF6A",
+          "SIMOBJ-A0A4E1B30407"
+        ],
+        "fault_profile": "fault_22"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-D6E46C8CCF6A",
+        "SIMOBJ-A0A4E1B30407"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "DEADLINE_EXCEEDED"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "blocked",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "DEADLINE_EXCEEDED"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-23",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_23",
+      "name": "核验退回整改",
+      "input_data": {
+        "event_id": "SIMEVENT-A0A4E1B30407",
+        "object_ids": [
+          "SIMOBJ-A0A4E1B30407",
+          "SIMOBJ-F05CDEC2DC83",
+          "SIMOBJ-4A7BE1632F91"
+        ],
+        "fault_profile": "fault_23"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-A0A4E1B30407",
+        "SIMOBJ-F05CDEC2DC83",
+        "SIMOBJ-4A7BE1632F91"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "VERIFICATION_REMEDIATION_REQUIRED"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "partial_completion",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "VERIFICATION_REMEDIATION_REQUIRED"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
+      "is_simulated": true
+    },
+    {
+      "scenario_id": "SIMSCENARIO-24",
+      "dataset_id": "FloodAgent-Bench",
+      "scenario_type": "scenario_24",
+      "name": "通信中断后人工接管和恢复补录",
+      "input_data": {
+        "event_id": "SIMEVENT-F05CDEC2DC83",
+        "object_ids": [
+          "SIMOBJ-F05CDEC2DC83",
+          "SIMOBJ-4A7BE1632F91",
+          "SIMOBJ-1B6A1253EF72",
+          "SIMOBJ-8F79390F0F3D"
+        ],
+        "fault_profile": "fault_24"
+      },
+      "expected_candidate_objects": [
+        "SIMOBJ-F05CDEC2DC83",
+        "SIMOBJ-4A7BE1632F91",
+        "SIMOBJ-1B6A1253EF72",
+        "SIMOBJ-8F79390F0F3D"
+      ],
+      "expected_fields_and_evidence": {
+        "required_fields": [
+          "action",
+          "responsible_role",
+          "deadline",
+          "evidence_refs"
+        ],
+        "evidence_state": "REVIEW_REQUIRED"
+      },
+      "expected_conflicts_or_missing": [
+        "MANUAL_TAKEOVER"
+      ],
+      "legal_state_path": [
+        "candidate_review",
+        "evidence_freeze",
+        "approval",
+        "deadline_extension",
+        "independent_verification"
+      ],
+      "rejected_operations": [
+        "bypass_human_approval",
+        "overwrite_formal_state_from_external_callback"
+      ],
+      "expected_error_codes": [
+        "MANUAL_TAKEOVER"
+      ],
+      "acceptance_assertions": [
+        "all formal state changes pass the guarded state machine",
+        "all evidence and operator actions remain auditable",
+        "simulation data never reaches a real external endpoint"
+      ],
+      "source": "deterministic_simulator",
+      "source_version": "floodagent-bench-v2",
+      "data_origin": "SYNTHETIC",
       "is_simulated": true
     }
   ]

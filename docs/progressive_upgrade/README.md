@@ -4,7 +4,8 @@
 
 ## 文档入口
 
-- `../releases/v0.2.0.md`：全仓清理、结构重构、性能、安全和兼容性更新报告。
+- `../releases/v0.3.0.md`：当前外部接口仿真、场景目录、浏览器验收、性能、安全和兼容性更新报告。
+- `../releases/v0.2.0.md`：上一版本全仓清理与结构重构报告。
 - `asset_inventory.md`：原系统资产、真实能力、依赖、写状态风险和 REUSE/WRAP/REFACTOR/REBUILD/RETIRE 结论。
 - `implementation_acceptance_matrix.md`：阶段 0—8、最终审查清单和 Go/No-Go 门禁状态。
 - `operations_and_rollback.md`：启动、健康检查、功能开关、备份、回滚和人工接管。

@@ -16,6 +16,7 @@
 | Approval approve/reject/revision | `POST /tasks/{id}/decision` | 决定绑定任务、证据和规则哈希；拒绝返回草稿并形成新版本路径。 |
 | Issue/ack/start/feedback/blocked/verify | `/tasks/{id}/decision`、`acknowledge`、`assign`、`start`、`feedback`、`verify-completion` | 只有明确命令，无通用 status 修改接口。 |
 | Extension/cancel/takeover/escalate | `deadline-extensions`、`cancel`、`take-over`、`deadline-sweep` | 延期独立审批；撤回和人工接管要求授权及理由；四时限巡检幂等。 |
+| Simulated dispatch/callback | `POST /dispatch/outbox/process`、`GET /dispatch/outbox/{id}/callbacks`、`POST /simulation/dispatch-callbacks` | 支持正常、超时、拒收、部分成功、重复和乱序；外部服务身份仅能访问回调入口，且回调不推进正式任务状态。 |
 | Timeline/audit/transitions/replay/report | `events/{id}/timeline`、`audit-trail`、`tasks/{id}/transitions`、`events/{id}/replay`、`events/{id}/reports` | 回放只读且先验证哈希链；报告来自持久化事件证据。 |
 | Legacy event read | `GET /legacy/events/{legacy_event_id}` | 只读投影，记录接口、映射版本、Trace、操作人和终端。 |
 

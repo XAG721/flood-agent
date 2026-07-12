@@ -17,11 +17,15 @@ from flood_system.identity import (
 from flood_system.response_workflow.models import (
     AlertAppendRequest,
     AlertInput,
+    ApprovalDecision,
+    ApprovalRequest,
     GeoPolygon,
     OperatorRole,
     RiskObjectBatchRequest,
     RiskObjectInput,
     SensitiveContact,
+    TaskActionRequest,
+    TaskStatus,
 )
 from flood_system.system import FloodWarningSystem
 
@@ -161,6 +165,105 @@ def test_response_api_binds_payload_identity_and_requires_aal2_for_high_risk_app
     )
     assert replay.status_code == 401
     assert "already used" in replay.json()["detail"]["message"]
+
+
+def test_simulated_callback_api_requires_external_identity_token_and_matching_idempotency(tmp_path):
+    system = FloodWarningSystem(tmp_path / "identity-callback-api.db")
+    system.response_identity = TrustedIdentityVerifier(system.repository, IDENTITY_SECRET)
+    dashboard = system.response_workflow.bootstrap_demo()
+    task = dashboard.tasks[0]
+    if task.status == TaskStatus.DRAFT:
+        system.response_workflow.submit_task(
+            task.task_id,
+            TaskActionRequest(operator_id="duty-1", operator_role=OperatorRole.DUTY_OFFICER),
+        )
+    issued = system.response_workflow.decide_task(
+        task.task_id,
+        ApprovalRequest(
+            operator_id="commander-1",
+            operator_role=OperatorRole.COMMANDER,
+            decision=ApprovalDecision.APPROVED,
+            note="生成模拟回调接口测试消息",
+        ),
+    )
+    message = system.response_workflow.list_outbox_messages(event_id=dashboard.event.event_id)[0]
+    original_task_status = issued.status
+    app = FastAPI()
+    app.include_router(create_response_router(lambda: system))
+    client = TestClient(app)
+    path = "/response/simulation/dispatch-callbacks"
+    payload = {
+        "message_id": message.message_id,
+        "external_id": "SIMDISPATCH-API-1",
+        "source": "deterministic_simulation_gateway",
+        "version": 3,
+        "event_time": datetime.now(timezone.utc).isoformat(),
+        "request_id": "SIMREQ-api-1",
+        "trace_id": "SIMTRACE-api-1",
+        "idempotency_key": "callback-api-1",
+        "status": "delivered",
+        "mock_token": "simulation-only-change-me",
+        "operator_id": "simulation-gateway",
+        "operator_role": "external_service",
+        "terminal_id": "simulation-gateway-terminal",
+    }
+
+    headers = signed_headers(
+        method="POST",
+        path=path,
+        nonce="identity-callback-api-1",
+        operator_id="simulation-gateway",
+        role=OperatorRole.EXTERNAL_SERVICE,
+        terminal_id="simulation-gateway-terminal",
+    )
+    headers["Idempotency-Key"] = payload["idempotency_key"]
+    accepted = client.post(path, headers=headers, json=payload)
+
+    assert accepted.status_code == 200
+    assert accepted.json()["message_id"] == message.message_id
+    current_task = next(
+        item for item in system.response_workflow.get_dashboard(message.event_id).tasks if item.task_id == message.task_id
+    )
+    assert current_task.status == original_task_status
+
+    read_path = "/response/events"
+    external_read = client.get(
+        read_path,
+        headers=signed_headers(
+            method="GET",
+            path=read_path,
+            nonce="identity-callback-api-read-forbidden",
+            operator_id="simulation-gateway",
+            role=OperatorRole.EXTERNAL_SERVICE,
+            terminal_id="simulation-gateway-terminal",
+        ),
+    )
+    assert external_read.status_code == 403
+    assert "restricted" in external_read.json()["detail"]["message"]
+
+    mismatch_headers = signed_headers(
+        method="POST",
+        path=path,
+        nonce="identity-callback-api-2",
+        operator_id="simulation-gateway",
+        role=OperatorRole.EXTERNAL_SERVICE,
+        terminal_id="simulation-gateway-terminal",
+    )
+    mismatch = client.post(path, headers=mismatch_headers, json=payload)
+    assert mismatch.status_code == 400
+    assert "must match" in mismatch.json()["detail"]["message"]
+
+    wrong_role_payload = {**payload, "operator_id": "admin-1", "operator_role": "admin", "idempotency_key": "callback-api-2"}
+    wrong_role_headers = signed_headers(
+        method="POST",
+        path=path,
+        nonce="identity-callback-api-3",
+        operator_id="admin-1",
+        role=OperatorRole.ADMIN,
+    )
+    wrong_role_headers["Idempotency-Key"] = wrong_role_payload["idempotency_key"]
+    forbidden = client.post(path, headers=wrong_role_headers, json=wrong_role_payload)
+    assert forbidden.status_code == 403
 
 
 def test_candidate_discovery_api_uses_trusted_operator_identity(tmp_path):

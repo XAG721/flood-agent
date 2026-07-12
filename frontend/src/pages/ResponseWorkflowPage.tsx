@@ -421,7 +421,8 @@ function TaskDetail({ task, escalation, evidencePackage, outboxMessage, ruleEval
       ) : null}
       {outboxMessage ? (
         <p className={outboxMessage.status === "failed" ? styles.dispatchFailed : styles.contractLine}>
-          模拟下发 {outboxMessage.status === "sent" ? "已送达" : outboxMessage.status === "failed" ? "失败并关闭" : "待处理"} · 尝试 {outboxMessage.attempts} 次 · {outboxMessage.message_id}
+          模拟下发 {outboxMessage.status === "sent" ? "已送达" : outboxMessage.status === "partially_sent" ? "部分成功，等待人工协调" : outboxMessage.status === "failed" ? "失败并关闭" : outboxMessage.status === "manual_takeover" ? "已转人工接管" : "待处理"}
+          {" · "}场景 {outboxMessage.simulation_scenario} · 回调 {outboxMessage.callback_count} 条 · 尝试 {outboxMessage.attempts} 次 · {outboxMessage.message_id}
         </p>
       ) : null}
       {deadlineExtension ? (

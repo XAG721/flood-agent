@@ -46,7 +46,8 @@
 - 审批载荷/证据哈希、幂等 Outbox、接收/开始/完成/核验四类时限；
 - 受阻、部分完成、延期、改派、撤回、人工接管和独立核验分支；
 - 数据库结构校验和账本、Legacy Adapter 只读审计和无法映射旧数据隔离；
-- 可重复 FloodAgent-Bench 生成器、候选关联评测、模拟端点网络隔离；
+- 可重复 FloodAgent-Bench v2 生成器、24 项正式场景目录、候选关联评测、模拟端点网络隔离；
+- 下发通道正常/超时/拒收/部分成功/重复/乱序故障矩阵，以及不改变正式状态的幂等异步回调；
 - `/health`、`/ready`、`/metrics`、Docker Compose 和功能开关回滚。
 
 常用命令：
@@ -307,11 +308,12 @@ AgentTwin 主链路：
 ## 验证命令
 
 ```powershell
-C:\Users\Administrator\anaconda3\python.exe scripts\inspect_demo_db.py
-C:\Users\Administrator\anaconda3\python.exe -m pytest
+python scripts\inspect_demo_db.py
+python -m pytest
 Set-Location d:\graduation_project\frontend
 npm.cmd run build
-npm.cmd run test -- --run --reporter=basic --testTimeout=10000
+npm.cmd run test -- --run
+npm.cmd run test:e2e
 ```
 
 说明：当前 Cesium 构建仍会提示 chunk 较大，`protobufjs` 也会输出 `eval` 警告，这是三维依赖带来的既有构建警告，不影响当前 demo 功能。
@@ -319,7 +321,8 @@ npm.cmd run test -- --run --reporter=basic --testTimeout=10000
 ## 文档入口
 
 - [文档索引](./docs/README.md)
-- [v0.2.0 更新报告](./docs/releases/v0.2.0.md)
+- [v0.3.0 更新报告](./docs/releases/v0.3.0.md)
+- [v0.2.0 清理与结构重构报告](./docs/releases/v0.2.0.md)
 - [渐进式升级与验收](./docs/progressive_upgrade/README.md)
 - [AgentTwin 兼容演示资料](./docs/agent_twin_upgrade/README.md)
 - [甲方演示脚本](./docs/agent_twin_upgrade/16_甲方演示脚本.md)

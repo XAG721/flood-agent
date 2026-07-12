@@ -86,6 +86,9 @@ def metrics():
     pending = sum(item.status.value == "pending" for item in outbox)
     failed = sum(item.status.value == "failed" for item in outbox)
     sent = sum(item.status.value == "sent" for item in outbox)
+    partially_sent = sum(item.status.value == "partially_sent" for item in outbox)
+    manual_takeover = sum(item.status.value == "manual_takeover" for item in outbox)
+    dispatch_callbacks = sum(item.callback_count for item in outbox)
     rule_evaluations = system.repository.list_rule_evaluations()
     rule_pass = sum(item.overall_outcome.value == "PASS" for item in rule_evaluations)
     rule_warning = sum(item.overall_outcome.value == "SOFT_WARNING" for item in rule_evaluations)
@@ -117,6 +120,15 @@ def metrics():
             "# HELP flood_response_outbox_sent Successfully processed simulated dispatch messages.",
             "# TYPE flood_response_outbox_sent gauge",
             f"flood_response_outbox_sent {sent}",
+            "# HELP flood_response_outbox_partially_sent Partially accepted simulated dispatch messages.",
+            "# TYPE flood_response_outbox_partially_sent gauge",
+            f"flood_response_outbox_partially_sent {partially_sent}",
+            "# HELP flood_response_outbox_manual_takeover Dispatch messages requiring manual takeover.",
+            "# TYPE flood_response_outbox_manual_takeover gauge",
+            f"flood_response_outbox_manual_takeover {manual_takeover}",
+            "# HELP flood_response_dispatch_callbacks_total Unique simulated callbacks recorded.",
+            "# TYPE flood_response_dispatch_callbacks_total gauge",
+            f"flood_response_dispatch_callbacks_total {dispatch_callbacks}",
             "# HELP flood_response_rule_evaluations Rule outcomes by result.",
             "# TYPE flood_response_rule_evaluations gauge",
             f'flood_response_rule_evaluations{{outcome="PASS"}} {rule_pass}',

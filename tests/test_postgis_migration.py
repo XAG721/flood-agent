@@ -27,6 +27,8 @@ def test_simulated_response_projection_preserves_hashes_and_postgis_polygon(tmp_
         "task",
         "task_version",
         "approval",
+        "outbox",
+        "dispatch_callback",
         "feedback",
         "evidence_package",
         "timeline",
@@ -38,6 +40,8 @@ def test_simulated_response_projection_preserves_hashes_and_postgis_polygon(tmp_
     assert all(len(record["canonical_payload_sha256"]) == 64 for record in records)
     assert all('"event_id"' not in record["payload_ciphertext"] for record in records)
     assert sum(record["record_type"] == "approval" for record in records) == 1
+    assert sum(record["record_type"] == "outbox" for record in records) == 1
+    assert sum(record["record_type"] == "dispatch_callback" for record in records) == 2
     assert sum(record["record_type"] == "feedback" for record in records) == 1
     assert sum(record["record_type"] == "evidence_package" for record in records) == 1
 

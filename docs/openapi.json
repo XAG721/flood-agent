@@ -2749,6 +2749,85 @@
         }
       }
     },
+    "/response/dispatch/outbox/{message_id}/callbacks": {
+      "get": {
+        "tags": [
+          "district-response-workflow"
+        ],
+        "summary": "List Dispatch Callbacks",
+        "operationId": "list_dispatch_callbacks_response_dispatch_outbox__message_id__callbacks_get",
+        "parameters": [
+          {
+            "name": "message_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Message Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/response/simulation/dispatch-callbacks": {
+      "post": {
+        "tags": [
+          "district-response-workflow"
+        ],
+        "summary": "Ingest Simulated Dispatch Callback",
+        "operationId": "ingest_simulated_dispatch_callback_response_simulation_dispatch_callbacks_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DispatchCallbackRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/response/migration/status": {
       "get": {
         "tags": [
@@ -7022,6 +7101,127 @@
         ],
         "title": "DeadlineExtensionRequest"
       },
+      "DispatchCallbackRequest": {
+        "properties": {
+          "operator_id": {
+            "type": "string",
+            "title": "Operator Id"
+          },
+          "operator_role": {
+            "$ref": "#/components/schemas/OperatorRole"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note",
+            "default": ""
+          },
+          "terminal_id": {
+            "type": "string",
+            "title": "Terminal Id",
+            "default": "unknown-terminal"
+          },
+          "expected_version": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Version"
+          },
+          "idempotency_key": {
+            "type": "string",
+            "title": "Idempotency Key"
+          },
+          "message_id": {
+            "type": "string",
+            "title": "Message Id"
+          },
+          "external_id": {
+            "type": "string",
+            "title": "External Id"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source",
+            "default": "deterministic_simulation_gateway"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Version"
+          },
+          "event_time": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Event Time"
+          },
+          "received_time": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Received Time"
+          },
+          "request_id": {
+            "type": "string",
+            "title": "Request Id"
+          },
+          "trace_id": {
+            "type": "string",
+            "title": "Trace Id"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DispatchCallbackStatus"
+          },
+          "error_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Code"
+          },
+          "mock_token": {
+            "type": "string",
+            "title": "Mock Token"
+          },
+          "is_simulated": {
+            "type": "boolean",
+            "title": "Is Simulated",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "operator_id",
+          "operator_role",
+          "idempotency_key",
+          "message_id",
+          "external_id",
+          "version",
+          "event_time",
+          "request_id",
+          "trace_id",
+          "status",
+          "mock_token"
+        ],
+        "title": "DispatchCallbackRequest"
+      },
+      "DispatchCallbackStatus": {
+        "type": "string",
+        "enum": [
+          "accepted",
+          "delivered",
+          "partial_success",
+          "rejected"
+        ],
+        "title": "DispatchCallbackStatus"
+      },
       "DocumentImportRequest": {
         "properties": {
           "operator_id": {
@@ -8005,7 +8205,8 @@
           "liaison",
           "field_operator",
           "auditor",
-          "admin"
+          "admin",
+          "external_service"
         ],
         "title": "OperatorRole"
       },
@@ -8068,6 +8269,11 @@
             "minimum": 1.0,
             "title": "Max Messages",
             "default": 50
+          },
+          "simulation_scenario": {
+            "type": "string",
+            "title": "Simulation Scenario",
+            "default": "normal"
           }
         },
         "type": "object",
