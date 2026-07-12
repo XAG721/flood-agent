@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import json
 from pathlib import Path
 
 from flood_system.response_workflow.models import LegacyMigrationRequest, OperatorRole

@@ -99,7 +99,8 @@ python scripts/run_controlled_performance.py --db tmp/performance.db --output-di
 - `scripts/rebuild_demo_db.py`：重建生产级 demo 演示主库。
 - `scripts/inspect_demo_db.py`：检查演示主库闭环完整性。
 - `scripts/start-demo.ps1`：一键重建/检查演示库并启动前后端。
-- `docs/agent_twin_upgrade/`：AgentTwin 设计、实施、测试、演示和数据库治理文档。
+- `docs/progressive_upgrade/`：当前架构、实施、运维、安全和验收资料。
+- `docs/agent_twin_upgrade/`：仅保留 AgentTwin 兼容演示脚本和真实数据接入字典。
 
 ## 一键演示
 
@@ -248,7 +249,7 @@ python -m venv .venv-rag-evaluation
 .\.venv-rag-evaluation\Scripts\python.exe scripts\run_neural_rag_evaluation.py --model BAAI/bge-small-zh-v1.5
 ```
 
-报告写入 `output/rag_evaluation/neural_rag_evaluation_report.json` 和 `.md`，记录模型、池化方式、设备、向量维度、PyTorch/Transformers 版本、逐用例结果和限制。模型文件只进入 `.cache/`，不纳入版本控制。
+报告写入 `output/rag_evaluation/neural_rag_evaluation_report.json` 和 `.md`，记录模型、池化方式、设备、向量维度、PyTorch/Transformers 版本、逐用例结果和限制。报告和模型文件均为可重复生成产物，不纳入版本控制。
 
 公开 benchmark 固定子集复现：
 
@@ -259,7 +260,7 @@ python -m venv .venv-rag-evaluation
 .\.venv-rag-evaluation\Scripts\python.exe scripts\run_public_rag_benchmarks.py --model BAAI/bge-small-en-v1.5 --sample-size 7405 --top-k 4 --seed 20260712 --output-dir output/rag_evaluation/full_public
 ```
 
-获取脚本只使用 MultiHop-RAG、ConditionalQA、HotpotQA 官方 GitHub 仓库以及 `hotpotqa/hotpot_qa` 官方 Hugging Face 数据集。报告保存源仓库 revision 和数据文件 SHA-256。快速报告使用每数据集 100 条；`full_public/` 报告覆盖 MultiHop-RAG 2255 条可映射证据查询、ConditionalQA 271 条可回答且证据可解析的开发样本，以及 HotpotQA 全部 7405 条 distractor validation。被排除样本数量和规则写入报告；该结果仍不是官方 leaderboard 提交。
+获取脚本只使用 MultiHop-RAG、ConditionalQA、HotpotQA 官方 GitHub 仓库以及 `hotpotqa/hotpot_qa` 官方 Hugging Face 数据集。报告保存源仓库 revision 和数据文件 SHA-256。快速报告使用每数据集 100 条；`full_public/` 报告覆盖 MultiHop-RAG 2255 条可映射证据查询、ConditionalQA 271 条可回答且证据可解析的开发样本，以及 HotpotQA 全部 7405 条 distractor validation。被排除样本数量和规则写入报告；该结果仍不是官方 leaderboard 提交。逐样本 JSON 可由命令重建且不纳入版本控制，仓库只保留全量摘要 Markdown。
 
 区县证据集独立双人标注和第三方裁决：
 
@@ -318,6 +319,7 @@ npm.cmd run test -- --run --reporter=basic --testTimeout=10000
 ## 文档入口
 
 - [文档索引](./docs/README.md)
-- [AgentTwin 文档包](./docs/agent_twin_upgrade/README.md)
+- [v0.2.0 更新报告](./docs/releases/v0.2.0.md)
+- [渐进式升级与验收](./docs/progressive_upgrade/README.md)
+- [AgentTwin 兼容演示资料](./docs/agent_twin_upgrade/README.md)
 - [甲方演示脚本](./docs/agent_twin_upgrade/16_甲方演示脚本.md)
-- [可交付重构说明](./docs/agent_twin_upgrade/17_可交付重构说明.md)

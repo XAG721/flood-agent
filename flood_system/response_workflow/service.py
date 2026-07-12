@@ -2,13 +2,22 @@ from __future__ import annotations
 
 import hashlib
 import json
-import math
 import os
 import re
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
 from ..models import CorpusType, RAGDocument
+from .candidate_discovery import build_risk_object_candidate, calculate_profile_risk_score, point_in_polygon
+from .feedback_policy import (
+    build_review_recommendations,
+    classify_feedback,
+    feedback_dedupe_key,
+    missing_evidence_types,
+    recommend_deadline_alternatives,
+    recommend_feedback_alternatives,
+    review_timeline_line,
+)
 from .state_machine import ensure_transition
 
 from .models import (
@@ -75,7 +84,6 @@ from .models import (
     RiskObjectBatchRequest,
     RiskObjectVerificationRequest,
     RiskObjectVersionSnapshot,
-    SensitiveContact,
     ReviewDraftRequest,
     RetrievalMode,
     RuleCheckResult,
@@ -357,7 +365,7 @@ class ResponseWorkflowService:
             profiles = [
                 item
                 for item in located_profiles
-                if self._point_in_polygon(
+                if point_in_polygon(
                     float(item.longitude),
                     float(item.latitude),
                     alert.affected_geometry.coordinates,
@@ -374,13 +382,13 @@ class ResponseWorkflowService:
             )
         scored: list[tuple[float, object]] = []
         for profile in profiles:
-            score = self._profile_risk_score(alert.level, profile)
+            score = calculate_profile_risk_score(alert.level, profile)
             if score >= request.min_risk_score:
                 scored.append((score, profile))
         scored.sort(key=lambda item: (-item[0], item[1].entity_id))
         selected = scored[: request.max_candidates]
         objects = [
-            self._profile_to_risk_object(profile, score, alert, association_mode) for score, profile in selected
+            build_risk_object_candidate(profile, score, alert, association_mode) for score, profile in selected
         ]
         candidates = self.add_risk_objects(
             event_id,
@@ -554,7 +562,7 @@ class ResponseWorkflowService:
         request: TaskDraftGenerationRequest,
     ) -> TaskDraftGenerationResult:
         self._require_role(request.operator_role, EDIT_ROLES, "generate a grounded task draft")
-        event = self._event(event_id, active=True)
+        self._event(event_id, active=True)
         risk_object = self.repository.get_event_risk_object(event_id, object_id)
         if risk_object is None:
             raise LookupError(f"risk object not found: {object_id}")
@@ -1759,8 +1767,8 @@ class ResponseWorkflowService:
             raise PermissionError("only the assigned field operator may submit execution feedback")
         self._event(task.event_id, active=True)
         previous_status = task.status
-        category, classification_reason = self._classify_feedback(request)
-        dedupe_key = self._feedback_dedupe_key(request)
+        category, classification_reason = classify_feedback(request)
+        dedupe_key = feedback_dedupe_key(request)
         duplicate = next(
             (item for item in self.repository.list_task_feedback(task_id) if item.dedupe_key == dedupe_key),
             None,
@@ -1791,7 +1799,7 @@ class ResponseWorkflowService:
         if category == FeedbackCategory.COORDINATION_REQUEST:
             escalation_reason = request.summary
         if category == FeedbackCategory.COMPLETION:
-            missing_types = self._missing_evidence(task, request.evidence)
+            missing_types = missing_evidence_types(task, request.evidence)
             if missing_types:
                 raise ValueError(f"required evidence missing: {', '.join(missing_types)}")
         feedback = TaskFeedback(
@@ -1820,7 +1828,7 @@ class ResponseWorkflowService:
                 previous,
                 escalation_reason,
                 "duty_officer",
-                recommended_actions=self._recommend_alternatives(category, request),
+                recommended_actions=recommend_feedback_alternatives(category),
             )
             action = "task_blocked_and_escalated"
         elif category == FeedbackCategory.COMPLETION:
@@ -2147,7 +2155,7 @@ class ResponseWorkflowService:
         task_by_id = {task.task_id: task for task in tasks}
         for item in feedback:
             task = task_by_id.get(item.task_id)
-            if task and item.category == FeedbackCategory.COMPLETION and not self._missing_evidence(task, item.evidence):
+            if task and item.category == FeedbackCategory.COMPLETION and not missing_evidence_types(task, item.evidence):
                 evidence_complete += 1
 
         process_metrics: dict[str, int | float] = {
@@ -2163,7 +2171,7 @@ class ResponseWorkflowService:
             "completion_rate": round(len(completed) / len(tasks), 4) if tasks else 0.0,
         }
         key_decisions = [
-            self._review_line(entry)
+            review_timeline_line(entry)
             for entry in timeline
             if entry.action in {"task_approved_and_issued", "task_rejected_to_draft", "task_waived", "event_closed"}
         ]
@@ -2181,7 +2189,12 @@ class ResponseWorkflowService:
             for task in tasks
             if task.status not in {TaskStatus.COMPLETED, TaskStatus.WAIVED}
         ]
-        recommendations = self._review_recommendations(feedback, escalations, duplicates, unresolved)
+        recommendations = build_review_recommendations(
+            feedback,
+            has_escalations=bool(escalations),
+            has_duplicates=bool(duplicates),
+            has_unresolved_tasks=bool(unresolved),
+        )
         review = EventReviewDraft(
             review_id=self._id("REVIEW"),
             event_id=event_id,
@@ -2269,7 +2282,7 @@ class ResponseWorkflowService:
         task_by_id = {task.task_id: task for task in dashboard.tasks}
         for item in dashboard.feedback:
             task = task_by_id.get(item.task_id)
-            if task and item.category == FeedbackCategory.COMPLETION and not self._missing_evidence(task, item.evidence):
+            if task and item.category == FeedbackCategory.COMPLETION and not missing_evidence_types(task, item.evidence):
                 feedback_complete += 1
         completion_feedback = sum(item.category == FeedbackCategory.COMPLETION for item in dashboard.feedback)
         verification_attempts = len(action_entries.get("completion_verified", [])) + len(action_entries.get("completion_returned", []))
@@ -2760,93 +2773,11 @@ class ResponseWorkflowService:
             reason=reason,
             previous_status=previous,
             target_role=target_role,
-            recommended_actions=recommended_actions or self._recommend_deadline_alternatives(reason),
+            recommended_actions=recommended_actions or recommend_deadline_alternatives(reason),
             created_at=self._now(),
         )
         self.repository.save_escalation_record(record)
         return record
-
-    @staticmethod
-    def _classify_feedback(request: FeedbackRequest) -> tuple[FeedbackCategory, str]:
-        text = " ".join(filter(None, [request.summary, request.blocked_reason, request.resource_gap]))
-        if request.resource_gap:
-            return FeedbackCategory.RESOURCE_SHORTAGE, "检测到资源缺口字段，按资源不足反馈分类。"
-        if request.blocked_reason:
-            return FeedbackCategory.BLOCKED, "检测到受阻原因字段，按执行受阻反馈分类。"
-        if any(keyword in text for keyword in ("协同", "支援", "增援", "协调")):
-            return FeedbackCategory.COORDINATION_REQUEST, "反馈包含协同或支援请求。"
-        if request.completion_percent is not None and request.completion_percent < 100:
-            return FeedbackCategory.PARTIAL_COMPLETION, "完成比例低于 100%，记录为部分完成并保持任务可继续执行。"
-        if request.evidence:
-            return FeedbackCategory.COMPLETION, "反馈包含结构化完成证据，进入待核实流程。"
-        return FeedbackCategory.SITUATION_UPDATE, "未检测到完成、受阻或协同信号，作为现场态势更新。"
-
-    @staticmethod
-    def _feedback_dedupe_key(request: FeedbackRequest) -> str:
-        payload = {
-            "summary": re.sub(r"\s+", "", request.summary).lower(),
-            "blocked_reason": re.sub(r"\s+", "", request.blocked_reason or "").lower(),
-            "resource_gap": re.sub(r"\s+", "", request.resource_gap or "").lower(),
-            "completion_percent": request.completion_percent,
-            "evidence": sorted(
-                (str(item.get("type", "")).strip(), str(item.get("value", item.get("url", ""))).strip())
-                for item in request.evidence
-            ),
-        }
-        raw = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-        return hashlib.sha256(raw.encode("utf-8")).hexdigest()
-
-    @staticmethod
-    def _recommend_alternatives(category: FeedbackCategory, request: FeedbackRequest) -> list[str]:
-        if category == FeedbackCategory.RESOURCE_SHORTAGE:
-            return [
-                "核查本部门同类资源和事件级资源台账，优先内部调剂。",
-                "向相邻成员单位或区级资源协调岗位申请补充资源。",
-                "在不降低安全要求的前提下调整执行顺序并重新确认时限。",
-            ]
-        if category == FeedbackCategory.BLOCKED:
-            return [
-                "核实受阻位置和现场安全条件，必要时暂停原路径。",
-                "由成员单位联络员协调替代路线、替代人员或替代设备。",
-                "重大方案变化提交重新审批后再恢复执行。",
-            ]
-        return ["提交防办审核员协调相关成员单位。", "保留现场证据并明确下一次反馈时限。"]
-
-    @staticmethod
-    def _recommend_deadline_alternatives(reason: str) -> list[str]:
-        if "未确认" in reason:
-            return ["通知成员单位联络员二次确认。", "核对责任人联系方式并准备重新分派。"]
-        return ["核查执行受阻原因和资源缺口。", "协调增援或重新分派并更新完成时限。"]
-
-    @staticmethod
-    def _review_line(entry: TimelineEntry) -> str:
-        labels = {
-            "task_approved_and_issued": "任务批准并下发",
-            "task_rejected_to_draft": "任务退回修改",
-            "task_waived": "任务批准豁免",
-            "event_closed": "事件授权关闭",
-        }
-        return f"{entry.created_at.isoformat()}：{labels.get(entry.action, entry.action)}（{entry.actor_id}）"
-
-    @staticmethod
-    def _review_recommendations(feedback, escalations, duplicates, unresolved) -> list[str]:
-        recommendations: list[str] = []
-        if escalations:
-            recommendations.append("复核确认时限和完成时限配置，并针对高频受阻原因预置跨部门资源调剂方案。")
-        if any(item.category == FeedbackCategory.RESOURCE_SHORTAGE for item in feedback):
-            recommendations.append("更新事件级资源台账和相邻单位支援清单，缩短资源缺口协调时间。")
-        if duplicates:
-            recommendations.append("保持反馈去重规则，同时要求现场人员在状态变化时补充新的时间、定位或证据值。")
-        if unresolved:
-            recommendations.append("事件关闭前逐项处理未完成、未核实或未批准豁免的任务。")
-        if not recommendations:
-            recommendations.append("保持当前审批、证据核实和事件台账机制，并在后续演练中复测确认时效。")
-        return recommendations
-
-    @staticmethod
-    def _missing_evidence(task: ResponseTask, evidence: list[dict]) -> list[str]:
-        supplied = {str(item.get("type", "")).strip() for item in evidence}
-        return [required for required in task.required_evidence if required not in supplied]
 
     def _query_task_evidence(self, query: str) -> list[RAGDocument]:
         if self.rag_service is None:
@@ -2915,148 +2846,6 @@ class ResponseWorkflowService:
             and str(document.metadata.get("stage", "")).strip().lower()
             not in {"compensation", "recovery", "postmortem"}
         ]
-
-    @staticmethod
-    def _profile_risk_score(alert_level: str, profile) -> float:
-        """Return an explainable screening score, not a hydraulic/GIS risk result."""
-        level_weight = {
-            "blue": 8,
-            "蓝色": 8,
-            "yellow": 16,
-            "黄色": 16,
-            "orange": 24,
-            "橙色": 24,
-            "red": 32,
-            "红色": 32,
-        }
-        type_weight = {
-            "resident": 12,
-            "community": 10,
-            "school": 18,
-            "factory": 14,
-            "hospital": 24,
-            "nursing_home": 26,
-            "metro_station": 22,
-            "underground_space": 25,
-        }
-        normalized_level = alert_level.strip().lower()
-        alert_points = max(
-            (weight for label, weight in level_weight.items() if label in normalized_level),
-            default=12,
-        )
-        population = max(profile.current_occupancy, profile.resident_count)
-        population_points = min(16.0, population / 75.0)
-        score = (
-            20.0
-            + alert_points
-            + type_weight.get(profile.entity_type.value, 10)
-            + min(12, len(profile.vulnerability_tags) * 3)
-            + min(10, len(profile.mobility_constraints) * 4)
-            + population_points
-        )
-        return round(min(100.0, score), 1)
-
-    @staticmethod
-    def _point_in_polygon(
-        longitude: float,
-        latitude: float,
-        ring: list[tuple[float, float]],
-    ) -> bool:
-        """Boundary-inclusive ray casting for an EPSG:4326 exterior ring."""
-        inside = False
-        for index in range(len(ring) - 1):
-            x1, y1 = ring[index]
-            x2, y2 = ring[index + 1]
-            cross = (longitude - x1) * (y2 - y1) - (latitude - y1) * (x2 - x1)
-            if abs(cross) <= 1e-12 and min(x1, x2) - 1e-12 <= longitude <= max(x1, x2) + 1e-12 \
-                    and min(y1, y2) - 1e-12 <= latitude <= max(y1, y2) + 1e-12:
-                return True
-            intersects = (y1 > latitude) != (y2 > latitude)
-            if intersects:
-                crossing_x = (x2 - x1) * (latitude - y1) / (y2 - y1) + x1
-                if longitude < crossing_x:
-                    inside = not inside
-        return inside
-
-    @staticmethod
-    def _profile_to_risk_object(profile, score: float, alert: AlertSnapshot, association_mode: str = "area_registry"):
-        from .models import RiskObjectInput
-
-        type_labels = {
-            "resident": "重点居民",
-            "community": "社区",
-            "school": "学校",
-            "factory": "工厂",
-            "hospital": "医院",
-            "nursing_home": "养老机构",
-            "metro_station": "地铁站",
-            "underground_space": "地下空间",
-        }
-        responsibility = {
-            "resident": ("属地街道", "社区网格员"),
-            "community": ("属地街道", "社区负责人"),
-            "school": ("区教育局", "学校防汛负责人"),
-            "factory": ("区应急管理局", "企业安全负责人"),
-            "hospital": ("区卫生健康局", "医院应急负责人"),
-            "nursing_home": ("区民政局", "机构应急负责人"),
-            "metro_station": ("轨道交通运营单位", "车站值班负责人"),
-            "underground_space": ("区住建局", "地下空间管理负责人"),
-        }
-        entity_type = profile.entity_type.value
-        organization, role = responsibility.get(entity_type, ("属地街道", "防汛责任人"))
-        vulnerability_parts = list(profile.vulnerability_tags) + list(profile.mobility_constraints)
-        population = max(profile.current_occupancy, profile.resident_count)
-        if population:
-            vulnerability_parts.append(f"在场或登记人数约 {population} 人")
-        contacts = [
-            SensitiveContact(name=item.name, role=item.role or "应急联系人", phone=item.phone)
-            for item in profile.emergency_contacts
-            if item.phone
-        ]
-        source_ref = str(profile.custom_attributes.get("source_ref", "")).strip()
-        sources = [alert.snapshot_id, f"entity_profile:{profile.entity_id}"]
-        if alert.affected_geometry is not None:
-            sources.append(f"alert_geometry:{alert.snapshot_id}:EPSG4326")
-        if source_ref:
-            sources.append(source_ref)
-        if alert.affected_geometry is not None and profile.longitude is not None and profile.latitude is not None:
-            spatial_reason = f"对象登记点落入{alert.level}{alert.disaster_type}预警多边形"
-        else:
-            spatial_reason = f"{alert.level}{alert.disaster_type}预警与对象同属区域 {profile.area_id}"
-        trigger_reasons = [
-            spatial_reason,
-            f"对象类型 {type_labels.get(entity_type, entity_type)} 纳入候选筛查",
-        ]
-        if profile.vulnerability_tags:
-            trigger_reasons.append("存在脆弱性标签：" + "、".join(profile.vulnerability_tags))
-        return RiskObjectInput(
-            object_id=profile.entity_id,
-            name=profile.name,
-            object_type=type_labels.get(entity_type, entity_type),
-            location=f"{profile.village}；{profile.location_hint}",
-            responsible_organization=organization,
-            responsible_role=role,
-            trigger_reasons=trigger_reasons,
-            source_refs=list(dict.fromkeys(sources)),
-            vulnerability="；".join(vulnerability_parts) or "区域台账未登记额外脆弱性",
-            historical_risk=str(profile.custom_attributes.get("historical_risk", "")),
-            risk_score=score,
-            raw_candidate_score=score,
-            calibrated_confidence=round(1.0 / (1.0 + math.exp(-((score - 55.0) / 12.0))), 4),
-            calibration_version="candidate-logistic-v1",
-            association_mode=association_mode,
-            system_explanation=(
-                "基于预警等级、对象类型、登记人数、脆弱性和行动约束形成候选排序；"
-                + (
-                    "空间关联采用 EPSG:4326 点落预警多边形判断；"
-                    if alert.affected_geometry is not None
-                    else "空间关联降级为 area_id 区域台账匹配；"
-                )
-                + "结果仅用于人工核验优先级，不替代水动力风险分析。"
-            ),
-            sensitive_contacts=contacts,
-            special_population_notes="、".join(vulnerability_parts),
-        )
 
     @staticmethod
     def _build_task_query(alert, risk_object: EventRiskObject) -> str:

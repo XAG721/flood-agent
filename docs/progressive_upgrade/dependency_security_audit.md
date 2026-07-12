@@ -26,6 +26,7 @@
 | Cesium 前端 | npm audit，`--audit-level=high` | 0 个漏洞 |
 | 主前端兼容性 | Vitest / TypeScript / Vite production build | 11/11 测试与构建通过 |
 | Cesium 兼容性 | TypeScript / Vite production build | 构建通过 |
+| Python 代码质量 | Ruff 0.15.21 | 0 个问题；CI 持续门禁 |
 
 ## 持续门禁
 

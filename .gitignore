@@ -4,6 +4,7 @@ api_key.txt
 /data/
 .pytest_cache/
 __pycache__/
+*.egg-info/
 *.tsbuildinfo
 frontend/node_modules/
 frontend/dist/
@@ -27,3 +28,8 @@ tmp-edge-debug/
 agent-twin-bigscreen-*.png
 data_sources/beilin/raw/geofabrik_shaanxi_osm/download.pbf
 3D_visual/public/models/*.glb
+/output/doc/
+/output/floodagent_bench/candidate_evaluation_input.json
+/output/rag_evaluation/**/public_benchmark_report.json
+/output/rag_evaluation/public_benchmark_report.md
+/output/rag_evaluation/neural_rag_evaluation_report.*

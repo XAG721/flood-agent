@@ -19,7 +19,6 @@ import type {
   HazardStateV2,
   MemoryBundleView,
   OperationalAlert,
-  OperatorCapabilitiesView,
   OperatorRole,
   RAGDocument,
   RegionalAnalysisPackageView,

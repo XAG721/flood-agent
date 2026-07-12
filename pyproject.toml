@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "flood-warning-system"
-version = "0.1.0"
+version = "0.2.0"
 description = "Event-driven flood warning and personalized response platform"
 requires-python = ">=3.12"
 dependencies = [
@@ -20,6 +20,7 @@ test = [
   "httpx2>=2.5,<3",
   "numpy>=1.26,<3",
   "pytest>=9.0.3,<10",
+  "ruff>=0.15.21,<0.16",
 ]
 postgres = [
   "psycopg[binary]>=3.3,<4",
@@ -46,3 +47,10 @@ flood_system = [
   "rag_raw/*/*.json",
   "v2/*.json",
 ]
+
+[tool.ruff]
+target-version = "py312"
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/inspect_demo_db.py" = ["E402"]
+"scripts/rebuild_demo_db.py" = ["E402"]

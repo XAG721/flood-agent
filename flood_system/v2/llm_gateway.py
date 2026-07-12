@@ -236,49 +236,6 @@ class ResponsesLLMGateway:
             response_model=RegionalAnalysisPackageOutput,
         )
 
-    def generate_regional_analysis_package(self, payload: dict[str, Any]) -> RegionalAnalysisPackageOutput:
-        hazard_state = payload.get("hazard_state") or {}
-        exposure = payload.get("exposure_summary") or {}
-        evidence = payload.get("knowledge_evidence") or []
-        proposals = payload.get("pending_proposals") or []
-        risk_level = str(hazard_state.get("overall_risk_level") or "Orange")
-        top_risks = exposure.get("top_risks") or []
-        affected_entities = exposure.get("affected_entities") or []
-        focus_names = [
-            item.get("entity", {}).get("name")
-            for item in affected_entities[:3]
-            if isinstance(item, dict) and isinstance(item.get("entity", {}).get("name"), str)
-        ]
-        evidence_titles = [
-            item.get("title")
-            for item in evidence[:2]
-            if isinstance(item, dict) and isinstance(item.get("title"), str)
-        ]
-        proposal_titles = [
-            item.get("title")
-            for item in proposals[:3]
-            if isinstance(item, dict) and isinstance(item.get("title"), str)
-        ]
-        focus_label = ", ".join(focus_names) if focus_names else "priority targets"
-        leading_risk = top_risks[0] if top_risks else f"The area remains at {risk_level} risk."
-        evidence_label = ", ".join(evidence_titles) if evidence_titles else "simulation and exposure evidence"
-        proposal_label = ", ".join(proposal_titles[:2]) if proposal_titles else "notification and rescue coordination"
-        return RegionalAnalysisPackageOutput(
-            analysis_message=f"A new regional analysis package is ready for {focus_label}.",
-            risk_assessment=(
-                f"The district is currently at {risk_level} flood risk. "
-                f"Primary concern: {leading_risk}. Supporting evidence comes from {evidence_label}."
-            ),
-            rescue_plan=(
-                f"Advance rescue preparation around {focus_label}, "
-                f"and prioritize the following actions: {proposal_label}."
-            ),
-            resource_dispatch_plan=(
-                f"Pre-position pumps, traffic coordination teams, and public-warning capacity near {focus_label} "
-                "to stay ahead of the next flood peak."
-            ),
-        )
-
     def generate_execution_bundle(self, payload: dict[str, Any]) -> ExecutionBundleOutput:
         return self._generate_output(
             prompt_profile="execution_bundle",
@@ -607,6 +564,49 @@ class MockLLMGateway:
             action_scope=scope,
             chat_follow_up_prompt=chat_follow_up_prompt,
             grounding_summary="基于区域决策动作、风险摘要和高风险对象清单生成请示草稿。",
+        )
+
+    def generate_regional_analysis_package(self, payload: dict[str, Any]) -> RegionalAnalysisPackageOutput:
+        hazard_state = payload.get("hazard_state") or {}
+        exposure = payload.get("exposure_summary") or {}
+        evidence = payload.get("knowledge_evidence") or []
+        proposals = payload.get("pending_proposals") or []
+        risk_level = str(hazard_state.get("overall_risk_level") or "Orange")
+        top_risks = exposure.get("top_risks") or []
+        affected_entities = exposure.get("affected_entities") or []
+        focus_names = [
+            item.get("entity", {}).get("name")
+            for item in affected_entities[:3]
+            if isinstance(item, dict) and isinstance(item.get("entity", {}).get("name"), str)
+        ]
+        evidence_titles = [
+            item.get("title")
+            for item in evidence[:2]
+            if isinstance(item, dict) and isinstance(item.get("title"), str)
+        ]
+        proposal_titles = [
+            item.get("title")
+            for item in proposals[:3]
+            if isinstance(item, dict) and isinstance(item.get("title"), str)
+        ]
+        focus_label = ", ".join(focus_names) if focus_names else "priority targets"
+        leading_risk = top_risks[0] if top_risks else f"The area remains at {risk_level} risk."
+        evidence_label = ", ".join(evidence_titles) if evidence_titles else "simulation and exposure evidence"
+        proposal_label = ", ".join(proposal_titles[:2]) if proposal_titles else "notification and rescue coordination"
+        return RegionalAnalysisPackageOutput(
+            analysis_message=f"A new regional analysis package is ready for {focus_label}.",
+            risk_assessment=(
+                f"The district is currently at {risk_level} flood risk. "
+                f"Primary concern: {leading_risk}. Supporting evidence comes from {evidence_label}."
+            ),
+            rescue_plan=(
+                f"Advance rescue preparation around {focus_label}, "
+                f"and prioritize the following actions: {proposal_label}."
+            ),
+            resource_dispatch_plan=(
+                f"Pre-position pumps, traffic coordination teams, and public-warning capacity near {focus_label} "
+                "to stay ahead of the next flood peak."
+            ),
         )
 
     def generate_execution_bundle(self, payload: dict[str, Any]) -> ExecutionBundleOutput:

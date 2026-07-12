@@ -295,7 +295,6 @@ function LegacyApplication() {
             onResolveProposal={(proposalId, decision, note) => void consoleState.resolveProposal(proposalId, decision, note)}
             onOpenOperations={() => navigate("/operations")}
             actionBusy={consoleState.isBusy}
-            twinBusy={consoleState.twinBusy}
           />
         ) : null}
 

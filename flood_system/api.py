@@ -96,7 +96,10 @@ def metrics():
         item.stale for event in events for item in system.repository.list_event_risk_objects(event.event_id)
     )
     durations = sorted(api_request_durations_ms)
-    percentile = lambda fraction: durations[min(len(durations) - 1, int((len(durations) - 1) * fraction))] if durations else 0.0
+    def percentile(fraction: float) -> float:
+        if not durations:
+            return 0.0
+        return durations[min(len(durations) - 1, int((len(durations) - 1) * fraction))]
     return "\n".join(
         (
             "# HELP flood_response_events_total Response events persisted by the core workflow.",

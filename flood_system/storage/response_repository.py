@@ -6,7 +6,6 @@ import os
 import re
 import shutil
 import sqlite3
-from collections.abc import Iterable
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import TypeVar

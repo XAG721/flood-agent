@@ -44,7 +44,6 @@ class AgentTwinService:
         event = self.platform.get_event(event_id)
         hazard_state = self.platform.get_hazard_state(event_id)
         exposure = self.platform.get_exposure_summary(event_id, top_k=6)
-        proposals = self.repository.list_v2_action_proposals(event_id, proposal_scope="regional")
         proposal_views = self.platform.list_regional_proposals(event_id)
         pending_proposals = [item for item in proposal_views if item.proposal.status == ProposalStatus.PENDING]
         approved_proposals = [item for item in proposal_views if item.proposal.status == ProposalStatus.APPROVED]

@@ -10,7 +10,6 @@ from .memory_store import SessionMemoryStore
 from .models import (
     ActionProposal,
     AlertSeverity,
-    AdvisoryRequest,
     BatchProposalResolutionRequest,
     CompletionAssessment,
     CompletionStatus,
@@ -18,10 +17,8 @@ from .models import (
     CopilotStructuredAnswer,
     DataFreshnessSummary,
     EntityImpactView,
-    EntityProfile,
     EvidenceItem,
     MemorySnapshot,
-    PlanRunRecord,
     ProposalResolutionRequest,
     ProposalStatus,
     TriggerEventType,
@@ -30,7 +27,6 @@ from .models import (
     ToolExecutionStatus,
     ToolTraceStep,
     V2CopilotMessage,
-    V2CopilotMessageRequest,
     V2CopilotSessionRequest,
     V2CopilotSessionView,
 )

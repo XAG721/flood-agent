@@ -30,7 +30,6 @@ from ..response_workflow.models import (
     RiskObjectVerificationRequest,
     ReviewDraftRequest,
     ScenarioEvaluationRequest,
-    OperatorRole,
     KeyRotationRequest,
     LegacyMigrationRequest,
     OutboxProcessRequest,
