@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 
-AUDIT_VERSION = "progressive-completion-audit-v2"
+AUDIT_VERSION = "progressive-completion-audit-v3"
 
 SOFTWARE_DELIVERABLES: dict[str, tuple[str, ...]] = {
     "web_and_cesium": (
@@ -92,6 +92,10 @@ DATA_EXPERIMENT_DELIVERABLES: dict[str, tuple[str, ...]] = {
         "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation_cases.jsonl.gz",
         "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation.json",
         "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation_cases.jsonl.gz",
+        "benchmarks/eurlex_temporal_selection.json",
+        "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.json",
+        "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.md",
+        "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation_cases.jsonl.gz",
     ),
     "reproduction_entrypoints": (
         "scripts/run_candidate_evaluation.py",
@@ -102,6 +106,9 @@ DATA_EXPERIMENT_DELIVERABLES: dict[str, tuple[str, ...]] = {
         "scripts/run_conflicts_frc_ablation.py",
         "scripts/run_housing_frc_ablation.py",
         "scripts/run_lawshift_temporal_ablation.py",
+        "scripts/prepare_eurlex_temporal_source.py",
+        "scripts/run_eurlex_temporal_ablation.py",
+        "flood_system/frc_eurlex_temporal_ablation.py",
     ),
 }
 
@@ -150,6 +157,10 @@ EVIDENCE_FILES = (
     "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation_cases.jsonl.gz",
     "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation.json",
     "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation_cases.jsonl.gz",
+    "benchmarks/eurlex_temporal_selection.json",
+    "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.json",
+    "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.md",
+    "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation_cases.jsonl.gz",
 )
 
 EXTERNAL_NO_GO_ITEMS = (
@@ -286,6 +297,7 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
     experiment_audit = rag_report["design_16_2_experiment_audit"]
     housing_ablation = experiment_audit["housing_real_model_ablation"]
     lawshift_ablation = experiment_audit["lawshift_temporal_ablation"]
+    eurlex_ablation = experiment_audit["eurlex_temporal_ablation"]
     gate_two_is_safely_held = (
         rag_decision["gate_2"] == "NO-GO"
         and rag_decision["pipeline_feasible"] is True
@@ -325,13 +337,24 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
             "full_exact_gain_over_strongest_baseline_at_least_0_05"
         ]
         is False
+        and eurlex_ablation["status"]
+        == "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL"
+        and eurlex_ablation["decision"]["gate_2"] == "NO-GO"
+        and eurlex_ablation["decision"][
+            "full_strictly_better_than_w_o_applicability"
+        ]
+        is True
+        and eurlex_ablation["decision"][
+            "full_exact_gain_over_strongest_baseline_at_least_0_05"
+        ]
+        is False
         and experiment_audit["applicability_identifiability"]["version_replacement"]
         == "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL"
         and experiment_audit["applicability_identifiability"][
             "effective_or_expiry_dates"
         ]
-        == "NOT_IDENTIFIABLE_NO_EFFECTIVE_DATES"
-        and experiment_audit["applicability_identifiability"]["complete"] is False
+        == "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL"
+        and experiment_audit["applicability_identifiability"]["complete"] is True
         and int(experiment_audit["combined_ablation_coverage"]["run_count"]) == 9
         and experiment_audit["combined_ablation_coverage"]["missing_variants"] == []
         and rag_decision["design_16_2_experiment_coverage_complete"] is False
@@ -434,6 +457,9 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
                 "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation_cases.jsonl.gz",
                 "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation.json",
                 "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation_cases.jsonl.gz",
+                "benchmarks/eurlex_temporal_selection.json",
+                "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.json",
+                "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation_cases.jsonl.gz",
                 "flood_system/response_workflow/service.py",
             ],
             {
@@ -461,6 +487,11 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
                     "frc_full"
                 ]["exact_evidence_accuracy"],
                 "lawshift_strongest_baseline": lawshift_ablation["strongest_baseline"],
+                "eurlex_temporal_ablation": eurlex_ablation["status"],
+                "eurlex_full_exact_evidence_accuracy": eurlex_ablation["aggregates"][
+                    "frc_full"
+                ]["exact_evidence_accuracy"],
+                "eurlex_strongest_baseline": eurlex_ablation["strongest_baseline"],
                 "version_replacement_applicability": experiment_audit[
                     "applicability_identifiability"
                 ]["version_replacement"],

@@ -1,6 +1,6 @@
 # FRC-Select 公开数据公平评测协议
 
-执行日期：2026-07-13。本协议用于验证 FRC-Select 的工程与理论流水线是否可行，不预设其优于基线，也不把覆盖贪心代理表述为真实 SetR。
+执行日期：2026-07-14。本协议用于验证 FRC-Select 的工程与理论流水线是否可行，不预设其优于基线，也不把覆盖贪心代理表述为真实 SetR。
 
 ## 1. 数据集与难例覆盖
 
@@ -13,6 +13,9 @@
 | 缺失证据 | ConditionalQA 的确定性变换切片 | 已运行 | 对每个至少含两条金证据的用例删除首条金证据，再用保存的真实模型分数重新选择 |
 | 冲突证据 | [Google CONFLICTS](https://github.com/google-research-datasets/rag_conflicts) | 已运行 | 458 例官方五类标签；六方法同预算选择后由同一本地 Qwen 分类 |
 | 失效/过期文件 | CONFLICTS 的 `Conflict due to outdated information` | 已运行 | 62 例；报告类型 Recall、最新日期来源保留和时间端点覆盖 |
+| 辖区适用性 | HousingQA | 已运行 | 40 个专家复合用例、160 字段、22 辖区、2021 快照 |
+| 版本替换 | LawShift | 已运行 | 124 例、31 类专家审阅的假设修订前/后版本 |
+| 权威生效/失效边界 | EU Publications Office CELLAR 与 EUR-Lex | 已运行 | 30 对法案、60 例旧法最后有效日/新法首个生效日；权威日期元数据 |
 
 Google 对 CONFLICTS 的研究说明给出了检索增强生成中的知识冲突分类与专家标注评测背景，参见 [Dragged into a Conflict](https://research.google/pubs/dragged-into-a-conflict-detecting-and-addressing-conflicting-sources-in-search-augmented-llms/)。本仓库已记录 Apache-2.0 许可、数据 SHA-256、真实模型配置和逐方法结果；但没有复现论文依赖独立人类判断的 expected-behavior adherence，因此不是官方 leaderboard 结果。
 
@@ -59,6 +62,10 @@ D:\anaconda3\envs\rag_exp\python.exe -m scripts.run_housing_frc_ablation `
   --generator-model-path D:\RAG_test\.hf_cache\local_models\Qwen2.5-7B-Instruct-GPTQ-Int4
 D:\anaconda3\envs\rag_exp\python.exe -m scripts.run_lawshift_temporal_ablation `
   --hf-home D:\RAG_test\.hf_cache
+D:\anaconda3\envs\rag_exp\python.exe -m scripts.prepare_eurlex_temporal_source `
+  --refresh-query --refresh-documents
+D:\anaconda3\envs\rag_exp\python.exe -m scripts.run_eurlex_temporal_ablation `
+  --hf-home D:\RAG_test\.hf_cache
 python scripts/import_frc_public_reference.py `
   --reference-root D:\RAG_test\frc-select `
   --conflicts-path output\rag_evaluation\conflicts_frc\conflicts_frc_report.json `
@@ -68,6 +75,7 @@ python scripts/import_frc_public_reference.py `
   --conflicts-ablation output\rag_evaluation\conflicts_frc_ablation\conflicts_frc_ablation.json `
   --housing-ablation output\rag_evaluation\housing_frc_ablation\housing_frc_ablation.json `
   --lawshift-ablation output\rag_evaluation\lawshift_temporal_ablation\lawshift_temporal_ablation.json `
+  --eurlex-ablation output\rag_evaluation\eurlex_temporal_ablation\eurlex_temporal_ablation.json `
   --output-dir output\rag_evaluation\public_frc_reference
 ```
 
@@ -83,8 +91,13 @@ python scripts/import_frc_public_reference.py `
 - `output/rag_evaluation/housing_frc_ablation/housing_frc_ablation.md`
 - `output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation.json`
 - `output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation.md`
+- `output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.json`
+- `output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.md`
+- `output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation_cases.jsonl.gz`
 
-导入报告同时审计设计第 16.2 节实验覆盖：ConditionalQA 原始产物包含 5 组消融，仓库另完成真实 `w/o Reranker`、CONFLICTS `w/o Conflict`、HousingQA `w/o Field`/辖区 `w/o Applicability` 和 LawShift 版本替换 `w/o Applicability`，跨适用公开集的 9/9 命名消融均有执行工件。HousingQA 40 例、160 字段、22 辖区上，Full 相对 `w/o Field` 字段覆盖提高 0.050000（95% CI [+0.018750, +0.087500]），相对无辖区过滤提高 0.175000；但 Full 与最强字段分解基线字段覆盖同为 0.706250，Answer Accuracy 仅 0.306250。LawShift 124 例、31 类专家审阅假设修订上，Full 相对无版本过滤的精确版本证据提高 0.137097（95% CI [+0.080645, +0.201613]）、错误版本率降低 0.451613，但 Article Recall@1 降低 0.064516，且与公平的适用性过滤 Cross-Encoder 基线完全持平。LawShift 没有权威生效/失效日期，因此构造覆盖仍为 `PARTIAL`。
+导入报告同时审计设计第 16.2 节实验覆盖：ConditionalQA 原始产物包含 5 组消融，仓库另完成真实 `w/o Reranker`、CONFLICTS `w/o Conflict`、HousingQA `w/o Field`/辖区 `w/o Applicability`、LawShift 版本替换和 EUR-Lex 生效/失效边界 `w/o Applicability`，跨适用公开集的 9/9 命名消融均有执行工件。HousingQA 40 例、160 字段、22 辖区上，Full 相对 `w/o Field` 字段覆盖提高 0.050000（95% CI [+0.018750, +0.087500]），相对无辖区过滤提高 0.175000；但 Full 与最强字段分解基线字段覆盖同为 0.706250，Answer Accuracy 仅 0.306250。LawShift 124 例、31 类专家审阅假设修订上，Full 相对无版本过滤的精确版本证据提高 0.137097（95% CI [+0.080645, +0.201613]）、错误版本率降低 0.451613，但 Article Recall@1 降低 0.064516，且与公平过滤基线持平。
+
+EUR-Lex/CELLAR 冻结切片从公开 SPARQL 法律元数据选择 30 对“旧法失效日 + 1 天 = 新法生效日”的唯一边界，其中 Decision/Directive/Regulation 为 12/6/12 对；每对分别评估旧法最后有效日和新法首个生效日，并加入两对确定性干扰法案。60 例上 Full/`w/o Applicability` 的精确证据准确率为 1.000000/0.483333，差值 +0.516667，95% CI [+0.383333, +0.650000]；无效适用率从 0.516667 降至 0。但获得相同有效期元数据的 `applicability_filtered_cross_encoder_top1` 也是 1.000000，因此日期过滤有效而 FRC 独有优势未获证明。源清单固定查询、CELEX、日期、官方 URL 及原始 HTML/规范文本 SHA-256，查询不含 gold CELEX，逐例 gzip 由导入器重新聚合。适用性三部分构造现已可识别；总体覆盖仍为 `PARTIAL`，因为该日期语料属于欧盟法律、字段/角色权重仍为受控诊断，且同一真实防汛领域复现和双专家评判未完成。
 
 Token 预算敏感性使用同一候选池、Top-K=5 和保存分数，严格限制 512/1024/2048 Token，任何方法超预算即失败；当前所有方法超预算率均为 0。缺失比例敏感性以固定 `SHA-256(case_id, evidence_id)` 分数与 0/25/50/75% 阈值比较，形成可重复、随比例嵌套的删除集合，不使用测试结果调参。CONFLICTS 冲突披露角色阈值 0.25/0.40/0.55/0.70/0.85 的真实模型准确率为 0.336245/0.336245/0.334061/0.334061/0.325328；该扫描是在既有结果已可见后补充的事后诊断，不用于重新选择冻结参数。字段/角色权重 0/0.5/1/2/4（字段另含 8）与选择器冲突风险阈值 0/0.35/0.5/0.8/1 已在 3 例、18 文档的仓库构造受控领域诊断集上运行；16 项“字段→金证据”映射只用于评分，从不传入选择器。冻结策略（角色 1、字段 4、冲突阈值 0）的 Evidence F1 为 0.750000、金标准字段覆盖为 0.773810、选择器自报字段覆盖和角色覆盖均为 1、冲突候选用例率为 0。角色权重 0 使角色覆盖降至 0.888889，字段权重 0 只使选择器自报字段覆盖降至 0.944444而金标准字段覆盖不变；字段权重 8 或冲突阈值不低于 0.5 时 Evidence F1/金标准字段覆盖降至 0.607143/0.573810，且 1/3 用例选入冲突候选。该结果证明参数行为可辨识，也暴露了自报覆盖与金标准覆盖的差异、过度加权和放宽冲突阈值的风险，但字段证据仍仅为 `RUN_CONTROLLED_DOMAIN_PUBLIC_SCHEMA_BLOCKED`。机器可读 Schema 审计覆盖 3,841 例、172,212 个候选，确认主公开集无字段分或适用性标注；`SCHEMA_BLOCKED` 不是通过，仍需另建领域真实模型标注基准。
 
@@ -108,9 +121,9 @@ conda run -n rag_exp python -m scripts.run_conflicts_frc_evaluation `
 
 1. 基于 CONFLICTS 的冲突/过时类型分类已经完成，但还需复现 expected-behavior adherence 并由独立人员复核；
 2. 主指标与安全指标预先冻结，不能只挑有利切片；
-3. 9/9 命名消融虽已运行，仍需在同一真实防汛领域专家基准上复现；当前 Full 未优于 `w/o Role`，HousingQA Full 与最强字段基线持平，LawShift Full 与公平适用性过滤基线持平，CONFLICTS Full 也未优于 `w/o Conflict`；
+3. 9/9 命名消融虽已运行，仍需在同一真实防汛领域专家基准上复现；当前 Full 未优于 `w/o Role`，HousingQA Full 与最强字段基线持平，LawShift 与 EUR-Lex Full 均与各自公平适用性过滤基线持平，CONFLICTS Full 也未优于 `w/o Conflict`；
 4. 在带任务字段标注的领域真实模型基准上复现字段权重扫描；CONFLICTS 冲突阈值扫描已经运行，但属于事后诊断，当前仓库构造受控诊断也只证明参数行为可辨识；
 5. 主要数据集上相对最强可复现基线的改善具有一致方向和配对统计支持；
 6. 冲突漏报、错误完整声明、不可回答误答等安全指标达到门槛；
-7. 使用带权威生效/失效日期的多版本语料补齐有效期与失效期识别；LawShift 只提供专家审阅的假设修订前/后版本；
+7. 将已完成的 EUR-Lex/CELLAR 权威日期协议迁移到具有权威版本登记的真实区县防汛文档，并在同一领域验证辖区、版本和有效期联合适用性；
 8. 原始输入、配置、种子、哈希、逐样本结果与失败用例可审计。

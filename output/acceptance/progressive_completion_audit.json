@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "audit_version": "progressive-completion-audit-v2",
+    "audit_version": "progressive-completion-audit-v3",
     "scope": "single-district controlled simulation",
     "contract": "洪水预警响应系统_渐进式迭代开发与升级设计.md sections 18-23",
     "evidence_hash_canonicalization": "UTF-8 text without BOM with CRLF/CR normalized to LF; binary archives use raw bytes"
@@ -90,6 +90,10 @@
         "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation_cases.jsonl.gz",
         "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation.json",
         "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation_cases.jsonl.gz",
+        "benchmarks/eurlex_temporal_selection.json",
+        "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.json",
+        "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.md",
+        "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation_cases.jsonl.gz",
         "scripts/run_candidate_evaluation.py",
         "scripts/run_rag_evaluation.py",
         "scripts/run_public_rag_benchmarks.py",
@@ -97,7 +101,10 @@
         "scripts/run_frc_controlled_sensitivity.py",
         "scripts/run_conflicts_frc_ablation.py",
         "scripts/run_housing_frc_ablation.py",
-        "scripts/run_lawshift_temporal_ablation.py"
+        "scripts/run_lawshift_temporal_ablation.py",
+        "scripts/prepare_eurlex_temporal_source.py",
+        "scripts/run_eurlex_temporal_ablation.py",
+        "flood_system/frc_eurlex_temporal_ablation.py"
       ],
       "details": {
         "group_count": 4,
@@ -188,6 +195,9 @@
         "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation_cases.jsonl.gz",
         "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation.json",
         "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation_cases.jsonl.gz",
+        "benchmarks/eurlex_temporal_selection.json",
+        "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.json",
+        "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation_cases.jsonl.gz",
         "flood_system/response_workflow/service.py"
       ],
       "details": {
@@ -211,8 +221,11 @@
         "lawshift_temporal_ablation": "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL",
         "lawshift_full_exact_evidence_accuracy": 0.427419,
         "lawshift_strongest_baseline": "applicability_filtered_cross_encoder_top1",
+        "eurlex_temporal_ablation": "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL",
+        "eurlex_full_exact_evidence_accuracy": 1.0,
+        "eurlex_strongest_baseline": "applicability_filtered_cross_encoder_top1",
         "version_replacement_applicability": "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL",
-        "effective_or_expiry_dates": "NOT_IDENTIFIABLE_NO_EFFECTIVE_DATES",
+        "effective_or_expiry_dates": "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL",
         "ablation_variants_run": 9
       }
     },
@@ -244,20 +257,24 @@
     "output/floodagent_bench/scenario_acceptance_report.json": "806c53237599302277ba9aaaecf8fc95690416a9b1474145b3a8bccb50515ab1",
     "output/candidate_evaluation/report.json": "4f25d27e8411bae5906cc4bf8c33eeeba664201fc82e18cb4adfe36085f7c9eb",
     "output/performance/controlled_performance_report.json": "72881b8700ac867eaefc71a0ff770c8317c3c76531f06afafd55cf5a14f3b2b3",
-    "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json": "e87ef99893b19b3c36a0fa451d31ce2da03ab8e6346d7a7c3ee620cd19f0bfcb",
+    "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json": "00a6a8170fd6181cf3c7c99f672e75ca5d84fc3bf3bbcb25e2046bc669f02f3b",
     "docs/openapi.json": "e338285b1b988a4ddf359bffa1d0249cfb12089f1f133d2a8696060b713ce73b",
     "docker-compose.yml": "8204abc75a6e82041d16e52d09e94e4f84de19f00f5a9cc9338dcd91ed76a33e",
-    "洪水预警响应系统_渐进式迭代开发与升级设计.md": "085384475b56c62e9db45e28a0c99a3287cf6296d1c17865904acde700c1665f",
+    "洪水预警响应系统_渐进式迭代开发与升级设计.md": "5f004cf1314018aac811372f1c777f9e7f6195e78ece54b359824a01a2de2e5f",
     "面向区县防办的洪水预警响应系统_升级设计说明V3.md": "b059960b880d7bc2be0891e5e676d353548aca79a692438c8538721426f9e88d",
-    "docs/progressive_upgrade/completion_traceability_audit.md": "1bbc5bda9d8b7885d5378203d14e8ee453048b3e05374c0ed9ec500a90c6c824",
-    "docs/V3_upgrade_acceptance_matrix.md": "9544d99d609df0c47fdb44560b05a8f14a7c27a9d31bfe63148115f8a72e7941",
+    "docs/progressive_upgrade/completion_traceability_audit.md": "bd99c033669a297f349923ba7367d7d115b3a9f7660fdbf380b5a0454766612d",
+    "docs/V3_upgrade_acceptance_matrix.md": "64fe1ef495b08ba0946862f12c6b35ff2940a7da8bfa18b8ee5c6b52e0a54db0",
     "output/rag_evaluation/controlled_domain_sensitivity/controlled_domain_sensitivity.json": "55e100bca5db241c4bce411060f555e683ccfef48ed2a9ad36f2c660c8135256",
     "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation.json": "f3d73309005e7ba6d1baf7d3a0f5365954fd3463c1a4037f6cecc075552aca31",
     "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation_cases.jsonl.gz": "d4a60ed544c0c6701715f0036e673881d0a1fd4523c8e9f789fad2ac39501e55",
     "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation.json": "439b7e4438658dad4c9e44783bf946bfca07d60bd7b1ed83a81b79e8a53e6597",
     "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation_cases.jsonl.gz": "4fef11fbaf1673980f6bdcfd3c5d23066b6aeb03514806bf867362cf62fbc687",
     "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation.json": "4145413531b35a47413e7138e2107bca1bcf8bd5c0f5bf462444cd9a099bc444",
-    "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation_cases.jsonl.gz": "68dc98188990a8780072dcf444f149b45e8c9abfb253a16bd064fe736997a31d"
+    "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation_cases.jsonl.gz": "68dc98188990a8780072dcf444f149b45e8c9abfb253a16bd064fe736997a31d",
+    "benchmarks/eurlex_temporal_selection.json": "9e1f23319ebff661b861107a7a2d3c50104024b93403d99ae0d6f421554bfc1d",
+    "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.json": "0c707d3ea3ee5138ee041b5b10b7a3b1fbbb70f91acfee7d0727e7fcc4faae1f",
+    "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.md": "42f9b0e8815c531abd3dee4326cdfa2fa6af7a00bfa7fb9389be9b58f05a6f79",
+    "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation_cases.jsonl.gz": "3d895269322eafea152cb366aaa50714beb6e209ac16b1d7c0df53464c31eda0"
   },
   "external_no_go": [
     {

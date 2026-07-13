@@ -57,6 +57,15 @@ def main() -> None:
         ),
     )
     parser.add_argument(
+        "--eurlex-ablation",
+        type=Path,
+        default=None,
+        help=(
+            "Machine-readable public official EUR-Lex/CELLAR effective and expiry "
+            "date applicability artifact."
+        ),
+    )
+    parser.add_argument(
         "--output-dir",
         type=Path,
         default=Path("output/rag_evaluation/public_frc_reference"),
@@ -72,6 +81,7 @@ def main() -> None:
         conflicts_ablation_path=args.conflicts_ablation,
         housing_ablation_path=args.housing_ablation,
         lawshift_ablation_path=args.lawshift_ablation,
+        eurlex_ablation_path=args.eurlex_ablation,
     )
     args.output_dir.mkdir(parents=True, exist_ok=True)
     json_path = args.output_dir / "public_frc_reference_report.json"

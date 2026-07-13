@@ -1879,8 +1879,8 @@
           "reason": "HousingQA supplies expert questions and supporting statutes; four independent questions are deterministically composed into fields and evaluated with frozen BGE, Cross-Encoder, and local Qwen models"
         },
         "w/o_applicability": {
-          "status": "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_AND_REVISION",
-          "reason": "HousingQA identifies jurisdiction filtering under its 2021 snapshot; LawShift identifies expert-reviewed before/after statutory replacement. Neither supplies authoritative effective or expiry dates."
+          "status": "RUN_PUBLIC_REAL_MODEL_JURISDICTION_REVISION_EFFECTIVE_EXPIRY",
+          "reason": "HousingQA identifies jurisdiction filtering under its 2021 snapshot; LawShift identifies expert-reviewed before/after statutory replacement; EUR-Lex/CELLAR supplies official effective and expiry dates at adjacent repeal boundaries."
         },
         "w/o_conflict": {
           "status": "RUN_REAL_MODEL_CONFLICTS",
@@ -3714,6 +3714,208 @@
       ],
       "source_sha256": "4145413531b35a47413e7138e2107bca1bcf8bd5c0f5bf462444cd9a099bc444"
     },
+    "eurlex_temporal_ablation": {
+      "status": "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL",
+      "metadata": {
+        "public_dataset": true,
+        "official_temporal_metadata": true,
+        "real_model_scores": true,
+        "source_snapshot_date": "2026-07-14",
+        "source_manifest_sha256": "9e1f23319ebff661b861107a7a2d3c50104024b93403d99ae0d6f421554bfc1d",
+        "source_query_sha256": "bcfc39e8812178fb36a51ccbdaae9b4a1ed3e8dd2f1db1fda04fb0a2c1b9aaa5",
+        "source_reuse_notice": "https://eur-lex.europa.eu/content/help/data-reuse/reuse-contents-eurlex-details.html?locale=en",
+        "scored_cases_sha256": "2ace39d5ac0a2b715b0bf661364a5cd9ed4c57cf13ead51f709e56cd3b4d09be",
+        "pair_count": 30,
+        "case_count": 60,
+        "candidate_occurrences": 360,
+        "family_counts": {
+          "decision": 12,
+          "directive": 6,
+          "regulation": 12
+        },
+        "methods": [
+          "bm25_top1",
+          "cross_encoder_top1",
+          "applicability_filtered_cross_encoder_top1",
+          "frc_full",
+          "w/o_applicability"
+        ],
+        "models": {
+          "reranker": "BAAI/bge-reranker-large"
+        },
+        "selection_parameters": {
+          "top_k": 1,
+          "token_budget": 512,
+          "distractor_pairs": 2,
+          "seed": 20260714
+        },
+        "frozen_protocol": "thirty CELEX repeal pairs with a unique one-day adjacent expiry/effective boundary; evaluate the last valid day of the old act and first effective day of the new act; add two deterministic unrelated repeal-pair distractors",
+        "gold_usage": "CELEX repeal relation and applicability dates determine labels after retrieval; the scorer sees only the natural-language question and candidate legal text, while frc_full and the fair filtered baseline may use validity metadata",
+        "case_manifest_sha256": "09c5a2f5d0bfd2a17999f32fe0cb8f4c228bfb3494f36ef0608b9df2fca7910b"
+      },
+      "coverage": {
+        "effective_dates": "IDENTIFIABLE_OFFICIAL_CELLAR_METADATA",
+        "expiry_dates": "IDENTIFIABLE_OFFICIAL_CELLAR_METADATA",
+        "adjacent_repeal_boundary": "IDENTIFIABLE",
+        "old_and_new_boundary_snapshots": "RUN"
+      },
+      "aggregates": {
+        "bm25_top1": {
+          "cases": 60,
+          "exact_evidence_accuracy": 0.466667,
+          "validity_accuracy": 0.466667,
+          "invalid_applicability_rate": 0.533333,
+          "wrong_boundary_version_rate": 0.5,
+          "token_cost": 292.316667
+        },
+        "cross_encoder_top1": {
+          "cases": 60,
+          "exact_evidence_accuracy": 0.483333,
+          "validity_accuracy": 0.483333,
+          "invalid_applicability_rate": 0.516667,
+          "wrong_boundary_version_rate": 0.516667,
+          "token_cost": 292.75
+        },
+        "applicability_filtered_cross_encoder_top1": {
+          "cases": 60,
+          "exact_evidence_accuracy": 1.0,
+          "validity_accuracy": 1.0,
+          "invalid_applicability_rate": 0.0,
+          "wrong_boundary_version_rate": 0.0,
+          "token_cost": 291.833333
+        },
+        "frc_full": {
+          "cases": 60,
+          "exact_evidence_accuracy": 1.0,
+          "validity_accuracy": 1.0,
+          "invalid_applicability_rate": 0.0,
+          "wrong_boundary_version_rate": 0.0,
+          "token_cost": 291.833333
+        },
+        "w/o_applicability": {
+          "cases": 60,
+          "exact_evidence_accuracy": 0.483333,
+          "validity_accuracy": 0.483333,
+          "invalid_applicability_rate": 0.516667,
+          "wrong_boundary_version_rate": 0.516667,
+          "token_cost": 292.75
+        }
+      },
+      "by_boundary": [
+        {
+          "boundary": "first_effective_day",
+          "cases": 30,
+          "frc_full_exact_evidence_accuracy": 1.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.766667
+        },
+        {
+          "boundary": "last_valid_day",
+          "cases": 30,
+          "frc_full_exact_evidence_accuracy": 1.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.2
+        }
+      ],
+      "by_family": [
+        {
+          "family": "decision",
+          "cases": 24,
+          "frc_full_exact_evidence_accuracy": 1.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.5
+        },
+        {
+          "family": "directive",
+          "cases": 12,
+          "frc_full_exact_evidence_accuracy": 1.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.583333
+        },
+        {
+          "family": "regulation",
+          "cases": 24,
+          "frc_full_exact_evidence_accuracy": 1.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.416667
+        }
+      ],
+      "strongest_baseline": "applicability_filtered_cross_encoder_top1",
+      "paired_comparisons": {
+        "full_minus_w_o_applicability": {
+          "left": "frc_full",
+          "right": "w/o_applicability",
+          "direction": "left_minus_right",
+          "metrics": {
+            "exact_evidence_accuracy": {
+              "cases": 60,
+              "mean_difference": 0.516667,
+              "ci_low": 0.383333,
+              "ci_high": 0.65
+            },
+            "validity_accuracy": {
+              "cases": 60,
+              "mean_difference": 0.516667,
+              "ci_low": 0.383333,
+              "ci_high": 0.65
+            },
+            "invalid_applicability_rate": {
+              "cases": 60,
+              "mean_difference": -0.516667,
+              "ci_low": -0.65,
+              "ci_high": -0.383333
+            },
+            "wrong_boundary_version_rate": {
+              "cases": 60,
+              "mean_difference": -0.516667,
+              "ci_low": -0.65,
+              "ci_high": -0.383333
+            }
+          }
+        },
+        "full_minus_strongest_baseline": {
+          "left": "frc_full",
+          "right": "applicability_filtered_cross_encoder_top1",
+          "direction": "left_minus_right",
+          "metrics": {
+            "exact_evidence_accuracy": {
+              "cases": 60,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "validity_accuracy": {
+              "cases": 60,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "invalid_applicability_rate": {
+              "cases": 60,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "wrong_boundary_version_rate": {
+              "cases": 60,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            }
+          }
+        }
+      },
+      "selection_changed_cases": 31,
+      "decision": {
+        "full_strictly_better_than_w_o_applicability": true,
+        "full_exact_gain_over_strongest_baseline_at_least_0_05": false,
+        "gate_2": "NO-GO",
+        "reason": "Official effective and expiry dates make temporal applicability identifiable, but the fair applicability-filtered Cross-Encoder baseline receives the same metadata and the corpus is EU law rather than flood-response evidence."
+      },
+      "limitations": [
+        "The corpus covers EU legal acts and does not establish performance on district flood-response documents.",
+        "CELLAR may expose multiple partial-application dates; the frozen slice keeps only repeal pairs with one unique adjacent expiry/effective boundary.",
+        "EUR-Lex legal texts and consolidated representations are reused for research and are not legal advice or an official legal edition claim.",
+        "The experiment evaluates evidence selection at the document boundary, not answer generation or article-level expected-behavior adherence.",
+        "FRC and the fair filtered Cross-Encoder baseline intentionally share validity metadata, preventing an unfair metadata advantage."
+      ],
+      "source_sha256": "0c707d3ea3ee5138ee041b5b10b7a3b1fbbb70f91acfee7d0727e7fcc4faae1f"
+    },
     "combined_ablation_coverage": {
       "planned_variants": [
         "full",
@@ -3742,14 +3944,14 @@
       "missing_variants": [],
       "scope_qualifications": {
         "w/o_field": "public expert HousingQA composite fields",
-        "w/o_applicability": "HousingQA jurisdiction plus LawShift expert-reviewed before/after revisions; authoritative effective/expiry dates untested"
+        "w/o_applicability": "HousingQA jurisdiction, LawShift expert-reviewed before/after revisions, and EUR-Lex/CELLAR official effective/expiry dates"
       }
     },
     "applicability_identifiability": {
       "jurisdiction": "RUN_PUBLIC_EXPERT_REAL_MODEL",
       "version_replacement": "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL",
-      "effective_or_expiry_dates": "NOT_IDENTIFIABLE_NO_EFFECTIVE_DATES",
-      "complete": false
+      "effective_or_expiry_dates": "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL",
+      "complete": true
     },
     "sensitivity_coverage": {
       "k_2_3_5_8": "RUN",
@@ -3760,7 +3962,7 @@
       "chunk_length": "RUN"
     },
     "coverage_complete": false,
-    "interpretation": "Real-model artifacts cover 9 of nine planned FRC ablations, all K and token-budget values, a ConditionalQA role/redundancy parameter grid, and multi-ratio missing-evidence diagnostics. Chunk-length status is RUN; controlled field/role/conflict sensitivity status is RUN_CONTROLLED_DOMAIN; public CONFLICTS ablation status is RUN_REAL_MODEL_CONFLICTS. public HousingQA field/jurisdiction ablation status is RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021. public LawShift version-replacement status is RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL. Even when all nine named variants have an execution artifact across compatible datasets, authoritative effective/expiry-date applicability and real flood-domain expert validity remain incomplete."
+    "interpretation": "Real-model artifacts cover 9 of nine planned FRC ablations, all K and token-budget values, a ConditionalQA role/redundancy parameter grid, and multi-ratio missing-evidence diagnostics. Chunk-length status is RUN; controlled field/role/conflict sensitivity status is RUN_CONTROLLED_DOMAIN; public CONFLICTS ablation status is RUN_REAL_MODEL_CONFLICTS. public HousingQA field/jurisdiction ablation status is RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021. public LawShift version-replacement status is RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL. public EUR-Lex effective/expiry-date status is RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL. Even when all nine named variants have an execution artifact across compatible datasets and the three-part applicability construct is identifiable, real public field/role-weight sensitivity and flood-domain expert validity remain incomplete."
   },
   "challenge_slices": {
     "normal": {
@@ -3885,6 +4087,14 @@
       "cases": 124,
       "revision_types": 31,
       "effective_or_expiry_dates": "NOT_IDENTIFIABLE_NO_EFFECTIVE_DATES"
+    },
+    "effective_expiry_applicability": {
+      "status": "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL",
+      "dataset": "EU Publications Office CELLAR and EUR-Lex",
+      "cases": 60,
+      "pairs": 30,
+      "effective_dates": "IDENTIFIABLE_OFFICIAL_CELLAR_METADATA",
+      "expiry_dates": "IDENTIFIABLE_OFFICIAL_CELLAR_METADATA"
     }
   },
   "decision": {
@@ -3894,14 +4104,14 @@
     "full_outperforms_w_o_role_and_w_o_field": false,
     "design_16_2_experiment_coverage_complete": false,
     "gate_2": "NO-GO",
-    "reason": "real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; Full does not outperform w/o Role; HousingQA Full does outperform w/o Field but ties the strongest field-decomposition baseline, and LawShift Full improves exact version evidence over w/o Applicability but ties the fair applicability-filtered Cross-Encoder baseline and has no authoritative effective/expiry dates; the CONFLICTS Full variant also does not outperform w/o Conflict; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment"
+    "reason": "real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; Full does not outperform w/o Role; HousingQA Full does outperform w/o Field but ties the strongest field-decomposition baseline, and LawShift Full improves exact version evidence over w/o Applicability but ties the fair applicability-filtered Cross-Encoder baseline; EUR-Lex/CELLAR now identifies official effective/expiry boundaries, where Full improves over the unfiltered variant but again ties the fair filtered Cross-Encoder baseline; the CONFLICTS Full variant also does not outperform w/o Conflict; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment"
   },
   "limitations": [
     "The report imports existing real-model artifacts and recomputes paired evidence metrics; it does not retrain models.",
     "The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.",
     "ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.",
     "The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.",
-    "The nine named ablation variants now have execution artifacts across compatible public datasets, but this is not complete construct coverage: HousingQA identifies jurisdiction under a single 2021 snapshot, LawShift identifies expert-reviewed hypothetical before/after revisions without authoritative effective/expiry dates, and field/role-weight sensitivity is controlled-domain only.",
+    "The nine named ablation variants now have execution artifacts across compatible public datasets, and applicability is separately identifiable through HousingQA jurisdiction, LawShift expert-reviewed hypothetical revisions, and EUR-Lex/CELLAR official effective/expiry dates. This is still not full design coverage because field/role-weight sensitivity is controlled-domain only and the applicability sources are cross-domain rather than flood-response records.",
     "CONFLICTS conflict-type classification is complete, but the paper's expected-behavior adherence metric and independent human judging are not reproduced.",
     "HousingQA is a public housing-law benchmark, not a flood-response or district-government benchmark.",
     "The public corpus is explicitly accurate as of 2021; it has no paired historical/current statute versions, so version replacement and expiry remain untested.",
@@ -3912,6 +4122,11 @@
     "The revised statutes are expert-reviewed hypothetical revisions rather than enacted historical versions with authoritative effective dates.",
     "The benchmark identifies before/after version replacement but cannot test exact effective or expiry dates.",
     "The frozen candidate pool is a retrieval stress slice built from the labeled article pair plus lexical hard negatives, not the paper's original legal-judgment-prediction protocol.",
-    "Only evidence selection is evaluated; charge and sentence generation are not scored in this retrieval ablation."
+    "Only evidence selection is evaluated; charge and sentence generation are not scored in this retrieval ablation.",
+    "The corpus covers EU legal acts and does not establish performance on district flood-response documents.",
+    "CELLAR may expose multiple partial-application dates; the frozen slice keeps only repeal pairs with one unique adjacent expiry/effective boundary.",
+    "EUR-Lex legal texts and consolidated representations are reused for research and are not legal advice or an official legal edition claim.",
+    "The experiment evaluates evidence selection at the document boundary, not answer generation or article-level expected-behavior adherence.",
+    "FRC and the fair filtered Cross-Encoder baseline intentionally share validity metadata, preventing an unfair metadata advantage."
   ]
 }

@@ -966,6 +966,273 @@ def load_lawshift_temporal_ablation(path: Path) -> dict[str, Any]:
     }
 
 
+def load_eurlex_temporal_ablation(path: Path) -> dict[str, Any]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if payload.get("schema_version") != "frc-eurlex-effective-expiry-ablation-v1":
+        raise ValueError(f"unsupported EUR-Lex temporal ablation schema: {path}")
+    if (
+        payload.get("dataset") != "EU Publications Office CELLAR and EUR-Lex"
+        or payload.get("status")
+        != "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL"
+    ):
+        raise ValueError("EUR-Lex dataset or run status mismatch")
+
+    metadata = payload.get("metadata", {})
+    if any(
+        metadata.get(flag) is not True
+        for flag in ("public_dataset", "official_temporal_metadata", "real_model_scores")
+    ):
+        raise ValueError("EUR-Lex temporal provenance is invalid")
+    if metadata.get("source_snapshot_date") != "2026-07-14":
+        raise ValueError("EUR-Lex source snapshot mismatch")
+    hash_fields = (
+        "source_manifest_sha256",
+        "source_query_sha256",
+        "scored_cases_sha256",
+        "case_manifest_sha256",
+    )
+    if any(len(str(metadata.get(field, ""))) != 64 for field in hash_fields):
+        raise ValueError("EUR-Lex source or scored-case provenance is incomplete")
+    if (
+        int(metadata.get("pair_count", 0)) != 30
+        or int(metadata.get("case_count", 0)) != 60
+        or int(metadata.get("candidate_occurrences", 0)) != 360
+        or metadata.get("family_counts")
+        != {"decision": 12, "directive": 6, "regulation": 12}
+    ):
+        raise ValueError("EUR-Lex frozen case coverage mismatch")
+    expected_methods = {
+        "bm25_top1",
+        "cross_encoder_top1",
+        "applicability_filtered_cross_encoder_top1",
+        "frc_full",
+        "w/o_applicability",
+    }
+    if set(metadata.get("methods", [])) != expected_methods:
+        raise ValueError("EUR-Lex method coverage mismatch")
+    parameters = metadata.get("selection_parameters", {})
+    if (
+        int(parameters.get("top_k", 0)) != 1
+        or int(parameters.get("token_budget", 0)) != 512
+        or int(parameters.get("distractor_pairs", 0)) != 2
+        or int(parameters.get("seed", 0)) != 20260714
+    ):
+        raise ValueError("EUR-Lex frozen selection parameters mismatch")
+
+    case_artifact = payload.get("case_results_artifact", {})
+    if case_artifact.get("format") != "gzip-jsonl":
+        raise ValueError("EUR-Lex case results must use deterministic gzip JSONL")
+    case_path = path.parent / str(case_artifact.get("file", ""))
+    if not case_path.is_file() or sha256(case_path) != case_artifact.get("sha256"):
+        raise ValueError("EUR-Lex case-result artifact is missing or hash-mismatched")
+    with gzip.open(case_path, "rt", encoding="utf-8") as handle:
+        case_results = [json.loads(line) for line in handle if line.strip()]
+    if (
+        len(case_results) != int(case_artifact.get("rows", -1))
+        or len(case_results) != 300
+    ):
+        raise ValueError("EUR-Lex case-result row count mismatch")
+
+    metric_names = {
+        "exact_evidence_accuracy",
+        "validity_accuracy",
+        "invalid_applicability_rate",
+        "wrong_boundary_version_rate",
+        "token_cost",
+    }
+    grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    seen: set[tuple[str, str]] = set()
+    case_boundaries: dict[str, str] = {}
+    case_families: dict[str, str] = {}
+    for row in case_results:
+        case_id = str(row.get("case_id"))
+        method = str(row.get("method"))
+        key = (case_id, method)
+        if key in seen:
+            raise ValueError(f"duplicate EUR-Lex case row: {key}")
+        seen.add(key)
+        if set(row.get("metrics", {})) != metric_names:
+            raise ValueError(f"EUR-Lex case metric coverage mismatch: {key}")
+        boundary = str(row.get("boundary"))
+        family = str(row.get("family"))
+        if boundary not in {"first_effective_day", "last_valid_day"}:
+            raise ValueError(f"EUR-Lex boundary mismatch: {key}")
+        if family not in {"decision", "directive", "regulation"}:
+            raise ValueError(f"EUR-Lex family mismatch: {key}")
+        case_boundaries.setdefault(case_id, boundary)
+        case_families.setdefault(case_id, family)
+        if case_boundaries[case_id] != boundary or case_families[case_id] != family:
+            raise ValueError(f"EUR-Lex case metadata changed across methods: {case_id}")
+        grouped[method].append(row)
+    if set(grouped) != expected_methods or any(
+        len(rows) != 60 for rows in grouped.values()
+    ):
+        raise ValueError("EUR-Lex must cover every case for every method")
+    if Counter(case_boundaries.values()) != Counter(
+        {"first_effective_day": 30, "last_valid_day": 30}
+    ):
+        raise ValueError("EUR-Lex boundary balance mismatch")
+    if Counter(case_families.values()) != Counter(
+        {"decision": 24, "directive": 12, "regulation": 24}
+    ):
+        raise ValueError("EUR-Lex family balance mismatch")
+
+    claimed = payload.get("aggregates", {})
+    if set(claimed) != expected_methods:
+        raise ValueError("EUR-Lex aggregate method coverage mismatch")
+    for method, rows in grouped.items():
+        recomputed = {
+            "cases": len(rows),
+            **{
+                name: round(
+                    sum(float(row["metrics"][name]) for row in rows) / len(rows),
+                    6,
+                )
+                for name in metric_names
+            },
+        }
+        if recomputed != claimed[method]:
+            raise ValueError(f"EUR-Lex aggregate mismatch: {method}")
+
+    def recompute_slice(dimension: str, value: str) -> dict[str, Any]:
+        full_rows = [row for row in grouped["frc_full"] if row[dimension] == value]
+        without_rows = [
+            row for row in grouped["w/o_applicability"] if row[dimension] == value
+        ]
+        return {
+            dimension: value,
+            "cases": len(full_rows),
+            "frc_full_exact_evidence_accuracy": round(
+                sum(float(row["metrics"]["exact_evidence_accuracy"]) for row in full_rows)
+                / len(full_rows),
+                6,
+            ),
+            "w_o_applicability_exact_evidence_accuracy": round(
+                sum(
+                    float(row["metrics"]["exact_evidence_accuracy"])
+                    for row in without_rows
+                )
+                / len(without_rows),
+                6,
+            ),
+        }
+
+    claimed_by_boundary = {
+        str(row["boundary"]): row for row in payload.get("by_boundary", [])
+    }
+    if set(claimed_by_boundary) != {"first_effective_day", "last_valid_day"}:
+        raise ValueError("EUR-Lex by-boundary coverage mismatch")
+    for boundary, row in claimed_by_boundary.items():
+        if row != recompute_slice("boundary", boundary):
+            raise ValueError(f"EUR-Lex by-boundary aggregate mismatch: {boundary}")
+    claimed_by_family = {
+        str(row["family"]): row for row in payload.get("by_family", [])
+    }
+    if set(claimed_by_family) != {"decision", "directive", "regulation"}:
+        raise ValueError("EUR-Lex by-family coverage mismatch")
+    for family, row in claimed_by_family.items():
+        if row != recompute_slice("family", family):
+            raise ValueError(f"EUR-Lex by-family aggregate mismatch: {family}")
+
+    baseline_methods = {
+        "bm25_top1",
+        "cross_encoder_top1",
+        "applicability_filtered_cross_encoder_top1",
+    }
+    strongest = max(
+        baseline_methods,
+        key=lambda method: (
+            float(claimed[method]["exact_evidence_accuracy"]), method
+        ),
+    )
+    if strongest != payload.get("strongest_baseline_by_exact_evidence_accuracy"):
+        raise ValueError("EUR-Lex strongest-baseline selection mismatch")
+    comparisons = payload.get("paired_comparisons", {})
+    expected_comparisons = {
+        "full_minus_w_o_applicability": ("frc_full", "w/o_applicability"),
+        "full_minus_strongest_baseline": ("frc_full", strongest),
+    }
+    paired_metrics = (
+        "exact_evidence_accuracy",
+        "validity_accuracy",
+        "invalid_applicability_rate",
+        "wrong_boundary_version_rate",
+    )
+    for comparison_name, (left_method, right_method) in expected_comparisons.items():
+        comparison = comparisons.get(comparison_name, {})
+        if (
+            comparison.get("left") != left_method
+            or comparison.get("right") != right_method
+            or comparison.get("direction") != "left_minus_right"
+        ):
+            raise ValueError(f"EUR-Lex comparison definition mismatch: {comparison_name}")
+        left = {row["case_id"]: row for row in grouped[left_method]}
+        right = {row["case_id"]: row for row in grouped[right_method]}
+        for metric in paired_metrics:
+            recomputed = paired_bootstrap(
+                [
+                    float(left[case_id]["metrics"][metric])
+                    - float(right[case_id]["metrics"][metric])
+                    for case_id in sorted(left)
+                ],
+                seed=20260714,
+            )
+            if recomputed != comparison.get("metrics", {}).get(metric):
+                raise ValueError(
+                    f"EUR-Lex paired metric mismatch: {comparison_name}/{metric}"
+                )
+    full_rows = {row["case_id"]: row for row in grouped["frc_full"]}
+    without_rows = {
+        row["case_id"]: row for row in grouped["w/o_applicability"]
+    }
+    changed = sum(
+        full_rows[case_id]["selected_ids"] != without_rows[case_id]["selected_ids"]
+        for case_id in full_rows
+    )
+    if int(payload.get("selection_changed_cases", -1)) != changed:
+        raise ValueError("EUR-Lex changed-selection count mismatch")
+
+    coverage = payload.get("coverage", {})
+    if coverage != {
+        "effective_dates": "IDENTIFIABLE_OFFICIAL_CELLAR_METADATA",
+        "expiry_dates": "IDENTIFIABLE_OFFICIAL_CELLAR_METADATA",
+        "adjacent_repeal_boundary": "IDENTIFIABLE",
+        "old_and_new_boundary_snapshots": "RUN",
+    }:
+        raise ValueError("EUR-Lex temporal coverage boundary mismatch")
+    decision = payload.get("decision", {})
+    applicability_difference = comparisons["full_minus_w_o_applicability"]["metrics"][
+        "exact_evidence_accuracy"
+    ]
+    baseline_difference = comparisons["full_minus_strongest_baseline"]["metrics"][
+        "exact_evidence_accuracy"
+    ]
+    if decision.get("full_strictly_better_than_w_o_applicability") is not (
+        float(applicability_difference["mean_difference"]) > 0.0
+    ):
+        raise ValueError("EUR-Lex applicability superiority decision mismatch")
+    if decision.get("full_exact_gain_over_strongest_baseline_at_least_0_05") is not (
+        float(baseline_difference["mean_difference"]) >= 0.05
+    ):
+        raise ValueError("EUR-Lex strongest-baseline decision mismatch")
+    if decision.get("gate_2") != "NO-GO":
+        raise ValueError("EUR-Lex ablation must not independently promote Gate 2")
+    return {
+        "status": "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL",
+        "metadata": metadata,
+        "coverage": coverage,
+        "aggregates": claimed,
+        "by_boundary": payload.get("by_boundary", []),
+        "by_family": payload.get("by_family", []),
+        "strongest_baseline": strongest,
+        "paired_comparisons": comparisons,
+        "selection_changed_cases": changed,
+        "decision": decision,
+        "limitations": payload.get("limitations", []),
+        "source_sha256": sha256(path),
+    }
+
+
 def load_ablation_audit(
     path: Path,
     supplemental_paths: Iterable[Path] = (),
@@ -1219,6 +1486,7 @@ def build_design_experiment_audit(
     conflicts_ablation_path: Path | None = None,
     housing_ablation_path: Path | None = None,
     lawshift_ablation_path: Path | None = None,
+    eurlex_ablation_path: Path | None = None,
 ) -> dict[str, Any]:
     supplemental_paths = tuple(supplemental_ablation_paths)
     ablation = load_ablation_audit(
@@ -1295,21 +1563,34 @@ def build_design_experiment_audit(
         lawshift_ablation_status
         == "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL"
     )
+    eurlex_ablation = (
+        load_eurlex_temporal_ablation(eurlex_ablation_path)
+        if eurlex_ablation_path
+        else {
+            "status": "NOT_RUN",
+            "interpretation": (
+                "no public official EUR-Lex effective/expiry-date artifact was supplied"
+            ),
+        }
+    )
+    eurlex_ablation_status = eurlex_ablation["status"]
+    eurlex_run = (
+        eurlex_ablation_status
+        == "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL"
+    )
     version_replacement_status = (
         lawshift_ablation.get("coverage", {}).get("version_replacement")
         if lawshift_run
         else "NOT_RUN"
     )
     expiry_status = (
-        lawshift_ablation.get("coverage", {}).get("effective_or_expiry_dates")
+        eurlex_ablation_status
+        if eurlex_run
+        else lawshift_ablation.get("coverage", {}).get("effective_or_expiry_dates")
         if lawshift_run
         else "NOT_RUN"
     )
-    applicability_complete = (
-        housing_run
-        and lawshift_run
-        and expiry_status == "RUN_PUBLIC_EXPERT_REAL_EFFECTIVE_DATES"
-    )
+    applicability_complete = housing_run and lawshift_run and eurlex_run
     combined_run_variants = sorted(
         {
             *ablation["run_variants"],
@@ -1319,7 +1600,7 @@ def build_design_experiment_audit(
                 else []
             ),
             *(["w/o_field"] if housing_run else []),
-            *(["w/o_applicability"] if housing_run or lawshift_run else []),
+            *(["w/o_applicability"] if housing_run or lawshift_run or eurlex_run else []),
         }
     )
     schema_audit["variants"]["w/o_conflict"] = (
@@ -1342,17 +1623,25 @@ def build_design_experiment_audit(
                 "BGE, Cross-Encoder, and local Qwen models"
             ),
         }
-    if housing_run or lawshift_run:
+    if housing_run or lawshift_run or eurlex_run:
         schema_audit["variants"]["w/o_applicability"] = {
             "status": (
-                "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_AND_REVISION"
+                "RUN_PUBLIC_REAL_MODEL_JURISDICTION_REVISION_EFFECTIVE_EXPIRY"
+                if housing_run and lawshift_run and eurlex_run
+                else "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_AND_REVISION"
                 if housing_run and lawshift_run
                 else "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021"
                 if housing_run
                 else "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL"
+                if lawshift_run
+                else "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL"
             ),
             "reason": (
                 "HousingQA identifies jurisdiction filtering under its 2021 snapshot; LawShift "
+                "identifies expert-reviewed before/after statutory replacement; EUR-Lex/CELLAR "
+                "supplies official effective and expiry dates at adjacent repeal boundaries."
+                if housing_run and lawshift_run and eurlex_run
+                else "HousingQA identifies jurisdiction filtering under its 2021 snapshot; LawShift "
                 "identifies expert-reviewed before/after statutory replacement. Neither supplies "
                 "authoritative effective or expiry dates."
                 if housing_run and lawshift_run
@@ -1361,6 +1650,9 @@ def build_design_experiment_audit(
                 if housing_run
                 else "LawShift identifies expert-reviewed before/after statutory replacement but "
                 "does not supply authoritative effective or expiry dates"
+                if lawshift_run
+                else "EUR-Lex/CELLAR identifies official effective and expiry dates at adjacent "
+                "repeal boundaries but does not identify HousingQA jurisdiction or LawShift revisions"
             ),
         }
     controlled_only_status = (
@@ -1395,6 +1687,7 @@ def build_design_experiment_audit(
         "conflicts_real_model_ablation": conflicts_ablation,
         "housing_real_model_ablation": housing_ablation,
         "lawshift_temporal_ablation": lawshift_ablation,
+        "eurlex_temporal_ablation": eurlex_ablation,
         "combined_ablation_coverage": {
             "planned_variants": list(PLANNED_ABLATIONS),
             "run_variants": combined_run_variants,
@@ -1408,13 +1701,18 @@ def build_design_experiment_audit(
                     else "not run on an identifiable public expert field schema"
                 ),
                 "w/o_applicability": (
-                    "HousingQA jurisdiction plus LawShift expert-reviewed before/after revisions; "
+                    "HousingQA jurisdiction, LawShift expert-reviewed before/after revisions, and "
+                    "EUR-Lex/CELLAR official effective/expiry dates"
+                    if housing_run and lawshift_run and eurlex_run
+                    else "HousingQA jurisdiction plus LawShift expert-reviewed before/after revisions; "
                     "authoritative effective/expiry dates untested"
                     if housing_run and lawshift_run
                     else "jurisdiction only under the HousingQA 2021 snapshot; version/expiry untested"
                     if housing_run
                     else "before/after LawShift revisions only; jurisdiction and expiry untested"
                     if lawshift_run
+                    else "official EUR-Lex effective/expiry dates only; jurisdiction and expert-reviewed revisions untested"
+                    if eurlex_run
                     else "not run on an identifiable public applicability schema"
                 ),
             },
@@ -1439,9 +1737,10 @@ def build_design_experiment_audit(
             f"{controlled_status}; public CONFLICTS ablation status is {conflicts_ablation_status}. "
             f"public HousingQA field/jurisdiction ablation status is {housing_ablation_status}. "
             f"public LawShift version-replacement status is {lawshift_ablation_status}. "
+            f"public EUR-Lex effective/expiry-date status is {eurlex_ablation_status}. "
             "Even when all nine named variants have an execution artifact across compatible "
-            "datasets, authoritative effective/expiry-date applicability and real flood-domain "
-            "expert validity remain incomplete."
+            "datasets and the three-part applicability construct is identifiable, real public "
+            "field/role-weight sensitivity and flood-domain expert validity remain incomplete."
         ),
     }
 
@@ -2020,6 +2319,7 @@ def build_public_reference_report(
     conflicts_ablation_path: Path | None = None,
     housing_ablation_path: Path | None = None,
     lawshift_ablation_path: Path | None = None,
+    eurlex_ablation_path: Path | None = None,
 ) -> dict[str, Any]:
     output = reference_root / "outputs"
     metrics_dir = output / "metrics"
@@ -2066,6 +2366,7 @@ def build_public_reference_report(
         conflicts_ablation_path,
         housing_ablation_path,
         lawshift_ablation_path,
+        eurlex_ablation_path,
     )
     ablation_gate = experiment_audit["ablation"]["gate_required_comparison"]
     housing_ablation = experiment_audit["housing_real_model_ablation"]
@@ -2078,12 +2379,17 @@ def build_public_reference_report(
         lawshift_ablation["status"]
         == "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL"
     )
+    eurlex_ablation = experiment_audit["eurlex_temporal_ablation"]
+    eurlex_run = (
+        eurlex_ablation["status"]
+        == "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL"
+    )
     limitations = [
         "The report imports existing real-model artifacts and recomputes paired evidence metrics; it does not retrain models.",
         "The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.",
         "ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.",
         "The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.",
-        "The nine named ablation variants now have execution artifacts across compatible public datasets, but this is not complete construct coverage: HousingQA identifies jurisdiction under a single 2021 snapshot, LawShift identifies expert-reviewed hypothetical before/after revisions without authoritative effective/expiry dates, and field/role-weight sensitivity is controlled-domain only.",
+        "The nine named ablation variants now have execution artifacts across compatible public datasets, and applicability is separately identifiable through HousingQA jurisdiction, LawShift expert-reviewed hypothetical revisions, and EUR-Lex/CELLAR official effective/expiry dates. This is still not full design coverage because field/role-weight sensitivity is controlled-domain only and the applicability sources are cross-domain rather than flood-response records.",
     ]
     if conflict_run:
         limitations.append(
@@ -2097,6 +2403,8 @@ def build_public_reference_report(
         limitations.extend(housing_ablation.get("limitations", []))
     if lawshift_run:
         limitations.extend(lawshift_ablation.get("limitations", []))
+    if eurlex_run:
+        limitations.extend(eurlex_ablation.get("limitations", []))
     return {
         "metadata": {
             "name": "FRC-Select public-dataset real-model reference audit",
@@ -2147,6 +2455,22 @@ def build_public_reference_report(
                     "effective_or_expiry_dates"
                 ),
             },
+            "effective_expiry_applicability": {
+                "status": eurlex_ablation["status"] if eurlex_run else "NOT_RUN",
+                "dataset": (
+                    "EU Publications Office CELLAR and EUR-Lex"
+                    if eurlex_run
+                    else None
+                ),
+                "cases": eurlex_ablation.get("metadata", {}).get("case_count"),
+                "pairs": eurlex_ablation.get("metadata", {}).get("pair_count"),
+                "effective_dates": eurlex_ablation.get("coverage", {}).get(
+                    "effective_dates"
+                ),
+                "expiry_dates": eurlex_ablation.get("coverage", {}).get(
+                    "expiry_dates"
+                ),
+            },
         },
         "decision": {
             "status": "THEORETICAL_PIPELINE_FEASIBLE_BUT_SUPERIORITY_NOT_PROVEN",
@@ -2166,8 +2490,9 @@ def build_public_reference_report(
                 "consistent superiority; Full does not outperform w/o Role; HousingQA Full does "
                 "outperform w/o Field but ties the strongest field-decomposition baseline, and "
                 "LawShift Full improves exact version evidence over w/o Applicability but ties "
-                "the fair applicability-filtered Cross-Encoder baseline and has no authoritative "
-                "effective/expiry dates; "
+                "the fair applicability-filtered Cross-Encoder baseline; EUR-Lex/CELLAR now "
+                "identifies official effective/expiry boundaries, where Full improves over the "
+                "unfiltered variant but again ties the fair filtered Cross-Encoder baseline; "
                 "the CONFLICTS Full variant also does not outperform w/o Conflict; "
                 "CONFLICTS is run but does not reproduce the paper's independent expected-behavior "
                 "adherence judgment"
@@ -2212,6 +2537,7 @@ def render_public_reference_markdown(report: dict[str, Any]) -> str:
     conflicts_ablation = experiment["conflicts_real_model_ablation"]
     housing_ablation = experiment["housing_real_model_ablation"]
     lawshift_ablation = experiment["lawshift_temporal_ablation"]
+    eurlex_ablation = experiment["eurlex_temporal_ablation"]
     lines.extend(
         [
             "",
@@ -2353,6 +2679,42 @@ def render_public_reference_markdown(report: dict[str, Any]) -> str:
                 f"Full 的 Article Recall@1 相对无过滤版本差值为 {lawshift_pair['article_recall_at_1']['mean_difference']:+.6f}；"
                 f"相对公平过滤基线的精确版本证据差值为 {lawshift_baseline_pair['mean_difference']:+.6f}。"
                 "因此版本过滤有效，但 FRC 独有优势未获证明。",
+            ]
+        )
+    if (
+        eurlex_ablation["status"]
+        == "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL"
+    ):
+        eurlex_full = eurlex_ablation["aggregates"]["frc_full"]
+        eurlex_without = eurlex_ablation["aggregates"]["w/o_applicability"]
+        eurlex_filtered = eurlex_ablation["aggregates"][
+            "applicability_filtered_cross_encoder_top1"
+        ]
+        eurlex_pair = eurlex_ablation["paired_comparisons"][
+            "full_minus_w_o_applicability"
+        ]["metrics"]
+        eurlex_baseline_pair = eurlex_ablation["paired_comparisons"][
+            "full_minus_strongest_baseline"
+        ]["metrics"]["exact_evidence_accuracy"]
+        lines.extend(
+            [
+                "",
+                "### `w/o Applicability`（EUR-Lex/CELLAR，权威生效与失效边界，真实重排）",
+                "",
+                "30 对废止/替代法案形成 60 个边界用例，分别查询旧法最后有效日和新法首个生效日；"
+                "权威 CELLAR 日期只用于适用性过滤与事后评分，查询文本不包含 gold CELEX。",
+                "",
+                "| 版本 | Exact Evidence Accuracy | Validity Accuracy | Invalid Applicability | Wrong Boundary Version |",
+                "|---|---:|---:|---:|---:|",
+                f"| Full | {eurlex_full['exact_evidence_accuracy']:.6f} | {eurlex_full['validity_accuracy']:.6f} | {eurlex_full['invalid_applicability_rate']:.6f} | {eurlex_full['wrong_boundary_version_rate']:.6f} |",
+                f"| w/o Applicability | {eurlex_without['exact_evidence_accuracy']:.6f} | {eurlex_without['validity_accuracy']:.6f} | {eurlex_without['invalid_applicability_rate']:.6f} | {eurlex_without['wrong_boundary_version_rate']:.6f} |",
+                f"| Applicability-filtered Cross-Encoder | {eurlex_filtered['exact_evidence_accuracy']:.6f} | {eurlex_filtered['validity_accuracy']:.6f} | {eurlex_filtered['invalid_applicability_rate']:.6f} | {eurlex_filtered['wrong_boundary_version_rate']:.6f} |",
+                "",
+                f"Full−w/o Applicability 的精确证据差值为 {eurlex_pair['exact_evidence_accuracy']['mean_difference']:+.6f}，"
+                f"95% CI=[{eurlex_pair['exact_evidence_accuracy']['ci_low']:+.6f}, {eurlex_pair['exact_evidence_accuracy']['ci_high']:+.6f}]；"
+                f"无效适用率差值为 {eurlex_pair['invalid_applicability_rate']['mean_difference']:+.6f}。",
+                f"Full 相对公平过滤基线的精确证据差值为 {eurlex_baseline_pair['mean_difference']:+.6f}。"
+                "因此权威日期过滤有效，但 FRC 独有优势仍未获证明，且该语料属于欧盟法律而非区县防汛文档。",
             ]
         )
     schema_audit = experiment["ablation_schema_applicability"]

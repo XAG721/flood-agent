@@ -1,0 +1,802 @@
+{
+  "schema_version": "eurlex-effective-expiry-source-v1",
+  "metadata": {
+    "source": "EU Publications Office CELLAR and EUR-Lex",
+    "snapshot_date": "2026-07-14",
+    "language": "ENG",
+    "sparql_endpoint": "https://publications.europa.eu/webapi/rdf/sparql",
+    "sparql_query_sha256": "bcfc39e8812178fb36a51ccbdaae9b4a1ed3e8dd2f1db1fda04fb0a2c1b9aaa5",
+    "sparql_result_sha256": "38e3e8c6d06a175917a60b02cc47843a504ccb3075039fe5cf78b901f490e276",
+    "reuse_notice": "https://eur-lex.europa.eu/content/help/data-reuse/reuse-contents-eurlex-details.html?locale=en",
+    "eli_documentation": "https://eur-lex.europa.eu/eli-register/eu_publications_office.html",
+    "selection_seed": 20260714,
+    "family_quotas": {
+      "decision": 12,
+      "directive": 6,
+      "regulation": 12
+    },
+    "selection_policy": "stable hash within decision/directive/regulation families; only one-day adjacent repeal boundaries with a unique effective-expiry boundary and at least 30 days of prior validity"
+  },
+  "pairs": [
+    {
+      "pair_id": "31976R1361--32023R2835",
+      "family": "regulation",
+      "old": {
+        "celex": "31976R1361",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/83268210-885e-46c7-b40e-739d47ab05fd",
+        "resource_type": "REG",
+        "valid_from": "1976-07-01",
+        "valid_to": "2023-12-27",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:31976R1361",
+        "title": "COMMISSION REGULATION (EEC) No 1361/76 of 14 June 1976 laying down certain detailed rules for applying the export refund on rice and on mixtures of rice",
+        "raw_html_sha256": "38258331beadf5e4b00ada9176d3a47adf452e468fe50e69ac96d95f4542eaf9",
+        "canonical_text_sha256": "fcc0fada7464ce42fed94262681fa166443af643c11919dbfce3ec2d21e4afb6"
+      },
+      "new": {
+        "celex": "32023R2835",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/b9f03776-9fa2-11ee-b164-01aa75ed71a1",
+        "resource_type": "REG_DEL",
+        "valid_from": "2023-12-28",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32023R2835",
+        "title": "COMMISSION DELEGATED REGULATION (EU) 2023/2835 of 10 October 2023 supplementing Regulation (EU) No 1308/2013 of the European Parliament and of the Council as regards rules on import in the sectors of rice, cereals, sugar and hops, and repealing Commission Regulations (EC) No 3330/94, (EC) No 2810/95, (EC) No 951/2006, (EC) No 972/2006, (EC) No 504/2007, (EC) No 1375/2007, (EC) No 402/2008, (EC) No 1295/2008, (EC) No 1312/2008 and (EU) No 642/2010, (EEC) No 1361/76, (EEC) No 1842/81, (EEC) No 3556/87, (EEC) No 3846/87, (EEC) No 815/89, (EC) No 765/2002, (EC) No 1993/2005, (EC) No 1670/2006, (EC) No 1731/2006, (EC) No 1741/2006, (EC) No 433/2007, (EC) No 1359/2007, (EC) No 1454/2007, (EC) No 508/2008, (EC) No 903/2008, (EC) No 147/2009, (EC) No 612/2009, (EU) No 817/2010, (EU) No 1178/2010, (EU) No 90/2011 and Commission Implementing Regulation (EU) No 1373/2013",
+        "raw_html_sha256": "ce4f53d092c9c1475653c02e9c334d26fd859c6a756f11e350baf92221039338",
+        "canonical_text_sha256": "45de1add466f6197e30a0cbf8f5eef0097e34fcdfb308637b2ff1674b2d8747a"
+      }
+    },
+    {
+      "pair_id": "32002R1221--32023R0734",
+      "family": "regulation",
+      "old": {
+        "celex": "32002R1221",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/e702a4bb-a600-4015-92eb-52940034704a",
+        "resource_type": "REG",
+        "valid_from": "2002-07-29",
+        "valid_to": "2024-08-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32002R1221",
+        "title": "Regulation (EC) No 1221/2002 of the European Parliament and of the Council of 10 June 2002 on quarterly non-financial accounts for general government",
+        "raw_html_sha256": "ab629122eb75b8d9092a56b49bbe3e9fc1f0e0bc86da2444ba87eb484c3256b7",
+        "canonical_text_sha256": "995bd93ae8eaaa0e3566e75f88b309420fdca442adc2237308b450a46e4ed3bd"
+      },
+      "new": {
+        "celex": "32023R0734",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/1d551161-d34d-11ed-a05c-01aa75ed71a1",
+        "resource_type": "REG",
+        "valid_from": "2024-09-01",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32023R0734",
+        "title": "REGULATION (EU) 2023/734 OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL of 15 March 2023 amending Regulation (EU) No 549/2013 on the European system of national and regional accounts in the European Union and repealing 11 legal acts in the field of national accounts (Text with EEA relevance)",
+        "raw_html_sha256": "704b55c4e4d513ad4299040ef8d8b7fe41ac8b9b84897ff55d85887b815c4e3d",
+        "canonical_text_sha256": "e9685c3d5503e9e3b69c8268af8996f6880e9a2b47665f2f0d14bc0f6ecd4d0c"
+      }
+    },
+    {
+      "pair_id": "32008D0721--32024D1514",
+      "family": "decision",
+      "old": {
+        "celex": "32008D0721",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/5e5216d0-6977-47dc-87d8-26f4db946451",
+        "resource_type": "DEC",
+        "valid_from": "2008-08-05",
+        "valid_to": "2024-06-19",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32008D0721",
+        "title": "COMMISSION DECISION of 5 August 2008 setting up an advisory structure of Scientific Committees and experts in the field of consumer safety, public health and the environment and repealing Decision 2004/210/EC (Text with EEA relevance) (2008/721/EC)",
+        "raw_html_sha256": "3398761a232bd3b36d798356810d08e090491adac7da47b3b4e21b322c16cc75",
+        "canonical_text_sha256": "4aad487530aebf228ea159eb3122f331c8c3dddea48063f496e323438d9809bc"
+      },
+      "new": {
+        "celex": "32024D1514",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/d6fd8e42-1ee5-11ef-a251-01aa75ed71a1",
+        "resource_type": "DEC",
+        "valid_from": "2024-06-20",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32024D1514",
+        "title": "COMMISSION DECISION (EU) 2024/1514 of 7 August 2015 on establishing Scientific Committees in the field of public health, consumer safety and the environment",
+        "raw_html_sha256": "3d17b9cfbde9edb1cba4abf1d0359fe1c8bee12097c78b0e23e9201b9f8dcc55",
+        "canonical_text_sha256": "19bd97114fc22c960e5c97f292a436a0f3621bb909a885ac8900c1d058dcebbc"
+      }
+    },
+    {
+      "pair_id": "32009L0073--32024L1788",
+      "family": "directive",
+      "old": {
+        "celex": "32009L0073",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/a0b2dee3-1ab4-4204-92e7-cb494cce6130",
+        "resource_type": "DIR",
+        "valid_from": "2009-09-03",
+        "valid_to": "2024-08-03",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32009L0073",
+        "title": "DIRECTIVE 2009/73/EC OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL of 13 July 2009 concerning common rules for the internal market in natural gas and repealing Directive 2003/55/EC (Text with EEA relevance)",
+        "raw_html_sha256": "d932426e584972113fb47234264ca07146e80afc5fe410f3840c83f44ebb45e2",
+        "canonical_text_sha256": "35ac306618477a7762349f67c587c71489ad0e3cf987ef30c09bfb37c0db71ac"
+      },
+      "new": {
+        "celex": "32024L1788",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/f07e2c67-4242-11ef-865a-01aa75ed71a1",
+        "resource_type": "DIR",
+        "valid_from": "2024-08-04",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32024L1788",
+        "title": "DIRECTIVE (EU) 2024/1788 OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL of 13 June 2024 on common rules for the internal markets for renewable gas, natural gas and hydrogen, amending Directive (EU) 2023/1791 and repealing Directive 2009/73/EC (recast) (Text with EEA relevance)",
+        "raw_html_sha256": "988a7bb36424d0f51a2a042d43c6f3a8f04088f1f2eaa85d4c48204529aec466",
+        "canonical_text_sha256": "fb207fe14b09d62ac56b0f71b328a5aabe7da604381997184f7b631ecd3cafdb"
+      }
+    },
+    {
+      "pair_id": "32009R1087--32025R0193",
+      "family": "regulation",
+      "old": {
+        "celex": "32009R1087",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/213b83ee-b1a2-4f3b-8828-d4d11e185d6c",
+        "resource_type": "REG",
+        "valid_from": "2009-12-03",
+        "valid_to": "2025-02-22",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32009R1087",
+        "title": "COMMISSION REGULATION (EC) No 1087/2009 of 12 November 2009 concerning the authorisation of an enzyme preparation of endo-1,4-beta-xylanase produced by Trichoderma reesei (ATCC PTA 5588), subtilisin produced by Bacillus subtilis (ATCC 2107) and alpha-amylase produced by Bacillus amyloliquefaciens (ATCC 3978) as a feed additive for chickens for fattening, for ducks and for turkeys for fattening (holder of authorisation Danisco Animal Nutrition, legal entity Finnfeeds International Limited) (Text with EEA relevance)",
+        "raw_html_sha256": "c0a05675b4cbff98d07945e914c9647fb93d364937848a4a3a1d8f9d1963aab2",
+        "canonical_text_sha256": "5ad149ac12569281ac49f310c674628aa1f8e1394152fd82fadd7efadb3a1ce4"
+      },
+      "new": {
+        "celex": "32025R0193",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/9d9df7e4-e1cf-11ef-be2a-01aa75ed71a1",
+        "resource_type": "REG_IMPL",
+        "valid_from": "2025-02-23",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32025R0193",
+        "title": "COMMISSION IMPLEMENTING REGULATION (EU) 2025/193 of 31 January 2025 concerning the renewal of the authorisation of a preparation of endo-1,4-beta-xylanase produced with Trichoderma reesei CBS 143953, subtilisin produced with Bacillus subtilis CBS 143946 and alpha-amylase produced with Bacillus amyloliquefaciens CBS 143954 as a feed additive for chickens for fattening, turkeys for fattening, ducks, and laying hens, and the authorisation of new uses of that preparation as a feed additive for all other poultry species and categories (holder of authorisation: Genencor International B.V.) and repealing Regulation (EC) No 1087/2009 and Implementing Regulation (EU) No 389/2011 (Text with EEA relevance)",
+        "raw_html_sha256": "c4ba16b745d04cb0753d6993754c49af812d40a49c47b05ab88a4dbf10b2a38e",
+        "canonical_text_sha256": "a267cda39385cf1739f91ecf49e6fa5366014f762329483b3bbc7777b0b4d049"
+      }
+    },
+    {
+      "pair_id": "32010L0065--32019R1239",
+      "family": "regulation",
+      "old": {
+        "celex": "32010L0065",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/0010a65c-175c-4ab9-9fa0-421a91557807",
+        "resource_type": "DIR",
+        "valid_from": "2012-05-19",
+        "valid_to": "2025-08-14",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32010L0065",
+        "title": "DIRECTIVE 2010/65/EU OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL of 20 October 2010 on reporting formalities for ships arriving in and/or departing from ports of the Member States and repealing Directive 2002/6/EC (Text with EEA relevance)",
+        "raw_html_sha256": "0ca43041c0985b00c4307bef41bb952bea8fe9c4c8141c532e613096879c0ec7",
+        "canonical_text_sha256": "42aeb3ee0c42cdf3d897bc1f786a57da4c0d8b14151766f9e225831b46c11734"
+      },
+      "new": {
+        "celex": "32019R1239",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/b4cf0abe-ae8d-11e9-9d01-01aa75ed71a1",
+        "resource_type": "REG",
+        "valid_from": "2025-08-15",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32019R1239",
+        "title": "REGULATION (EU) 2019/1239 OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL of 20 June 2019 establishing a European Maritime Single Window environment and repealing Directive 2010/65/EU",
+        "raw_html_sha256": "2cb2147229df6ae5de9adfb12ca484bc650e4d1dc8202c99ff612504e1a52f1f",
+        "canonical_text_sha256": "4473e8269c2b14701a9fc0ca7d35c4a2e2b87d90c0ae84625c177b67f7ae4c32"
+      }
+    },
+    {
+      "pair_id": "32011R1333--32023R2429",
+      "family": "regulation",
+      "old": {
+        "celex": "32011R1333",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/1b1b420a-ec3e-4293-ac20-1297270391aa",
+        "resource_type": "REG_IMPL",
+        "valid_from": "2012-01-09",
+        "valid_to": "2024-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32011R1333",
+        "title": "COMMISSION IMPLEMENTING REGULATION (EU) No 1333/2011 of 19 December 2011 laying down marketing standards for bananas, rules on the verification of compliance with those marketing standards and requirements for notifications in the banana sector (codification)",
+        "raw_html_sha256": "86c32ce36d407e3a0855add4a59d1977fdadf59f96726bd92ec321a3f237cf83",
+        "canonical_text_sha256": "36c86ad4a2a5bb249830e9f12018e3bf9364ceefe25af074788ac6e94463d7fc"
+      },
+      "new": {
+        "celex": "32023R2429",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/a8b77f38-79ea-11ee-99ba-01aa75ed71a1",
+        "resource_type": "REG_DEL",
+        "valid_from": "2025-01-01",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32023R2429",
+        "title": "COMMISSION DELEGATED REGULATION (EU) 2023/2429 of 17 August 2023 supplementing Regulation (EU) No 1308/2013 of the European Parliament and of the Council as regards marketing standards for the fruit and vegetables sector, certain processed fruit and vegetable products and the bananas sector, and repealing Commission Regulation (EC) No 1666/1999 and Commission Implementing Regulations (EU) No 543/2011 and (EU) No 1333/2011",
+        "raw_html_sha256": "511f293cff8102faf488b1cded03d24561204899a09cb601dbea919bd5a89a67",
+        "canonical_text_sha256": "8ce00463f7f1cfda1a5698c0d8ecaa7a5e33bc5cb4387086e256940f62873fe5"
+      }
+    },
+    {
+      "pair_id": "32013L0012--32023L1791",
+      "family": "directive",
+      "old": {
+        "celex": "32013L0012",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/d0c67a95-c76c-11e2-ac91-01aa75ed71a1",
+        "resource_type": "DIR",
+        "valid_from": "2013-07-01",
+        "valid_to": "2025-10-11",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32013L0012",
+        "title": "COUNCIL DIRECTIVE 2013/12/EU of 13 May 2013 adapting Directive 2012/27/EU of the European Parliament and of the Council on energy efficiency, by reason of the accession of the Republic of Croatia",
+        "raw_html_sha256": "8f5b495c0837d16488d30db1c64024e32667657fca236ba3f30d0b624a9e2372",
+        "canonical_text_sha256": "0d7e11ab9903745fd96f3600588abede763dcff4815694fe3ccb645504a81455"
+      },
+      "new": {
+        "celex": "32023L1791",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/0e432499-5752-11ee-9220-01aa75ed71a1",
+        "resource_type": "DIR",
+        "valid_from": "2025-10-12",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32023L1791",
+        "title": "DIRECTIVE (EU) 2023/1791 OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL of 13 September 2023 on energy efficiency and amending Regulation (EU) 2023/955 (recast) (Text with EEA relevance)",
+        "raw_html_sha256": "24e2e3ef8a3004e8e714e29eb0e66582153c4a4b93d9b63918c375ac04abcd2f",
+        "canonical_text_sha256": "38eda2ea23cd92eb37d654e0dde19dc6de4ca226e853ed4268b2dd0bd1e34015"
+      }
+    },
+    {
+      "pair_id": "32014R0305--32025R2186",
+      "family": "regulation",
+      "old": {
+        "celex": "32014R0305",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/28afdffa-b4bd-11e3-86f9-01aa75ed71a1",
+        "resource_type": "REG_IMPL",
+        "valid_from": "2014-04-15",
+        "valid_to": "2025-11-18",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32014R0305",
+        "title": "COMMISSION IMPLEMENTING REGULATION (EU) No 305/2014 of 25 March 2014 concerning the authorisation of propionic acid, sodium propionate and ammonium propionate as feed additives for all animal species other than ruminants, pigs and poultry (Text with EEA relevance)",
+        "raw_html_sha256": "6c9c88650907ef389311140652878608ac61d2196292ac644186a9b2a75beec5",
+        "canonical_text_sha256": "cb6b748a06e3f502f0a1ab970194ab630540dbdff56b3a06e7be29f2922cccfc"
+      },
+      "new": {
+        "celex": "32025R2186",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/a58dbd91-b531-11f0-b37f-01aa75ed71a1",
+        "resource_type": "REG_IMPL",
+        "valid_from": "2025-11-19",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32025R2186",
+        "title": "COMMISSION IMPLEMENTING REGULATION (EU) 2025/2186 of 29 October 2025 concerning the renewal of the authorisation of propionic acid, sodium propionate and ammonium propionate as feed additives for all terrestrial animal species and repealing Implementing Regulations (EU) No 1222/2013 and (EU) No 305/2014 (Text with EEA relevance)",
+        "raw_html_sha256": "d0890a8e95db4dd6d83708ec1c7c3dbcfe57930d2635d6ad064b88b4a4bb4a68",
+        "canonical_text_sha256": "6e5978161ce3c78c16dc519c9936b4e4482fc3efb8c659b4cfa6304f2e121b55"
+      }
+    },
+    {
+      "pair_id": "32014R0664--32025R0027",
+      "family": "regulation",
+      "old": {
+        "celex": "32014R0664",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/f1eeb970-f782-11e3-831f-01aa75ed71a1",
+        "resource_type": "REG_DEL",
+        "valid_from": "2014-06-22",
+        "valid_to": "2025-01-17",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32014R0664",
+        "title": "COMMISSION DELEGATED REGULATION (EU) No 664/2014 of 18 December 2013 supplementing Regulation (EU) No 1151/2012 of the European Parliament and of the Council with regard to the establishment of the Union symbols for protected designations of origin, protected geographical indications and traditional specialities guaranteed and with regard to certain rules on sourcing, certain procedural rules and certain additional transitional rules",
+        "raw_html_sha256": "97d09a0574d95087b97584973bf90e1e3bea370bd55b62ea6ab8c2bc2e4eaa43",
+        "canonical_text_sha256": "dd0b5cbb5ef5794a69c3fb5ee079ec31a4e91ad3cd87a52e2e3960b438bb32ef"
+      },
+      "new": {
+        "celex": "32025R0027",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/8de31a46-d2e1-11ef-be2a-01aa75ed71a1",
+        "resource_type": "REG_DEL",
+        "valid_from": "2025-01-18",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32025R0027",
+        "title": "COMMISSION DELEGATED REGULATION (EU) 2025/27 of 30 October 2024 supplementing Regulation (EU) 2024/1143 of the European Parliament and of the Council with rules concerning the registration and the protection of geographical indications, traditional specialities guaranteed and optional quality terms and repealing Delegated Regulation (EU) No 664/2014",
+        "raw_html_sha256": "47264c28e0ccf73ae366a211a4cc1572ded2c8ec02894226d0ffcf11d42d45b8",
+        "canonical_text_sha256": "1c82e562ce83d1814e83616df608ac477fe86523408fa5710524bea628e5a7d4"
+      }
+    },
+    {
+      "pair_id": "32016R2072--32023R2917",
+      "family": "regulation",
+      "old": {
+        "celex": "32016R2072",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/439ec166-b372-11e6-9e3c-01aa75ed71a1",
+        "resource_type": "REG_DEL",
+        "valid_from": "2016-12-16",
+        "valid_to": "2023-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32016R2072",
+        "title": "COMMISSION DELEGATED REGULATION (EU) 2016/2072 of 22 September 2016 on the verification activities and accreditation of verifiers pursuant to Regulation (EU) 2015/757 of the European Parliament and of the Council on the monitoring, reporting and verification of carbon dioxide emissions from maritime transport (Text with EEA relevance)",
+        "raw_html_sha256": "029d4e061f4f0caf5f9b53d0ce4628b655d632036b2ad4b568068456ea9608c8",
+        "canonical_text_sha256": "a44cee31bc6689bdcd9d61bc621d01467c1b1f7ba452e6d9dc55d91f1e75d6a9"
+      },
+      "new": {
+        "celex": "32023R2917",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/4236b3e5-a5ec-11ee-b164-01aa75ed71a1",
+        "resource_type": "REG_DEL",
+        "valid_from": "2024-01-01",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32023R2917",
+        "title": "COMMISSION DELEGATED REGULATION (EU) 2023/2917 of 20 October 2023 on the verification activities, accreditation of verifiers and approval of monitoring plans by administering authorities pursuant to Regulation (EU) 2015/757 of the European Parliament and of the Council on the monitoring, reporting and verification of greenhouse gas emissions from maritime transport, and repealing Commission Delegated Regulation (EU) 2016/2072 (Text with EEA relevance)",
+        "raw_html_sha256": "5d9d2b2c8e3c263d0fa4c17c1ce7e6ab3745915c1fdbacc1cdde890e0cb6579d",
+        "canonical_text_sha256": "bc7d0fa9d96d56e064003d24ba05a15e28093e995aea2b2066994cda11cd1f8e"
+      }
+    },
+    {
+      "pair_id": "32017D0036--32024D2938",
+      "family": "decision",
+      "old": {
+        "celex": "32017D0036",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/e02c4a91-da4f-11e7-a506-01aa75ed71a1",
+        "resource_type": "DEC",
+        "valid_from": "2017-12-26",
+        "valid_to": "2024-12-30",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32017D0036",
+        "title": "DECISION (EU) 2017/2239 OF THE EUROPEAN CENTRAL BANK of 16 November 2017 amending Decision (EU) 2016/2247 on the annual accounts of the European Central Bank (ECB/2017/36)",
+        "raw_html_sha256": "9799242579b9698bd0e20a301a63907f130e2402aa8bae10632c2988a9e14dd0",
+        "canonical_text_sha256": "7f3e4a93ae9bc3f3ca2124efbae3d781fe098d8e5c5494aa2e3c301ed6d76142"
+      },
+      "new": {
+        "celex": "32024D2938",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/c298ed21-b760-11ef-91ed-01aa75ed71a1",
+        "resource_type": "DEC",
+        "valid_from": "2024-12-31",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32024D2938",
+        "title": "DECISION (EU) 2024/2938 OF THE EUROPEAN CENTRAL BANK of 14 November 2024 on the annual accounts of the European Central Bank (ECB/2024/32) (recast)",
+        "raw_html_sha256": "108611cd7978ec5e47383838d8306f473c62bb6424a144a0b7faba0ed71a9620",
+        "canonical_text_sha256": "b08ccb722086ad96f91c7369a296e7ccbc0d73d07a42dd07aa9c2b1f65d2c5c8"
+      }
+    },
+    {
+      "pair_id": "32018D1220--32025D2024",
+      "family": "decision",
+      "old": {
+        "celex": "32018D1220",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/2d54bf5e-b270-11e8-99ee-01aa75ed71a1",
+        "resource_type": "DEC",
+        "valid_from": "2018-08-02",
+        "valid_to": "2025-10-12",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32018D1220",
+        "title": "COMMISSION DECISION (EU) 2018/1220 of 6 September 2018 on the rules of procedure of the panel referred to in Article 143 of Regulation (EU, Euratom) 2018/1046 of the European Parliament and of the Council",
+        "raw_html_sha256": "59c381dd0363441e31e5d0515da4a6fe1aa03c96e5804475616418ad96168acb",
+        "canonical_text_sha256": "f4a070e7015e1f9d357c265b8ab9ee4c1b8912a1dd443647b82be2e69c501173"
+      },
+      "new": {
+        "celex": "32025D2024",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/60ea23a6-a571-11f0-a7c5-01aa75ed71a1",
+        "resource_type": "DEC",
+        "valid_from": "2025-10-13",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32025D2024",
+        "title": "COMMISSION DECISION (EU) 2025/2024 of 9 October 2025 on the rules of procedure of the panel referred to in Article 145 of Regulation (EU, Euratom) 2024/2509 of the European Parliament and of the Council",
+        "raw_html_sha256": "adcb03a5013b394b0509f835d6d4795fbc5c02451b2c707cf44f461e8604bfb4",
+        "canonical_text_sha256": "b2b0f3815a4424c5cdbf18b7ed25207f18933e173099b17271f712b1b54d3d09"
+      }
+    },
+    {
+      "pair_id": "32018L0844--32023L1791",
+      "family": "directive",
+      "old": {
+        "celex": "32018L0844",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/a61a4eda-7380-11e8-9483-01aa75ed71a1",
+        "resource_type": "DIR",
+        "valid_from": "2018-07-09",
+        "valid_to": "2025-10-11",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32018L0844",
+        "title": "DIRECTIVE (EU) 2018/844 OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL of 30 May 2018 amending Directive 2010/31/EU on the energy performance of buildings and Directive 2012/27/EU on energy efficiency (Text with EEA relevance)",
+        "raw_html_sha256": "722dce2e19bb6e563803acfac5780ad0c7d1638a3b72476ff28c9ac1e254d35b",
+        "canonical_text_sha256": "1a8bd344f169624c51a352160b609926f1e2ef7a0809d0e88ab00551f41d03b2"
+      },
+      "new": {
+        "celex": "32023L1791",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/0e432499-5752-11ee-9220-01aa75ed71a1",
+        "resource_type": "DIR",
+        "valid_from": "2025-10-12",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32023L1791",
+        "title": "DIRECTIVE (EU) 2023/1791 OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL of 13 September 2023 on energy efficiency and amending Regulation (EU) 2023/955 (recast) (Text with EEA relevance)",
+        "raw_html_sha256": "24e2e3ef8a3004e8e714e29eb0e66582153c4a4b93d9b63918c375ac04abcd2f",
+        "canonical_text_sha256": "38eda2ea23cd92eb37d654e0dde19dc6de4ca226e853ed4268b2dd0bd1e34015"
+      }
+    },
+    {
+      "pair_id": "32018R0886--32025R1564",
+      "family": "regulation",
+      "old": {
+        "celex": "32018R0886",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/4646584a-750d-11e8-9483-01aa75ed71a1",
+        "resource_type": "REG_IMPL",
+        "valid_from": "2018-06-22",
+        "valid_to": "2025-07-24",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32018R0886",
+        "title": "COMMISSION IMPLEMENTING REGULATION (EU) 2018/886 of 20 June 2018 on certain commercial policy measures concerning certain products originating in the United States of America and amending Implementing Regulation (EU) 2018/724",
+        "raw_html_sha256": "6f43e6b3c2fbd3ad869b316dfd026a24e0ac1b3a9bf9054a2806ca4f820d073c",
+        "canonical_text_sha256": "91e683ecfb8a42e2898167c284b7faf2e95060eecaa61527f76138184242f271"
+      },
+      "new": {
+        "celex": "32025R1564",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/462ed3c3-68a2-11f0-bf4e-01aa75ed71a1",
+        "resource_type": "REG_IMPL",
+        "valid_from": "2025-07-25",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32025R1564",
+        "title": "COMMISSION IMPLEMENTING REGULATION (EU) 2025/1564 of 24 July 2025 on commercial rebalancing measures concerning certain products originating in the United States of America and certain products exported from the Union to the United States of America, and repealing Implementing Regulations (EU) 2018/724, (EU) 2018/886, (EU) 2020/502 and (EU) 2025/778",
+        "raw_html_sha256": "a29f0bd3ac16e0f61a318b0cdbe744c54c90c2a77ee913ee673d2d8a8c43011c",
+        "canonical_text_sha256": "5b26d532793be39a3e88b0857aa21aabe7d32103c7210db296a0ebdc00efb8be"
+      }
+    },
+    {
+      "pair_id": "32018R1999--32023L1791",
+      "family": "directive",
+      "old": {
+        "celex": "32018R1999",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/c6980a60-04e7-11e9-adde-01aa75ed71a1",
+        "resource_type": "REG",
+        "valid_from": "2018-12-24",
+        "valid_to": "2025-10-11",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32018R1999",
+        "title": "REGULATION (EU) 2018/1999 OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL of 11 December 2018 on the Governance of the Energy Union and Climate Action, amending Regulations (EC) No 663/2009 and (EC) No 715/2009 of the European Parliament and of the Council, Directives 94/22/EC, 98/70/EC, 2009/31/EC, 2009/73/EC, 2010/31/EU, 2012/27/EU and 2013/30/EU of the European Parliament and of the Council, Council Directives 2009/119/EC and (EU) 2015/652 and repealing Regulation (EU) No 525/2013 of the European Parliament and of the Council (Text with EEA relevance)",
+        "raw_html_sha256": "0b5bbea204abbd862054a03b8756564037545f558e2a2ffae7497c497f107d58",
+        "canonical_text_sha256": "d412d87fcf2f19c48f07072e49e2fa3b3d391314c900313acc163123b1095b3a"
+      },
+      "new": {
+        "celex": "32023L1791",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/0e432499-5752-11ee-9220-01aa75ed71a1",
+        "resource_type": "DIR",
+        "valid_from": "2025-10-12",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32023L1791",
+        "title": "DIRECTIVE (EU) 2023/1791 OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL of 13 September 2023 on energy efficiency and amending Regulation (EU) 2023/955 (recast) (Text with EEA relevance)",
+        "raw_html_sha256": "24e2e3ef8a3004e8e714e29eb0e66582153c4a4b93d9b63918c375ac04abcd2f",
+        "canonical_text_sha256": "38eda2ea23cd92eb37d654e0dde19dc6de4ca226e853ed4268b2dd0bd1e34015"
+      }
+    },
+    {
+      "pair_id": "32019D0035--32024D2938",
+      "family": "decision",
+      "old": {
+        "celex": "32019D0035",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/4ed93a61-2572-11ea-af81-01aa75ed71a1",
+        "resource_type": "DEC",
+        "valid_from": "2019-12-31",
+        "valid_to": "2024-12-30",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32019D0035",
+        "title": "DECISION (EU) 2019/2215 OF THE EUROPEAN CENTRAL BANK of 28 November 2019 amending Decision (EU) 2016/2247 on the annual accounts of the European Central Bank (ECB/2019/35)",
+        "raw_html_sha256": "2a1849d1c516d0634aabb0f9c4d4042862899cf790e25a96a1a5158ea57c2062",
+        "canonical_text_sha256": "349b7f50a066167eccd5c110e40b1696646d3ba6ebe160d253ee135f6ba791a9"
+      },
+      "new": {
+        "celex": "32024D2938",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/c298ed21-b760-11ef-91ed-01aa75ed71a1",
+        "resource_type": "DEC",
+        "valid_from": "2024-12-31",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32024D2938",
+        "title": "DECISION (EU) 2024/2938 OF THE EUROPEAN CENTRAL BANK of 14 November 2024 on the annual accounts of the European Central Bank (ECB/2024/32) (recast)",
+        "raw_html_sha256": "108611cd7978ec5e47383838d8306f473c62bb6424a144a0b7faba0ed71a9620",
+        "canonical_text_sha256": "b08ccb722086ad96f91c7369a296e7ccbc0d73d07a42dd07aa9c2b1f65d2c5c8"
+      }
+    },
+    {
+      "pair_id": "32019D1923--32024D0354",
+      "family": "decision",
+      "old": {
+        "celex": "32019D1923",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/ffefe561-0a98-11ea-8c1f-01aa75ed71a1",
+        "resource_type": "DEC_IMPL",
+        "valid_from": "2019-11-19",
+        "valid_to": "2024-01-22",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32019D1923",
+        "title": "COMMISSION IMPLEMENTING DECISION (EU) 2019/1923 of 18 November 2019 on the harmonised standards for cableway installations drafted in support of Regulation (EU) 2016/424 of the European Parliament and of the Council",
+        "raw_html_sha256": "d151e73f1f57bc397c2ceb71f95044e03d209ceea4c197c5c22877143994a224",
+        "canonical_text_sha256": "1cc3313dff45a1de8c446acbdc84d04c84333f7bb1fec04fdd716d87558898d0"
+      },
+      "new": {
+        "celex": "32024D0354",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/b4aa2fb0-b992-11ee-b164-01aa75ed71a1",
+        "resource_type": "DEC_IMPL",
+        "valid_from": "2024-01-23",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32024D0354",
+        "title": "COMMISSION IMPLEMENTING DECISION (EU) 2024/354 of 19 January 2024 on harmonised standards for cableway installations drafted in support of Regulation (EU) 2016/424 of the European Parliament and the Council (Text with EEA relevance)",
+        "raw_html_sha256": "d4bd430edfff2770072c0fc90cadf4ad9b18be83e3bd3eb1ec41618173f3f806",
+        "canonical_text_sha256": "88b5aec972e7f381bca1e1e9193ef4238bf629a95a144c89566041c4646e1647"
+      }
+    },
+    {
+      "pair_id": "32019R0826--32023L1791",
+      "family": "directive",
+      "old": {
+        "celex": "32019R0826",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/9a58980b-7d25-11e9-9f05-01aa75ed71a1",
+        "resource_type": "REG_DEL",
+        "valid_from": "2019-06-12",
+        "valid_to": "2025-10-11",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32019R0826",
+        "title": "COMMISSION DELEGATED REGULATION (EU) 2019/826 of 4 March 2019 amending Annexes VIII and IX to Directive 2012/27/EU of the European Parliament and of the Council on the contents of comprehensive assessments of the potential for efficient heating and cooling",
+        "raw_html_sha256": "6a80013ac56d8e210144711db36a70d2de07a40dc3d3782fc85a1e964654e06d",
+        "canonical_text_sha256": "4a46fa2e6827200b64d679bc66fcc4b6a287be2ca95659858affe64647636de5"
+      },
+      "new": {
+        "celex": "32023L1791",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/0e432499-5752-11ee-9220-01aa75ed71a1",
+        "resource_type": "DIR",
+        "valid_from": "2025-10-12",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32023L1791",
+        "title": "DIRECTIVE (EU) 2023/1791 OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL of 13 September 2023 on energy efficiency and amending Regulation (EU) 2023/955 (recast) (Text with EEA relevance)",
+        "raw_html_sha256": "24e2e3ef8a3004e8e714e29eb0e66582153c4a4b93d9b63918c375ac04abcd2f",
+        "canonical_text_sha256": "38eda2ea23cd92eb37d654e0dde19dc6de4ca226e853ed4268b2dd0bd1e34015"
+      }
+    },
+    {
+      "pair_id": "32021R1444--32023R1804",
+      "family": "regulation",
+      "old": {
+        "celex": "32021R1444",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/1baae0d3-0eac-11ec-b771-01aa75ed71a1",
+        "resource_type": "REG_DEL",
+        "valid_from": "2021-09-26",
+        "valid_to": "2024-04-12",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32021R1444",
+        "title": "COMMISSION DELEGATED REGULATION (EU) 2021/1444 of 17 June 2021 supplementing Directive 2014/94/EU of the European Parliament and of the Council with regards standards for recharging points for electric buses (Text with EEA relevance)",
+        "raw_html_sha256": "0bb4a75709ced34b7ab9a49f4340b4c50274996b2cc100c5a6acb999743244c4",
+        "canonical_text_sha256": "5bf950f5b2116009c859449d2dee3dbe49882d38f22e687f8f49cfca098b772e"
+      },
+      "new": {
+        "celex": "32023R1804",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/6337734c-58e4-11ee-9220-01aa75ed71a1",
+        "resource_type": "REG",
+        "valid_from": "2024-04-13",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32023R1804",
+        "title": "REGULATION (EU) 2023/1804 OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL of 13 September 2023 on the deployment of alternative fuels infrastructure, and repealing Directive 2014/94/EU (Text with EEA relevance)",
+        "raw_html_sha256": "e3c4b7f1215b842bc37326beb62be472838ff8b16ac0553c41d8f18b066d5713",
+        "canonical_text_sha256": "de76b0f23f7dfe933b5442266d6a641479ecee599882b604e6689acef34fb222"
+      }
+    },
+    {
+      "pair_id": "32022R0869--32024L1788",
+      "family": "directive",
+      "old": {
+        "celex": "32022R0869",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/dd62a206-e2d6-11ec-a534-01aa75ed71a1",
+        "resource_type": "REG",
+        "valid_from": "2022-06-23",
+        "valid_to": "2024-08-03",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32022R0869",
+        "title": "REGULATION (EU) 2022/869 OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL of 30 May 2022 on guidelines for trans-European energy infrastructure, amending Regulations (EC) No 715/2009, (EU) 2019/942 and (EU) 2019/943 and Directives 2009/73/EC and (EU) 2019/944, and repealing Regulation (EU) No 347/2013",
+        "raw_html_sha256": "3ce66c484a20ef2ada582d63cc26fbecca7580cde4063cf2a7f30c8f7de1f745",
+        "canonical_text_sha256": "aacced50315935858385ce87ce7da30f5744f5077f01c2fea87317339e906235"
+      },
+      "new": {
+        "celex": "32024L1788",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/f07e2c67-4242-11ef-865a-01aa75ed71a1",
+        "resource_type": "DIR",
+        "valid_from": "2024-08-04",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32024L1788",
+        "title": "DIRECTIVE (EU) 2024/1788 OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL of 13 June 2024 on common rules for the internal markets for renewable gas, natural gas and hydrogen, amending Directive (EU) 2023/1791 and repealing Directive 2009/73/EC (recast) (Text with EEA relevance)",
+        "raw_html_sha256": "988a7bb36424d0f51a2a042d43c6f3a8f04088f1f2eaa85d4c48204529aec466",
+        "canonical_text_sha256": "fb207fe14b09d62ac56b0f71b328a5aabe7da604381997184f7b631ecd3cafdb"
+      }
+    },
+    {
+      "pair_id": "32023D1013--32024D1809",
+      "family": "decision",
+      "old": {
+        "celex": "32023D1013",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/ae36d1f8-f9d2-11ed-a05c-01aa75ed71a1",
+        "resource_type": "DEC",
+        "valid_from": "2023-05-25",
+        "valid_to": "2024-08-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32023D1013",
+        "title": "COUNCIL DECISION (EU) 2023/1013 of 16 May 2023 on a derogation from Decision 2013/471/EU on the granting of daily allowances to and the reimbursement of travelling expenses of members of the European Economic and Social Committee and their alternates, and repealing Decision (EU) 2021/1072",
+        "raw_html_sha256": "fc9d75f4246b8e75b4fca812cf06b2a8833e28829e2087bf402adc013b1264bc",
+        "canonical_text_sha256": "09c91c812f6222c1477449ac787623f8bcdf6c96f76a7599aeb2c7bb6fa09626"
+      },
+      "new": {
+        "celex": "32024D1809",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/5dfc5e54-3421-11ef-b441-01aa75ed71a1",
+        "resource_type": "DEC",
+        "valid_from": "2024-09-01",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32024D1809",
+        "title": "COUNCIL DECISION (EU) 2024/1809 of 21 June 2024 on the granting of daily allowances to and the reimbursement of travel expenses of members of the European Economic and Social Committee and their alternates, and repealing Decisions 2013/471/EU and (EU) 2023/1013",
+        "raw_html_sha256": "840560331fd34d94f233f99b33220eeaceea4812d245ba0614ff3a05f2a54a19",
+        "canonical_text_sha256": "4e02941d7c28e747d706abf975e37800a49df23ccdf1e6721b0561ea28c6fa4a"
+      }
+    },
+    {
+      "pair_id": "32023D2130--32024D2667",
+      "family": "decision",
+      "old": {
+        "celex": "32023D2130",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/feab14d0-67cf-11ee-9220-01aa75ed71a1",
+        "resource_type": "DEC",
+        "valid_from": "2024-01-21",
+        "valid_to": "2025-01-20",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32023D2130",
+        "title": "POLITICAL AND SECURITY COMMITTEE DECISION (CFSP) 2023/2130 of 26 September 2023 on the appointment of the EU Force Commander for the European Union military operation in Bosnia and Herzegovina and repealing Decision (CFSP) 2022/2539 (BiH/35/2023)",
+        "raw_html_sha256": "a9301ce565a73f32eda95cea29fcd8ed40cca9494041f6d9cec155b87a761be0",
+        "canonical_text_sha256": "3218cfe7af806b86b0b0637f21fa42ad68b94e4e27926664c275446a23385198"
+      },
+      "new": {
+        "celex": "32024D2667",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/0793a692-86a4-11ef-a67d-01aa75ed71a1",
+        "resource_type": "DEC",
+        "valid_from": "2025-01-21",
+        "valid_to": "2026-01-20",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32024D2667",
+        "title": "POLITICAL AND SECURITY COMMITTEE DECISION (CFSP) 2024/2667 of 8 October 2024 on the appointment of the EU Force Commander for the European Union military operation in Bosnia and Herzegovina and repealing Decision (CFSP) 2023/2130 (BiH/38/2024)",
+        "raw_html_sha256": "4c98b22f114ff054d807fbeba4c87b58d2a321576ca3c15a2664fcab978e2c90",
+        "canonical_text_sha256": "bc2114a50d04746557f0816d3071028c76f2691e0ad5d78b666972950076eea7"
+      }
+    },
+    {
+      "pair_id": "32023R1070--32025R0512",
+      "family": "regulation",
+      "old": {
+        "celex": "32023R1070",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/d89921cf-0111-11ee-87ec-01aa75ed71a1",
+        "resource_type": "REG_IMPL",
+        "valid_from": "2023-06-22",
+        "valid_to": "2025-04-08",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32023R1070",
+        "title": "COMMISSION IMPLEMENTING REGULATION (EU) 2023/1070 of 1 June 2023 on technical arrangements for developing, maintaining and employing electronic systems for the exchange and storage of information under Regulation (EU) No 952/2013 of the European Parliament and the Council",
+        "raw_html_sha256": "d6f950d90695da713f8ef10ea80042456061e5d5d4184a1fc3f1620fcd59070b",
+        "canonical_text_sha256": "bfa0ed1876d4f9921df79529b4572ea6aadc625d0a4c2ab3ec081aa279ce8b14"
+      },
+      "new": {
+        "celex": "32025R0512",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/210e4ad2-052c-11f0-b1a3-01aa75ed71a1",
+        "resource_type": "REG_IMPL",
+        "valid_from": "2025-04-09",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32025R0512",
+        "title": "COMMISSION IMPLEMENTING REGULATION (EU) 2025/512 of 13 March 2025 on technical arrangements for developing, maintaining and employing electronic systems for the exchange and storage of information under Regulation (EU) No 952/2013 of the European Parliament and of the Council",
+        "raw_html_sha256": "fde4459e5321c6d7fcd689fbe3c9ac76e7050987df0423ababf1967578adbcf0",
+        "canonical_text_sha256": "3a46483dc9386c0da5eadcfae530a3152e8784500b1cf4cbe009d222e971bdd0"
+      }
+    },
+    {
+      "pair_id": "32023R2770--32025R0006",
+      "family": "regulation",
+      "old": {
+        "celex": "32023R2770",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/c6045b20-9958-11ee-b164-01aa75ed71a1",
+        "resource_type": "REG_IMPL",
+        "valid_from": "2024-01-02",
+        "valid_to": "2025-01-26",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32023R2770",
+        "title": "COMMISSION IMPLEMENTING REGULATION (EU) 2023/2770 of 12 December 2023 prohibiting the introduction into the Union of specimens of certain species of wild fauna and flora in accordance with Council Regulation (EC) No 338/97 on the protection of species of wild fauna and flora by regulating trade therein",
+        "raw_html_sha256": "4d397fdc5ef68eefbca1aa07202fc0c49d806e8bd0a504e98170041668ee355d",
+        "canonical_text_sha256": "77a02ba50cf30e0af74bd8bb761347b91d2805bef7b644927dc4d58e093dda36"
+      },
+      "new": {
+        "celex": "32025R0006",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/99912510-cc9e-11ef-91ed-01aa75ed71a1",
+        "resource_type": "REG_IMPL",
+        "valid_from": "2025-01-27",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32025R0006",
+        "title": "COMMISSION IMPLEMENTING REGULATION (EU) 2025/6 of 6 January 2025 prohibiting the introduction into the Union of specimens of certain species of wild fauna and flora in accordance with Council Regulation (EC) No 338/97 on the protection of species of wild fauna and flora by regulating trade therein and repealing Commission Implementing Regulation (EU) 2023/2770",
+        "raw_html_sha256": "ceff69ad42927aeb5e6003bc4f384d9914b77da8dda4b85ce3a6e8096515dd76",
+        "canonical_text_sha256": "e31b8b7a7a305d731cf84b9c5f77c11dbd59128f3d09d85d2d192b6edb695e09"
+      }
+    },
+    {
+      "pair_id": "32024D2192--32025D2010",
+      "family": "decision",
+      "old": {
+        "celex": "32024D2192",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/d9098bfa-6cb0-11ef-a8ba-01aa75ed71a1",
+        "resource_type": "DEC",
+        "valid_from": "2024-09-27",
+        "valid_to": "2025-09-29",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32024D2192",
+        "title": "POLITICAL AND SECURITY COMMITTEE DECISION (CFSP) 2024/2192 of 27 August 2024 on the appointment of the EU Mission Force Commander of the European Union CSDP Military Training Mission in the Central African Republic (EUTM RCA) and repealing Decision (CFSP) 2023/2112 (EUTM RCA/1/2024)",
+        "raw_html_sha256": "5f0f1947e191e2b6806dc808e3f47478bfbe7278e095ceec5e507fbc433667e9",
+        "canonical_text_sha256": "a4a5240a999bc6147fce09a6765624374705f4c2f2d2ceb4dee8b2bf61da8577"
+      },
+      "new": {
+        "celex": "32025D2010",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/a43bd8b4-9ff3-11f0-97c8-01aa75ed71a1",
+        "resource_type": "DEC",
+        "valid_from": "2025-09-30",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32025D2010",
+        "title": "POLITICAL AND SECURITY COMMITTEE DECISION (CFSP) 2025/2010 of 25 September 2025 on the appointment of the EU Mission Force Commander of the European Union CSDP Military Training Mission in the Central African Republic (EUTM RCA) and repealing Decision (CFSP) 2024/2192 (EUTM RCA/1/2025)",
+        "raw_html_sha256": "8a79a9bc0d2d7a4d1223df69929bcb6331d65a51deb9183c236abd67fad08c8f",
+        "canonical_text_sha256": "ba2ec0ed5f1d9fabf862c0b010f9a8ac29a0148cef9717de5d3a20b372e5bb7c"
+      }
+    },
+    {
+      "pair_id": "32024D2410--32025D0459",
+      "family": "decision",
+      "old": {
+        "celex": "32024D2410",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/13f9d966-73c4-11ef-a8ba-01aa75ed71a1",
+        "resource_type": "DEC_IMPL",
+        "valid_from": "2024-10-06",
+        "valid_to": "2025-03-30",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32024D2410",
+        "title": "COMMISSION IMPLEMENTING DECISION (EU) 2024/2410 of 13 September 2024 postponing the expiry date of the approval of dinotefuran for use in biocidal products of product-type 18 in accordance with Regulation (EU) No 528/2012 of the European Parliament and of the Council (Text with EEA relevance)",
+        "raw_html_sha256": "a209b75d11c93ee21a58ec93b18d6f4affd5a7862f1d16d365bfbc44f106c5e7",
+        "canonical_text_sha256": "299a553cb941cc62bac6efb04941c04b23a3e6f072215fcd42e0aa2b4c4d0d9e"
+      },
+      "new": {
+        "celex": "32025D0459",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/240e77d1-fe19-11ef-b7db-01aa75ed71a1",
+        "resource_type": "DEC_IMPL",
+        "valid_from": "2025-03-31",
+        "valid_to": "2025-03-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32025D0459",
+        "title": "COMMISSION IMPLEMENTING DECISION (EU) 2025/459 of 10 March 2025 repealing Implementing Decision (EU) 2024/2410 postponing the expiry date of the approval of dinotefuran for use in biocidal products of product-type 18 in accordance with Regulation (EU) No 528/2012 of the European Parliament and of the Council (Text with EEA relevance)",
+        "raw_html_sha256": "67c4d75ddc797a8c1147cc02cff447b34e16701e693d4e4eda632d3fb59f2b8e",
+        "canonical_text_sha256": "fcb9e369f549995ee483c0e05bcc9e96071a8d51662c47b763d85532dd47a738"
+      }
+    },
+    {
+      "pair_id": "32024D2930--32025D2344",
+      "family": "decision",
+      "old": {
+        "celex": "32024D2930",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/509f1623-b050-11ef-acb1-01aa75ed71a1",
+        "resource_type": "DEC_IMPL",
+        "valid_from": "2024-12-22",
+        "valid_to": "2025-12-09",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32024D2930",
+        "title": "COMMISSION IMPLEMENTING DECISION (EU) 2024/2930 of 28 November 2024 postponing the expiry date of the approval of dazomet for use in biocidal products of product-type 8 in accordance with Regulation (EU) No 528/2012 of the European Parliament and of the Council (Text with EEA relevance)",
+        "raw_html_sha256": "93bc66fbc9de2c1c27f18ac7ba3e01ce97f24029afce9eb565849967ab0c810c",
+        "canonical_text_sha256": "382792932dcfc43b813c896503cf10ed0a1bc69aa1ceb53c9af4f8bc9b62774b"
+      },
+      "new": {
+        "celex": "32025D2344",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/54578dfb-c5b2-11f0-8da2-01aa75ed71a1",
+        "resource_type": "DEC_IMPL",
+        "valid_from": "2025-12-10",
+        "valid_to": "2025-12-10",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32025D2344",
+        "title": "COMMISSION IMPLEMENTING DECISION (EU) 2025/2344 of 19 November 2025 repealing Implementing Decision (EU) 2024/2930 postponing the expiry date of the approval of dazomet for use in biocidal products of product-type 8 in accordance with Regulation (EU) No 528/2012 of the European Parliament and of the Council (Text with EEA relevance)",
+        "raw_html_sha256": "07de5080a2ab49b8a5c96953105630f5824e34ef55a2126a50cea919de21511a",
+        "canonical_text_sha256": "92b32a879fa215cd8f0f50139f51d8cdc4055974d0ab27466793fc2714b8f2a2"
+      }
+    },
+    {
+      "pair_id": "32025D1224--32025D2217",
+      "family": "decision",
+      "old": {
+        "celex": "32025D1224",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/9993fcb4-4ca6-11f0-a9d0-01aa75ed71a1",
+        "resource_type": "DEC",
+        "valid_from": "2025-07-01",
+        "valid_to": "2025-11-05",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32025D1224",
+        "title": "POLITICAL AND SECURITY COMMITTEE DECISION (CFSP) 2025/1224 of 17 June 2025 on the appointment of the EU Force Commander for the European Union maritime security operation to safeguard the freedom of navigation in relation to the Red Sea crisis (EUNAVFOR ASPIDES) and repealing Decision (CFSP) 2025/199 (EUNAVFOR ASPIDES/3/2025)",
+        "raw_html_sha256": "92a8c130fe303ad494f41bbb5517c2af6d8be571257d711568fadee574e5c67b",
+        "canonical_text_sha256": "44f47e17f6c6cd161fb020e02bfebdc34cec14c70c3230eb58ed6e7914f031d5"
+      },
+      "new": {
+        "celex": "32025D2217",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/33742532-b531-11f0-b37f-01aa75ed71a1",
+        "resource_type": "DEC",
+        "valid_from": "2025-11-06",
+        "valid_to": "2026-02-17",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32025D2217",
+        "title": "POLITICAL AND SECURITY COMMITTEE DECISION (CFSP) 2025/2217 of 22 October 2025 on the appointment of the EU Force Commander for the European Union maritime security operation to safeguard freedom of navigation in relation to the Red Sea crisis (EUNAVFOR ASPIDES) and repealing Decision (CFSP) 2025/1224 (EUNAVFOR ASPIDES/4/2025)",
+        "raw_html_sha256": "46073a95dc7194afd4361a4f6268e41ada9474e3cc20b7ddfe722808e747d019",
+        "canonical_text_sha256": "a8549c148f251f5a0d57ae63b3d49a75e68ab657eb1bfc10ac41fb8241d76002"
+      }
+    },
+    {
+      "pair_id": "32025D1318--32025D1582",
+      "family": "decision",
+      "old": {
+        "celex": "32025D1318",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/b8203138-5613-11f0-a9d0-01aa75ed71a1",
+        "resource_type": "DEC_IMPL",
+        "valid_from": "2025-06-27",
+        "valid_to": "2025-07-28",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32025D1318",
+        "title": "COMMISSION IMPLEMENTING DECISION (EU) 2025/1318 of 27 June 2025 concerning certain interim emergency measures relating to infection with lumpy skin disease virus in Italy (notified under document C(2025) 4422) (Only the Italian text is authentic) (Text with EEA relevance)",
+        "raw_html_sha256": "88edac4bad6a736faa5c18e5eac4af56cf52c88450c1ab1e873349e41dec5285",
+        "canonical_text_sha256": "5411a5b9f6387e7da5a74cb9e889ab8e8fdc6c4e104bcfb2a1813d849f07e4c8"
+      },
+      "new": {
+        "celex": "32025D1582",
+        "cellar_uri": "http://publications.europa.eu/resource/cellar/84f470d0-6e70-11f0-bf4e-01aa75ed71a1",
+        "resource_type": "DEC_IMPL",
+        "valid_from": "2025-07-29",
+        "valid_to": "9999-12-31",
+        "content_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32025D1582",
+        "title": "COMMISSION IMPLEMENTING DECISION (EU) 2025/1582 of 29 July 2025 concerning certain emergency measures relating to infection with lumpy skin disease virus in Italy and repealing Implementing Decision (EU) 2025/1318 (notified under document C(2025) 5362) (Only the Italian text is authentic) (Text with EEA relevance)",
+        "raw_html_sha256": "ad801fc5a997209d44058e287cff28a50b773a2665513180f050a9afcaaac09e",
+        "canonical_text_sha256": "6e9a060e742eb9957bef0c97309f40806053eb733ce194745824b7b95a82241a"
+      }
+    }
+  ]
+}

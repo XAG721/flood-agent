@@ -70,12 +70,25 @@ Full−w/o Field 的字段覆盖差值为 +0.050000，95% CI=[+0.018750, +0.0875
 Full−w/o Applicability 的精确版本证据差值为 +0.137097，95% CI=[+0.080645, +0.201613]；错误版本率差值为 -0.451613。
 Full 的 Article Recall@1 相对无过滤版本差值为 -0.064516；相对公平过滤基线的精确版本证据差值为 +0.000000。因此版本过滤有效，但 FRC 独有优势未获证明。
 
+### `w/o Applicability`（EUR-Lex/CELLAR，权威生效与失效边界，真实重排）
+
+30 对废止/替代法案形成 60 个边界用例，分别查询旧法最后有效日和新法首个生效日；权威 CELLAR 日期只用于适用性过滤与事后评分，查询文本不包含 gold CELEX。
+
+| 版本 | Exact Evidence Accuracy | Validity Accuracy | Invalid Applicability | Wrong Boundary Version |
+|---|---:|---:|---:|---:|
+| Full | 1.000000 | 1.000000 | 0.000000 | 0.000000 |
+| w/o Applicability | 0.483333 | 0.483333 | 0.516667 | 0.516667 |
+| Applicability-filtered Cross-Encoder | 1.000000 | 1.000000 | 0.000000 | 0.000000 |
+
+Full−w/o Applicability 的精确证据差值为 +0.516667，95% CI=[+0.383333, +0.650000]；无效适用率差值为 -0.516667。
+Full 相对公平过滤基线的精确证据差值为 +0.000000。因此权威日期过滤有效，但 FRC 独有优势仍未获证明，且该语料属于欧盟法律而非区县防汛文档。
+
 ### 消融数据可识别性
 
 | 消融 | 可识别状态 | 原因 |
 |---|---|---|
 | w/o_field | RUN_PUBLIC_EXPERT_REAL_MODEL | HousingQA supplies expert questions and supporting statutes; four independent questions are deterministically composed into fields and evaluated with frozen BGE, Cross-Encoder, and local Qwen models |
-| w/o_applicability | RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_AND_REVISION | HousingQA identifies jurisdiction filtering under its 2021 snapshot; LawShift identifies expert-reviewed before/after statutory replacement. Neither supplies authoritative effective or expiry dates. |
+| w/o_applicability | RUN_PUBLIC_REAL_MODEL_JURISDICTION_REVISION_EFFECTIVE_EXPIRY | HousingQA identifies jurisdiction filtering under its 2021 snapshot; LawShift identifies expert-reviewed before/after statutory replacement; EUR-Lex/CELLAR supplies official effective and expiry dates at adjacent repeal boundaries. |
 | w/o_conflict | RUN_REAL_MODEL_CONFLICTS | Google CONFLICTS supplies case-level conflict types; the ablation removes only alternative-claim and temporal-validity disclosure roles on the frozen real-model pool |
 | w/o_reranker | RUN_REAL_BIENCODER_RESCORING | supplemental artifact recomputed both relevance and role scores without a Cross-Encoder |
 
@@ -199,7 +212,7 @@ Only the two conflict-disclosure role thresholds change; this is a post-hoc diag
 
 - 状态：`THEORETICAL_PIPELINE_FEASIBLE_BUT_SUPERIORITY_NOT_PROVEN`
 - Gate 2：`NO-GO`
-- 结论：real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; Full does not outperform w/o Role; HousingQA Full does outperform w/o Field but ties the strongest field-decomposition baseline, and LawShift Full improves exact version evidence over w/o Applicability but ties the fair applicability-filtered Cross-Encoder baseline and has no authoritative effective/expiry dates; the CONFLICTS Full variant also does not outperform w/o Conflict; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment。
+- 结论：real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; Full does not outperform w/o Role; HousingQA Full does outperform w/o Field but ties the strongest field-decomposition baseline, and LawShift Full improves exact version evidence over w/o Applicability but ties the fair applicability-filtered Cross-Encoder baseline; EUR-Lex/CELLAR now identifies official effective/expiry boundaries, where Full improves over the unfiltered variant but again ties the fair filtered Cross-Encoder baseline; the CONFLICTS Full variant also does not outperform w/o Conflict; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment。
 
 这组结果证明真实模型、公开数据和 FRC 选择器可以形成可复现流水线，但不能证明 FRC 已经稳定优于强重排基线。
 
@@ -209,7 +222,7 @@ Only the two conflict-disclosure role thresholds change; this is a post-hoc diag
 - The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.
 - ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.
 - The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.
-- The nine named ablation variants now have execution artifacts across compatible public datasets, but this is not complete construct coverage: HousingQA identifies jurisdiction under a single 2021 snapshot, LawShift identifies expert-reviewed hypothetical before/after revisions without authoritative effective/expiry dates, and field/role-weight sensitivity is controlled-domain only.
+- The nine named ablation variants now have execution artifacts across compatible public datasets, and applicability is separately identifiable through HousingQA jurisdiction, LawShift expert-reviewed hypothetical revisions, and EUR-Lex/CELLAR official effective/expiry dates. This is still not full design coverage because field/role-weight sensitivity is controlled-domain only and the applicability sources are cross-domain rather than flood-response records.
 - CONFLICTS conflict-type classification is complete, but the paper's expected-behavior adherence metric and independent human judging are not reproduced.
 - HousingQA is a public housing-law benchmark, not a flood-response or district-government benchmark.
 - The public corpus is explicitly accurate as of 2021; it has no paired historical/current statute versions, so version replacement and expiry remain untested.
@@ -221,3 +234,8 @@ Only the two conflict-disclosure role thresholds change; this is a post-hoc diag
 - The benchmark identifies before/after version replacement but cannot test exact effective or expiry dates.
 - The frozen candidate pool is a retrieval stress slice built from the labeled article pair plus lexical hard negatives, not the paper's original legal-judgment-prediction protocol.
 - Only evidence selection is evaluated; charge and sentence generation are not scored in this retrieval ablation.
+- The corpus covers EU legal acts and does not establish performance on district flood-response documents.
+- CELLAR may expose multiple partial-application dates; the frozen slice keeps only repeal pairs with one unique adjacent expiry/effective boundary.
+- EUR-Lex legal texts and consolidated representations are reused for research and are not legal advice or an official legal edition claim.
+- The experiment evaluates evidence selection at the document boundary, not answer generation or article-level expected-behavior adherence.
+- FRC and the fair filtered Cross-Encoder baseline intentionally share validity metadata, preventing an unfair metadata advantage.
