@@ -1,0 +1,38 @@
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+
+from flood_system.frc_public_evidence import build_public_reference_report, render_public_reference_markdown
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Import and independently audit real-model FRC public-dataset artifacts."
+    )
+    parser.add_argument("--reference-root", type=Path, required=True)
+    parser.add_argument("--conflicts-path", type=Path, default=None)
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("output/rag_evaluation/public_frc_reference"),
+    )
+    args = parser.parse_args()
+
+    report = build_public_reference_report(
+        args.reference_root,
+        conflicts_path=args.conflicts_path,
+    )
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    json_path = args.output_dir / "public_frc_reference_report.json"
+    markdown_path = args.output_dir / "public_frc_reference_report.md"
+    json_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    markdown_path.write_text(render_public_reference_markdown(report), encoding="utf-8")
+    print(json_path)
+    print(markdown_path)
+    print(report["decision"]["status"])
+
+
+if __name__ == "__main__":
+    main()

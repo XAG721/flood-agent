@@ -52,9 +52,21 @@ npm.cmd run test:e2e
 | 冲突检测 F1 | 1.0000（4 条受控模拟用例） | 达到 Gate 2 建议值 |
 | Full 相对 w/o Role 引用正确率增益 | +0.0833（1.0000 对 0.9167） | Full 严格更优 |
 | Full 相对 w/o Field 引用正确率增益 | +0.0833（1.0000 对 0.9167） | Full 严格更优 |
-| 字段覆盖率相对最强基线增益 | 0 个百分点（SetR 同为 1.0000） | 未达到至少 5 个百分点 |
+| 字段覆盖率相对最强可复现基线增益 | 0 个百分点（覆盖贪心代理同为 1.0000） | 未达到至少 5 个百分点；该代理不是 SetR 复现 |
 
 Candidate 指标来自生成器明确标记的模拟金标准，不能外推为真实业务表现。FRC 指标来自仓库内 3 条小规模工程标注集；它证明实现可复现，但样本规模不足以形成论文级或生产结论。
+
+## 公开数据真实模型参考审计
+
+只读导入 `D:\RAG_test\frc-select` 中已完成的真实模型产物，并由本仓库独立重算逐样本指标与 2,000 次配对 bootstrap。统一配置为 BGE Large English embedding、BGE Large reranker、Top-K 5 和 1500-token 预算。完整协议、数据来源与复现命令见 `frc_public_evaluation_protocol.md`，机器可读结果见 `../../output/rag_evaluation/public_frc_reference/public_frc_reference_report.json`。
+
+| 数据集 | FRC Evidence F1 | 最强可复现基线 | 基线 F1 | FRC - 基线 95% CI |
+|---|---:|---|---:|---:|
+| ConditionalQA（285） | 0.705754 | Cross-Encoder Top-K | 0.706158 | [-0.003311, +0.002423] |
+| MultiHop-RAG（2556） | 0.394001 | Cross-Encoder Top-K | 0.393660 | [-0.000705, +0.001385] |
+| HotpotQA（1000） | 0.550754 | 覆盖贪心代理 | 0.550818 | [-0.000857, +0.000667] |
+
+三个区间均跨 0，故只能证明真实模型公开数据流水线可行和结果接近强基线，不能证明 FRC 稳定优于基线。缺失证据切片共 261 例：FRC 的可用金证据召回率为 0.772180，但“角色分数仍宣称完整”的比例为 0.816092，表明角色覆盖分数不能替代证据完整性判定。Google CONFLICTS 下载因外部审批服务当前不可用而保持 `NOT_RUN`，失效文件时间切片也未形成可信金标准；两者均不产生占位指标。
 
 PostGIS v2 数值、两条 Chromium 生产路由验收和浏览器截图归档来自 GitHub Actions 受控容器运行 `29202239706`（提交 `c62b877`）。该结果证明模拟 Schema 的 DDL、空间扩展、12 类单向投影、重复执行、对账及容器化新版/回退页面可运行，不代表真实生产库已经切换，也不替代生产密钥、权限、性能、恢复或真实岗位验收。
 
@@ -66,7 +78,7 @@ GitHub Actions Linux 运行 `29196681614` 对同一预算复测通过：event li
 
 - Gate 0：`GO（受控模拟）`。来源、版本、种子、数据来源、模拟标记、家族隔离及 24 场景八类验收字段均由测试校验。
 - Gate 1：`GO（受控模拟）`。当前规则候选链达到建议阈值，仍强制人工确认。
-- Gate 2：`NO-GO`。`run_rag_evaluation.py` 现在逐项生成机器可读 `gate_2` 判定；Full 在引用正确率上严格优于 w/o Role 和 w/o Field，引用正确率、无依据率和受控冲突 F1 也达到建议值，但字段覆盖率相对最强 SetR 基线没有达到至少 5 个百分点，且样本仅为 3 条内部工程标注。系统默认保持 `SHADOW`，`DEFAULT/CANARY` 必须由事件级 `feature.frc_rag_formal_enabled` 显式放行。
+- Gate 2：`NO-GO`。内部 3 条工程集只证明选择逻辑可运行；公开真实模型审计在 ConditionalQA、MultiHop-RAG、HotpotQA 上均未得到相对最强可复现基线显著为正的 Evidence F1 配对区间，冲突与失效切片仍未完成。此前的 `setr` 仅是覆盖贪心代理，不是真实 SetR。系统默认保持 `SHADOW`，补齐公平公开评测并重新通过 Gate 2 后才可考虑 `CANARY/DEFAULT`。
 - Gate 3：`GO（自动化安全不变量）`。未审批、越权、非法迁移、职责分离、证据/规则/审批/下发哈希和幂等 Outbox 有自动测试。
 - Gate 4：`CONDITIONAL NO-GO`。受控业务闭环、本地恢复、进程内 API 冻结预算和三套已知依赖漏洞审计通过，但生产网络/并发性能预算、真实 IdP/TLS/KMS、异地主机恢复与第三方渗透测试尚无外部运行证据。
 

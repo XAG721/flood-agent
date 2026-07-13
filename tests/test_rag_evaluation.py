@@ -42,7 +42,9 @@ def test_frc_select_ablation_and_markdown_report_are_reproducible() -> None:
     markdown = render_rag_evaluation_markdown(report, ablations, metadata)
     assert "| bm25 |" in markdown
     assert "| dense_top_k |" in markdown
+    assert "| coverage_greedy_proxy |" in markdown
     assert "| frc_select |" in markdown
+    assert "不是 SetR 复现" in markdown
     assert "正式论文结论仍需真实神经向量模型" in markdown
 
 
@@ -57,4 +59,5 @@ def test_gate_two_report_keeps_failed_coverage_threshold_as_no_go() -> None:
     assert gate["status"] == "NO-GO"
     assert gate["criteria"]["相同预算下字段覆盖率相对最强基线提高至少5个百分点"] is False
     assert gate["criteria"]["Full引用正确率严格优于w/o Role和w/o Field"] is True
+    assert gate["strongest_reproducible_baseline_method"] == "coverage_greedy_proxy"
     assert gate["undisclosed_critical_conflicts"] == 0

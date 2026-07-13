@@ -1,0 +1,476 @@
+from __future__ import annotations
+
+import csv
+import hashlib
+import json
+import math
+import random
+from collections import defaultdict
+from pathlib import Path
+from typing import Any, Iterable
+
+
+DATASET_METHODS = {
+    "conditionalqa": (
+        "bm25_topk",
+        "dense_topk",
+        "hybrid_topk",
+        "cross_encoder_topk",
+        "mmr",
+        "setr_style",
+        "frc_select",
+    ),
+    "multihoprag": ("cross_encoder_topk", "mmr", "setr_style", "frc_select"),
+    "hotpotqa": ("cross_encoder_topk", "mmr", "setr_style", "frc_select"),
+}
+
+DISPLAY_METHOD = {"setr_style": "coverage_greedy_proxy"}
+PRIMARY_METRICS = ("evidence_recall", "evidence_precision", "evidence_f1", "role_coverage")
+
+
+def display_method(method: str) -> str:
+    return DISPLAY_METHOD.get(method, method)
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def read_jsonl(path: Path) -> Iterable[dict[str, Any]]:
+    with path.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            if line.strip():
+                yield json.loads(line)
+
+
+def _safe_float(value: str) -> float | None:
+    parsed = float(value)
+    return None if math.isnan(parsed) or math.isinf(parsed) else parsed
+
+
+def load_aggregate_csv(path: Path) -> dict[str, dict[str, float | int | None]]:
+    rows: dict[str, dict[str, float | int | None]] = {}
+    with path.open("r", encoding="utf-8-sig", newline="") as handle:
+        for row in csv.DictReader(handle):
+            method = display_method(row["Method"])
+            rows[method] = {
+                "evidence_recall": _safe_float(row["Evidence Recall@5"]),
+                "evidence_precision": _safe_float(row["Evidence Precision@5"]),
+                "evidence_f1": _safe_float(row["Evidence F1@5"]),
+                "role_coverage": _safe_float(row["Role Coverage@5"]),
+                "condition_coverage": _safe_float(row["Condition Coverage"]),
+                "redundancy": _safe_float(row["Redundancy"]),
+                "token_cost": _safe_float(row["Token Cost"]),
+                "cases": int(row["Cases"]),
+            }
+    return rows
+
+
+def load_answer_csv(path: Path) -> dict[str, dict[str, float | int | None]]:
+    rows: dict[str, dict[str, float | int | None]] = {}
+    with path.open("r", encoding="utf-8-sig", newline="") as handle:
+        for row in csv.DictReader(handle):
+            method = display_method(row["Method"])
+            rows[method] = {
+                "answer_em": _safe_float(row["Answer EM"]),
+                "answer_f1": _safe_float(row["Answer F1"]),
+                "conditional_f1": _safe_float(row["Conditional F1"]),
+                "not_answerable_accuracy": _safe_float(row["Not-answerable Accuracy"]),
+                "answer_accuracy": _safe_float(row["Answer Accuracy"]),
+                "supporting_fact_f1": _safe_float(row["Supporting Fact F1"]),
+                "joint_f1": _safe_float(row["Joint F1"]),
+                "cases": int(row["Cases"]),
+            }
+    return rows
+
+
+def evidence_metrics(expected_ids: Iterable[str], selected_ids: Iterable[str]) -> dict[str, float]:
+    expected = set(expected_ids)
+    selected = set(selected_ids)
+    true_positive = len(expected & selected)
+    recall = true_positive / max(1, len(expected))
+    precision = true_positive / max(1, len(selected))
+    f1 = 2 * precision * recall / max(1e-12, precision + recall)
+    return {
+        "evidence_recall": recall,
+        "evidence_precision": precision,
+        "evidence_f1": f1,
+        "complete_evidence_set": float(expected <= selected),
+    }
+
+
+def selected_role_coverage(row: dict[str, Any], *, threshold: float = 0.55) -> float:
+    required = list(row.get("required_roles", []))
+    if not required:
+        return 1.0
+    selected = row.get("selected_evidence", [])
+    covered = sum(
+        max((float(item.get("role_scores", {}).get(role, 0.0)) for item in selected), default=0.0)
+        >= threshold
+        for role in required
+    )
+    return covered / len(required)
+
+
+def row_metrics(row: dict[str, Any]) -> dict[str, float]:
+    return {
+        **evidence_metrics(row.get("gold_evidence_ids", []), row.get("selected_ids", [])),
+        "role_coverage": selected_role_coverage(row),
+    }
+
+
+def paired_bootstrap(
+    differences: list[float],
+    *,
+    seed: int = 20260713,
+    resamples: int = 2000,
+) -> dict[str, float | int]:
+    if not differences:
+        return {"cases": 0, "mean_difference": 0.0, "ci_low": 0.0, "ci_high": 0.0}
+    rng = random.Random(seed)
+    size = len(differences)
+    samples = sorted(
+        sum(differences[rng.randrange(size)] for _ in range(size)) / size
+        for _ in range(resamples)
+    )
+    return {
+        "cases": size,
+        "mean_difference": round(sum(differences) / size, 6),
+        "ci_low": round(samples[int(0.025 * (resamples - 1))], 6),
+        "ci_high": round(samples[int(0.975 * (resamples - 1))], 6),
+    }
+
+
+def compare_selected_files(frc_path: Path, baseline_path: Path) -> dict[str, Any]:
+    frc = {row["case_id"]: row_metrics(row) for row in read_jsonl(frc_path)}
+    baseline = {row["case_id"]: row_metrics(row) for row in read_jsonl(baseline_path)}
+    case_ids = sorted(set(frc) & set(baseline))
+    output: dict[str, Any] = {"cases": len(case_ids), "metrics": {}}
+    for metric in PRIMARY_METRICS:
+        differences = [frc[case_id][metric] - baseline[case_id][metric] for case_id in case_ids]
+        wins = sum(value > 1e-12 for value in differences)
+        losses = sum(value < -1e-12 for value in differences)
+        output["metrics"][metric] = {
+            **paired_bootstrap(differences),
+            "wins": wins,
+            "ties": len(differences) - wins - losses,
+            "losses": losses,
+        }
+    return output
+
+
+def _take_with_budget(candidates: list[dict[str, Any]], *, k: int, budget: int) -> list[dict[str, Any]]:
+    selected: list[dict[str, Any]] = []
+    total = 0
+    for candidate in candidates:
+        cost = int(candidate.get("token_count", 1))
+        if selected and total + cost > budget:
+            continue
+        selected.append(candidate)
+        total += cost
+        if len(selected) >= k:
+            break
+    return selected
+
+
+def select_precomputed(
+    row: dict[str, Any],
+    method: str,
+    *,
+    k: int = 5,
+    budget: int = 1500,
+    threshold: float = 0.55,
+) -> list[dict[str, Any]]:
+    candidates = list(row.get("candidates", []))
+    score_name = {
+        "bm25_topk": "bm25",
+        "dense_topk": "dense",
+        "hybrid_topk": "hybrid",
+        "cross_encoder_topk": "cross_encoder",
+    }.get(method)
+    if score_name:
+        ordered = sorted(
+            candidates,
+            key=lambda item: (-float(item.get("scores", {}).get(score_name, 0.0)), item["id"]),
+        )
+        return _take_with_budget(ordered, k=k, budget=budget)
+
+    if method == "coverage_greedy_proxy":
+        selected: list[dict[str, Any]] = []
+        selected_ids: set[str] = set()
+        total = 0
+        for role in row.get("required_roles", []):
+            eligible = [item for item in candidates if item["id"] not in selected_ids]
+            if not eligible:
+                break
+            best = max(
+                eligible,
+                key=lambda item: (
+                    float(item.get("role_scores", {}).get(role, 0.0)),
+                    float(item.get("scores", {}).get("cross_encoder", 0.0)),
+                    item["id"],
+                ),
+            )
+            cost = int(best.get("token_count", 1))
+            if selected and total + cost > budget:
+                continue
+            selected.append(best)
+            selected_ids.add(best["id"])
+            total += cost
+            if len(selected) >= k:
+                return selected
+        fill = sorted(
+            (item for item in candidates if item["id"] not in selected_ids),
+            key=lambda item: (-float(item.get("scores", {}).get("cross_encoder", 0.0)), item["id"]),
+        )
+        return selected + _take_with_budget(fill, k=k - len(selected), budget=max(0, budget - total))
+
+    if method != "frc_select":
+        raise ValueError(f"unsupported precomputed selector: {method}")
+    selected: list[dict[str, Any]] = []
+    remaining = list(candidates)
+    total = 0
+    role_best = {role: 0.0 for role in row.get("required_roles", [])}
+    while remaining and len(selected) < k:
+        scored: list[tuple[float, str, dict[str, Any]]] = []
+        for candidate in remaining:
+            cost = int(candidate.get("token_count", 1))
+            if selected and total + cost > budget:
+                continue
+            improvements = []
+            for role, old in role_best.items():
+                score = float(candidate.get("role_scores", {}).get(role, 0.0))
+                if old < threshold <= max(old, score):
+                    improvements.append(1.0)
+                else:
+                    improvements.append(max(0.0, score - old) * 0.25)
+            role_gain = sum(improvements) / max(1, len(role_best))
+            relevance = float(candidate.get("scores", {}).get("cross_encoder", 0.0))
+            scored.append((2.0 * role_gain + relevance, candidate["id"], candidate))
+        if not scored:
+            break
+        _, _, best = max(scored, key=lambda item: (item[0], item[1]))
+        selected.append(best)
+        remaining = [item for item in remaining if item["id"] != best["id"]]
+        total += int(best.get("token_count", 1))
+        for role in role_best:
+            role_best[role] = max(role_best[role], float(best.get("role_scores", {}).get(role, 0.0)))
+    return selected
+
+
+def missing_evidence_challenge(path: Path) -> dict[str, Any]:
+    methods = (
+        "bm25_topk",
+        "dense_topk",
+        "hybrid_topk",
+        "cross_encoder_topk",
+        "coverage_greedy_proxy",
+        "frc_select",
+    )
+    totals: dict[str, dict[str, float]] = defaultdict(lambda: defaultdict(float))
+    cases = 0
+    for source in read_jsonl(path):
+        gold = list(source.get("gold_evidence_ids", []))
+        if len(gold) < 2:
+            continue
+        cases += 1
+        removed = gold[0]
+        available_gold = set(gold[1:])
+        row = {
+            **source,
+            "candidates": [item for item in source.get("candidates", []) if item["id"] != removed],
+        }
+        for method in methods:
+            selected = select_precomputed(row, method)
+            metrics = evidence_metrics(available_gold, [item["id"] for item in selected])
+            selected_row = {**row, "selected_evidence": selected}
+            role_coverage = selected_role_coverage(selected_row)
+            for key, value in metrics.items():
+                totals[method][key] += value
+            totals[method]["role_coverage"] += role_coverage
+            totals[method]["false_complete"] += float(role_coverage == 1.0)
+    return {
+        "protocol": "remove the first gold passage from every ConditionalQA case with at least two gold passages, then rerun selectors from saved real-model scores",
+        "cases": cases,
+        "removed_gold_per_case": 1,
+        "metrics": {
+            method: {key: round(value / max(1, cases), 6) for key, value in values.items()}
+            for method, values in totals.items()
+        },
+        "interpretation": "false_complete is the rate at which role scores still claim full coverage after a required gold passage was removed; lower is safer.",
+    }
+
+
+def conflict_inventory(path: Path | None) -> dict[str, Any]:
+    if path is None or not path.is_file():
+        return {
+            "status": "NOT_RUN",
+            "reason": "official Google CONFLICTS file is not locally available; no result is fabricated",
+        }
+    counts: dict[str, int] = defaultdict(int)
+    total = 0
+    for row in read_jsonl(path):
+        total += 1
+        counts[str(row.get("conflict_type", "unknown"))] += 1
+    return {
+        "status": "DATA_READY",
+        "cases": total,
+        "conflict_types": dict(sorted(counts.items())),
+        "sha256": sha256(path),
+        "note": "inventory only; model comparison requires the same BGE/reranker scoring pass before metrics can be reported",
+    }
+
+
+def build_public_reference_report(
+    reference_root: Path,
+    *,
+    conflicts_path: Path | None = None,
+) -> dict[str, Any]:
+    output = reference_root / "outputs"
+    metrics_dir = output / "metrics"
+    selected_dir = output / "selected_evidence"
+    datasets: dict[str, Any] = {}
+    for dataset, methods in DATASET_METHODS.items():
+        evidence_csv = metrics_dir / f"evidence_metrics_{dataset}.csv"
+        answer_csv = metrics_dir / f"answer_metrics_{dataset}.csv"
+        evidence = load_aggregate_csv(evidence_csv)
+        answers = load_answer_csv(answer_csv)
+        baseline_methods = [display_method(method) for method in methods if method != "frc_select"]
+        strongest = max(
+            baseline_methods,
+            key=lambda method: float(evidence[method]["evidence_f1"] or 0.0),
+        )
+        source_method = "setr_style" if strongest == "coverage_greedy_proxy" else strongest
+        comparison = compare_selected_files(
+            selected_dir / f"{dataset}_frc_select.jsonl",
+            selected_dir / f"{dataset}_{source_method}.jsonl",
+        )
+        datasets[dataset] = {
+            "evidence_metrics": evidence,
+            "answer_metrics": answers,
+            "strongest_reproducible_baseline_by_evidence_f1": strongest,
+            "paired_frc_minus_baseline": comparison,
+            "source_hashes": {
+                "evidence_csv": sha256(evidence_csv),
+                "answer_csv": sha256(answer_csv),
+                "frc_selected": sha256(selected_dir / f"{dataset}_frc_select.jsonl"),
+                "baseline_selected": sha256(selected_dir / f"{dataset}_{source_method}.jsonl"),
+            },
+        }
+    superiority = all(
+        dataset["paired_frc_minus_baseline"]["metrics"]["evidence_f1"]["ci_low"] > 0
+        for dataset in datasets.values()
+    )
+    return {
+        "metadata": {
+            "name": "FRC-Select public-dataset real-model reference audit",
+            "reference_root": str(reference_root.resolve()),
+            "scoring_backend": "real",
+            "embedding_model": "BAAI/bge-large-en-v1.5",
+            "reranker_model": "BAAI/bge-reranker-large",
+            "generator": "Qwen2.5-7B-Instruct-GPTQ-Int4",
+            "top_k": 5,
+            "token_budget": 1500,
+            "score_calibration": "per_case_minmax",
+            "role_relevance_mix": 0.15,
+            "selection_parameters": {"alpha": 2.0, "beta": 1.0, "gamma": 0.0},
+            "setr_status": "not reproduced; setr_style source rows are reported as coverage_greedy_proxy",
+        },
+        "datasets": datasets,
+        "challenge_slices": {
+            "normal": {"status": "RUN", "datasets": list(datasets)},
+            "exception_and_condition": {"status": "RUN", "dataset": "conditionalqa"},
+            "cross_document": {"status": "RUN", "dataset": "multihoprag"},
+            "multi_hop": {"status": "RUN", "datasets": ["multihoprag", "hotpotqa"]},
+            "missing_evidence": missing_evidence_challenge(
+                output / "role_scores" / "role_scores_conditionalqa.jsonl"
+            ),
+            "conflict_and_stale": conflict_inventory(conflicts_path),
+        },
+        "decision": {
+            "status": "THEORETICAL_PIPELINE_FEASIBLE_BUT_SUPERIORITY_NOT_PROVEN",
+            "pipeline_feasible": True,
+            "evidence_f1_superiority_on_all_primary_datasets": superiority,
+            "gate_2": "NO-GO",
+            "reason": "real-model FRC runs are reproducible and competitive, but paired confidence intervals do not establish consistent superiority; conflict/stale comparison is not yet run",
+        },
+        "limitations": [
+            "The report imports existing real-model artifacts and recomputes paired evidence metrics; it does not retrain models.",
+            "The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.",
+            "ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.",
+            "The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.",
+            "CONFLICTS metrics remain NOT_RUN until the official file and an equal-scoring pass are available.",
+        ],
+    }
+
+
+def render_public_reference_markdown(report: dict[str, Any]) -> str:
+    metadata = report["metadata"]
+    lines = [
+        "# FRC-Select 公开数据真实模型参考审计",
+        "",
+        f"- Embedding：`{metadata['embedding_model']}`",
+        f"- Reranker：`{metadata['reranker_model']}`",
+        f"- Generator：`{metadata['generator']}`",
+        f"- 统一预算：Top-K={metadata['top_k']}，{metadata['token_budget']} tokens",
+        "- `coverage_greedy_proxy` 是覆盖贪心代理，不是 SetR 复现。",
+        "",
+        "## 主结果",
+        "",
+        "| 数据集 | 用例 | FRC Evidence F1 | 最强可复现基线 | 基线 F1 | 差值 | 95% CI |",
+        "|---|---:|---:|---|---:|---:|---:|",
+    ]
+    for name, dataset in report["datasets"].items():
+        frc = dataset["evidence_metrics"]["frc_select"]
+        baseline_name = dataset["strongest_reproducible_baseline_by_evidence_f1"]
+        baseline = dataset["evidence_metrics"][baseline_name]
+        paired = dataset["paired_frc_minus_baseline"]["metrics"]["evidence_f1"]
+        lines.append(
+            f"| {name} | {frc['cases']} | {frc['evidence_f1']:.6f} | {baseline_name} | "
+            f"{baseline['evidence_f1']:.6f} | {paired['mean_difference']:+.6f} | "
+            f"[{paired['ci_low']:+.6f}, {paired['ci_high']:+.6f}] |"
+        )
+    missing = report["challenge_slices"]["missing_evidence"]
+    lines.extend(
+        [
+            "",
+            "## 缺失证据挑战",
+            "",
+            f"协议：{missing['protocol']}。用例：{missing['cases']}。",
+            "",
+            "| 方法 | 可用证据 Recall | 完整可用证据集 | 角色覆盖 | 错误宣称完整率 |",
+            "|---|---:|---:|---:|---:|",
+        ]
+    )
+    for method, values in missing["metrics"].items():
+        lines.append(
+            f"| {method} | {values['evidence_recall']:.6f} | {values['complete_evidence_set']:.6f} | "
+            f"{values['role_coverage']:.6f} | {values['false_complete']:.6f} |"
+        )
+    conflict = report["challenge_slices"]["conflict_and_stale"]
+    lines.extend(
+        [
+            "",
+            "## 冲突与失效证据",
+            "",
+            f"- 状态：`{conflict['status']}`",
+            f"- 说明：{conflict.get('reason') or conflict.get('note')}",
+            "",
+            "## 判定",
+            "",
+            f"- 状态：`{report['decision']['status']}`",
+            f"- Gate 2：`{report['decision']['gate_2']}`",
+            f"- 结论：{report['decision']['reason']}。",
+            "",
+            "这组结果证明真实模型、公开数据和 FRC 选择器可以形成可复现流水线，但不能证明 FRC 已经稳定优于强重排基线。",
+            "",
+            "## 限制",
+            "",
+        ]
+    )
+    lines.extend(f"- {item}" for item in report["limitations"])
+    return "\n".join(lines) + "\n"

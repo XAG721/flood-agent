@@ -80,7 +80,8 @@ python scripts/run_controlled_performance.py --db tmp/performance.db --output-di
 - `flood_system/config.py`：运行配置与 `FLOOD_DB_PATH` 解析。
 - `flood_system/http/`：AgentTwin HTTP 路由层。
 - `flood_system/response_workflow/`：区县防办确定性响应工作流模型与服务。
-- `flood_system/rag_evaluation.py`：BM25、哈希向量 Dense、混合、MMR、Rerank、SetR 和 FRC-Select 的可重复工程评测、w/o Role / w/o Field 消融与机器可读 Gate 2 判定。
+- `flood_system/rag_evaluation.py`：BM25、哈希向量 Dense、混合、MMR、Rerank、覆盖贪心代理和 FRC-Select 的可重复工程评测、w/o Role / w/o Field 消融与机器可读 Gate 2 判定；覆盖贪心代理不是 SetR 复现。
+- `flood_system/frc_public_evidence.py`：导入真实 BGE/reranker 公共数据产物，重算逐样本配对置信区间，并执行缺失证据压力切片。
 - `flood_system/http/response_router.py`：`/response/*` 业务闭环 API。
 - `flood_system/infrastructure/sse.py`：SSE 编码与流式基础设施。
 - `flood_system/schemas/`：HTTP router 使用的 schema import surface。
@@ -262,6 +263,14 @@ python -m venv .venv-rag-evaluation
 ```
 
 获取脚本只使用 MultiHop-RAG、ConditionalQA、HotpotQA 官方 GitHub 仓库以及 `hotpotqa/hotpot_qa` 官方 Hugging Face 数据集。报告保存源仓库 revision 和数据文件 SHA-256。快速报告使用每数据集 100 条；`full_public/` 报告覆盖 MultiHop-RAG 2255 条可映射证据查询、ConditionalQA 271 条可回答且证据可解析的开发样本，以及 HotpotQA 全部 7405 条 distractor validation。被排除样本数量和规则写入报告；该结果仍不是官方 leaderboard 提交。逐样本 JSON 可由命令重建且不纳入版本控制，仓库只保留全量摘要 Markdown。
+
+导入 `D:\RAG_test` 已完成的真实 BGE Large、BGE reranker 和本地 Qwen 公共数据实验，并独立重算配对统计：
+
+```powershell
+python scripts/import_frc_public_reference.py --reference-root D:\RAG_test\frc-select
+```
+
+该导入只读参考目录，关键输入写入 SHA-256；历史 `setr_style` 在报告中统一正名为 `coverage_greedy_proxy`。协议与 Gate 2 解释见 `docs/progressive_upgrade/frc_public_evaluation_protocol.md`。
 
 区县证据集独立双人标注和第三方裁决：
 

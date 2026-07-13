@@ -12,7 +12,15 @@ from .models import CorpusType, RAGDocument
 from .rag import SimpleRAGStore, _normalize_text, _tokenize
 
 
-RAG_METHODS = ("bm25", "dense_top_k", "hybrid", "mmr", "rerank", "setr", "frc_select")
+RAG_METHODS = (
+    "bm25",
+    "dense_top_k",
+    "hybrid",
+    "mmr",
+    "rerank",
+    "coverage_greedy_proxy",
+    "frc_select",
+)
 ROLE_IDS = ("condition", "object", "responsibility", "procedure", "exception", "attribution")
 
 
@@ -87,8 +95,14 @@ class RAGBaselineEvaluator:
             return self._mmr(documents, case.query, top_k)
         if method == "rerank":
             return self._rerank(documents, case.query, case.slots)[:top_k]
-        if method == "setr":
-            return self._setr(documents, case.query, case.required_roles, top_k, token_budget)
+        if method == "coverage_greedy_proxy":
+            return self._coverage_greedy_proxy(
+                documents,
+                case.query,
+                case.required_roles,
+                top_k,
+                token_budget,
+            )
         if method == "frc_select":
             return self._frc_select(documents, case, top_k=top_k, token_budget=token_budget)
         raise ValueError(f"unsupported RAG evaluation method: {method}")
@@ -132,6 +146,7 @@ class RAGBaselineEvaluator:
             "cases": [asdict(item) for item in results],
             "limitations": [
                 "Dense Top-K 使用本地确定性哈希 n-gram 向量，仅作为无外部模型依赖的工程基线。",
+                "coverage_greedy_proxy 只是覆盖优先贪心代理；未使用 SetR 官方代码、训练流程或权重，不是 SetR 复现。",
                 "区县标注集为小规模演示集，不能替代 ConditionalQA、MultiHop-RAG 或 HotpotQA 的正式复现实验。",
                 "Answer F1 以相关证据集合 F1 作为可重复代理指标，未调用生成模型裁判。",
             ],
@@ -161,7 +176,12 @@ class RAGBaselineEvaluator:
                 include_fields=False,
             ),
             "without_budget": lambda case: self.retrieve("frc_select", case, top_k=top_k, token_budget=None),
-            "without_trust_conflict": lambda case: self.retrieve("setr", case, top_k=top_k, token_budget=token_budget),
+            "without_trust_conflict": lambda case: self.retrieve(
+                "coverage_greedy_proxy",
+                case,
+                top_k=top_k,
+                token_budget=token_budget,
+            ),
             "without_set_objective": lambda case: self.retrieve("hybrid", case, top_k=top_k, token_budget=token_budget),
         }
         output = {}
@@ -181,7 +201,7 @@ class RAGBaselineEvaluator:
                 "without_role": "移除功能角色约束，检验角色互补性对证据选择的贡献。",
                 "without_field": "移除任务字段查询约束，检验字段完整性目标的贡献。",
                 "without_budget": "移除证据预算约束，观察覆盖收益与证据成本控制的权衡。",
-                "without_trust_conflict": "使用仅覆盖优先的 SetR，移除 FRC 的可信度与冲突惩罚。",
+                "without_trust_conflict": "退化为仅按功能角色覆盖的贪心代理，移除 FRC 的字段支持、可信度、适用性与冲突惩罚；该代理不是 SetR 复现。",
                 "without_set_objective": "退化为混合 Top-K，移除集合互补性目标。",
             },
         }
@@ -330,7 +350,7 @@ class RAGBaselineEvaluator:
         return [item[1] for item in scored]
 
     @classmethod
-    def _setr(
+    def _coverage_greedy_proxy(
         cls,
         documents: list[RAGDocument],
         query: str,
@@ -432,12 +452,16 @@ def evaluate_frc_gate(report: dict, ablations: dict, conflict_report: dict) -> d
 
     aggregates = report["aggregates"]
     full = aggregates["frc_select"]
-    baseline_coverages = [
-        row["task_element_completeness"]
+    baseline_coverages = {
+        method: row["task_element_completeness"]
         for method, row in aggregates.items()
         if method != "frc_select"
-    ]
-    strongest_baseline = max(baseline_coverages, default=0.0)
+    }
+    strongest_baseline_method, strongest_baseline = max(
+        baseline_coverages.items(),
+        key=lambda item: (item[1], item[0]),
+        default=("none", 0.0),
+    )
     coverage_gain = round((full["task_element_completeness"] - strongest_baseline) * 100, 4)
     variants = ablations["variants"]
     role_gain = round(full["citation_precision"] - variants["without_role"]["citation_precision"], 4)
@@ -458,6 +482,7 @@ def evaluate_frc_gate(report: dict, ablations: dict, conflict_report: dict) -> d
     return {
         "status": "GO" if all(criteria.values()) else "NO-GO",
         "criteria": criteria,
+        "strongest_reproducible_baseline_method": strongest_baseline_method,
         "strongest_baseline_task_element_completeness": strongest_baseline,
         "frc_task_element_completeness": full["task_element_completeness"],
         "coverage_gain_percentage_points": coverage_gain,

@@ -11,7 +11,7 @@
       "hybrid",
       "mmr",
       "rerank",
-      "setr",
+      "coverage_greedy_proxy",
       "frc_select"
     ],
     "case_count": 3,
@@ -25,7 +25,7 @@
         "task_element_completeness": 0.7111,
         "citation_precision": 0.5,
         "unsupported_evidence_ratio": 0.5,
-        "latency_ms": 0.8176
+        "latency_ms": 0.8057
       },
       "dense_top_k": {
         "evidence_recall": 0.6111,
@@ -34,7 +34,7 @@
         "task_element_completeness": 0.7778,
         "citation_precision": 0.5833,
         "unsupported_evidence_ratio": 0.4167,
-        "latency_ms": 1.3287
+        "latency_ms": 1.2815
       },
       "hybrid": {
         "evidence_recall": 0.6111,
@@ -43,7 +43,7 @@
         "task_element_completeness": 0.7778,
         "citation_precision": 0.5833,
         "unsupported_evidence_ratio": 0.4167,
-        "latency_ms": 2.0645
+        "latency_ms": 2.01
       },
       "mmr": {
         "evidence_recall": 0.6111,
@@ -52,7 +52,7 @@
         "task_element_completeness": 0.7778,
         "citation_precision": 0.5833,
         "unsupported_evidence_ratio": 0.4167,
-        "latency_ms": 3.9199
+        "latency_ms": 4.4221
       },
       "rerank": {
         "evidence_recall": 0.7222,
@@ -61,16 +61,16 @@
         "task_element_completeness": 0.8333,
         "citation_precision": 0.6667,
         "unsupported_evidence_ratio": 0.3333,
-        "latency_ms": 2.4467
+        "latency_ms": 2.4628
       },
-      "setr": {
+      "coverage_greedy_proxy": {
         "evidence_recall": 0.6389,
         "role_coverage": 1.0,
         "answer_f1": 0.6071,
         "task_element_completeness": 1.0,
         "citation_precision": 0.5833,
         "unsupported_evidence_ratio": 0.4167,
-        "latency_ms": 2.2164
+        "latency_ms": 2.1792
       },
       "frc_select": {
         "evidence_recall": 1.0,
@@ -79,7 +79,7 @@
         "task_element_completeness": 1.0,
         "citation_precision": 1.0,
         "unsupported_evidence_ratio": 0.0,
-        "latency_ms": 2.094
+        "latency_ms": 2.0934
       }
     },
     "cases": [
@@ -98,7 +98,7 @@
         "task_element_completeness": 0.6667,
         "citation_precision": 0.5,
         "unsupported_evidence_ratio": 0.5,
-        "latency_ms": 0.9416
+        "latency_ms": 0.9296
       },
       {
         "case_id": "underpass_orange_response",
@@ -115,7 +115,7 @@
         "task_element_completeness": 0.6667,
         "citation_precision": 0.5,
         "unsupported_evidence_ratio": 0.5,
-        "latency_ms": 1.3685
+        "latency_ms": 1.297
       },
       {
         "case_id": "underpass_orange_response",
@@ -132,7 +132,7 @@
         "task_element_completeness": 0.6667,
         "citation_precision": 0.5,
         "unsupported_evidence_ratio": 0.5,
-        "latency_ms": 2.1338
+        "latency_ms": 2.1012
       },
       {
         "case_id": "underpass_orange_response",
@@ -149,7 +149,7 @@
         "task_element_completeness": 0.6667,
         "citation_precision": 0.5,
         "unsupported_evidence_ratio": 0.5,
-        "latency_ms": 3.9389
+        "latency_ms": 4.581
       },
       {
         "case_id": "underpass_orange_response",
@@ -166,11 +166,11 @@
         "task_element_completeness": 0.6667,
         "citation_precision": 0.5,
         "unsupported_evidence_ratio": 0.5,
-        "latency_ms": 2.5385
+        "latency_ms": 2.5799
       },
       {
         "case_id": "underpass_orange_response",
-        "method": "setr",
+        "method": "coverage_greedy_proxy",
         "selected_doc_ids": [
           "plan_school_trigger",
           "plan_school_exception",
@@ -183,7 +183,7 @@
         "task_element_completeness": 1.0,
         "citation_precision": 0.5,
         "unsupported_evidence_ratio": 0.5,
-        "latency_ms": 2.2785
+        "latency_ms": 2.2511
       },
       {
         "case_id": "underpass_orange_response",
@@ -200,7 +200,7 @@
         "task_element_completeness": 1.0,
         "citation_precision": 1.0,
         "unsupported_evidence_ratio": 0.0,
-        "latency_ms": 2.3089
+        "latency_ms": 2.285
       },
       {
         "case_id": "school_dismissal_response",
@@ -217,7 +217,7 @@
         "task_element_completeness": 0.6667,
         "citation_precision": 0.25,
         "unsupported_evidence_ratio": 0.75,
-        "latency_ms": 0.7512
+        "latency_ms": 0.7389
       },
       {
         "case_id": "school_dismissal_response",
@@ -234,7 +234,7 @@
         "task_element_completeness": 0.6667,
         "citation_precision": 0.25,
         "unsupported_evidence_ratio": 0.75,
-        "latency_ms": 1.3088
+        "latency_ms": 1.2641
       },
       {
         "case_id": "school_dismissal_response",
@@ -251,7 +251,7 @@
         "task_element_completeness": 0.6667,
         "citation_precision": 0.25,
         "unsupported_evidence_ratio": 0.75,
-        "latency_ms": 2.0363
+        "latency_ms": 1.9556
       },
       {
         "case_id": "school_dismissal_response",
@@ -268,7 +268,7 @@
         "task_element_completeness": 0.6667,
         "citation_precision": 0.25,
         "unsupported_evidence_ratio": 0.75,
-        "latency_ms": 4.0432
+        "latency_ms": 4.7949
       },
       {
         "case_id": "school_dismissal_response",
@@ -285,11 +285,11 @@
         "task_element_completeness": 0.8333,
         "citation_precision": 0.5,
         "unsupported_evidence_ratio": 0.5,
-        "latency_ms": 2.445
+        "latency_ms": 2.3862
       },
       {
         "case_id": "school_dismissal_response",
-        "method": "setr",
+        "method": "coverage_greedy_proxy",
         "selected_doc_ids": [
           "plan_school_trigger",
           "plan_school_exception",
@@ -302,7 +302,7 @@
         "task_element_completeness": 1.0,
         "citation_precision": 0.5,
         "unsupported_evidence_ratio": 0.5,
-        "latency_ms": 2.1739
+        "latency_ms": 2.1075
       },
       {
         "case_id": "school_dismissal_response",
@@ -318,7 +318,7 @@
         "task_element_completeness": 1.0,
         "citation_precision": 1.0,
         "unsupported_evidence_ratio": 0.0,
-        "latency_ms": 1.796
+        "latency_ms": 1.8159
       },
       {
         "case_id": "cross_department_control",
@@ -335,7 +335,7 @@
         "task_element_completeness": 0.8,
         "citation_precision": 0.75,
         "unsupported_evidence_ratio": 0.25,
-        "latency_ms": 0.76
+        "latency_ms": 0.7487
       },
       {
         "case_id": "cross_department_control",
@@ -352,7 +352,7 @@
         "task_element_completeness": 1.0,
         "citation_precision": 1.0,
         "unsupported_evidence_ratio": 0.0,
-        "latency_ms": 1.3088
+        "latency_ms": 1.2835
       },
       {
         "case_id": "cross_department_control",
@@ -369,7 +369,7 @@
         "task_element_completeness": 1.0,
         "citation_precision": 1.0,
         "unsupported_evidence_ratio": 0.0,
-        "latency_ms": 2.0233
+        "latency_ms": 1.9733
       },
       {
         "case_id": "cross_department_control",
@@ -386,7 +386,7 @@
         "task_element_completeness": 1.0,
         "citation_precision": 1.0,
         "unsupported_evidence_ratio": 0.0,
-        "latency_ms": 3.7776
+        "latency_ms": 3.8905
       },
       {
         "case_id": "cross_department_control",
@@ -403,11 +403,11 @@
         "task_element_completeness": 1.0,
         "citation_precision": 1.0,
         "unsupported_evidence_ratio": 0.0,
-        "latency_ms": 2.3566
+        "latency_ms": 2.4222
       },
       {
         "case_id": "cross_department_control",
-        "method": "setr",
+        "method": "coverage_greedy_proxy",
         "selected_doc_ids": [
           "plan_school_action",
           "plan_underpass_exception",
@@ -420,7 +420,7 @@
         "task_element_completeness": 1.0,
         "citation_precision": 0.75,
         "unsupported_evidence_ratio": 0.25,
-        "latency_ms": 2.1968
+        "latency_ms": 2.1789
       },
       {
         "case_id": "cross_department_control",
@@ -437,11 +437,12 @@
         "task_element_completeness": 1.0,
         "citation_precision": 1.0,
         "unsupported_evidence_ratio": 0.0,
-        "latency_ms": 2.1772
+        "latency_ms": 2.1792
       }
     ],
     "limitations": [
       "Dense Top-K 使用本地确定性哈希 n-gram 向量，仅作为无外部模型依赖的工程基线。",
+      "coverage_greedy_proxy 只是覆盖优先贪心代理；未使用 SetR 官方代码、训练流程或权重，不是 SetR 复现。",
       "区县标注集为小规模演示集，不能替代 ConditionalQA、MultiHop-RAG 或 HotpotQA 的正式复现实验。",
       "Answer F1 以相关证据集合 F1 作为可重复代理指标，未调用生成模型裁判。"
     ]
@@ -453,49 +454,49 @@
         "role_coverage": 1.0,
         "citation_precision": 1.0,
         "unsupported_evidence_ratio": 0.0,
-        "latency_ms": 2.0328
+        "latency_ms": 1.9895
       },
       "without_role": {
         "evidence_recall": 1.0,
         "role_coverage": 1.0,
         "citation_precision": 0.9167,
         "unsupported_evidence_ratio": 0.0833,
-        "latency_ms": 2.211
+        "latency_ms": 2.3694
       },
       "without_field": {
         "evidence_recall": 1.0,
         "role_coverage": 1.0,
         "citation_precision": 0.9167,
         "unsupported_evidence_ratio": 0.0833,
-        "latency_ms": 2.2233
+        "latency_ms": 2.2323
       },
       "without_budget": {
         "evidence_recall": 1.0,
         "role_coverage": 1.0,
         "citation_precision": 1.0,
         "unsupported_evidence_ratio": 0.0,
-        "latency_ms": 2.0229
+        "latency_ms": 2.0196
       },
       "without_trust_conflict": {
         "evidence_recall": 0.6389,
         "role_coverage": 1.0,
         "citation_precision": 0.5833,
         "unsupported_evidence_ratio": 0.4167,
-        "latency_ms": 2.2378
+        "latency_ms": 2.1691
       },
       "without_set_objective": {
         "evidence_recall": 0.6111,
         "role_coverage": 0.7778,
         "citation_precision": 0.5833,
         "unsupported_evidence_ratio": 0.4167,
-        "latency_ms": 2.0492
+        "latency_ms": 2.0891
       }
     },
     "interpretation": {
       "without_role": "移除功能角色约束，检验角色互补性对证据选择的贡献。",
       "without_field": "移除任务字段查询约束，检验字段完整性目标的贡献。",
       "without_budget": "移除证据预算约束，观察覆盖收益与证据成本控制的权衡。",
-      "without_trust_conflict": "使用仅覆盖优先的 SetR，移除 FRC 的可信度与冲突惩罚。",
+      "without_trust_conflict": "退化为仅按功能角色覆盖的贪心代理，移除 FRC 的字段支持、可信度、适用性与冲突惩罚；该代理不是 SetR 复现。",
       "without_set_objective": "退化为混合 Top-K，移除集合互补性目标。"
     }
   },
@@ -547,6 +548,7 @@
       "相同预算下字段覆盖率相对最强基线提高至少5个百分点": false,
       "Full引用正确率严格优于w/o Role和w/o Field": true
     },
+    "strongest_reproducible_baseline_method": "coverage_greedy_proxy",
     "strongest_baseline_task_element_completeness": 1.0,
     "frc_task_element_completeness": 1.0,
     "coverage_gain_percentage_points": 0.0,
