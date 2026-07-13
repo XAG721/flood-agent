@@ -2,7 +2,8 @@
   "metadata": {
     "audit_version": "progressive-completion-audit-v1",
     "scope": "single-district controlled simulation",
-    "contract": "洪水预警响应系统_渐进式迭代开发与升级设计.md sections 18-23"
+    "contract": "洪水预警响应系统_渐进式迭代开发与升级设计.md sections 18-23",
+    "evidence_hash_canonicalization": "UTF-8 without BOM; CRLF and CR normalized to LF"
   },
   "summary": {
     "controlled_first_iteration": "PASS",
@@ -206,16 +207,16 @@
     }
   ],
   "evidence_sha256": {
-    "output/floodagent_bench/scenario_acceptance_report.json": "892f59b6ab254fda2595ce3f776640c728690bd408c0edab778ef2091fa50706",
-    "output/candidate_evaluation/report.json": "3625f561599af83510b28c4b6ba09c03495da4388096ee274c3e5df3cf8fbe76",
-    "output/performance/controlled_performance_report.json": "251794464930d5882db471788bd2424d52377881ccdc25e413f5ca14321741c2",
-    "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json": "dda3fe2c4820d37f71c78a16ee2b6a3db2c01b61fd7f2ef078a3045703e3b75b",
-    "docs/openapi.json": "719a7653036a03d3e113cd7a12a2c5b2c4f6ff46914f672cd8793242f7f0d17f",
+    "output/floodagent_bench/scenario_acceptance_report.json": "806c53237599302277ba9aaaecf8fc95690416a9b1474145b3a8bccb50515ab1",
+    "output/candidate_evaluation/report.json": "4f25d27e8411bae5906cc4bf8c33eeeba664201fc82e18cb4adfe36085f7c9eb",
+    "output/performance/controlled_performance_report.json": "72881b8700ac867eaefc71a0ff770c8317c3c76531f06afafd55cf5a14f3b2b3",
+    "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json": "b0657a06846cd2bf5dcf4d9cb24591fda5316b9805e18b612e7f45e5ecd45222",
+    "docs/openapi.json": "e338285b1b988a4ddf359bffa1d0249cfb12089f1f133d2a8696060b713ce73b",
     "docker-compose.yml": "8204abc75a6e82041d16e52d09e94e4f84de19f00f5a9cc9338dcd91ed76a33e",
     "洪水预警响应系统_渐进式迭代开发与升级设计.md": "e30b25945f65c7616b3cc052ee1c5e242a8ebf1b091b497efde8df049e267801",
     "面向区县防办的洪水预警响应系统_升级设计说明V3.md": "b059960b880d7bc2be0891e5e676d353548aca79a692438c8538721426f9e88d",
-    "docs/progressive_upgrade/completion_traceability_audit.md": "081fd14ea6172855b1227a9d0407ccc3416abb34ec377903b057e615e4642afc",
-    "docs/V3_upgrade_acceptance_matrix.md": "0314e83d10f26d195599a15adfa8b855ab74c25066e43654fbcb159f3f92b469"
+    "docs/progressive_upgrade/completion_traceability_audit.md": "c033e1f666ede2b0f86cb9ea8bda240c6c588a6c538cfb556d336ea737a632d1",
+    "docs/V3_upgrade_acceptance_matrix.md": "fbfac7538a0ca64b3b68480f2ffe148b51d57811956e579935e72d49eb160c28"
   },
   "external_no_go": [
     {

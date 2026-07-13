@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 from flood_system.completion_audit import (
+    _canonical_text_sha256,
     build_progressive_completion_audit,
     check_artifact_groups,
     check_gate_one,
@@ -71,3 +72,12 @@ def test_completion_audit_output_is_deterministic(tmp_path: Path) -> None:
     assert first_md.read_bytes() == second_md.read_bytes()
     report = json.loads(first_json.read_text(encoding="utf-8"))
     assert report["metadata"]["audit_version"] == "progressive-completion-audit-v1"
+
+
+def test_evidence_hash_is_independent_of_platform_newlines(tmp_path: Path) -> None:
+    lf = tmp_path / "lf.txt"
+    crlf = tmp_path / "crlf.txt"
+    lf.write_bytes("第一行\n第二行\n".encode())
+    crlf.write_bytes("第一行\r\n第二行\r\n".encode())
+
+    assert _canonical_text_sha256(lf) == _canonical_text_sha256(crlf)
