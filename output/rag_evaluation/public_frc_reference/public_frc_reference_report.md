@@ -53,11 +53,34 @@ ConditionalQA 保存分数上共审计 80 组 FRC 参数；最佳 Evidence F1=0.
 | 敏感性维度 | 状态 |
 |---|---|
 | k_2_3_5_8 | RUN |
-| token_budget_512_1024_2048 | NOT_RUN |
+| token_budget_512_1024_2048 | RUN |
 | role_and_field_weights | PARTIAL_ROLE_ONLY |
 | conflict_threshold | NOT_RUN |
-| document_missing_ratio | PARTIAL_SINGLE_REMOVAL_CHALLENGE |
+| document_missing_ratio | RUN |
 | chunk_length | NOT_RUN |
+
+### Token 预算敏感性
+
+| 数据集 | Token 预算 | FRC Evidence F1 | 最强基线 | 基线 F1 | 差值 |
+|---|---:|---:|---|---:|---:|
+| conditionalqa | 512 | 0.484816 | coverage_greedy_proxy | 0.481744 | +0.003072 |
+| conditionalqa | 1024 | 0.696558 | cross_encoder_topk | 0.696673 | -0.000115 |
+| conditionalqa | 2048 | 0.705754 | cross_encoder_topk | 0.706158 | -0.000404 |
+| multihoprag | 512 | 0.453156 | cross_encoder_topk | 0.452804 | +0.000352 |
+| multihoprag | 1024 | 0.421133 | cross_encoder_topk | 0.420154 | +0.000979 |
+| multihoprag | 2048 | 0.394001 | cross_encoder_topk | 0.393660 | +0.000341 |
+| hotpotqa | 512 | 0.550754 | coverage_greedy_proxy | 0.550818 | -0.000064 |
+| hotpotqa | 1024 | 0.550754 | coverage_greedy_proxy | 0.550818 | -0.000064 |
+| hotpotqa | 2048 | 0.550754 | coverage_greedy_proxy | 0.550818 | -0.000064 |
+
+### 多档缺失比例敏感性（ConditionalQA）
+
+| 目标缺失 | 实际缺失 | FRC Evidence F1 | 最强基线 | 差值 | FRC 错误完整声明率 |
+|---:|---:|---:|---|---:|---:|
+| 0% | 0.00% | 0.756220 | cross_encoder_topk | -0.000441 | 0.000000 |
+| 25% | 27.25% | 0.780936 | cross_encoder_topk | -0.001597 | 0.723005 |
+| 50% | 51.63% | 0.731869 | coverage_greedy_proxy | -0.001749 | 0.514056 |
+| 75% | 76.12% | 0.570430 | coverage_greedy_proxy | -0.000435 | 0.280156 |
 
 ## 缺失证据挑战
 

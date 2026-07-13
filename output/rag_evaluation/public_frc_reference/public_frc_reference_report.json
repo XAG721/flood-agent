@@ -1267,16 +1267,536 @@
       "interpretation": "This is a descriptive sweep over saved ConditionalQA real-model scores. It is not a held-out tuning result and does not authorize changing the frozen test configuration.",
       "source_sha256": "81b7e4d08a23010893bf3a0ca8681217c6e4d94d0cc43f1b0c2cc417285e2b25"
     },
+    "token_budget_sensitivity": {
+      "status": "RUN",
+      "k": 5,
+      "token_budgets": [
+        512,
+        1024,
+        2048
+      ],
+      "datasets": {
+        "conditionalqa": {
+          "status": "RUN",
+          "cases": 285,
+          "budgets": [
+            {
+              "token_budget": 512,
+              "metrics": {
+                "cross_encoder_topk": {
+                  "evidence_recall": 0.384791,
+                  "evidence_precision": 0.811111,
+                  "evidence_f1": 0.480334,
+                  "complete_evidence_set": 0.101754,
+                  "role_coverage": 0.936959,
+                  "token_cost": 432.908772,
+                  "budget_violation": 0.0,
+                  "cases": 285
+                },
+                "coverage_greedy_proxy": {
+                  "evidence_recall": 0.385704,
+                  "evidence_precision": 0.81462,
+                  "evidence_f1": 0.481744,
+                  "complete_evidence_set": 0.098246,
+                  "role_coverage": 1.0,
+                  "token_cost": 432.375439,
+                  "budget_violation": 0.0,
+                  "cases": 285
+                },
+                "frc_select": {
+                  "evidence_recall": 0.389908,
+                  "evidence_precision": 0.816959,
+                  "evidence_f1": 0.484816,
+                  "complete_evidence_set": 0.105263,
+                  "role_coverage": 0.997368,
+                  "token_cost": 432.252632,
+                  "budget_violation": 0.0,
+                  "cases": 285
+                }
+              },
+              "strongest_baseline": "coverage_greedy_proxy",
+              "frc_minus_baseline_evidence_f1": 0.003072
+            },
+            {
+              "token_budget": 1024,
+              "metrics": {
+                "cross_encoder_topk": {
+                  "evidence_recall": 0.695043,
+                  "evidence_precision": 0.794094,
+                  "evidence_f1": 0.696673,
+                  "complete_evidence_set": 0.42807,
+                  "role_coverage": 0.968889,
+                  "token_cost": 919.947368,
+                  "budget_violation": 0.0,
+                  "cases": 285
+                },
+                "coverage_greedy_proxy": {
+                  "evidence_recall": 0.692228,
+                  "evidence_precision": 0.793392,
+                  "evidence_f1": 0.695484,
+                  "complete_evidence_set": 0.421053,
+                  "role_coverage": 1.0,
+                  "token_cost": 915.129825,
+                  "budget_violation": 0.0,
+                  "cases": 285
+                },
+                "frc_select": {
+                  "evidence_recall": 0.69513,
+                  "evidence_precision": 0.794094,
+                  "evidence_f1": 0.696558,
+                  "complete_evidence_set": 0.42807,
+                  "role_coverage": 1.0,
+                  "token_cost": 917.347368,
+                  "budget_violation": 0.0,
+                  "cases": 285
+                }
+              },
+              "strongest_baseline": "cross_encoder_topk",
+              "frc_minus_baseline_evidence_f1": -0.000115
+            },
+            {
+              "token_budget": 2048,
+              "metrics": {
+                "cross_encoder_topk": {
+                  "evidence_recall": 0.704869,
+                  "evidence_precision": 0.804094,
+                  "evidence_f1": 0.706158,
+                  "complete_evidence_set": 0.445614,
+                  "role_coverage": 0.975906,
+                  "token_cost": 929.849123,
+                  "budget_violation": 0.0,
+                  "cases": 285
+                },
+                "coverage_greedy_proxy": {
+                  "evidence_recall": 0.701096,
+                  "evidence_precision": 0.801988,
+                  "evidence_f1": 0.703873,
+                  "complete_evidence_set": 0.438596,
+                  "role_coverage": 1.0,
+                  "token_cost": 924.736842,
+                  "budget_violation": 0.0,
+                  "cases": 285
+                },
+                "frc_select": {
+                  "evidence_recall": 0.704547,
+                  "evidence_precision": 0.804094,
+                  "evidence_f1": 0.705754,
+                  "complete_evidence_set": 0.445614,
+                  "role_coverage": 1.0,
+                  "token_cost": 927.638596,
+                  "budget_violation": 0.0,
+                  "cases": 285
+                }
+              },
+              "strongest_baseline": "cross_encoder_topk",
+              "frc_minus_baseline_evidence_f1": -0.000404
+            }
+          ],
+          "source_sha256": "feb0d75957c1bb09f07985979bb0816abc761ce6fafc66b40d9d99b02c1374b5"
+        },
+        "multihoprag": {
+          "status": "RUN",
+          "cases": 2556,
+          "budgets": [
+            {
+              "token_budget": 512,
+              "metrics": {
+                "cross_encoder_topk": {
+                  "evidence_recall": 0.420579,
+                  "evidence_precision": 0.507825,
+                  "evidence_f1": 0.452804,
+                  "complete_evidence_set": 0.271909,
+                  "role_coverage": 0.946009,
+                  "token_cost": 486.278951,
+                  "budget_violation": 0.0,
+                  "cases": 2556
+                },
+                "coverage_greedy_proxy": {
+                  "evidence_recall": 0.407766,
+                  "evidence_precision": 0.489632,
+                  "evidence_f1": 0.438054,
+                  "complete_evidence_set": 0.269562,
+                  "role_coverage": 0.992567,
+                  "token_cost": 486.9018,
+                  "budget_violation": 0.0,
+                  "cases": 2556
+                },
+                "frc_select": {
+                  "evidence_recall": 0.421394,
+                  "evidence_precision": 0.507629,
+                  "evidence_f1": 0.453156,
+                  "complete_evidence_set": 0.274257,
+                  "role_coverage": 0.998011,
+                  "token_cost": 486.426056,
+                  "budget_violation": 0.0,
+                  "cases": 2556
+                }
+              },
+              "strongest_baseline": "cross_encoder_topk",
+              "frc_minus_baseline_evidence_f1": 0.000352
+            },
+            {
+              "token_budget": 1024,
+              "metrics": {
+                "cross_encoder_topk": {
+                  "evidence_recall": 0.559468,
+                  "evidence_precision": 0.345364,
+                  "evidence_f1": 0.420154,
+                  "complete_evidence_set": 0.422926,
+                  "role_coverage": 0.979167,
+                  "token_cost": 972.684664,
+                  "budget_violation": 0.0,
+                  "cases": 2556
+                },
+                "coverage_greedy_proxy": {
+                  "evidence_recall": 0.556012,
+                  "evidence_precision": 0.342234,
+                  "evidence_f1": 0.416827,
+                  "complete_evidence_set": 0.420579,
+                  "role_coverage": 1.0,
+                  "token_cost": 973.083333,
+                  "budget_violation": 0.0,
+                  "cases": 2556
+                },
+                "frc_select": {
+                  "evidence_recall": 0.561261,
+                  "evidence_precision": 0.346049,
+                  "evidence_f1": 0.421133,
+                  "complete_evidence_set": 0.426448,
+                  "role_coverage": 0.99987,
+                  "token_cost": 972.742175,
+                  "budget_violation": 0.0,
+                  "cases": 2556
+                }
+              },
+              "strongest_baseline": "cross_encoder_topk",
+              "frc_minus_baseline_evidence_f1": 0.000979
+            },
+            {
+              "token_budget": 2048,
+              "metrics": {
+                "cross_encoder_topk": {
+                  "evidence_recall": 0.602113,
+                  "evidence_precision": 0.299374,
+                  "evidence_f1": 0.39366,
+                  "complete_evidence_set": 0.472222,
+                  "role_coverage": 0.984285,
+                  "token_cost": 1215.74687,
+                  "budget_violation": 0.0,
+                  "cases": 2556
+                },
+                "coverage_greedy_proxy": {
+                  "evidence_recall": 0.60032,
+                  "evidence_precision": 0.298122,
+                  "evidence_f1": 0.392216,
+                  "complete_evidence_set": 0.472222,
+                  "role_coverage": 1.0,
+                  "token_cost": 1216.10133,
+                  "budget_violation": 0.0,
+                  "cases": 2556
+                },
+                "frc_select": {
+                  "evidence_recall": 0.602765,
+                  "evidence_precision": 0.299609,
+                  "evidence_f1": 0.394001,
+                  "complete_evidence_set": 0.474178,
+                  "role_coverage": 1.0,
+                  "token_cost": 1215.82277,
+                  "budget_violation": 0.0,
+                  "cases": 2556
+                }
+              },
+              "strongest_baseline": "cross_encoder_topk",
+              "frc_minus_baseline_evidence_f1": 0.000341
+            }
+          ],
+          "source_sha256": "de5333ecea96ed274afd5d28b4d69af5a63e975fc75c9fa991ade9ce52f296e7"
+        },
+        "hotpotqa": {
+          "status": "RUN",
+          "cases": 1000,
+          "budgets": [
+            {
+              "token_budget": 512,
+              "metrics": {
+                "cross_encoder_topk": {
+                  "evidence_recall": 0.865712,
+                  "evidence_precision": 0.413,
+                  "evidence_f1": 0.550754,
+                  "complete_evidence_set": 0.689,
+                  "role_coverage": 1.0,
+                  "token_cost": 133.964,
+                  "budget_violation": 0.0,
+                  "cases": 1000
+                },
+                "coverage_greedy_proxy": {
+                  "evidence_recall": 0.865962,
+                  "evidence_precision": 0.413,
+                  "evidence_f1": 0.550818,
+                  "complete_evidence_set": 0.69,
+                  "role_coverage": 1.0,
+                  "token_cost": 133.969,
+                  "budget_violation": 0.0,
+                  "cases": 1000
+                },
+                "frc_select": {
+                  "evidence_recall": 0.865712,
+                  "evidence_precision": 0.413,
+                  "evidence_f1": 0.550754,
+                  "complete_evidence_set": 0.689,
+                  "role_coverage": 1.0,
+                  "token_cost": 133.964,
+                  "budget_violation": 0.0,
+                  "cases": 1000
+                }
+              },
+              "strongest_baseline": "coverage_greedy_proxy",
+              "frc_minus_baseline_evidence_f1": -6.4e-05
+            },
+            {
+              "token_budget": 1024,
+              "metrics": {
+                "cross_encoder_topk": {
+                  "evidence_recall": 0.865712,
+                  "evidence_precision": 0.413,
+                  "evidence_f1": 0.550754,
+                  "complete_evidence_set": 0.689,
+                  "role_coverage": 1.0,
+                  "token_cost": 133.964,
+                  "budget_violation": 0.0,
+                  "cases": 1000
+                },
+                "coverage_greedy_proxy": {
+                  "evidence_recall": 0.865962,
+                  "evidence_precision": 0.413,
+                  "evidence_f1": 0.550818,
+                  "complete_evidence_set": 0.69,
+                  "role_coverage": 1.0,
+                  "token_cost": 133.969,
+                  "budget_violation": 0.0,
+                  "cases": 1000
+                },
+                "frc_select": {
+                  "evidence_recall": 0.865712,
+                  "evidence_precision": 0.413,
+                  "evidence_f1": 0.550754,
+                  "complete_evidence_set": 0.689,
+                  "role_coverage": 1.0,
+                  "token_cost": 133.964,
+                  "budget_violation": 0.0,
+                  "cases": 1000
+                }
+              },
+              "strongest_baseline": "coverage_greedy_proxy",
+              "frc_minus_baseline_evidence_f1": -6.4e-05
+            },
+            {
+              "token_budget": 2048,
+              "metrics": {
+                "cross_encoder_topk": {
+                  "evidence_recall": 0.865712,
+                  "evidence_precision": 0.413,
+                  "evidence_f1": 0.550754,
+                  "complete_evidence_set": 0.689,
+                  "role_coverage": 1.0,
+                  "token_cost": 133.964,
+                  "budget_violation": 0.0,
+                  "cases": 1000
+                },
+                "coverage_greedy_proxy": {
+                  "evidence_recall": 0.865962,
+                  "evidence_precision": 0.413,
+                  "evidence_f1": 0.550818,
+                  "complete_evidence_set": 0.69,
+                  "role_coverage": 1.0,
+                  "token_cost": 133.969,
+                  "budget_violation": 0.0,
+                  "cases": 1000
+                },
+                "frc_select": {
+                  "evidence_recall": 0.865712,
+                  "evidence_precision": 0.413,
+                  "evidence_f1": 0.550754,
+                  "complete_evidence_set": 0.689,
+                  "role_coverage": 1.0,
+                  "token_cost": 133.964,
+                  "budget_violation": 0.0,
+                  "cases": 1000
+                }
+              },
+              "strongest_baseline": "coverage_greedy_proxy",
+              "frc_minus_baseline_evidence_f1": -6.4e-05
+            }
+          ],
+          "source_sha256": "ac5189e4f64e799ca7915a0eff9a304e6d09e0bbc6c4ef233335b17c6d56e6af"
+        }
+      },
+      "all_methods_within_budget": true,
+      "interpretation": "Selectors are rerun from the same saved real-model candidate and role scores. No generation metric is reused as a retrieval-selection claim."
+    },
+    "missing_ratio_sensitivity": {
+      "status": "RUN",
+      "protocol": "For each case/evidence pair, a fixed SHA-256 uniform score is compared with the target ratio, producing nested deterministic removals from the same saved real-model pool.",
+      "target_ratios": [
+        0.0,
+        0.25,
+        0.5,
+        0.75
+      ],
+      "results": [
+        {
+          "target_missing_ratio": 0.0,
+          "achieved_missing_ratio": 0.0,
+          "cases": 261,
+          "cases_with_removal": 0,
+          "empty_available_evidence_rate": 0.0,
+          "metrics": {
+            "cross_encoder_topk": {
+              "evidence_recall": 0.73137,
+              "evidence_precision": 0.869093,
+              "evidence_f1": 0.756661,
+              "complete_available_evidence_set": 0.394636,
+              "role_coverage": 0.976373,
+              "false_complete_on_removed_cases": 0.0
+            },
+            "coverage_greedy_proxy": {
+              "evidence_recall": 0.731082,
+              "evidence_precision": 0.867561,
+              "evidence_f1": 0.755443,
+              "complete_available_evidence_set": 0.390805,
+              "role_coverage": 1.0,
+              "false_complete_on_removed_cases": 0.0
+            },
+            "frc_select": {
+              "evidence_recall": 0.731019,
+              "evidence_precision": 0.869093,
+              "evidence_f1": 0.75622,
+              "complete_available_evidence_set": 0.394636,
+              "role_coverage": 1.0,
+              "false_complete_on_removed_cases": 0.0
+            }
+          },
+          "strongest_baseline": "cross_encoder_topk",
+          "frc_minus_baseline_evidence_f1": -0.000441
+        },
+        {
+          "target_missing_ratio": 0.25,
+          "achieved_missing_ratio": 0.272472,
+          "cases": 261,
+          "cases_with_removal": 213,
+          "empty_available_evidence_rate": 0.0,
+          "metrics": {
+            "cross_encoder_topk": {
+              "evidence_recall": 0.813964,
+              "evidence_precision": 0.819476,
+              "evidence_f1": 0.782533,
+              "complete_available_evidence_set": 0.563218,
+              "role_coverage": 0.804278,
+              "false_complete_on_removed_cases": 0.713615
+            },
+            "coverage_greedy_proxy": {
+              "evidence_recall": 0.813073,
+              "evidence_precision": 0.81871,
+              "evidence_f1": 0.781499,
+              "complete_available_evidence_set": 0.559387,
+              "role_coverage": 0.811941,
+              "false_complete_on_removed_cases": 0.723005
+            },
+            "frc_select": {
+              "evidence_recall": 0.812139,
+              "evidence_precision": 0.817944,
+              "evidence_f1": 0.780936,
+              "complete_available_evidence_set": 0.563218,
+              "role_coverage": 0.811941,
+              "false_complete_on_removed_cases": 0.723005
+            }
+          },
+          "strongest_baseline": "cross_encoder_topk",
+          "frc_minus_baseline_evidence_f1": -0.001597
+        },
+        {
+          "target_missing_ratio": 0.5,
+          "achieved_missing_ratio": 0.516292,
+          "cases": 261,
+          "cases_with_removal": 249,
+          "empty_available_evidence_rate": 0.057471,
+          "metrics": {
+            "cross_encoder_topk": {
+              "evidence_recall": 0.832588,
+              "evidence_precision": 0.711367,
+              "evidence_f1": 0.732827,
+              "complete_available_evidence_set": 0.727969,
+              "role_coverage": 0.598978,
+              "false_complete_on_removed_cases": 0.51004
+            },
+            "coverage_greedy_proxy": {
+              "evidence_recall": 0.833811,
+              "evidence_precision": 0.712133,
+              "evidence_f1": 0.733618,
+              "complete_available_evidence_set": 0.727969,
+              "role_coverage": 0.600894,
+              "false_complete_on_removed_cases": 0.514056
+            },
+            "frc_select": {
+              "evidence_recall": 0.83131,
+              "evidence_precision": 0.7106,
+              "evidence_f1": 0.731869,
+              "complete_available_evidence_set": 0.727969,
+              "role_coverage": 0.600894,
+              "false_complete_on_removed_cases": 0.514056
+            }
+          },
+          "strongest_baseline": "coverage_greedy_proxy",
+          "frc_minus_baseline_evidence_f1": -0.001749
+        },
+        {
+          "target_missing_ratio": 0.75,
+          "achieved_missing_ratio": 0.761236,
+          "cases": 261,
+          "cases_with_removal": 257,
+          "empty_available_evidence_rate": 0.264368,
+          "metrics": {
+            "cross_encoder_topk": {
+              "evidence_recall": 0.684483,
+              "evidence_precision": 0.524968,
+              "evidence_f1": 0.57043,
+              "complete_available_evidence_set": 0.896552,
+              "role_coverage": 0.350894,
+              "false_complete_on_removed_cases": 0.280156
+            },
+            "coverage_greedy_proxy": {
+              "evidence_recall": 0.685951,
+              "evidence_precision": 0.524968,
+              "evidence_f1": 0.570865,
+              "complete_available_evidence_set": 0.900383,
+              "role_coverage": 0.350894,
+              "false_complete_on_removed_cases": 0.280156
+            },
+            "frc_select": {
+              "evidence_recall": 0.684483,
+              "evidence_precision": 0.524968,
+              "evidence_f1": 0.57043,
+              "complete_available_evidence_set": 0.896552,
+              "role_coverage": 0.350894,
+              "false_complete_on_removed_cases": 0.280156
+            }
+          },
+          "strongest_baseline": "coverage_greedy_proxy",
+          "frc_minus_baseline_evidence_f1": -0.000435
+        }
+      ],
+      "source_sha256": "feb0d75957c1bb09f07985979bb0816abc761ce6fafc66b40d9d99b02c1374b5"
+    },
     "sensitivity_coverage": {
       "k_2_3_5_8": "RUN",
-      "token_budget_512_1024_2048": "NOT_RUN",
+      "token_budget_512_1024_2048": "RUN",
       "role_and_field_weights": "PARTIAL_ROLE_ONLY",
       "conflict_threshold": "NOT_RUN",
-      "document_missing_ratio": "PARTIAL_SINGLE_REMOVAL_CHALLENGE",
+      "document_missing_ratio": "RUN",
       "chunk_length": "NOT_RUN"
     },
     "coverage_complete": false,
-    "interpretation": "Existing real-model artifacts directly cover five of nine planned FRC ablations, all K values, and a ConditionalQA role/redundancy parameter grid. Missing dimensions remain NOT_RUN rather than being inferred from unrelated metrics."
+    "interpretation": "Existing real-model artifacts directly cover five of nine planned FRC ablations, all K and token-budget values, a ConditionalQA role/redundancy parameter grid, and multi-ratio missing-evidence diagnostics. Missing dimensions remain NOT_RUN rather than being inferred from unrelated metrics."
   },
   "challenge_slices": {
     "normal": {

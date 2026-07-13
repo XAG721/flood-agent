@@ -276,12 +276,17 @@ def build_design_experiment_audit(metrics_dir: Path) -> dict[str, Any]:
     parameters = load_parameter_sensitivity_audit(
         metrics_dir / "frc_param_sweep_conditionalqa.csv"
     )
+    role_scores_dir = metrics_dir.parent / "role_scores"
+    token_budgets = token_budget_sensitivity(role_scores_dir)
+    missing_ratios = missing_ratio_sensitivity(
+        role_scores_dir / "role_scores_conditionalqa.jsonl"
+    )
     sensitivity_coverage = {
         "k_2_3_5_8": "RUN",
-        "token_budget_512_1024_2048": "NOT_RUN",
+        "token_budget_512_1024_2048": token_budgets["status"],
         "role_and_field_weights": "PARTIAL_ROLE_ONLY",
         "conflict_threshold": "NOT_RUN",
-        "document_missing_ratio": "PARTIAL_SINGLE_REMOVAL_CHALLENGE",
+        "document_missing_ratio": missing_ratios["status"],
         "chunk_length": "NOT_RUN",
     }
     return {
@@ -289,6 +294,8 @@ def build_design_experiment_audit(metrics_dir: Path) -> dict[str, Any]:
         "ablation": ablation,
         "k_sensitivity": k_sensitivity,
         "parameter_sensitivity": parameters,
+        "token_budget_sensitivity": token_budgets,
+        "missing_ratio_sensitivity": missing_ratios,
         "sensitivity_coverage": sensitivity_coverage,
         "coverage_complete": (
             ablation["status"] == "RUN"
@@ -296,8 +303,9 @@ def build_design_experiment_audit(metrics_dir: Path) -> dict[str, Any]:
         ),
         "interpretation": (
             "Existing real-model artifacts directly cover five of nine planned FRC ablations, "
-            "all K values, and a ConditionalQA role/redundancy parameter grid. Missing dimensions "
-            "remain NOT_RUN rather than being inferred from unrelated metrics."
+            "all K and token-budget values, a ConditionalQA role/redundancy parameter grid, and "
+            "multi-ratio missing-evidence diagnostics. Missing dimensions remain NOT_RUN rather "
+            "than being inferred from unrelated metrics."
         ),
     }
 
@@ -382,7 +390,7 @@ def _take_with_budget(candidates: list[dict[str, Any]], *, k: int, budget: int) 
     total = 0
     for candidate in candidates:
         cost = int(candidate.get("token_count", 1))
-        if selected and total + cost > budget:
+        if total + cost > budget:
             continue
         selected.append(candidate)
         total += cost
@@ -430,7 +438,7 @@ def select_precomputed(
                 ),
             )
             cost = int(best.get("token_count", 1))
-            if selected and total + cost > budget:
+            if total + cost > budget:
                 continue
             selected.append(best)
             selected_ids.add(best["id"])
@@ -453,7 +461,7 @@ def select_precomputed(
         scored: list[tuple[float, str, dict[str, Any]]] = []
         for candidate in remaining:
             cost = int(candidate.get("token_count", 1))
-            if selected and total + cost > budget:
+            if total + cost > budget:
                 continue
             improvements = []
             for role, old in role_best.items():
@@ -516,6 +524,206 @@ def missing_evidence_challenge(path: Path) -> dict[str, Any]:
             for method, values in totals.items()
         },
         "interpretation": "false_complete is the rate at which role scores still claim full coverage after a required gold passage was removed; lower is safer.",
+    }
+
+
+def aggregate_precomputed_selectors(
+    rows: Iterable[dict[str, Any]],
+    methods: Iterable[str],
+    *,
+    k: int,
+    budget: int,
+) -> dict[str, dict[str, float | int]]:
+    method_list = list(methods)
+    totals: dict[str, dict[str, float]] = defaultdict(lambda: defaultdict(float))
+    cases = 0
+    for row in rows:
+        cases += 1
+        for method in method_list:
+            selected = select_precomputed(row, method, k=k, budget=budget)
+            metrics = evidence_metrics(
+                row.get("gold_evidence_ids", []),
+                [item["id"] for item in selected],
+            )
+            for key, value in metrics.items():
+                totals[method][key] += value
+            totals[method]["role_coverage"] += selected_role_coverage(
+                {**row, "selected_evidence": selected}
+            )
+            token_cost = sum(int(item.get("token_count", 1)) for item in selected)
+            totals[method]["token_cost"] += token_cost
+            totals[method]["budget_violation"] += float(token_cost > budget)
+    return {
+        method: {
+            **{
+                key: round(value / max(1, cases), 6)
+                for key, value in totals[method].items()
+            },
+            "cases": cases,
+        }
+        for method in method_list
+    }
+
+
+def token_budget_sensitivity(
+    role_scores_dir: Path,
+    *,
+    budgets: tuple[int, ...] = (512, 1024, 2048),
+    k: int = 5,
+) -> dict[str, Any]:
+    methods = ("cross_encoder_topk", "coverage_greedy_proxy", "frc_select")
+    datasets: dict[str, Any] = {}
+    for dataset in DATASET_METHODS:
+        path = role_scores_dir / f"role_scores_{dataset}.jsonl"
+        rows = list(read_jsonl(path))
+        budget_results = []
+        for budget in budgets:
+            metrics = aggregate_precomputed_selectors(
+                rows,
+                methods,
+                k=k,
+                budget=budget,
+            )
+            strongest = max(
+                (method for method in methods if method != "frc_select"),
+                key=lambda method: float(metrics[method]["evidence_f1"]),
+            )
+            budget_results.append(
+                {
+                    "token_budget": budget,
+                    "metrics": metrics,
+                    "strongest_baseline": strongest,
+                    "frc_minus_baseline_evidence_f1": round(
+                        float(metrics["frc_select"]["evidence_f1"])
+                        - float(metrics[strongest]["evidence_f1"]),
+                        6,
+                    ),
+                }
+            )
+        datasets[dataset] = {
+            "status": "RUN",
+            "cases": len(rows),
+            "budgets": budget_results,
+            "source_sha256": sha256(path),
+        }
+    all_within_budget = all(
+        method_metrics["budget_violation"] == 0.0
+        for dataset in datasets.values()
+        for item in dataset["budgets"]
+        for method_metrics in item["metrics"].values()
+    )
+    return {
+        "status": "RUN" if all_within_budget else "FAIL",
+        "k": k,
+        "token_budgets": list(budgets),
+        "datasets": datasets,
+        "all_methods_within_budget": all_within_budget,
+        "interpretation": (
+            "Selectors are rerun from the same saved real-model candidate and role scores. "
+            "No generation metric is reused as a retrieval-selection claim."
+        ),
+    }
+
+
+def _stable_missing_evidence_ids(
+    case_id: str,
+    gold_ids: Iterable[str],
+    ratio: float,
+) -> set[str]:
+    removed: set[str] = set()
+    for evidence_id in gold_ids:
+        digest = hashlib.sha256(
+            f"missing-ratio-v1\0{case_id}\0{evidence_id}".encode("utf-8")
+        ).digest()
+        unit = int.from_bytes(digest[:8], "big") / 2**64
+        if unit < ratio:
+            removed.add(evidence_id)
+    return removed
+
+
+def missing_ratio_sensitivity(
+    path: Path,
+    *,
+    ratios: tuple[float, ...] = (0.0, 0.25, 0.5, 0.75),
+) -> dict[str, Any]:
+    methods = ("cross_encoder_topk", "coverage_greedy_proxy", "frc_select")
+    rows = [row for row in read_jsonl(path) if len(row.get("gold_evidence_ids", [])) >= 2]
+    ratio_results = []
+    for ratio in ratios:
+        totals: dict[str, dict[str, float]] = defaultdict(lambda: defaultdict(float))
+        total_gold = 0
+        removed_gold = 0
+        cases_with_removal = 0
+        empty_available = 0
+        for source in rows:
+            gold = list(source["gold_evidence_ids"])
+            removed = _stable_missing_evidence_ids(source["id"], gold, ratio)
+            available = set(gold) - removed
+            total_gold += len(gold)
+            removed_gold += len(removed)
+            cases_with_removal += int(bool(removed))
+            empty_available += int(not available)
+            row = {
+                **source,
+                "candidates": [
+                    item for item in source.get("candidates", []) if item["id"] not in removed
+                ],
+            }
+            for method in methods:
+                selected = select_precomputed(row, method)
+                metrics = evidence_metrics(available, [item["id"] for item in selected])
+                for key, value in metrics.items():
+                    totals[method][key] += value
+                role_coverage = selected_role_coverage({**row, "selected_evidence": selected})
+                totals[method]["role_coverage"] += role_coverage
+                if removed:
+                    totals[method]["false_complete"] += float(role_coverage == 1.0)
+        metrics = {
+            method: {
+                "evidence_recall": round(totals[method]["evidence_recall"] / max(1, len(rows)), 6),
+                "evidence_precision": round(
+                    totals[method]["evidence_precision"] / max(1, len(rows)), 6
+                ),
+                "evidence_f1": round(totals[method]["evidence_f1"] / max(1, len(rows)), 6),
+                "complete_available_evidence_set": round(
+                    totals[method]["complete_evidence_set"] / max(1, len(rows)), 6
+                ),
+                "role_coverage": round(totals[method]["role_coverage"] / max(1, len(rows)), 6),
+                "false_complete_on_removed_cases": round(
+                    totals[method]["false_complete"] / max(1, cases_with_removal), 6
+                ),
+            }
+            for method in methods
+        }
+        strongest = max(
+            (method for method in methods if method != "frc_select"),
+            key=lambda method: metrics[method]["evidence_f1"],
+        )
+        ratio_results.append(
+            {
+                "target_missing_ratio": ratio,
+                "achieved_missing_ratio": round(removed_gold / max(1, total_gold), 6),
+                "cases": len(rows),
+                "cases_with_removal": cases_with_removal,
+                "empty_available_evidence_rate": round(empty_available / max(1, len(rows)), 6),
+                "metrics": metrics,
+                "strongest_baseline": strongest,
+                "frc_minus_baseline_evidence_f1": round(
+                    metrics["frc_select"]["evidence_f1"]
+                    - metrics[strongest]["evidence_f1"],
+                    6,
+                ),
+            }
+        )
+    return {
+        "status": "RUN",
+        "protocol": (
+            "For each case/evidence pair, a fixed SHA-256 uniform score is compared with the target "
+            "ratio, producing nested deterministic removals from the same saved real-model pool."
+        ),
+        "target_ratios": list(ratios),
+        "results": ratio_results,
+        "source_sha256": sha256(path),
     }
 
 
@@ -747,6 +955,42 @@ def render_public_reference_markdown(report: dict[str, Any]) -> str:
     )
     for dimension, status in experiment["sensitivity_coverage"].items():
         lines.append(f"| {dimension} | {status} |")
+    lines.extend(
+        [
+            "",
+            "### Token 预算敏感性",
+            "",
+            "| 数据集 | Token 预算 | FRC Evidence F1 | 最强基线 | 基线 F1 | 差值 |",
+            "|---|---:|---:|---|---:|---:|",
+        ]
+    )
+    for dataset_name, dataset in experiment["token_budget_sensitivity"]["datasets"].items():
+        for item in dataset["budgets"]:
+            frc = item["metrics"]["frc_select"]
+            baseline_name = item["strongest_baseline"]
+            baseline = item["metrics"][baseline_name]
+            lines.append(
+                f"| {dataset_name} | {item['token_budget']} | {frc['evidence_f1']:.6f} | "
+                f"{baseline_name} | {baseline['evidence_f1']:.6f} | "
+                f"{item['frc_minus_baseline_evidence_f1']:+.6f} |"
+            )
+    lines.extend(
+        [
+            "",
+            "### 多档缺失比例敏感性（ConditionalQA）",
+            "",
+            "| 目标缺失 | 实际缺失 | FRC Evidence F1 | 最强基线 | 差值 | FRC 错误完整声明率 |",
+            "|---:|---:|---:|---|---:|---:|",
+        ]
+    )
+    for item in experiment["missing_ratio_sensitivity"]["results"]:
+        frc = item["metrics"]["frc_select"]
+        lines.append(
+            f"| {item['target_missing_ratio']:.0%} | {item['achieved_missing_ratio']:.2%} | "
+            f"{frc['evidence_f1']:.6f} | {item['strongest_baseline']} | "
+            f"{item['frc_minus_baseline_evidence_f1']:+.6f} | "
+            f"{frc['false_complete_on_removed_cases']:.6f} |"
+        )
     missing = report["challenge_slices"]["missing_evidence"]
     lines.extend(
         [

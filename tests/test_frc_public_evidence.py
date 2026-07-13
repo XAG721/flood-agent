@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+import json
+
 from flood_system.frc_public_evidence import (
+    _stable_missing_evidence_ids,
+    aggregate_precomputed_selectors,
     build_design_experiment_audit,
     conflict_inventory,
     evidence_metrics,
@@ -133,6 +137,23 @@ def test_design_experiment_audit_does_not_treat_missing_ablations_as_passed(tmp_
         "frc_select,2.0,0.0,0.55,0.15,0.70,0.71,1.0,0.98,0.20,900,10\n",
         encoding="utf-8",
     )
+    role_scores = tmp_path / "role_scores"
+    role_scores.mkdir()
+    for dataset in ("conditionalqa", "multihoprag", "hotpotqa"):
+        row = {
+            "id": f"{dataset}-case",
+            "required_roles": ["answer", "condition"],
+            "gold_evidence_ids": ["gold-a", "gold-b"],
+            "candidates": [
+                candidate("gold-a", 1.0, {"answer": 1.0, "condition": 0.1}, gold=True),
+                candidate("gold-b", 0.9, {"answer": 0.1, "condition": 1.0}, gold=True),
+                candidate("other", 0.8, {"answer": 0.2, "condition": 0.2}),
+            ],
+        }
+        (role_scores / f"role_scores_{dataset}.jsonl").write_text(
+            json.dumps(row) + "\n",
+            encoding="utf-8",
+        )
 
     audit = build_design_experiment_audit(metrics)
 
@@ -146,6 +167,8 @@ def test_design_experiment_audit_does_not_treat_missing_ablations_as_passed(tmp_
     assert audit["ablation"]["gate_required_comparison"]["passed"] is False
     assert audit["k_sensitivity"]["status"] == "RUN"
     assert audit["parameter_sensitivity"]["configuration_count"] == 1
+    assert audit["token_budget_sensitivity"]["status"] == "RUN"
+    assert audit["missing_ratio_sensitivity"]["status"] == "RUN"
 
 
 def test_k_sensitivity_uses_coverage_proxy_name_instead_of_setr(tmp_path):
@@ -171,3 +194,34 @@ def test_k_sensitivity_uses_coverage_proxy_name_instead_of_setr(tmp_path):
     audit = load_k_sensitivity_audit(metrics)
 
     assert audit["datasets"]["hotpotqa"]["summary"][0]["strongest_baseline"] == "coverage_greedy_proxy"
+
+
+def test_precomputed_token_budget_is_strict():
+    row = {
+        "required_roles": ["answer"],
+        "gold_evidence_ids": ["too-large"],
+        "candidates": [candidate("too-large", 1.0, {"answer": 1.0}, gold=True) | {"token_count": 11}],
+    }
+
+    metrics = aggregate_precomputed_selectors(
+        [row],
+        ["cross_encoder_topk", "coverage_greedy_proxy", "frc_select"],
+        k=5,
+        budget=10,
+    )
+
+    assert all(values["token_cost"] == 0.0 for values in metrics.values())
+    assert all(values["budget_violation"] == 0.0 for values in metrics.values())
+
+
+def test_missing_ratio_removal_is_deterministic_and_nested():
+    gold = [f"evidence-{index}" for index in range(100)]
+
+    removed_25_first = _stable_missing_evidence_ids("case-1", gold, 0.25)
+    removed_25_second = _stable_missing_evidence_ids("case-1", gold, 0.25)
+    removed_50 = _stable_missing_evidence_ids("case-1", gold, 0.5)
+    removed_75 = _stable_missing_evidence_ids("case-1", gold, 0.75)
+
+    assert removed_25_first == removed_25_second
+    assert removed_25_first <= removed_50 <= removed_75
+    assert 15 <= len(removed_25_first) <= 35

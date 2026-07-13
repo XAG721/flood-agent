@@ -268,6 +268,9 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
         and conflict_slice["strongest_reproducible_baseline"] == "coverage_greedy_proxy"
         and experiment_audit["status"] == "PARTIAL"
         and experiment_audit["ablation"]["gate_required_comparison"]["passed"] is False
+        and experiment_audit["token_budget_sensitivity"]["status"] == "RUN"
+        and experiment_audit["token_budget_sensitivity"]["all_methods_within_budget"] is True
+        and experiment_audit["missing_ratio_sensitivity"]["status"] == "RUN"
         and rag_decision["design_16_2_experiment_coverage_complete"] is False
     )
     service_source = (repo_root / "flood_system/response_workflow/service.py").read_text(encoding="utf-8")
@@ -374,6 +377,8 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
                 "ablation_variants_run": len(experiment_audit["ablation"]["run_variants"]),
                 "ablation_variants_planned": len(experiment_audit["ablation"]["planned_variants"]),
                 "experiment_coverage_complete": experiment_audit["coverage_complete"],
+                "token_budget_sensitivity": experiment_audit["token_budget_sensitivity"]["status"],
+                "missing_ratio_sensitivity": experiment_audit["missing_ratio_sensitivity"]["status"],
             },
         ),
         _check(
