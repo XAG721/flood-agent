@@ -4,7 +4,7 @@
     "source_document": "洪水预警响应系统_渐进式迭代开发与升级设计.md",
     "source_contract_sha256": "b7a0c2ba1526848bc995da50ca3c6e63835882d4a1fb0a82a73811a3e34b7dfa",
     "policy": "docs/progressive_upgrade/design_contract_evidence_policy.json",
-    "policy_sha256": "462fb279838bae2096cdb59bf1ad84dad5d5e26e1735a349729ac8c4377202b1",
+    "policy_sha256": "ea4e6c5f8f7bda542430ba1ba30f6df6115abe0fd749dd34ce847dbac6e46791",
     "baseline_manifest": "output/acceptance/legacy_baseline_manifest.json",
     "baseline_manifest_sha256": "f950ac1274207a32650813d288beb91302392e60d96f762346f579d7f4c46230",
     "scope": "sections 18.3-18.6, 22 and 23 controlled acceptance contract"
@@ -137,7 +137,7 @@
         {
           "path": "docs/progressive_upgrade/completion_traceability_audit.md",
           "contains": "生产旧流量归零和账号撤权",
-          "sha256": "54921202b7ec3da9c9d9950562ae6c71a362217e29c5e5b5509abadbb0389721"
+          "sha256": "8dc43decf22eace031861c610f24f3ed44b4368db2ffdc6d1cce9bde6d0c0572"
         }
       ],
       "assigned_item_count": 2
@@ -221,17 +221,17 @@
         {
           "path": "README.md",
           "contains": "FRC-RAG",
-          "sha256": "a9d2a4d7c2b98fae8f0417b6f8ea458f11972820d500ba9c65235f34e6857c08"
+          "sha256": "a84b09bf58ff8679aceb9083b0616b23645a13f787c3526e2a5621e52a880dd3"
         },
         {
           "path": "docs/V3_upgrade_acceptance_matrix.md",
           "contains": "NO-GO/SHADOW",
-          "sha256": "9399be45a638f0c3064988ca53093726085344447e7070b9909ca65289e83b82"
+          "sha256": "f8d82f6a5bab85e403c24c68aadea6a092927b55379fcda379d768902b31d8a0"
         },
         {
           "path": "docs/progressive_upgrade/completion_traceability_audit.md",
           "contains": "受控模拟",
-          "sha256": "54921202b7ec3da9c9d9950562ae6c71a362217e29c5e5b5509abadbb0389721"
+          "sha256": "8dc43decf22eace031861c610f24f3ed44b4368db2ffdc6d1cce9bde6d0c0572"
         }
       ],
       "assigned_item_count": 5
@@ -262,9 +262,19 @@
           "sha256": "b7da1ab79737db0d7cd1686fba2dc6bba7bc6c739d44c76ebbdc5938d4d20f8b"
         },
         {
+          "path": "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
+          "contains": "RUN_PUBLIC_EXPERT_FIELD_REAL_MODEL_ROLE_DIAGNOSTIC",
+          "sha256": "a3829ca843fca740443e8b97c431daf3a791a5fc699bd20b66351a303d762975"
+        },
+        {
+          "path": "tests/test_frc_housing_weight_sensitivity.py",
+          "contains": "test_public_loader_reaggregates_committed_weight_sensitivity",
+          "sha256": "5dfb104b850c6f06837d529e1af3b7083d0ef91c9cca776d500bdf8b665e0cc4"
+        },
+        {
           "path": "docs/progressive_upgrade/frc_public_evaluation_protocol.md",
           "contains": null,
-          "sha256": "ffd9d36958829afdab029822bd73aeee96f10adb8585f8897d54136fea6e0b85"
+          "sha256": "07f1c91f3c460391eca971c6af695c7e30ec20d3a4a7de9eb9183487832a0660"
         }
       ],
       "assigned_item_count": 8
@@ -335,12 +345,12 @@
         {
           "path": "tests/test_completion_audit.py",
           "contains": "test_completion_audit_proves_controlled_scope_without_overstating_production",
-          "sha256": "48a93757d6596d4dea748ab06c9f6aeee2382793ddb06504303d17028886b08a"
+          "sha256": "d58f75122dfb517fe224137110bd0164c2fdca8fd7d66427976eb00eb23760f4"
         },
         {
           "path": "docs/progressive_upgrade/evaluation_and_gate_report.md",
           "contains": null,
-          "sha256": "ef14273e264df634bd68ecb5edf346a9e7bbd11c55494220c6240b772b1dac1a"
+          "sha256": "39359e8fcaf4f559d7c0672a4c2cfd7c4001db039676ce85b6267bbe0161bc2e"
         }
       ],
       "assigned_item_count": 11
@@ -1062,6 +1072,8 @@
         "tests/test_response_workflow.py",
         "tests/test_response_workflow.py",
         "flood_system/rag.py",
+        "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
+        "tests/test_frc_housing_weight_sensitivity.py",
         "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
       ],
       "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
@@ -1079,6 +1091,8 @@
         "tests/test_response_workflow.py",
         "tests/test_response_workflow.py",
         "flood_system/rag.py",
+        "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
+        "tests/test_frc_housing_weight_sensitivity.py",
         "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
       ],
       "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
@@ -1096,6 +1110,8 @@
         "tests/test_response_workflow.py",
         "tests/test_response_workflow.py",
         "flood_system/rag.py",
+        "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
+        "tests/test_frc_housing_weight_sensitivity.py",
         "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
       ],
       "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
@@ -1113,6 +1129,8 @@
         "tests/test_response_workflow.py",
         "tests/test_response_workflow.py",
         "flood_system/rag.py",
+        "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
+        "tests/test_frc_housing_weight_sensitivity.py",
         "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
       ],
       "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
@@ -1130,6 +1148,8 @@
         "tests/test_response_workflow.py",
         "tests/test_response_workflow.py",
         "flood_system/rag.py",
+        "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
+        "tests/test_frc_housing_weight_sensitivity.py",
         "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
       ],
       "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
@@ -1147,6 +1167,8 @@
         "tests/test_response_workflow.py",
         "tests/test_response_workflow.py",
         "flood_system/rag.py",
+        "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
+        "tests/test_frc_housing_weight_sensitivity.py",
         "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
       ],
       "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
@@ -1164,6 +1186,8 @@
         "tests/test_response_workflow.py",
         "tests/test_response_workflow.py",
         "flood_system/rag.py",
+        "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
+        "tests/test_frc_housing_weight_sensitivity.py",
         "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
       ],
       "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
@@ -1789,6 +1813,8 @@
         "tests/test_response_workflow.py",
         "tests/test_response_workflow.py",
         "flood_system/rag.py",
+        "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
+        "tests/test_frc_housing_weight_sensitivity.py",
         "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
       ],
       "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"

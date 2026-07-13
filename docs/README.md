@@ -14,6 +14,7 @@
 - [`releases/v0.2.0.md`](./releases/v0.2.0.md)：上一版本的全仓清理与结构重构报告。
 - [`progressive_upgrade/`](./progressive_upgrade/)：资产处置、合同、数据字典、运维、安全、评测和阶段验收。
 - [`progressive_upgrade/frc_public_evaluation_protocol.md`](./progressive_upgrade/frc_public_evaluation_protocol.md)：FRC-Select 公开数据真实模型参考审计的公平协议、难例覆盖和 Gate 2 判据。
+- [`../output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.md`](../output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.md)：HousingQA 冻结真实模型字段/角色权重敏感性与限制。
 - [`progressive_upgrade/completion_traceability_audit.md`](./progressive_upgrade/completion_traceability_audit.md)：最新设计合同的阶段、场景、切换清单、门禁和交付物逐项追溯结论。
 - [`../output/acceptance/design_contract_audit.md`](../output/acceptance/design_contract_audit.md)：最新设计 89 条显式条件的逐条证据与外部 No-Go 账本。
 - [`../output/acceptance/legacy_baseline_manifest.md`](../output/acceptance/legacy_baseline_manifest.md)：升级前代码、SQLite 和 RAG 基线的离线可复现冻结报告。

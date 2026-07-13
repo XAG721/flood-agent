@@ -4,7 +4,10 @@ import argparse
 import json
 from pathlib import Path
 
-from flood_system.frc_public_evidence import build_public_reference_report, render_public_reference_markdown
+from flood_system.frc_public_evidence import (
+    build_public_reference_report,
+    render_public_reference_markdown,
+)
 
 
 def main() -> None:
@@ -48,6 +51,15 @@ def main() -> None:
         ),
     )
     parser.add_argument(
+        "--housing-weight-sensitivity",
+        type=Path,
+        default=None,
+        help=(
+            "Machine-readable public HousingQA frozen real-model field/role-weight "
+            "sensitivity artifact."
+        ),
+    )
+    parser.add_argument(
         "--lawshift-ablation",
         type=Path,
         default=None,
@@ -80,13 +92,16 @@ def main() -> None:
         controlled_domain_sensitivity_path=args.controlled_domain_sensitivity,
         conflicts_ablation_path=args.conflicts_ablation,
         housing_ablation_path=args.housing_ablation,
+        housing_weight_sensitivity_path=args.housing_weight_sensitivity,
         lawshift_ablation_path=args.lawshift_ablation,
         eurlex_ablation_path=args.eurlex_ablation,
     )
     args.output_dir.mkdir(parents=True, exist_ok=True)
     json_path = args.output_dir / "public_frc_reference_report.json"
     markdown_path = args.output_dir / "public_frc_reference_report.md"
-    json_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    json_path.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     markdown_path.write_text(render_public_reference_markdown(report), encoding="utf-8")
     print(json_path)
     print(markdown_path)

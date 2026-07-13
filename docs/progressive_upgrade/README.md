@@ -16,6 +16,7 @@
 - `operations_and_rollback.md`：启动、健康检查、功能开关、备份、回滚和人工接管。
 - `evaluation_and_gate_report.md`：真实运行的受控模拟指标、Gate 判定和外部 No-Go 边界。
 - `frc_public_evaluation_protocol.md`：FRC-Select 公开数据、真实模型、公平基线、配对统计和缺失/冲突/失效难例协议。
+- `../../output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.md`：HousingQA 冻结真实模型字段/角色权重扫描、参数辨识结果与 Gate 2 边界。
 - `../../infra/postgis/README.md`：SQLite 到 PostGIS 单向影子迁移、空间投影、隔离和对账演练。
 - `../../output/performance/controlled_performance_report.md`：受控关键 API P50/P95、错误率和冻结预算报告。
 - `dependency_security_audit.md`：Python、主前端和 Cesium 依赖漏洞清零及持续 CI 门禁。

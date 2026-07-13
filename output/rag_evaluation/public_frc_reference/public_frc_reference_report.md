@@ -57,6 +57,26 @@ Full−`w/o Conflict` 准确率差值为 -0.004367，95% CI=[-0.013100, +0.00436
 Full−w/o Field 的字段覆盖差值为 +0.050000，95% CI=[+0.018750, +0.087500]；Full−w/o Applicability 的字段覆盖差值为 +0.175000，错误司法辖区率差值为 -0.275000。
 最强字段覆盖基线为 `field_decomposition_topk`；Full 相对其字段覆盖差值为 +0.000000，未达到 Gate 2 要求的 +0.05。
 
+### 字段/角色权重敏感性（HousingQA，公开冻结真实模型分数）
+
+该单因素扫描复用同一 40 用例、160 字段、22 辖区候选池；gold 字段证据只在选择完成后评分。结果用于辨识权重行为，不用于回看结果后修改冻结参数。
+
+| 维度 | 值 | Evidence F1 | Field Coverage | Role Coverage | 相对冻结选择变化 |
+|---|---:|---:|---:|---:|---:|
+| field_weight | 0.00 | 0.656250 | 0.656250 | 0.633333 | 29 |
+| field_weight | 0.50 | 0.681250 | 0.681250 | 0.625000 | 23 |
+| field_weight | 1.00 | 0.687500 | 0.687500 | 0.625000 | 15 |
+| field_weight | 2.00 | 0.706250 | 0.706250 | 0.625000 | 0 |
+| field_weight | 4.00 | 0.712500 | 0.712500 | 0.625000 | 10 |
+| field_weight | 8.00 | 0.712500 | 0.712500 | 0.625000 | 16 |
+| role_weight | 0.00 | 0.706250 | 0.706250 | 0.600000 | 12 |
+| role_weight | 0.50 | 0.712500 | 0.712500 | 0.616667 | 4 |
+| role_weight | 1.00 | 0.706250 | 0.706250 | 0.625000 | 0 |
+| role_weight | 2.00 | 0.712500 | 0.712500 | 0.633333 | 9 |
+| role_weight | 4.00 | 0.712500 | 0.712500 | 0.633333 | 13 |
+
+字段权重从 0 提高到冻结值 2 时 Evidence F1/字段覆盖由 0.656250 提高到 0.706250；角色权重从 0 提高到 2 时角色覆盖由 0.600000 提高到 0.633333。字段与角色权重均可辨识，但更高权重相对冻结配置的最大 Evidence F1 增益只有 0.006250，且角色标签不是 HousingQA 专家标注，因此 Gate 2 仍为 NO-GO。
+
 ### `w/o Applicability`（LawShift，31 类专家审阅修订，真实重排）
 
 124 个用例平衡覆盖修订前/后快照；候选池同时包含目标法条两个版本和三对词法难负例。法条版本是专家审阅的假设修订，不含权威生效或失效日期。
@@ -115,7 +135,7 @@ ConditionalQA 保存分数上共审计 80 组 FRC 参数；最佳 Evidence F1=0.
 |---|---|
 | k_2_3_5_8 | RUN |
 | token_budget_512_1024_2048 | RUN |
-| role_and_field_weights | RUN_CONTROLLED_DOMAIN_PUBLIC_SCHEMA_BLOCKED |
+| role_and_field_weights | RUN_PUBLIC_EXPERT_FIELD_REAL_MODEL_ROLE_DIAGNOSTIC |
 | conflict_threshold | RUN_REAL_MODEL_CONFLICTS |
 | document_missing_ratio | RUN |
 | chunk_length | RUN |
@@ -222,7 +242,7 @@ Only the two conflict-disclosure role thresholds change; this is a post-hoc diag
 - The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.
 - ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.
 - The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.
-- The nine named ablation variants now have execution artifacts across compatible public datasets, and applicability is separately identifiable through HousingQA jurisdiction, LawShift expert-reviewed hypothetical revisions, and EUR-Lex/CELLAR official effective/expiry dates. This is still not full design coverage because field/role-weight sensitivity is controlled-domain only and the applicability sources are cross-domain rather than flood-response records.
+- The nine named ablation variants now have execution artifacts across compatible public datasets; applicability is separately identifiable through HousingQA jurisdiction, LawShift expert-reviewed hypothetical revisions, and EUR-Lex/CELLAR official effective/expiry dates; and HousingQA now supplies a frozen-score public real-model field/role-weight sweep. This is still not full design coverage because the weight and applicability sources are cross-domain rather than independently judged flood-response records.
 - CONFLICTS conflict-type classification is complete, but the paper's expected-behavior adherence metric and independent human judging are not reproduced.
 - HousingQA is a public housing-law benchmark, not a flood-response or district-government benchmark.
 - The public corpus is explicitly accurate as of 2021; it has no paired historical/current statute versions, so version replacement and expiry remain untested.

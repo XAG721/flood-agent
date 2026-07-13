@@ -26,7 +26,12 @@ DATASET_METHODS = {
 }
 
 DISPLAY_METHOD = {"setr_style": "coverage_greedy_proxy"}
-PRIMARY_METRICS = ("evidence_recall", "evidence_precision", "evidence_f1", "role_coverage")
+PRIMARY_METRICS = (
+    "evidence_recall",
+    "evidence_precision",
+    "evidence_f1",
+    "role_coverage",
+)
 
 PLANNED_ABLATIONS = (
     "full",
@@ -110,7 +115,9 @@ def load_answer_csv(path: Path) -> dict[str, dict[str, float | int | None]]:
     return rows
 
 
-def load_supplemental_ablation(path: Path) -> tuple[str, dict[str, Any], dict[str, Any]]:
+def load_supplemental_ablation(
+    path: Path,
+) -> tuple[str, dict[str, Any], dict[str, Any]]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     if payload.get("schema_version") != "frc-real-model-ablation-v1":
         raise ValueError(f"unsupported supplemental ablation schema: {path}")
@@ -125,7 +132,9 @@ def load_supplemental_ablation(path: Path) -> tuple[str, dict[str, Any], dict[st
         metadata.get("cross_encoder_used") is not False
         or metadata.get("scoring_backend") != "bge_biencoder_no_cross_encoder"
     ):
-        raise ValueError("w/o_reranker must recompute relevance and role scores without a Cross-Encoder")
+        raise ValueError(
+            "w/o_reranker must recompute relevance and role scores without a Cross-Encoder"
+        )
     metric_names = (
         "evidence_recall",
         "evidence_precision",
@@ -142,8 +151,12 @@ def load_supplemental_ablation(path: Path) -> tuple[str, dict[str, Any], dict[st
     }
     claimed = payload.get("aggregate", {})
     for name, value in recomputed.items():
-        if not math.isclose(value, float(claimed.get(name, float("nan"))), abs_tol=1e-6):
-            raise ValueError(f"supplemental ablation aggregate mismatch for {name}: {path}")
+        if not math.isclose(
+            value, float(claimed.get(name, float("nan"))), abs_tol=1e-6
+        ):
+            raise ValueError(
+                f"supplemental ablation aggregate mismatch for {name}: {path}"
+            )
     metrics = {
         **recomputed,
         "condition_coverage": claimed.get("condition_coverage"),
@@ -166,12 +179,21 @@ def load_controlled_domain_sensitivity(path: Path) -> dict[str, Any]:
     if payload.get("schema_version") != "frc-controlled-domain-sensitivity-v1":
         raise ValueError(f"unsupported controlled sensitivity schema: {path}")
     metadata = payload.get("metadata", {})
-    if metadata.get("data_origin") != "SYNTHETIC" or metadata.get("is_simulated") is not True:
+    if (
+        metadata.get("data_origin") != "SYNTHETIC"
+        or metadata.get("is_simulated") is not True
+    ):
         raise ValueError("controlled sensitivity must preserve synthetic provenance")
     if metadata.get("neural_model_used") is not False:
-        raise ValueError("controlled sensitivity must not be presented as a real-model run")
-    if int(metadata.get("cases_with_field_evidence_map", 0)) != int(metadata.get("case_count", -1)):
-        raise ValueError("controlled sensitivity requires an independent field-to-evidence map for every case")
+        raise ValueError(
+            "controlled sensitivity must not be presented as a real-model run"
+        )
+    if int(metadata.get("cases_with_field_evidence_map", 0)) != int(
+        metadata.get("case_count", -1)
+    ):
+        raise ValueError(
+            "controlled sensitivity requires an independent field-to-evidence map for every case"
+        )
     results = payload.get("results", [])
     if not results:
         raise ValueError("controlled sensitivity has no result rows")
@@ -195,7 +217,9 @@ def load_controlled_domain_sensitivity(path: Path) -> dict[str, Any]:
     for row in results:
         dimension = str(row.get("dimension", ""))
         if dimension not in required_dimensions:
-            raise ValueError(f"unsupported controlled sensitivity dimension: {dimension}")
+            raise ValueError(
+                f"unsupported controlled sensitivity dimension: {dimension}"
+            )
         dimensions[dimension].add(float(row["value"]))
         case_rows = row.get("case_results", [])
         if not case_rows:
@@ -204,18 +228,30 @@ def load_controlled_domain_sensitivity(path: Path) -> dict[str, Any]:
         aggregates_by_dimension[dimension].append(aggregate)
         for metric in metric_names:
             recomputed = round(
-                sum(float(case["metrics"][metric]) for case in case_rows) / len(case_rows),
+                sum(float(case["metrics"][metric]) for case in case_rows)
+                / len(case_rows),
                 6,
             )
-            if not math.isclose(recomputed, float(aggregate.get(metric, float("nan"))), abs_tol=1e-6):
+            if not math.isclose(
+                recomputed, float(aggregate.get(metric, float("nan"))), abs_tol=1e-6
+            ):
                 raise ValueError(
                     f"controlled sensitivity aggregate mismatch for {dimension}/{metric}: {path}"
                 )
-    if set(dimensions) != required_dimensions or any(len(values) < 2 for values in dimensions.values()):
-        raise ValueError("controlled sensitivity must scan every required dimension at multiple values")
+    if set(dimensions) != required_dimensions or any(
+        len(values) < 2 for values in dimensions.values()
+    ):
+        raise ValueError(
+            "controlled sensitivity must scan every required dimension at multiple values"
+        )
     frozen_policy = metadata.get("frozen_policy", {})
-    if any(float(frozen_policy.get(dimension, float("nan"))) not in values for dimension, values in dimensions.items()):
-        raise ValueError("controlled sensitivity must include every frozen parameter value")
+    if any(
+        float(frozen_policy.get(dimension, float("nan"))) not in values
+        for dimension, values in dimensions.items()
+    ):
+        raise ValueError(
+            "controlled sensitivity must include every frozen parameter value"
+        )
     identifiability_metrics = {
         "role_weight": ("role_coverage", "evidence_f1"),
         "field_weight": ("field_coverage", "evidence_f1"),
@@ -224,17 +260,26 @@ def load_controlled_domain_sensitivity(path: Path) -> dict[str, Any]:
     identifiability: dict[str, dict[str, list[float]]] = {}
     for dimension, names in identifiability_metrics.items():
         ranges = {
-            name: sorted({float(aggregate[name]) for aggregate in aggregates_by_dimension[dimension]})
+            name: sorted(
+                {
+                    float(aggregate[name])
+                    for aggregate in aggregates_by_dimension[dimension]
+                }
+            )
             for name in names
         }
         if all(len(values) == 1 for values in ranges.values()):
-            raise ValueError(f"controlled sensitivity dimension is not identifiable: {dimension}")
+            raise ValueError(
+                f"controlled sensitivity dimension is not identifiable: {dimension}"
+            )
         identifiability[dimension] = ranges
     return {
         "status": "RUN_CONTROLLED_DOMAIN",
         "scope": "SYNTHETIC_CONTROLLED_NO_NEURAL_MODEL",
         "metadata": metadata,
-        "dimensions": {key: sorted(values) for key, values in sorted(dimensions.items())},
+        "dimensions": {
+            key: sorted(values) for key, values in sorted(dimensions.items())
+        },
         "identifiability": identifiability,
         "results": [
             {
@@ -276,7 +321,9 @@ def _conflicts_classification_summary(rows: list[dict[str, Any]]) -> dict[str, A
     for label in labels:
         true_positive = confusion[label][label]
         false_negative = support[label] - true_positive
-        false_positive = sum(confusion[other][label] for other in labels if other != label)
+        false_positive = sum(
+            confusion[other][label] for other in labels if other != label
+        )
         precision = true_positive / max(1, true_positive + false_positive)
         recall = true_positive / max(1, true_positive + false_negative)
         f1 = 2 * precision * recall / max(1e-12, precision + recall)
@@ -307,7 +354,8 @@ def _conflicts_selection_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
     return {
         "cases": len(rows),
         "domain_coverage": round(
-            sum(float(row["metrics"]["domain_coverage"]) for row in rows) / max(1, len(rows)),
+            sum(float(row["metrics"]["domain_coverage"]) for row in rows)
+            / max(1, len(rows)),
             6,
         ),
         "lexical_diversity": round(
@@ -316,7 +364,8 @@ def _conflicts_selection_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
             6,
         ),
         "mean_token_cost": round(
-            sum(float(row["metrics"]["token_cost"]) for row in rows) / max(1, len(rows)),
+            sum(float(row["metrics"]["token_cost"]) for row in rows)
+            / max(1, len(rows)),
             3,
         ),
         "answer_cases": len(answer_rows),
@@ -337,7 +386,10 @@ def _conflicts_selection_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
             6,
         ),
         "temporal_endpoint_coverage": round(
-            sum(float(row["metrics"]["temporal_endpoint_coverage"]) for row in outdated_rows)
+            sum(
+                float(row["metrics"]["temporal_endpoint_coverage"])
+                for row in outdated_rows
+            )
             / max(1, len(outdated_rows)),
             6,
         ),
@@ -349,16 +401,28 @@ def load_conflicts_real_model_ablation(path: Path) -> dict[str, Any]:
     if payload.get("schema_version") != "frc-conflicts-real-model-ablation-v1":
         raise ValueError(f"unsupported CONFLICTS ablation schema: {path}")
     metadata = payload.get("metadata", {})
-    if metadata.get("data_origin") != "PUBLIC" or metadata.get("is_simulated") is not False:
-        raise ValueError("CONFLICTS ablation must preserve public non-simulated provenance")
-    if metadata.get("real_model_scores") is not True or metadata.get("generator") != "local_qwen":
-        raise ValueError("CONFLICTS ablation must use real-model scores and local Qwen generation")
+    if (
+        metadata.get("data_origin") != "PUBLIC"
+        or metadata.get("is_simulated") is not False
+    ):
+        raise ValueError(
+            "CONFLICTS ablation must preserve public non-simulated provenance"
+        )
+    if (
+        metadata.get("real_model_scores") is not True
+        or metadata.get("generator") != "local_qwen"
+    ):
+        raise ValueError(
+            "CONFLICTS ablation must use real-model scores and local Qwen generation"
+        )
     case_count = int(metadata.get("case_count", 0))
     if case_count != 458:
         raise ValueError("CONFLICTS ablation must cover all 458 public cases")
     thresholds = [float(value) for value in metadata.get("conflict_thresholds", [])]
     if len(thresholds) < 2 or 0.55 not in thresholds:
-        raise ValueError("CONFLICTS ablation must scan multiple thresholds including 0.55")
+        raise ValueError(
+            "CONFLICTS ablation must scan multiple thresholds including 0.55"
+        )
     expected_methods = {
         "frc_full",
         "wo_conflict",
@@ -366,10 +430,14 @@ def load_conflicts_real_model_ablation(path: Path) -> dict[str, Any]:
     }
     case_artifact = payload.get("case_results_artifact", {})
     if case_artifact.get("format") != "gzip-jsonl":
-        raise ValueError("CONFLICTS ablation case results must use deterministic gzip JSONL")
+        raise ValueError(
+            "CONFLICTS ablation case results must use deterministic gzip JSONL"
+        )
     case_path = path.parent / str(case_artifact.get("file", ""))
     if not case_path.is_file() or sha256(case_path) != case_artifact.get("sha256"):
-        raise ValueError("CONFLICTS ablation case-result artifact is missing or hash-mismatched")
+        raise ValueError(
+            "CONFLICTS ablation case-result artifact is missing or hash-mismatched"
+        )
     with gzip.open(case_path, "rt", encoding="utf-8") as handle:
         case_results = [json.loads(line) for line in handle if line.strip()]
     if len(case_results) != int(case_artifact.get("rows", -1)):
@@ -382,7 +450,9 @@ def load_conflicts_real_model_ablation(path: Path) -> dict[str, Any]:
             raise ValueError(f"duplicate CONFLICTS ablation case row: {key}")
         seen.add(key)
         grouped[key[1]].append(row)
-    if set(grouped) != expected_methods or any(len(rows) != case_count for rows in grouped.values()):
+    if set(grouped) != expected_methods or any(
+        len(rows) != case_count for rows in grouped.values()
+    ):
         raise ValueError("CONFLICTS ablation must cover every case for every variant")
     claimed = {row["method"]: row for row in payload.get("aggregates", [])}
     if set(claimed) != expected_methods:
@@ -416,21 +486,31 @@ def load_conflicts_real_model_ablation(path: Path) -> dict[str, Any]:
     if ablation.get("full") != claimed["frc_full"]:
         raise ValueError("CONFLICTS Full summary does not match reaggregated cases")
     if ablation.get("without_conflict") != claimed["wo_conflict"]:
-        raise ValueError("CONFLICTS w/o Conflict summary does not match reaggregated cases")
+        raise ValueError(
+            "CONFLICTS w/o Conflict summary does not match reaggregated cases"
+        )
     sensitivity = payload.get("conflict_threshold_sensitivity", {})
     if sensitivity.get("status") != "RUN_REAL_MODEL_CONFLICTS":
-        raise ValueError("CONFLICTS conflict-threshold sensitivity status is not complete")
+        raise ValueError(
+            "CONFLICTS conflict-threshold sensitivity status is not complete"
+        )
     sensitivity_rows = sensitivity.get("results", [])
     if [float(row["conflict_threshold"]) for row in sensitivity_rows] != thresholds:
         raise ValueError("CONFLICTS conflict-threshold result ordering mismatch")
     for row in sensitivity_rows:
         method = f"conflict_threshold_{float(row['conflict_threshold']):.2f}"
-        expected = {"conflict_threshold": float(row["conflict_threshold"]), **claimed[method]}
+        expected = {
+            "conflict_threshold": float(row["conflict_threshold"]),
+            **claimed[method],
+        }
         if row != expected:
             raise ValueError(f"CONFLICTS threshold summary mismatch: {method}")
     full = {row["case_id"]: row for row in grouped["frc_full"]}
     without = {row["case_id"]: row for row in grouped["wo_conflict"]}
-    changed = sum(full[case_id]["selected_ids"] != without[case_id]["selected_ids"] for case_id in full)
+    changed = sum(
+        full[case_id]["selected_ids"] != without[case_id]["selected_ids"]
+        for case_id in full
+    )
     comparison = payload["ablation"]["comparison"]
     if int(comparison.get("selection_changed_cases", -1)) != changed:
         raise ValueError("CONFLICTS ablation changed-selection count mismatch")
@@ -445,7 +525,9 @@ def load_conflicts_real_model_ablation(path: Path) -> dict[str, Any]:
     if recomputed_ci != comparison["full_minus_wo_conflict"]["classification_accuracy"]:
         raise ValueError("CONFLICTS ablation paired classification interval mismatch")
     source_hashes = metadata.get("source_sha256", {})
-    if not source_hashes or any(len(str(value)) != 64 for value in source_hashes.values()):
+    if not source_hashes or any(
+        len(str(value)) != 64 for value in source_hashes.values()
+    ):
         raise ValueError("CONFLICTS ablation source hashes are incomplete")
     decision = payload.get("decision", {})
     if decision.get("gate_2") != "NO-GO":
@@ -476,7 +558,9 @@ def load_housing_real_model_ablation(path: Path) -> dict[str, Any]:
         or metadata.get("real_model_scores") is not True
         or metadata.get("generator") != "local_qwen"
     ):
-        raise ValueError("HousingQA ablation provenance or real-model status is invalid")
+        raise ValueError(
+            "HousingQA ablation provenance or real-model status is invalid"
+        )
     if metadata.get("source_repository") != "reglab/housing_qa":
         raise ValueError("HousingQA ablation source repository mismatch")
     if metadata.get("source_revision") != "761550cc974fa1d9141ffd39014db89efa2a7230":
@@ -493,11 +577,17 @@ def load_housing_real_model_ablation(path: Path) -> dict[str, Any]:
     case_count = int(metadata.get("case_count", 0))
     field_count = int(metadata.get("field_count", 0))
     if case_count != 40 or field_count != 160:
-        raise ValueError("HousingQA ablation must cover 40 composite cases and 160 fields")
+        raise ValueError(
+            "HousingQA ablation must cover 40 composite cases and 160 fields"
+        )
     if int(metadata.get("jurisdiction_count", 0)) < 20:
-        raise ValueError("HousingQA ablation must preserve broad multi-jurisdiction coverage")
+        raise ValueError(
+            "HousingQA ablation must preserve broad multi-jurisdiction coverage"
+        )
     if int(metadata.get("snapshot_year", 0)) != 2021:
-        raise ValueError("HousingQA ablation must preserve the official 2021 snapshot boundary")
+        raise ValueError(
+            "HousingQA ablation must preserve the official 2021 snapshot boundary"
+        )
 
     expected_methods = {
         "bm25_topk",
@@ -513,10 +603,14 @@ def load_housing_real_model_ablation(path: Path) -> dict[str, Any]:
         raise ValueError("HousingQA ablation method coverage mismatch")
     case_artifact = payload.get("case_results_artifact", {})
     if case_artifact.get("format") != "gzip-jsonl":
-        raise ValueError("HousingQA ablation case results must use deterministic gzip JSONL")
+        raise ValueError(
+            "HousingQA ablation case results must use deterministic gzip JSONL"
+        )
     case_path = path.parent / str(case_artifact.get("file", ""))
     if not case_path.is_file() or sha256(case_path) != case_artifact.get("sha256"):
-        raise ValueError("HousingQA ablation case-result artifact is missing or hash-mismatched")
+        raise ValueError(
+            "HousingQA ablation case-result artifact is missing or hash-mismatched"
+        )
     with gzip.open(case_path, "rt", encoding="utf-8") as handle:
         case_results = [json.loads(line) for line in handle if line.strip()]
     if len(case_results) != int(case_artifact.get("rows", -1)):
@@ -547,7 +641,9 @@ def load_housing_real_model_ablation(path: Path) -> dict[str, Any]:
         if set(row.get("metrics", {})) != set(metric_names):
             raise ValueError(f"HousingQA case metric coverage mismatch: {key}")
         if len(row.get("expected_answers", {})) != 4:
-            raise ValueError(f"HousingQA composite case does not contain four fields: {key}")
+            raise ValueError(
+                f"HousingQA composite case does not contain four fields: {key}"
+            )
         grouped[key[1]].append(row)
     if set(grouped) != expected_methods or any(
         len(rows) != case_count for rows in grouped.values()
@@ -615,11 +711,15 @@ def load_housing_real_model_ablation(path: Path) -> dict[str, Any]:
             or comparison.get("right") != right_method
             or comparison.get("direction") != "left_minus_right"
         ):
-            raise ValueError(f"HousingQA paired comparison definition mismatch: {comparison_name}")
+            raise ValueError(
+                f"HousingQA paired comparison definition mismatch: {comparison_name}"
+            )
         left = {row["case_id"]: row for row in grouped[left_method]}
         right = {row["case_id"]: row for row in grouped[right_method]}
         if set(left) != set(right):
-            raise ValueError(f"HousingQA paired case coverage mismatch: {comparison_name}")
+            raise ValueError(
+                f"HousingQA paired case coverage mismatch: {comparison_name}"
+            )
         for metric in paired_metrics:
             recomputed = paired_bootstrap(
                 [
@@ -663,10 +763,20 @@ def load_housing_real_model_ablation(path: Path) -> dict[str, Any]:
     coverage = payload.get("coverage", {})
     if coverage.get("w/o_field") != "RUN_PUBLIC_EXPERT_REAL_MODEL":
         raise ValueError("HousingQA w/o Field coverage is not complete")
-    if coverage.get("w/o_applicability") != "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021":
-        raise ValueError("HousingQA jurisdiction applicability coverage is not complete")
-    if coverage.get("version_or_expiry_variation") != "NOT_IDENTIFIABLE_SINGLE_SNAPSHOT":
-        raise ValueError("HousingQA must retain its single-snapshot temporal limitation")
+    if (
+        coverage.get("w/o_applicability")
+        != "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021"
+    ):
+        raise ValueError(
+            "HousingQA jurisdiction applicability coverage is not complete"
+        )
+    if (
+        coverage.get("version_or_expiry_variation")
+        != "NOT_IDENTIFIABLE_SINGLE_SNAPSHOT"
+    ):
+        raise ValueError(
+            "HousingQA must retain its single-snapshot temporal limitation"
+        )
     decision = payload.get("decision", {})
     field_difference = comparisons["full_minus_w_o_field"]["metrics"]["field_coverage"]
     baseline_difference = comparisons["full_minus_strongest_baseline"]["metrics"][
@@ -680,9 +790,9 @@ def load_housing_real_model_ablation(path: Path) -> dict[str, Any]:
         float(field_difference["ci_low"]) > 0.0
     ):
         raise ValueError("HousingQA w/o Field confidence decision mismatch")
-    if decision.get("full_field_coverage_gain_over_strongest_baseline_at_least_0_05") is not (
-        float(baseline_difference["mean_difference"]) >= 0.05
-    ):
+    if decision.get(
+        "full_field_coverage_gain_over_strongest_baseline_at_least_0_05"
+    ) is not (float(baseline_difference["mean_difference"]) >= 0.05):
         raise ValueError("HousingQA strongest-baseline gain decision mismatch")
     if decision.get("gate_2") != "NO-GO":
         raise ValueError("HousingQA ablation must not independently promote Gate 2")
@@ -700,9 +810,246 @@ def load_housing_real_model_ablation(path: Path) -> dict[str, Any]:
     }
 
 
+def load_housing_public_weight_sensitivity(path: Path) -> dict[str, Any]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    expected_status = "RUN_PUBLIC_EXPERT_FIELD_REAL_MODEL_ROLE_DIAGNOSTIC"
+    if payload.get("schema_version") != "frc-housing-public-weight-sensitivity-v1":
+        raise ValueError(f"unsupported HousingQA weight-sensitivity schema: {path}")
+    if payload.get("status") != expected_status:
+        raise ValueError("HousingQA public weight sensitivity status is incomplete")
+    metadata = payload.get("metadata", {})
+    if (
+        metadata.get("data_origin") != "PUBLIC"
+        or metadata.get("is_simulated") is not False
+        or metadata.get("public_dataset") is not True
+        or metadata.get("expert_annotated_supporting_statutes") is not True
+        or metadata.get("real_model_scores") is not True
+        or metadata.get("generator_used") is not False
+    ):
+        raise ValueError("HousingQA public weight-sensitivity provenance is invalid")
+    if metadata.get("source_repository") != "reglab/housing_qa":
+        raise ValueError("HousingQA weight-sensitivity source repository mismatch")
+    if metadata.get("source_revision") != "761550cc974fa1d9141ffd39014db89efa2a7230":
+        raise ValueError("HousingQA weight-sensitivity source revision mismatch")
+    if metadata.get("source_license") != "CC-BY-SA-4.0":
+        raise ValueError("HousingQA weight-sensitivity license mismatch")
+    if metadata.get("source_json_sha256") != (
+        "4f6eb35e1b865a6c5cfd0cf73a0b514a86bd1d8306bf6719f2b4fb94793c7e4b"
+    ):
+        raise ValueError("HousingQA weight-sensitivity source hash mismatch")
+    if (
+        int(metadata.get("case_count", 0)) != 40
+        or int(metadata.get("field_count", 0)) != 160
+        or int(metadata.get("jurisdiction_count", 0)) < 20
+        or metadata.get("role_count_per_case") != [3]
+        or int(metadata.get("candidate_occurrences", 0)) != 400
+    ):
+        raise ValueError(
+            "HousingQA weight sensitivity has incomplete benchmark coverage"
+        )
+    for name in ("scored_cases_sha256", "scored_metadata_sha256", "case_signature"):
+        value = metadata.get(name)
+        if not isinstance(value, str) or len(value) != 64:
+            raise ValueError(
+                f"HousingQA weight-sensitivity provenance hash is invalid: {name}"
+            )
+    if metadata.get("models") != {
+        "embedding": "BAAI/bge-large-en-v1.5",
+        "reranker": "BAAI/bge-reranker-large",
+    }:
+        raise ValueError(
+            "HousingQA weight sensitivity must use the frozen real-model stack"
+        )
+    expected_dimensions = {
+        "field_weight": [0.0, 0.5, 1.0, 2.0, 4.0, 8.0],
+        "role_weight": [0.0, 0.5, 1.0, 2.0, 4.0],
+    }
+    dimensions = {
+        str(name): [float(value) for value in values]
+        for name, values in payload.get("dimensions", {}).items()
+    }
+    if dimensions != expected_dimensions:
+        raise ValueError(
+            "HousingQA weight sensitivity does not cover the frozen scan grid"
+        )
+    frozen = metadata.get("frozen_parameters", {})
+    frozen_values = {
+        "field_weight": float(frozen.get("field_weight", float("nan"))),
+        "role_weight": float(frozen.get("role_weight", float("nan"))),
+    }
+    if frozen_values != {"field_weight": 2.0, "role_weight": 1.0}:
+        raise ValueError(
+            "HousingQA weight sensitivity changed the frozen selection policy"
+        )
+
+    case_artifact = payload.get("case_results_artifact", {})
+    if case_artifact.get("format") != "gzip-jsonl":
+        raise ValueError(
+            "HousingQA weight sensitivity requires deterministic gzip case rows"
+        )
+    case_path = path.parent / str(case_artifact.get("file", ""))
+    if not case_path.is_file() or sha256(case_path) != case_artifact.get("sha256"):
+        raise ValueError(
+            "HousingQA weight-sensitivity case artifact is missing or hash-mismatched"
+        )
+    with gzip.open(case_path, "rt", encoding="utf-8") as handle:
+        case_results = [json.loads(line) for line in handle if line.strip()]
+    expected_rows = 40 * sum(len(values) for values in expected_dimensions.values())
+    if (
+        len(case_results) != expected_rows
+        or int(case_artifact.get("rows", -1)) != expected_rows
+    ):
+        raise ValueError(
+            "HousingQA weight sensitivity has incomplete case-result coverage"
+        )
+
+    metric_names = (
+        "evidence_recall",
+        "evidence_precision",
+        "evidence_f1",
+        "field_coverage",
+        "selector_field_coverage",
+        "role_coverage",
+        "unsupported_field_rate",
+        "wrong_jurisdiction_rate",
+        "token_cost",
+        "selected_count",
+    )
+    grouped: dict[tuple[str, float], list[dict[str, Any]]] = defaultdict(list)
+    seen: set[tuple[str, float, str]] = set()
+    for row in case_results:
+        dimension = str(row.get("dimension", ""))
+        value = float(row.get("value", float("nan")))
+        case_id = str(row.get("case_id", ""))
+        key = (dimension, value, case_id)
+        if (
+            dimension not in expected_dimensions
+            or value not in expected_dimensions[dimension]
+            or not case_id
+            or key in seen
+        ):
+            raise ValueError(f"invalid or duplicate HousingQA weight case row: {key}")
+        seen.add(key)
+        if set(row.get("metrics", {})) != set(metric_names):
+            raise ValueError(f"HousingQA weight case metric coverage mismatch: {key}")
+        if float(row["metrics"]["wrong_jurisdiction_rate"]) != 0.0:
+            raise ValueError(
+                "HousingQA applicable selector retained a wrong-jurisdiction item"
+            )
+        grouped[(dimension, value)].append(row)
+    if any(
+        len(grouped[(dimension, value)]) != 40
+        for dimension, values in expected_dimensions.items()
+        for value in values
+    ):
+        raise ValueError(
+            "HousingQA weight sensitivity must cover all 40 cases per setting"
+        )
+
+    summaries = {
+        (str(row["dimension"]), float(row["value"])): row
+        for row in payload.get("results", [])
+    }
+    expected_keys = {
+        (dimension, value)
+        for dimension, values in expected_dimensions.items()
+        for value in values
+    }
+    if set(summaries) != expected_keys:
+        raise ValueError("HousingQA weight-sensitivity summary grid is incomplete")
+    aggregates: dict[tuple[str, float], dict[str, float | int]] = {}
+    for key in sorted(expected_keys):
+        rows = grouped[key]
+        aggregate = {
+            "cases": len(rows),
+            **{
+                metric: round(
+                    sum(float(row["metrics"][metric]) for row in rows) / len(rows),
+                    6,
+                )
+                for metric in metric_names
+            },
+        }
+        if aggregate != summaries[key].get("aggregate"):
+            raise ValueError(f"HousingQA weight aggregate mismatch: {key}")
+        frozen_key = (key[0], frozen_values[key[0]])
+        frozen_rows = {row["case_id"]: row for row in grouped[frozen_key]}
+        changed = sum(
+            row["selected_ids"] != frozen_rows[row["case_id"]]["selected_ids"]
+            for row in rows
+        )
+        if (
+            int(summaries[key].get("selection_changed_cases_from_frozen", -1))
+            != changed
+        ):
+            raise ValueError(
+                f"HousingQA weight changed-selection count mismatch: {key}"
+            )
+        if summaries[key].get("is_frozen") is not (key[1] == frozen_values[key[0]]):
+            raise ValueError(f"HousingQA weight frozen-setting marker mismatch: {key}")
+        aggregates[key] = aggregate
+
+    recomputed_identifiability = {}
+    for dimension, values in expected_dimensions.items():
+        metric_names_for_dimension = (
+            ("field_coverage", "evidence_f1")
+            if dimension == "field_weight"
+            else ("role_coverage", "evidence_f1")
+        )
+        ranges = {
+            metric: sorted(
+                {float(aggregates[(dimension, value)][metric]) for value in values}
+            )
+            for metric in metric_names_for_dimension
+        }
+        if all(len(metric_values) == 1 for metric_values in ranges.values()):
+            raise ValueError(
+                f"HousingQA public weight dimension is not identifiable: {dimension}"
+            )
+        recomputed_identifiability[dimension] = {
+            "status": "IDENTIFIABLE",
+            "metric_values": ranges,
+        }
+    if payload.get("identifiability") != recomputed_identifiability:
+        raise ValueError(
+            "HousingQA weight-sensitivity identifiability summary mismatch"
+        )
+    decision = payload.get("decision", {})
+    if (
+        decision.get("gate_2") != "NO-GO"
+        or decision.get("public_real_model_weight_sensitivity_complete") is not True
+        or decision.get("frozen_parameters_changed") is not False
+    ):
+        raise ValueError("HousingQA weight-sensitivity decision boundary is invalid")
+    return {
+        "status": expected_status,
+        "metadata": metadata,
+        "dimensions": expected_dimensions,
+        "identifiability": recomputed_identifiability,
+        "results": [
+            {
+                "dimension": dimension,
+                "value": value,
+                "aggregate": aggregates[(dimension, value)],
+                "selection_changed_cases_from_frozen": summaries[(dimension, value)][
+                    "selection_changed_cases_from_frozen"
+                ],
+            }
+            for dimension, values in expected_dimensions.items()
+            for value in values
+        ],
+        "decision": decision,
+        "limitations": payload.get("limitations", []),
+        "source_sha256": sha256(path),
+    }
+
+
 def load_lawshift_temporal_ablation(path: Path) -> dict[str, Any]:
     payload = json.loads(path.read_text(encoding="utf-8"))
-    if payload.get("schema_version") != "frc-lawshift-temporal-applicability-ablation-v1":
+    if (
+        payload.get("schema_version")
+        != "frc-lawshift-temporal-applicability-ablation-v1"
+    ):
         raise ValueError(f"unsupported LawShift temporal ablation schema: {path}")
     metadata = payload.get("metadata", {})
     if (
@@ -809,8 +1156,12 @@ def load_lawshift_temporal_ablation(path: Path) -> dict[str, Any]:
         ].add(str(row["as_of_version"]))
     if (
         len(paired_snapshots) != 62
-        or any(versions != {"original", "revised"} for versions in paired_snapshots.values())
-        or Counter(key[0] for key in paired_snapshots) != Counter(
+        or any(
+            versions != {"original", "revised"}
+            for versions in paired_snapshots.values()
+        )
+        or Counter(key[0] for key in paired_snapshots)
+        != Counter(
             {revision_type: 2 for revision_type in set(case_revision_types.values())}
         )
     ):
@@ -850,7 +1201,10 @@ def load_lawshift_temporal_ablation(path: Path) -> dict[str, Any]:
             "revision_type": revision_type,
             "cases": len(full_revision),
             "frc_full_exact_evidence_accuracy": round(
-                sum(float(row["metrics"]["exact_evidence_accuracy"]) for row in full_revision)
+                sum(
+                    float(row["metrics"]["exact_evidence_accuracy"])
+                    for row in full_revision
+                )
                 / len(full_revision),
                 6,
             ),
@@ -864,7 +1218,9 @@ def load_lawshift_temporal_ablation(path: Path) -> dict[str, Any]:
             ),
         }
         if recomputed_revision != claimed_revision:
-            raise ValueError(f"LawShift by-revision aggregate mismatch: {revision_type}")
+            raise ValueError(
+                f"LawShift by-revision aggregate mismatch: {revision_type}"
+            )
 
     baseline_methods = {
         "char_bm25_top1",
@@ -899,7 +1255,9 @@ def load_lawshift_temporal_ablation(path: Path) -> dict[str, Any]:
             or comparison.get("right") != right_method
             or comparison.get("direction") != "left_minus_right"
         ):
-            raise ValueError(f"LawShift comparison definition mismatch: {comparison_name}")
+            raise ValueError(
+                f"LawShift comparison definition mismatch: {comparison_name}"
+            )
         left = {row["case_id"]: row for row in grouped[left_method]}
         right = {row["case_id"]: row for row in grouped[right_method]}
         for metric in paired_metrics:
@@ -916,9 +1274,7 @@ def load_lawshift_temporal_ablation(path: Path) -> dict[str, Any]:
                     f"LawShift paired metric mismatch: {comparison_name}/{metric}"
                 )
     full_rows = {row["case_id"]: row for row in grouped["frc_full"]}
-    without_rows = {
-        row["case_id"]: row for row in grouped["w/o_applicability"]
-    }
+    without_rows = {row["case_id"]: row for row in grouped["w/o_applicability"]}
     changed = sum(
         full_rows[case_id]["selected_ids"] != without_rows[case_id]["selected_ids"]
         for case_id in full_rows
@@ -972,15 +1328,18 @@ def load_eurlex_temporal_ablation(path: Path) -> dict[str, Any]:
         raise ValueError(f"unsupported EUR-Lex temporal ablation schema: {path}")
     if (
         payload.get("dataset") != "EU Publications Office CELLAR and EUR-Lex"
-        or payload.get("status")
-        != "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL"
+        or payload.get("status") != "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL"
     ):
         raise ValueError("EUR-Lex dataset or run status mismatch")
 
     metadata = payload.get("metadata", {})
     if any(
         metadata.get(flag) is not True
-        for flag in ("public_dataset", "official_temporal_metadata", "real_model_scores")
+        for flag in (
+            "public_dataset",
+            "official_temporal_metadata",
+            "real_model_scores",
+        )
     ):
         raise ValueError("EUR-Lex temporal provenance is invalid")
     if metadata.get("source_snapshot_date") != "2026-07-14":
@@ -1103,7 +1462,10 @@ def load_eurlex_temporal_ablation(path: Path) -> dict[str, Any]:
             dimension: value,
             "cases": len(full_rows),
             "frc_full_exact_evidence_accuracy": round(
-                sum(float(row["metrics"]["exact_evidence_accuracy"]) for row in full_rows)
+                sum(
+                    float(row["metrics"]["exact_evidence_accuracy"])
+                    for row in full_rows
+                )
                 / len(full_rows),
                 6,
             ),
@@ -1141,9 +1503,7 @@ def load_eurlex_temporal_ablation(path: Path) -> dict[str, Any]:
     }
     strongest = max(
         baseline_methods,
-        key=lambda method: (
-            float(claimed[method]["exact_evidence_accuracy"]), method
-        ),
+        key=lambda method: (float(claimed[method]["exact_evidence_accuracy"]), method),
     )
     if strongest != payload.get("strongest_baseline_by_exact_evidence_accuracy"):
         raise ValueError("EUR-Lex strongest-baseline selection mismatch")
@@ -1165,7 +1525,9 @@ def load_eurlex_temporal_ablation(path: Path) -> dict[str, Any]:
             or comparison.get("right") != right_method
             or comparison.get("direction") != "left_minus_right"
         ):
-            raise ValueError(f"EUR-Lex comparison definition mismatch: {comparison_name}")
+            raise ValueError(
+                f"EUR-Lex comparison definition mismatch: {comparison_name}"
+            )
         left = {row["case_id"]: row for row in grouped[left_method]}
         right = {row["case_id"]: row for row in grouped[right_method]}
         for metric in paired_metrics:
@@ -1182,9 +1544,7 @@ def load_eurlex_temporal_ablation(path: Path) -> dict[str, Any]:
                     f"EUR-Lex paired metric mismatch: {comparison_name}/{metric}"
                 )
     full_rows = {row["case_id"]: row for row in grouped["frc_full"]}
-    without_rows = {
-        row["case_id"]: row for row in grouped["w/o_applicability"]
-    }
+    without_rows = {row["case_id"]: row for row in grouped["w/o_applicability"]}
     changed = sum(
         full_rows[case_id]["selected_ids"] != without_rows[case_id]["selected_ids"]
         for case_id in full_rows
@@ -1255,7 +1615,9 @@ def load_ablation_audit(
     for supplemental_path in supplemental_paths:
         variant, metrics, provenance = load_supplemental_ablation(supplemental_path)
         if variant in variants:
-            raise ValueError(f"duplicate ablation result for {variant}: {supplemental_path}")
+            raise ValueError(
+                f"duplicate ablation result for {variant}: {supplemental_path}"
+            )
         variants[variant] = metrics
         supplemental_sources[variant] = provenance
     run = [variant for variant in PLANNED_ABLATIONS if variant in variants]
@@ -1269,7 +1631,9 @@ def load_ablation_audit(
         "dataset": "conditionalqa",
         "planned_variants": list(PLANNED_ABLATIONS),
         "run_variants": run,
-        "missing_variants": [variant for variant in PLANNED_ABLATIONS if variant not in variants],
+        "missing_variants": [
+            variant for variant in PLANNED_ABLATIONS if variant not in variants
+        ],
         "variants": variants,
         "gate_required_comparison": {
             "full_beats_w_o_role": full_beats_wo_role,
@@ -1314,10 +1678,19 @@ def audit_public_ablation_schema(role_scores_dir: Path) -> dict[str, Any]:
                     counts["candidates_with_applicability"] += 1
                 if any(
                     candidate.get(key) is not None
-                    for key in ("version", "jurisdiction", "valid_from", "valid_to", "effective_at")
+                    for key in (
+                        "version",
+                        "jurisdiction",
+                        "valid_from",
+                        "valid_to",
+                        "effective_at",
+                    )
                 ):
                     counts["candidates_with_standardized_validity_fields"] += 1
-                if candidate.get("conflict_key") is not None or candidate.get("conflict_value") is not None:
+                if (
+                    candidate.get("conflict_key") is not None
+                    or candidate.get("conflict_value") is not None
+                ):
                     counts["candidates_with_conflict_annotations"] += 1
                 scores = candidate.get("scores", {})
                 if scores.get("cross_encoder") is not None:
@@ -1382,7 +1755,9 @@ def load_k_sensitivity_audit(metrics_dir: Path) -> dict[str, Any]:
             at_k = [row for row in rows if row["k"] == k]
             frc = next(row for row in at_k if row["method"] == "frc_select")
             baselines = [row for row in at_k if row["method"] != "frc_select"]
-            strongest = max(baselines, key=lambda row: float(row["evidence_recall"] or 0.0))
+            strongest = max(
+                baselines, key=lambda row: float(row["evidence_recall"] or 0.0)
+            )
             summaries.append(
                 {
                     "k": k,
@@ -1466,7 +1841,10 @@ def load_parameter_sensitivity_audit(path: Path) -> dict[str, Any]:
         "best_by_evidence_f1": best,
         "frozen_configuration": frozen,
         "frozen_minus_best_evidence_f1": (
-            round(float(frozen["evidence_f1"] or 0.0) - float(best["evidence_f1"] or 0.0), 6)
+            round(
+                float(frozen["evidence_f1"] or 0.0) - float(best["evidence_f1"] or 0.0),
+                6,
+            )
             if frozen
             else None
         ),
@@ -1485,6 +1863,7 @@ def build_design_experiment_audit(
     controlled_domain_sensitivity_path: Path | None = None,
     conflicts_ablation_path: Path | None = None,
     housing_ablation_path: Path | None = None,
+    housing_weight_sensitivity_path: Path | None = None,
     lawshift_ablation_path: Path | None = None,
     eurlex_ablation_path: Path | None = None,
 ) -> dict[str, Any]:
@@ -1548,6 +1927,20 @@ def build_design_experiment_audit(
     housing_run = (
         housing_ablation_status == "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021"
     )
+    housing_weight_sensitivity = (
+        load_housing_public_weight_sensitivity(housing_weight_sensitivity_path)
+        if housing_weight_sensitivity_path
+        else {
+            "status": "NOT_RUN",
+            "interpretation": (
+                "no public HousingQA real-model field/role-weight sensitivity artifact was supplied"
+            ),
+        }
+    )
+    housing_weight_status = housing_weight_sensitivity["status"]
+    housing_weight_run = (
+        housing_weight_status == "RUN_PUBLIC_EXPERT_FIELD_REAL_MODEL_ROLE_DIAGNOSTIC"
+    )
     lawshift_ablation = (
         load_lawshift_temporal_ablation(lawshift_ablation_path)
         if lawshift_ablation_path
@@ -1560,8 +1953,7 @@ def build_design_experiment_audit(
     )
     lawshift_ablation_status = lawshift_ablation["status"]
     lawshift_run = (
-        lawshift_ablation_status
-        == "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL"
+        lawshift_ablation_status == "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL"
     )
     eurlex_ablation = (
         load_eurlex_temporal_ablation(eurlex_ablation_path)
@@ -1575,8 +1967,7 @@ def build_design_experiment_audit(
     )
     eurlex_ablation_status = eurlex_ablation["status"]
     eurlex_run = (
-        eurlex_ablation_status
-        == "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL"
+        eurlex_ablation_status == "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL"
     )
     version_replacement_status = (
         lawshift_ablation.get("coverage", {}).get("version_replacement")
@@ -1591,6 +1982,7 @@ def build_design_experiment_audit(
         else "NOT_RUN"
     )
     applicability_complete = housing_run and lawshift_run and eurlex_run
+    flood_domain_expert_validation = False
     combined_run_variants = sorted(
         {
             *ablation["run_variants"],
@@ -1600,7 +1992,11 @@ def build_design_experiment_audit(
                 else []
             ),
             *(["w/o_field"] if housing_run else []),
-            *(["w/o_applicability"] if housing_run or lawshift_run or eurlex_run else []),
+            *(
+                ["w/o_applicability"]
+                if housing_run or lawshift_run or eurlex_run
+                else []
+            ),
         }
     )
     schema_audit["variants"]["w/o_conflict"] = (
@@ -1664,7 +2060,11 @@ def build_design_experiment_audit(
         "k_2_3_5_8": "RUN",
         "token_budget_512_1024_2048": token_budgets["status"],
         "role_and_field_weights": (
-            controlled_only_status if controlled_status == "RUN_CONTROLLED_DOMAIN" else "PARTIAL_ROLE_ONLY"
+            housing_weight_status
+            if housing_weight_run
+            else controlled_only_status
+            if controlled_status == "RUN_CONTROLLED_DOMAIN"
+            else "PARTIAL_ROLE_ONLY"
         ),
         "conflict_threshold": (
             "RUN_REAL_MODEL_CONFLICTS"
@@ -1686,6 +2086,7 @@ def build_design_experiment_audit(
         "controlled_domain_sensitivity": controlled_sensitivity,
         "conflicts_real_model_ablation": conflicts_ablation,
         "housing_real_model_ablation": housing_ablation,
+        "housing_public_weight_sensitivity": housing_weight_sensitivity,
         "lawshift_temporal_ablation": lawshift_ablation,
         "eurlex_temporal_ablation": eurlex_ablation,
         "combined_ablation_coverage": {
@@ -1693,7 +2094,9 @@ def build_design_experiment_audit(
             "run_variants": combined_run_variants,
             "run_count": len(combined_run_variants),
             "planned_count": len(PLANNED_ABLATIONS),
-            "missing_variants": sorted(set(PLANNED_ABLATIONS) - set(combined_run_variants)),
+            "missing_variants": sorted(
+                set(PLANNED_ABLATIONS) - set(combined_run_variants)
+            ),
             "scope_qualifications": {
                 "w/o_field": (
                     "public expert HousingQA composite fields"
@@ -1718,16 +2121,38 @@ def build_design_experiment_audit(
             },
         },
         "applicability_identifiability": {
-            "jurisdiction": "RUN_PUBLIC_EXPERT_REAL_MODEL" if housing_run else "NOT_RUN",
+            "jurisdiction": "RUN_PUBLIC_EXPERT_REAL_MODEL"
+            if housing_run
+            else "NOT_RUN",
             "version_replacement": version_replacement_status,
             "effective_or_expiry_dates": expiry_status,
             "complete": applicability_complete,
         },
         "sensitivity_coverage": sensitivity_coverage,
+        "technical_sensitivity_matrix_complete": (
+            k_sensitivity["status"] == "RUN"
+            and token_budgets["status"] == "RUN"
+            and housing_weight_run
+            and conflicts_ablation_status == "RUN_REAL_MODEL_CONFLICTS"
+            and missing_ratios["status"] == "RUN"
+            and chunk_lengths["status"] == "RUN"
+        ),
+        "flood_domain_expert_validation_complete": flood_domain_expert_validation,
         "coverage_complete": (
             len(combined_run_variants) == len(PLANNED_ABLATIONS)
-            and all(status == "RUN" for status in sensitivity_coverage.values())
+            and housing_weight_run
+            and conflicts_ablation_status == "RUN_REAL_MODEL_CONFLICTS"
+            and all(
+                sensitivity_coverage[dimension] == "RUN"
+                for dimension in (
+                    "k_2_3_5_8",
+                    "token_budget_512_1024_2048",
+                    "document_missing_ratio",
+                    "chunk_length",
+                )
+            )
             and applicability_complete
+            and flood_domain_expert_validation
         ),
         "interpretation": (
             f"Real-model artifacts cover {len(combined_run_variants)} of nine planned FRC ablations, "
@@ -1736,16 +2161,20 @@ def build_design_experiment_audit(
             f"{chunk_lengths['status']}; controlled field/role/conflict sensitivity status is "
             f"{controlled_status}; public CONFLICTS ablation status is {conflicts_ablation_status}. "
             f"public HousingQA field/jurisdiction ablation status is {housing_ablation_status}. "
+            f"public HousingQA field/role-weight sensitivity status is {housing_weight_status}. "
             f"public LawShift version-replacement status is {lawshift_ablation_status}. "
             f"public EUR-Lex effective/expiry-date status is {eurlex_ablation_status}. "
             "Even when all nine named variants have an execution artifact across compatible "
-            "datasets and the three-part applicability construct is identifiable, real public "
-            "field/role-weight sensitivity and flood-domain expert validity remain incomplete."
+            "datasets, the three-part applicability construct is identifiable, and the public "
+            "real-model weight matrix is complete, same-domain flood-response expert validity "
+            "and independent behavior judging remain incomplete."
         ),
     }
 
 
-def evidence_metrics(expected_ids: Iterable[str], selected_ids: Iterable[str]) -> dict[str, float]:
+def evidence_metrics(
+    expected_ids: Iterable[str], selected_ids: Iterable[str]
+) -> dict[str, float]:
     expected = set(expected_ids)
     selected = set(selected_ids)
     true_positive = len(expected & selected)
@@ -1766,7 +2195,10 @@ def selected_role_coverage(row: dict[str, Any], *, threshold: float = 0.55) -> f
         return 1.0
     selected = row.get("selected_evidence", [])
     covered = sum(
-        max((float(item.get("role_scores", {}).get(role, 0.0)) for item in selected), default=0.0)
+        max(
+            (float(item.get("role_scores", {}).get(role, 0.0)) for item in selected),
+            default=0.0,
+        )
         >= threshold
         for role in required
     )
@@ -1775,7 +2207,9 @@ def selected_role_coverage(row: dict[str, Any], *, threshold: float = 0.55) -> f
 
 def row_metrics(row: dict[str, Any]) -> dict[str, float]:
     return {
-        **evidence_metrics(row.get("gold_evidence_ids", []), row.get("selected_ids", [])),
+        **evidence_metrics(
+            row.get("gold_evidence_ids", []), row.get("selected_ids", [])
+        ),
         "role_coverage": selected_role_coverage(row),
     }
 
@@ -1812,7 +2246,9 @@ def load_chunk_length_sensitivity(path: Path) -> dict[str, Any]:
     chunk_lengths = [int(value) for value in metadata.get("chunk_lengths", [])]
     methods = [str(value) for value in metadata.get("methods", [])]
     if len(chunk_lengths) < 2 or "frc_select" not in methods:
-        raise ValueError("chunk-length sensitivity needs multiple lengths and frc_select")
+        raise ValueError(
+            "chunk-length sensitivity needs multiple lengths and frc_select"
+        )
     case_rows = payload.get("case_results", [])
     claimed_rows = {
         (int(row["chunk_length"]), str(row["method"])): row["metrics"]
@@ -1851,8 +2287,12 @@ def load_chunk_length_sensitivity(path: Path) -> dict[str, Any]:
             if claimed is None:
                 raise ValueError(f"missing chunk-length aggregate: {key}")
             for name, value in recomputed.items():
-                if not math.isclose(value, float(claimed.get(name, float("nan"))), abs_tol=1e-6):
-                    raise ValueError(f"chunk-length aggregate mismatch for {key} {name}")
+                if not math.isclose(
+                    value, float(claimed.get(name, float("nan"))), abs_tol=1e-6
+                ):
+                    raise ValueError(
+                        f"chunk-length aggregate mismatch for {key} {name}"
+                    )
             aggregates[key] = {**recomputed, "cases": len(rows)}
     results = []
     for chunk_length in chunk_lengths:
@@ -1909,7 +2349,9 @@ def compare_selected_files(frc_path: Path, baseline_path: Path) -> dict[str, Any
     case_ids = sorted(set(frc) & set(baseline))
     output: dict[str, Any] = {"cases": len(case_ids), "metrics": {}}
     for metric in PRIMARY_METRICS:
-        differences = [frc[case_id][metric] - baseline[case_id][metric] for case_id in case_ids]
+        differences = [
+            frc[case_id][metric] - baseline[case_id][metric] for case_id in case_ids
+        ]
         wins = sum(value > 1e-12 for value in differences)
         losses = sum(value < -1e-12 for value in differences)
         output["metrics"][metric] = {
@@ -1921,7 +2363,9 @@ def compare_selected_files(frc_path: Path, baseline_path: Path) -> dict[str, Any
     return output
 
 
-def _take_with_budget(candidates: list[dict[str, Any]], *, k: int, budget: int) -> list[dict[str, Any]]:
+def _take_with_budget(
+    candidates: list[dict[str, Any]], *, k: int, budget: int
+) -> list[dict[str, Any]]:
     selected: list[dict[str, Any]] = []
     total = 0
     for candidate in candidates:
@@ -1954,7 +2398,10 @@ def select_precomputed(
     if score_name:
         ordered = sorted(
             candidates,
-            key=lambda item: (-float(item.get("scores", {}).get(score_name, 0.0)), item["id"]),
+            key=lambda item: (
+                -float(item.get("scores", {}).get(score_name, 0.0)),
+                item["id"],
+            ),
         )
         return _take_with_budget(ordered, k=k, budget=budget)
 
@@ -1984,9 +2431,14 @@ def select_precomputed(
                 return selected
         fill = sorted(
             (item for item in candidates if item["id"] not in selected_ids),
-            key=lambda item: (-float(item.get("scores", {}).get("cross_encoder", 0.0)), item["id"]),
+            key=lambda item: (
+                -float(item.get("scores", {}).get("cross_encoder", 0.0)),
+                item["id"],
+            ),
         )
-        return selected + _take_with_budget(fill, k=k - len(selected), budget=max(0, budget - total))
+        return selected + _take_with_budget(
+            fill, k=k - len(selected), budget=max(0, budget - total)
+        )
 
     if method != "frc_select":
         raise ValueError(f"unsupported precomputed selector: {method}")
@@ -2018,7 +2470,9 @@ def select_precomputed(
         remaining = [item for item in remaining if item["id"] != best["id"]]
         total += int(best.get("token_count", 1))
         for role in role_best:
-            role_best[role] = max(role_best[role], float(best.get("role_scores", {}).get(role, 0.0)))
+            role_best[role] = max(
+                role_best[role], float(best.get("role_scores", {}).get(role, 0.0))
+            )
     return selected
 
 
@@ -2042,11 +2496,15 @@ def missing_evidence_challenge(path: Path) -> dict[str, Any]:
         available_gold = set(gold[1:])
         row = {
             **source,
-            "candidates": [item for item in source.get("candidates", []) if item["id"] != removed],
+            "candidates": [
+                item for item in source.get("candidates", []) if item["id"] != removed
+            ],
         }
         for method in methods:
             selected = select_precomputed(row, method)
-            metrics = evidence_metrics(available_gold, [item["id"] for item in selected])
+            metrics = evidence_metrics(
+                available_gold, [item["id"] for item in selected]
+            )
             selected_row = {**row, "selected_evidence": selected}
             role_coverage = selected_role_coverage(selected_row)
             for key, value in metrics.items():
@@ -2058,7 +2516,9 @@ def missing_evidence_challenge(path: Path) -> dict[str, Any]:
         "cases": cases,
         "removed_gold_per_case": 1,
         "metrics": {
-            method: {key: round(value / max(1, cases), 6) for key, value in values.items()}
+            method: {
+                key: round(value / max(1, cases), 6) for key, value in values.items()
+            }
             for method, values in totals.items()
         },
         "interpretation": "false_complete is the rate at which role scores still claim full coverage after a required gold passage was removed; lower is safer.",
@@ -2185,7 +2645,9 @@ def missing_ratio_sensitivity(
     ratios: tuple[float, ...] = (0.0, 0.25, 0.5, 0.75),
 ) -> dict[str, Any]:
     methods = ("cross_encoder_topk", "coverage_greedy_proxy", "frc_select")
-    rows = [row for row in read_jsonl(path) if len(row.get("gold_evidence_ids", [])) >= 2]
+    rows = [
+        row for row in read_jsonl(path) if len(row.get("gold_evidence_ids", [])) >= 2
+    ]
     ratio_results = []
     for ratio in ratios:
         totals: dict[str, dict[str, float]] = defaultdict(lambda: defaultdict(float))
@@ -2204,7 +2666,9 @@ def missing_ratio_sensitivity(
             row = {
                 **source,
                 "candidates": [
-                    item for item in source.get("candidates", []) if item["id"] not in removed
+                    item
+                    for item in source.get("candidates", [])
+                    if item["id"] not in removed
                 ],
             }
             for method in methods:
@@ -2212,21 +2676,29 @@ def missing_ratio_sensitivity(
                 metrics = evidence_metrics(available, [item["id"] for item in selected])
                 for key, value in metrics.items():
                     totals[method][key] += value
-                role_coverage = selected_role_coverage({**row, "selected_evidence": selected})
+                role_coverage = selected_role_coverage(
+                    {**row, "selected_evidence": selected}
+                )
                 totals[method]["role_coverage"] += role_coverage
                 if removed:
                     totals[method]["false_complete"] += float(role_coverage == 1.0)
         metrics = {
             method: {
-                "evidence_recall": round(totals[method]["evidence_recall"] / max(1, len(rows)), 6),
+                "evidence_recall": round(
+                    totals[method]["evidence_recall"] / max(1, len(rows)), 6
+                ),
                 "evidence_precision": round(
                     totals[method]["evidence_precision"] / max(1, len(rows)), 6
                 ),
-                "evidence_f1": round(totals[method]["evidence_f1"] / max(1, len(rows)), 6),
+                "evidence_f1": round(
+                    totals[method]["evidence_f1"] / max(1, len(rows)), 6
+                ),
                 "complete_available_evidence_set": round(
                     totals[method]["complete_evidence_set"] / max(1, len(rows)), 6
                 ),
-                "role_coverage": round(totals[method]["role_coverage"] / max(1, len(rows)), 6),
+                "role_coverage": round(
+                    totals[method]["role_coverage"] / max(1, len(rows)), 6
+                ),
                 "false_complete_on_removed_cases": round(
                     totals[method]["false_complete"] / max(1, cases_with_removal), 6
                 ),
@@ -2243,7 +2715,9 @@ def missing_ratio_sensitivity(
                 "achieved_missing_ratio": round(removed_gold / max(1, total_gold), 6),
                 "cases": len(rows),
                 "cases_with_removal": cases_with_removal,
-                "empty_available_evidence_rate": round(empty_available / max(1, len(rows)), 6),
+                "empty_available_evidence_rate": round(
+                    empty_available / max(1, len(rows)), 6
+                ),
                 "metrics": metrics,
                 "strongest_baseline": strongest,
                 "frc_minus_baseline_evidence_f1": round(
@@ -2274,7 +2748,10 @@ def conflict_inventory(path: Path | None) -> dict[str, Any]:
     if path.suffix.lower() == ".json":
         report = json.loads(path.read_text(encoding="utf-8"))
         metadata = report.get("metadata", {})
-        if metadata.get("name") == "Google CONFLICTS FRC retrieval and conflict-classification audit":
+        if (
+            metadata.get("name")
+            == "Google CONFLICTS FRC retrieval and conflict-classification audit"
+        ):
             strongest = report["strongest_reproducible_baseline_by_accuracy"]
             return {
                 "status": metadata.get("status", "RUN"),
@@ -2284,8 +2761,12 @@ def conflict_inventory(path: Path | None) -> dict[str, Any]:
                 "dataset_sha256": metadata["dataset_sha256"],
                 "report_sha256": sha256(path),
                 "strongest_reproducible_baseline": strongest,
-                "baseline_accuracy": report["classification_metrics"][strongest]["accuracy"],
-                "frc_accuracy": report["classification_metrics"]["frc_select"]["accuracy"],
+                "baseline_accuracy": report["classification_metrics"][strongest][
+                    "accuracy"
+                ],
+                "frc_accuracy": report["classification_metrics"]["frc_select"][
+                    "accuracy"
+                ],
                 "paired_frc_minus_baseline_accuracy": report[
                     "paired_frc_minus_baseline_accuracy"
                 ],
@@ -2318,6 +2799,7 @@ def build_public_reference_report(
     controlled_domain_sensitivity_path: Path | None = None,
     conflicts_ablation_path: Path | None = None,
     housing_ablation_path: Path | None = None,
+    housing_weight_sensitivity_path: Path | None = None,
     lawshift_ablation_path: Path | None = None,
     eurlex_ablation_path: Path | None = None,
 ) -> dict[str, Any]:
@@ -2330,12 +2812,16 @@ def build_public_reference_report(
         answer_csv = metrics_dir / f"answer_metrics_{dataset}.csv"
         evidence = load_aggregate_csv(evidence_csv)
         answers = load_answer_csv(answer_csv)
-        baseline_methods = [display_method(method) for method in methods if method != "frc_select"]
+        baseline_methods = [
+            display_method(method) for method in methods if method != "frc_select"
+        ]
         strongest = max(
             baseline_methods,
             key=lambda method: float(evidence[method]["evidence_f1"] or 0.0),
         )
-        source_method = "setr_style" if strongest == "coverage_greedy_proxy" else strongest
+        source_method = (
+            "setr_style" if strongest == "coverage_greedy_proxy" else strongest
+        )
         comparison = compare_selected_files(
             selected_dir / f"{dataset}_frc_select.jsonl",
             selected_dir / f"{dataset}_{source_method}.jsonl",
@@ -2349,7 +2835,9 @@ def build_public_reference_report(
                 "evidence_csv": sha256(evidence_csv),
                 "answer_csv": sha256(answer_csv),
                 "frc_selected": sha256(selected_dir / f"{dataset}_frc_select.jsonl"),
-                "baseline_selected": sha256(selected_dir / f"{dataset}_{source_method}.jsonl"),
+                "baseline_selected": sha256(
+                    selected_dir / f"{dataset}_{source_method}.jsonl"
+                ),
             },
         }
     superiority = all(
@@ -2365,31 +2853,29 @@ def build_public_reference_report(
         controlled_domain_sensitivity_path,
         conflicts_ablation_path,
         housing_ablation_path,
+        housing_weight_sensitivity_path,
         lawshift_ablation_path,
         eurlex_ablation_path,
     )
     ablation_gate = experiment_audit["ablation"]["gate_required_comparison"]
     housing_ablation = experiment_audit["housing_real_model_ablation"]
     housing_run = (
-        housing_ablation["status"]
-        == "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021"
+        housing_ablation["status"] == "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021"
     )
     lawshift_ablation = experiment_audit["lawshift_temporal_ablation"]
     lawshift_run = (
-        lawshift_ablation["status"]
-        == "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL"
+        lawshift_ablation["status"] == "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL"
     )
     eurlex_ablation = experiment_audit["eurlex_temporal_ablation"]
     eurlex_run = (
-        eurlex_ablation["status"]
-        == "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL"
+        eurlex_ablation["status"] == "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL"
     )
     limitations = [
         "The report imports existing real-model artifacts and recomputes paired evidence metrics; it does not retrain models.",
         "The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.",
         "ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.",
         "The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.",
-        "The nine named ablation variants now have execution artifacts across compatible public datasets, and applicability is separately identifiable through HousingQA jurisdiction, LawShift expert-reviewed hypothetical revisions, and EUR-Lex/CELLAR official effective/expiry dates. This is still not full design coverage because field/role-weight sensitivity is controlled-domain only and the applicability sources are cross-domain rather than flood-response records.",
+        "The nine named ablation variants now have execution artifacts across compatible public datasets; applicability is separately identifiable through HousingQA jurisdiction, LawShift expert-reviewed hypothetical revisions, and EUR-Lex/CELLAR official effective/expiry dates; and HousingQA now supplies a frozen-score public real-model field/role-weight sweep. This is still not full design coverage because the weight and applicability sources are cross-domain rather than independently judged flood-response records.",
     ]
     if conflict_run:
         limitations.append(
@@ -2439,7 +2925,9 @@ def build_public_reference_report(
                 "jurisdictions": housing_ablation.get("metadata", {}).get(
                     "jurisdiction_count"
                 ),
-                "snapshot_year": housing_ablation.get("metadata", {}).get("snapshot_year"),
+                "snapshot_year": housing_ablation.get("metadata", {}).get(
+                    "snapshot_year"
+                ),
                 "version_or_expiry": housing_ablation.get("coverage", {}).get(
                     "version_or_expiry_variation"
                 ),
@@ -2458,18 +2946,14 @@ def build_public_reference_report(
             "effective_expiry_applicability": {
                 "status": eurlex_ablation["status"] if eurlex_run else "NOT_RUN",
                 "dataset": (
-                    "EU Publications Office CELLAR and EUR-Lex"
-                    if eurlex_run
-                    else None
+                    "EU Publications Office CELLAR and EUR-Lex" if eurlex_run else None
                 ),
                 "cases": eurlex_ablation.get("metadata", {}).get("case_count"),
                 "pairs": eurlex_ablation.get("metadata", {}).get("pair_count"),
                 "effective_dates": eurlex_ablation.get("coverage", {}).get(
                     "effective_dates"
                 ),
-                "expiry_dates": eurlex_ablation.get("coverage", {}).get(
-                    "expiry_dates"
-                ),
+                "expiry_dates": eurlex_ablation.get("coverage", {}).get("expiry_dates"),
             },
         },
         "decision": {
@@ -2479,11 +2963,11 @@ def build_public_reference_report(
             "full_outperforms_w_o_role_and_w_o_field": (
                 ablation_gate["full_beats_w_o_role"]
                 and housing_run
-                and housing_ablation["decision"][
-                    "full_strictly_better_than_w_o_field"
-                ]
+                and housing_ablation["decision"]["full_strictly_better_than_w_o_field"]
             ),
-            "design_16_2_experiment_coverage_complete": experiment_audit["coverage_complete"],
+            "design_16_2_experiment_coverage_complete": experiment_audit[
+                "coverage_complete"
+            ],
             "gate_2": "NO-GO",
             "reason": (
                 "real-model FRC runs are reproducible, but paired confidence intervals do not establish "
@@ -2536,6 +3020,7 @@ def render_public_reference_markdown(report: dict[str, Any]) -> str:
     combined_ablation = experiment["combined_ablation_coverage"]
     conflicts_ablation = experiment["conflicts_real_model_ablation"]
     housing_ablation = experiment["housing_real_model_ablation"]
+    housing_weights = experiment["housing_public_weight_sensitivity"]
     lawshift_ablation = experiment["lawshift_temporal_ablation"]
     eurlex_ablation = experiment["eurlex_temporal_ablation"]
     lines.extend(
@@ -2556,7 +3041,10 @@ def render_public_reference_markdown(report: dict[str, Any]) -> str:
             lines.append(
                 f"| {variant} | RUN | {values['evidence_f1']:.6f} | {values['role_coverage']:.6f} |"
             )
-        elif variant == "w/o_conflict" and conflicts_ablation["status"] == "RUN_REAL_MODEL_CONFLICTS":
+        elif (
+            variant == "w/o_conflict"
+            and conflicts_ablation["status"] == "RUN_REAL_MODEL_CONFLICTS"
+        ):
             lines.append("| w/o_conflict | RUN_REAL_MODEL_CONFLICTS | — | — |")
         elif (
             variant in {"w/o_field", "w/o_applicability"}
@@ -2605,10 +3093,7 @@ def render_public_reference_markdown(report: dict[str, Any]) -> str:
                 "也不替代独立 expected-behavior adherence 评判。",
             ]
         )
-    if (
-        housing_ablation["status"]
-        == "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021"
-    ):
+    if housing_ablation["status"] == "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021":
         housing_full = housing_ablation["aggregates"]["frc_full"]
         housing_without_field = housing_ablation["aggregates"]["w/o_field"]
         housing_without_applicability = housing_ablation["aggregates"][
@@ -2645,9 +3130,39 @@ def render_public_reference_markdown(report: dict[str, Any]) -> str:
             ]
         )
     if (
-        lawshift_ablation["status"]
-        == "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL"
+        housing_weights["status"]
+        == "RUN_PUBLIC_EXPERT_FIELD_REAL_MODEL_ROLE_DIAGNOSTIC"
     ):
+        lines.extend(
+            [
+                "",
+                "### 字段/角色权重敏感性（HousingQA，公开冻结真实模型分数）",
+                "",
+                "该单因素扫描复用同一 40 用例、160 字段、22 辖区候选池；gold 字段证据只在选择完成后评分。"
+                "结果用于辨识权重行为，不用于回看结果后修改冻结参数。",
+                "",
+                "| 维度 | 值 | Evidence F1 | Field Coverage | Role Coverage | 相对冻结选择变化 |",
+                "|---|---:|---:|---:|---:|---:|",
+            ]
+        )
+        for row in housing_weights["results"]:
+            aggregate = row["aggregate"]
+            lines.append(
+                f"| {row['dimension']} | {row['value']:.2f} | "
+                f"{aggregate['evidence_f1']:.6f} | {aggregate['field_coverage']:.6f} | "
+                f"{aggregate['role_coverage']:.6f} | "
+                f"{row['selection_changed_cases_from_frozen']} |"
+            )
+        lines.extend(
+            [
+                "",
+                "字段权重从 0 提高到冻结值 2 时 Evidence F1/字段覆盖由 0.656250 提高到 0.706250；"
+                "角色权重从 0 提高到 2 时角色覆盖由 0.600000 提高到 0.633333。"
+                "字段与角色权重均可辨识，但更高权重相对冻结配置的最大 Evidence F1 增益只有 0.006250，"
+                "且角色标签不是 HousingQA 专家标注，因此 Gate 2 仍为 NO-GO。",
+            ]
+        )
+    if lawshift_ablation["status"] == "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL":
         lawshift_full = lawshift_ablation["aggregates"]["frc_full"]
         lawshift_without = lawshift_ablation["aggregates"]["w/o_applicability"]
         lawshift_filtered = lawshift_ablation["aggregates"][
@@ -2681,10 +3196,7 @@ def render_public_reference_markdown(report: dict[str, Any]) -> str:
                 "因此版本过滤有效，但 FRC 独有优势未获证明。",
             ]
         )
-    if (
-        eurlex_ablation["status"]
-        == "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL"
-    ):
+    if eurlex_ablation["status"] == "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL":
         eurlex_full = eurlex_ablation["aggregates"]["frc_full"]
         eurlex_without = eurlex_ablation["aggregates"]["w/o_applicability"]
         eurlex_filtered = eurlex_ablation["aggregates"][
@@ -2830,7 +3342,9 @@ def render_public_reference_markdown(report: dict[str, Any]) -> str:
             "|---|---:|---:|---|---:|---:|",
         ]
     )
-    for dataset_name, dataset in experiment["token_budget_sensitivity"]["datasets"].items():
+    for dataset_name, dataset in experiment["token_budget_sensitivity"][
+        "datasets"
+    ].items():
         for item in dataset["budgets"]:
             frc = item["metrics"]["frc_select"]
             baseline_name = item["strongest_baseline"]

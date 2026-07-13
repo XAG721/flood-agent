@@ -94,6 +94,8 @@
         {"path": "tests/test_response_workflow.py", "contains": "test_grounded_task_draft_covers_all_roles_and_keeps_plan_attribution"},
         {"path": "tests/test_response_workflow.py", "contains": "test_evidence_conflicts_are_separate_from_applicability_and_require_human_resolution"},
         {"path": "flood_system/rag.py", "contains": "EvidenceSelectionPolicy"},
+        {"path": "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json", "contains": "RUN_PUBLIC_EXPERT_FIELD_REAL_MODEL_ROLE_DIAGNOSTIC"},
+        {"path": "tests/test_frc_housing_weight_sensitivity.py", "contains": "test_public_loader_reaggregates_committed_weight_sensitivity"},
         {"path": "docs/progressive_upgrade/frc_public_evaluation_protocol.md"}
       ],
       "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"

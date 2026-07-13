@@ -9,7 +9,7 @@ from typing import Any, Iterable
 from flood_system.design_contract_audit import build_design_contract_audit
 
 
-AUDIT_VERSION = "progressive-completion-audit-v4"
+AUDIT_VERSION = "progressive-completion-audit-v5"
 
 SOFTWARE_DELIVERABLES: dict[str, tuple[str, ...]] = {
     "web_and_cesium": (
@@ -105,6 +105,9 @@ DATA_EXPERIMENT_DELIVERABLES: dict[str, tuple[str, ...]] = {
         "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation_cases.jsonl.gz",
         "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation.json",
         "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation_cases.jsonl.gz",
+        "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
+        "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.md",
+        "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity_cases.jsonl.gz",
         "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation.json",
         "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation_cases.jsonl.gz",
         "benchmarks/eurlex_temporal_selection.json",
@@ -120,10 +123,12 @@ DATA_EXPERIMENT_DELIVERABLES: dict[str, tuple[str, ...]] = {
         "scripts/run_frc_controlled_sensitivity.py",
         "scripts/run_conflicts_frc_ablation.py",
         "scripts/run_housing_frc_ablation.py",
+        "scripts/run_housing_weight_sensitivity.py",
         "scripts/run_lawshift_temporal_ablation.py",
         "scripts/prepare_eurlex_temporal_source.py",
         "scripts/run_eurlex_temporal_ablation.py",
         "flood_system/frc_eurlex_temporal_ablation.py",
+        "flood_system/frc_housing_weight_sensitivity.py",
     ),
     "contract_and_legacy_baseline_evidence": (
         "output/acceptance/legacy_baseline_manifest.json",
@@ -175,6 +180,9 @@ EVIDENCE_FILES = (
     "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation_cases.jsonl.gz",
     "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation.json",
     "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation_cases.jsonl.gz",
+    "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
+    "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.md",
+    "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity_cases.jsonl.gz",
     "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation.json",
     "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation_cases.jsonl.gz",
     "benchmarks/eurlex_temporal_selection.json",
@@ -342,6 +350,7 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
     conflict_slice = rag_report["challenge_slices"]["conflict_and_stale"]
     experiment_audit = rag_report["design_16_2_experiment_audit"]
     housing_ablation = experiment_audit["housing_real_model_ablation"]
+    housing_weights = experiment_audit["housing_public_weight_sensitivity"]
     lawshift_ablation = experiment_audit["lawshift_temporal_ablation"]
     eurlex_ablation = experiment_audit["eurlex_temporal_ablation"]
     gate_two_is_safely_held = (
@@ -360,7 +369,17 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
         and experiment_audit["controlled_domain_sensitivity"]["status"]
         == "RUN_CONTROLLED_DOMAIN"
         and experiment_audit["sensitivity_coverage"]["role_and_field_weights"]
-        == "RUN_CONTROLLED_DOMAIN_PUBLIC_SCHEMA_BLOCKED"
+        == "RUN_PUBLIC_EXPERT_FIELD_REAL_MODEL_ROLE_DIAGNOSTIC"
+        and housing_weights["status"]
+        == "RUN_PUBLIC_EXPERT_FIELD_REAL_MODEL_ROLE_DIAGNOSTIC"
+        and housing_weights["decision"][
+            "public_real_model_weight_sensitivity_complete"
+        ]
+        is True
+        and housing_weights["decision"]["frozen_parameters_changed"] is False
+        and housing_weights["decision"]["gate_2"] == "NO-GO"
+        and experiment_audit["technical_sensitivity_matrix_complete"] is True
+        and experiment_audit["flood_domain_expert_validation_complete"] is False
         and experiment_audit["sensitivity_coverage"]["conflict_threshold"]
         == "RUN_REAL_MODEL_CONFLICTS"
         and experiment_audit["conflicts_real_model_ablation"]["status"]
@@ -508,6 +527,8 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
                 "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation.json",
                 "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation.json",
                 "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation_cases.jsonl.gz",
+                "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
+                "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity_cases.jsonl.gz",
                 "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation.json",
                 "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation_cases.jsonl.gz",
                 "benchmarks/eurlex_temporal_selection.json",
@@ -551,6 +572,19 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
                     "frc_full"
                 ]["field_coverage"],
                 "housing_strongest_baseline": housing_ablation["strongest_baseline"],
+                "housing_weight_sensitivity": housing_weights["status"],
+                "housing_weight_field_values": housing_weights["dimensions"][
+                    "field_weight"
+                ],
+                "housing_weight_role_values": housing_weights["dimensions"][
+                    "role_weight"
+                ],
+                "technical_sensitivity_matrix_complete": experiment_audit[
+                    "technical_sensitivity_matrix_complete"
+                ],
+                "flood_domain_expert_validation_complete": experiment_audit[
+                    "flood_domain_expert_validation_complete"
+                ],
                 "lawshift_temporal_ablation": lawshift_ablation["status"],
                 "lawshift_full_exact_evidence_accuracy": lawshift_ablation[
                     "aggregates"

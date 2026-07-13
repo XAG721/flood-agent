@@ -58,6 +58,7 @@ python scripts/run_legacy_migration_inventory.py --db data/flood_warning_system_
 python scripts/generate_floodagent_bench.py
 python scripts/run_candidate_evaluation.py
 python scripts/run_rag_evaluation.py
+python scripts/run_housing_weight_sensitivity.py
 python scripts/run_response_worker.py --once
 python scripts/reset_simulation_environment.py --confirm RESET-SIMULATION
 python scripts/export_openapi.py --output docs/openapi.json
@@ -97,6 +98,7 @@ python scripts/run_progressive_completion_audit.py
 - `flood_system/response_workflow/`：区县防办确定性响应工作流模型与服务。
 - `flood_system/rag_evaluation.py`：BM25、哈希向量 Dense、混合、MMR、Rerank、覆盖贪心代理和 FRC-Select 的可重复工程评测、w/o Role / w/o Field 消融与机器可读 Gate 2 判定；覆盖贪心代理不是 SetR 复现。
 - `flood_system/frc_public_evidence.py`：导入真实 BGE/reranker 公共数据产物，重算逐样本配对置信区间，并执行缺失证据压力切片。
+- `flood_system/frc_housing_weight_sensitivity.py`：复用 HousingQA 冻结真实模型分数，执行字段/角色权重单因素扫描并生成可失败关闭的逐例工件；该跨领域诊断不改变 Gate 2。
 - `flood_system/design_contract_audit.py`：从最新设计原文提取 89 条显式合同，校验证据唯一归属、仓库内路径、内容标记和旧基线哈希，并保留外部 No-Go。
 - `flood_system/http/response_router.py`：`/response/*` 业务闭环 API。
 - `flood_system/infrastructure/sse.py`：SSE 编码与流式基础设施。
