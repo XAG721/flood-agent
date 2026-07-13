@@ -9,6 +9,9 @@
 - `asset_inventory.md`：原系统资产、真实能力、依赖、写状态风险和 REUSE/WRAP/REFACTOR/REBUILD/RETIRE 结论。
 - `implementation_acceptance_matrix.md`：阶段 0—8、最终审查清单和 Go/No-Go 门禁状态。
 - `completion_traceability_audit.md`：按最新设计合同汇总阶段、24 场景、第 18 节切换清单、Gate、交付物和外部 No-Go 的全目标追溯审计。
+- `design_contract_evidence_policy.json`：把最新设计中的 89 条显式条件一一绑定到本地、受控、门禁或外部证据组的失败关闭策略。
+- `../../output/acceptance/design_contract_audit.md`：从设计原文确定性提取并逐条核验的 89 条合同账本。
+- `../../output/acceptance/legacy_baseline_manifest.md`：升级前代码、数据库重建输入、SQLite 与 RAG 索引的离线可复现冻结清单。
 - `../../output/acceptance/progressive_completion_audit.md`：CI 可确定性重建的第 18—23 节机器可读审计，固定区分受控首期完成、Gate 2 No-Go 与生产外部 No-Go。
 - `operations_and_rollback.md`：启动、健康检查、功能开关、备份、回滚和人工接管。
 - `evaluation_and_gate_report.md`：真实运行的受控模拟指标、Gate 判定和外部 No-Go 边界。

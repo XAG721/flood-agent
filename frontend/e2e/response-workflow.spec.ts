@@ -14,6 +14,12 @@ test("响应工作台在桌面与移动视口中保持可读、可追溯且无�
   await expect(page.getByRole("list", { name: "预警响应业务流程" })).toContainText("人工审批");
   await expect(page.getByText(/deterministic|模拟|STALE/).first()).toBeVisible();
 
+  const eventHeading = await page.getByRole("heading", { name: /碑林区.*响应事件/ }).innerText();
+  await page.reload();
+  await expect(page.getByRole("status").filter({ hasText: "受控模拟环境" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: eventHeading })).toBeVisible();
+  await expect(page.getByText(/预警版本 V\d+/)).toBeVisible();
+
   const desktopOverflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(desktopOverflow).toBeLessThanOrEqual(1);
   await page.screenshot({ path: testInfo.outputPath("response-workbench-desktop.png"), fullPage: true });

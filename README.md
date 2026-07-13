@@ -74,13 +74,20 @@ python scripts/run_controlled_performance.py --db tmp/performance.db --output-di
 
 该命令只验证仓库内单进程回归预算，不能代替生产网络、并发容量或真实数据规模压测。
 
-重建第 18—23 节机器可读完成性审计：
+冻结并验证旧系统可复现基线（实际 SQLite/RAG 二进制只保存在忽略的 `.cache/`，Git 仅保存哈希、Schema、行数和 Git blob 身份）：
 
 ```powershell
+python scripts/freeze_legacy_baseline.py
+```
+
+逐条重建第 18.3—18.6、22、23 节的 89 条显式设计合同，再重建汇总完成性审计：
+
+```powershell
+python scripts/run_design_contract_audit.py
 python scripts/run_progressive_completion_audit.py
 ```
 
-报告写入 `output/acceptance/progressive_completion_audit.json` 和 `.md`。CI 会重建并逐字节比较；本地受控闭环通过不会改变 FRC-RAG Gate 2 或真实生产/UAT 的 No-Go 状态。
+逐条报告写入 `output/acceptance/design_contract_audit.json` 和 `.md`，汇总报告写入 `output/acceptance/progressive_completion_audit.json` 和 `.md`。CI 会重建并逐字节比较；当前 87 条本地/受控条件有证据，`18.4-10` 和 `22.4-10` 的真实旧流量归零与旧链路退役仍为外部 No-Go。本地受控闭环通过不会改变 FRC-RAG Gate 2 或真实生产/UAT 的 No-Go 状态。
 
 ## 主要目录与结构边界
 
@@ -90,6 +97,7 @@ python scripts/run_progressive_completion_audit.py
 - `flood_system/response_workflow/`：区县防办确定性响应工作流模型与服务。
 - `flood_system/rag_evaluation.py`：BM25、哈希向量 Dense、混合、MMR、Rerank、覆盖贪心代理和 FRC-Select 的可重复工程评测、w/o Role / w/o Field 消融与机器可读 Gate 2 判定；覆盖贪心代理不是 SetR 复现。
 - `flood_system/frc_public_evidence.py`：导入真实 BGE/reranker 公共数据产物，重算逐样本配对置信区间，并执行缺失证据压力切片。
+- `flood_system/design_contract_audit.py`：从最新设计原文提取 89 条显式合同，校验证据唯一归属、仓库内路径、内容标记和旧基线哈希，并保留外部 No-Go。
 - `flood_system/http/response_router.py`：`/response/*` 业务闭环 API。
 - `flood_system/infrastructure/sse.py`：SSE 编码与流式基础设施。
 - `flood_system/schemas/`：HTTP router 使用的 schema import surface。
@@ -397,6 +405,8 @@ npm.cmd run test:e2e
 - [v0.2.0 清理与结构重构报告](./docs/releases/v0.2.0.md)
 - [渐进式升级与验收](./docs/progressive_upgrade/README.md)
 - [全目标完成度追溯审计](./docs/progressive_upgrade/completion_traceability_audit.md)
+- [89 条设计合同逐条审计](./output/acceptance/design_contract_audit.md)
+- [旧系统可复现基线冻结报告](./output/acceptance/legacy_baseline_manifest.md)
 - [机器可读完成性审计](./output/acceptance/progressive_completion_audit.md)
 - [AgentTwin 兼容演示资料](./docs/agent_twin_upgrade/README.md)
 - [甲方演示脚本](./docs/agent_twin_upgrade/16_甲方演示脚本.md)

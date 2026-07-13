@@ -2,6 +2,8 @@
 
 盘点基线：Git `2db016a`（`main`，升级前最后一次已提交版本）。升级开发期间不把工作树中的新实现反写为“原系统已有能力”。
 
+可复现冻结证据位于 `output/acceptance/legacy_baseline_manifest.json` 和 `.md`：完整提交为 `2db016af915ada1912afe91d315defe844dba09d`，清单保存 Git tree/archive、重建输入 blob、SQLite 逐表内容和 RAG 运行索引哈希；实际二进制只保存在忽略的 `.cache`。该证据证明受控旧系统可离线重建，不代表真实生产流量归零或生产数据库已归档。
+
 | asset_id | layer | code_location | current_capability | state_write | dependencies | reproducibility | test_status | disposition | target_module | rollback |
 |---|---|---|---|---|---|---|---|---|---|---|
 | LEGACY-FE-01 | 页面 | `frontend/src/components/DigitalTwinCesiumCanvas.tsx` | Cesium 三维场景、对象标注和相机交互 | 否 | Cesium 静态资源、3D 模型 | 部分可复现 | 前端回归 | REUSE/REFACTOR | 新版预警、对象和任务数据访问层 | 关闭响应页开关，保留旧展示入口 |

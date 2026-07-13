@@ -17,13 +17,15 @@ from flood_system.completion_audit import (
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_completion_audit_proves_controlled_scope_without_overstating_production() -> None:
+def test_completion_audit_proves_controlled_scope_without_overstating_production() -> (
+    None
+):
     report = build_progressive_completion_audit(REPO_ROOT)
 
     assert report["summary"] == {
         "controlled_first_iteration": "PASS",
-        "passed_local_requirements": 11,
-        "local_requirement_count": 11,
+        "passed_local_requirements": 12,
+        "local_requirement_count": 12,
         "frc_gate_2": "NO-GO",
         "production_readiness": "NO-GO_EXTERNAL",
         "overall": "CONTROLLED_SCOPE_COMPLETE_PRODUCTION_NO_GO",
@@ -73,7 +75,7 @@ def test_completion_audit_output_is_deterministic(tmp_path: Path) -> None:
     assert first_json.read_bytes() == second_json.read_bytes()
     assert first_md.read_bytes() == second_md.read_bytes()
     report = json.loads(first_json.read_text(encoding="utf-8"))
-    assert report["metadata"]["audit_version"] == "progressive-completion-audit-v3"
+    assert report["metadata"]["audit_version"] == "progressive-completion-audit-v4"
 
 
 def test_evidence_hash_is_independent_of_platform_newlines(tmp_path: Path) -> None:

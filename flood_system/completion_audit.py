@@ -6,8 +6,10 @@ import re
 from pathlib import Path
 from typing import Any, Iterable
 
+from flood_system.design_contract_audit import build_design_contract_audit
 
-AUDIT_VERSION = "progressive-completion-audit-v3"
+
+AUDIT_VERSION = "progressive-completion-audit-v4"
 
 SOFTWARE_DELIVERABLES: dict[str, tuple[str, ...]] = {
     "web_and_cesium": (
@@ -20,7 +22,10 @@ SOFTWARE_DELIVERABLES: dict[str, tuple[str, ...]] = {
     ),
     "worker": ("scripts/run_response_worker.py",),
     "candidate_service": ("flood_system/response_workflow/candidate_discovery.py",),
-    "frc_rag_service": ("flood_system/rag.py", "flood_system/response_workflow/service.py"),
+    "frc_rag_service": (
+        "flood_system/rag.py",
+        "flood_system/response_workflow/service.py",
+    ),
     "draft_rules_state_machine": (
         "flood_system/response_workflow/service.py",
         "flood_system/response_workflow/state_machine.py",
@@ -35,6 +40,11 @@ SOFTWARE_DELIVERABLES: dict[str, tuple[str, ...]] = {
         "infra/postgis/001_shadow_projection.sql",
     ),
     "deployment": ("Dockerfile", "frontend/Dockerfile", "docker-compose.yml"),
+    "contract_audit": (
+        "flood_system/design_contract_audit.py",
+        "scripts/run_design_contract_audit.py",
+        "scripts/freeze_legacy_baseline.py",
+    ),
 }
 
 DOCUMENT_DELIVERABLES: dict[str, tuple[str, ...]] = {
@@ -67,6 +77,11 @@ DOCUMENT_DELIVERABLES: dict[str, tuple[str, ...]] = {
     "experiments": (
         "docs/progressive_upgrade/evaluation_and_gate_report.md",
         "docs/progressive_upgrade/frc_public_evaluation_protocol.md",
+    ),
+    "contract_traceability": (
+        "docs/progressive_upgrade/design_contract_evidence_policy.json",
+        "output/acceptance/legacy_baseline_manifest.md",
+        "output/acceptance/design_contract_audit.md",
     ),
 }
 
@@ -109,6 +124,11 @@ DATA_EXPERIMENT_DELIVERABLES: dict[str, tuple[str, ...]] = {
         "scripts/prepare_eurlex_temporal_source.py",
         "scripts/run_eurlex_temporal_ablation.py",
         "flood_system/frc_eurlex_temporal_ablation.py",
+    ),
+    "contract_and_legacy_baseline_evidence": (
+        "output/acceptance/legacy_baseline_manifest.json",
+        "output/acceptance/design_contract_audit.json",
+        "tests/test_design_contract_audit.py",
     ),
 }
 
@@ -161,6 +181,11 @@ EVIDENCE_FILES = (
     "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.json",
     "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.md",
     "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation_cases.jsonl.gz",
+    "docs/progressive_upgrade/design_contract_evidence_policy.json",
+    "output/acceptance/legacy_baseline_manifest.json",
+    "output/acceptance/legacy_baseline_manifest.md",
+    "output/acceptance/design_contract_audit.json",
+    "output/acceptance/design_contract_audit.md",
 )
 
 EXTERNAL_NO_GO_ITEMS = (
@@ -221,7 +246,9 @@ def check_artifact_groups(
         for group, paths in groups.items()
     }
     missing = {group: paths for group, paths in missing.items() if paths}
-    evidence = list(dict.fromkeys(relative for paths in groups.values() for relative in paths))
+    evidence = list(
+        dict.fromkeys(relative for paths in groups.values() for relative in paths)
+    )
     return _check(
         requirement_id,
         title,
@@ -252,7 +279,9 @@ def check_gate_one(candidate_report: dict[str, Any]) -> dict[str, Any]:
             "critical_miss_rate": baseline["critical_miss_rate"],
             "ece": baseline["ece"],
             "calibration_improvement": calibration_improvement,
-            "missing_feature_recall_drop_percentage_points": stress["recall_drop_percentage_points"],
+            "missing_feature_recall_drop_percentage_points": stress[
+                "recall_drop_percentage_points"
+            ],
         },
     )
 
@@ -270,6 +299,21 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
     rag_report = _load_json(repo_root / EVIDENCE_FILES[3])
     openapi = _load_json(repo_root / EVIDENCE_FILES[4])
     compose_text = (repo_root / EVIDENCE_FILES[5]).read_text(encoding="utf-8-sig")
+    committed_design_audit = _load_json(
+        repo_root / "output/acceptance/design_contract_audit.json"
+    )
+    rebuilt_design_audit = build_design_contract_audit(repo_root)
+    design_summary = rebuilt_design_audit["summary"]
+    design_contract_passed = (
+        committed_design_audit == rebuilt_design_audit
+        and design_summary["item_count"] == 89
+        and design_summary["controlled_or_local_pass_count"] == 87
+        and design_summary["external_no_go_ids"] == ["18.4-10", "22.4-10"]
+        and design_summary["all_items_accounted"] is True
+        and design_summary["controlled_scope_complete"] is True
+        and design_summary["full_production_complete"] is False
+        and rebuilt_design_audit["legacy_baseline"]["offline_reproducible"] is True
+    )
 
     scenario_summary = scenario_report["summary"]
     scenario_passed = (
@@ -290,7 +334,9 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
     openapi_paths = set(openapi["paths"])
     missing_paths = sorted(REQUIRED_RESPONSE_PATHS - openapi_paths)
     compose_services = _compose_services(compose_text)
-    missing_services = sorted({"backend", "frontend", "worker", "postgis"} - compose_services)
+    missing_services = sorted(
+        {"backend", "frontend", "worker", "postgis"} - compose_services
+    )
 
     rag_decision = rag_report["decision"]
     conflict_slice = rag_report["challenge_slices"]["conflict_and_stale"]
@@ -308,7 +354,8 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
         and experiment_audit["status"] == "PARTIAL"
         and rag_decision["full_outperforms_w_o_role_and_w_o_field"] is False
         and experiment_audit["token_budget_sensitivity"]["status"] == "RUN"
-        and experiment_audit["token_budget_sensitivity"]["all_methods_within_budget"] is True
+        and experiment_audit["token_budget_sensitivity"]["all_methods_within_budget"]
+        is True
         and experiment_audit["missing_ratio_sensitivity"]["status"] == "RUN"
         and experiment_audit["controlled_domain_sensitivity"]["status"]
         == "RUN_CONTROLLED_DOMAIN"
@@ -329,9 +376,7 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
         and lawshift_ablation["status"]
         == "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL"
         and lawshift_ablation["decision"]["gate_2"] == "NO-GO"
-        and lawshift_ablation["decision"][
-            "full_strictly_better_than_w_o_applicability"
-        ]
+        and lawshift_ablation["decision"]["full_strictly_better_than_w_o_applicability"]
         is True
         and lawshift_ablation["decision"][
             "full_exact_gain_over_strongest_baseline_at_least_0_05"
@@ -340,9 +385,7 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
         and eurlex_ablation["status"]
         == "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL"
         and eurlex_ablation["decision"]["gate_2"] == "NO-GO"
-        and eurlex_ablation["decision"][
-            "full_strictly_better_than_w_o_applicability"
-        ]
+        and eurlex_ablation["decision"]["full_strictly_better_than_w_o_applicability"]
         is True
         and eurlex_ablation["decision"][
             "full_exact_gain_over_strongest_baseline_at_least_0_05"
@@ -359,7 +402,9 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
         and experiment_audit["combined_ablation_coverage"]["missing_variants"] == []
         and rag_decision["design_16_2_experiment_coverage_complete"] is False
     )
-    service_source = (repo_root / "flood_system/response_workflow/service.py").read_text(encoding="utf-8")
+    service_source = (
+        repo_root / "flood_system/response_workflow/service.py"
+    ).read_text(encoding="utf-8")
     gate_two_is_safely_held = gate_two_is_safely_held and all(
         marker in service_source
         for marker in (
@@ -375,9 +420,9 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
         item["passed"] for item in performance_decision["checks"]
     )
 
-    boundary_document = (repo_root / "docs/progressive_upgrade/completion_traceability_audit.md").read_text(
-        encoding="utf-8-sig"
-    )
+    boundary_document = (
+        repo_root / "docs/progressive_upgrade/completion_traceability_audit.md"
+    ).read_text(encoding="utf-8-sig")
     boundary_markers = (
         "真实预警/GIS/对象主数据",
         "生产 PostgreSQL",
@@ -390,7 +435,9 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
         "真实岗位 UAT",
         "生产旧流量归零",
     )
-    missing_boundary_markers = [marker for marker in boundary_markers if marker not in boundary_document]
+    missing_boundary_markers = [
+        marker for marker in boundary_markers if marker not in boundary_document
+    ]
 
     requirements = [
         check_artifact_groups(
@@ -416,14 +463,20 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
             "受控响应工作流通过版本化 Core API 暴露",
             not missing_paths,
             ["docs/openapi.json"],
-            {"required_path_count": len(REQUIRED_RESPONSE_PATHS), "missing_paths": missing_paths},
+            {
+                "required_path_count": len(REQUIRED_RESPONSE_PATHS),
+                "missing_paths": missing_paths,
+            },
         ),
         _check(
             "compose_environment",
             "完整受控环境声明 Web、API、Worker 和 PostGIS 服务",
             not missing_services,
             ["docker-compose.yml"],
-            {"services": sorted(compose_services), "missing_services": missing_services},
+            {
+                "services": sorted(compose_services),
+                "missing_services": missing_services,
+            },
         ),
         _check(
             "simulation_provenance",
@@ -466,26 +519,42 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
                 "gate_2": rag_decision["gate_2"],
                 "pipeline_feasible": rag_decision["pipeline_feasible"],
                 "conflicts_cases": conflict_slice["cases"],
-                "strongest_reproducible_baseline": conflict_slice["strongest_reproducible_baseline"],
+                "strongest_reproducible_baseline": conflict_slice[
+                    "strongest_reproducible_baseline"
+                ],
                 "baseline_accuracy": conflict_slice["baseline_accuracy"],
                 "frc_accuracy": conflict_slice["frc_accuracy"],
-                "ablation_variants_planned": experiment_audit["combined_ablation_coverage"]["planned_count"],
+                "ablation_variants_planned": experiment_audit[
+                    "combined_ablation_coverage"
+                ]["planned_count"],
                 "experiment_coverage_complete": experiment_audit["coverage_complete"],
-                "token_budget_sensitivity": experiment_audit["token_budget_sensitivity"]["status"],
-                "missing_ratio_sensitivity": experiment_audit["missing_ratio_sensitivity"]["status"],
-                "controlled_domain_sensitivity": experiment_audit["controlled_domain_sensitivity"]["status"],
-                "role_field_weight_sensitivity": experiment_audit["sensitivity_coverage"]["role_and_field_weights"],
-                "conflict_threshold_sensitivity": experiment_audit["sensitivity_coverage"]["conflict_threshold"],
-                "conflicts_real_model_ablation": experiment_audit["conflicts_real_model_ablation"]["status"],
+                "token_budget_sensitivity": experiment_audit[
+                    "token_budget_sensitivity"
+                ]["status"],
+                "missing_ratio_sensitivity": experiment_audit[
+                    "missing_ratio_sensitivity"
+                ]["status"],
+                "controlled_domain_sensitivity": experiment_audit[
+                    "controlled_domain_sensitivity"
+                ]["status"],
+                "role_field_weight_sensitivity": experiment_audit[
+                    "sensitivity_coverage"
+                ]["role_and_field_weights"],
+                "conflict_threshold_sensitivity": experiment_audit[
+                    "sensitivity_coverage"
+                ]["conflict_threshold"],
+                "conflicts_real_model_ablation": experiment_audit[
+                    "conflicts_real_model_ablation"
+                ]["status"],
                 "housing_real_model_ablation": housing_ablation["status"],
-                "housing_full_field_coverage": housing_ablation["aggregates"]["frc_full"][
-                    "field_coverage"
-                ],
+                "housing_full_field_coverage": housing_ablation["aggregates"][
+                    "frc_full"
+                ]["field_coverage"],
                 "housing_strongest_baseline": housing_ablation["strongest_baseline"],
                 "lawshift_temporal_ablation": lawshift_ablation["status"],
-                "lawshift_full_exact_evidence_accuracy": lawshift_ablation["aggregates"][
-                    "frc_full"
-                ]["exact_evidence_accuracy"],
+                "lawshift_full_exact_evidence_accuracy": lawshift_ablation[
+                    "aggregates"
+                ]["frc_full"]["exact_evidence_accuracy"],
                 "lawshift_strongest_baseline": lawshift_ablation["strongest_baseline"],
                 "eurlex_temporal_ablation": eurlex_ablation["status"],
                 "eurlex_full_exact_evidence_accuracy": eurlex_ablation["aggregates"][
@@ -498,7 +567,9 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
                 "effective_or_expiry_dates": experiment_audit[
                     "applicability_identifiability"
                 ]["effective_or_expiry_dates"],
-                "ablation_variants_run": experiment_audit["combined_ablation_coverage"]["run_count"],
+                "ablation_variants_run": experiment_audit["combined_ablation_coverage"][
+                    "run_count"
+                ],
             },
         ),
         _check(
@@ -518,12 +589,41 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
             ["docs/progressive_upgrade/completion_traceability_audit.md"],
             {"missing_boundary_markers": missing_boundary_markers},
         ),
+        _check(
+            "design_contract_traceability",
+            "第 18.3—18.6、22 和 23 节的 89 条显式合同逐条归属且外部条件不冒充完成",
+            design_contract_passed,
+            [
+                "docs/progressive_upgrade/design_contract_evidence_policy.json",
+                "output/acceptance/legacy_baseline_manifest.json",
+                "output/acceptance/design_contract_audit.json",
+                "output/acceptance/design_contract_audit.md",
+                "tests/test_design_contract_audit.py",
+            ],
+            {
+                "committed_report_matches_rebuild": committed_design_audit
+                == rebuilt_design_audit,
+                "item_count": design_summary["item_count"],
+                "controlled_or_local_pass_count": design_summary[
+                    "controlled_or_local_pass_count"
+                ],
+                "external_no_go_ids": design_summary["external_no_go_ids"],
+                "legacy_baseline_source_commit": rebuilt_design_audit[
+                    "legacy_baseline"
+                ]["source_commit"],
+                "legacy_database_sha256": rebuilt_design_audit["legacy_baseline"][
+                    "database"
+                ]["sha256"],
+                "legacy_rag_index_sha256": rebuilt_design_audit["legacy_baseline"][
+                    "rag_index"
+                ]["sha256"],
+            },
+        ),
     ]
 
     passed_count = sum(item["status"] == "PASS" for item in requirements)
     evidence_hashes = {
-        relative: _evidence_sha256(repo_root / relative)
-        for relative in EVIDENCE_FILES
+        relative: _evidence_sha256(repo_root / relative) for relative in EVIDENCE_FILES
     }
     controlled_status = "PASS" if passed_count == len(requirements) else "FAIL"
     return {
@@ -572,7 +672,9 @@ def write_progressive_completion_audit(
     report = build_progressive_completion_audit(repo_root)
     json_target.parent.mkdir(parents=True, exist_ok=True)
     markdown_target.parent.mkdir(parents=True, exist_ok=True)
-    json_target.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    json_target.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
 
     summary = report["summary"]
     lines = [
@@ -593,7 +695,9 @@ def write_progressive_completion_audit(
     ]
     for requirement in report["requirements"]:
         evidence = "<br>".join(f"`{item}`" for item in requirement["evidence"])
-        lines.append(f"| {requirement['title']} | {requirement['status']} | {evidence} |")
+        lines.append(
+            f"| {requirement['title']} | {requirement['status']} | {evidence} |"
+        )
     lines.extend(
         [
             "",

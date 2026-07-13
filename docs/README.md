@@ -15,6 +15,8 @@
 - [`progressive_upgrade/`](./progressive_upgrade/)：资产处置、合同、数据字典、运维、安全、评测和阶段验收。
 - [`progressive_upgrade/frc_public_evaluation_protocol.md`](./progressive_upgrade/frc_public_evaluation_protocol.md)：FRC-Select 公开数据真实模型参考审计的公平协议、难例覆盖和 Gate 2 判据。
 - [`progressive_upgrade/completion_traceability_audit.md`](./progressive_upgrade/completion_traceability_audit.md)：最新设计合同的阶段、场景、切换清单、门禁和交付物逐项追溯结论。
+- [`../output/acceptance/design_contract_audit.md`](../output/acceptance/design_contract_audit.md)：最新设计 89 条显式条件的逐条证据与外部 No-Go 账本。
+- [`../output/acceptance/legacy_baseline_manifest.md`](../output/acceptance/legacy_baseline_manifest.md)：升级前代码、SQLite 和 RAG 基线的离线可复现冻结报告。
 - [`../output/acceptance/progressive_completion_audit.md`](../output/acceptance/progressive_completion_audit.md)：由 CI 确定性重建的机器可读完成性审计。
 - [`V3_upgrade_acceptance_matrix.md`](./V3_upgrade_acceptance_matrix.md)：V3 功能证据与外部阻塞边界。
 - [`openapi.json`](./openapi.json)：由运行中 FastAPI 应用导出的接口快照。

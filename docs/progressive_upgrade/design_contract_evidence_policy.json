@@ -1,0 +1,140 @@
+{
+  "schema_version": "progressive-design-evidence-policy-v1",
+  "source_document": "洪水预警响应系统_渐进式迭代开发与升级设计.md",
+  "expected_item_count": 89,
+  "status_definitions": {
+    "PASS_LOCAL": "静态合同、代码或确定性本地检查直接证明",
+    "PASS_CONTROLLED": "受控模拟运行、自动测试、构建或恢复演练证明，不外推到生产",
+    "NO_GO_GATE": "门禁未满足，安全降级或阻断已证明",
+    "NO_GO_EXTERNAL": "必须由真实机构、生产流量、生产基础设施或独立人员提供"
+  },
+  "evidence_groups": {
+    "legacy_baseline": {
+      "status": "PASS_LOCAL",
+      "scope": "旧系统代码、数据库重建输入、SQLite 和 RAG 索引离线冻结",
+      "evidence": [
+        {"path": "output/acceptance/legacy_baseline_manifest.json"},
+        {"path": "output/acceptance/legacy_baseline_manifest.md"},
+        {"path": "scripts/freeze_legacy_baseline.py", "contains": "build_legacy_baseline_manifest"},
+        {"path": "docs/progressive_upgrade/asset_inventory.md", "contains": "2db016a"}
+      ],
+      "limitation": "只证明受控旧系统基线可离线重建，不证明旧生产流量归零或生产数据库归档。"
+    },
+    "migration_controlled": {
+      "status": "PASS_CONTROLLED",
+      "scope": "迁移账本、隔离、数量/哈希/外键对账、备份恢复和只读影子投影",
+      "evidence": [
+        {"path": "tests/test_response_workflow.py", "contains": "test_schema_ledger_migration_quarantine_and_legacy_adapter_are_traceable"},
+        {"path": "tests/test_postgis_migration.py", "contains": "test_simulated_response_projection_preserves_hashes_and_postgis_polygon"},
+        {"path": "tests/test_response_workflow.py", "contains": "test_database_backup_and_isolated_restore_drill_are_hash_verified"},
+        {"path": "infra/migrations/README.md"}
+      ],
+      "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
+    },
+    "api_switch_controlled": {
+      "status": "PASS_CONTROLLED",
+      "scope": "新旧接口映射、只读 Legacy、身份权限、幂等、乐观锁、审计和回调隔离",
+      "evidence": [
+        {"path": "docs/progressive_upgrade/api_compatibility_mapping.md"},
+        {"path": "tests/test_response_identity.py", "contains": "test_response_api_binds_payload_identity_and_requires_aal2_for_high_risk_approval"},
+        {"path": "tests/test_response_workflow.py", "contains": "test_rule_engine_hard_blocks_ungrounded_ai_draft_and_optimistic_lock_conflict"},
+        {"path": "tests/test_response_workflow.py", "contains": "test_external_service_callback_is_token_bound_idempotent_and_state_safe"}
+      ],
+      "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
+    },
+    "legacy_retirement_external": {
+      "status": "NO_GO_EXTERNAL",
+      "scope": "旧生产写流量归零、无在途事件、账号和写权限撤销",
+      "evidence": [
+        {"path": "docs/progressive_upgrade/operations_and_rollback.md", "contains": "M7"},
+        {"path": "docs/progressive_upgrade/completion_traceability_audit.md", "contains": "生产旧流量归零和账号撤权"}
+      ],
+      "limitation": "仓库没有真实生产流量、在途事件和账号目录，禁止伪造完成。"
+    },
+    "page_switch_controlled": {
+      "status": "PASS_CONTROLLED",
+      "scope": "新版 API 页面、版本/来源/STALE/水印、危险操作理由、刷新和列表降级",
+      "evidence": [
+        {"path": "frontend/src/pages/ResponseWorkflowPage.tsx", "contains": "受控模拟环境"},
+        {"path": "frontend/e2e/response-workflow.spec.ts", "contains": "await page.reload()"},
+        {"path": "frontend/e2e/response-workflow.spec.ts", "contains": "legacy-operations-baseline.png"},
+        {"path": "tests/test_response_workflow.py", "contains": "test_task_creation_idempotency_key_prevents_duplicate_formal_tasks"}
+      ],
+      "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
+    },
+    "release_rollback_controlled": {
+      "status": "PASS_CONTROLLED",
+      "scope": "Compose 镜像、健康检查、功能开关、模拟端点隔离、Baseline 回退、审计/Outbox 和回滚手册",
+      "evidence": [
+        {"path": ".github/workflows/ci.yml", "contains": "Compose build and smoke test"},
+        {"path": "docker-compose.yml"},
+        {"path": "tests/test_response_workflow.py", "contains": "test_feature_flags_are_scoped_versioned_and_admin_only"},
+        {"path": "tests/test_response_workflow.py", "contains": "test_retrieval_modes_compare_baseline_and_frc_without_shadow_side_effects"},
+        {"path": "tests/test_simulation_dataset.py", "contains": "test_simulation_gateway_cannot_contact_real_endpoints"},
+        {"path": "docs/progressive_upgrade/operations_and_rollback.md"}
+      ],
+      "limitation": "保存的是当前受控构建合同与 Git 提交；生产镜像签名、负责人签字和生产回滚演练需部署方完成。"
+    },
+    "name_boundary_local": {
+      "status": "PASS_LOCAL",
+      "scope": "产品名称、能力边界、模拟声明和实现状态措辞",
+      "evidence": [
+        {"path": "PRODUCT.md"},
+        {"path": "README.md", "contains": "FRC-RAG"},
+        {"path": "docs/V3_upgrade_acceptance_matrix.md", "contains": "NO-GO/SHADOW"},
+        {"path": "docs/progressive_upgrade/completion_traceability_audit.md", "contains": "受控模拟"}
+      ],
+      "limitation": "静态仓库措辞已审计；外部论文终稿和演示材料仍需沿用相同边界。"
+    },
+    "data_algorithm_controlled": {
+      "status": "PASS_CONTROLLED",
+      "scope": "来源/版本/模拟标记、候选解释、两层 Schema、证据三态、冲突与适用性分离及测试隔离",
+      "evidence": [
+        {"path": "tests/test_simulation_dataset.py", "contains": "test_floodagent_bench_is_deterministic_traceable_and_family_isolated"},
+        {"path": "tests/test_response_workflow.py", "contains": "test_grounded_task_draft_covers_all_roles_and_keeps_plan_attribution"},
+        {"path": "tests/test_response_workflow.py", "contains": "test_evidence_conflicts_are_separate_from_applicability_and_require_human_resolution"},
+        {"path": "flood_system/rag.py", "contains": "EvidenceSelectionPolicy"},
+        {"path": "docs/progressive_upgrade/frc_public_evaluation_protocol.md"}
+      ],
+      "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
+    },
+    "business_safety_controlled": {
+      "status": "PASS_CONTROLLED",
+      "scope": "AI 无正式写权限、审批重审、哈希、Outbox、职责分离、异常分支、四时限、失败关闭和回放",
+      "evidence": [
+        {"path": "tests/test_response_workflow.py", "contains": "test_full_deterministic_response_loop_and_close"},
+        {"path": "tests/test_response_workflow.py", "contains": "test_approved_dispatch_uses_idempotent_outbox_and_payload_hash"},
+        {"path": "tests/test_response_workflow.py", "contains": "test_high_risk_task_cannot_be_self_approved_or_approved_by_reviewer"},
+        {"path": "tests/test_response_workflow.py", "contains": "test_all_four_deadline_types_escalate_with_explicit_audit"},
+        {"path": "tests/test_response_workflow.py", "contains": "test_read_only_event_replay_requires_integrity_and_returns_traceable_snapshot"},
+        {"path": "flood_system/response_workflow/state_machine.py", "contains": "ALLOWED_TASK_TRANSITIONS"}
+      ],
+      "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
+    },
+    "engineering_controlled": {
+      "status": "PASS_CONTROLLED",
+      "scope": "资产矩阵、影子差异、Compose、模拟生成、自动测试、状态穷举、监控备份和真实运行 Gate 报告",
+      "evidence": [
+        {"path": "docs/progressive_upgrade/asset_inventory.md"},
+        {"path": "output/floodagent_bench/scenario_acceptance_report.json"},
+        {"path": "tests/test_response_workflow.py", "contains": "test_task_transition_table_is_exhaustive_and_terminal_states_have_no_outgoing_edges"},
+        {"path": "scripts/run_progressive_completion_audit.py"},
+        {"path": "tests/test_completion_audit.py", "contains": "test_completion_audit_proves_controlled_scope_without_overstating_production"},
+        {"path": "docs/progressive_upgrade/evaluation_and_gate_report.md"}
+      ],
+      "limitation": "结论限于受控原型；生产并发、安全、灾备和 UAT 不在 PASS 范围。"
+    }
+  },
+  "assignments": {
+    "legacy_baseline": ["22.4-01", "23-01"],
+    "migration_controlled": ["18.3-01", "18.3-02", "18.3-03", "18.3-04", "18.3-05", "18.3-06", "18.3-07", "18.3-08", "18.3-09", "18.3-10", "22.4-06", "22.4-07", "23-04"],
+    "api_switch_controlled": ["18.4-01", "18.4-02", "18.4-03", "18.4-04", "18.4-05", "18.4-06", "18.4-07", "18.4-08", "18.4-09", "22.4-03", "22.4-04", "22.4-05", "23-02"],
+    "legacy_retirement_external": ["18.4-10", "22.4-10"],
+    "page_switch_controlled": ["18.5-01", "18.5-02", "18.5-03", "18.5-04", "18.5-05", "18.5-06", "18.5-07", "18.5-08", "18.5-09", "18.5-10"],
+    "release_rollback_controlled": ["18.6-01", "18.6-02", "18.6-03", "18.6-04", "18.6-05", "18.6-06", "18.6-07", "18.6-08", "22.4-09", "23-05"],
+    "name_boundary_local": ["22.1-01", "22.1-02", "22.1-03", "22.1-04", "22.1-05"],
+    "data_algorithm_controlled": ["22.2-01", "22.2-02", "22.2-03", "22.2-04", "22.2-05", "22.2-06", "22.2-07", "23-09"],
+    "business_safety_controlled": ["22.3-01", "22.3-02", "22.3-03", "22.3-04", "22.3-05", "22.3-06", "22.3-07", "22.3-08", "22.3-09", "22.3-10", "23-03", "23-07", "23-08", "23-10", "23-11"],
+    "engineering_controlled": ["22.4-02", "22.4-08", "22.4-11", "22.4-12", "22.4-13", "22.4-14", "22.4-15", "22.4-16", "22.4-17", "23-06", "23-12"]
+  }
+}

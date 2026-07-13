@@ -1,0 +1,1893 @@
+{
+  "schema_version": "progressive-design-contract-audit-v1",
+  "metadata": {
+    "source_document": "洪水预警响应系统_渐进式迭代开发与升级设计.md",
+    "source_contract_sha256": "b7a0c2ba1526848bc995da50ca3c6e63835882d4a1fb0a82a73811a3e34b7dfa",
+    "policy": "docs/progressive_upgrade/design_contract_evidence_policy.json",
+    "policy_sha256": "462fb279838bae2096cdb59bf1ad84dad5d5e26e1735a349729ac8c4377202b1",
+    "baseline_manifest": "output/acceptance/legacy_baseline_manifest.json",
+    "baseline_manifest_sha256": "f950ac1274207a32650813d288beb91302392e60d96f762346f579d7f4c46230",
+    "scope": "sections 18.3-18.6, 22 and 23 controlled acceptance contract"
+  },
+  "summary": {
+    "item_count": 89,
+    "status_counts": {
+      "PASS_LOCAL": 7,
+      "PASS_CONTROLLED": 80,
+      "NO_GO_GATE": 0,
+      "NO_GO_EXTERNAL": 2
+    },
+    "controlled_or_local_pass_count": 87,
+    "external_no_go_count": 2,
+    "external_no_go_ids": [
+      "18.4-10",
+      "22.4-10"
+    ],
+    "all_items_accounted": true,
+    "controlled_scope_complete": true,
+    "full_production_complete": false,
+    "overall": "CONTROLLED_CONTRACT_ACCOUNTED_EXTERNAL_NO_GO"
+  },
+  "section_counts": {
+    "18.3": 10,
+    "18.4": 10,
+    "18.5": 10,
+    "18.6": 8,
+    "22.1": 5,
+    "22.2": 7,
+    "22.3": 10,
+    "22.4": 17,
+    "23": 12
+  },
+  "evidence_groups": {
+    "legacy_baseline": {
+      "status": "PASS_LOCAL",
+      "scope": "旧系统代码、数据库重建输入、SQLite 和 RAG 索引离线冻结",
+      "limitation": "只证明受控旧系统基线可离线重建，不证明旧生产流量归零或生产数据库归档。",
+      "evidence": [
+        {
+          "path": "output/acceptance/legacy_baseline_manifest.json",
+          "contains": null,
+          "sha256": "f950ac1274207a32650813d288beb91302392e60d96f762346f579d7f4c46230"
+        },
+        {
+          "path": "output/acceptance/legacy_baseline_manifest.md",
+          "contains": null,
+          "sha256": "dae91658b9192b8e1a0cd71378e444bc1a38c76a7aa8901656b0cd6cd35b5180"
+        },
+        {
+          "path": "scripts/freeze_legacy_baseline.py",
+          "contains": "build_legacy_baseline_manifest",
+          "sha256": "daf5188b7c154982c4eb90009e2bc6c631774193576bfa1f7ca60ac333f40306"
+        },
+        {
+          "path": "docs/progressive_upgrade/asset_inventory.md",
+          "contains": "2db016a",
+          "sha256": "6bb264ce40a2cd54e7559bce01a85dbf45bb68d71ddf2a47ff6857690ef2c15e"
+        }
+      ],
+      "assigned_item_count": 2
+    },
+    "migration_controlled": {
+      "status": "PASS_CONTROLLED",
+      "scope": "迁移账本、隔离、数量/哈希/外键对账、备份恢复和只读影子投影",
+      "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。",
+      "evidence": [
+        {
+          "path": "tests/test_response_workflow.py",
+          "contains": "test_schema_ledger_migration_quarantine_and_legacy_adapter_are_traceable",
+          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+        },
+        {
+          "path": "tests/test_postgis_migration.py",
+          "contains": "test_simulated_response_projection_preserves_hashes_and_postgis_polygon",
+          "sha256": "225989ac38e224ecc273a50afb0460ffa67995e8bdd669f22e4c8a303eb2fdc8"
+        },
+        {
+          "path": "tests/test_response_workflow.py",
+          "contains": "test_database_backup_and_isolated_restore_drill_are_hash_verified",
+          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+        },
+        {
+          "path": "infra/migrations/README.md",
+          "contains": null,
+          "sha256": "420887037be713af5e08026aadd7e9538f06b60418792397eab32fc8ed3c0fa8"
+        }
+      ],
+      "assigned_item_count": 13
+    },
+    "api_switch_controlled": {
+      "status": "PASS_CONTROLLED",
+      "scope": "新旧接口映射、只读 Legacy、身份权限、幂等、乐观锁、审计和回调隔离",
+      "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。",
+      "evidence": [
+        {
+          "path": "docs/progressive_upgrade/api_compatibility_mapping.md",
+          "contains": null,
+          "sha256": "af6edecaf8588bb977155c0301ab3a1ddb0d4c34274162f4aaef083c1f19ea7e"
+        },
+        {
+          "path": "tests/test_response_identity.py",
+          "contains": "test_response_api_binds_payload_identity_and_requires_aal2_for_high_risk_approval",
+          "sha256": "f07e492ab35bc36a964653a70662cd306bfaf0faba7bba33bec03de97e03fa18"
+        },
+        {
+          "path": "tests/test_response_workflow.py",
+          "contains": "test_rule_engine_hard_blocks_ungrounded_ai_draft_and_optimistic_lock_conflict",
+          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+        },
+        {
+          "path": "tests/test_response_workflow.py",
+          "contains": "test_external_service_callback_is_token_bound_idempotent_and_state_safe",
+          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+        }
+      ],
+      "assigned_item_count": 13
+    },
+    "legacy_retirement_external": {
+      "status": "NO_GO_EXTERNAL",
+      "scope": "旧生产写流量归零、无在途事件、账号和写权限撤销",
+      "limitation": "仓库没有真实生产流量、在途事件和账号目录，禁止伪造完成。",
+      "evidence": [
+        {
+          "path": "docs/progressive_upgrade/operations_and_rollback.md",
+          "contains": "M7",
+          "sha256": "da84e74e105c36f6e622161e4cdd4ea4426404e75c6bc360e1ec2fe01fa5d97f"
+        },
+        {
+          "path": "docs/progressive_upgrade/completion_traceability_audit.md",
+          "contains": "生产旧流量归零和账号撤权",
+          "sha256": "a87dcb3b7ef70fd4b7b4e5a7d97ba0af9c8ceec8bcf2932da8eab4ba29c10fd0"
+        }
+      ],
+      "assigned_item_count": 2
+    },
+    "page_switch_controlled": {
+      "status": "PASS_CONTROLLED",
+      "scope": "新版 API 页面、版本/来源/STALE/水印、危险操作理由、刷新和列表降级",
+      "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。",
+      "evidence": [
+        {
+          "path": "frontend/src/pages/ResponseWorkflowPage.tsx",
+          "contains": "受控模拟环境",
+          "sha256": "7bb85ddbb7f82cb8c726a499623afa9b1c7c38c6db792735d605eb3d08090337"
+        },
+        {
+          "path": "frontend/e2e/response-workflow.spec.ts",
+          "contains": "await page.reload()",
+          "sha256": "5e9b401d2f059610dc1037b5fb61a95c2efa99c5c307df91693ebb9b94daa3e8"
+        },
+        {
+          "path": "frontend/e2e/response-workflow.spec.ts",
+          "contains": "legacy-operations-baseline.png",
+          "sha256": "5e9b401d2f059610dc1037b5fb61a95c2efa99c5c307df91693ebb9b94daa3e8"
+        },
+        {
+          "path": "tests/test_response_workflow.py",
+          "contains": "test_task_creation_idempotency_key_prevents_duplicate_formal_tasks",
+          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+        }
+      ],
+      "assigned_item_count": 10
+    },
+    "release_rollback_controlled": {
+      "status": "PASS_CONTROLLED",
+      "scope": "Compose 镜像、健康检查、功能开关、模拟端点隔离、Baseline 回退、审计/Outbox 和回滚手册",
+      "limitation": "保存的是当前受控构建合同与 Git 提交；生产镜像签名、负责人签字和生产回滚演练需部署方完成。",
+      "evidence": [
+        {
+          "path": ".github/workflows/ci.yml",
+          "contains": "Compose build and smoke test",
+          "sha256": "b9dcc885baa2a4ff258c1d4530d098040bf34cfef2885e514dbf2fdad9131654"
+        },
+        {
+          "path": "docker-compose.yml",
+          "contains": null,
+          "sha256": "8204abc75a6e82041d16e52d09e94e4f84de19f00f5a9cc9338dcd91ed76a33e"
+        },
+        {
+          "path": "tests/test_response_workflow.py",
+          "contains": "test_feature_flags_are_scoped_versioned_and_admin_only",
+          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+        },
+        {
+          "path": "tests/test_response_workflow.py",
+          "contains": "test_retrieval_modes_compare_baseline_and_frc_without_shadow_side_effects",
+          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+        },
+        {
+          "path": "tests/test_simulation_dataset.py",
+          "contains": "test_simulation_gateway_cannot_contact_real_endpoints",
+          "sha256": "5be3e3b4d6cffabeb666ad13cefecfdf86573d0972589b8a515434509488ab19"
+        },
+        {
+          "path": "docs/progressive_upgrade/operations_and_rollback.md",
+          "contains": null,
+          "sha256": "da84e74e105c36f6e622161e4cdd4ea4426404e75c6bc360e1ec2fe01fa5d97f"
+        }
+      ],
+      "assigned_item_count": 10
+    },
+    "name_boundary_local": {
+      "status": "PASS_LOCAL",
+      "scope": "产品名称、能力边界、模拟声明和实现状态措辞",
+      "limitation": "静态仓库措辞已审计；外部论文终稿和演示材料仍需沿用相同边界。",
+      "evidence": [
+        {
+          "path": "PRODUCT.md",
+          "contains": null,
+          "sha256": "bf7896c1677a187215cb9e790860618b76044c9d13624f813309fb8a5aef6b9b"
+        },
+        {
+          "path": "README.md",
+          "contains": "FRC-RAG",
+          "sha256": "a9d2a4d7c2b98fae8f0417b6f8ea458f11972820d500ba9c65235f34e6857c08"
+        },
+        {
+          "path": "docs/V3_upgrade_acceptance_matrix.md",
+          "contains": "NO-GO/SHADOW",
+          "sha256": "9399be45a638f0c3064988ca53093726085344447e7070b9909ca65289e83b82"
+        },
+        {
+          "path": "docs/progressive_upgrade/completion_traceability_audit.md",
+          "contains": "受控模拟",
+          "sha256": "a87dcb3b7ef70fd4b7b4e5a7d97ba0af9c8ceec8bcf2932da8eab4ba29c10fd0"
+        }
+      ],
+      "assigned_item_count": 5
+    },
+    "data_algorithm_controlled": {
+      "status": "PASS_CONTROLLED",
+      "scope": "来源/版本/模拟标记、候选解释、两层 Schema、证据三态、冲突与适用性分离及测试隔离",
+      "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。",
+      "evidence": [
+        {
+          "path": "tests/test_simulation_dataset.py",
+          "contains": "test_floodagent_bench_is_deterministic_traceable_and_family_isolated",
+          "sha256": "5be3e3b4d6cffabeb666ad13cefecfdf86573d0972589b8a515434509488ab19"
+        },
+        {
+          "path": "tests/test_response_workflow.py",
+          "contains": "test_grounded_task_draft_covers_all_roles_and_keeps_plan_attribution",
+          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+        },
+        {
+          "path": "tests/test_response_workflow.py",
+          "contains": "test_evidence_conflicts_are_separate_from_applicability_and_require_human_resolution",
+          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+        },
+        {
+          "path": "flood_system/rag.py",
+          "contains": "EvidenceSelectionPolicy",
+          "sha256": "b7da1ab79737db0d7cd1686fba2dc6bba7bc6c739d44c76ebbdc5938d4d20f8b"
+        },
+        {
+          "path": "docs/progressive_upgrade/frc_public_evaluation_protocol.md",
+          "contains": null,
+          "sha256": "ffd9d36958829afdab029822bd73aeee96f10adb8585f8897d54136fea6e0b85"
+        }
+      ],
+      "assigned_item_count": 8
+    },
+    "business_safety_controlled": {
+      "status": "PASS_CONTROLLED",
+      "scope": "AI 无正式写权限、审批重审、哈希、Outbox、职责分离、异常分支、四时限、失败关闭和回放",
+      "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。",
+      "evidence": [
+        {
+          "path": "tests/test_response_workflow.py",
+          "contains": "test_full_deterministic_response_loop_and_close",
+          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+        },
+        {
+          "path": "tests/test_response_workflow.py",
+          "contains": "test_approved_dispatch_uses_idempotent_outbox_and_payload_hash",
+          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+        },
+        {
+          "path": "tests/test_response_workflow.py",
+          "contains": "test_high_risk_task_cannot_be_self_approved_or_approved_by_reviewer",
+          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+        },
+        {
+          "path": "tests/test_response_workflow.py",
+          "contains": "test_all_four_deadline_types_escalate_with_explicit_audit",
+          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+        },
+        {
+          "path": "tests/test_response_workflow.py",
+          "contains": "test_read_only_event_replay_requires_integrity_and_returns_traceable_snapshot",
+          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+        },
+        {
+          "path": "flood_system/response_workflow/state_machine.py",
+          "contains": "ALLOWED_TASK_TRANSITIONS",
+          "sha256": "d64fb61952cc1adec9e9042aa2522b4804d3caad1fe45c938a3ac1cb58523e8c"
+        }
+      ],
+      "assigned_item_count": 15
+    },
+    "engineering_controlled": {
+      "status": "PASS_CONTROLLED",
+      "scope": "资产矩阵、影子差异、Compose、模拟生成、自动测试、状态穷举、监控备份和真实运行 Gate 报告",
+      "limitation": "结论限于受控原型；生产并发、安全、灾备和 UAT 不在 PASS 范围。",
+      "evidence": [
+        {
+          "path": "docs/progressive_upgrade/asset_inventory.md",
+          "contains": null,
+          "sha256": "6bb264ce40a2cd54e7559bce01a85dbf45bb68d71ddf2a47ff6857690ef2c15e"
+        },
+        {
+          "path": "output/floodagent_bench/scenario_acceptance_report.json",
+          "contains": null,
+          "sha256": "806c53237599302277ba9aaaecf8fc95690416a9b1474145b3a8bccb50515ab1"
+        },
+        {
+          "path": "tests/test_response_workflow.py",
+          "contains": "test_task_transition_table_is_exhaustive_and_terminal_states_have_no_outgoing_edges",
+          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+        },
+        {
+          "path": "scripts/run_progressive_completion_audit.py",
+          "contains": null,
+          "sha256": "e214960c0bb9b0439da1abfac7e0f1461c72ef722786078e981a8b9941e49477"
+        },
+        {
+          "path": "tests/test_completion_audit.py",
+          "contains": "test_completion_audit_proves_controlled_scope_without_overstating_production",
+          "sha256": "48a93757d6596d4dea748ab06c9f6aeee2382793ddb06504303d17028886b08a"
+        },
+        {
+          "path": "docs/progressive_upgrade/evaluation_and_gate_report.md",
+          "contains": null,
+          "sha256": "ef14273e264df634bd68ecb5edf346a9e7bbd11c55494220c6240b772b1dac1a"
+        }
+      ],
+      "assigned_item_count": 11
+    }
+  },
+  "items": [
+    {
+      "item_id": "18.3-01",
+      "source_section": "18.3",
+      "source_heading": "18.3 数据切换检查",
+      "source_line": 2205,
+      "requirement": "迁移批次有唯一ID和映射版本",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "migration_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_postgis_migration.py",
+        "tests/test_response_workflow.py",
+        "infra/migrations/README.md"
+      ],
+      "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
+    },
+    {
+      "item_id": "18.3-02",
+      "source_section": "18.3",
+      "source_heading": "18.3 数据切换检查",
+      "source_line": 2206,
+      "requirement": "旧记录数量、迁移成功、隔离和忽略数量可对账",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "migration_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_postgis_migration.py",
+        "tests/test_response_workflow.py",
+        "infra/migrations/README.md"
+      ],
+      "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
+    },
+    {
+      "item_id": "18.3-03",
+      "source_section": "18.3",
+      "source_heading": "18.3 数据切换检查",
+      "source_line": 2207,
+      "requirement": "迁移前后关键字段哈希或抽样校验通过",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "migration_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_postgis_migration.py",
+        "tests/test_response_workflow.py",
+        "infra/migrations/README.md"
+      ],
+      "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
+    },
+    {
+      "item_id": "18.3-04",
+      "source_section": "18.3",
+      "source_heading": "18.3 数据切换检查",
+      "source_line": 2208,
+      "requirement": "外键、唯一约束和业务不变量通过",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "migration_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_postgis_migration.py",
+        "tests/test_response_workflow.py",
+        "infra/migrations/README.md"
+      ],
+      "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
+    },
+    {
+      "item_id": "18.3-05",
+      "source_section": "18.3",
+      "source_heading": "18.3 数据切换检查",
+      "source_line": 2209,
+      "requirement": "旧数据缺失不通过默认值伪造成正式事实",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "migration_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_postgis_migration.py",
+        "tests/test_response_workflow.py",
+        "infra/migrations/README.md"
+      ],
+      "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
+    },
+    {
+      "item_id": "18.3-06",
+      "source_section": "18.3",
+      "source_heading": "18.3 数据切换检查",
+      "source_line": 2210,
+      "requirement": "模拟数据没有进入真实或匿名化数据集",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "migration_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_postgis_migration.py",
+        "tests/test_response_workflow.py",
+        "infra/migrations/README.md"
+      ],
+      "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
+    },
+    {
+      "item_id": "18.3-07",
+      "source_section": "18.3",
+      "source_heading": "18.3 数据切换检查",
+      "source_line": 2211,
+      "requirement": "新Schema备份和恢复已演练",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "migration_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_postgis_migration.py",
+        "tests/test_response_workflow.py",
+        "infra/migrations/README.md"
+      ],
+      "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
+    },
+    {
+      "item_id": "18.3-08",
+      "source_section": "18.3",
+      "source_heading": "18.3 数据切换检查",
+      "source_line": 2212,
+      "requirement": "回滚不会删除已经产生的审批、任务和审计记录",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "migration_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_postgis_migration.py",
+        "tests/test_response_workflow.py",
+        "infra/migrations/README.md"
+      ],
+      "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
+    },
+    {
+      "item_id": "18.3-09",
+      "source_section": "18.3",
+      "source_heading": "18.3 数据切换检查",
+      "source_line": 2213,
+      "requirement": "历史事件按原始版本回放",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "migration_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_postgis_migration.py",
+        "tests/test_response_workflow.py",
+        "infra/migrations/README.md"
+      ],
+      "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
+    },
+    {
+      "item_id": "18.3-10",
+      "source_section": "18.3",
+      "source_heading": "18.3 数据切换检查",
+      "source_line": 2214,
+      "requirement": "新事件不再写入旧正式状态表",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "migration_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_postgis_migration.py",
+        "tests/test_response_workflow.py",
+        "infra/migrations/README.md"
+      ],
+      "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
+    },
+    {
+      "item_id": "18.4-01",
+      "source_section": "18.4",
+      "source_heading": "18.4 API切换检查",
+      "source_line": 2218,
+      "requirement": "新旧接口契约映射完成",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "api_switch_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/api_compatibility_mapping.md",
+        "tests/test_response_identity.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
+    },
+    {
+      "item_id": "18.4-02",
+      "source_section": "18.4",
+      "source_heading": "18.4 API切换检查",
+      "source_line": 2219,
+      "requirement": "所有调用方有清单",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "api_switch_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/api_compatibility_mapping.md",
+        "tests/test_response_identity.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
+    },
+    {
+      "item_id": "18.4-03",
+      "source_section": "18.4",
+      "source_heading": "18.4 API切换检查",
+      "source_line": 2220,
+      "requirement": "Legacy Adapter有调用日志",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "api_switch_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/api_compatibility_mapping.md",
+        "tests/test_response_identity.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
+    },
+    {
+      "item_id": "18.4-04",
+      "source_section": "18.4",
+      "source_heading": "18.4 API切换检查",
+      "source_line": 2221,
+      "requirement": "新写接口具备权限、幂等、乐观锁和审计",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "api_switch_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/api_compatibility_mapping.md",
+        "tests/test_response_identity.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
+    },
+    {
+      "item_id": "18.4-05",
+      "source_section": "18.4",
+      "source_heading": "18.4 API切换检查",
+      "source_line": 2222,
+      "requirement": "旧写接口已拒绝或路由到受控命令",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "api_switch_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/api_compatibility_mapping.md",
+        "tests/test_response_identity.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
+    },
+    {
+      "item_id": "18.4-06",
+      "source_section": "18.4",
+      "source_heading": "18.4 API切换检查",
+      "source_line": 2223,
+      "requirement": "回调不能绕过状态机",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "api_switch_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/api_compatibility_mapping.md",
+        "tests/test_response_identity.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
+    },
+    {
+      "item_id": "18.4-07",
+      "source_section": "18.4",
+      "source_heading": "18.4 API切换检查",
+      "source_line": 2224,
+      "requirement": "影子请求不会产生外部副作用",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "api_switch_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/api_compatibility_mapping.md",
+        "tests/test_response_identity.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
+    },
+    {
+      "item_id": "18.4-08",
+      "source_section": "18.4",
+      "source_heading": "18.4 API切换检查",
+      "source_line": 2225,
+      "requirement": "功能开关支持按事件回退",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "api_switch_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/api_compatibility_mapping.md",
+        "tests/test_response_identity.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
+    },
+    {
+      "item_id": "18.4-09",
+      "source_section": "18.4",
+      "source_heading": "18.4 API切换检查",
+      "source_line": 2226,
+      "requirement": "错误码和前端提示完成",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "api_switch_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/api_compatibility_mapping.md",
+        "tests/test_response_identity.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
+    },
+    {
+      "item_id": "18.4-10",
+      "source_section": "18.4",
+      "source_heading": "18.4 API切换检查",
+      "source_line": 2227,
+      "requirement": "旧接口调用归零后才允许移除",
+      "status": "NO_GO_EXTERNAL",
+      "evidence_group": "legacy_retirement_external",
+      "evidence": [
+        "docs/progressive_upgrade/operations_and_rollback.md",
+        "docs/progressive_upgrade/completion_traceability_audit.md"
+      ],
+      "limitation": "仓库没有真实生产流量、在途事件和账号目录，禁止伪造完成。"
+    },
+    {
+      "item_id": "18.5-01",
+      "source_section": "18.5",
+      "source_heading": "18.5 页面切换检查",
+      "source_line": 2231,
+      "requirement": "旧页面主要操作和截图已归档",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "page_switch_controlled",
+      "evidence": [
+        "frontend/src/pages/ResponseWorkflowPage.tsx",
+        "frontend/e2e/response-workflow.spec.ts",
+        "frontend/e2e/response-workflow.spec.ts",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
+    },
+    {
+      "item_id": "18.5-02",
+      "source_section": "18.5",
+      "source_heading": "18.5 页面切换检查",
+      "source_line": 2232,
+      "requirement": "新页面所有字段来自新版API",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "page_switch_controlled",
+      "evidence": [
+        "frontend/src/pages/ResponseWorkflowPage.tsx",
+        "frontend/e2e/response-workflow.spec.ts",
+        "frontend/e2e/response-workflow.spec.ts",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
+    },
+    {
+      "item_id": "18.5-03",
+      "source_section": "18.5",
+      "source_heading": "18.5 页面切换检查",
+      "source_line": 2233,
+      "requirement": "页面显示数据版本、来源和STALE状态",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "page_switch_controlled",
+      "evidence": [
+        "frontend/src/pages/ResponseWorkflowPage.tsx",
+        "frontend/e2e/response-workflow.spec.ts",
+        "frontend/e2e/response-workflow.spec.ts",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
+    },
+    {
+      "item_id": "18.5-04",
+      "source_section": "18.5",
+      "source_heading": "18.5 页面切换检查",
+      "source_line": 2234,
+      "requirement": "权限不仅在前端隐藏，也由后端校验",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "page_switch_controlled",
+      "evidence": [
+        "frontend/src/pages/ResponseWorkflowPage.tsx",
+        "frontend/e2e/response-workflow.spec.ts",
+        "frontend/e2e/response-workflow.spec.ts",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
+    },
+    {
+      "item_id": "18.5-05",
+      "source_section": "18.5",
+      "source_heading": "18.5 页面切换检查",
+      "source_line": 2235,
+      "requirement": "危险操作要求二次确认和理由",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "page_switch_controlled",
+      "evidence": [
+        "frontend/src/pages/ResponseWorkflowPage.tsx",
+        "frontend/e2e/response-workflow.spec.ts",
+        "frontend/e2e/response-workflow.spec.ts",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
+    },
+    {
+      "item_id": "18.5-06",
+      "source_section": "18.5",
+      "source_heading": "18.5 页面切换检查",
+      "source_line": 2236,
+      "requirement": "模拟数据水印始终可见",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "page_switch_controlled",
+      "evidence": [
+        "frontend/src/pages/ResponseWorkflowPage.tsx",
+        "frontend/e2e/response-workflow.spec.ts",
+        "frontend/e2e/response-workflow.spec.ts",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
+    },
+    {
+      "item_id": "18.5-07",
+      "source_section": "18.5",
+      "source_heading": "18.5 页面切换检查",
+      "source_line": 2237,
+      "requirement": "页面刷新、重复提交和并发编辑测试通过",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "page_switch_controlled",
+      "evidence": [
+        "frontend/src/pages/ResponseWorkflowPage.tsx",
+        "frontend/e2e/response-workflow.spec.ts",
+        "frontend/e2e/response-workflow.spec.ts",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
+    },
+    {
+      "item_id": "18.5-08",
+      "source_section": "18.5",
+      "source_heading": "18.5 页面切换检查",
+      "source_line": 2238,
+      "requirement": "地图不可用时列表模式可继续",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "page_switch_controlled",
+      "evidence": [
+        "frontend/src/pages/ResponseWorkflowPage.tsx",
+        "frontend/e2e/response-workflow.spec.ts",
+        "frontend/e2e/response-workflow.spec.ts",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
+    },
+    {
+      "item_id": "18.5-09",
+      "source_section": "18.5",
+      "source_heading": "18.5 页面切换检查",
+      "source_line": 2239,
+      "requirement": "新页面失败可通过功能开关回退",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "page_switch_controlled",
+      "evidence": [
+        "frontend/src/pages/ResponseWorkflowPage.tsx",
+        "frontend/e2e/response-workflow.spec.ts",
+        "frontend/e2e/response-workflow.spec.ts",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
+    },
+    {
+      "item_id": "18.5-10",
+      "source_section": "18.5",
+      "source_heading": "18.5 页面切换检查",
+      "source_line": 2240,
+      "requirement": "回退不允许使用旧页面绕过新版状态机",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "page_switch_controlled",
+      "evidence": [
+        "frontend/src/pages/ResponseWorkflowPage.tsx",
+        "frontend/e2e/response-workflow.spec.ts",
+        "frontend/e2e/response-workflow.spec.ts",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
+    },
+    {
+      "item_id": "18.6-01",
+      "source_section": "18.6",
+      "source_heading": "18.6 发布与回滚检查",
+      "source_line": 2246,
+      "requirement": "数据库备份和迁移预演完成",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "release_rollback_controlled",
+      "evidence": [
+        ".github/workflows/ci.yml",
+        "docker-compose.yml",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_simulation_dataset.py",
+        "docs/progressive_upgrade/operations_and_rollback.md"
+      ],
+      "limitation": "保存的是当前受控构建合同与 Git 提交；生产镜像签名、负责人签字和生产回滚演练需部署方完成。"
+    },
+    {
+      "item_id": "18.6-02",
+      "source_section": "18.6",
+      "source_heading": "18.6 发布与回滚检查",
+      "source_line": 2247,
+      "requirement": "当前可运行版本镜像和配置已保存",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "release_rollback_controlled",
+      "evidence": [
+        ".github/workflows/ci.yml",
+        "docker-compose.yml",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_simulation_dataset.py",
+        "docs/progressive_upgrade/operations_and_rollback.md"
+      ],
+      "limitation": "保存的是当前受控构建合同与 Git 提交；生产镜像签名、负责人签字和生产回滚演练需部署方完成。"
+    },
+    {
+      "item_id": "18.6-03",
+      "source_section": "18.6",
+      "source_heading": "18.6 发布与回滚检查",
+      "source_line": 2248,
+      "requirement": "新旧服务健康检查通过",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "release_rollback_controlled",
+      "evidence": [
+        ".github/workflows/ci.yml",
+        "docker-compose.yml",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_simulation_dataset.py",
+        "docs/progressive_upgrade/operations_and_rollback.md"
+      ],
+      "limitation": "保存的是当前受控构建合同与 Git 提交；生产镜像签名、负责人签字和生产回滚演练需部署方完成。"
+    },
+    {
+      "item_id": "18.6-04",
+      "source_section": "18.6",
+      "source_heading": "18.6 发布与回滚检查",
+      "source_line": 2249,
+      "requirement": "功能开关初始状态已审核",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "release_rollback_controlled",
+      "evidence": [
+        ".github/workflows/ci.yml",
+        "docker-compose.yml",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_simulation_dataset.py",
+        "docs/progressive_upgrade/operations_and_rollback.md"
+      ],
+      "limitation": "保存的是当前受控构建合同与 Git 提交；生产镜像签名、负责人签字和生产回滚演练需部署方完成。"
+    },
+    {
+      "item_id": "18.6-05",
+      "source_section": "18.6",
+      "source_heading": "18.6 发布与回滚检查",
+      "source_line": 2250,
+      "requirement": "模拟端点与未来真实端点隔离",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "release_rollback_controlled",
+      "evidence": [
+        ".github/workflows/ci.yml",
+        "docker-compose.yml",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_simulation_dataset.py",
+        "docs/progressive_upgrade/operations_and_rollback.md"
+      ],
+      "limitation": "保存的是当前受控构建合同与 Git 提交；生产镜像签名、负责人签字和生产回滚演练需部署方完成。"
+    },
+    {
+      "item_id": "18.6-06",
+      "source_section": "18.6",
+      "source_heading": "18.6 发布与回滚检查",
+      "source_line": 2251,
+      "requirement": "baseline与FRC-RAG配置均可复现",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "release_rollback_controlled",
+      "evidence": [
+        ".github/workflows/ci.yml",
+        "docker-compose.yml",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_simulation_dataset.py",
+        "docs/progressive_upgrade/operations_and_rollback.md"
+      ],
+      "limitation": "保存的是当前受控构建合同与 Git 提交；生产镜像签名、负责人签字和生产回滚演练需部署方完成。"
+    },
+    {
+      "item_id": "18.6-07",
+      "source_section": "18.6",
+      "source_heading": "18.6 发布与回滚检查",
+      "source_line": 2252,
+      "requirement": "审计、告警和Outbox运行正常",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "release_rollback_controlled",
+      "evidence": [
+        ".github/workflows/ci.yml",
+        "docker-compose.yml",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_simulation_dataset.py",
+        "docs/progressive_upgrade/operations_and_rollback.md"
+      ],
+      "limitation": "保存的是当前受控构建合同与 Git 提交；生产镜像签名、负责人签字和生产回滚演练需部署方完成。"
+    },
+    {
+      "item_id": "18.6-08",
+      "source_section": "18.6",
+      "source_heading": "18.6 发布与回滚检查",
+      "source_line": 2253,
+      "requirement": "回滚负责人、触发条件和操作步骤明确",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "release_rollback_controlled",
+      "evidence": [
+        ".github/workflows/ci.yml",
+        "docker-compose.yml",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_simulation_dataset.py",
+        "docs/progressive_upgrade/operations_and_rollback.md"
+      ],
+      "limitation": "保存的是当前受控构建合同与 Git 提交；生产镜像签名、负责人签字和生产回滚演练需部署方完成。"
+    },
+    {
+      "item_id": "22.1-01",
+      "source_section": "22.1",
+      "source_heading": "名称与边界",
+      "source_line": 2425,
+      "requirement": "全文统一使用FRC-RAG",
+      "status": "PASS_LOCAL",
+      "evidence_group": "name_boundary_local",
+      "evidence": [
+        "PRODUCT.md",
+        "README.md",
+        "docs/V3_upgrade_acceptance_matrix.md",
+        "docs/progressive_upgrade/completion_traceability_audit.md"
+      ],
+      "limitation": "静态仓库措辞已审计；外部论文终稿和演示材料仍需沿用相同边界。"
+    },
+    {
+      "item_id": "22.1-02",
+      "source_section": "22.1",
+      "source_heading": "名称与边界",
+      "source_line": 2426,
+      "requirement": "不宣称系统进行洪水预测",
+      "status": "PASS_LOCAL",
+      "evidence_group": "name_boundary_local",
+      "evidence": [
+        "PRODUCT.md",
+        "README.md",
+        "docs/V3_upgrade_acceptance_matrix.md",
+        "docs/progressive_upgrade/completion_traceability_audit.md"
+      ],
+      "limitation": "静态仓库措辞已审计；外部论文终稿和演示材料仍需沿用相同边界。"
+    },
+    {
+      "item_id": "22.1-03",
+      "source_section": "22.1",
+      "source_heading": "名称与边界",
+      "source_line": 2427,
+      "requirement": "不宣称AI替代指挥决策",
+      "status": "PASS_LOCAL",
+      "evidence_group": "name_boundary_local",
+      "evidence": [
+        "PRODUCT.md",
+        "README.md",
+        "docs/V3_upgrade_acceptance_matrix.md",
+        "docs/progressive_upgrade/completion_traceability_audit.md"
+      ],
+      "limitation": "静态仓库措辞已审计；外部论文终稿和演示材料仍需沿用相同边界。"
+    },
+    {
+      "item_id": "22.1-04",
+      "source_section": "22.1",
+      "source_heading": "名称与边界",
+      "source_line": 2428,
+      "requirement": "模拟下发不表述为真实跨部门接入",
+      "status": "PASS_LOCAL",
+      "evidence_group": "name_boundary_local",
+      "evidence": [
+        "PRODUCT.md",
+        "README.md",
+        "docs/V3_upgrade_acceptance_matrix.md",
+        "docs/progressive_upgrade/completion_traceability_audit.md"
+      ],
+      "limitation": "静态仓库措辞已审计；外部论文终稿和演示材料仍需沿用相同边界。"
+    },
+    {
+      "item_id": "22.1-05",
+      "source_section": "22.1",
+      "source_heading": "名称与边界",
+      "source_line": 2429,
+      "requirement": "已实现与待实现状态明确区分",
+      "status": "PASS_LOCAL",
+      "evidence_group": "name_boundary_local",
+      "evidence": [
+        "PRODUCT.md",
+        "README.md",
+        "docs/V3_upgrade_acceptance_matrix.md",
+        "docs/progressive_upgrade/completion_traceability_audit.md"
+      ],
+      "limitation": "静态仓库措辞已审计；外部论文终稿和演示材料仍需沿用相同边界。"
+    },
+    {
+      "item_id": "22.2-01",
+      "source_section": "22.2",
+      "source_heading": "数据与算法",
+      "source_line": 2433,
+      "requirement": "每条数据具有来源、版本和模拟标记",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "data_algorithm_controlled",
+      "evidence": [
+        "tests/test_simulation_dataset.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/rag.py",
+        "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
+      ],
+      "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
+    },
+    {
+      "item_id": "22.2-02",
+      "source_section": "22.2",
+      "source_heading": "数据与算法",
+      "source_line": 2434,
+      "requirement": "候选输出包含理由、缺失项和运行模式",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "data_algorithm_controlled",
+      "evidence": [
+        "tests/test_simulation_dataset.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/rag.py",
+        "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
+      ],
+      "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
+    },
+    {
+      "item_id": "22.2-03",
+      "source_section": "22.2",
+      "source_heading": "数据与算法",
+      "source_line": 2435,
+      "requirement": "FRC-RAG两层Schema实现",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "data_algorithm_controlled",
+      "evidence": [
+        "tests/test_simulation_dataset.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/rag.py",
+        "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
+      ],
+      "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
+    },
+    {
+      "item_id": "22.2-04",
+      "source_section": "22.2",
+      "source_heading": "数据与算法",
+      "source_line": 2436,
+      "requirement": "证据三态贯穿数据库、接口和页面",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "data_algorithm_controlled",
+      "evidence": [
+        "tests/test_simulation_dataset.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/rag.py",
+        "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
+      ],
+      "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
+    },
+    {
+      "item_id": "22.2-05",
+      "source_section": "22.2",
+      "source_heading": "数据与算法",
+      "source_line": 2437,
+      "requirement": "冲突检测和适用性裁决明确分离",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "data_algorithm_controlled",
+      "evidence": [
+        "tests/test_simulation_dataset.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/rag.py",
+        "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
+      ],
+      "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
+    },
+    {
+      "item_id": "22.2-06",
+      "source_section": "22.2",
+      "source_heading": "数据与算法",
+      "source_line": 2438,
+      "requirement": "不用一次检索失败断言源文件没有规定",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "data_algorithm_controlled",
+      "evidence": [
+        "tests/test_simulation_dataset.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/rag.py",
+        "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
+      ],
+      "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
+    },
+    {
+      "item_id": "22.2-07",
+      "source_section": "22.2",
+      "source_heading": "数据与算法",
+      "source_line": 2439,
+      "requirement": "测试集按事件、文档和模板族隔离",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "data_algorithm_controlled",
+      "evidence": [
+        "tests/test_simulation_dataset.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/rag.py",
+        "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
+      ],
+      "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
+    },
+    {
+      "item_id": "22.3-01",
+      "source_section": "22.3",
+      "source_heading": "业务与安全",
+      "source_line": 2443,
+      "requirement": "AI服务不能写审批、下发和任务状态表",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "business_safety_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/response_workflow/state_machine.py"
+      ],
+      "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
+    },
+    {
+      "item_id": "22.3-02",
+      "source_section": "22.3",
+      "source_heading": "业务与安全",
+      "source_line": 2444,
+      "requirement": "通用状态修改接口不存在",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "business_safety_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/response_workflow/state_machine.py"
+      ],
+      "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
+    },
+    {
+      "item_id": "22.3-03",
+      "source_section": "22.3",
+      "source_heading": "业务与安全",
+      "source_line": 2445,
+      "requirement": "审批后修改必须重新审批",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "business_safety_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/response_workflow/state_machine.py"
+      ],
+      "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
+    },
+    {
+      "item_id": "22.3-04",
+      "source_section": "22.3",
+      "source_heading": "业务与安全",
+      "source_line": 2446,
+      "requirement": "下发载荷与审批载荷哈希一致",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "business_safety_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/response_workflow/state_machine.py"
+      ],
+      "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
+    },
+    {
+      "item_id": "22.3-05",
+      "source_section": "22.3",
+      "source_heading": "业务与安全",
+      "source_line": 2447,
+      "requirement": "幂等和Outbox实现",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "business_safety_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/response_workflow/state_machine.py"
+      ],
+      "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
+    },
+    {
+      "item_id": "22.3-06",
+      "source_section": "22.3",
+      "source_heading": "业务与安全",
+      "source_line": 2448,
+      "requirement": "执行、审批和核验职责分离",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "business_safety_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/response_workflow/state_machine.py"
+      ],
+      "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
+    },
+    {
+      "item_id": "22.3-07",
+      "source_section": "22.3",
+      "source_heading": "业务与安全",
+      "source_line": 2449,
+      "requirement": "受阻、延期、改派、撤回和部分成功分支实现",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "business_safety_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/response_workflow/state_machine.py"
+      ],
+      "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
+    },
+    {
+      "item_id": "22.3-08",
+      "source_section": "22.3",
+      "source_heading": "业务与安全",
+      "source_line": 2450,
+      "requirement": "接收、开始、完成和核验四类时限实现",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "business_safety_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/response_workflow/state_machine.py"
+      ],
+      "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
+    },
+    {
+      "item_id": "22.3-09",
+      "source_section": "22.3",
+      "source_heading": "业务与安全",
+      "source_line": 2451,
+      "requirement": "规则、权限或审计故障时失败关闭",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "business_safety_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/response_workflow/state_machine.py"
+      ],
+      "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
+    },
+    {
+      "item_id": "22.3-10",
+      "source_section": "22.3",
+      "source_heading": "业务与安全",
+      "source_line": 2452,
+      "requirement": "事件归档后可完整回放",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "business_safety_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/response_workflow/state_machine.py"
+      ],
+      "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
+    },
+    {
+      "item_id": "22.4-01",
+      "source_section": "22.4",
+      "source_heading": "工程与验收",
+      "source_line": 2456,
+      "requirement": "原系统可运行基线、数据库和索引快照已冻结",
+      "status": "PASS_LOCAL",
+      "evidence_group": "legacy_baseline",
+      "evidence": [
+        "output/acceptance/legacy_baseline_manifest.json",
+        "output/acceptance/legacy_baseline_manifest.md",
+        "scripts/freeze_legacy_baseline.py",
+        "docs/progressive_upgrade/asset_inventory.md"
+      ],
+      "limitation": "只证明受控旧系统基线可离线重建，不证明旧生产流量归零或生产数据库归档。"
+    },
+    {
+      "item_id": "22.4-02",
+      "source_section": "22.4",
+      "source_heading": "工程与验收",
+      "source_line": 2457,
+      "requirement": "复用、适配、重构、重建和退役矩阵完成",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "engineering_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/asset_inventory.md",
+        "output/floodagent_bench/scenario_acceptance_report.json",
+        "tests/test_response_workflow.py",
+        "scripts/run_progressive_completion_audit.py",
+        "tests/test_completion_audit.py",
+        "docs/progressive_upgrade/evaluation_and_gate_report.md"
+      ],
+      "limitation": "结论限于受控原型；生产并发、安全、灾备和 UAT 不在 PASS 范围。"
+    },
+    {
+      "item_id": "22.4-03",
+      "source_section": "22.4",
+      "source_heading": "工程与验收",
+      "source_line": 2458,
+      "requirement": "新Core API是正式业务状态唯一写入口",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "api_switch_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/api_compatibility_mapping.md",
+        "tests/test_response_identity.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
+    },
+    {
+      "item_id": "22.4-04",
+      "source_section": "22.4",
+      "source_heading": "工程与验收",
+      "source_line": 2459,
+      "requirement": "Legacy Adapter不存在正式状态写入",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "api_switch_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/api_compatibility_mapping.md",
+        "tests/test_response_identity.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
+    },
+    {
+      "item_id": "22.4-05",
+      "source_section": "22.4",
+      "source_heading": "工程与验收",
+      "source_line": 2460,
+      "requirement": "新旧ID、状态和接口映射可追溯",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "api_switch_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/api_compatibility_mapping.md",
+        "tests/test_response_identity.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
+    },
+    {
+      "item_id": "22.4-06",
+      "source_section": "22.4",
+      "source_heading": "工程与验收",
+      "source_line": 2461,
+      "requirement": "数据库迁移可重复执行",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "migration_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_postgis_migration.py",
+        "tests/test_response_workflow.py",
+        "infra/migrations/README.md"
+      ],
+      "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
+    },
+    {
+      "item_id": "22.4-07",
+      "source_section": "22.4",
+      "source_heading": "工程与验收",
+      "source_line": 2462,
+      "requirement": "数据迁移数量、哈希、外键和业务语义对账通过",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "migration_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_postgis_migration.py",
+        "tests/test_response_workflow.py",
+        "infra/migrations/README.md"
+      ],
+      "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
+    },
+    {
+      "item_id": "22.4-08",
+      "source_section": "22.4",
+      "source_heading": "工程与验收",
+      "source_line": 2463,
+      "requirement": "影子运行和新旧差异报告完成",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "engineering_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/asset_inventory.md",
+        "output/floodagent_bench/scenario_acceptance_report.json",
+        "tests/test_response_workflow.py",
+        "scripts/run_progressive_completion_audit.py",
+        "tests/test_completion_audit.py",
+        "docs/progressive_upgrade/evaluation_and_gate_report.md"
+      ],
+      "limitation": "结论限于受控原型；生产并发、安全、灾备和 UAT 不在 PASS 范围。"
+    },
+    {
+      "item_id": "22.4-09",
+      "source_section": "22.4",
+      "source_heading": "工程与验收",
+      "source_line": 2464,
+      "requirement": "功能开关、切换和回滚演练完成",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "release_rollback_controlled",
+      "evidence": [
+        ".github/workflows/ci.yml",
+        "docker-compose.yml",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_simulation_dataset.py",
+        "docs/progressive_upgrade/operations_and_rollback.md"
+      ],
+      "limitation": "保存的是当前受控构建合同与 Git 提交；生产镜像签名、负责人签字和生产回滚演练需部署方完成。"
+    },
+    {
+      "item_id": "22.4-10",
+      "source_section": "22.4",
+      "source_heading": "工程与验收",
+      "source_line": 2465,
+      "requirement": "旧写接口关闭且旧链路退役条件满足",
+      "status": "NO_GO_EXTERNAL",
+      "evidence_group": "legacy_retirement_external",
+      "evidence": [
+        "docs/progressive_upgrade/operations_and_rollback.md",
+        "docs/progressive_upgrade/completion_traceability_audit.md"
+      ],
+      "limitation": "仓库没有真实生产流量、在途事件和账号目录，禁止伪造完成。"
+    },
+    {
+      "item_id": "22.4-11",
+      "source_section": "22.4",
+      "source_heading": "工程与验收",
+      "source_line": 2466,
+      "requirement": "Docker Compose可启动完整模拟环境",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "engineering_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/asset_inventory.md",
+        "output/floodagent_bench/scenario_acceptance_report.json",
+        "tests/test_response_workflow.py",
+        "scripts/run_progressive_completion_audit.py",
+        "tests/test_completion_audit.py",
+        "docs/progressive_upgrade/evaluation_and_gate_report.md"
+      ],
+      "limitation": "结论限于受控原型；生产并发、安全、灾备和 UAT 不在 PASS 范围。"
+    },
+    {
+      "item_id": "22.4-12",
+      "source_section": "22.4",
+      "source_heading": "工程与验收",
+      "source_line": 2467,
+      "requirement": "模拟数据可一键生成且不可误发真实端点",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "engineering_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/asset_inventory.md",
+        "output/floodagent_bench/scenario_acceptance_report.json",
+        "tests/test_response_workflow.py",
+        "scripts/run_progressive_completion_audit.py",
+        "tests/test_completion_audit.py",
+        "docs/progressive_upgrade/evaluation_and_gate_report.md"
+      ],
+      "limitation": "结论限于受控原型；生产并发、安全、灾备和 UAT 不在 PASS 范围。"
+    },
+    {
+      "item_id": "22.4-13",
+      "source_section": "22.4",
+      "source_heading": "工程与验收",
+      "source_line": 2468,
+      "requirement": "API、规则、模型和状态机均有自动测试",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "engineering_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/asset_inventory.md",
+        "output/floodagent_bench/scenario_acceptance_report.json",
+        "tests/test_response_workflow.py",
+        "scripts/run_progressive_completion_audit.py",
+        "tests/test_completion_audit.py",
+        "docs/progressive_upgrade/evaluation_and_gate_report.md"
+      ],
+      "limitation": "结论限于受控原型；生产并发、安全、灾备和 UAT 不在 PASS 范围。"
+    },
+    {
+      "item_id": "22.4-14",
+      "source_section": "22.4",
+      "source_heading": "工程与验收",
+      "source_line": 2469,
+      "requirement": "状态转换表完成穷举和属性测试",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "engineering_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/asset_inventory.md",
+        "output/floodagent_bench/scenario_acceptance_report.json",
+        "tests/test_response_workflow.py",
+        "scripts/run_progressive_completion_audit.py",
+        "tests/test_completion_audit.py",
+        "docs/progressive_upgrade/evaluation_and_gate_report.md"
+      ],
+      "limitation": "结论限于受控原型；生产并发、安全、灾备和 UAT 不在 PASS 范围。"
+    },
+    {
+      "item_id": "22.4-15",
+      "source_section": "22.4",
+      "source_heading": "工程与验收",
+      "source_line": 2470,
+      "requirement": "监控、日志、备份和恢复验证完成",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "engineering_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/asset_inventory.md",
+        "output/floodagent_bench/scenario_acceptance_report.json",
+        "tests/test_response_workflow.py",
+        "scripts/run_progressive_completion_audit.py",
+        "tests/test_completion_audit.py",
+        "docs/progressive_upgrade/evaluation_and_gate_report.md"
+      ],
+      "limitation": "结论限于受控原型；生产并发、安全、灾备和 UAT 不在 PASS 范围。"
+    },
+    {
+      "item_id": "22.4-16",
+      "source_section": "22.4",
+      "source_heading": "工程与验收",
+      "source_line": 2471,
+      "requirement": "Go/No-Go结果来自真实运行，不填写虚构数值",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "engineering_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/asset_inventory.md",
+        "output/floodagent_bench/scenario_acceptance_report.json",
+        "tests/test_response_workflow.py",
+        "scripts/run_progressive_completion_audit.py",
+        "tests/test_completion_audit.py",
+        "docs/progressive_upgrade/evaluation_and_gate_report.md"
+      ],
+      "limitation": "结论限于受控原型；生产并发、安全、灾备和 UAT 不在 PASS 范围。"
+    },
+    {
+      "item_id": "22.4-17",
+      "source_section": "22.4",
+      "source_heading": "工程与验收",
+      "source_line": 2472,
+      "requirement": "论文结论限定为受控场景中的原型验证",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "engineering_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/asset_inventory.md",
+        "output/floodagent_bench/scenario_acceptance_report.json",
+        "tests/test_response_workflow.py",
+        "scripts/run_progressive_completion_audit.py",
+        "tests/test_completion_audit.py",
+        "docs/progressive_upgrade/evaluation_and_gate_report.md"
+      ],
+      "limitation": "结论限于受控原型；生产并发、安全、灾备和 UAT 不在 PASS 范围。"
+    },
+    {
+      "item_id": "23-01",
+      "source_section": "23",
+      "source_heading": "系统最终完成标准",
+      "source_line": 2505,
+      "requirement": "原系统可复现，复用与退役范围有记录",
+      "status": "PASS_LOCAL",
+      "evidence_group": "legacy_baseline",
+      "evidence": [
+        "output/acceptance/legacy_baseline_manifest.json",
+        "output/acceptance/legacy_baseline_manifest.md",
+        "scripts/freeze_legacy_baseline.py",
+        "docs/progressive_upgrade/asset_inventory.md"
+      ],
+      "limitation": "只证明受控旧系统基线可离线重建，不证明旧生产流量归零或生产数据库归档。"
+    },
+    {
+      "item_id": "23-02",
+      "source_section": "23",
+      "source_heading": "系统最终完成标准",
+      "source_line": 2506,
+      "requirement": "不存在新旧系统同时写同一事件",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "api_switch_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/api_compatibility_mapping.md",
+        "tests/test_response_identity.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py"
+      ],
+      "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
+    },
+    {
+      "item_id": "23-03",
+      "source_section": "23",
+      "source_heading": "系统最终完成标准",
+      "source_line": 2507,
+      "requirement": "每个事件固定工作流引擎版本",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "business_safety_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/response_workflow/state_machine.py"
+      ],
+      "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
+    },
+    {
+      "item_id": "23-04",
+      "source_section": "23",
+      "source_heading": "系统最终完成标准",
+      "source_line": 2508,
+      "requirement": "数据和API迁移经过对账",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "migration_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_postgis_migration.py",
+        "tests/test_response_workflow.py",
+        "infra/migrations/README.md"
+      ],
+      "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
+    },
+    {
+      "item_id": "23-05",
+      "source_section": "23",
+      "source_heading": "系统最终完成标准",
+      "source_line": 2509,
+      "requirement": "新功能具备开关、回滚和人工接管路径",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "release_rollback_controlled",
+      "evidence": [
+        ".github/workflows/ci.yml",
+        "docker-compose.yml",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_simulation_dataset.py",
+        "docs/progressive_upgrade/operations_and_rollback.md"
+      ],
+      "limitation": "保存的是当前受控构建合同与 Git 提交；生产镜像签名、负责人签字和生产回滚演练需部署方完成。"
+    },
+    {
+      "item_id": "23-06",
+      "source_section": "23",
+      "source_heading": "系统最终完成标准",
+      "source_line": 2510,
+      "requirement": "baseline仍可复现并作为FRC-RAG比较和降级策略",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "engineering_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/asset_inventory.md",
+        "output/floodagent_bench/scenario_acceptance_report.json",
+        "tests/test_response_workflow.py",
+        "scripts/run_progressive_completion_audit.py",
+        "tests/test_completion_audit.py",
+        "docs/progressive_upgrade/evaluation_and_gate_report.md"
+      ],
+      "limitation": "结论限于受控原型；生产并发、安全、灾备和 UAT 不在 PASS 范围。"
+    },
+    {
+      "item_id": "23-07",
+      "source_section": "23",
+      "source_heading": "系统最终完成标准",
+      "source_line": 2511,
+      "requirement": "AI无正式状态写权限",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "business_safety_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/response_workflow/state_machine.py"
+      ],
+      "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
+    },
+    {
+      "item_id": "23-08",
+      "source_section": "23",
+      "source_heading": "系统最终完成标准",
+      "source_line": 2512,
+      "requirement": "未审批、越权、重复和载荷不一致任务不能进入执行",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "business_safety_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/response_workflow/state_machine.py"
+      ],
+      "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
+    },
+    {
+      "item_id": "23-09",
+      "source_section": "23",
+      "source_heading": "系统最终完成标准",
+      "source_line": 2513,
+      "requirement": "关键字段始终显示支持、冲突或缺失",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "data_algorithm_controlled",
+      "evidence": [
+        "tests/test_simulation_dataset.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/rag.py",
+        "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
+      ],
+      "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
+    },
+    {
+      "item_id": "23-10",
+      "source_section": "23",
+      "source_heading": "系统最终完成标准",
+      "source_line": 2514,
+      "requirement": "每个正式任务可以追溯到预警版本、对象快照、原文证据、规则版本、审批人和执行反馈",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "business_safety_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/response_workflow/state_machine.py"
+      ],
+      "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
+    },
+    {
+      "item_id": "23-11",
+      "source_section": "23",
+      "source_heading": "系统最终完成标准",
+      "source_line": 2515,
+      "requirement": "模型或外部服务失败时能够安全降级或人工接管",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "business_safety_controlled",
+      "evidence": [
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "tests/test_response_workflow.py",
+        "flood_system/response_workflow/state_machine.py"
+      ],
+      "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
+    },
+    {
+      "item_id": "23-12",
+      "source_section": "23",
+      "source_heading": "系统最终完成标准",
+      "source_line": 2516,
+      "requirement": "模拟数据、接口和结果不会与未来真实环境混淆",
+      "status": "PASS_CONTROLLED",
+      "evidence_group": "engineering_controlled",
+      "evidence": [
+        "docs/progressive_upgrade/asset_inventory.md",
+        "output/floodagent_bench/scenario_acceptance_report.json",
+        "tests/test_response_workflow.py",
+        "scripts/run_progressive_completion_audit.py",
+        "tests/test_completion_audit.py",
+        "docs/progressive_upgrade/evaluation_and_gate_report.md"
+      ],
+      "limitation": "结论限于受控原型；生产并发、安全、灾备和 UAT 不在 PASS 范围。"
+    }
+  ],
+  "legacy_baseline": {
+    "source_commit": "2db016af915ada1912afe91d315defe844dba09d",
+    "source_tree": "11ad151eb65101d4786f1815420fb2304cf55d65",
+    "git_archive_sha256": "c95f450964eca8a824bb445efbfaf874e6bc69820856b4d3cbf99b2bb170dc1c",
+    "tracked_file_count": 254,
+    "tracked_blob_bytes": 2200943,
+    "categories": {
+      "application": {
+        "file_count": 188,
+        "blob_bytes": 1709557,
+        "listing_sha256": "3cd4ffadd067bba0e8c0f7c9510f2f8daa69e97d7bc58ef7ff5306548662aa98"
+      },
+      "database_rebuild_inputs": {
+        "file_count": 27,
+        "blob_bytes": 91216,
+        "listing_sha256": "8b312b21cce129b18bcf8db3640cfbdd98db4938176c4f41631ecde0e82c5416"
+      },
+      "rag_index_rebuild_inputs": {
+        "file_count": 31,
+        "blob_bytes": 40815,
+        "listing_sha256": "f8eada98ee8a20d052f887f76b94323b46bbd457aad5a59333b424a54a6012e5"
+      },
+      "models_prompts_and_contracts": {
+        "file_count": 7,
+        "blob_bytes": 85433,
+        "listing_sha256": "da97461f711259e096b1e07723bffc81a936edab024e6776e0e0d21a3dd7cbec"
+      }
+    },
+    "database": {
+      "sha256": "40198e9fe2bd9b5e55dcb9db8cc897639695bfc8668f9a58dd440dfe490b8908",
+      "bytes": 487424,
+      "table_count": 37,
+      "index_count": 38
+    },
+    "rag_index": {
+      "sha256": "d557eee3a09f32ae4d059bc6e88693946d606073d7603a2aeeee82b6ba43a539",
+      "bytes": 11527,
+      "document_count": 22
+    },
+    "offline_reproducible": true
+  },
+  "interpretation": "The 87 local or controlled clauses are evidenced without claiming production completion. Items 18.4-10 and 22.4-10 remain external No-Go until real legacy traffic, in-flight events, archives, accounts, and write permissions are verified."
+}

@@ -1,14 +1,14 @@
 {
   "metadata": {
-    "audit_version": "progressive-completion-audit-v3",
+    "audit_version": "progressive-completion-audit-v4",
     "scope": "single-district controlled simulation",
     "contract": "洪水预警响应系统_渐进式迭代开发与升级设计.md sections 18-23",
     "evidence_hash_canonicalization": "UTF-8 text without BOM with CRLF/CR normalized to LF; binary archives use raw bytes"
   },
   "summary": {
     "controlled_first_iteration": "PASS",
-    "passed_local_requirements": 11,
-    "local_requirement_count": 11,
+    "passed_local_requirements": 12,
+    "local_requirement_count": 12,
     "frc_gate_2": "NO-GO",
     "production_readiness": "NO-GO_EXTERNAL",
     "overall": "CONTROLLED_SCOPE_COMPLETE_PRODUCTION_NO_GO"
@@ -35,10 +35,13 @@
         "infra/postgis/001_shadow_projection.sql",
         "Dockerfile",
         "frontend/Dockerfile",
-        "docker-compose.yml"
+        "docker-compose.yml",
+        "flood_system/design_contract_audit.py",
+        "scripts/run_design_contract_audit.py",
+        "scripts/freeze_legacy_baseline.py"
       ],
       "details": {
-        "group_count": 9,
+        "group_count": 10,
         "missing": {}
       }
     },
@@ -62,10 +65,13 @@
         "docs/progressive_upgrade/security_and_incident_manual.md",
         "docs/progressive_upgrade/dependency_security_audit.md",
         "docs/progressive_upgrade/evaluation_and_gate_report.md",
-        "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
+        "docs/progressive_upgrade/frc_public_evaluation_protocol.md",
+        "docs/progressive_upgrade/design_contract_evidence_policy.json",
+        "output/acceptance/legacy_baseline_manifest.md",
+        "output/acceptance/design_contract_audit.md"
       ],
       "details": {
-        "group_count": 7,
+        "group_count": 8,
         "missing": {}
       }
     },
@@ -104,10 +110,13 @@
         "scripts/run_lawshift_temporal_ablation.py",
         "scripts/prepare_eurlex_temporal_source.py",
         "scripts/run_eurlex_temporal_ablation.py",
-        "flood_system/frc_eurlex_temporal_ablation.py"
+        "flood_system/frc_eurlex_temporal_ablation.py",
+        "output/acceptance/legacy_baseline_manifest.json",
+        "output/acceptance/design_contract_audit.json",
+        "tests/test_design_contract_audit.py"
       ],
       "details": {
-        "group_count": 4,
+        "group_count": 5,
         "missing": {}
       }
     },
@@ -251,6 +260,30 @@
       "details": {
         "missing_boundary_markers": []
       }
+    },
+    {
+      "requirement_id": "design_contract_traceability",
+      "title": "第 18.3—18.6、22 和 23 节的 89 条显式合同逐条归属且外部条件不冒充完成",
+      "status": "PASS",
+      "evidence": [
+        "docs/progressive_upgrade/design_contract_evidence_policy.json",
+        "output/acceptance/legacy_baseline_manifest.json",
+        "output/acceptance/design_contract_audit.json",
+        "output/acceptance/design_contract_audit.md",
+        "tests/test_design_contract_audit.py"
+      ],
+      "details": {
+        "committed_report_matches_rebuild": true,
+        "item_count": 89,
+        "controlled_or_local_pass_count": 87,
+        "external_no_go_ids": [
+          "18.4-10",
+          "22.4-10"
+        ],
+        "legacy_baseline_source_commit": "2db016af915ada1912afe91d315defe844dba09d",
+        "legacy_database_sha256": "40198e9fe2bd9b5e55dcb9db8cc897639695bfc8668f9a58dd440dfe490b8908",
+        "legacy_rag_index_sha256": "d557eee3a09f32ae4d059bc6e88693946d606073d7603a2aeeee82b6ba43a539"
+      }
     }
   ],
   "evidence_sha256": {
@@ -260,10 +293,10 @@
     "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json": "00a6a8170fd6181cf3c7c99f672e75ca5d84fc3bf3bbcb25e2046bc669f02f3b",
     "docs/openapi.json": "e338285b1b988a4ddf359bffa1d0249cfb12089f1f133d2a8696060b713ce73b",
     "docker-compose.yml": "8204abc75a6e82041d16e52d09e94e4f84de19f00f5a9cc9338dcd91ed76a33e",
-    "洪水预警响应系统_渐进式迭代开发与升级设计.md": "5f004cf1314018aac811372f1c777f9e7f6195e78ece54b359824a01a2de2e5f",
+    "洪水预警响应系统_渐进式迭代开发与升级设计.md": "7516b53fac1bdf021d3299abbe4cc2edeaa6576ae6edb49c48196cecf798de8e",
     "面向区县防办的洪水预警响应系统_升级设计说明V3.md": "b059960b880d7bc2be0891e5e676d353548aca79a692438c8538721426f9e88d",
-    "docs/progressive_upgrade/completion_traceability_audit.md": "bd99c033669a297f349923ba7367d7d115b3a9f7660fdbf380b5a0454766612d",
-    "docs/V3_upgrade_acceptance_matrix.md": "64fe1ef495b08ba0946862f12c6b35ff2940a7da8bfa18b8ee5c6b52e0a54db0",
+    "docs/progressive_upgrade/completion_traceability_audit.md": "a87dcb3b7ef70fd4b7b4e5a7d97ba0af9c8ceec8bcf2932da8eab4ba29c10fd0",
+    "docs/V3_upgrade_acceptance_matrix.md": "9399be45a638f0c3064988ca53093726085344447e7070b9909ca65289e83b82",
     "output/rag_evaluation/controlled_domain_sensitivity/controlled_domain_sensitivity.json": "55e100bca5db241c4bce411060f555e683ccfef48ed2a9ad36f2c660c8135256",
     "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation.json": "f3d73309005e7ba6d1baf7d3a0f5365954fd3463c1a4037f6cecc075552aca31",
     "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation_cases.jsonl.gz": "d4a60ed544c0c6701715f0036e673881d0a1fd4523c8e9f789fad2ac39501e55",
@@ -274,7 +307,12 @@
     "benchmarks/eurlex_temporal_selection.json": "9e1f23319ebff661b861107a7a2d3c50104024b93403d99ae0d6f421554bfc1d",
     "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.json": "0c707d3ea3ee5138ee041b5b10b7a3b1fbbb70f91acfee7d0727e7fcc4faae1f",
     "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.md": "42f9b0e8815c531abd3dee4326cdfa2fa6af7a00bfa7fb9389be9b58f05a6f79",
-    "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation_cases.jsonl.gz": "3d895269322eafea152cb366aaa50714beb6e209ac16b1d7c0df53464c31eda0"
+    "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation_cases.jsonl.gz": "3d895269322eafea152cb366aaa50714beb6e209ac16b1d7c0df53464c31eda0",
+    "docs/progressive_upgrade/design_contract_evidence_policy.json": "462fb279838bae2096cdb59bf1ad84dad5d5e26e1735a349729ac8c4377202b1",
+    "output/acceptance/legacy_baseline_manifest.json": "f950ac1274207a32650813d288beb91302392e60d96f762346f579d7f4c46230",
+    "output/acceptance/legacy_baseline_manifest.md": "dae91658b9192b8e1a0cd71378e444bc1a38c76a7aa8901656b0cd6cd35b5180",
+    "output/acceptance/design_contract_audit.json": "c0bef43f8ae1ec83784dac3534810e4fbb463eb1fec649d6767366546b85ac38",
+    "output/acceptance/design_contract_audit.md": "bde92fd4f0e3ccf793c7c570ddbb0c1bdb5befa9e6a8e0818d8a71894bd6280a"
   },
   "external_no_go": [
     {
