@@ -37,6 +37,10 @@
       "evidence": [
         {"path": "docs/progressive_upgrade/api_compatibility_mapping.md"},
         {"path": "tests/test_response_identity.py", "contains": "test_response_api_binds_payload_identity_and_requires_aal2_for_high_risk_approval"},
+        {"path": "flood_system/http/idempotency.py", "contains": "IDEMPOTENCY_OUTCOME_INDETERMINATE"},
+        {"path": "tests/test_response_idempotency.py", "contains": "test_core_write_replays_completed_response_and_rejects_key_reuse"},
+        {"path": "tests/test_response_idempotency.py", "contains": "test_repository_reservation_is_atomic_and_completion_is_encrypted"},
+        {"path": "tests/test_response_idempotency.py", "contains": "test_completed_idempotency_response_survives_encryption_key_rotation"},
         {"path": "tests/test_response_workflow.py", "contains": "test_rule_engine_hard_blocks_ungrounded_ai_draft_and_optimistic_lock_conflict"},
         {"path": "tests/test_response_workflow.py", "contains": "test_external_service_callback_is_token_bound_idempotent_and_state_safe"}
       ],

@@ -33,7 +33,12 @@ from .v2.models import (
     V2CopilotMessageRequest,
     V2CopilotSessionRequest,
 )
-from .v2.security import AuthorizationError, ensure_operator_role, list_operator_capabilities, normalize_operator_role
+from .v2.security import (
+    AuthorizationError,
+    ensure_operator_role,
+    list_operator_capabilities,
+    normalize_operator_role,
+)
 
 
 settings = load_settings()
@@ -75,7 +80,9 @@ def readiness():
             connection.execute("SELECT 1").fetchone()
         return {"status": "ready", "database": "ok"}
     except Exception as exc:
-        raise HTTPException(status_code=503, detail={"code": "DATABASE_NOT_READY", "message": str(exc)}) from exc
+        raise HTTPException(
+            status_code=503, detail={"code": "DATABASE_NOT_READY", "message": str(exc)}
+        ) from exc
 
 
 @app.get("/metrics", response_class=PlainTextResponse, tags=["operations"])
@@ -89,20 +96,33 @@ def metrics():
     partially_sent = sum(item.status.value == "partially_sent" for item in outbox)
     manual_takeover = sum(item.status.value == "manual_takeover" for item in outbox)
     dispatch_callbacks = sum(item.callback_count for item in outbox)
+    idempotency_records = system.repository.count_idempotency_records()
     rule_evaluations = system.repository.list_rule_evaluations()
     rule_pass = sum(item.overall_outcome.value == "PASS" for item in rule_evaluations)
-    rule_warning = sum(item.overall_outcome.value == "SOFT_WARNING" for item in rule_evaluations)
-    rule_block = sum(item.overall_outcome.value == "HARD_BLOCK" for item in rule_evaluations)
-    timeline = [entry for event in events for entry in system.repository.list_timeline_entries(event.event_id)]
+    rule_warning = sum(
+        item.overall_outcome.value == "SOFT_WARNING" for item in rule_evaluations
+    )
+    rule_block = sum(
+        item.overall_outcome.value == "HARD_BLOCK" for item in rule_evaluations
+    )
+    timeline = [
+        entry
+        for event in events
+        for entry in system.repository.list_timeline_entries(event.event_id)
+    ]
     takeovers = sum(item.action == "task_taken_over" for item in timeline)
     stale_objects = sum(
-        item.stale for event in events for item in system.repository.list_event_risk_objects(event.event_id)
+        item.stale
+        for event in events
+        for item in system.repository.list_event_risk_objects(event.event_id)
     )
     durations = sorted(api_request_durations_ms)
+
     def percentile(fraction: float) -> float:
         if not durations:
             return 0.0
         return durations[min(len(durations) - 1, int((len(durations) - 1) * fraction))]
+
     return "\n".join(
         (
             "# HELP flood_response_events_total Response events persisted by the core workflow.",
@@ -129,6 +149,12 @@ def metrics():
             "# HELP flood_response_dispatch_callbacks_total Unique simulated callbacks recorded.",
             "# TYPE flood_response_dispatch_callbacks_total gauge",
             f"flood_response_dispatch_callbacks_total {dispatch_callbacks}",
+            "# HELP flood_response_idempotency_records Persisted Core API idempotency records by status.",
+            "# TYPE flood_response_idempotency_records gauge",
+            *(
+                f'flood_response_idempotency_records{{status="{status}"}} {count}'
+                for status, count in sorted(idempotency_records.items())
+            ),
             "# HELP flood_response_rule_evaluations Rule outcomes by result.",
             "# TYPE flood_response_rule_evaluations gauge",
             f'flood_response_rule_evaluations{{outcome="PASS"}} {rule_pass}',
@@ -174,7 +200,7 @@ async def rewrite_unified_agent_twin_paths(request, call_next):
             request.scope["path"] = internal_prefix
             break
         if path.startswith(f"{public_prefix}/"):
-            request.scope["path"] = f"{internal_prefix}{path[len(public_prefix):]}"
+            request.scope["path"] = f"{internal_prefix}{path[len(public_prefix) :]}"
             break
     response = await call_next(request)
     api_request_total += 1
@@ -254,7 +280,9 @@ def get_v2_archive_status():
 
 
 @app.post("/v2/archive/run")
-def run_v2_archive_cycle(x_operator_role: str | None = Header(default=None, alias="X-Operator-Role")):
+def run_v2_archive_cycle(
+    x_operator_role: str | None = Header(default=None, alias="X-Operator-Role"),
+):
     try:
         _resolve_operator_role(header_role=x_operator_role, action="archive_run")
         return production.run_archive_cycle()
@@ -297,7 +325,9 @@ def build_v2_dataset(
 
 
 @app.post("/v2/admin/dataset/validate")
-def validate_v2_dataset(x_operator_role: str | None = Header(default=None, alias="X-Operator-Role")):
+def validate_v2_dataset(
+    x_operator_role: str | None = Header(default=None, alias="X-Operator-Role"),
+):
     try:
         _resolve_operator_role(header_role=x_operator_role, action="dataset_manage")
         return system.dataset_service.start_validate()
@@ -318,7 +348,10 @@ def sync_v2_dataset(
 
 
 @app.post("/v2/admin/dataset/jobs/{job_id}/cancel")
-def cancel_v2_dataset_job(job_id: str, x_operator_role: str | None = Header(default=None, alias="X-Operator-Role")):
+def cancel_v2_dataset_job(
+    job_id: str,
+    x_operator_role: str | None = Header(default=None, alias="X-Operator-Role"),
+):
     try:
         _resolve_operator_role(header_role=x_operator_role, action="dataset_manage")
         return system.dataset_service.cancel_job(job_id)
@@ -329,7 +362,10 @@ def cancel_v2_dataset_job(job_id: str, x_operator_role: str | None = Header(defa
 
 
 @app.post("/v2/admin/dataset/jobs/{job_id}/retry")
-def retry_v2_dataset_job(job_id: str, x_operator_role: str | None = Header(default=None, alias="X-Operator-Role")):
+def retry_v2_dataset_job(
+    job_id: str,
+    x_operator_role: str | None = Header(default=None, alias="X-Operator-Role"),
+):
     try:
         _resolve_operator_role(header_role=x_operator_role, action="dataset_manage")
         return system.dataset_service.retry_job(job_id)
@@ -408,7 +444,9 @@ def list_v2_regional_proposals(event_id: str, status: str | None = None):
 @app.get("/v2/events/{event_id}/regional-analysis-packages")
 def list_v2_regional_analysis_packages(event_id: str, include_pending: bool = True):
     try:
-        return production.list_regional_analysis_packages(event_id, include_pending=include_pending)
+        return production.list_regional_analysis_packages(
+            event_id, include_pending=include_pending
+        )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
@@ -427,7 +465,9 @@ def update_v2_regional_proposal_draft(
     request: ProposalDraftUpdateRequest,
 ):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="proposal_draft_edit")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="proposal_draft_edit"
+        )
         return production.update_regional_proposal_draft(proposal_id, request)
     except AuthorizationError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
@@ -441,7 +481,9 @@ def approve_v2_regional_proposal(
     request: ProposalResolutionRequest,
 ):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="proposal_resolve")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="proposal_resolve"
+        )
         return production.approve_regional_proposal(proposal_id, request)
     except LLMGenerationError as exc:
         raise HTTPException(status_code=503, detail=f"{exc.code}: {exc}") from exc
@@ -457,7 +499,9 @@ def reject_v2_regional_proposal(
     request: ProposalResolutionRequest,
 ):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="proposal_resolve")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="proposal_resolve"
+        )
         return production.reject_regional_proposal(proposal_id, request)
     except AuthorizationError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
@@ -471,7 +515,9 @@ def approve_v2_regional_analysis_package(
     request: ProposalResolutionRequest,
 ):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="proposal_resolve")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="proposal_resolve"
+        )
         return production.approve_regional_analysis_package(package_id, request)
     except LLMGenerationError as exc:
         raise HTTPException(status_code=503, detail=f"{exc.code}: {exc}") from exc
@@ -487,7 +533,9 @@ def reject_v2_regional_analysis_package(
     request: ProposalResolutionRequest,
 ):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="proposal_resolve")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="proposal_resolve"
+        )
         return production.reject_regional_analysis_package(package_id, request)
     except AuthorizationError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
@@ -590,7 +638,9 @@ def approve_v2_copilot_proposal(
     request: ProposalResolutionRequest,
 ):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="proposal_resolve")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="proposal_resolve"
+        )
         return production.approve_copilot_proposal(session_id, proposal_id, request)
     except AuthorizationError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
@@ -605,7 +655,9 @@ def reject_v2_copilot_proposal(
     request: ProposalResolutionRequest,
 ):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="proposal_resolve")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="proposal_resolve"
+        )
         return production.reject_copilot_proposal(session_id, proposal_id, request)
     except AuthorizationError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
@@ -619,7 +671,9 @@ def batch_approve_v2_copilot_proposals(
     request: BatchProposalResolutionRequest,
 ):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="proposal_resolve")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="proposal_resolve"
+        )
         return production.batch_approve_copilot_proposals(session_id, request)
     except AuthorizationError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
@@ -633,7 +687,9 @@ def batch_reject_v2_copilot_proposals(
     request: BatchProposalResolutionRequest,
 ):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="proposal_resolve")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="proposal_resolve"
+        )
         return production.batch_reject_copilot_proposals(session_id, request)
     except AuthorizationError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
@@ -660,7 +716,9 @@ def get_v2_admin_entity_profile(entity_id: str):
 @app.post("/v2/admin/entity-profiles")
 def create_v2_admin_entity_profile(request: EntityProfileUpsertRequest):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="runtime_admin_write")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="runtime_admin_write"
+        )
         return production.save_entity_profile(request.profile)
     except AuthorizationError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
@@ -671,7 +729,9 @@ def create_v2_admin_entity_profile(request: EntityProfileUpsertRequest):
 @app.put("/v2/admin/entity-profiles/{entity_id}")
 def update_v2_admin_entity_profile(entity_id: str, request: EntityProfileUpsertRequest):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="runtime_admin_write")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="runtime_admin_write"
+        )
         if request.profile.entity_id != entity_id:
             raise ValueError("entity_id in path and payload must match.")
         return production.save_entity_profile(request.profile)
@@ -682,9 +742,14 @@ def update_v2_admin_entity_profile(entity_id: str, request: EntityProfileUpsertR
 
 
 @app.delete("/v2/admin/entity-profiles/{entity_id}")
-def delete_v2_admin_entity_profile(entity_id: str, x_operator_role: str | None = Header(default=None, alias="X-Operator-Role")):
+def delete_v2_admin_entity_profile(
+    entity_id: str,
+    x_operator_role: str | None = Header(default=None, alias="X-Operator-Role"),
+):
     try:
-        _resolve_operator_role(header_role=x_operator_role, action="runtime_admin_write")
+        _resolve_operator_role(
+            header_role=x_operator_role, action="runtime_admin_write"
+        )
         production.delete_entity_profile(entity_id)
         return {"status": "deleted", "entity_id": entity_id}
     except AuthorizationError as exc:
@@ -704,7 +769,9 @@ def get_v2_area_resource_status(area_id: str):
 @app.put("/v2/admin/areas/{area_id}/resource-status")
 def update_v2_area_resource_status(area_id: str, request: ResourceStatusUpdateRequest):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="runtime_admin_write")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="runtime_admin_write"
+        )
         if request.resource_status.area_id != area_id:
             raise ValueError("area_id in path and payload must match.")
         production.save_area_resource_status(request.resource_status)
@@ -724,9 +791,13 @@ def get_v2_event_resource_status(event_id: str):
 
 
 @app.put("/v2/admin/events/{event_id}/resource-status")
-def update_v2_event_resource_status(event_id: str, request: ResourceStatusUpdateRequest):
+def update_v2_event_resource_status(
+    event_id: str, request: ResourceStatusUpdateRequest
+):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="runtime_admin_write")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="runtime_admin_write"
+        )
         production.save_event_resource_status(event_id, request.resource_status)
         return production.get_event_resource_status_view(event_id)
     except AuthorizationError as exc:
@@ -736,9 +807,14 @@ def update_v2_event_resource_status(event_id: str, request: ResourceStatusUpdate
 
 
 @app.delete("/v2/admin/events/{event_id}/resource-status")
-def delete_v2_event_resource_status(event_id: str, x_operator_role: str | None = Header(default=None, alias="X-Operator-Role")):
+def delete_v2_event_resource_status(
+    event_id: str,
+    x_operator_role: str | None = Header(default=None, alias="X-Operator-Role"),
+):
     try:
-        _resolve_operator_role(header_role=x_operator_role, action="runtime_admin_write")
+        _resolve_operator_role(
+            header_role=x_operator_role, action="runtime_admin_write"
+        )
         production.delete_event_resource_status(event_id)
         return {"status": "deleted", "event_id": event_id}
     except AuthorizationError as exc:
@@ -755,9 +831,15 @@ def list_v2_rag_documents():
 @app.post("/v2/admin/rag-documents/import")
 def import_v2_rag_documents(request: RAGDocumentImportRequest):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="runtime_admin_write")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="runtime_admin_write"
+        )
         documents = production.import_rag_documents(request)
-        return {"status": "imported", "document_count": len(documents), "documents": documents}
+        return {
+            "status": "imported",
+            "document_count": len(documents),
+            "documents": documents,
+        }
     except AuthorizationError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
     except ValueError as exc:
@@ -765,11 +847,19 @@ def import_v2_rag_documents(request: RAGDocumentImportRequest):
 
 
 @app.post("/v2/admin/rag-documents/reload")
-def reload_v2_rag_documents(x_operator_role: str | None = Header(default=None, alias="X-Operator-Role")):
+def reload_v2_rag_documents(
+    x_operator_role: str | None = Header(default=None, alias="X-Operator-Role"),
+):
     try:
-        _resolve_operator_role(header_role=x_operator_role, action="runtime_admin_write")
+        _resolve_operator_role(
+            header_role=x_operator_role, action="runtime_admin_write"
+        )
         documents = production.reload_rag_documents()
-        return {"status": "reloaded", "document_count": len(documents), "documents": documents}
+        return {
+            "status": "reloaded",
+            "document_count": len(documents),
+            "documents": documents,
+        }
     except AuthorizationError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
     except ValueError as exc:
@@ -819,7 +909,9 @@ def list_v2_evaluation_benchmarks():
 
 
 @app.post("/v2/evaluation/run")
-def run_v2_evaluation(x_operator_role: str | None = Header(default=None, alias="X-Operator-Role")):
+def run_v2_evaluation(
+    x_operator_role: str | None = Header(default=None, alias="X-Operator-Role"),
+):
     try:
         _resolve_operator_role(header_role=x_operator_role, action="evaluation_run")
         return production.run_evaluation()
@@ -836,7 +928,10 @@ def get_v2_evaluation_report(report_id: str):
 
 
 @app.post("/v2/evaluation/reports/{report_id}/replay")
-def replay_v2_evaluation_report(report_id: str, x_operator_role: str | None = Header(default=None, alias="X-Operator-Role")):
+def replay_v2_evaluation_report(
+    report_id: str,
+    x_operator_role: str | None = Header(default=None, alias="X-Operator-Role"),
+):
     try:
         _resolve_operator_role(header_role=x_operator_role, action="evaluation_run")
         return production.replay_evaluation_report(report_id)

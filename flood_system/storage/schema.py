@@ -446,6 +446,18 @@ CREATE TABLE IF NOT EXISTS response_identity_nonces (
     expires_at TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS response_idempotency_records (
+    record_id TEXT PRIMARY KEY,
+    scope TEXT NOT NULL,
+    idempotency_key TEXT NOT NULL,
+    request_hash TEXT NOT NULL,
+    status TEXT NOT NULL,
+    expires_at TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    UNIQUE(scope, idempotency_key)
+);
+
 CREATE TABLE IF NOT EXISTS response_key_rotation_state (
     rotation_id TEXT PRIMARY KEY,
     backup_id TEXT NOT NULL,
@@ -748,6 +760,8 @@ CREATE INDEX IF NOT EXISTS idx_response_audit_archives_event ON response_audit_a
 CREATE INDEX IF NOT EXISTS idx_response_restore_backup_id ON response_backup_restores(backup_id, restored_at);
 CREATE INDEX IF NOT EXISTS idx_response_backup_imported_at ON response_backup_imports(imported_at);
 CREATE INDEX IF NOT EXISTS idx_response_identity_nonce_expiry ON response_identity_nonces(expires_at);
+CREATE INDEX IF NOT EXISTS idx_response_idempotency_expiry ON response_idempotency_records(expires_at);
+CREATE INDEX IF NOT EXISTS idx_response_idempotency_status ON response_idempotency_records(status, created_at);
 CREATE INDEX IF NOT EXISTS idx_response_feature_flags_scope ON response_feature_flags(scope_key, flag_key);
 CREATE INDEX IF NOT EXISTS idx_response_outbox_status ON response_outbox(status, updated_at);
 CREATE INDEX IF NOT EXISTS idx_response_outbox_event ON response_outbox(event_id, created_at);

@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "audit_version": "progressive-completion-audit-v5",
+    "audit_version": "progressive-completion-audit-v6",
     "scope": "single-district controlled simulation",
     "contract": "洪水预警响应系统_渐进式迭代开发与升级设计.md sections 18-23",
     "evidence_hash_canonicalization": "UTF-8 text without BOM with CRLF/CR normalized to LF; binary archives use raw bytes"
@@ -22,6 +22,7 @@
         "frontend/src/pages/ResponseWorkflowPage.tsx",
         "3D_visual/src/App.tsx",
         "flood_system/api.py",
+        "flood_system/http/idempotency.py",
         "flood_system/http/response_router.py",
         "scripts/run_response_worker.py",
         "flood_system/response_workflow/candidate_discovery.py",
@@ -318,10 +319,10 @@
     "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json": "f414a12fad2024988a091c86b450331ff467c15645ecf6c75183bd89d9a9637a",
     "docs/openapi.json": "e338285b1b988a4ddf359bffa1d0249cfb12089f1f133d2a8696060b713ce73b",
     "docker-compose.yml": "8204abc75a6e82041d16e52d09e94e4f84de19f00f5a9cc9338dcd91ed76a33e",
-    "洪水预警响应系统_渐进式迭代开发与升级设计.md": "72aa05368041cd23746fc7bd271f8b384812a9f8136e03221532b01e023717dd",
+    "洪水预警响应系统_渐进式迭代开发与升级设计.md": "e8d2942f4c3152332007f5d09c3647d7d46f9fc150a7beb822d82fb4cdab6258",
     "面向区县防办的洪水预警响应系统_升级设计说明V3.md": "b059960b880d7bc2be0891e5e676d353548aca79a692438c8538721426f9e88d",
-    "docs/progressive_upgrade/completion_traceability_audit.md": "8dc43decf22eace031861c610f24f3ed44b4368db2ffdc6d1cce9bde6d0c0572",
-    "docs/V3_upgrade_acceptance_matrix.md": "f8d82f6a5bab85e403c24c68aadea6a092927b55379fcda379d768902b31d8a0",
+    "docs/progressive_upgrade/completion_traceability_audit.md": "aa4341c0487f89bcff0067a841e545a390f743c4ee4895d395ed164b33cf9c88",
+    "docs/V3_upgrade_acceptance_matrix.md": "ab86cf8fa241590a4cd6c2f7dde36caf74f8e3043ca38bd194af9fb26746aaa2",
     "output/rag_evaluation/controlled_domain_sensitivity/controlled_domain_sensitivity.json": "55e100bca5db241c4bce411060f555e683ccfef48ed2a9ad36f2c660c8135256",
     "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation.json": "f3d73309005e7ba6d1baf7d3a0f5365954fd3463c1a4037f6cecc075552aca31",
     "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation_cases.jsonl.gz": "d4a60ed544c0c6701715f0036e673881d0a1fd4523c8e9f789fad2ac39501e55",
@@ -336,11 +337,11 @@
     "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.json": "0c707d3ea3ee5138ee041b5b10b7a3b1fbbb70f91acfee7d0727e7fcc4faae1f",
     "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.md": "42f9b0e8815c531abd3dee4326cdfa2fa6af7a00bfa7fb9389be9b58f05a6f79",
     "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation_cases.jsonl.gz": "3d895269322eafea152cb366aaa50714beb6e209ac16b1d7c0df53464c31eda0",
-    "docs/progressive_upgrade/design_contract_evidence_policy.json": "ea4e6c5f8f7bda542430ba1ba30f6df6115abe0fd749dd34ce847dbac6e46791",
+    "docs/progressive_upgrade/design_contract_evidence_policy.json": "b91aeaf972912b47d396f0e86bfdc64e636bda83cd31dde799abb6b627afa088",
     "output/acceptance/legacy_baseline_manifest.json": "f950ac1274207a32650813d288beb91302392e60d96f762346f579d7f4c46230",
     "output/acceptance/legacy_baseline_manifest.md": "dae91658b9192b8e1a0cd71378e444bc1a38c76a7aa8901656b0cd6cd35b5180",
-    "output/acceptance/design_contract_audit.json": "0915bb2f520afcd1ae8a05af1d956ea41b4bdee1d46caedf7641094ab17b342a",
-    "output/acceptance/design_contract_audit.md": "bde92fd4f0e3ccf793c7c570ddbb0c1bdb5befa9e6a8e0818d8a71894bd6280a"
+    "output/acceptance/design_contract_audit.json": "3a891a486490c3a0048359e8b410ccba641e4483c4ec3ce2ff4d5df77e7fab95",
+    "output/acceptance/design_contract_audit.md": "d4cabb910fe6aa366e93367ccd188fe6cf6dbdf5df85d03f532ce47bc9352623"
   },
   "external_no_go": [
     {

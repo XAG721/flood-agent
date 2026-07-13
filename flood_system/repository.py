@@ -44,7 +44,10 @@ class SQLiteRepository(
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self.data_protector = DataProtector.for_database(self.db_path)
         self.backup_manifest_signer = BackupManifestSigner.from_environment()
-        self.instance_id = os.getenv("FLOOD_INSTANCE_ID", "").strip() or f"{socket.gethostname()}-{self.db_path.stem}"
+        self.instance_id = (
+            os.getenv("FLOOD_INSTANCE_ID", "").strip()
+            or f"{socket.gethostname()}-{self.db_path.stem}"
+        )
         self._initialize()
         self._check_pending_key_rotation()
         self._migrate_response_payload_encryption()
@@ -71,7 +74,8 @@ class SQLiteRepository(
             checksum = hashlib.sha256(REPOSITORY_SCHEMA_SQL.encode("utf-8")).hexdigest()
             version = f"schema-{checksum[:16]}"
             existing = conn.execute(
-                "SELECT checksum FROM response_schema_migrations WHERE version = ?", (version,)
+                "SELECT checksum FROM response_schema_migrations WHERE version = ?",
+                (version,),
             ).fetchone()
             if existing is not None and existing["checksum"] != checksum:
                 raise RuntimeError("repository schema migration checksum mismatch")
@@ -102,6 +106,7 @@ class SQLiteRepository(
             "response_backup_retention_runs",
             "response_audit_archives",
             "response_feature_flags",
+            "response_idempotency_records",
             "response_outbox",
             "response_dispatch_callbacks",
             "response_candidate_runs",
@@ -116,15 +121,23 @@ class SQLiteRepository(
         try:
             with self._connect() as conn:
                 for table in tables:
-                    rows = conn.execute(f"SELECT rowid, payload FROM {table}").fetchall()
+                    rows = conn.execute(
+                        f"SELECT rowid, payload FROM {table}"
+                    ).fetchall()
                     for row in rows:
                         payload = str(row["payload"])
-                        if self.data_protector.payload_key_id(payload) == self.data_protector.key_id:
+                        if (
+                            self.data_protector.payload_key_id(payload)
+                            == self.data_protector.key_id
+                        ):
                             continue
                         raw_payload = self.data_protector.decrypt_payload(payload)
                         conn.execute(
                             f"UPDATE {table} SET payload = ? WHERE rowid = ?",
-                            (self.data_protector.encrypt_payload(raw_payload), row["rowid"]),
+                            (
+                                self.data_protector.encrypt_payload(raw_payload),
+                                row["rowid"],
+                            ),
                         )
         finally:
             self._rotation_in_progress = False

@@ -9,7 +9,7 @@ from typing import Any, Iterable
 from flood_system.design_contract_audit import build_design_contract_audit
 
 
-AUDIT_VERSION = "progressive-completion-audit-v5"
+AUDIT_VERSION = "progressive-completion-audit-v6"
 
 SOFTWARE_DELIVERABLES: dict[str, tuple[str, ...]] = {
     "web_and_cesium": (
@@ -18,6 +18,7 @@ SOFTWARE_DELIVERABLES: dict[str, tuple[str, ...]] = {
     ),
     "core_api": (
         "flood_system/api.py",
+        "flood_system/http/idempotency.py",
         "flood_system/http/response_router.py",
     ),
     "worker": ("scripts/run_response_worker.py",),

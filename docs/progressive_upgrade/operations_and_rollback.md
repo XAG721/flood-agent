@@ -14,9 +14,11 @@ SQLite 到 PostGIS 的演练使用 `scripts/migrate_response_to_postgis.py`，�
 
 Compose 演示环境显式设置 `FLOOD_ALLOW_DEV_IDENTITY_HEADERS=1`，让同一容器网络内的前端代理使用模拟岗位头；该分支在 `production/prod` 环境无条件禁用。试点和生产必须删除此配置，并由可信 IdP 网关签发短时 HMAC/OIDC 身份断言。Core API 所有写请求必须带 `Idempotency-Key`，前端同时生成 `X-Correlation-ID`。
 
+通用幂等账本默认保留 24 小时（`FLOOD_IDEMPOTENCY_TTL_SECONDS=86400`，允许范围 60 秒至 7 天），成功响应默认最多加密保存 8 MiB 用于原样重放（`FLOOD_IDEMPOTENCY_MAX_REPLAY_BYTES=8388608`，允许范围 1 KiB 至 64 MiB）。客户端重试必须复用业务请求的 `Idempotency-Key`，但身份断言 nonce 每次重新签发。同键异请求不得换请求体重试；出现 `IDEMPOTENCY_OUTCOME_INDETERMINATE` 时，先按事件/任务/记录 ID 和审计时间线对账，再由授权人员决定补偿或使用新键发起新命令。不得直接删除账本来强行重试。
+
 受控重建模拟环境：`python scripts/reset_simulation_environment.py --confirm RESET-SIMULATION`。命令拒绝生产环境、拒绝工作区外数据库路径，并重新生成 FloodAgent-Bench。开发管理员单次签名断言可用 `python scripts/build_dev_admin_assertion.py --method GET --path /response/configuration/feature-flags` 生成；生产管理员必须由真实 IdP/MFA 提供，不能使用该脚本。
 
-探针：`/health` 检查进程，`/ready` 检查数据库，`/metrics` 暴露响应事件和 Outbox 指标。
+探针：`/health` 检查进程，`/ready` 检查数据库，`/metrics` 暴露响应事件、Outbox 和按 `processing/completed/indeterminate` 分组的幂等账本指标。指标查询只读取未过期记录，不产生清理写入。
 
 ## 功能开关
 

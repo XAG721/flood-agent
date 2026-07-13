@@ -24,6 +24,7 @@
 - 备份清单使用独立 HMAC 密钥签名并记录源实例；跨主机导入会验证签名、文件摘要、大小、SQLite 完整性、加密密钥标识和实际解密能力，再允许隔离恢复。
 - 数据加密密钥支持在线重加密和受控激活：轮换前自动备份，生产模式写入 `pending_activation` 状态；部署未提升新密钥时重启会拒绝服务，防止回退旧钥或继续产生混合密文。
 - `/response/*` 只接受可信身份网关签名的短时身份断言；签名绑定操作者、岗位、终端、AAL、时间、nonce、方法和路径，并通过一次性 nonce 防重放。高风险审批、任务豁免、备份和恢复强制 AAL2。
+- `/response/*` 和 `/api/v1/*` 的全部写请求由通用幂等账本保护：作用域绑定身份、终端、方法和路径，同键同请求重放原 2xx 响应，同键异请求或并发占位返回 409；异常结果进入不可盲重试的 `INDETERMINATE`。记录加密落盘并随数据密钥轮换。
 - 风险对象的联系方式、特殊人群说明和精确位置带数据分类；读取时按签名岗位生成脱敏视图。所有真实外部模型调用统一经过个人信息出站过滤，并只把脱敏计数和摘要哈希写入审计记录。
 - 受阻、资源不足和协同请求会生成升级记录与备选处置动作；事件关闭时自动生成基于完整台账的复盘草稿。
 - 首页 `/` 已重构为数字孪生智能体指挥主屏，包含左侧态势带、中央 Cesium 三维画布、右侧 proposal / warning 闭环指挥台和智能体对话抽屉。
@@ -44,6 +45,7 @@
 - FRC-RAG 证据包字段三态、冲突原子组、人工裁决与冻结版本；
 - 固定任务 JSON Schema、`PASS/SOFT_WARNING/HARD_BLOCK` 规则结果、乐观锁；
 - 审批载荷/证据哈希、幂等 Outbox、接收/开始/完成/核验四类时限；
+- 身份绑定的通用写请求幂等账本、原响应重放、并发预留和失败不确定态；
 - 受阻、部分完成、延期、改派、撤回、人工接管和独立核验分支；
 - 数据库结构校验和账本、Legacy Adapter 只读审计和无法映射旧数据隔离；
 - 可重复 FloodAgent-Bench v2 生成器、24 项正式场景目录、候选关联评测、模拟端点网络隔离；
@@ -101,6 +103,7 @@ python scripts/run_progressive_completion_audit.py
 - `flood_system/frc_housing_weight_sensitivity.py`：复用 HousingQA 冻结真实模型分数，执行字段/角色权重单因素扫描并生成可失败关闭的逐例工件；该跨领域诊断不改变 Gate 2。
 - `flood_system/design_contract_audit.py`：从最新设计原文提取 89 条显式合同，校验证据唯一归属、仓库内路径、内容标记和旧基线哈希，并保留外部 No-Go。
 - `flood_system/http/response_router.py`：`/response/*` 业务闭环 API。
+- `flood_system/http/idempotency.py`：Core API 写请求指纹、原子预留、响应重放与不确定结果失败关闭。
 - `flood_system/infrastructure/sse.py`：SSE 编码与流式基础设施。
 - `flood_system/schemas/`：HTTP router 使用的 schema import surface。
 - `flood_system/storage/schema.py`：SQLite 运行时表结构与索引定义，避免 `repository.py` 继续承载建表大块文本。

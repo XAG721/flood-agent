@@ -58,6 +58,7 @@
 | ApprovalRecord | `approval_id` | 绑定任务版本、载荷哈希、证据哈希和规则集版本；不可修改删除 |
 | OutboxMessage | `message_id`、唯一 `idempotency_key` | 发送前重算审批载荷哈希；不一致失败关闭 |
 | DispatchCallbackRecord | `callback_id`、唯一 `idempotency_key`、外部 `version` | 重复回调幂等合并，乱序只记录；任何回调均不得直接修改正式任务状态 |
+| IdempotencyRecord | `scope + idempotency_key`、`request_hash`、`status` | scope 绑定身份/终端/方法/路径；同键异请求拒绝；2xx 可原样重放；异常结果标记 `INDETERMINATE`，不得盲重试；载荷加密并纳入密钥轮换 |
 | DeadlineExtensionRecord | `extension_id` | 独立申请与审批，不修改已审批基础载荷 |
 | TimelineEntry | `entry_id`、哈希链 | 追加写；记录操作者、岗位、终端、前后状态和原因 |
 
@@ -74,5 +75,9 @@
 | 409 | `VERSION_CONFLICT` | 乐观锁版本不一致 |
 | 409 | `STATE_CONFLICT` | 状态机不允许当前转换 |
 | 409 | `RULE_HARD_BLOCK` | 规则硬阻断或未决关键冲突 |
+| 409 | `IDEMPOTENCY_KEY_REUSED` | 同一身份与路由作用域中的幂等键已用于不同请求 |
+| 409 | `IDEMPOTENCY_REQUEST_IN_PROGRESS` | 等价写请求正在处理，可使用同一请求稍后重试 |
+| 409 | `IDEMPOTENCY_OUTCOME_INDETERMINATE` | 原请求可能已写入但未安全完成，必须先人工对账 |
+| 409 | `IDEMPOTENCY_RESPONSE_NOT_REPLAYABLE` | 原请求已完成但响应超过重放上限，按记录的资源引用查询 |
 
 错误响应统一为 `detail: { code, message, retryable }`。

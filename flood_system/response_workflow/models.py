@@ -65,6 +65,12 @@ class OutboxStatus(StrEnum):
     MANUAL_TAKEOVER = "manual_takeover"
 
 
+class IdempotencyStatus(StrEnum):
+    PROCESSING = "processing"
+    COMPLETED = "completed"
+    INDETERMINATE = "indeterminate"
+
+
 class DispatchCallbackStatus(StrEnum):
     ACCEPTED = "accepted"
     DELIVERED = "delivered"
@@ -158,7 +164,9 @@ class GeoPolygon(WorkflowModel):
             if not -180 <= longitude <= 180 or not -90 <= latitude <= 90:
                 raise ValueError("polygon coordinate is outside EPSG:4326 bounds")
         if len(set(self.coordinates[:-1])) < 3:
-            raise ValueError("polygon exterior ring requires at least three distinct vertices")
+            raise ValueError(
+                "polygon exterior ring requires at least three distinct vertices"
+            )
         return self
 
 
@@ -238,7 +246,9 @@ class RiskObjectInput(WorkflowModel):
     system_explanation: str
     sensitive_contacts: list[SensitiveContact] = Field(default_factory=list)
     special_population_notes: str = ""
-    special_population_classification: DataClassification = DataClassification.HIGHLY_SENSITIVE
+    special_population_classification: DataClassification = (
+        DataClassification.HIGHLY_SENSITIVE
+    )
     source_type: str = "simulation"
     source_version: str = "registry-v1"
     data_version: str = "risk-object-v1"
@@ -429,19 +439,30 @@ class TaskCreateRequest(WorkflowModel):
     @model_validator(mode="after")
     def validate_deadlines(self):
         if self.start_deadline_at is None:
-            self.start_deadline_at = self.acknowledge_deadline_at + (
-                self.deadline_at - self.acknowledge_deadline_at
-            ) / 3
+            self.start_deadline_at = (
+                self.acknowledge_deadline_at
+                + (self.deadline_at - self.acknowledge_deadline_at) / 3
+            )
         if self.verification_deadline_at is None:
-            self.verification_deadline_at = self.deadline_at + (
-                self.deadline_at - self.acknowledge_deadline_at
-            ) / 4
+            self.verification_deadline_at = (
+                self.deadline_at + (self.deadline_at - self.acknowledge_deadline_at) / 4
+            )
         if self.acknowledge_deadline_at > self.deadline_at:
-            raise ValueError("acknowledge_deadline_at must not be later than deadline_at")
-        if not self.acknowledge_deadline_at <= self.start_deadline_at <= self.deadline_at:
-            raise ValueError("start_deadline_at must be between acknowledge and completion deadlines")
+            raise ValueError(
+                "acknowledge_deadline_at must not be later than deadline_at"
+            )
+        if (
+            not self.acknowledge_deadline_at
+            <= self.start_deadline_at
+            <= self.deadline_at
+        ):
+            raise ValueError(
+                "start_deadline_at must be between acknowledge and completion deadlines"
+            )
         if self.verification_deadline_at < self.deadline_at:
-            raise ValueError("verification_deadline_at must not be earlier than completion deadline")
+            raise ValueError(
+                "verification_deadline_at must not be earlier than completion deadline"
+            )
         if self.generated_by_ai and not self.generation_version:
             raise ValueError("AI-generated drafts must include generation_version")
         return self
@@ -939,6 +960,23 @@ class FeatureFlagUpdateRequest(TaskActionRequest):
     reason: str = Field(min_length=4)
 
 
+class IdempotencyRecord(WorkflowModel):
+    record_id: str
+    scope: str = Field(min_length=1)
+    idempotency_key: str = Field(min_length=1, max_length=200)
+    request_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    status: IdempotencyStatus = IdempotencyStatus.PROCESSING
+    response_status: int | None = Field(default=None, ge=100, le=599)
+    response_content_type: str | None = None
+    response_headers: dict[str, str] = Field(default_factory=dict)
+    response_body_base64: str = ""
+    response_ref: str | None = None
+    replayable: bool = True
+    expires_at: datetime
+    created_at: datetime
+    completed_at: datetime | None = None
+
+
 class OutboxMessage(WorkflowModel):
     message_id: str
     event_id: str
@@ -1151,7 +1189,9 @@ class TaskDraftGenerationRequest(TaskActionRequest):
     @model_validator(mode="after")
     def validate_generation_deadlines(self):
         if self.acknowledge_minutes >= self.deadline_minutes:
-            raise ValueError("acknowledge_minutes must be earlier than deadline_minutes")
+            raise ValueError(
+                "acknowledge_minutes must be earlier than deadline_minutes"
+            )
         return self
 
 
