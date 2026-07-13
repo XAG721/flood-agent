@@ -19,7 +19,7 @@ npm.cmd run test:e2e
 
 | 验收项 | 实测结果 | 结论 |
 |---|---:|---|
-| 后端自动测试 | 175/175 通过 | 通过 |
+| 后端自动测试 | 177/177 通过 | 通过 |
 | Python 静态质量 | Ruff 0.15.21：0 个问题 | 通过 |
 | 响应工作流专项 | 54 个测试节点在全量套件通过 | 通过 |
 | 前端测试 | 13/13 通过 | 通过 |
@@ -68,7 +68,7 @@ Candidate 指标来自生成器明确标记的模拟金标准，不能外推为�
 
 三个区间均跨 0，故只能证明真实模型公开数据流水线可行和结果接近强基线，不能证明 FRC 稳定优于基线。缺失证据切片共 261 例：FRC 的可用金证据召回率为 0.772180，但“角色分数仍宣称完整”的比例为 0.816092，表明角色覆盖分数不能替代证据完整性判定。
 
-设计第 16.2 节真实模型实验覆盖审计显示：9 组计划消融中仅 5 组有原始结果；Full Evidence F1 为 0.705754，低于 `w/o Role` 的 0.706158，`w/o Field`、`w/o Applicability`、`w/o Conflict` 和 `w/o Reranker` 尚未运行，因此“Full 优于 w/o Role 和 w/o Field”硬条件不通过。K=2/3/5/8 已在三套数据上完成；ConditionalQA 保存分数覆盖 80 组 alpha/gamma/角色阈值组合，冻结配置与最佳 Evidence F1 相同。
+设计第 16.2 节真实模型实验覆盖审计显示：9 组计划消融已有 6 组结果。新增 `w/o Reranker` 不复用 Cross-Encoder 角色分，而是用同一 BGE Large 双编码器重新计算相关性与五类角色分；285 例 Evidence F1 为 0.697327，完整 FRC 为 0.705754，消融相对完整差值 -0.008427，95% CI [-0.018126, +0.001562]。方向上完整模型更好，但区间跨 0。Full 仍低于 `w/o Role` 的 0.706158；`w/o Field`、`w/o Applicability`、`w/o Conflict` 因三套主公开集 3,841 例、172,212 个候选均没有标准化字段分、适用性或候选级冲突标注而保持 `SCHEMA_BLOCKED/NOT_RUN`，因此“Full 优于 w/o Role 和 w/o Field”硬条件不通过。K=2/3/5/8 已在三套数据上完成；ConditionalQA 保存分数覆盖 80 组 alpha/gamma/角色阈值组合，冻结配置与最佳 Evidence F1 相同。
 
 同一保存分数上进一步完成 Token 预算 512/1024/2048 复算，三方法超预算率均为 0。ConditionalQA 的 FRC - 最强基线 Evidence F1 差值依次为 +0.003072、-0.000115、-0.000404；MultiHop-RAG 为 +0.000352、+0.000979、+0.000341；HotpotQA 三档均为 -0.000064，未出现稳定或达到 5 个百分点的提升。ConditionalQA 多档缺失使用固定 SHA-256 阈值形成嵌套删除，目标 25/50/75% 的实际删除率为 27.25%/51.63%/76.12%；FRC 差值均为负，且 25% 档错误完整声明率仍为 0.723005。字段权重、冲突阈值和分块长度仍未运行，不得从角色权重或 Token 扫描推断完成。
 
@@ -84,7 +84,7 @@ GitHub Actions Linux 对同一预算持续复测；冻结报告只用于回归�
 
 - Gate 0：`GO（受控模拟）`。来源、版本、种子、数据来源、模拟标记、家族隔离及 24 场景八类验收字段均由测试校验。
 - Gate 1：`GO（受控模拟）`。当前规则候选链达到建议阈值，仍强制人工确认。
-- Gate 2：`NO-GO`。内部 3 条工程集只证明选择逻辑可运行；ConditionalQA、MultiHop-RAG、HotpotQA 的 Evidence F1 配对区间均未显著为正，CONFLICTS 上 FRC Accuracy 也低于覆盖贪心代理且区间跨 0。真实模型消融仅完成 5/9，Full 未优于 `w/o Role` 且 `w/o Field` 未运行；Token 预算与多档缺失已补齐，但没有稳定优势且缺失安全指标仍偏高，字段权重、冲突阈值和分块长度未运行。冲突/过时分类虽已运行，但论文 expected-behavior adherence 与独立评判未复现。此前的 `setr` 仅是覆盖贪心代理，不是真实 SetR。系统默认保持 `SHADOW`，重新通过 Gate 2 后才可考虑 `CANARY/DEFAULT`。
+- Gate 2：`NO-GO`。内部 3 条工程集只证明选择逻辑可运行；ConditionalQA、MultiHop-RAG、HotpotQA 的 Evidence F1 配对区间均未显著为正，CONFLICTS 上 FRC Accuracy 也低于覆盖贪心代理且区间跨 0。真实模型消融完成 6/9；`w/o Reranker` 已严格重评分但贡献区间仍跨 0，Full 未优于 `w/o Role`，且 `w/o Field` 等三项领域消融在当前公开集不可识别；Token 预算与多档缺失已补齐，但没有稳定优势且缺失安全指标仍偏高，字段权重、冲突阈值和分块长度未运行。冲突/过时分类虽已运行，但论文 expected-behavior adherence 与独立评判未复现。此前的 `setr` 仅是覆盖贪心代理，不是真实 SetR。系统默认保持 `SHADOW`，重新通过 Gate 2 后才可考虑 `CANARY/DEFAULT`。
 - Gate 3：`GO（自动化安全不变量）`。未审批、越权、非法迁移、职责分离、证据/规则/审批/下发哈希和幂等 Outbox 有自动测试。
 - Gate 4：`CONDITIONAL NO-GO`。受控业务闭环、本地恢复、进程内 API 冻结预算和三套已知依赖漏洞审计通过，但生产网络/并发性能预算、真实 IdP/TLS/KMS、异地主机恢复与第三方渗透测试尚无外部运行证据。
 

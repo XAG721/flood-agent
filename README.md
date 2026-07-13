@@ -275,8 +275,18 @@ python -m venv .venv-rag-evaluation
 导入 `D:\RAG_test` 已完成的真实 BGE Large、BGE reranker 和本地 Qwen 公共数据实验，并独立重算配对统计：
 
 ```powershell
-python scripts/import_frc_public_reference.py --reference-root D:\RAG_test\frc-select
+$bgeSnapshot = (Get-ChildItem -Directory D:\RAG_test\.hf_cache\hub\models--BAAI--bge-large-en-v1.5\snapshots | Select-Object -First 1).FullName
+python scripts/run_frc_wo_reranker_ablation.py `
+  --source-role-scores D:\RAG_test\frc-select\outputs\role_scores\role_scores_conditionalqa.jsonl `
+  --output output\rag_evaluation\public_frc_reference\wo_reranker_conditionalqa.json `
+  --model-name $bgeSnapshot --device cuda
+python scripts/import_frc_public_reference.py `
+  --reference-root D:\RAG_test\frc-select `
+  --conflicts-path output\rag_evaluation\conflicts_frc\conflicts_frc_report.json `
+  --supplemental-ablation output\rag_evaluation\public_frc_reference\wo_reranker_conditionalqa.json
 ```
+
+`w/o Reranker` 会同时用 BGE 双编码器重算相关性和角色分，不复用 Cross-Encoder 角色分；当前 285 例 Evidence F1 为 0.697327，完整 FRC 为 0.705754。三套主公开集没有字段分、适用性和候选级冲突标注，因此对应三项消融保持 `SCHEMA_BLOCKED/NOT_RUN`，不能按通过处理。
 
 该导入只读参考目录，关键输入写入 SHA-256；历史 `setr_style` 在报告中统一正名为 `coverage_greedy_proxy`。协议与 Gate 2 解释见 `docs/progressive_upgrade/frc_public_evaluation_protocol.md`。
 

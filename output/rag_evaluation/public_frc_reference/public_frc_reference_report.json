@@ -501,14 +501,14 @@
         "full",
         "w/o_role",
         "w/o_redundancy",
+        "w/o_reranker",
         "role_only",
         "random_role"
       ],
       "missing_variants": [
         "w/o_field",
         "w/o_applicability",
-        "w/o_conflict",
-        "w/o_reranker"
+        "w/o_conflict"
       ],
       "variants": {
         "full": {
@@ -570,6 +570,16 @@
           "redundancy": 0.26094145090714294,
           "token_cost": 924.7368421052631,
           "cases": 285
+        },
+        "w/o_reranker": {
+          "evidence_recall": 0.695481,
+          "evidence_precision": 0.794269,
+          "evidence_f1": 0.697327,
+          "role_coverage": 1.0,
+          "token_cost": 924.463158,
+          "condition_coverage": null,
+          "redundancy": null,
+          "cases": 285
         }
       },
       "gate_required_comparison": {
@@ -578,7 +588,36 @@
         "passed": false,
         "interpretation": "Gate 2 requires Full to outperform both w/o Role and w/o Field. A missing ablation is not treated as a pass."
       },
-      "source_sha256": "7d2dcbce1904530261e2d6bc04db4e52253fe92a02abdbc18b397683a5530ca4"
+      "source_sha256": "7d2dcbce1904530261e2d6bc04db4e52253fe92a02abdbc18b397683a5530ca4",
+      "supplemental_sources": {
+        "w/o_reranker": {
+          "artifact": "D:\\graduation_project\\output\\rag_evaluation\\public_frc_reference\\wo_reranker_conditionalqa.json",
+          "artifact_sha256": "c0e97a29dfb8c7f0002dc3428da3765f11ac2d37fbc273c5b7f79186c3b260b2",
+          "metadata": {
+            "model": "D:\\RAG_test\\.hf_cache\\hub\\models--BAAI--bge-large-en-v1.5\\snapshots\\d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+            "sentence_transformers_version": "3.3.1",
+            "source_role_scores_sha256": "feb0d75957c1bb09f07985979bb0816abc761ce6fafc66b40d9d99b02c1374b5",
+            "scoring_backend": "bge_biencoder_no_cross_encoder",
+            "cross_encoder_used": false,
+            "score_calibration": "per_case_minmax",
+            "role_relevance_mix": 0.15,
+            "selection_parameters": {
+              "alpha": 2.0,
+              "beta": 1.0,
+              "gamma": 0.0
+            },
+            "top_k": 5,
+            "token_budget": 1500,
+            "protocol": "replace Cross-Encoder relevance with saved normalized BGE dense relevance and recompute every role score from normalized BGE passage/role-query embeddings"
+          },
+          "paired_against_full_evidence_f1": {
+            "cases": 285,
+            "mean_difference": -0.008427,
+            "ci_low": -0.018126,
+            "ci_high": 0.001562
+          }
+        }
+      }
     },
     "k_sensitivity": {
       "status": "RUN",
@@ -1787,6 +1826,73 @@
       ],
       "source_sha256": "feb0d75957c1bb09f07985979bb0816abc761ce6fafc66b40d9d99b02c1374b5"
     },
+    "ablation_schema_applicability": {
+      "datasets": {
+        "conditionalqa": {
+          "cases": 285,
+          "cases_with_required_field_schema": 0,
+          "candidates": 2601,
+          "candidates_with_field_scores": 0,
+          "candidates_with_applicability": 0,
+          "candidates_with_standardized_validity_fields": 0,
+          "candidates_with_conflict_annotations": 0,
+          "candidates_with_cross_encoder_score": 2601,
+          "candidates_with_role_scores": 2601
+        },
+        "multihoprag": {
+          "cases": 2556,
+          "cases_with_required_field_schema": 0,
+          "candidates": 127800,
+          "candidates_with_field_scores": 0,
+          "candidates_with_applicability": 0,
+          "candidates_with_standardized_validity_fields": 0,
+          "candidates_with_conflict_annotations": 0,
+          "candidates_with_cross_encoder_score": 127800,
+          "candidates_with_role_scores": 127800
+        },
+        "hotpotqa": {
+          "cases": 1000,
+          "cases_with_required_field_schema": 0,
+          "candidates": 41811,
+          "candidates_with_field_scores": 0,
+          "candidates_with_applicability": 0,
+          "candidates_with_standardized_validity_fields": 0,
+          "candidates_with_conflict_annotations": 0,
+          "candidates_with_cross_encoder_score": 41811,
+          "candidates_with_role_scores": 41811
+        }
+      },
+      "totals": {
+        "cases": 3841,
+        "cases_with_required_field_schema": 0,
+        "candidates": 172212,
+        "candidates_with_field_scores": 0,
+        "candidates_with_applicability": 0,
+        "candidates_with_standardized_validity_fields": 0,
+        "candidates_with_conflict_annotations": 0,
+        "candidates_with_cross_encoder_score": 172212,
+        "candidates_with_role_scores": 172212
+      },
+      "variants": {
+        "w/o_field": {
+          "status": "SCHEMA_BLOCKED",
+          "reason": "public artifacts contain neither required field schemas nor candidate field_scores"
+        },
+        "w/o_applicability": {
+          "status": "SCHEMA_BLOCKED",
+          "reason": "public artifacts contain no standardized applicability/version/jurisdiction/effective-period fields"
+        },
+        "w/o_conflict": {
+          "status": "SCHEMA_BLOCKED",
+          "reason": "the three primary public artifacts contain no candidate-level conflict annotations; CONFLICTS is a separate challenge dataset"
+        },
+        "w/o_reranker": {
+          "status": "RUN_REAL_BIENCODER_RESCORING",
+          "reason": "supplemental artifact recomputed both relevance and role scores without a Cross-Encoder"
+        }
+      },
+      "interpretation": "SCHEMA_BLOCKED means the variant cannot be identified on these public artifacts. It is not counted as RUN or PASS and must be evaluated on a field-, applicability-, or conflict-annotated benchmark."
+    },
     "sensitivity_coverage": {
       "k_2_3_5_8": "RUN",
       "token_budget_512_1024_2048": "RUN",
@@ -1796,7 +1902,7 @@
       "chunk_length": "NOT_RUN"
     },
     "coverage_complete": false,
-    "interpretation": "Existing real-model artifacts directly cover five of nine planned FRC ablations, all K and token-budget values, a ConditionalQA role/redundancy parameter grid, and multi-ratio missing-evidence diagnostics. Missing dimensions remain NOT_RUN rather than being inferred from unrelated metrics."
+    "interpretation": "Real-model artifacts cover 6 of nine planned FRC ablations, all K and token-budget values, a ConditionalQA role/redundancy parameter grid, and multi-ratio missing-evidence diagnostics. Schema-blocked dimensions remain unrun rather than being inferred from unrelated metrics or treated as passes."
   },
   "challenge_slices": {
     "normal": {
@@ -1914,14 +2020,14 @@
     "full_outperforms_w_o_role_and_w_o_field": false,
     "design_16_2_experiment_coverage_complete": false,
     "gate_2": "NO-GO",
-    "reason": "real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; Full does not outperform w/o Role and w/o Field is not run; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment"
+    "reason": "real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; Full does not outperform w/o Role and w/o Field is schema-blocked on the primary public artifacts; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment"
   },
   "limitations": [
     "The report imports existing real-model artifacts and recomputes paired evidence metrics; it does not retrain models.",
     "The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.",
     "ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.",
     "The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.",
-    "The real-model design audit is incomplete: w/o Field, w/o Applicability, w/o Conflict and w/o Reranker plus several sensitivity dimensions remain NOT_RUN.",
+    "The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed, and several sensitivity dimensions remain NOT_RUN.",
     "CONFLICTS conflict-type classification is complete, but the paper's expected-behavior adherence metric and independent human judging are not reproduced."
   ]
 }

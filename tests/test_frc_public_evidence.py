@@ -5,9 +5,11 @@ import json
 from flood_system.frc_public_evidence import (
     _stable_missing_evidence_ids,
     aggregate_precomputed_selectors,
+    audit_public_ablation_schema,
     build_design_experiment_audit,
     conflict_inventory,
     evidence_metrics,
+    load_supplemental_ablation,
     paired_bootstrap,
     select_precomputed,
     selected_role_coverage,
@@ -169,6 +171,78 @@ def test_design_experiment_audit_does_not_treat_missing_ablations_as_passed(tmp_
     assert audit["parameter_sensitivity"]["configuration_count"] == 1
     assert audit["token_budget_sensitivity"]["status"] == "RUN"
     assert audit["missing_ratio_sensitivity"]["status"] == "RUN"
+
+
+def test_supplemental_real_model_ablation_is_reaggregated_from_cases(tmp_path):
+    path = tmp_path / "wo-reranker.json"
+    path.write_text(
+        json.dumps(
+            {
+                "schema_version": "frc-real-model-ablation-v1",
+                "variant": "w/o_reranker",
+                "metadata": {
+                    "cross_encoder_used": False,
+                    "scoring_backend": "bge_biencoder_no_cross_encoder",
+                },
+                "aggregate": {
+                    "evidence_recall": 0.75,
+                    "evidence_precision": 0.5,
+                    "evidence_f1": 0.6,
+                    "role_coverage": 0.875,
+                    "token_cost": 100.0,
+                },
+                "case_results": [
+                    {
+                        "metrics": {
+                            "evidence_recall": 0.5,
+                            "evidence_precision": 0.5,
+                            "evidence_f1": 0.5,
+                            "role_coverage": 0.75,
+                            "token_cost": 90,
+                        }
+                    },
+                    {
+                        "metrics": {
+                            "evidence_recall": 1.0,
+                            "evidence_precision": 0.5,
+                            "evidence_f1": 0.7,
+                            "role_coverage": 1.0,
+                            "token_cost": 110,
+                        }
+                    },
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    variant, metrics, provenance = load_supplemental_ablation(path)
+
+    assert variant == "w/o_reranker"
+    assert metrics["evidence_f1"] == 0.6
+    assert metrics["cases"] == 2
+    assert provenance["metadata"]["cross_encoder_used"] is False
+
+
+def test_public_schema_audit_blocks_unidentifiable_domain_ablations(tmp_path):
+    for dataset in ("conditionalqa", "multihoprag", "hotpotqa"):
+        row = {
+            "id": f"{dataset}-case",
+            "required_roles": ["answer"],
+            "candidates": [candidate("evidence", 1.0, {"answer": 1.0})],
+        }
+        (tmp_path / f"role_scores_{dataset}.jsonl").write_text(
+            json.dumps(row) + "\n",
+            encoding="utf-8",
+        )
+
+    audit = audit_public_ablation_schema(tmp_path)
+
+    assert audit["totals"]["cases"] == 3
+    assert audit["variants"]["w/o_field"]["status"] == "SCHEMA_BLOCKED"
+    assert audit["variants"]["w/o_applicability"]["status"] == "SCHEMA_BLOCKED"
+    assert audit["variants"]["w/o_conflict"]["status"] == "SCHEMA_BLOCKED"
+    assert audit["variants"]["w/o_reranker"]["status"] == "REQUIRES_REAL_RESCORING"
 
 
 def test_k_sensitivity_uses_coverage_proxy_name_instead_of_setr(tmp_path):

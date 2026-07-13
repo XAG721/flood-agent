@@ -14,6 +14,13 @@ def main() -> None:
     parser.add_argument("--reference-root", type=Path, required=True)
     parser.add_argument("--conflicts-path", type=Path, default=None)
     parser.add_argument(
+        "--supplemental-ablation",
+        type=Path,
+        action="append",
+        default=[],
+        help="Machine-readable real-model ablation artifact; may be repeated.",
+    )
+    parser.add_argument(
         "--output-dir",
         type=Path,
         default=Path("output/rag_evaluation/public_frc_reference"),
@@ -23,6 +30,7 @@ def main() -> None:
     report = build_public_reference_report(
         args.reference_root,
         conflicts_path=args.conflicts_path,
+        supplemental_ablation_paths=args.supplemental_ablation,
     )
     args.output_dir.mkdir(parents=True, exist_ok=True)
     json_path = args.output_dir / "public_frc_reference_report.json"

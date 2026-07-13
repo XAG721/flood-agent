@@ -109,7 +109,61 @@ def load_answer_csv(path: Path) -> dict[str, dict[str, float | int | None]]:
     return rows
 
 
-def load_ablation_audit(path: Path) -> dict[str, Any]:
+def load_supplemental_ablation(path: Path) -> tuple[str, dict[str, Any], dict[str, Any]]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if payload.get("schema_version") != "frc-real-model-ablation-v1":
+        raise ValueError(f"unsupported supplemental ablation schema: {path}")
+    variant = str(payload.get("variant", ""))
+    if variant not in PLANNED_ABLATIONS:
+        raise ValueError(f"unsupported supplemental ablation variant: {variant}")
+    case_rows = payload.get("case_results", [])
+    if not case_rows:
+        raise ValueError(f"supplemental ablation has no case results: {path}")
+    metadata = payload.get("metadata", {})
+    if variant == "w/o_reranker" and (
+        metadata.get("cross_encoder_used") is not False
+        or metadata.get("scoring_backend") != "bge_biencoder_no_cross_encoder"
+    ):
+        raise ValueError("w/o_reranker must recompute relevance and role scores without a Cross-Encoder")
+    metric_names = (
+        "evidence_recall",
+        "evidence_precision",
+        "evidence_f1",
+        "role_coverage",
+        "token_cost",
+    )
+    recomputed = {
+        name: round(
+            sum(float(row["metrics"][name]) for row in case_rows) / len(case_rows),
+            6,
+        )
+        for name in metric_names
+    }
+    claimed = payload.get("aggregate", {})
+    for name, value in recomputed.items():
+        if not math.isclose(value, float(claimed.get(name, float("nan"))), abs_tol=1e-6):
+            raise ValueError(f"supplemental ablation aggregate mismatch for {name}: {path}")
+    metrics = {
+        **recomputed,
+        "condition_coverage": claimed.get("condition_coverage"),
+        "redundancy": claimed.get("redundancy"),
+        "cases": len(case_rows),
+    }
+    provenance = {
+        "artifact": str(path.resolve()),
+        "artifact_sha256": sha256(path),
+        "metadata": metadata,
+        "paired_against_full_evidence_f1": payload.get(
+            "paired_w_o_reranker_minus_full_evidence_f1"
+        ),
+    }
+    return variant, metrics, provenance
+
+
+def load_ablation_audit(
+    path: Path,
+    supplemental_paths: Iterable[Path] = (),
+) -> dict[str, Any]:
     variants: dict[str, dict[str, float | int | None]] = {}
     with path.open("r", encoding="utf-8-sig", newline="") as handle:
         for row in csv.DictReader(handle):
@@ -124,6 +178,13 @@ def load_ablation_audit(path: Path) -> dict[str, Any]:
                 "token_cost": _safe_float(row["Token Cost"]),
                 "cases": int(row["Cases"]),
             }
+    supplemental_sources: dict[str, Any] = {}
+    for supplemental_path in supplemental_paths:
+        variant, metrics, provenance = load_supplemental_ablation(supplemental_path)
+        if variant in variants:
+            raise ValueError(f"duplicate ablation result for {variant}: {supplemental_path}")
+        variants[variant] = metrics
+        supplemental_sources[variant] = provenance
     run = [variant for variant in PLANNED_ABLATIONS if variant in variants]
     full_f1 = float(variants.get("full", {}).get("evidence_f1") or 0.0)
     wo_role_f1 = variants.get("w/o_role", {}).get("evidence_f1")
@@ -147,6 +208,80 @@ def load_ablation_audit(path: Path) -> dict[str, Any]:
             ),
         },
         "source_sha256": sha256(path),
+        "supplemental_sources": supplemental_sources,
+    }
+
+
+def audit_public_ablation_schema(role_scores_dir: Path) -> dict[str, Any]:
+    count_fields = (
+        "cases",
+        "cases_with_required_field_schema",
+        "candidates",
+        "candidates_with_field_scores",
+        "candidates_with_applicability",
+        "candidates_with_standardized_validity_fields",
+        "candidates_with_conflict_annotations",
+        "candidates_with_cross_encoder_score",
+        "candidates_with_role_scores",
+    )
+    datasets: dict[str, Any] = {}
+    totals: dict[str, int] = defaultdict(int)
+    for dataset in DATASET_METHODS:
+        path = role_scores_dir / f"role_scores_{dataset}.jsonl"
+        counts: dict[str, int] = defaultdict(int)
+        for row in read_jsonl(path):
+            counts["cases"] += 1
+            if any(key in row for key in ("required_fields", "slots", "field_schema")):
+                counts["cases_with_required_field_schema"] += 1
+            for candidate in row.get("candidates", []):
+                counts["candidates"] += 1
+                if candidate.get("field_scores"):
+                    counts["candidates_with_field_scores"] += 1
+                if candidate.get("applicability") is not None:
+                    counts["candidates_with_applicability"] += 1
+                if any(
+                    candidate.get(key) is not None
+                    for key in ("version", "jurisdiction", "valid_from", "valid_to", "effective_at")
+                ):
+                    counts["candidates_with_standardized_validity_fields"] += 1
+                if candidate.get("conflict_key") is not None or candidate.get("conflict_value") is not None:
+                    counts["candidates_with_conflict_annotations"] += 1
+                scores = candidate.get("scores", {})
+                if scores.get("cross_encoder") is not None:
+                    counts["candidates_with_cross_encoder_score"] += 1
+                if candidate.get("role_scores"):
+                    counts["candidates_with_role_scores"] += 1
+        datasets[dataset] = {name: counts[name] for name in count_fields}
+        for name in count_fields:
+            value = counts[name]
+            totals[name] += value
+    variants = {
+        "w/o_field": {
+            "status": "SCHEMA_BLOCKED",
+            "reason": "public artifacts contain neither required field schemas nor candidate field_scores",
+        },
+        "w/o_applicability": {
+            "status": "SCHEMA_BLOCKED",
+            "reason": "public artifacts contain no standardized applicability/version/jurisdiction/effective-period fields",
+        },
+        "w/o_conflict": {
+            "status": "SCHEMA_BLOCKED",
+            "reason": "the three primary public artifacts contain no candidate-level conflict annotations; CONFLICTS is a separate challenge dataset",
+        },
+        "w/o_reranker": {
+            "status": "REQUIRES_REAL_RESCORING",
+            "reason": "saved relevance and role scores depend on the Cross-Encoder, so swapping only the relevance column is not a valid ablation",
+        },
+    }
+    return {
+        "datasets": datasets,
+        "totals": {name: totals[name] for name in count_fields},
+        "variants": variants,
+        "interpretation": (
+            "SCHEMA_BLOCKED means the variant cannot be identified on these public artifacts. "
+            "It is not counted as RUN or PASS and must be evaluated on a field-, applicability-, "
+            "or conflict-annotated benchmark."
+        ),
     }
 
 
@@ -270,13 +405,26 @@ def load_parameter_sensitivity_audit(path: Path) -> dict[str, Any]:
     }
 
 
-def build_design_experiment_audit(metrics_dir: Path) -> dict[str, Any]:
-    ablation = load_ablation_audit(metrics_dir / "ablation_conditionalqa.csv")
+def build_design_experiment_audit(
+    metrics_dir: Path,
+    supplemental_ablation_paths: Iterable[Path] = (),
+) -> dict[str, Any]:
+    supplemental_paths = tuple(supplemental_ablation_paths)
+    ablation = load_ablation_audit(
+        metrics_dir / "ablation_conditionalqa.csv",
+        supplemental_paths,
+    )
     k_sensitivity = load_k_sensitivity_audit(metrics_dir)
     parameters = load_parameter_sensitivity_audit(
         metrics_dir / "frc_param_sweep_conditionalqa.csv"
     )
     role_scores_dir = metrics_dir.parent / "role_scores"
+    schema_audit = audit_public_ablation_schema(role_scores_dir)
+    if "w/o_reranker" in ablation["run_variants"]:
+        schema_audit["variants"]["w/o_reranker"] = {
+            "status": "RUN_REAL_BIENCODER_RESCORING",
+            "reason": "supplemental artifact recomputed both relevance and role scores without a Cross-Encoder",
+        }
     token_budgets = token_budget_sensitivity(role_scores_dir)
     missing_ratios = missing_ratio_sensitivity(
         role_scores_dir / "role_scores_conditionalqa.jsonl"
@@ -296,16 +444,17 @@ def build_design_experiment_audit(metrics_dir: Path) -> dict[str, Any]:
         "parameter_sensitivity": parameters,
         "token_budget_sensitivity": token_budgets,
         "missing_ratio_sensitivity": missing_ratios,
+        "ablation_schema_applicability": schema_audit,
         "sensitivity_coverage": sensitivity_coverage,
         "coverage_complete": (
             ablation["status"] == "RUN"
             and all(status == "RUN" for status in sensitivity_coverage.values())
         ),
         "interpretation": (
-            "Existing real-model artifacts directly cover five of nine planned FRC ablations, "
+            f"Real-model artifacts cover {len(ablation['run_variants'])} of nine planned FRC ablations, "
             "all K and token-budget values, a ConditionalQA role/redundancy parameter grid, and "
-            "multi-ratio missing-evidence diagnostics. Missing dimensions remain NOT_RUN rather "
-            "than being inferred from unrelated metrics."
+            "multi-ratio missing-evidence diagnostics. Schema-blocked dimensions remain unrun rather "
+            "than being inferred from unrelated metrics or treated as passes."
         ),
     }
 
@@ -775,6 +924,7 @@ def build_public_reference_report(
     reference_root: Path,
     *,
     conflicts_path: Path | None = None,
+    supplemental_ablation_paths: Iterable[Path] = (),
 ) -> dict[str, Any]:
     output = reference_root / "outputs"
     metrics_dir = output / "metrics"
@@ -813,14 +963,17 @@ def build_public_reference_report(
     )
     conflict = conflict_inventory(conflicts_path)
     conflict_run = conflict.get("status") == "RUN"
-    experiment_audit = build_design_experiment_audit(metrics_dir)
+    experiment_audit = build_design_experiment_audit(
+        metrics_dir,
+        supplemental_ablation_paths,
+    )
     ablation_gate = experiment_audit["ablation"]["gate_required_comparison"]
     limitations = [
         "The report imports existing real-model artifacts and recomputes paired evidence metrics; it does not retrain models.",
         "The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.",
         "ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.",
         "The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.",
-        "The real-model design audit is incomplete: w/o Field, w/o Applicability, w/o Conflict and w/o Reranker plus several sensitivity dimensions remain NOT_RUN.",
+        "The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed, and several sensitivity dimensions remain NOT_RUN.",
     ]
     if conflict_run:
         limitations.append(
@@ -866,7 +1019,7 @@ def build_public_reference_report(
             "gate_2": "NO-GO",
             "reason": (
                 "real-model FRC runs are reproducible, but paired confidence intervals do not establish "
-                "consistent superiority; Full does not outperform w/o Role and w/o Field is not run; "
+                "consistent superiority; Full does not outperform w/o Role and w/o Field is schema-blocked on the primary public artifacts; "
                 "CONFLICTS is run but does not reproduce the paper's independent expected-behavior "
                 "adherence judgment"
                 if conflict_run
@@ -926,6 +1079,29 @@ def render_public_reference_markdown(report: dict[str, Any]) -> str:
             )
         else:
             lines.append(f"| {variant} | NOT_RUN | — | — |")
+    wo_reranker_source = ablation["supplemental_sources"].get("w/o_reranker")
+    if wo_reranker_source and wo_reranker_source["paired_against_full_evidence_f1"]:
+        paired = wo_reranker_source["paired_against_full_evidence_f1"]
+        lines.extend(
+            [
+                "",
+                "`w/o Reranker` 相对 Full 的 Evidence F1 配对差值为 "
+                f"{paired['mean_difference']:+.6f}，95% CI="
+                f"[{paired['ci_low']:+.6f}, {paired['ci_high']:+.6f}]；区间跨 0。",
+            ]
+        )
+    schema_audit = experiment["ablation_schema_applicability"]
+    lines.extend(
+        [
+            "",
+            "### 消融数据可识别性",
+            "",
+            "| 消融 | 可识别状态 | 原因 |",
+            "|---|---|---|",
+        ]
+    )
+    for variant, item in schema_audit["variants"].items():
+        lines.append(f"| {variant} | {item['status']} | {item['reason']} |")
     lines.extend(
         [
             "",

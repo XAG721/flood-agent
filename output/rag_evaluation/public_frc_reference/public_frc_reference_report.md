@@ -16,7 +16,7 @@
 
 ## 设计第 16.2 节消融审计
 
-- 覆盖状态：`PARTIAL`；已运行 5/9 组。
+- 覆盖状态：`PARTIAL`；已运行 6/9 组。
 - Gate 必需比较通过：`False`。缺失消融不得按通过处理。
 
 | 消融 | 状态 | Evidence F1 | Role Coverage |
@@ -27,9 +27,20 @@
 | w/o_applicability | NOT_RUN | — | — |
 | w/o_redundancy | RUN | 0.705754 | 1.000000 |
 | w/o_conflict | NOT_RUN | — | — |
-| w/o_reranker | NOT_RUN | — | — |
+| w/o_reranker | RUN | 0.697327 | 1.000000 |
 | role_only | RUN | 0.694475 | 1.000000 |
 | random_role | RUN | 0.705086 | 0.997953 |
+
+`w/o Reranker` 相对 Full 的 Evidence F1 配对差值为 -0.008427，95% CI=[-0.018126, +0.001562]；区间跨 0。
+
+### 消融数据可识别性
+
+| 消融 | 可识别状态 | 原因 |
+|---|---|---|
+| w/o_field | SCHEMA_BLOCKED | public artifacts contain neither required field schemas nor candidate field_scores |
+| w/o_applicability | SCHEMA_BLOCKED | public artifacts contain no standardized applicability/version/jurisdiction/effective-period fields |
+| w/o_conflict | SCHEMA_BLOCKED | the three primary public artifacts contain no candidate-level conflict annotations; CONFLICTS is a separate challenge dataset |
+| w/o_reranker | RUN_REAL_BIENCODER_RESCORING | supplemental artifact recomputed both relevance and role scores without a Cross-Encoder |
 
 ## K 与参数敏感性审计
 
@@ -109,7 +120,7 @@ ConditionalQA 保存分数上共审计 80 组 FRC 参数；最佳 Evidence F1=0.
 
 - 状态：`THEORETICAL_PIPELINE_FEASIBLE_BUT_SUPERIORITY_NOT_PROVEN`
 - Gate 2：`NO-GO`
-- 结论：real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; Full does not outperform w/o Role and w/o Field is not run; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment。
+- 结论：real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; Full does not outperform w/o Role and w/o Field is schema-blocked on the primary public artifacts; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment。
 
 这组结果证明真实模型、公开数据和 FRC 选择器可以形成可复现流水线，但不能证明 FRC 已经稳定优于强重排基线。
 
@@ -119,5 +130,5 @@ ConditionalQA 保存分数上共审计 80 组 FRC 参数；最佳 Evidence F1=0.
 - The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.
 - ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.
 - The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.
-- The real-model design audit is incomplete: w/o Field, w/o Applicability, w/o Conflict and w/o Reranker plus several sensitivity dimensions remain NOT_RUN.
+- The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed, and several sensitivity dimensions remain NOT_RUN.
 - CONFLICTS conflict-type classification is complete, but the paper's expected-behavior adherence metric and independent human judging are not reproduced.
