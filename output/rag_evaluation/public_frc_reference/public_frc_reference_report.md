@@ -68,7 +68,15 @@ ConditionalQA 保存分数上共审计 80 组 FRC 参数；最佳 Evidence F1=0.
 | role_and_field_weights | PARTIAL_ROLE_ONLY |
 | conflict_threshold | NOT_RUN |
 | document_missing_ratio | RUN |
-| chunk_length | NOT_RUN |
+| chunk_length | RUN |
+
+### 分块长度敏感性（ConditionalQA，真实重评分）
+
+| 分块 tokens | FRC Evidence F1 | 最强基线 | 基线 F1 | 差值 | 95% CI | 重复父证据率 |
+|---:|---:|---|---:|---:|---:|---:|
+| 64 | 0.614475 | coverage_greedy_proxy | 0.614854 | -0.000379 | [-0.006775, +0.006388] | 0.324912 |
+| 128 | 0.632662 | coverage_greedy_proxy | 0.632700 | -0.000038 | [-0.004760, +0.005067] | 0.279298 |
+| 256 | 0.679077 | coverage_greedy_proxy | 0.680232 | -0.001155 | [-0.006445, +0.003629] | 0.122807 |
 
 ### Token 预算敏感性
 
@@ -130,5 +138,5 @@ ConditionalQA 保存分数上共审计 80 组 FRC 参数；最佳 Evidence F1=0.
 - The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.
 - ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.
 - The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.
-- The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed, and several sensitivity dimensions remain NOT_RUN.
+- The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed, and field-weight/conflict-threshold sensitivity remains NOT_RUN.
 - CONFLICTS conflict-type classification is complete, but the paper's expected-behavior adherence metric and independent human judging are not reproduced.

@@ -21,6 +21,12 @@ def main() -> None:
         help="Machine-readable real-model ablation artifact; may be repeated.",
     )
     parser.add_argument(
+        "--chunk-length-sensitivity",
+        type=Path,
+        default=None,
+        help="Machine-readable real-model chunk-length sensitivity artifact.",
+    )
+    parser.add_argument(
         "--output-dir",
         type=Path,
         default=Path("output/rag_evaluation/public_frc_reference"),
@@ -31,6 +37,7 @@ def main() -> None:
         args.reference_root,
         conflicts_path=args.conflicts_path,
         supplemental_ablation_paths=args.supplemental_ablation,
+        chunk_length_sensitivity_path=args.chunk_length_sensitivity,
     )
     args.output_dir.mkdir(parents=True, exist_ok=True)
     json_path = args.output_dir / "public_frc_reference_report.json"

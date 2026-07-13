@@ -9,6 +9,7 @@ from flood_system.frc_public_evidence import (
     build_design_experiment_audit,
     conflict_inventory,
     evidence_metrics,
+    load_chunk_length_sensitivity,
     load_supplemental_ablation,
     paired_bootstrap,
     select_precomputed,
@@ -171,6 +172,7 @@ def test_design_experiment_audit_does_not_treat_missing_ablations_as_passed(tmp_
     assert audit["parameter_sensitivity"]["configuration_count"] == 1
     assert audit["token_budget_sensitivity"]["status"] == "RUN"
     assert audit["missing_ratio_sensitivity"]["status"] == "RUN"
+    assert audit["chunk_length_sensitivity"]["status"] == "NOT_RUN"
 
 
 def test_supplemental_real_model_ablation_is_reaggregated_from_cases(tmp_path):
@@ -243,6 +245,68 @@ def test_public_schema_audit_blocks_unidentifiable_domain_ablations(tmp_path):
     assert audit["variants"]["w/o_applicability"]["status"] == "SCHEMA_BLOCKED"
     assert audit["variants"]["w/o_conflict"]["status"] == "SCHEMA_BLOCKED"
     assert audit["variants"]["w/o_reranker"]["status"] == "REQUIRES_REAL_RESCORING"
+
+
+def test_chunk_length_artifact_is_reaggregated_and_compared(tmp_path):
+    path = tmp_path / "chunk-length.json"
+    case_results = []
+    aggregates = []
+    methods = ("cross_encoder_topk", "coverage_greedy_proxy", "frc_select")
+    for chunk_length in (64, 128):
+        for method_index, method in enumerate(methods):
+            rows = []
+            for case_index in range(2):
+                f1 = 0.5 + method_index * 0.1 + case_index * 0.02
+                metrics = {
+                    "evidence_recall": f1,
+                    "evidence_precision": f1,
+                    "evidence_f1": f1,
+                    "role_coverage": 1.0,
+                    "token_cost": 100 + chunk_length,
+                    "selected_chunk_count": 2,
+                    "unique_parent_count": 2,
+                    "duplicate_parent_ratio": 0.0,
+                }
+                row = {
+                    "case_id": f"case-{case_index}",
+                    "chunk_length": chunk_length,
+                    "method": method,
+                    "metrics": metrics,
+                }
+                rows.append(row)
+                case_results.append(row)
+            aggregates.append(
+                {
+                    "chunk_length": chunk_length,
+                    "method": method,
+                    "metrics": {
+                        name: round(sum(row["metrics"][name] for row in rows) / 2, 6)
+                        for name in rows[0]["metrics"]
+                    },
+                }
+            )
+    path.write_text(
+        json.dumps(
+            {
+                "schema_version": "frc-chunk-length-sensitivity-v1",
+                "dataset": "conditionalqa",
+                "metadata": {
+                    "chunk_lengths": [64, 128],
+                    "methods": list(methods),
+                },
+                "aggregates": aggregates,
+                "case_results": case_results,
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    audit = load_chunk_length_sensitivity(path)
+
+    assert audit["status"] == "RUN"
+    assert audit["chunk_lengths"] == [64, 128]
+    assert audit["results"][0]["strongest_baseline"] == "coverage_greedy_proxy"
+    assert audit["results"][0]["frc_minus_baseline_evidence_f1"] == 0.1
 
 
 def test_k_sensitivity_uses_coverage_proxy_name_instead_of_setr(tmp_path):

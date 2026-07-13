@@ -215,13 +215,13 @@
     "output/floodagent_bench/scenario_acceptance_report.json": "806c53237599302277ba9aaaecf8fc95690416a9b1474145b3a8bccb50515ab1",
     "output/candidate_evaluation/report.json": "4f25d27e8411bae5906cc4bf8c33eeeba664201fc82e18cb4adfe36085f7c9eb",
     "output/performance/controlled_performance_report.json": "72881b8700ac867eaefc71a0ff770c8317c3c76531f06afafd55cf5a14f3b2b3",
-    "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json": "6cad8c394181aa0041f8942ba9ad74f44373f819f7e5470a67f21fc0042e5a46",
+    "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json": "36349fc89949a2c4564050bf37bc042db84117fa1e7e6b19ce4fbb41a2ffcf90",
     "docs/openapi.json": "e338285b1b988a4ddf359bffa1d0249cfb12089f1f133d2a8696060b713ce73b",
     "docker-compose.yml": "8204abc75a6e82041d16e52d09e94e4f84de19f00f5a9cc9338dcd91ed76a33e",
-    "洪水预警响应系统_渐进式迭代开发与升级设计.md": "cd448cf0b8f148e4025db70402f7b86b730a7e339c3a2914bba5e5696ad1a890",
+    "洪水预警响应系统_渐进式迭代开发与升级设计.md": "b2ecbdda4eacb38d3bfb6dae9deb57ea4cfd39a4b229268aaa1232a1b3f7d1d4",
     "面向区县防办的洪水预警响应系统_升级设计说明V3.md": "b059960b880d7bc2be0891e5e676d353548aca79a692438c8538721426f9e88d",
-    "docs/progressive_upgrade/completion_traceability_audit.md": "d7c523a915e6567001d150dae5e20f6cfd723689b47221c68550becaf2102bbf",
-    "docs/V3_upgrade_acceptance_matrix.md": "7c8fc706ed6694de28da56a1006d83102d3615d6879797dac24c907e355eae96"
+    "docs/progressive_upgrade/completion_traceability_audit.md": "ae45d864b3f2e7ffcbe1a10bff50d7b9f08a6852ebeadf0da67edaf25f260155",
+    "docs/V3_upgrade_acceptance_matrix.md": "f7b8a70ce2ef65e38caa71de03227ffeae523a91b036f92700eadc41effc8207"
   },
   "external_no_go": [
     {

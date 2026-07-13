@@ -1893,16 +1893,219 @@
       },
       "interpretation": "SCHEMA_BLOCKED means the variant cannot be identified on these public artifacts. It is not counted as RUN or PASS and must be evaluated on a field-, applicability-, or conflict-annotated benchmark."
     },
+    "chunk_length_sensitivity": {
+      "status": "RUN",
+      "dataset": "conditionalqa",
+      "chunk_lengths": [
+        64,
+        128,
+        256
+      ],
+      "methods": [
+        "cross_encoder_topk",
+        "coverage_greedy_proxy",
+        "frc_select"
+      ],
+      "metadata": {
+        "reranker_model": "BAAI/bge-reranker-large",
+        "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+        "sentence_transformers_version": "3.3.1",
+        "source_role_scores_sha256": "feb0d75957c1bb09f07985979bb0816abc761ce6fafc66b40d9d99b02c1374b5",
+        "score_calibration": "per_case_minmax",
+        "role_relevance_mix": 0.15,
+        "selection_parameters": {
+          "alpha": 2.0,
+          "beta": 1.0,
+          "gamma": 0.0
+        },
+        "chunk_lengths": [
+          64,
+          128,
+          256
+        ],
+        "overlap_ratio": 0.2,
+        "chunk_tokenizer": "BAAI/bge-reranker-large",
+        "methods": [
+          "cross_encoder_topk",
+          "coverage_greedy_proxy",
+          "frc_select"
+        ],
+        "top_k": 5,
+        "token_budget": 1500,
+        "seed": 20260713,
+        "parent_evidence_protocol": "one or more selected chunks recall their unique parent evidence ID",
+        "dense_embedding_status": "not used because frozen gamma=0.0 and all compared selectors use reranker scores",
+        "chunk_inventory": [
+          {
+            "chunk_length": 64,
+            "cases": 285,
+            "chunks": 13240
+          },
+          {
+            "chunk_length": 128,
+            "cases": 285,
+            "chunks": 7468
+          },
+          {
+            "chunk_length": 256,
+            "cases": 285,
+            "chunks": 3950
+          }
+        ]
+      },
+      "results": [
+        {
+          "chunk_length": 64,
+          "metrics": {
+            "cross_encoder_topk": {
+              "evidence_recall": 0.541712,
+              "evidence_precision": 0.83883,
+              "evidence_f1": 0.610207,
+              "role_coverage": 0.959649,
+              "token_cost": 302.414035,
+              "selected_chunk_count": 5.0,
+              "unique_parent_count": 3.350877,
+              "duplicate_parent_ratio": 0.329825,
+              "cases": 285
+            },
+            "coverage_greedy_proxy": {
+              "evidence_recall": 0.547563,
+              "evidence_precision": 0.834912,
+              "evidence_f1": 0.614854,
+              "role_coverage": 1.0,
+              "token_cost": 300.407018,
+              "selected_chunk_count": 5.0,
+              "unique_parent_count": 3.421053,
+              "duplicate_parent_ratio": 0.315789,
+              "cases": 285
+            },
+            "frc_select": {
+              "evidence_recall": 0.546306,
+              "evidence_precision": 0.839649,
+              "evidence_f1": 0.614475,
+              "role_coverage": 1.0,
+              "token_cost": 302.140351,
+              "selected_chunk_count": 5.0,
+              "unique_parent_count": 3.375439,
+              "duplicate_parent_ratio": 0.324912,
+              "cases": 285
+            }
+          },
+          "strongest_baseline": "coverage_greedy_proxy",
+          "frc_minus_baseline_evidence_f1": -0.000379,
+          "paired_frc_minus_baseline_evidence_f1": {
+            "cases": 285,
+            "mean_difference": -0.000379,
+            "ci_low": -0.006775,
+            "ci_high": 0.006388
+          }
+        },
+        {
+          "chunk_length": 128,
+          "metrics": {
+            "cross_encoder_topk": {
+              "evidence_recall": 0.564653,
+              "evidence_precision": 0.830643,
+              "evidence_f1": 0.629299,
+              "role_coverage": 0.971345,
+              "token_cost": 565.684211,
+              "selected_chunk_count": 5.0,
+              "unique_parent_count": 3.575439,
+              "duplicate_parent_ratio": 0.284912,
+              "cases": 285
+            },
+            "coverage_greedy_proxy": {
+              "evidence_recall": 0.570986,
+              "evidence_precision": 0.833333,
+              "evidence_f1": 0.6327,
+              "role_coverage": 1.0,
+              "token_cost": 560.407018,
+              "selected_chunk_count": 5.0,
+              "unique_parent_count": 3.585965,
+              "duplicate_parent_ratio": 0.282807,
+              "cases": 285
+            },
+            "frc_select": {
+              "evidence_recall": 0.570845,
+              "evidence_precision": 0.831754,
+              "evidence_f1": 0.632662,
+              "role_coverage": 1.0,
+              "token_cost": 564.785965,
+              "selected_chunk_count": 5.0,
+              "unique_parent_count": 3.603509,
+              "duplicate_parent_ratio": 0.279298,
+              "cases": 285
+            }
+          },
+          "strongest_baseline": "coverage_greedy_proxy",
+          "frc_minus_baseline_evidence_f1": -3.8e-05,
+          "paired_frc_minus_baseline_evidence_f1": {
+            "cases": 285,
+            "mean_difference": -3.8e-05,
+            "ci_low": -0.00476,
+            "ci_high": 0.005067
+          }
+        },
+        {
+          "chunk_length": 256,
+          "metrics": {
+            "cross_encoder_topk": {
+              "evidence_recall": 0.653689,
+              "evidence_precision": 0.814035,
+              "evidence_f1": 0.678986,
+              "role_coverage": 0.983041,
+              "token_cost": 1051.2,
+              "selected_chunk_count": 4.901754,
+              "unique_parent_count": 4.287719,
+              "duplicate_parent_ratio": 0.122807,
+              "cases": 285
+            },
+            "coverage_greedy_proxy": {
+              "evidence_recall": 0.654403,
+              "evidence_precision": 0.817368,
+              "evidence_f1": 0.680232,
+              "role_coverage": 1.0,
+              "token_cost": 1034.414035,
+              "selected_chunk_count": 4.901754,
+              "unique_parent_count": 4.259649,
+              "duplicate_parent_ratio": 0.128421,
+              "cases": 285
+            },
+            "frc_select": {
+              "evidence_recall": 0.654302,
+              "evidence_precision": 0.813333,
+              "evidence_f1": 0.679077,
+              "role_coverage": 1.0,
+              "token_cost": 1046.880702,
+              "selected_chunk_count": 4.901754,
+              "unique_parent_count": 4.287719,
+              "duplicate_parent_ratio": 0.122807,
+              "cases": 285
+            }
+          },
+          "strongest_baseline": "coverage_greedy_proxy",
+          "frc_minus_baseline_evidence_f1": -0.001155,
+          "paired_frc_minus_baseline_evidence_f1": {
+            "cases": 285,
+            "mean_difference": -0.001155,
+            "ci_low": -0.006445,
+            "ci_high": 0.003629
+          }
+        }
+      ],
+      "source_sha256": "33eeb470f2026020e525d4e356e75e1c9d555b42fcaea43aee8fa5f7c566ba92",
+      "interpretation": "Every chunk length is rescored by the real reranker for question relevance and all five role queries. Evidence metrics use unique parent evidence IDs, while token cost and duplicate-parent ratio remain chunk-level diagnostics."
+    },
     "sensitivity_coverage": {
       "k_2_3_5_8": "RUN",
       "token_budget_512_1024_2048": "RUN",
       "role_and_field_weights": "PARTIAL_ROLE_ONLY",
       "conflict_threshold": "NOT_RUN",
       "document_missing_ratio": "RUN",
-      "chunk_length": "NOT_RUN"
+      "chunk_length": "RUN"
     },
     "coverage_complete": false,
-    "interpretation": "Real-model artifacts cover 6 of nine planned FRC ablations, all K and token-budget values, a ConditionalQA role/redundancy parameter grid, and multi-ratio missing-evidence diagnostics. Schema-blocked dimensions remain unrun rather than being inferred from unrelated metrics or treated as passes."
+    "interpretation": "Real-model artifacts cover 6 of nine planned FRC ablations, all K and token-budget values, a ConditionalQA role/redundancy parameter grid, and multi-ratio missing-evidence diagnostics. Chunk-length status is RUN. Schema-blocked dimensions remain unrun rather than being inferred from unrelated metrics or treated as passes."
   },
   "challenge_slices": {
     "normal": {
@@ -2027,7 +2230,7 @@
     "The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.",
     "ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.",
     "The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.",
-    "The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed, and several sensitivity dimensions remain NOT_RUN.",
+    "The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed, and field-weight/conflict-threshold sensitivity remains NOT_RUN.",
     "CONFLICTS conflict-type classification is complete, but the paper's expected-behavior adherence metric and independent human judging are not reproduced."
   ]
 }

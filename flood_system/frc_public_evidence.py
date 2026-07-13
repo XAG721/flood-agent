@@ -408,6 +408,7 @@ def load_parameter_sensitivity_audit(path: Path) -> dict[str, Any]:
 def build_design_experiment_audit(
     metrics_dir: Path,
     supplemental_ablation_paths: Iterable[Path] = (),
+    chunk_length_sensitivity_path: Path | None = None,
 ) -> dict[str, Any]:
     supplemental_paths = tuple(supplemental_ablation_paths)
     ablation = load_ablation_audit(
@@ -429,13 +430,21 @@ def build_design_experiment_audit(
     missing_ratios = missing_ratio_sensitivity(
         role_scores_dir / "role_scores_conditionalqa.jsonl"
     )
+    chunk_lengths = (
+        load_chunk_length_sensitivity(chunk_length_sensitivity_path)
+        if chunk_length_sensitivity_path
+        else {
+            "status": "NOT_RUN",
+            "interpretation": "no real-model chunk-length sensitivity artifact was supplied",
+        }
+    )
     sensitivity_coverage = {
         "k_2_3_5_8": "RUN",
         "token_budget_512_1024_2048": token_budgets["status"],
         "role_and_field_weights": "PARTIAL_ROLE_ONLY",
         "conflict_threshold": "NOT_RUN",
         "document_missing_ratio": missing_ratios["status"],
-        "chunk_length": "NOT_RUN",
+        "chunk_length": chunk_lengths["status"],
     }
     return {
         "status": "PARTIAL",
@@ -445,6 +454,7 @@ def build_design_experiment_audit(
         "token_budget_sensitivity": token_budgets,
         "missing_ratio_sensitivity": missing_ratios,
         "ablation_schema_applicability": schema_audit,
+        "chunk_length_sensitivity": chunk_lengths,
         "sensitivity_coverage": sensitivity_coverage,
         "coverage_complete": (
             ablation["status"] == "RUN"
@@ -453,7 +463,8 @@ def build_design_experiment_audit(
         "interpretation": (
             f"Real-model artifacts cover {len(ablation['run_variants'])} of nine planned FRC ablations, "
             "all K and token-budget values, a ConditionalQA role/redundancy parameter grid, and "
-            "multi-ratio missing-evidence diagnostics. Schema-blocked dimensions remain unrun rather "
+            "multi-ratio missing-evidence diagnostics. Chunk-length status is "
+            f"{chunk_lengths['status']}. Schema-blocked dimensions remain unrun rather "
             "than being inferred from unrelated metrics or treated as passes."
         ),
     }
@@ -513,6 +524,107 @@ def paired_bootstrap(
         "mean_difference": round(sum(differences) / size, 6),
         "ci_low": round(samples[int(0.025 * (resamples - 1))], 6),
         "ci_high": round(samples[int(0.975 * (resamples - 1))], 6),
+    }
+
+
+def load_chunk_length_sensitivity(path: Path) -> dict[str, Any]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if payload.get("schema_version") != "frc-chunk-length-sensitivity-v1":
+        raise ValueError(f"unsupported chunk-length sensitivity schema: {path}")
+    if payload.get("dataset") != "conditionalqa":
+        raise ValueError("chunk-length sensitivity currently requires ConditionalQA")
+    metadata = payload.get("metadata", {})
+    chunk_lengths = [int(value) for value in metadata.get("chunk_lengths", [])]
+    methods = [str(value) for value in metadata.get("methods", [])]
+    if len(chunk_lengths) < 2 or "frc_select" not in methods:
+        raise ValueError("chunk-length sensitivity needs multiple lengths and frc_select")
+    case_rows = payload.get("case_results", [])
+    claimed_rows = {
+        (int(row["chunk_length"]), str(row["method"])): row["metrics"]
+        for row in payload.get("aggregates", [])
+    }
+    metric_names = (
+        "evidence_recall",
+        "evidence_precision",
+        "evidence_f1",
+        "role_coverage",
+        "token_cost",
+        "selected_chunk_count",
+        "unique_parent_count",
+        "duplicate_parent_ratio",
+    )
+    grouped: dict[tuple[int, str], list[dict[str, Any]]] = defaultdict(list)
+    for row in case_rows:
+        grouped[(int(row["chunk_length"]), str(row["method"]))].append(row)
+    aggregates: dict[tuple[int, str], dict[str, float | int]] = {}
+    for chunk_length in chunk_lengths:
+        for method in methods:
+            key = (chunk_length, method)
+            rows = grouped.get(key, [])
+            if not rows:
+                raise ValueError(f"missing chunk-length case results: {key}")
+            if len({row["case_id"] for row in rows}) != len(rows):
+                raise ValueError(f"duplicate chunk-length case results: {key}")
+            recomputed = {
+                name: round(
+                    sum(float(row["metrics"][name]) for row in rows) / len(rows),
+                    6,
+                )
+                for name in metric_names
+            }
+            claimed = claimed_rows.get(key)
+            if claimed is None:
+                raise ValueError(f"missing chunk-length aggregate: {key}")
+            for name, value in recomputed.items():
+                if not math.isclose(value, float(claimed.get(name, float("nan"))), abs_tol=1e-6):
+                    raise ValueError(f"chunk-length aggregate mismatch for {key} {name}")
+            aggregates[key] = {**recomputed, "cases": len(rows)}
+    results = []
+    for chunk_length in chunk_lengths:
+        metrics = {method: aggregates[(chunk_length, method)] for method in methods}
+        baselines = [method for method in methods if method != "frc_select"]
+        strongest = max(
+            baselines,
+            key=lambda method: float(metrics[method]["evidence_f1"]),
+        )
+        frc_by_case = {
+            row["case_id"]: float(row["metrics"]["evidence_f1"])
+            for row in grouped[(chunk_length, "frc_select")]
+        }
+        baseline_by_case = {
+            row["case_id"]: float(row["metrics"]["evidence_f1"])
+            for row in grouped[(chunk_length, strongest)]
+        }
+        case_ids = sorted(set(frc_by_case) & set(baseline_by_case))
+        paired = paired_bootstrap(
+            [frc_by_case[case_id] - baseline_by_case[case_id] for case_id in case_ids]
+        )
+        results.append(
+            {
+                "chunk_length": chunk_length,
+                "metrics": metrics,
+                "strongest_baseline": strongest,
+                "frc_minus_baseline_evidence_f1": round(
+                    float(metrics["frc_select"]["evidence_f1"])
+                    - float(metrics[strongest]["evidence_f1"]),
+                    6,
+                ),
+                "paired_frc_minus_baseline_evidence_f1": paired,
+            }
+        )
+    return {
+        "status": "RUN",
+        "dataset": "conditionalqa",
+        "chunk_lengths": chunk_lengths,
+        "methods": methods,
+        "metadata": metadata,
+        "results": results,
+        "source_sha256": sha256(path),
+        "interpretation": (
+            "Every chunk length is rescored by the real reranker for question relevance and all "
+            "five role queries. Evidence metrics use unique parent evidence IDs, while token cost "
+            "and duplicate-parent ratio remain chunk-level diagnostics."
+        ),
     }
 
 
@@ -925,6 +1037,7 @@ def build_public_reference_report(
     *,
     conflicts_path: Path | None = None,
     supplemental_ablation_paths: Iterable[Path] = (),
+    chunk_length_sensitivity_path: Path | None = None,
 ) -> dict[str, Any]:
     output = reference_root / "outputs"
     metrics_dir = output / "metrics"
@@ -966,6 +1079,7 @@ def build_public_reference_report(
     experiment_audit = build_design_experiment_audit(
         metrics_dir,
         supplemental_ablation_paths,
+        chunk_length_sensitivity_path,
     )
     ablation_gate = experiment_audit["ablation"]["gate_required_comparison"]
     limitations = [
@@ -973,7 +1087,7 @@ def build_public_reference_report(
         "The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.",
         "ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.",
         "The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.",
-        "The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed, and several sensitivity dimensions remain NOT_RUN.",
+        "The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed, and field-weight/conflict-threshold sensitivity remains NOT_RUN.",
     ]
     if conflict_run:
         limitations.append(
@@ -1131,6 +1245,28 @@ def render_public_reference_markdown(report: dict[str, Any]) -> str:
     )
     for dimension, status in experiment["sensitivity_coverage"].items():
         lines.append(f"| {dimension} | {status} |")
+    chunk_lengths = experiment["chunk_length_sensitivity"]
+    if chunk_lengths["status"] == "RUN":
+        lines.extend(
+            [
+                "",
+                "### 分块长度敏感性（ConditionalQA，真实重评分）",
+                "",
+                "| 分块 tokens | FRC Evidence F1 | 最强基线 | 基线 F1 | 差值 | 95% CI | 重复父证据率 |",
+                "|---:|---:|---|---:|---:|---:|---:|",
+            ]
+        )
+        for item in chunk_lengths["results"]:
+            frc = item["metrics"]["frc_select"]
+            baseline_name = item["strongest_baseline"]
+            baseline = item["metrics"][baseline_name]
+            paired = item["paired_frc_minus_baseline_evidence_f1"]
+            lines.append(
+                f"| {item['chunk_length']} | {frc['evidence_f1']:.6f} | {baseline_name} | "
+                f"{baseline['evidence_f1']:.6f} | {item['frc_minus_baseline_evidence_f1']:+.6f} | "
+                f"[{paired['ci_low']:+.6f}, {paired['ci_high']:+.6f}] | "
+                f"{frc['duplicate_parent_ratio']:.6f} |"
+            )
     lines.extend(
         [
             "",

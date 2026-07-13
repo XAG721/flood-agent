@@ -276,17 +276,26 @@ python -m venv .venv-rag-evaluation
 
 ```powershell
 $bgeSnapshot = (Get-ChildItem -Directory D:\RAG_test\.hf_cache\hub\models--BAAI--bge-large-en-v1.5\snapshots | Select-Object -First 1).FullName
+$rerankerSnapshot = (Get-ChildItem -Directory D:\RAG_test\.hf_cache\hub\models--BAAI--bge-reranker-large\snapshots | Select-Object -First 1).FullName
 python scripts/run_frc_wo_reranker_ablation.py `
   --source-role-scores D:\RAG_test\frc-select\outputs\role_scores\role_scores_conditionalqa.jsonl `
   --output output\rag_evaluation\public_frc_reference\wo_reranker_conditionalqa.json `
   --model-name $bgeSnapshot --device cuda
+python scripts/run_frc_chunk_length_sensitivity.py `
+  --source-role-scores D:\RAG_test\frc-select\outputs\role_scores\role_scores_conditionalqa.jsonl `
+  --output output\rag_evaluation\public_frc_reference\chunk_length_sensitivity_conditionalqa.json `
+  --reranker-model-path $rerankerSnapshot --device cuda `
+  --chunk-lengths 64,128,256 --overlap-ratio 0.2
 python scripts/import_frc_public_reference.py `
   --reference-root D:\RAG_test\frc-select `
   --conflicts-path output\rag_evaluation\conflicts_frc\conflicts_frc_report.json `
-  --supplemental-ablation output\rag_evaluation\public_frc_reference\wo_reranker_conditionalqa.json
+  --supplemental-ablation output\rag_evaluation\public_frc_reference\wo_reranker_conditionalqa.json `
+  --chunk-length-sensitivity output\rag_evaluation\public_frc_reference\chunk_length_sensitivity_conditionalqa.json
 ```
 
 `w/o Reranker` 会同时用 BGE 双编码器重算相关性和角色分，不复用 Cross-Encoder 角色分；当前 285 例 Evidence F1 为 0.697327，完整 FRC 为 0.705754。三套主公开集没有字段分、适用性和候选级冲突标注，因此对应三项消融保持 `SCHEMA_BLOCKED/NOT_RUN`，不能按通过处理。
+
+分块长度敏感性对 ConditionalQA 全部 285 例执行 64/128/256-token、20% overlap 的真实 reranker 重评分，并按唯一父证据 ID 评价。FRC Evidence F1 为 0.614475/0.632662/0.679077，相对每档最强覆盖贪心代理均略低且 95% CI 跨 0；FRC 重复父证据率由 64-token 的 0.324912 降至 256-token 的 0.122807。
 
 该导入只读参考目录，关键输入写入 SHA-256；历史 `setr_style` 在报告中统一正名为 `coverage_greedy_proxy`。协议与 Gate 2 解释见 `docs/progressive_upgrade/frc_public_evaluation_protocol.md`。
 

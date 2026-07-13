@@ -33,14 +33,21 @@ Google 对 CONFLICTS 的研究说明给出了检索增强生成中的知识冲�
 
 ```powershell
 $bgeSnapshot = (Get-ChildItem -Directory D:\RAG_test\.hf_cache\hub\models--BAAI--bge-large-en-v1.5\snapshots | Select-Object -First 1).FullName
+$rerankerSnapshot = (Get-ChildItem -Directory D:\RAG_test\.hf_cache\hub\models--BAAI--bge-reranker-large\snapshots | Select-Object -First 1).FullName
 python scripts/run_frc_wo_reranker_ablation.py `
   --source-role-scores D:\RAG_test\frc-select\outputs\role_scores\role_scores_conditionalqa.jsonl `
   --output output\rag_evaluation\public_frc_reference\wo_reranker_conditionalqa.json `
   --model-name $bgeSnapshot --device cuda
+python scripts/run_frc_chunk_length_sensitivity.py `
+  --source-role-scores D:\RAG_test\frc-select\outputs\role_scores\role_scores_conditionalqa.jsonl `
+  --output output\rag_evaluation\public_frc_reference\chunk_length_sensitivity_conditionalqa.json `
+  --reranker-model-path $rerankerSnapshot --device cuda `
+  --chunk-lengths 64,128,256 --overlap-ratio 0.2
 python scripts/import_frc_public_reference.py `
   --reference-root D:\RAG_test\frc-select `
   --conflicts-path output\rag_evaluation\conflicts_frc\conflicts_frc_report.json `
   --supplemental-ablation output\rag_evaluation\public_frc_reference\wo_reranker_conditionalqa.json `
+  --chunk-length-sensitivity output\rag_evaluation\public_frc_reference\chunk_length_sensitivity_conditionalqa.json `
   --output-dir output\rag_evaluation\public_frc_reference
 ```
 
@@ -51,7 +58,9 @@ python scripts/import_frc_public_reference.py `
 
 导入报告同时审计设计第 16.2 节实验覆盖：ConditionalQA 原始产物包含 5 组消融，仓库另以离线 BGE 双编码器完成真实 `w/o Reranker` 重评分，合计 6/9；三套数据均包含 K=2/3/5/8。Full Evidence F1 为 0.705754，`w/o Role` 为 0.706158，`w/o Reranker` 为 0.697327。Full 仍未优于 `w/o Role`，且 `w/o Field` 因主公开集没有字段标注而无法运行，因此 Gate 的消融硬条件失败。
 
-Token 预算敏感性使用同一候选池、Top-K=5 和保存分数，严格限制 512/1024/2048 Token，任何方法超预算即失败；当前所有方法超预算率均为 0。缺失比例敏感性以固定 `SHA-256(case_id, evidence_id)` 分数与 0/25/50/75% 阈值比较，形成可重复、随比例嵌套的删除集合，不使用测试结果调参。字段权重、冲突阈值和分块长度仍为 `NOT_RUN/PARTIAL`。机器可读 Schema 审计覆盖 3,841 例、172,212 个候选，确认主公开集只有 Cross-Encoder 和角色分，而无字段分、适用性或候选级冲突标注；`SCHEMA_BLOCKED` 不是通过，需另建领域标注基准。
+Token 预算敏感性使用同一候选池、Top-K=5 和保存分数，严格限制 512/1024/2048 Token，任何方法超预算即失败；当前所有方法超预算率均为 0。缺失比例敏感性以固定 `SHA-256(case_id, evidence_id)` 分数与 0/25/50/75% 阈值比较，形成可重复、随比例嵌套的删除集合，不使用测试结果调参。字段权重和冲突阈值仍为 `NOT_RUN/PARTIAL`。机器可读 Schema 审计覆盖 3,841 例、172,212 个候选，确认主公开集只有 Cross-Encoder 和角色分，而无字段分、适用性或候选级冲突标注；`SCHEMA_BLOCKED` 不是通过，需另建领域标注基准。
+
+分块长度采用 reranker tokenizer 的 64/128/256 内容 tokens、20% overlap；每档对全部 285 例重新运行问题相关性和五类角色 Cross-Encoder 评分，不复用原候选分数。评价时任一选中分块命中其唯一父证据 ID，Token 成本与重复父证据率仍按分块统计。三档 FRC Evidence F1 为 0.614475/0.632662/0.679077，相对最强基线的配对区间均跨 0。
 
 CONFLICTS 全量评测在已缓存模型的 `rag_exp` 环境执行：
 
@@ -72,7 +81,7 @@ conda run -n rag_exp python -m scripts.run_conflicts_frc_evaluation `
 1. 基于 CONFLICTS 的冲突/过时类型分类已经完成，但还需复现 expected-behavior adherence 并由独立人员复核；
 2. 主指标与安全指标预先冻结，不能只挑有利切片；
 3. 在包含字段、适用性和冲突标注的领域基准上补齐剩余 3 组真实模型消融，且 Full 严格优于 `w/o Role` 和 `w/o Field`；
-4. 补齐字段权重、冲突阈值和分块长度敏感性；
+4. 补齐字段权重和冲突阈值敏感性；
 5. 主要数据集上相对最强可复现基线的改善具有一致方向和配对统计支持；
 6. 冲突漏报、错误完整声明、不可回答误答等安全指标达到门槛；
 7. 原始输入、配置、种子、哈希、逐样本结果与失败用例可审计。
