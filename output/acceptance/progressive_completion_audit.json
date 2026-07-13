@@ -1,0 +1,268 @@
+{
+  "metadata": {
+    "audit_version": "progressive-completion-audit-v1",
+    "scope": "single-district controlled simulation",
+    "contract": "洪水预警响应系统_渐进式迭代开发与升级设计.md sections 18-23"
+  },
+  "summary": {
+    "controlled_first_iteration": "PASS",
+    "passed_local_requirements": 11,
+    "local_requirement_count": 11,
+    "frc_gate_2": "NO-GO",
+    "production_readiness": "NO-GO_EXTERNAL",
+    "overall": "CONTROLLED_SCOPE_COMPLETE_PRODUCTION_NO_GO"
+  },
+  "requirements": [
+    {
+      "requirement_id": "software_deliverables",
+      "title": "第 20.1 节软件交付物齐备",
+      "status": "PASS",
+      "evidence": [
+        "frontend/src/pages/ResponseWorkflowPage.tsx",
+        "3D_visual/src/App.tsx",
+        "flood_system/api.py",
+        "flood_system/http/response_router.py",
+        "scripts/run_response_worker.py",
+        "flood_system/response_workflow/candidate_discovery.py",
+        "flood_system/rag.py",
+        "flood_system/response_workflow/service.py",
+        "flood_system/response_workflow/state_machine.py",
+        "flood_system/simulation_dataset.py",
+        "scripts/run_simulation_scenario_acceptance.py",
+        "scripts/migrate_response_schema.py",
+        "scripts/migrate_response_to_postgis.py",
+        "infra/postgis/001_shadow_projection.sql",
+        "Dockerfile",
+        "frontend/Dockerfile",
+        "docker-compose.yml"
+      ],
+      "details": {
+        "group_count": 9,
+        "missing": {}
+      }
+    },
+    {
+      "requirement_id": "document_deliverables",
+      "title": "第 20.3 节文档交付物齐备",
+      "status": "PASS",
+      "evidence": [
+        "docs/progressive_upgrade/asset_inventory.md",
+        "docs/progressive_upgrade/implementation_acceptance_matrix.md",
+        "docs/progressive_upgrade/api_compatibility_mapping.md",
+        "docs/progressive_upgrade/contracts_and_data_dictionary.md",
+        "infra/migrations/README.md",
+        "洪水预警响应系统_渐进式迭代开发与升级设计.md",
+        "面向区县防办的洪水预警响应系统_升级设计说明V3.md",
+        "docs/openapi.json",
+        "docs/V3_upgrade_acceptance_matrix.md",
+        "docs/progressive_upgrade/completion_traceability_audit.md",
+        "docs/progressive_upgrade/operations_and_rollback.md",
+        "docs/progressive_upgrade/user_manual.md",
+        "docs/progressive_upgrade/security_and_incident_manual.md",
+        "docs/progressive_upgrade/dependency_security_audit.md",
+        "docs/progressive_upgrade/evaluation_and_gate_report.md",
+        "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
+      ],
+      "details": {
+        "group_count": 7,
+        "missing": {}
+      }
+    },
+    {
+      "requirement_id": "data_experiment_deliverables",
+      "title": "第 20.2 节数据与实验交付物齐备",
+      "status": "PASS",
+      "evidence": [
+        "output/floodagent_bench/floodagent_bench.json",
+        "output/floodagent_bench/scenario_acceptance_report.json",
+        "output/candidate_evaluation/report.json",
+        "output/performance/controlled_performance_report.json",
+        "benchmarks/controlled_performance_budget.json",
+        "output/rag_evaluation/rag_evaluation_report.json",
+        "output/rag_evaluation/full_public/public_benchmark_report.md",
+        "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json",
+        "output/rag_evaluation/conflicts_frc/conflicts_frc_report.json",
+        "scripts/run_candidate_evaluation.py",
+        "scripts/run_rag_evaluation.py",
+        "scripts/run_public_rag_benchmarks.py",
+        "scripts/run_conflicts_frc_evaluation.py"
+      ],
+      "details": {
+        "group_count": 4,
+        "missing": {}
+      }
+    },
+    {
+      "requirement_id": "openapi_contract",
+      "title": "受控响应工作流通过版本化 Core API 暴露",
+      "status": "PASS",
+      "evidence": [
+        "docs/openapi.json"
+      ],
+      "details": {
+        "required_path_count": 24,
+        "missing_paths": []
+      }
+    },
+    {
+      "requirement_id": "compose_environment",
+      "title": "完整受控环境声明 Web、API、Worker 和 PostGIS 服务",
+      "status": "PASS",
+      "evidence": [
+        "docker-compose.yml"
+      ],
+      "details": {
+        "services": [
+          "backend",
+          "frontend",
+          "postgis",
+          "worker"
+        ],
+        "missing_services": []
+      }
+    },
+    {
+      "requirement_id": "simulation_provenance",
+      "title": "Gate 0 模拟数据具有来源、版本、种子和清单溯源",
+      "status": "PASS",
+      "evidence": [
+        "output/candidate_evaluation/report.json"
+      ],
+      "details": {
+        "data_origin": "SYNTHETIC",
+        "is_simulated": true,
+        "seed": 20260712,
+        "manifest_sha256": "fdce9656bcc607ed2bc5ab106535064c8c0c8303bc32cae4be479fd99b3d3efd"
+      }
+    },
+    {
+      "requirement_id": "scenario_acceptance",
+      "title": "24 个受控正常与故障场景均具有可执行测试证据",
+      "status": "PASS",
+      "evidence": [
+        "output/floodagent_bench/scenario_acceptance_report.json"
+      ],
+      "details": {
+        "scenario_count": 24,
+        "covered_count": 24,
+        "missing_evidence_count": 0,
+        "status": "PASS"
+      }
+    },
+    {
+      "requirement_id": "gate_1_candidate_quality",
+      "title": "Gate 1 候选质量达到冻结的受控阈值",
+      "status": "PASS",
+      "evidence": [
+        "output/candidate_evaluation/report.json"
+      ],
+      "details": {
+        "recall_at_5": 1.0,
+        "critical_miss_rate": 0.0,
+        "ece": 0.037792,
+        "calibration_improvement": 0.262208,
+        "missing_feature_recall_drop_percentage_points": 0.0
+      }
+    },
+    {
+      "requirement_id": "gate_2_safe_fallback",
+      "title": "Gate 2 使用真实证据且未获支持的 FRC 正式切流保持阻断",
+      "status": "PASS",
+      "evidence": [
+        "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json",
+        "flood_system/response_workflow/service.py"
+      ],
+      "details": {
+        "gate_2": "NO-GO",
+        "pipeline_feasible": true,
+        "conflicts_cases": 458,
+        "strongest_reproducible_baseline": "coverage_greedy_proxy",
+        "baseline_accuracy": 0.344978,
+        "frc_accuracy": 0.334061
+      }
+    },
+    {
+      "requirement_id": "controlled_performance",
+      "title": "全部冻结的受控 API 性能预算通过",
+      "status": "PASS",
+      "evidence": [
+        "output/performance/controlled_performance_report.json"
+      ],
+      "details": {
+        "status": "PASS",
+        "check_count": 4
+      }
+    },
+    {
+      "requirement_id": "external_boundaries",
+      "title": "生产、真实数据与独立人员条件明确保持外部 No-Go",
+      "status": "PASS",
+      "evidence": [
+        "docs/progressive_upgrade/completion_traceability_audit.md"
+      ],
+      "details": {
+        "missing_boundary_markers": []
+      }
+    }
+  ],
+  "evidence_sha256": {
+    "output/floodagent_bench/scenario_acceptance_report.json": "892f59b6ab254fda2595ce3f776640c728690bd408c0edab778ef2091fa50706",
+    "output/candidate_evaluation/report.json": "3625f561599af83510b28c4b6ba09c03495da4388096ee274c3e5df3cf8fbe76",
+    "output/performance/controlled_performance_report.json": "251794464930d5882db471788bd2424d52377881ccdc25e413f5ca14321741c2",
+    "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json": "dda3fe2c4820d37f71c78a16ee2b6a3db2c01b61fd7f2ef078a3045703e3b75b",
+    "docs/openapi.json": "719a7653036a03d3e113cd7a12a2c5b2c4f6ff46914f672cd8793242f7f0d17f",
+    "docker-compose.yml": "8204abc75a6e82041d16e52d09e94e4f84de19f00f5a9cc9338dcd91ed76a33e",
+    "洪水预警响应系统_渐进式迭代开发与升级设计.md": "e30b25945f65c7616b3cc052ee1c5e242a8ebf1b091b497efde8df049e267801",
+    "面向区县防办的洪水预警响应系统_升级设计说明V3.md": "b059960b880d7bc2be0891e5e676d353548aca79a692438c8538721426f9e88d",
+    "docs/progressive_upgrade/completion_traceability_audit.md": "081fd14ea6172855b1227a9d0407ccc3416abb34ec377903b057e615e4642afc",
+    "docs/V3_upgrade_acceptance_matrix.md": "0314e83d10f26d195599a15adfa8b855ab74c25066e43654fbcb159f3f92b469"
+  },
+  "external_no_go": [
+    {
+      "item": "authoritative_warning_gis_and_object_data",
+      "status": "NO-GO_EXTERNAL",
+      "reason": "requires authoritative organization, production environment, or independent human evidence"
+    },
+    {
+      "item": "production_postgresql_authority_switch",
+      "status": "NO-GO_EXTERNAL",
+      "reason": "requires authoritative organization, production environment, or independent human evidence"
+    },
+    {
+      "item": "production_idp_mfa_tls_kms",
+      "status": "NO-GO_EXTERNAL",
+      "reason": "requires authoritative organization, production environment, or independent human evidence"
+    },
+    {
+      "item": "real_cross_department_dispatch",
+      "status": "NO-GO_EXTERNAL",
+      "reason": "requires authoritative organization, production environment, or independent human evidence"
+    },
+    {
+      "item": "independent_expert_annotation_and_adjudication",
+      "status": "NO-GO_EXTERNAL",
+      "reason": "requires authoritative organization, production environment, or independent human evidence"
+    },
+    {
+      "item": "third_party_penetration_test",
+      "status": "NO-GO_EXTERNAL",
+      "reason": "requires authoritative organization, production environment, or independent human evidence"
+    },
+    {
+      "item": "remote_host_disaster_recovery",
+      "status": "NO-GO_EXTERNAL",
+      "reason": "requires authoritative organization, production environment, or independent human evidence"
+    },
+    {
+      "item": "real_role_uat",
+      "status": "NO-GO_EXTERNAL",
+      "reason": "requires authoritative organization, production environment, or independent human evidence"
+    },
+    {
+      "item": "legacy_production_traffic_retirement",
+      "status": "NO-GO_EXTERNAL",
+      "reason": "requires authoritative organization, production environment, or independent human evidence"
+    }
+  ],
+  "interpretation": "PASS proves the repository's controlled first-iteration contract only. It does not convert Gate 2 or any external production/UAT item into GO."
+}

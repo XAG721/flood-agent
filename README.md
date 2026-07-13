@@ -74,6 +74,14 @@ python scripts/run_controlled_performance.py --db tmp/performance.db --output-di
 
 该命令只验证仓库内单进程回归预算，不能代替生产网络、并发容量或真实数据规模压测。
 
+重建第 18—23 节机器可读完成性审计：
+
+```powershell
+python scripts/run_progressive_completion_audit.py
+```
+
+报告写入 `output/acceptance/progressive_completion_audit.json` 和 `.md`。CI 会重建并逐字节比较；本地受控闭环通过不会改变 FRC-RAG Gate 2 或真实生产/UAT 的 No-Go 状态。
+
 ## 主要目录与结构边界
 
 - `flood_system/api.py`：FastAPI 统一装配入口，并提供 `/agent-twin/*` 与 `/platform/*` 两类公开能力入口。
@@ -344,5 +352,6 @@ npm.cmd run test:e2e
 - [v0.2.0 清理与结构重构报告](./docs/releases/v0.2.0.md)
 - [渐进式升级与验收](./docs/progressive_upgrade/README.md)
 - [全目标完成度追溯审计](./docs/progressive_upgrade/completion_traceability_audit.md)
+- [机器可读完成性审计](./output/acceptance/progressive_completion_audit.md)
 - [AgentTwin 兼容演示资料](./docs/agent_twin_upgrade/README.md)
 - [甲方演示脚本](./docs/agent_twin_upgrade/16_甲方演示脚本.md)
