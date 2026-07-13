@@ -481,6 +481,803 @@
       }
     }
   },
+  "design_16_2_experiment_audit": {
+    "status": "PARTIAL",
+    "ablation": {
+      "status": "PARTIAL",
+      "dataset": "conditionalqa",
+      "planned_variants": [
+        "full",
+        "w/o_role",
+        "w/o_field",
+        "w/o_applicability",
+        "w/o_redundancy",
+        "w/o_conflict",
+        "w/o_reranker",
+        "role_only",
+        "random_role"
+      ],
+      "run_variants": [
+        "full",
+        "w/o_role",
+        "w/o_redundancy",
+        "role_only",
+        "random_role"
+      ],
+      "missing_variants": [
+        "w/o_field",
+        "w/o_applicability",
+        "w/o_conflict",
+        "w/o_reranker"
+      ],
+      "variants": {
+        "full": {
+          "evidence_recall": 0.7045471357048675,
+          "evidence_precision": 0.804093567251462,
+          "evidence_f1": 0.7057543794488627,
+          "role_coverage": 1.0,
+          "condition_coverage": 0.9809160305343512,
+          "redundancy": 0.2626265616153989,
+          "token_cost": 927.6385964912281,
+          "cases": 285
+        },
+        "w/o_role": {
+          "evidence_recall": 0.7048687731317681,
+          "evidence_precision": 0.804093567251462,
+          "evidence_f1": 0.7061581666947552,
+          "role_coverage": 0.975906432748538,
+          "condition_coverage": 0.9809160305343512,
+          "redundancy": 0.263924517458768,
+          "token_cost": 929.8491228070176,
+          "cases": 285
+        },
+        "w/o_redundancy": {
+          "evidence_recall": 0.7045471357048675,
+          "evidence_precision": 0.804093567251462,
+          "evidence_f1": 0.7057543794488627,
+          "role_coverage": 1.0,
+          "condition_coverage": 0.9809160305343512,
+          "redundancy": 0.2626265616153989,
+          "token_cost": 927.6385964912281,
+          "cases": 285
+        },
+        "role_only": {
+          "evidence_recall": 0.6933746148419442,
+          "evidence_precision": 0.7907602339181287,
+          "evidence_f1": 0.6944747320237044,
+          "role_coverage": 1.0,
+          "condition_coverage": 0.9809160305343512,
+          "redundancy": 0.27958711501004807,
+          "token_cost": 936.5859649122807,
+          "cases": 285
+        },
+        "random_role": {
+          "evidence_recall": 0.7041085392136395,
+          "evidence_precision": 0.8026900584795321,
+          "evidence_f1": 0.7050860419384198,
+          "role_coverage": 0.997953216374269,
+          "condition_coverage": 0.9809160305343512,
+          "redundancy": 0.2628865111011671,
+          "token_cost": 927.6526315789474,
+          "cases": 285
+        },
+        "coverage_greedy_proxy": {
+          "evidence_recall": 0.7010958939641521,
+          "evidence_precision": 0.8019883040935673,
+          "evidence_f1": 0.7038732322735979,
+          "role_coverage": 1.0,
+          "condition_coverage": 0.9770992366412213,
+          "redundancy": 0.26094145090714294,
+          "token_cost": 924.7368421052631,
+          "cases": 285
+        }
+      },
+      "gate_required_comparison": {
+        "full_beats_w_o_role": false,
+        "full_beats_w_o_field": false,
+        "passed": false,
+        "interpretation": "Gate 2 requires Full to outperform both w/o Role and w/o Field. A missing ablation is not treated as a pass."
+      },
+      "source_sha256": "7d2dcbce1904530261e2d6bc04db4e52253fe92a02abdbc18b397683a5530ca4"
+    },
+    "k_sensitivity": {
+      "status": "RUN",
+      "expected_k": [
+        2,
+        3,
+        5,
+        8
+      ],
+      "datasets": {
+        "conditionalqa": {
+          "status": "RUN",
+          "k_values": [
+            2,
+            3,
+            5,
+            8
+          ],
+          "rows": [
+            {
+              "k": 2,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.3588244725600111,
+              "role_coverage": 0.9314035087719298,
+              "condition_coverage": 0.9618320610687023,
+              "answer_f1": 0.09826285380695421,
+              "token_cost": 394.89122807017543,
+              "cases": 285
+            },
+            {
+              "k": 2,
+              "method": "mmr",
+              "evidence_recall": 0.3514560515073795,
+              "role_coverage": 0.9349122807017544,
+              "condition_coverage": 0.9618320610687023,
+              "answer_f1": 0.09717174140254389,
+              "token_cost": 393.4982456140351,
+              "cases": 285
+            },
+            {
+              "k": 2,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.3586256036614518,
+              "role_coverage": 1.0,
+              "condition_coverage": 0.9618320610687023,
+              "answer_f1": 0.0985338550756108,
+              "token_cost": 393.5684210526316,
+              "cases": 285
+            },
+            {
+              "k": 2,
+              "method": "frc_select",
+              "evidence_recall": 0.3632396772383737,
+              "role_coverage": 0.9964912280701754,
+              "condition_coverage": 0.9694656488549618,
+              "answer_f1": 0.0994405883453827,
+              "token_cost": 392.93333333333334,
+              "cases": 285
+            },
+            {
+              "k": 3,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.502514403109971,
+              "role_coverage": 0.9542105263157895,
+              "condition_coverage": 0.9732824427480916,
+              "answer_f1": 0.09567973216813194,
+              "token_cost": 592.9403508771929,
+              "cases": 285
+            },
+            {
+              "k": 3,
+              "method": "mmr",
+              "evidence_recall": 0.49036907767517185,
+              "role_coverage": 0.9542105263157895,
+              "condition_coverage": 0.9732824427480916,
+              "answer_f1": 0.09452430853697255,
+              "token_cost": 585.5859649122807,
+              "cases": 285
+            },
+            {
+              "k": 3,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.4997898907801955,
+              "role_coverage": 1.0,
+              "condition_coverage": 0.9694656488549618,
+              "answer_f1": 0.09487775444852292,
+              "token_cost": 588.7263157894737,
+              "cases": 285
+            },
+            {
+              "k": 3,
+              "method": "frc_select",
+              "evidence_recall": 0.5041810697766377,
+              "role_coverage": 0.9991228070175439,
+              "condition_coverage": 0.9732824427480916,
+              "answer_f1": 0.09591163820044808,
+              "token_cost": 590.6561403508772,
+              "cases": 285
+            },
+            {
+              "k": 5,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.7048687731317681,
+              "role_coverage": 0.975906432748538,
+              "condition_coverage": 0.9809160305343512,
+              "answer_f1": 0.0942350260360738,
+              "token_cost": 929.8491228070176,
+              "cases": 285
+            },
+            {
+              "k": 5,
+              "method": "mmr",
+              "evidence_recall": 0.6840067716428316,
+              "role_coverage": 0.9839181286549707,
+              "condition_coverage": 0.9770992366412213,
+              "answer_f1": 0.0935286128800625,
+              "token_cost": 915.0912280701755,
+              "cases": 285
+            },
+            {
+              "k": 5,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.7010958939641521,
+              "role_coverage": 1.0,
+              "condition_coverage": 0.9770992366412213,
+              "answer_f1": 0.09355465113261935,
+              "token_cost": 924.7368421052631,
+              "cases": 285
+            },
+            {
+              "k": 5,
+              "method": "frc_select",
+              "evidence_recall": 0.7045471357048675,
+              "role_coverage": 1.0,
+              "condition_coverage": 0.9809160305343512,
+              "answer_f1": 0.09435567851106376,
+              "token_cost": 927.6385964912281,
+              "cases": 285
+            },
+            {
+              "k": 8,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.8117566024703062,
+              "role_coverage": 0.993859649122807,
+              "condition_coverage": 0.9809160305343512,
+              "answer_f1": 0.09471213076223164,
+              "token_cost": 1189.6561403508772,
+              "cases": 285
+            },
+            {
+              "k": 8,
+              "method": "mmr",
+              "evidence_recall": 0.7978706011307445,
+              "role_coverage": 0.9956140350877193,
+              "condition_coverage": 0.9809160305343512,
+              "answer_f1": 0.09264714916138402,
+              "token_cost": 1183.8245614035088,
+              "cases": 285
+            },
+            {
+              "k": 8,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.8116835030551015,
+              "role_coverage": 1.0,
+              "condition_coverage": 0.9809160305343512,
+              "answer_f1": 0.0932636186771644,
+              "token_cost": 1188.8666666666666,
+              "cases": 285
+            },
+            {
+              "k": 8,
+              "method": "frc_select",
+              "evidence_recall": 0.8108794094878501,
+              "role_coverage": 1.0,
+              "condition_coverage": 0.9809160305343512,
+              "answer_f1": 0.09434266089825337,
+              "token_cost": 1189.1543859649123,
+              "cases": 285
+            }
+          ],
+          "summary": [
+            {
+              "k": 2,
+              "frc_evidence_recall": 0.3632396772383737,
+              "frc_role_coverage": 0.9964912280701754,
+              "strongest_baseline": "cross_encoder_topk",
+              "baseline_evidence_recall": 0.3588244725600111,
+              "frc_minus_baseline_recall": 0.004415
+            },
+            {
+              "k": 3,
+              "frc_evidence_recall": 0.5041810697766377,
+              "frc_role_coverage": 0.9991228070175439,
+              "strongest_baseline": "cross_encoder_topk",
+              "baseline_evidence_recall": 0.502514403109971,
+              "frc_minus_baseline_recall": 0.001667
+            },
+            {
+              "k": 5,
+              "frc_evidence_recall": 0.7045471357048675,
+              "frc_role_coverage": 1.0,
+              "strongest_baseline": "cross_encoder_topk",
+              "baseline_evidence_recall": 0.7048687731317681,
+              "frc_minus_baseline_recall": -0.000322
+            },
+            {
+              "k": 8,
+              "frc_evidence_recall": 0.8108794094878501,
+              "frc_role_coverage": 1.0,
+              "strongest_baseline": "cross_encoder_topk",
+              "baseline_evidence_recall": 0.8117566024703062,
+              "frc_minus_baseline_recall": -0.000877
+            }
+          ],
+          "source_sha256": "42fd2a9031f6680b05bee7f8e1b67fc6fefd57a8200122e8c747cb3b7f71ffa7"
+        },
+        "multihoprag": {
+          "status": "RUN",
+          "k_values": [
+            2,
+            3,
+            5,
+            8
+          ],
+          "rows": [
+            {
+              "k": 2,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.4215571205007825,
+              "role_coverage": 0.9460745957224831,
+              "condition_coverage": 0.6625514403292181,
+              "answer_f1": 0.011386936378916676,
+              "token_cost": 486.3137715179969,
+              "cases": 2556
+            },
+            {
+              "k": 2,
+              "method": "mmr",
+              "evidence_recall": 0.4018648930620762,
+              "role_coverage": 0.9445748565466875,
+              "condition_coverage": 0.6592592592592592,
+              "answer_f1": 0.01133689379713391,
+              "token_cost": 486.23826291079814,
+              "cases": 2556
+            },
+            {
+              "k": 2,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.40874413145539906,
+              "role_coverage": 0.9924360980699009,
+              "condition_coverage": 0.6460905349794238,
+              "answer_f1": 0.010998309646987042,
+              "token_cost": 486.9389671361502,
+              "cases": 2556
+            },
+            {
+              "k": 2,
+              "method": "frc_select",
+              "evidence_recall": 0.42237219613980176,
+              "role_coverage": 0.9980112154407929,
+              "condition_coverage": 0.6625514403292181,
+              "answer_f1": 0.011504358574094506,
+              "token_cost": 486.46048513302037,
+              "cases": 2556
+            },
+            {
+              "k": 3,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.5061945748565467,
+              "role_coverage": 0.9689293166405842,
+              "condition_coverage": 0.6995884773662552,
+              "answer_f1": 0.010606901468269708,
+              "token_cost": 729.5258215962441,
+              "cases": 2556
+            },
+            {
+              "k": 3,
+              "method": "mmr",
+              "evidence_recall": 0.4574530516431925,
+              "role_coverage": 0.9654733959311425,
+              "condition_coverage": 0.6888888888888889,
+              "answer_f1": 0.01070400589118218,
+              "token_cost": 729.339593114241,
+              "cases": 2556
+            },
+            {
+              "k": 3,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.5005542514345331,
+              "role_coverage": 0.9991197183098591,
+              "condition_coverage": 0.6872427983539094,
+              "answer_f1": 0.010141968184457045,
+              "token_cost": 730.0645539906103,
+              "cases": 2556
+            },
+            {
+              "k": 3,
+              "method": "frc_select",
+              "evidence_recall": 0.5070748565466875,
+              "role_coverage": 0.9997717788210746,
+              "condition_coverage": 0.6995884773662552,
+              "answer_f1": 0.01053691935644109,
+              "token_cost": 729.6298904538342,
+              "cases": 2556
+            },
+            {
+              "k": 5,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.602112676056338,
+              "role_coverage": 0.9842853416797078,
+              "condition_coverage": 0.7300411522633745,
+              "answer_f1": 0.008392652288369126,
+              "token_cost": 1215.746870109546,
+              "cases": 2556
+            },
+            {
+              "k": 5,
+              "method": "mmr",
+              "evidence_recall": 0.5175078247261345,
+              "role_coverage": 0.9825247782994262,
+              "condition_coverage": 0.7185185185185186,
+              "answer_f1": 0.008713998873034048,
+              "token_cost": 1215.679186228482,
+              "cases": 2556
+            },
+            {
+              "k": 5,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.6003195096504955,
+              "role_coverage": 1.0,
+              "condition_coverage": 0.7267489711934156,
+              "answer_f1": 0.008439435952499325,
+              "token_cost": 1216.1013302034428,
+              "cases": 2556
+            },
+            {
+              "k": 5,
+              "method": "frc_select",
+              "evidence_recall": 0.6027647365675535,
+              "role_coverage": 1.0,
+              "condition_coverage": 0.7308641975308642,
+              "answer_f1": 0.00837825577330781,
+              "token_cost": 1215.8227699530516,
+              "cases": 2556
+            },
+            {
+              "k": 8,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.6355959833072509,
+              "role_coverage": 0.9884259259259259,
+              "condition_coverage": 0.739917695473251,
+              "answer_f1": 0.007933693424156117,
+              "token_cost": 1458.6553208137716,
+              "cases": 2556
+            },
+            {
+              "k": 8,
+              "method": "mmr",
+              "evidence_recall": 0.5375260824204486,
+              "role_coverage": 0.985263432446531,
+              "condition_coverage": 0.725925925925926,
+              "answer_f1": 0.008139964475400694,
+              "token_cost": 1458.5199530516431,
+              "cases": 2556
+            },
+            {
+              "k": 8,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.6350743348982786,
+              "role_coverage": 1.0,
+              "condition_coverage": 0.7390946502057614,
+              "answer_f1": 0.007865217777369104,
+              "token_cost": 1458.9589201877934,
+              "cases": 2556
+            },
+            {
+              "k": 8,
+              "method": "frc_select",
+              "evidence_recall": 0.6358242044861763,
+              "role_coverage": 1.0,
+              "condition_coverage": 0.7407407407407407,
+              "answer_f1": 0.00789594808405539,
+              "token_cost": 1458.7147887323943,
+              "cases": 2556
+            }
+          ],
+          "summary": [
+            {
+              "k": 2,
+              "frc_evidence_recall": 0.42237219613980176,
+              "frc_role_coverage": 0.9980112154407929,
+              "strongest_baseline": "cross_encoder_topk",
+              "baseline_evidence_recall": 0.4215571205007825,
+              "frc_minus_baseline_recall": 0.000815
+            },
+            {
+              "k": 3,
+              "frc_evidence_recall": 0.5070748565466875,
+              "frc_role_coverage": 0.9997717788210746,
+              "strongest_baseline": "cross_encoder_topk",
+              "baseline_evidence_recall": 0.5061945748565467,
+              "frc_minus_baseline_recall": 0.00088
+            },
+            {
+              "k": 5,
+              "frc_evidence_recall": 0.6027647365675535,
+              "frc_role_coverage": 1.0,
+              "strongest_baseline": "cross_encoder_topk",
+              "baseline_evidence_recall": 0.602112676056338,
+              "frc_minus_baseline_recall": 0.000652
+            },
+            {
+              "k": 8,
+              "frc_evidence_recall": 0.6358242044861763,
+              "frc_role_coverage": 1.0,
+              "strongest_baseline": "cross_encoder_topk",
+              "baseline_evidence_recall": 0.6355959833072509,
+              "frc_minus_baseline_recall": 0.000228
+            }
+          ],
+          "source_sha256": "c5704f5e6cf079a988b86d9878e4cb0a4c49bda9b461d4c8cdb4e320be765497"
+        },
+        "hotpotqa": {
+          "status": "RUN",
+          "k_values": [
+            2,
+            3,
+            5,
+            8
+          ],
+          "rows": [
+            {
+              "k": 2,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.6444857142857143,
+              "role_coverage": 0.998,
+              "condition_coverage": null,
+              "answer_f1": 0.08366568518232874,
+              "token_cost": 55.282,
+              "cases": 1000
+            },
+            {
+              "k": 2,
+              "method": "mmr",
+              "evidence_recall": 0.6225690476190476,
+              "role_coverage": 0.998,
+              "condition_coverage": null,
+              "answer_f1": 0.08253038417765533,
+              "token_cost": 54.91,
+              "cases": 1000
+            },
+            {
+              "k": 2,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.6427357142857143,
+              "role_coverage": 1.0,
+              "condition_coverage": null,
+              "answer_f1": 0.08365737048577593,
+              "token_cost": 54.536,
+              "cases": 1000
+            },
+            {
+              "k": 2,
+              "method": "frc_select",
+              "evidence_recall": 0.643902380952381,
+              "role_coverage": 1.0,
+              "condition_coverage": null,
+              "answer_f1": 0.08246683979810483,
+              "token_cost": 55.302,
+              "cases": 1000
+            },
+            {
+              "k": 3,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.7654119047619048,
+              "role_coverage": 0.999,
+              "condition_coverage": null,
+              "answer_f1": 0.08223286042978366,
+              "token_cost": 81.601,
+              "cases": 1000
+            },
+            {
+              "k": 3,
+              "method": "mmr",
+              "evidence_recall": 0.7408285714285714,
+              "role_coverage": 0.9985,
+              "condition_coverage": null,
+              "answer_f1": 0.08009703614251902,
+              "token_cost": 81.139,
+              "cases": 1000
+            },
+            {
+              "k": 3,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.7659119047619047,
+              "role_coverage": 1.0,
+              "condition_coverage": null,
+              "answer_f1": 0.08230928587787778,
+              "token_cost": 81.557,
+              "cases": 1000
+            },
+            {
+              "k": 3,
+              "method": "frc_select",
+              "evidence_recall": 0.7651619047619047,
+              "role_coverage": 1.0,
+              "condition_coverage": null,
+              "answer_f1": 0.08203931204268688,
+              "token_cost": 81.611,
+              "cases": 1000
+            },
+            {
+              "k": 5,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.8657119047619047,
+              "role_coverage": 1.0,
+              "condition_coverage": null,
+              "answer_f1": 0.07859165307509934,
+              "token_cost": 133.964,
+              "cases": 1000
+            },
+            {
+              "k": 5,
+              "method": "mmr",
+              "evidence_recall": 0.8271785714285714,
+              "role_coverage": 0.9995,
+              "condition_coverage": null,
+              "answer_f1": 0.07867244188340378,
+              "token_cost": 130.853,
+              "cases": 1000
+            },
+            {
+              "k": 5,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.8659619047619047,
+              "role_coverage": 1.0,
+              "condition_coverage": null,
+              "answer_f1": 0.0800425617886211,
+              "token_cost": 133.969,
+              "cases": 1000
+            },
+            {
+              "k": 5,
+              "method": "frc_select",
+              "evidence_recall": 0.8657119047619047,
+              "role_coverage": 1.0,
+              "condition_coverage": null,
+              "answer_f1": 0.07839810468800257,
+              "token_cost": 133.964,
+              "cases": 1000
+            },
+            {
+              "k": 8,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.922647619047619,
+              "role_coverage": 1.0,
+              "condition_coverage": null,
+              "answer_f1": 0.0736165399321898,
+              "token_cost": 214.27,
+              "cases": 1000
+            },
+            {
+              "k": 8,
+              "method": "mmr",
+              "evidence_recall": 0.8767952380952381,
+              "role_coverage": 0.9995,
+              "condition_coverage": null,
+              "answer_f1": 0.07714055369717608,
+              "token_cost": 205.357,
+              "cases": 1000
+            },
+            {
+              "k": 8,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.922647619047619,
+              "role_coverage": 1.0,
+              "condition_coverage": null,
+              "answer_f1": 0.07446263624327108,
+              "token_cost": 214.27,
+              "cases": 1000
+            },
+            {
+              "k": 8,
+              "method": "frc_select",
+              "evidence_recall": 0.922647619047619,
+              "role_coverage": 1.0,
+              "condition_coverage": null,
+              "answer_f1": 0.0736165399321898,
+              "token_cost": 214.27,
+              "cases": 1000
+            }
+          ],
+          "summary": [
+            {
+              "k": 2,
+              "frc_evidence_recall": 0.643902380952381,
+              "frc_role_coverage": 1.0,
+              "strongest_baseline": "cross_encoder_topk",
+              "baseline_evidence_recall": 0.6444857142857143,
+              "frc_minus_baseline_recall": -0.000583
+            },
+            {
+              "k": 3,
+              "frc_evidence_recall": 0.7651619047619047,
+              "frc_role_coverage": 1.0,
+              "strongest_baseline": "coverage_greedy_proxy",
+              "baseline_evidence_recall": 0.7659119047619047,
+              "frc_minus_baseline_recall": -0.00075
+            },
+            {
+              "k": 5,
+              "frc_evidence_recall": 0.8657119047619047,
+              "frc_role_coverage": 1.0,
+              "strongest_baseline": "coverage_greedy_proxy",
+              "baseline_evidence_recall": 0.8659619047619047,
+              "frc_minus_baseline_recall": -0.00025
+            },
+            {
+              "k": 8,
+              "frc_evidence_recall": 0.922647619047619,
+              "frc_role_coverage": 1.0,
+              "strongest_baseline": "cross_encoder_topk",
+              "baseline_evidence_recall": 0.922647619047619,
+              "frc_minus_baseline_recall": 0.0
+            }
+          ],
+          "source_sha256": "d3f5c74fa48688e92e620ef13a68115eef48407fe62b6c3eca278b966f26d954"
+        }
+      }
+    },
+    "parameter_sensitivity": {
+      "status": "RUN",
+      "dataset": "conditionalqa",
+      "configuration_count": 80,
+      "grid": {
+        "alpha": [
+          0.5,
+          1.0,
+          2.0,
+          4.0
+        ],
+        "gamma": [
+          0.0,
+          0.05,
+          0.1,
+          0.2,
+          0.5
+        ],
+        "role_threshold": [
+          0.35,
+          0.5,
+          0.55,
+          0.7
+        ],
+        "role_mix": [
+          0.15
+        ]
+      },
+      "best_by_evidence_f1": {
+        "alpha": 1.0,
+        "gamma": 0.0,
+        "role_threshold": 0.55,
+        "role_mix": 0.15,
+        "evidence_recall": 0.7045471357048675,
+        "evidence_f1": 0.7057543794488627,
+        "role_coverage": 1.0,
+        "condition_coverage": 0.9809160305343512,
+        "redundancy": 0.2626265616153989,
+        "token_cost": 927.6385964912281,
+        "cases": 285
+      },
+      "frozen_configuration": {
+        "alpha": 2.0,
+        "gamma": 0.0,
+        "role_threshold": 0.55,
+        "role_mix": 0.15,
+        "evidence_recall": 0.7045471357048675,
+        "evidence_f1": 0.7057543794488627,
+        "role_coverage": 1.0,
+        "condition_coverage": 0.9809160305343512,
+        "redundancy": 0.2626265616153989,
+        "token_cost": 927.6385964912281,
+        "cases": 285
+      },
+      "frozen_minus_best_evidence_f1": 0.0,
+      "interpretation": "This is a descriptive sweep over saved ConditionalQA real-model scores. It is not a held-out tuning result and does not authorize changing the frozen test configuration.",
+      "source_sha256": "81b7e4d08a23010893bf3a0ca8681217c6e4d94d0cc43f1b0c2cc417285e2b25"
+    },
+    "sensitivity_coverage": {
+      "k_2_3_5_8": "RUN",
+      "token_budget_512_1024_2048": "NOT_RUN",
+      "role_and_field_weights": "PARTIAL_ROLE_ONLY",
+      "conflict_threshold": "NOT_RUN",
+      "document_missing_ratio": "PARTIAL_SINGLE_REMOVAL_CHALLENGE",
+      "chunk_length": "NOT_RUN"
+    },
+    "coverage_complete": false,
+    "interpretation": "Existing real-model artifacts directly cover five of nine planned FRC ablations, all K values, and a ConditionalQA role/redundancy parameter grid. Missing dimensions remain NOT_RUN rather than being inferred from unrelated metrics."
+  },
   "challenge_slices": {
     "normal": {
       "status": "RUN",
@@ -594,14 +1391,17 @@
     "status": "THEORETICAL_PIPELINE_FEASIBLE_BUT_SUPERIORITY_NOT_PROVEN",
     "pipeline_feasible": true,
     "evidence_f1_superiority_on_all_primary_datasets": false,
+    "full_outperforms_w_o_role_and_w_o_field": false,
+    "design_16_2_experiment_coverage_complete": false,
     "gate_2": "NO-GO",
-    "reason": "real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment"
+    "reason": "real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; Full does not outperform w/o Role and w/o Field is not run; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment"
   },
   "limitations": [
     "The report imports existing real-model artifacts and recomputes paired evidence metrics; it does not retrain models.",
     "The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.",
     "ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.",
     "The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.",
+    "The real-model design audit is incomplete: w/o Field, w/o Applicability, w/o Conflict and w/o Reranker plus several sensitivity dimensions remain NOT_RUN.",
     "CONFLICTS conflict-type classification is complete, but the paper's expected-behavior adherence metric and independent human judging are not reproduced."
   ]
 }

@@ -14,6 +14,51 @@
 | multihoprag | 2556 | 0.394001 | cross_encoder_topk | 0.393660 | +0.000342 | [-0.000705, +0.001385] |
 | hotpotqa | 1000 | 0.550754 | coverage_greedy_proxy | 0.550818 | -0.000063 | [-0.000857, +0.000667] |
 
+## 设计第 16.2 节消融审计
+
+- 覆盖状态：`PARTIAL`；已运行 5/9 组。
+- Gate 必需比较通过：`False`。缺失消融不得按通过处理。
+
+| 消融 | 状态 | Evidence F1 | Role Coverage |
+|---|---|---:|---:|
+| full | RUN | 0.705754 | 1.000000 |
+| w/o_role | RUN | 0.706158 | 0.975906 |
+| w/o_field | NOT_RUN | — | — |
+| w/o_applicability | NOT_RUN | — | — |
+| w/o_redundancy | RUN | 0.705754 | 1.000000 |
+| w/o_conflict | NOT_RUN | — | — |
+| w/o_reranker | NOT_RUN | — | — |
+| role_only | RUN | 0.694475 | 1.000000 |
+| random_role | RUN | 0.705086 | 0.997953 |
+
+## K 与参数敏感性审计
+
+| 数据集 | K | FRC Recall | 最强基线 | 基线 Recall | 差值 |
+|---|---:|---:|---|---:|---:|
+| conditionalqa | 2 | 0.363240 | cross_encoder_topk | 0.358824 | +0.004415 |
+| conditionalqa | 3 | 0.504181 | cross_encoder_topk | 0.502514 | +0.001667 |
+| conditionalqa | 5 | 0.704547 | cross_encoder_topk | 0.704869 | -0.000322 |
+| conditionalqa | 8 | 0.810879 | cross_encoder_topk | 0.811757 | -0.000877 |
+| multihoprag | 2 | 0.422372 | cross_encoder_topk | 0.421557 | +0.000815 |
+| multihoprag | 3 | 0.507075 | cross_encoder_topk | 0.506195 | +0.000880 |
+| multihoprag | 5 | 0.602765 | cross_encoder_topk | 0.602113 | +0.000652 |
+| multihoprag | 8 | 0.635824 | cross_encoder_topk | 0.635596 | +0.000228 |
+| hotpotqa | 2 | 0.643902 | cross_encoder_topk | 0.644486 | -0.000583 |
+| hotpotqa | 3 | 0.765162 | coverage_greedy_proxy | 0.765912 | -0.000750 |
+| hotpotqa | 5 | 0.865712 | coverage_greedy_proxy | 0.865962 | -0.000250 |
+| hotpotqa | 8 | 0.922648 | cross_encoder_topk | 0.922648 | +0.000000 |
+
+ConditionalQA 保存分数上共审计 80 组 FRC 参数；最佳 Evidence F1=0.705754（alpha=1.0、gamma=0.0、role_threshold=0.55）。该扫参不是独立留出集结果，不用于事后改写冻结测试配置。
+
+| 敏感性维度 | 状态 |
+|---|---|
+| k_2_3_5_8 | RUN |
+| token_budget_512_1024_2048 | NOT_RUN |
+| role_and_field_weights | PARTIAL_ROLE_ONLY |
+| conflict_threshold | NOT_RUN |
+| document_missing_ratio | PARTIAL_SINGLE_REMOVAL_CHALLENGE |
+| chunk_length | NOT_RUN |
+
 ## 缺失证据挑战
 
 协议：remove the first gold passage from every ConditionalQA case with at least two gold passages, then rerun selectors from saved real-model scores。用例：261。
@@ -41,7 +86,7 @@
 
 - 状态：`THEORETICAL_PIPELINE_FEASIBLE_BUT_SUPERIORITY_NOT_PROVEN`
 - Gate 2：`NO-GO`
-- 结论：real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment。
+- 结论：real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; Full does not outperform w/o Role and w/o Field is not run; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment。
 
 这组结果证明真实模型、公开数据和 FRC 选择器可以形成可复现流水线，但不能证明 FRC 已经稳定优于强重排基线。
 
@@ -51,4 +96,5 @@
 - The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.
 - ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.
 - The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.
+- The real-model design audit is incomplete: w/o Field, w/o Applicability, w/o Conflict and w/o Reranker plus several sensitivity dimensions remain NOT_RUN.
 - CONFLICTS conflict-type classification is complete, but the paper's expected-behavior adherence metric and independent human judging are not reproduced.

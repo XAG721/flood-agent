@@ -179,7 +179,10 @@
         "conflicts_cases": 458,
         "strongest_reproducible_baseline": "coverage_greedy_proxy",
         "baseline_accuracy": 0.344978,
-        "frc_accuracy": 0.334061
+        "frc_accuracy": 0.334061,
+        "ablation_variants_run": 5,
+        "ablation_variants_planned": 9,
+        "experiment_coverage_complete": false
       }
     },
     {
@@ -210,13 +213,13 @@
     "output/floodagent_bench/scenario_acceptance_report.json": "806c53237599302277ba9aaaecf8fc95690416a9b1474145b3a8bccb50515ab1",
     "output/candidate_evaluation/report.json": "4f25d27e8411bae5906cc4bf8c33eeeba664201fc82e18cb4adfe36085f7c9eb",
     "output/performance/controlled_performance_report.json": "72881b8700ac867eaefc71a0ff770c8317c3c76531f06afafd55cf5a14f3b2b3",
-    "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json": "b0657a06846cd2bf5dcf4d9cb24591fda5316b9805e18b612e7f45e5ecd45222",
+    "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json": "db3884a602de8ada51f8f2774684ce7cccf1562271d507633d787ef982f98349",
     "docs/openapi.json": "e338285b1b988a4ddf359bffa1d0249cfb12089f1f133d2a8696060b713ce73b",
     "docker-compose.yml": "8204abc75a6e82041d16e52d09e94e4f84de19f00f5a9cc9338dcd91ed76a33e",
-    "洪水预警响应系统_渐进式迭代开发与升级设计.md": "e30b25945f65c7616b3cc052ee1c5e242a8ebf1b091b497efde8df049e267801",
+    "洪水预警响应系统_渐进式迭代开发与升级设计.md": "d3209d4e039fdae92825d0a3ff0be7d7c1cb84e2eec73312f175c10a5eba47cc",
     "面向区县防办的洪水预警响应系统_升级设计说明V3.md": "b059960b880d7bc2be0891e5e676d353548aca79a692438c8538721426f9e88d",
-    "docs/progressive_upgrade/completion_traceability_audit.md": "c033e1f666ede2b0f86cb9ea8bda240c6c588a6c538cfb556d336ea737a632d1",
-    "docs/V3_upgrade_acceptance_matrix.md": "fbfac7538a0ca64b3b68480f2ffe148b51d57811956e579935e72d49eb160c28"
+    "docs/progressive_upgrade/completion_traceability_audit.md": "9a749307a9e85385bbc5b8bb08faf527a93178e93930abaa6f01d1ef29ba633d",
+    "docs/V3_upgrade_acceptance_matrix.md": "7b66f66bd67a9ce30bb97b2765ac99bd88b131c981d2a57840132a5603766de4"
   },
   "external_no_go": [
     {

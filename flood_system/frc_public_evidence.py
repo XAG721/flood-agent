@@ -27,6 +27,27 @@ DATASET_METHODS = {
 DISPLAY_METHOD = {"setr_style": "coverage_greedy_proxy"}
 PRIMARY_METRICS = ("evidence_recall", "evidence_precision", "evidence_f1", "role_coverage")
 
+PLANNED_ABLATIONS = (
+    "full",
+    "w/o_role",
+    "w/o_field",
+    "w/o_applicability",
+    "w/o_redundancy",
+    "w/o_conflict",
+    "w/o_reranker",
+    "role_only",
+    "random_role",
+)
+
+ABLATION_METHOD = {
+    "frc_full": "full",
+    "w/o Role": "w/o_role",
+    "w/o Redundancy": "w/o_redundancy",
+    "Role-only": "role_only",
+    "random_role": "random_role",
+    "setr_style": "coverage_greedy_proxy",
+}
+
 
 def display_method(method: str) -> str:
     return DISPLAY_METHOD.get(method, method)
@@ -86,6 +107,199 @@ def load_answer_csv(path: Path) -> dict[str, dict[str, float | int | None]]:
                 "cases": int(row["Cases"]),
             }
     return rows
+
+
+def load_ablation_audit(path: Path) -> dict[str, Any]:
+    variants: dict[str, dict[str, float | int | None]] = {}
+    with path.open("r", encoding="utf-8-sig", newline="") as handle:
+        for row in csv.DictReader(handle):
+            method = ABLATION_METHOD.get(row["Method"], row["Method"])
+            variants[method] = {
+                "evidence_recall": _safe_float(row["Evidence Recall@5"]),
+                "evidence_precision": _safe_float(row["Evidence Precision@5"]),
+                "evidence_f1": _safe_float(row["Evidence F1@5"]),
+                "role_coverage": _safe_float(row["Role Coverage@5"]),
+                "condition_coverage": _safe_float(row["Condition Coverage"]),
+                "redundancy": _safe_float(row["Redundancy"]),
+                "token_cost": _safe_float(row["Token Cost"]),
+                "cases": int(row["Cases"]),
+            }
+    run = [variant for variant in PLANNED_ABLATIONS if variant in variants]
+    full_f1 = float(variants.get("full", {}).get("evidence_f1") or 0.0)
+    wo_role_f1 = variants.get("w/o_role", {}).get("evidence_f1")
+    wo_field_f1 = variants.get("w/o_field", {}).get("evidence_f1")
+    full_beats_wo_role = wo_role_f1 is not None and full_f1 > float(wo_role_f1)
+    full_beats_wo_field = wo_field_f1 is not None and full_f1 > float(wo_field_f1)
+    return {
+        "status": "RUN" if len(run) == len(PLANNED_ABLATIONS) else "PARTIAL",
+        "dataset": "conditionalqa",
+        "planned_variants": list(PLANNED_ABLATIONS),
+        "run_variants": run,
+        "missing_variants": [variant for variant in PLANNED_ABLATIONS if variant not in variants],
+        "variants": variants,
+        "gate_required_comparison": {
+            "full_beats_w_o_role": full_beats_wo_role,
+            "full_beats_w_o_field": full_beats_wo_field,
+            "passed": full_beats_wo_role and full_beats_wo_field,
+            "interpretation": (
+                "Gate 2 requires Full to outperform both w/o Role and w/o Field. "
+                "A missing ablation is not treated as a pass."
+            ),
+        },
+        "source_sha256": sha256(path),
+    }
+
+
+def load_k_sensitivity_audit(metrics_dir: Path) -> dict[str, Any]:
+    datasets: dict[str, Any] = {}
+    for dataset in DATASET_METHODS:
+        path = metrics_dir / f"k_sensitivity_{dataset}.csv"
+        rows: list[dict[str, Any]] = []
+        with path.open("r", encoding="utf-8-sig", newline="") as handle:
+            for row in csv.DictReader(handle):
+                rows.append(
+                    {
+                        "k": int(row["K"]),
+                        "method": display_method(row["Method"]),
+                        "evidence_recall": _safe_float(row["Evidence Recall@K"]),
+                        "role_coverage": _safe_float(row["Role Coverage@K"]),
+                        "condition_coverage": _safe_float(row["Condition Coverage@K"]),
+                        "answer_f1": _safe_float(row["Answer F1@K"]),
+                        "token_cost": _safe_float(row["Token Cost@K"]),
+                        "cases": int(row["Cases"]),
+                    }
+                )
+        summaries = []
+        for k in sorted({row["k"] for row in rows}):
+            at_k = [row for row in rows if row["k"] == k]
+            frc = next(row for row in at_k if row["method"] == "frc_select")
+            baselines = [row for row in at_k if row["method"] != "frc_select"]
+            strongest = max(baselines, key=lambda row: float(row["evidence_recall"] or 0.0))
+            summaries.append(
+                {
+                    "k": k,
+                    "frc_evidence_recall": frc["evidence_recall"],
+                    "frc_role_coverage": frc["role_coverage"],
+                    "strongest_baseline": strongest["method"],
+                    "baseline_evidence_recall": strongest["evidence_recall"],
+                    "frc_minus_baseline_recall": round(
+                        float(frc["evidence_recall"] or 0.0)
+                        - float(strongest["evidence_recall"] or 0.0),
+                        6,
+                    ),
+                }
+            )
+        datasets[dataset] = {
+            "status": "RUN",
+            "k_values": sorted({row["k"] for row in rows}),
+            "rows": rows,
+            "summary": summaries,
+            "source_sha256": sha256(path),
+        }
+    expected_k = [2, 3, 5, 8]
+    complete = all(dataset["k_values"] == expected_k for dataset in datasets.values())
+    return {
+        "status": "RUN" if complete else "PARTIAL",
+        "expected_k": expected_k,
+        "datasets": datasets,
+    }
+
+
+def load_parameter_sensitivity_audit(path: Path) -> dict[str, Any]:
+    rows: list[dict[str, Any]] = []
+    with path.open("r", encoding="utf-8-sig", newline="") as handle:
+        for row in csv.DictReader(handle):
+            if row["Method"] != "frc_select":
+                continue
+            rows.append(
+                {
+                    "alpha": _safe_float(row["alpha"]),
+                    "gamma": _safe_float(row["gamma"]),
+                    "role_threshold": _safe_float(row["role_threshold"]),
+                    "role_mix": _safe_float(row["role_mix"]),
+                    "evidence_recall": _safe_float(row["Evidence Recall@5"]),
+                    "evidence_f1": _safe_float(row["Evidence F1@5"]),
+                    "role_coverage": _safe_float(row["Role Coverage@5"]),
+                    "condition_coverage": _safe_float(row["Condition Coverage"]),
+                    "redundancy": _safe_float(row["Redundancy"]),
+                    "token_cost": _safe_float(row["Token Cost"]),
+                    "cases": int(row["Cases"]),
+                }
+            )
+    best = max(
+        rows,
+        key=lambda row: (
+            float(row["evidence_f1"] or 0.0),
+            float(row["role_coverage"] or 0.0),
+            -float(row["token_cost"] or 0.0),
+        ),
+    )
+    frozen = next(
+        (
+            row
+            for row in rows
+            if row["alpha"] == 2.0
+            and row["gamma"] == 0.0
+            and row["role_threshold"] == 0.55
+            and row["role_mix"] == 0.15
+        ),
+        None,
+    )
+    return {
+        "status": "RUN",
+        "dataset": "conditionalqa",
+        "configuration_count": len(rows),
+        "grid": {
+            "alpha": sorted({row["alpha"] for row in rows}),
+            "gamma": sorted({row["gamma"] for row in rows}),
+            "role_threshold": sorted({row["role_threshold"] for row in rows}),
+            "role_mix": sorted({row["role_mix"] for row in rows}),
+        },
+        "best_by_evidence_f1": best,
+        "frozen_configuration": frozen,
+        "frozen_minus_best_evidence_f1": (
+            round(float(frozen["evidence_f1"] or 0.0) - float(best["evidence_f1"] or 0.0), 6)
+            if frozen
+            else None
+        ),
+        "interpretation": (
+            "This is a descriptive sweep over saved ConditionalQA real-model scores. "
+            "It is not a held-out tuning result and does not authorize changing the frozen test configuration."
+        ),
+        "source_sha256": sha256(path),
+    }
+
+
+def build_design_experiment_audit(metrics_dir: Path) -> dict[str, Any]:
+    ablation = load_ablation_audit(metrics_dir / "ablation_conditionalqa.csv")
+    k_sensitivity = load_k_sensitivity_audit(metrics_dir)
+    parameters = load_parameter_sensitivity_audit(
+        metrics_dir / "frc_param_sweep_conditionalqa.csv"
+    )
+    sensitivity_coverage = {
+        "k_2_3_5_8": "RUN",
+        "token_budget_512_1024_2048": "NOT_RUN",
+        "role_and_field_weights": "PARTIAL_ROLE_ONLY",
+        "conflict_threshold": "NOT_RUN",
+        "document_missing_ratio": "PARTIAL_SINGLE_REMOVAL_CHALLENGE",
+        "chunk_length": "NOT_RUN",
+    }
+    return {
+        "status": "PARTIAL",
+        "ablation": ablation,
+        "k_sensitivity": k_sensitivity,
+        "parameter_sensitivity": parameters,
+        "sensitivity_coverage": sensitivity_coverage,
+        "coverage_complete": (
+            ablation["status"] == "RUN"
+            and all(status == "RUN" for status in sensitivity_coverage.values())
+        ),
+        "interpretation": (
+            "Existing real-model artifacts directly cover five of nine planned FRC ablations, "
+            "all K values, and a ConditionalQA role/redundancy parameter grid. Missing dimensions "
+            "remain NOT_RUN rather than being inferred from unrelated metrics."
+        ),
+    }
 
 
 def evidence_metrics(expected_ids: Iterable[str], selected_ids: Iterable[str]) -> dict[str, float]:
@@ -391,11 +605,14 @@ def build_public_reference_report(
     )
     conflict = conflict_inventory(conflicts_path)
     conflict_run = conflict.get("status") == "RUN"
+    experiment_audit = build_design_experiment_audit(metrics_dir)
+    ablation_gate = experiment_audit["ablation"]["gate_required_comparison"]
     limitations = [
         "The report imports existing real-model artifacts and recomputes paired evidence metrics; it does not retrain models.",
         "The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.",
         "ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.",
         "The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.",
+        "The real-model design audit is incomplete: w/o Field, w/o Applicability, w/o Conflict and w/o Reranker plus several sensitivity dimensions remain NOT_RUN.",
     ]
     if conflict_run:
         limitations.append(
@@ -421,6 +638,7 @@ def build_public_reference_report(
             "setr_status": "not reproduced; setr_style source rows are reported as coverage_greedy_proxy",
         },
         "datasets": datasets,
+        "design_16_2_experiment_audit": experiment_audit,
         "challenge_slices": {
             "normal": {"status": "RUN", "datasets": list(datasets)},
             "exception_and_condition": {"status": "RUN", "dataset": "conditionalqa"},
@@ -435,11 +653,14 @@ def build_public_reference_report(
             "status": "THEORETICAL_PIPELINE_FEASIBLE_BUT_SUPERIORITY_NOT_PROVEN",
             "pipeline_feasible": True,
             "evidence_f1_superiority_on_all_primary_datasets": superiority,
+            "full_outperforms_w_o_role_and_w_o_field": ablation_gate["passed"],
+            "design_16_2_experiment_coverage_complete": experiment_audit["coverage_complete"],
             "gate_2": "NO-GO",
             "reason": (
                 "real-model FRC runs are reproducible, but paired confidence intervals do not establish "
-                "consistent superiority; CONFLICTS is run but does not reproduce the paper's independent "
-                "expected-behavior adherence judgment"
+                "consistent superiority; Full does not outperform w/o Role and w/o Field is not run; "
+                "CONFLICTS is run but does not reproduce the paper's independent expected-behavior "
+                "adherence judgment"
                 if conflict_run
                 else "real-model FRC runs are reproducible and competitive, but paired confidence intervals "
                 "do not establish consistent superiority; conflict/stale comparison is not yet run"
@@ -475,6 +696,57 @@ def render_public_reference_markdown(report: dict[str, Any]) -> str:
             f"{baseline['evidence_f1']:.6f} | {paired['mean_difference']:+.6f} | "
             f"[{paired['ci_low']:+.6f}, {paired['ci_high']:+.6f}] |"
         )
+    experiment = report["design_16_2_experiment_audit"]
+    ablation = experiment["ablation"]
+    lines.extend(
+        [
+            "",
+            "## 设计第 16.2 节消融审计",
+            "",
+            f"- 覆盖状态：`{ablation['status']}`；已运行 {len(ablation['run_variants'])}/{len(ablation['planned_variants'])} 组。",
+            f"- Gate 必需比较通过：`{ablation['gate_required_comparison']['passed']}`。缺失消融不得按通过处理。",
+            "",
+            "| 消融 | 状态 | Evidence F1 | Role Coverage |",
+            "|---|---|---:|---:|",
+        ]
+    )
+    for variant in ablation["planned_variants"]:
+        values = ablation["variants"].get(variant)
+        if values:
+            lines.append(
+                f"| {variant} | RUN | {values['evidence_f1']:.6f} | {values['role_coverage']:.6f} |"
+            )
+        else:
+            lines.append(f"| {variant} | NOT_RUN | — | — |")
+    lines.extend(
+        [
+            "",
+            "## K 与参数敏感性审计",
+            "",
+            "| 数据集 | K | FRC Recall | 最强基线 | 基线 Recall | 差值 |",
+            "|---|---:|---:|---|---:|---:|",
+        ]
+    )
+    for dataset_name, dataset in experiment["k_sensitivity"]["datasets"].items():
+        for item in dataset["summary"]:
+            lines.append(
+                f"| {dataset_name} | {item['k']} | {item['frc_evidence_recall']:.6f} | "
+                f"{item['strongest_baseline']} | {item['baseline_evidence_recall']:.6f} | "
+                f"{item['frc_minus_baseline_recall']:+.6f} |"
+            )
+    parameter = experiment["parameter_sensitivity"]
+    best = parameter["best_by_evidence_f1"]
+    lines.extend(
+        [
+            "",
+            f"ConditionalQA 保存分数上共审计 {parameter['configuration_count']} 组 FRC 参数；最佳 Evidence F1={best['evidence_f1']:.6f}（alpha={best['alpha']}、gamma={best['gamma']}、role_threshold={best['role_threshold']}）。该扫参不是独立留出集结果，不用于事后改写冻结测试配置。",
+            "",
+            "| 敏感性维度 | 状态 |",
+            "|---|---|",
+        ]
+    )
+    for dimension, status in experiment["sensitivity_coverage"].items():
+        lines.append(f"| {dimension} | {status} |")
     missing = report["challenge_slices"]["missing_evidence"]
     lines.extend(
         [

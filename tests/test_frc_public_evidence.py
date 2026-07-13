@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from flood_system.frc_public_evidence import (
+    build_design_experiment_audit,
     conflict_inventory,
     evidence_metrics,
     paired_bootstrap,
@@ -97,3 +98,76 @@ def test_conflict_inventory_imports_completed_audit_report(tmp_path):
     assert inventory["cases"] == 458
     assert inventory["frc_accuracy"] == 0.33
     assert inventory["frc_outdated_recall"] == 0.56
+
+
+def test_design_experiment_audit_does_not_treat_missing_ablations_as_passed(tmp_path):
+    metrics = tmp_path / "metrics"
+    metrics.mkdir()
+    (metrics / "ablation_conditionalqa.csv").write_text(
+        "Dataset,Method,Evidence Recall@5,Evidence Precision@5,Evidence F1@5,Role Coverage@5,Condition Coverage,Redundancy,Token Cost,Cases\n"
+        "conditionalqa,frc_full,0.70,0.80,0.71,1.0,0.98,0.20,900,10\n"
+        "conditionalqa,w/o Role,0.71,0.81,0.72,0.97,0.98,0.21,905,10\n"
+        "conditionalqa,w/o Redundancy,0.70,0.80,0.71,1.0,0.98,0.20,900,10\n"
+        "conditionalqa,Role-only,0.68,0.78,0.69,1.0,0.97,0.25,910,10\n"
+        "conditionalqa,random_role,0.69,0.79,0.70,0.99,0.97,0.22,902,10\n",
+        encoding="utf-8",
+    )
+    k_header = "Dataset,K,Method,Evidence Recall@K,Role Coverage@K,Condition Coverage@K,Answer F1@K,Token Cost@K,Cases\n"
+    for dataset in ("conditionalqa", "multihoprag", "hotpotqa"):
+        rows = []
+        for k in (2, 3, 5, 8):
+            rows.extend(
+                [
+                    f"{dataset},{k},cross_encoder_topk,0.6,0.9,0.8,0.1,500,10",
+                    f"{dataset},{k},mmr,0.5,0.9,0.8,0.1,500,10",
+                    f"{dataset},{k},setr_style,0.59,1.0,0.8,0.1,500,10",
+                    f"{dataset},{k},frc_select,0.61,1.0,0.8,0.1,500,10",
+                ]
+            )
+        (metrics / f"k_sensitivity_{dataset}.csv").write_text(
+            k_header + "\n".join(rows) + "\n",
+            encoding="utf-8",
+        )
+    (metrics / "frc_param_sweep_conditionalqa.csv").write_text(
+        "Method,alpha,gamma,role_threshold,role_mix,Evidence Recall@5,Evidence F1@5,Role Coverage@5,Condition Coverage,Redundancy,Token Cost,Cases\n"
+        "frc_select,2.0,0.0,0.55,0.15,0.70,0.71,1.0,0.98,0.20,900,10\n",
+        encoding="utf-8",
+    )
+
+    audit = build_design_experiment_audit(metrics)
+
+    assert audit["status"] == "PARTIAL"
+    assert audit["ablation"]["missing_variants"] == [
+        "w/o_field",
+        "w/o_applicability",
+        "w/o_conflict",
+        "w/o_reranker",
+    ]
+    assert audit["ablation"]["gate_required_comparison"]["passed"] is False
+    assert audit["k_sensitivity"]["status"] == "RUN"
+    assert audit["parameter_sensitivity"]["configuration_count"] == 1
+
+
+def test_k_sensitivity_uses_coverage_proxy_name_instead_of_setr(tmp_path):
+    metrics = tmp_path
+    header = "Dataset,K,Method,Evidence Recall@K,Role Coverage@K,Condition Coverage@K,Answer F1@K,Token Cost@K,Cases\n"
+    for dataset in ("conditionalqa", "multihoprag", "hotpotqa"):
+        rows = []
+        for k in (2, 3, 5, 8):
+            for method, recall in (
+                ("cross_encoder_topk", 0.6),
+                ("mmr", 0.5),
+                ("setr_style", 0.61),
+                ("frc_select", 0.62),
+            ):
+                rows.append(f"{dataset},{k},{method},{recall},1.0,0.8,0.1,500,10")
+        (metrics / f"k_sensitivity_{dataset}.csv").write_text(
+            header + "\n".join(rows) + "\n",
+            encoding="utf-8",
+        )
+
+    from flood_system.frc_public_evidence import load_k_sensitivity_audit
+
+    audit = load_k_sensitivity_audit(metrics)
+
+    assert audit["datasets"]["hotpotqa"]["summary"][0]["strongest_baseline"] == "coverage_greedy_proxy"

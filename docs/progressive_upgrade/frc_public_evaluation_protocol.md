@@ -42,6 +42,8 @@ python scripts/import_frc_public_reference.py `
 - `output/rag_evaluation/public_frc_reference/public_frc_reference_report.json`
 - `output/rag_evaluation/public_frc_reference/public_frc_reference_report.md`
 
+导入报告同时审计设计第 16.2 节实验覆盖：ConditionalQA 原始产物包含 5/9 组消融和 80 组 alpha/gamma/角色阈值组合，三套数据均包含 K=2/3/5/8。Full Evidence F1 为 0.705754，`w/o Role` 为 0.706158，且 `w/o Field` 未运行，因此 Gate 的消融硬条件失败。Token 预算、字段权重、冲突阈值、多档缺失比例和分块长度保持 `NOT_RUN/PARTIAL`，不得从其他指标推断完成。
+
 CONFLICTS 全量评测在已缓存模型的 `rag_exp` 环境执行：
 
 ```powershell
@@ -60,6 +62,8 @@ conda run -n rag_exp python -m scripts.run_conflicts_frc_evaluation `
 
 1. 基于 CONFLICTS 的冲突/过时类型分类已经完成，但还需复现 expected-behavior adherence 并由独立人员复核；
 2. 主指标与安全指标预先冻结，不能只挑有利切片；
-3. 主要数据集上相对最强可复现基线的改善具有一致方向和配对统计支持；
-4. 冲突漏报、错误完整声明、不可回答误答等安全指标达到门槛；
-5. 原始输入、配置、种子、哈希、逐样本结果与失败用例可审计。
+3. 补齐设计要求的 9 组真实模型消融，且 Full 严格优于 `w/o Role` 和 `w/o Field`；
+4. 补齐 Token 预算、字段权重、冲突阈值、多档缺失比例和分块长度敏感性；
+5. 主要数据集上相对最强可复现基线的改善具有一致方向和配对统计支持；
+6. 冲突漏报、错误完整声明、不可回答误答等安全指标达到门槛；
+7. 原始输入、配置、种子、哈希、逐样本结果与失败用例可审计。

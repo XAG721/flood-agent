@@ -258,6 +258,7 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
 
     rag_decision = rag_report["decision"]
     conflict_slice = rag_report["challenge_slices"]["conflict_and_stale"]
+    experiment_audit = rag_report["design_16_2_experiment_audit"]
     gate_two_is_safely_held = (
         rag_decision["gate_2"] == "NO-GO"
         and rag_decision["pipeline_feasible"] is True
@@ -265,6 +266,9 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
         and conflict_slice["status"] == "RUN"
         and int(conflict_slice["cases"]) == 458
         and conflict_slice["strongest_reproducible_baseline"] == "coverage_greedy_proxy"
+        and experiment_audit["status"] == "PARTIAL"
+        and experiment_audit["ablation"]["gate_required_comparison"]["passed"] is False
+        and rag_decision["design_16_2_experiment_coverage_complete"] is False
     )
     service_source = (repo_root / "flood_system/response_workflow/service.py").read_text(encoding="utf-8")
     gate_two_is_safely_held = gate_two_is_safely_held and all(
@@ -367,6 +371,9 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
                 "strongest_reproducible_baseline": conflict_slice["strongest_reproducible_baseline"],
                 "baseline_accuracy": conflict_slice["baseline_accuracy"],
                 "frc_accuracy": conflict_slice["frc_accuracy"],
+                "ablation_variants_run": len(experiment_audit["ablation"]["run_variants"]),
+                "ablation_variants_planned": len(experiment_audit["ablation"]["planned_variants"]),
+                "experiment_coverage_complete": experiment_audit["coverage_complete"],
             },
         ),
         _check(
