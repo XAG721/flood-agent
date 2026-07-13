@@ -6,7 +6,7 @@ import hashlib
 import json
 import math
 import random
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -465,6 +465,507 @@ def load_conflicts_real_model_ablation(path: Path) -> dict[str, Any]:
     }
 
 
+def load_housing_real_model_ablation(path: Path) -> dict[str, Any]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if payload.get("schema_version") != "frc-housing-field-applicability-ablation-v1":
+        raise ValueError(f"unsupported HousingQA ablation schema: {path}")
+    metadata = payload.get("metadata", {})
+    if (
+        metadata.get("public_dataset") is not True
+        or metadata.get("expert_annotated_supporting_statutes") is not True
+        or metadata.get("real_model_scores") is not True
+        or metadata.get("generator") != "local_qwen"
+    ):
+        raise ValueError("HousingQA ablation provenance or real-model status is invalid")
+    if metadata.get("source_repository") != "reglab/housing_qa":
+        raise ValueError("HousingQA ablation source repository mismatch")
+    if metadata.get("source_revision") != "761550cc974fa1d9141ffd39014db89efa2a7230":
+        raise ValueError("HousingQA ablation source revision mismatch")
+    if metadata.get("source_license") != "CC-BY-SA-4.0":
+        raise ValueError("HousingQA ablation license provenance mismatch")
+    expected_source_hashes = {
+        "source_json_sha256": "4f6eb35e1b865a6c5cfd0cf73a0b514a86bd1d8306bf6719f2b4fb94793c7e4b",
+        "source_zip_sha256": "7e7722c267d44ecc1f9f52d69109116d8a0a352b89f002438585872f67de9985",
+    }
+    for name, expected in expected_source_hashes.items():
+        if metadata.get(name) != expected:
+            raise ValueError(f"HousingQA ablation pinned source hash mismatch: {name}")
+    case_count = int(metadata.get("case_count", 0))
+    field_count = int(metadata.get("field_count", 0))
+    if case_count != 40 or field_count != 160:
+        raise ValueError("HousingQA ablation must cover 40 composite cases and 160 fields")
+    if int(metadata.get("jurisdiction_count", 0)) < 20:
+        raise ValueError("HousingQA ablation must preserve broad multi-jurisdiction coverage")
+    if int(metadata.get("snapshot_year", 0)) != 2021:
+        raise ValueError("HousingQA ablation must preserve the official 2021 snapshot boundary")
+
+    expected_methods = {
+        "bm25_topk",
+        "dense_topk",
+        "hybrid_topk",
+        "cross_encoder_topk",
+        "field_decomposition_topk",
+        "frc_full",
+        "w/o_field",
+        "w/o_applicability",
+    }
+    if set(metadata.get("methods", [])) != expected_methods:
+        raise ValueError("HousingQA ablation method coverage mismatch")
+    case_artifact = payload.get("case_results_artifact", {})
+    if case_artifact.get("format") != "gzip-jsonl":
+        raise ValueError("HousingQA ablation case results must use deterministic gzip JSONL")
+    case_path = path.parent / str(case_artifact.get("file", ""))
+    if not case_path.is_file() or sha256(case_path) != case_artifact.get("sha256"):
+        raise ValueError("HousingQA ablation case-result artifact is missing or hash-mismatched")
+    with gzip.open(case_path, "rt", encoding="utf-8") as handle:
+        case_results = [json.loads(line) for line in handle if line.strip()]
+    if len(case_results) != int(case_artifact.get("rows", -1)):
+        raise ValueError("HousingQA ablation case-result row count mismatch")
+
+    grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    seen: set[tuple[str, str]] = set()
+    metric_names = (
+        "evidence_recall",
+        "evidence_precision",
+        "evidence_f1",
+        "field_coverage",
+        "core_field_coverage",
+        "citation_support_precision",
+        "unsupported_field_rate",
+        "wrong_jurisdiction_rate",
+        "wrong_jurisdiction_case",
+        "answer_accuracy",
+        "valid_answer_rate",
+        "case_accuracy",
+        "token_cost",
+    )
+    for row in case_results:
+        key = (str(row["case_id"]), str(row["method"]))
+        if key in seen:
+            raise ValueError(f"duplicate HousingQA ablation case row: {key}")
+        seen.add(key)
+        if set(row.get("metrics", {})) != set(metric_names):
+            raise ValueError(f"HousingQA case metric coverage mismatch: {key}")
+        if len(row.get("expected_answers", {})) != 4:
+            raise ValueError(f"HousingQA composite case does not contain four fields: {key}")
+        grouped[key[1]].append(row)
+    if set(grouped) != expected_methods or any(
+        len(rows) != case_count for rows in grouped.values()
+    ):
+        raise ValueError("HousingQA ablation must cover every case for every method")
+    prediction_provenance = metadata.get("prediction_provenance", {})
+    unique_selection_prompts = len(
+        {
+            (str(row["case_id"]), tuple(str(value) for value in row["selected_ids"]))
+            for row in case_results
+        }
+    )
+    if (
+        int(prediction_provenance.get("total_method_rows", -1)) != len(case_results)
+        or int(prediction_provenance.get("unique_case_selection_prompts", -1))
+        != unique_selection_prompts
+        or int(prediction_provenance.get("equivalent_selection_reuse_rows", -1))
+        != len(case_results) - unique_selection_prompts
+    ):
+        raise ValueError("HousingQA generation provenance mismatch")
+    if any(
+        len(str(metadata.get(name, ""))) != 64
+        for name in ("manifest_sha256", "scored_cases_sha256")
+    ):
+        raise ValueError("HousingQA scored-case or manifest provenance is incomplete")
+
+    claimed = payload.get("aggregates", {})
+    if set(claimed) != expected_methods:
+        raise ValueError("HousingQA aggregate method coverage mismatch")
+    for method, rows in grouped.items():
+        recomputed = {
+            "cases": len(rows),
+            **{
+                name: round(
+                    sum(float(row["metrics"][name]) for row in rows) / len(rows),
+                    6,
+                )
+                for name in metric_names
+            },
+        }
+        if recomputed != claimed[method]:
+            raise ValueError(f"HousingQA aggregate mismatch: {method}")
+
+    comparisons = payload.get("paired_comparisons", {})
+    expected_comparisons = {
+        "full_minus_w_o_field": ("frc_full", "w/o_field"),
+        "full_minus_w_o_applicability": ("frc_full", "w/o_applicability"),
+        "full_minus_strongest_baseline": (
+            "frc_full",
+            str(payload.get("strongest_baseline_by_field_coverage")),
+        ),
+    }
+    paired_metrics = (
+        "evidence_f1",
+        "field_coverage",
+        "citation_support_precision",
+        "answer_accuracy",
+        "case_accuracy",
+        "wrong_jurisdiction_rate",
+    )
+    for comparison_name, (left_method, right_method) in expected_comparisons.items():
+        comparison = comparisons.get(comparison_name, {})
+        if (
+            comparison.get("left") != left_method
+            or comparison.get("right") != right_method
+            or comparison.get("direction") != "left_minus_right"
+        ):
+            raise ValueError(f"HousingQA paired comparison definition mismatch: {comparison_name}")
+        left = {row["case_id"]: row for row in grouped[left_method]}
+        right = {row["case_id"]: row for row in grouped[right_method]}
+        if set(left) != set(right):
+            raise ValueError(f"HousingQA paired case coverage mismatch: {comparison_name}")
+        for metric in paired_metrics:
+            recomputed = paired_bootstrap(
+                [
+                    float(left[case_id]["metrics"][metric])
+                    - float(right[case_id]["metrics"][metric])
+                    for case_id in sorted(left)
+                ]
+            )
+            if recomputed != comparison.get("metrics", {}).get(metric):
+                raise ValueError(
+                    f"HousingQA paired metric mismatch: {comparison_name}/{metric}"
+                )
+
+    baseline_methods = {
+        "bm25_topk",
+        "dense_topk",
+        "hybrid_topk",
+        "cross_encoder_topk",
+        "field_decomposition_topk",
+    }
+    strongest = max(
+        baseline_methods,
+        key=lambda method: (
+            float(claimed[method]["field_coverage"]),
+            float(claimed[method]["answer_accuracy"]),
+            method,
+        ),
+    )
+    if strongest != payload.get("strongest_baseline_by_field_coverage"):
+        raise ValueError("HousingQA strongest-baseline selection mismatch")
+    full_rows = {row["case_id"]: row for row in grouped["frc_full"]}
+    for variant in ("w/o_field", "w/o_applicability"):
+        variant_rows = {row["case_id"]: row for row in grouped[variant]}
+        changed = sum(
+            full_rows[case_id]["selected_ids"] != variant_rows[case_id]["selected_ids"]
+            for case_id in full_rows
+        )
+        if int(payload.get("selection_changed_cases", {}).get(variant, -1)) != changed:
+            raise ValueError(f"HousingQA changed-selection count mismatch: {variant}")
+
+    coverage = payload.get("coverage", {})
+    if coverage.get("w/o_field") != "RUN_PUBLIC_EXPERT_REAL_MODEL":
+        raise ValueError("HousingQA w/o Field coverage is not complete")
+    if coverage.get("w/o_applicability") != "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021":
+        raise ValueError("HousingQA jurisdiction applicability coverage is not complete")
+    if coverage.get("version_or_expiry_variation") != "NOT_IDENTIFIABLE_SINGLE_SNAPSHOT":
+        raise ValueError("HousingQA must retain its single-snapshot temporal limitation")
+    decision = payload.get("decision", {})
+    field_difference = comparisons["full_minus_w_o_field"]["metrics"]["field_coverage"]
+    baseline_difference = comparisons["full_minus_strongest_baseline"]["metrics"][
+        "field_coverage"
+    ]
+    if decision.get("full_strictly_better_than_w_o_field") is not (
+        float(field_difference["mean_difference"]) > 0.0
+    ):
+        raise ValueError("HousingQA Full versus w/o Field decision mismatch")
+    if decision.get("full_w_o_field_ci_excludes_zero") is not (
+        float(field_difference["ci_low"]) > 0.0
+    ):
+        raise ValueError("HousingQA w/o Field confidence decision mismatch")
+    if decision.get("full_field_coverage_gain_over_strongest_baseline_at_least_0_05") is not (
+        float(baseline_difference["mean_difference"]) >= 0.05
+    ):
+        raise ValueError("HousingQA strongest-baseline gain decision mismatch")
+    if decision.get("gate_2") != "NO-GO":
+        raise ValueError("HousingQA ablation must not independently promote Gate 2")
+    return {
+        "status": "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021",
+        "metadata": metadata,
+        "coverage": coverage,
+        "aggregates": claimed,
+        "strongest_baseline": strongest,
+        "paired_comparisons": comparisons,
+        "selection_changed_cases": payload.get("selection_changed_cases", {}),
+        "decision": decision,
+        "limitations": payload.get("limitations", []),
+        "source_sha256": sha256(path),
+    }
+
+
+def load_lawshift_temporal_ablation(path: Path) -> dict[str, Any]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if payload.get("schema_version") != "frc-lawshift-temporal-applicability-ablation-v1":
+        raise ValueError(f"unsupported LawShift temporal ablation schema: {path}")
+    metadata = payload.get("metadata", {})
+    if (
+        metadata.get("public_dataset") is not True
+        or metadata.get("expert_annotated_revisions") is not True
+        or metadata.get("real_model_scores") is not True
+    ):
+        raise ValueError("LawShift temporal ablation provenance is invalid")
+    if metadata.get("source_repository") != "triangularPeach/LawShift":
+        raise ValueError("LawShift source repository mismatch")
+    if metadata.get("source_revision") != "0fce4f3821140bde29081ae0b20500e79aa065d5":
+        raise ValueError("LawShift source revision mismatch")
+    if metadata.get("source_license") != "Apache-2.0":
+        raise ValueError("LawShift source license mismatch")
+    if (
+        int(metadata.get("source_file_count", 0)) != 124
+        or len(str(metadata.get("source_manifest_sha256", ""))) != 64
+        or len(str(metadata.get("scored_cases_sha256", ""))) != 64
+        or len(str(metadata.get("case_manifest_sha256", ""))) != 64
+    ):
+        raise ValueError("LawShift source or scored-case provenance is incomplete")
+    case_count = int(metadata.get("case_count", 0))
+    if (
+        case_count != 124
+        or int(metadata.get("paired_case_count", 0)) != 62
+        or int(metadata.get("revision_type_count", 0)) != 31
+        or int(metadata.get("original_case_count", 0)) != 62
+        or int(metadata.get("revised_case_count", 0)) != 62
+        or int(metadata.get("candidate_occurrences", 0)) != 992
+    ):
+        raise ValueError("LawShift frozen case coverage mismatch")
+    expected_methods = {
+        "char_bm25_top1",
+        "cross_encoder_top1",
+        "applicability_filtered_cross_encoder_top1",
+        "frc_full",
+        "w/o_applicability",
+    }
+    if set(metadata.get("methods", [])) != expected_methods:
+        raise ValueError("LawShift method coverage mismatch")
+    parameters = metadata.get("selection_parameters", {})
+    if (
+        int(parameters.get("top_k", 0)) != 1
+        or int(parameters.get("token_budget", 0)) != 512
+        or int(parameters.get("pairs_per_revision", 0)) != 2
+        or int(parameters.get("distractor_articles", 0)) != 3
+        or int(parameters.get("seed", 0)) != 20260713
+    ):
+        raise ValueError("LawShift frozen selection parameters mismatch")
+
+    case_artifact = payload.get("case_results_artifact", {})
+    if case_artifact.get("format") != "gzip-jsonl":
+        raise ValueError("LawShift case results must use deterministic gzip JSONL")
+    case_path = path.parent / str(case_artifact.get("file", ""))
+    if not case_path.is_file() or sha256(case_path) != case_artifact.get("sha256"):
+        raise ValueError("LawShift case-result artifact is missing or hash-mismatched")
+    with gzip.open(case_path, "rt", encoding="utf-8") as handle:
+        case_results = [json.loads(line) for line in handle if line.strip()]
+    if len(case_results) != int(case_artifact.get("rows", -1)):
+        raise ValueError("LawShift case-result row count mismatch")
+
+    metric_names = {
+        "article_recall_at_1",
+        "version_accuracy",
+        "exact_evidence_accuracy",
+        "invalid_applicability_rate",
+        "token_cost",
+    }
+    grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    seen: set[tuple[str, str]] = set()
+    case_versions: dict[str, str] = {}
+    case_revision_types: dict[str, str] = {}
+    for row in case_results:
+        key = (str(row["case_id"]), str(row["method"]))
+        if key in seen:
+            raise ValueError(f"duplicate LawShift case row: {key}")
+        seen.add(key)
+        if set(row.get("metrics", {})) != metric_names:
+            raise ValueError(f"LawShift case metric coverage mismatch: {key}")
+        version = str(row.get("as_of_version"))
+        if version not in {"original", "revised"}:
+            raise ValueError(f"LawShift case version mismatch: {key}")
+        case_versions.setdefault(key[0], version)
+        if case_versions[key[0]] != version:
+            raise ValueError(f"LawShift case version changed across methods: {key[0]}")
+        revision_type = str(row.get("revision_type"))
+        case_revision_types.setdefault(key[0], revision_type)
+        if case_revision_types[key[0]] != revision_type:
+            raise ValueError(f"LawShift revision type changed across methods: {key[0]}")
+        grouped[key[1]].append(row)
+    if set(grouped) != expected_methods or any(
+        len(rows) != case_count for rows in grouped.values()
+    ):
+        raise ValueError("LawShift must cover every case for every method")
+    if len(set(case_revision_types.values())) != 31:
+        raise ValueError("LawShift revision-type coverage is incomplete")
+    if Counter(case_versions.values()) != Counter({"original": 62, "revised": 62}):
+        raise ValueError("LawShift before/after case balance mismatch")
+    reference_rows = grouped["frc_full"]
+    paired_snapshots: dict[tuple[str, int], set[str]] = defaultdict(set)
+    for row in reference_rows:
+        paired_snapshots[
+            (str(row["revision_type"]), int(row["source_case_index"]))
+        ].add(str(row["as_of_version"]))
+    if (
+        len(paired_snapshots) != 62
+        or any(versions != {"original", "revised"} for versions in paired_snapshots.values())
+        or Counter(key[0] for key in paired_snapshots) != Counter(
+            {revision_type: 2 for revision_type in set(case_revision_types.values())}
+        )
+    ):
+        raise ValueError("LawShift paired before/after source-case structure mismatch")
+
+    claimed = payload.get("aggregates", {})
+    if set(claimed) != expected_methods:
+        raise ValueError("LawShift aggregate method coverage mismatch")
+    for method, rows in grouped.items():
+        recomputed = {
+            "cases": len(rows),
+            **{
+                name: round(
+                    sum(float(row["metrics"][name]) for row in rows) / len(rows),
+                    6,
+                )
+                for name in metric_names
+            },
+        }
+        if recomputed != claimed[method]:
+            raise ValueError(f"LawShift aggregate mismatch: {method}")
+    claimed_by_revision = {
+        str(row["revision_type"]): row for row in payload.get("by_revision_type", [])
+    }
+    if set(claimed_by_revision) != set(case_revision_types.values()):
+        raise ValueError("LawShift by-revision coverage mismatch")
+    for revision_type, claimed_revision in claimed_by_revision.items():
+        full_revision = [
+            row for row in grouped["frc_full"] if row["revision_type"] == revision_type
+        ]
+        without_revision = [
+            row
+            for row in grouped["w/o_applicability"]
+            if row["revision_type"] == revision_type
+        ]
+        recomputed_revision = {
+            "revision_type": revision_type,
+            "cases": len(full_revision),
+            "frc_full_exact_evidence_accuracy": round(
+                sum(float(row["metrics"]["exact_evidence_accuracy"]) for row in full_revision)
+                / len(full_revision),
+                6,
+            ),
+            "w_o_applicability_exact_evidence_accuracy": round(
+                sum(
+                    float(row["metrics"]["exact_evidence_accuracy"])
+                    for row in without_revision
+                )
+                / len(without_revision),
+                6,
+            ),
+        }
+        if recomputed_revision != claimed_revision:
+            raise ValueError(f"LawShift by-revision aggregate mismatch: {revision_type}")
+
+    baseline_methods = {
+        "char_bm25_top1",
+        "cross_encoder_top1",
+        "applicability_filtered_cross_encoder_top1",
+    }
+    strongest = max(
+        baseline_methods,
+        key=lambda method: (
+            float(claimed[method]["exact_evidence_accuracy"]),
+            float(claimed[method]["article_recall_at_1"]),
+            method,
+        ),
+    )
+    if strongest != payload.get("strongest_baseline_by_exact_evidence_accuracy"):
+        raise ValueError("LawShift strongest-baseline selection mismatch")
+    comparisons = payload.get("paired_comparisons", {})
+    expected_comparisons = {
+        "full_minus_w_o_applicability": ("frc_full", "w/o_applicability"),
+        "full_minus_strongest_baseline": ("frc_full", strongest),
+    }
+    paired_metrics = (
+        "article_recall_at_1",
+        "version_accuracy",
+        "exact_evidence_accuracy",
+        "invalid_applicability_rate",
+    )
+    for comparison_name, (left_method, right_method) in expected_comparisons.items():
+        comparison = comparisons.get(comparison_name, {})
+        if (
+            comparison.get("left") != left_method
+            or comparison.get("right") != right_method
+            or comparison.get("direction") != "left_minus_right"
+        ):
+            raise ValueError(f"LawShift comparison definition mismatch: {comparison_name}")
+        left = {row["case_id"]: row for row in grouped[left_method]}
+        right = {row["case_id"]: row for row in grouped[right_method]}
+        for metric in paired_metrics:
+            recomputed = paired_bootstrap(
+                [
+                    float(left[case_id]["metrics"][metric])
+                    - float(right[case_id]["metrics"][metric])
+                    for case_id in sorted(left)
+                ],
+                seed=20260713,
+            )
+            if recomputed != comparison.get("metrics", {}).get(metric):
+                raise ValueError(
+                    f"LawShift paired metric mismatch: {comparison_name}/{metric}"
+                )
+    full_rows = {row["case_id"]: row for row in grouped["frc_full"]}
+    without_rows = {
+        row["case_id"]: row for row in grouped["w/o_applicability"]
+    }
+    changed = sum(
+        full_rows[case_id]["selected_ids"] != without_rows[case_id]["selected_ids"]
+        for case_id in full_rows
+    )
+    if int(payload.get("selection_changed_cases", -1)) != changed:
+        raise ValueError("LawShift changed-selection count mismatch")
+    coverage = payload.get("coverage", {})
+    if (
+        coverage.get("version_replacement")
+        != "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL"
+        or coverage.get("original_and_revised_snapshots") != "IDENTIFIABLE"
+        or coverage.get("effective_or_expiry_dates")
+        != "NOT_IDENTIFIABLE_NO_EFFECTIVE_DATES"
+    ):
+        raise ValueError("LawShift temporal coverage boundary mismatch")
+    decision = payload.get("decision", {})
+    applicability_difference = comparisons["full_minus_w_o_applicability"]["metrics"][
+        "exact_evidence_accuracy"
+    ]
+    baseline_difference = comparisons["full_minus_strongest_baseline"]["metrics"][
+        "exact_evidence_accuracy"
+    ]
+    if decision.get("full_strictly_better_than_w_o_applicability") is not (
+        float(applicability_difference["mean_difference"]) > 0.0
+    ):
+        raise ValueError("LawShift applicability superiority decision mismatch")
+    if decision.get("full_exact_gain_over_strongest_baseline_at_least_0_05") is not (
+        float(baseline_difference["mean_difference"]) >= 0.05
+    ):
+        raise ValueError("LawShift strongest-baseline decision mismatch")
+    if decision.get("gate_2") != "NO-GO":
+        raise ValueError("LawShift ablation must not independently promote Gate 2")
+    return {
+        "status": "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL",
+        "metadata": metadata,
+        "coverage": coverage,
+        "aggregates": claimed,
+        "by_revision_type": payload.get("by_revision_type", []),
+        "strongest_baseline": strongest,
+        "paired_comparisons": comparisons,
+        "selection_changed_cases": changed,
+        "decision": decision,
+        "limitations": payload.get("limitations", []),
+        "source_sha256": sha256(path),
+    }
+
+
 def load_ablation_audit(
     path: Path,
     supplemental_paths: Iterable[Path] = (),
@@ -716,6 +1217,8 @@ def build_design_experiment_audit(
     chunk_length_sensitivity_path: Path | None = None,
     controlled_domain_sensitivity_path: Path | None = None,
     conflicts_ablation_path: Path | None = None,
+    housing_ablation_path: Path | None = None,
+    lawshift_ablation_path: Path | None = None,
 ) -> dict[str, Any]:
     supplemental_paths = tuple(supplemental_ablation_paths)
     ablation = load_ablation_audit(
@@ -763,6 +1266,50 @@ def build_design_experiment_audit(
         }
     )
     conflicts_ablation_status = conflicts_ablation["status"]
+    housing_ablation = (
+        load_housing_real_model_ablation(housing_ablation_path)
+        if housing_ablation_path
+        else {
+            "status": "NOT_RUN",
+            "interpretation": (
+                "no public expert HousingQA field/jurisdiction ablation artifact was supplied"
+            ),
+        }
+    )
+    housing_ablation_status = housing_ablation["status"]
+    housing_run = (
+        housing_ablation_status == "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021"
+    )
+    lawshift_ablation = (
+        load_lawshift_temporal_ablation(lawshift_ablation_path)
+        if lawshift_ablation_path
+        else {
+            "status": "NOT_RUN",
+            "interpretation": (
+                "no public expert-reviewed LawShift version-replacement artifact was supplied"
+            ),
+        }
+    )
+    lawshift_ablation_status = lawshift_ablation["status"]
+    lawshift_run = (
+        lawshift_ablation_status
+        == "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL"
+    )
+    version_replacement_status = (
+        lawshift_ablation.get("coverage", {}).get("version_replacement")
+        if lawshift_run
+        else "NOT_RUN"
+    )
+    expiry_status = (
+        lawshift_ablation.get("coverage", {}).get("effective_or_expiry_dates")
+        if lawshift_run
+        else "NOT_RUN"
+    )
+    applicability_complete = (
+        housing_run
+        and lawshift_run
+        and expiry_status == "RUN_PUBLIC_EXPERT_REAL_EFFECTIVE_DATES"
+    )
     combined_run_variants = sorted(
         {
             *ablation["run_variants"],
@@ -771,6 +1318,8 @@ def build_design_experiment_audit(
                 if conflicts_ablation_status == "RUN_REAL_MODEL_CONFLICTS"
                 else []
             ),
+            *(["w/o_field"] if housing_run else []),
+            *(["w/o_applicability"] if housing_run or lawshift_run else []),
         }
     )
     schema_audit["variants"]["w/o_conflict"] = (
@@ -784,6 +1333,36 @@ def build_design_experiment_audit(
         if conflicts_ablation_status == "RUN_REAL_MODEL_CONFLICTS"
         else schema_audit["variants"]["w/o_conflict"]
     )
+    if housing_run:
+        schema_audit["variants"]["w/o_field"] = {
+            "status": "RUN_PUBLIC_EXPERT_REAL_MODEL",
+            "reason": (
+                "HousingQA supplies expert questions and supporting statutes; four independent "
+                "questions are deterministically composed into fields and evaluated with frozen "
+                "BGE, Cross-Encoder, and local Qwen models"
+            ),
+        }
+    if housing_run or lawshift_run:
+        schema_audit["variants"]["w/o_applicability"] = {
+            "status": (
+                "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_AND_REVISION"
+                if housing_run and lawshift_run
+                else "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021"
+                if housing_run
+                else "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL"
+            ),
+            "reason": (
+                "HousingQA identifies jurisdiction filtering under its 2021 snapshot; LawShift "
+                "identifies expert-reviewed before/after statutory replacement. Neither supplies "
+                "authoritative effective or expiry dates."
+                if housing_run and lawshift_run
+                else "HousingQA identifies jurisdiction filtering under its official 2021 snapshot; "
+                "it does not identify version replacement or expiry behavior"
+                if housing_run
+                else "LawShift identifies expert-reviewed before/after statutory replacement but "
+                "does not supply authoritative effective or expiry dates"
+            ),
+        }
     controlled_only_status = (
         "RUN_CONTROLLED_DOMAIN_PUBLIC_SCHEMA_BLOCKED"
         if controlled_status == "RUN_CONTROLLED_DOMAIN"
@@ -814,17 +1393,43 @@ def build_design_experiment_audit(
         "chunk_length_sensitivity": chunk_lengths,
         "controlled_domain_sensitivity": controlled_sensitivity,
         "conflicts_real_model_ablation": conflicts_ablation,
+        "housing_real_model_ablation": housing_ablation,
+        "lawshift_temporal_ablation": lawshift_ablation,
         "combined_ablation_coverage": {
             "planned_variants": list(PLANNED_ABLATIONS),
             "run_variants": combined_run_variants,
             "run_count": len(combined_run_variants),
             "planned_count": len(PLANNED_ABLATIONS),
             "missing_variants": sorted(set(PLANNED_ABLATIONS) - set(combined_run_variants)),
+            "scope_qualifications": {
+                "w/o_field": (
+                    "public expert HousingQA composite fields"
+                    if housing_run
+                    else "not run on an identifiable public expert field schema"
+                ),
+                "w/o_applicability": (
+                    "HousingQA jurisdiction plus LawShift expert-reviewed before/after revisions; "
+                    "authoritative effective/expiry dates untested"
+                    if housing_run and lawshift_run
+                    else "jurisdiction only under the HousingQA 2021 snapshot; version/expiry untested"
+                    if housing_run
+                    else "before/after LawShift revisions only; jurisdiction and expiry untested"
+                    if lawshift_run
+                    else "not run on an identifiable public applicability schema"
+                ),
+            },
+        },
+        "applicability_identifiability": {
+            "jurisdiction": "RUN_PUBLIC_EXPERT_REAL_MODEL" if housing_run else "NOT_RUN",
+            "version_replacement": version_replacement_status,
+            "effective_or_expiry_dates": expiry_status,
+            "complete": applicability_complete,
         },
         "sensitivity_coverage": sensitivity_coverage,
         "coverage_complete": (
             len(combined_run_variants) == len(PLANNED_ABLATIONS)
             and all(status == "RUN" for status in sensitivity_coverage.values())
+            and applicability_complete
         ),
         "interpretation": (
             f"Real-model artifacts cover {len(combined_run_variants)} of nine planned FRC ablations, "
@@ -832,8 +1437,11 @@ def build_design_experiment_audit(
             "multi-ratio missing-evidence diagnostics. Chunk-length status is "
             f"{chunk_lengths['status']}; controlled field/role/conflict sensitivity status is "
             f"{controlled_status}; public CONFLICTS ablation status is {conflicts_ablation_status}. "
-            "Schema-blocked public dimensions remain unrun rather "
-            "than being inferred from unrelated metrics or treated as passes."
+            f"public HousingQA field/jurisdiction ablation status is {housing_ablation_status}. "
+            f"public LawShift version-replacement status is {lawshift_ablation_status}. "
+            "Even when all nine named variants have an execution artifact across compatible "
+            "datasets, authoritative effective/expiry-date applicability and real flood-domain "
+            "expert validity remain incomplete."
         ),
     }
 
@@ -1410,6 +2018,8 @@ def build_public_reference_report(
     chunk_length_sensitivity_path: Path | None = None,
     controlled_domain_sensitivity_path: Path | None = None,
     conflicts_ablation_path: Path | None = None,
+    housing_ablation_path: Path | None = None,
+    lawshift_ablation_path: Path | None = None,
 ) -> dict[str, Any]:
     output = reference_root / "outputs"
     metrics_dir = output / "metrics"
@@ -1454,14 +2064,26 @@ def build_public_reference_report(
         chunk_length_sensitivity_path,
         controlled_domain_sensitivity_path,
         conflicts_ablation_path,
+        housing_ablation_path,
+        lawshift_ablation_path,
     )
     ablation_gate = experiment_audit["ablation"]["gate_required_comparison"]
+    housing_ablation = experiment_audit["housing_real_model_ablation"]
+    housing_run = (
+        housing_ablation["status"]
+        == "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021"
+    )
+    lawshift_ablation = experiment_audit["lawshift_temporal_ablation"]
+    lawshift_run = (
+        lawshift_ablation["status"]
+        == "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL"
+    )
     limitations = [
         "The report imports existing real-model artifacts and recomputes paired evidence metrics; it does not retrain models.",
         "The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.",
         "ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.",
         "The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.",
-        "The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed. Field/role-weight sensitivity is controlled-domain only. Conflict-threshold sensitivity is now public real-model evidence on CONFLICTS but remains post hoc and does not supply field or applicability labels.",
+        "The nine named ablation variants now have execution artifacts across compatible public datasets, but this is not complete construct coverage: HousingQA identifies jurisdiction under a single 2021 snapshot, LawShift identifies expert-reviewed hypothetical before/after revisions without authoritative effective/expiry dates, and field/role-weight sensitivity is controlled-domain only.",
     ]
     if conflict_run:
         limitations.append(
@@ -1471,6 +2093,10 @@ def build_public_reference_report(
         limitations.append(
             "CONFLICTS metrics remain NOT_RUN until the official file and an equal-scoring pass are available."
         )
+    if housing_run:
+        limitations.extend(housing_ablation.get("limitations", []))
+    if lawshift_run:
+        limitations.extend(lawshift_ablation.get("limitations", []))
     return {
         "metadata": {
             "name": "FRC-Select public-dataset real-model reference audit",
@@ -1497,17 +2123,51 @@ def build_public_reference_report(
                 output / "role_scores" / "role_scores_conditionalqa.jsonl"
             ),
             "conflict_and_stale": conflict,
+            "field_and_jurisdiction_applicability": {
+                "status": housing_ablation["status"] if housing_run else "NOT_RUN",
+                "dataset": "reglab/housing_qa" if housing_run else None,
+                "cases": housing_ablation.get("metadata", {}).get("case_count"),
+                "fields": housing_ablation.get("metadata", {}).get("field_count"),
+                "jurisdictions": housing_ablation.get("metadata", {}).get(
+                    "jurisdiction_count"
+                ),
+                "snapshot_year": housing_ablation.get("metadata", {}).get("snapshot_year"),
+                "version_or_expiry": housing_ablation.get("coverage", {}).get(
+                    "version_or_expiry_variation"
+                ),
+            },
+            "version_replacement_applicability": {
+                "status": lawshift_ablation["status"] if lawshift_run else "NOT_RUN",
+                "dataset": "triangularPeach/LawShift" if lawshift_run else None,
+                "cases": lawshift_ablation.get("metadata", {}).get("case_count"),
+                "revision_types": lawshift_ablation.get("metadata", {}).get(
+                    "revision_type_count"
+                ),
+                "effective_or_expiry_dates": lawshift_ablation.get("coverage", {}).get(
+                    "effective_or_expiry_dates"
+                ),
+            },
         },
         "decision": {
             "status": "THEORETICAL_PIPELINE_FEASIBLE_BUT_SUPERIORITY_NOT_PROVEN",
             "pipeline_feasible": True,
             "evidence_f1_superiority_on_all_primary_datasets": superiority,
-            "full_outperforms_w_o_role_and_w_o_field": ablation_gate["passed"],
+            "full_outperforms_w_o_role_and_w_o_field": (
+                ablation_gate["full_beats_w_o_role"]
+                and housing_run
+                and housing_ablation["decision"][
+                    "full_strictly_better_than_w_o_field"
+                ]
+            ),
             "design_16_2_experiment_coverage_complete": experiment_audit["coverage_complete"],
             "gate_2": "NO-GO",
             "reason": (
                 "real-model FRC runs are reproducible, but paired confidence intervals do not establish "
-                "consistent superiority; Full does not outperform w/o Role and w/o Field is schema-blocked on the primary public artifacts; "
+                "consistent superiority; Full does not outperform w/o Role; HousingQA Full does "
+                "outperform w/o Field but ties the strongest field-decomposition baseline, and "
+                "LawShift Full improves exact version evidence over w/o Applicability but ties "
+                "the fair applicability-filtered Cross-Encoder baseline and has no authoritative "
+                "effective/expiry dates; "
                 "the CONFLICTS Full variant also does not outperform w/o Conflict; "
                 "CONFLICTS is run but does not reproduce the paper's independent expected-behavior "
                 "adherence judgment"
@@ -1550,6 +2210,8 @@ def render_public_reference_markdown(report: dict[str, Any]) -> str:
     ablation = experiment["ablation"]
     combined_ablation = experiment["combined_ablation_coverage"]
     conflicts_ablation = experiment["conflicts_real_model_ablation"]
+    housing_ablation = experiment["housing_real_model_ablation"]
+    lawshift_ablation = experiment["lawshift_temporal_ablation"]
     lines.extend(
         [
             "",
@@ -1570,6 +2232,16 @@ def render_public_reference_markdown(report: dict[str, Any]) -> str:
             )
         elif variant == "w/o_conflict" and conflicts_ablation["status"] == "RUN_REAL_MODEL_CONFLICTS":
             lines.append("| w/o_conflict | RUN_REAL_MODEL_CONFLICTS | — | — |")
+        elif (
+            variant in {"w/o_field", "w/o_applicability"}
+            and housing_ablation["status"]
+            == "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021"
+        ):
+            housing_variant = housing_ablation["aggregates"][variant]
+            lines.append(
+                f"| {variant} | {housing_ablation['coverage'][variant]} | "
+                f"{housing_variant['evidence_f1']:.6f} | — |"
+            )
         else:
             lines.append(f"| {variant} | NOT_RUN | — | — |")
     wo_reranker_source = ablation["supplemental_sources"].get("w/o_reranker")
@@ -1605,6 +2277,82 @@ def render_public_reference_markdown(report: dict[str, Any]) -> str:
                 f"Full−`w/o Conflict` 准确率差值为 {paired['mean_difference']:+.6f}，95% CI="
                 f"[{paired['ci_low']:+.6f}, {paired['ci_high']:+.6f}]。该结果不证明 Full 更优，"
                 "也不替代独立 expected-behavior adherence 评判。",
+            ]
+        )
+    if (
+        housing_ablation["status"]
+        == "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021"
+    ):
+        housing_full = housing_ablation["aggregates"]["frc_full"]
+        housing_without_field = housing_ablation["aggregates"]["w/o_field"]
+        housing_without_applicability = housing_ablation["aggregates"][
+            "w/o_applicability"
+        ]
+        housing_field_pair = housing_ablation["paired_comparisons"][
+            "full_minus_w_o_field"
+        ]["metrics"]["field_coverage"]
+        housing_applicability_pair = housing_ablation["paired_comparisons"][
+            "full_minus_w_o_applicability"
+        ]["metrics"]
+        housing_baseline_pair = housing_ablation["paired_comparisons"][
+            "full_minus_strongest_baseline"
+        ]["metrics"]["field_coverage"]
+        lines.extend(
+            [
+                "",
+                "### `w/o Field` 与 `w/o Applicability`（HousingQA，公开专家标注，真实模型）",
+                "",
+                "40 个确定性复合用例包含 160 个任务字段、22 个司法辖区；每个字段的正确答案与支持法条仅用于事后评分。"
+                "适用性消融只识别 2021 快照下的司法辖区过滤，不能识别法规版本替换或失效。",
+                "",
+                "| 版本 | Field Coverage | Citation Support Precision | Wrong-jurisdiction Rate | Answer Accuracy |",
+                "|---|---:|---:|---:|---:|",
+                f"| Full | {housing_full['field_coverage']:.6f} | {housing_full['citation_support_precision']:.6f} | {housing_full['wrong_jurisdiction_rate']:.6f} | {housing_full['answer_accuracy']:.6f} |",
+                f"| w/o Field | {housing_without_field['field_coverage']:.6f} | {housing_without_field['citation_support_precision']:.6f} | {housing_without_field['wrong_jurisdiction_rate']:.6f} | {housing_without_field['answer_accuracy']:.6f} |",
+                f"| w/o Applicability | {housing_without_applicability['field_coverage']:.6f} | {housing_without_applicability['citation_support_precision']:.6f} | {housing_without_applicability['wrong_jurisdiction_rate']:.6f} | {housing_without_applicability['answer_accuracy']:.6f} |",
+                "",
+                f"Full−w/o Field 的字段覆盖差值为 {housing_field_pair['mean_difference']:+.6f}，95% CI=[{housing_field_pair['ci_low']:+.6f}, {housing_field_pair['ci_high']:+.6f}]；"
+                f"Full−w/o Applicability 的字段覆盖差值为 {housing_applicability_pair['field_coverage']['mean_difference']:+.6f}，"
+                f"错误司法辖区率差值为 {housing_applicability_pair['wrong_jurisdiction_rate']['mean_difference']:+.6f}。",
+                f"最强字段覆盖基线为 `{housing_ablation['strongest_baseline']}`；Full 相对其字段覆盖差值为 "
+                f"{housing_baseline_pair['mean_difference']:+.6f}，未达到 Gate 2 要求的 +0.05。",
+            ]
+        )
+    if (
+        lawshift_ablation["status"]
+        == "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL"
+    ):
+        lawshift_full = lawshift_ablation["aggregates"]["frc_full"]
+        lawshift_without = lawshift_ablation["aggregates"]["w/o_applicability"]
+        lawshift_filtered = lawshift_ablation["aggregates"][
+            "applicability_filtered_cross_encoder_top1"
+        ]
+        lawshift_pair = lawshift_ablation["paired_comparisons"][
+            "full_minus_w_o_applicability"
+        ]["metrics"]
+        lawshift_baseline_pair = lawshift_ablation["paired_comparisons"][
+            "full_minus_strongest_baseline"
+        ]["metrics"]["exact_evidence_accuracy"]
+        lines.extend(
+            [
+                "",
+                "### `w/o Applicability`（LawShift，31 类专家审阅修订，真实重排）",
+                "",
+                "124 个用例平衡覆盖修订前/后快照；候选池同时包含目标法条两个版本和三对词法难负例。"
+                "法条版本是专家审阅的假设修订，不含权威生效或失效日期。",
+                "",
+                "| 版本 | Article Recall@1 | Version Accuracy | Exact Evidence Accuracy | Invalid Applicability |",
+                "|---|---:|---:|---:|---:|",
+                f"| Full | {lawshift_full['article_recall_at_1']:.6f} | {lawshift_full['version_accuracy']:.6f} | {lawshift_full['exact_evidence_accuracy']:.6f} | {lawshift_full['invalid_applicability_rate']:.6f} |",
+                f"| w/o Applicability | {lawshift_without['article_recall_at_1']:.6f} | {lawshift_without['version_accuracy']:.6f} | {lawshift_without['exact_evidence_accuracy']:.6f} | {lawshift_without['invalid_applicability_rate']:.6f} |",
+                f"| Applicability-filtered Cross-Encoder | {lawshift_filtered['article_recall_at_1']:.6f} | {lawshift_filtered['version_accuracy']:.6f} | {lawshift_filtered['exact_evidence_accuracy']:.6f} | {lawshift_filtered['invalid_applicability_rate']:.6f} |",
+                "",
+                f"Full−w/o Applicability 的精确版本证据差值为 {lawshift_pair['exact_evidence_accuracy']['mean_difference']:+.6f}，"
+                f"95% CI=[{lawshift_pair['exact_evidence_accuracy']['ci_low']:+.6f}, {lawshift_pair['exact_evidence_accuracy']['ci_high']:+.6f}]；"
+                f"错误版本率差值为 {lawshift_pair['invalid_applicability_rate']['mean_difference']:+.6f}。",
+                f"Full 的 Article Recall@1 相对无过滤版本差值为 {lawshift_pair['article_recall_at_1']['mean_difference']:+.6f}；"
+                f"相对公平过滤基线的精确版本证据差值为 {lawshift_baseline_pair['mean_difference']:+.6f}。"
+                "因此版本过滤有效，但 FRC 独有优势未获证明。",
             ]
         )
     schema_audit = experiment["ablation_schema_applicability"]

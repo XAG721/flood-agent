@@ -1875,12 +1875,12 @@
       },
       "variants": {
         "w/o_field": {
-          "status": "SCHEMA_BLOCKED",
-          "reason": "public artifacts contain neither required field schemas nor candidate field_scores"
+          "status": "RUN_PUBLIC_EXPERT_REAL_MODEL",
+          "reason": "HousingQA supplies expert questions and supporting statutes; four independent questions are deterministically composed into fields and evaluated with frozen BGE, Cross-Encoder, and local Qwen models"
         },
         "w/o_applicability": {
-          "status": "SCHEMA_BLOCKED",
-          "reason": "public artifacts contain no standardized applicability/version/jurisdiction/effective-period fields"
+          "status": "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_AND_REVISION",
+          "reason": "HousingQA identifies jurisdiction filtering under its 2021 snapshot; LawShift identifies expert-reviewed before/after statutory replacement. Neither supplies authoritative effective or expiry dates."
         },
         "w/o_conflict": {
           "status": "RUN_REAL_MODEL_CONFLICTS",
@@ -3019,6 +3019,701 @@
       ],
       "source_sha256": "f3d73309005e7ba6d1baf7d3a0f5365954fd3463c1a4037f6cecc075552aca31"
     },
+    "housing_real_model_ablation": {
+      "status": "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021",
+      "metadata": {
+        "public_dataset": true,
+        "expert_annotated_supporting_statutes": true,
+        "source_repository": "reglab/housing_qa",
+        "source_revision": "761550cc974fa1d9141ffd39014db89efa2a7230",
+        "source_url": "https://huggingface.co/datasets/reglab/housing_qa/resolve/761550cc974fa1d9141ffd39014db89efa2a7230/data/questions.json.zip?download=true",
+        "source_license": "CC-BY-SA-4.0",
+        "source_json_sha256": "4f6eb35e1b865a6c5cfd0cf73a0b514a86bd1d8306bf6719f2b4fb94793c7e4b",
+        "source_zip_sha256": "7e7722c267d44ecc1f9f52d69109116d8a0a352b89f002438585872f67de9985",
+        "scored_cases_sha256": "2f7b25941f436e39d58521ff6604376837f093d9d061d413e335e4b321383d52",
+        "case_count": 40,
+        "field_count": 160,
+        "jurisdiction_count": 22,
+        "snapshot_year": 2021,
+        "candidate_occurrences": 400,
+        "methods": [
+          "bm25_topk",
+          "dense_topk",
+          "hybrid_topk",
+          "cross_encoder_topk",
+          "field_decomposition_topk",
+          "frc_full",
+          "w/o_field",
+          "w/o_applicability"
+        ],
+        "models": {
+          "embedding": "BAAI/bge-large-en-v1.5",
+          "reranker": "BAAI/bge-reranker-large",
+          "generator": "Qwen2.5-7B-Instruct-GPTQ-Int4"
+        },
+        "real_model_scores": true,
+        "generator": "local_qwen",
+        "selection_parameters": {
+          "top_k": 4,
+          "token_budget": 1200,
+          "field_threshold": 0.55,
+          "role_threshold": 0.55,
+          "field_weight": 2.0,
+          "role_weight": 1.0
+        },
+        "frozen_protocol": "deterministically selected jurisdiction-rounds form composite cases; four original expert questions become task fields; each field has one annotated statute; same-field opposite-answer statutes from other jurisdictions are hard negatives",
+        "gold_usage": "expected answers and field_evidence_map are used only after selection and generation for scoring; neither is included in scorer queries or generator prompts",
+        "manifest_sha256": "3b73c422d0ea25315e516bc167ac1558fa1bdc6373544deda0142e45b5dbfde5",
+        "prediction_provenance": {
+          "total_method_rows": 320,
+          "unique_case_selection_prompts": 232,
+          "equivalent_selection_reuse_rows": 88
+        }
+      },
+      "coverage": {
+        "w/o_field": "RUN_PUBLIC_EXPERT_REAL_MODEL",
+        "w/o_applicability": "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021",
+        "jurisdiction": "IDENTIFIABLE",
+        "snapshot_year": "FROZEN_2021",
+        "version_or_expiry_variation": "NOT_IDENTIFIABLE_SINGLE_SNAPSHOT"
+      },
+      "aggregates": {
+        "bm25_topk": {
+          "cases": 40,
+          "evidence_recall": 0.64375,
+          "evidence_precision": 0.64375,
+          "evidence_f1": 0.64375,
+          "field_coverage": 0.64375,
+          "core_field_coverage": 0.64375,
+          "citation_support_precision": 0.64375,
+          "unsupported_field_rate": 0.35625,
+          "wrong_jurisdiction_rate": 0.0,
+          "wrong_jurisdiction_case": 0.0,
+          "answer_accuracy": 0.30625,
+          "valid_answer_rate": 1.0,
+          "case_accuracy": 0.0,
+          "token_cost": 458.725
+        },
+        "dense_topk": {
+          "cases": 40,
+          "evidence_recall": 0.7,
+          "evidence_precision": 0.7,
+          "evidence_f1": 0.7,
+          "field_coverage": 0.7,
+          "core_field_coverage": 0.7,
+          "citation_support_precision": 0.7,
+          "unsupported_field_rate": 0.3,
+          "wrong_jurisdiction_rate": 0.0,
+          "wrong_jurisdiction_case": 0.0,
+          "answer_accuracy": 0.325,
+          "valid_answer_rate": 1.0,
+          "case_accuracy": 0.0,
+          "token_cost": 428.975
+        },
+        "hybrid_topk": {
+          "cases": 40,
+          "evidence_recall": 0.68125,
+          "evidence_precision": 0.68125,
+          "evidence_f1": 0.68125,
+          "field_coverage": 0.68125,
+          "core_field_coverage": 0.68125,
+          "citation_support_precision": 0.68125,
+          "unsupported_field_rate": 0.31875,
+          "wrong_jurisdiction_rate": 0.0,
+          "wrong_jurisdiction_case": 0.0,
+          "answer_accuracy": 0.31875,
+          "valid_answer_rate": 1.0,
+          "case_accuracy": 0.0,
+          "token_cost": 454.925
+        },
+        "cross_encoder_topk": {
+          "cases": 40,
+          "evidence_recall": 0.65,
+          "evidence_precision": 0.65,
+          "evidence_f1": 0.65,
+          "field_coverage": 0.65,
+          "core_field_coverage": 0.65,
+          "citation_support_precision": 0.65,
+          "unsupported_field_rate": 0.35,
+          "wrong_jurisdiction_rate": 0.0,
+          "wrong_jurisdiction_case": 0.0,
+          "answer_accuracy": 0.3125,
+          "valid_answer_rate": 1.0,
+          "case_accuracy": 0.0,
+          "token_cost": 395.875
+        },
+        "field_decomposition_topk": {
+          "cases": 40,
+          "evidence_recall": 0.70625,
+          "evidence_precision": 0.70625,
+          "evidence_f1": 0.70625,
+          "field_coverage": 0.70625,
+          "core_field_coverage": 0.70625,
+          "citation_support_precision": 0.70625,
+          "unsupported_field_rate": 0.29375,
+          "wrong_jurisdiction_rate": 0.0,
+          "wrong_jurisdiction_case": 0.0,
+          "answer_accuracy": 0.31875,
+          "valid_answer_rate": 1.0,
+          "case_accuracy": 0.0,
+          "token_cost": 398.85
+        },
+        "frc_full": {
+          "cases": 40,
+          "evidence_recall": 0.70625,
+          "evidence_precision": 0.70625,
+          "evidence_f1": 0.70625,
+          "field_coverage": 0.70625,
+          "core_field_coverage": 0.70625,
+          "citation_support_precision": 0.70625,
+          "unsupported_field_rate": 0.29375,
+          "wrong_jurisdiction_rate": 0.0,
+          "wrong_jurisdiction_case": 0.0,
+          "answer_accuracy": 0.30625,
+          "valid_answer_rate": 1.0,
+          "case_accuracy": 0.0,
+          "token_cost": 401.0
+        },
+        "w/o_field": {
+          "cases": 40,
+          "evidence_recall": 0.65625,
+          "evidence_precision": 0.65625,
+          "evidence_f1": 0.65625,
+          "field_coverage": 0.65625,
+          "core_field_coverage": 0.65625,
+          "citation_support_precision": 0.65625,
+          "unsupported_field_rate": 0.34375,
+          "wrong_jurisdiction_rate": 0.0,
+          "wrong_jurisdiction_case": 0.0,
+          "answer_accuracy": 0.3125,
+          "valid_answer_rate": 1.0,
+          "case_accuracy": 0.0,
+          "token_cost": 398.875
+        },
+        "w/o_applicability": {
+          "cases": 40,
+          "evidence_recall": 0.53125,
+          "evidence_precision": 0.53125,
+          "evidence_f1": 0.53125,
+          "field_coverage": 0.53125,
+          "core_field_coverage": 0.53125,
+          "citation_support_precision": 0.53125,
+          "unsupported_field_rate": 0.46875,
+          "wrong_jurisdiction_rate": 0.275,
+          "wrong_jurisdiction_case": 0.775,
+          "answer_accuracy": 0.3375,
+          "valid_answer_rate": 1.0,
+          "case_accuracy": 0.0,
+          "token_cost": 410.35
+        }
+      },
+      "strongest_baseline": "field_decomposition_topk",
+      "paired_comparisons": {
+        "full_minus_w_o_field": {
+          "left": "frc_full",
+          "right": "w/o_field",
+          "direction": "left_minus_right",
+          "metrics": {
+            "evidence_f1": {
+              "cases": 40,
+              "mean_difference": 0.05,
+              "ci_low": 0.01875,
+              "ci_high": 0.0875
+            },
+            "field_coverage": {
+              "cases": 40,
+              "mean_difference": 0.05,
+              "ci_low": 0.01875,
+              "ci_high": 0.0875
+            },
+            "citation_support_precision": {
+              "cases": 40,
+              "mean_difference": 0.05,
+              "ci_low": 0.01875,
+              "ci_high": 0.0875
+            },
+            "answer_accuracy": {
+              "cases": 40,
+              "mean_difference": -0.00625,
+              "ci_low": -0.05,
+              "ci_high": 0.04375
+            },
+            "case_accuracy": {
+              "cases": 40,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "wrong_jurisdiction_rate": {
+              "cases": 40,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            }
+          }
+        },
+        "full_minus_w_o_applicability": {
+          "left": "frc_full",
+          "right": "w/o_applicability",
+          "direction": "left_minus_right",
+          "metrics": {
+            "evidence_f1": {
+              "cases": 40,
+              "mean_difference": 0.175,
+              "ci_low": 0.125,
+              "ci_high": 0.225
+            },
+            "field_coverage": {
+              "cases": 40,
+              "mean_difference": 0.175,
+              "ci_low": 0.125,
+              "ci_high": 0.225
+            },
+            "citation_support_precision": {
+              "cases": 40,
+              "mean_difference": 0.175,
+              "ci_low": 0.125,
+              "ci_high": 0.225
+            },
+            "answer_accuracy": {
+              "cases": 40,
+              "mean_difference": -0.03125,
+              "ci_low": -0.08125,
+              "ci_high": 0.0125
+            },
+            "case_accuracy": {
+              "cases": 40,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "wrong_jurisdiction_rate": {
+              "cases": 40,
+              "mean_difference": -0.275,
+              "ci_low": -0.3375,
+              "ci_high": -0.2125
+            }
+          }
+        },
+        "full_minus_strongest_baseline": {
+          "left": "frc_full",
+          "right": "field_decomposition_topk",
+          "direction": "left_minus_right",
+          "metrics": {
+            "evidence_f1": {
+              "cases": 40,
+              "mean_difference": 0.0,
+              "ci_low": -0.01875,
+              "ci_high": 0.01875
+            },
+            "field_coverage": {
+              "cases": 40,
+              "mean_difference": 0.0,
+              "ci_low": -0.01875,
+              "ci_high": 0.01875
+            },
+            "citation_support_precision": {
+              "cases": 40,
+              "mean_difference": 0.0,
+              "ci_low": -0.01875,
+              "ci_high": 0.01875
+            },
+            "answer_accuracy": {
+              "cases": 40,
+              "mean_difference": -0.0125,
+              "ci_low": -0.03125,
+              "ci_high": 0.0
+            },
+            "case_accuracy": {
+              "cases": 40,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "wrong_jurisdiction_rate": {
+              "cases": 40,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            }
+          }
+        }
+      },
+      "selection_changed_cases": {
+        "w/o_field": 29,
+        "w/o_applicability": 31
+      },
+      "decision": {
+        "full_strictly_better_than_w_o_field": true,
+        "full_w_o_field_ci_excludes_zero": true,
+        "full_field_coverage_gain_over_strongest_baseline_at_least_0_05": false,
+        "gate_2": "NO-GO",
+        "reason": "This public expert benchmark can test field coverage and jurisdiction filtering, but a single 2021 snapshot cannot identify version/expiry behavior and the cross-domain result cannot override the existing failed public comparisons."
+      },
+      "limitations": [
+        "HousingQA is a public housing-law benchmark, not a flood-response or district-government benchmark.",
+        "The public corpus is explicitly accurate as of 2021; it has no paired historical/current statute versions, so version replacement and expiry remain untested.",
+        "Composite four-field cases and hard-negative pools are deterministic transformations of expert single-question annotations, not separately expert-reviewed composite tasks.",
+        "Public model pretraining contamination cannot be excluded.",
+        "The frozen test configuration was not tuned after observing these results."
+      ],
+      "source_sha256": "439b7e4438658dad4c9e44783bf946bfca07d60bd7b1ed83a81b79e8a53e6597"
+    },
+    "lawshift_temporal_ablation": {
+      "status": "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL",
+      "metadata": {
+        "public_dataset": true,
+        "expert_annotated_revisions": true,
+        "real_model_scores": true,
+        "source_repository": "triangularPeach/LawShift",
+        "source_revision": "0fce4f3821140bde29081ae0b20500e79aa065d5",
+        "source_license": "Apache-2.0",
+        "source_file_count": 124,
+        "source_manifest_sha256": "35448c34e3d2a26504d57f1f1e0c741bc8caecf927b2126f567f158b32d08687",
+        "scored_cases_sha256": "d50ed624afc4edbeabef047a7a28c1583070f1af779e321f0cc1b3cb9e1cf0a2",
+        "case_count": 124,
+        "paired_case_count": 62,
+        "revision_type_count": 31,
+        "original_case_count": 62,
+        "revised_case_count": 62,
+        "candidate_occurrences": 992,
+        "methods": [
+          "char_bm25_top1",
+          "cross_encoder_top1",
+          "applicability_filtered_cross_encoder_top1",
+          "frc_full",
+          "w/o_applicability"
+        ],
+        "models": {
+          "reranker": "BAAI/bge-reranker-large"
+        },
+        "selection_parameters": {
+          "top_k": 1,
+          "token_budget": 512,
+          "pairs_per_revision": 2,
+          "distractor_articles": 3,
+          "seed": 20260713
+        },
+        "frozen_protocol": "two deterministic paired case indices per each of 31 expert-reviewed revision types; both original and revised snapshots are evaluated; candidate pools contain both versions of the gold article and three lexical hard-negative article pairs",
+        "gold_usage": "relevant_articles identify the gold evidence only after retrieval; facts and before/after time scope are scorer inputs, while charge and prison_time are not",
+        "case_manifest_sha256": "404a09edbe6ad88e726651e717d03556e2562b69d5f8b48112f531fb748587a3"
+      },
+      "coverage": {
+        "version_replacement": "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL",
+        "original_and_revised_snapshots": "IDENTIFIABLE",
+        "effective_or_expiry_dates": "NOT_IDENTIFIABLE_NO_EFFECTIVE_DATES"
+      },
+      "aggregates": {
+        "char_bm25_top1": {
+          "cases": 124,
+          "article_recall_at_1": 0.282258,
+          "version_accuracy": 0.572581,
+          "exact_evidence_accuracy": 0.185484,
+          "invalid_applicability_rate": 0.427419,
+          "token_cost": 109.991935
+        },
+        "cross_encoder_top1": {
+          "cases": 124,
+          "article_recall_at_1": 0.491935,
+          "version_accuracy": 0.548387,
+          "exact_evidence_accuracy": 0.290323,
+          "invalid_applicability_rate": 0.451613,
+          "token_cost": 79.782258
+        },
+        "applicability_filtered_cross_encoder_top1": {
+          "cases": 124,
+          "article_recall_at_1": 0.427419,
+          "version_accuracy": 1.0,
+          "exact_evidence_accuracy": 0.427419,
+          "invalid_applicability_rate": 0.0,
+          "token_cost": 80.064516
+        },
+        "frc_full": {
+          "cases": 124,
+          "article_recall_at_1": 0.427419,
+          "version_accuracy": 1.0,
+          "exact_evidence_accuracy": 0.427419,
+          "invalid_applicability_rate": 0.0,
+          "token_cost": 80.064516
+        },
+        "w/o_applicability": {
+          "cases": 124,
+          "article_recall_at_1": 0.491935,
+          "version_accuracy": 0.548387,
+          "exact_evidence_accuracy": 0.290323,
+          "invalid_applicability_rate": 0.451613,
+          "token_cost": 79.782258
+        }
+      },
+      "by_revision_type": [
+        {
+          "revision_type": "action_explicit_extend",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.25,
+          "w_o_applicability_exact_evidence_accuracy": 0.25
+        },
+        {
+          "revision_type": "action_explicit_reduce",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.5,
+          "w_o_applicability_exact_evidence_accuracy": 0.25
+        },
+        {
+          "revision_type": "action_implicit_expand",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 1.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.75
+        },
+        {
+          "revision_type": "action_implicit_reduce",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.75,
+          "w_o_applicability_exact_evidence_accuracy": 0.75
+        },
+        {
+          "revision_type": "action_reallocated_expand",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 1.0,
+          "w_o_applicability_exact_evidence_accuracy": 1.0
+        },
+        {
+          "revision_type": "action_reallocated_reduce",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.75,
+          "w_o_applicability_exact_evidence_accuracy": 0.75
+        },
+        {
+          "revision_type": "objCon_addition",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        },
+        {
+          "revision_type": "objCon_explicit_extend",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.5,
+          "w_o_applicability_exact_evidence_accuracy": 0.5
+        },
+        {
+          "revision_type": "objCon_implicit_expand",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        },
+        {
+          "revision_type": "objCon_implicit_reduce",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.5,
+          "w_o_applicability_exact_evidence_accuracy": 0.25
+        },
+        {
+          "revision_type": "objCon_reallocated_expand",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        },
+        {
+          "revision_type": "objCon_reallocated_reduce",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        },
+        {
+          "revision_type": "objCon_removal",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.5,
+          "w_o_applicability_exact_evidence_accuracy": 0.5
+        },
+        {
+          "revision_type": "object_explicit_extend",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.5,
+          "w_o_applicability_exact_evidence_accuracy": 0.25
+        },
+        {
+          "revision_type": "object_explicit_reduce",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.25,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        },
+        {
+          "revision_type": "object_implicit_expand",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.5,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        },
+        {
+          "revision_type": "object_implicit_reduce",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.5,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        },
+        {
+          "revision_type": "object_reallocated_expand",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 1.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.5
+        },
+        {
+          "revision_type": "object_reallocated_reduce",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.75,
+          "w_o_applicability_exact_evidence_accuracy": 0.5
+        },
+        {
+          "revision_type": "sbCon_addition",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.5,
+          "w_o_applicability_exact_evidence_accuracy": 0.5
+        },
+        {
+          "revision_type": "sbCon_removal",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.5,
+          "w_o_applicability_exact_evidence_accuracy": 0.25
+        },
+        {
+          "revision_type": "subject_explicit_extend",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        },
+        {
+          "revision_type": "subject_explicit_reduce",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        },
+        {
+          "revision_type": "subject_implicit_expand",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.5,
+          "w_o_applicability_exact_evidence_accuracy": 0.5
+        },
+        {
+          "revision_type": "subject_implicit_reduce",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        },
+        {
+          "revision_type": "subject_reallocated_expand",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.25,
+          "w_o_applicability_exact_evidence_accuracy": 0.25
+        },
+        {
+          "revision_type": "subject_reallocated_reduce",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        },
+        {
+          "revision_type": "term_down",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.5,
+          "w_o_applicability_exact_evidence_accuracy": 0.25
+        },
+        {
+          "revision_type": "term_extremity_in",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 1.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.5
+        },
+        {
+          "revision_type": "term_extremity_out",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.75,
+          "w_o_applicability_exact_evidence_accuracy": 0.5
+        },
+        {
+          "revision_type": "term_up",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        }
+      ],
+      "strongest_baseline": "applicability_filtered_cross_encoder_top1",
+      "paired_comparisons": {
+        "full_minus_w_o_applicability": {
+          "left": "frc_full",
+          "right": "w/o_applicability",
+          "direction": "left_minus_right",
+          "metrics": {
+            "article_recall_at_1": {
+              "cases": 124,
+              "mean_difference": -0.064516,
+              "ci_low": -0.112903,
+              "ci_high": -0.024194
+            },
+            "version_accuracy": {
+              "cases": 124,
+              "mean_difference": 0.451613,
+              "ci_low": 0.362903,
+              "ci_high": 0.532258
+            },
+            "exact_evidence_accuracy": {
+              "cases": 124,
+              "mean_difference": 0.137097,
+              "ci_low": 0.080645,
+              "ci_high": 0.201613
+            },
+            "invalid_applicability_rate": {
+              "cases": 124,
+              "mean_difference": -0.451613,
+              "ci_low": -0.532258,
+              "ci_high": -0.362903
+            }
+          }
+        },
+        "full_minus_strongest_baseline": {
+          "left": "frc_full",
+          "right": "applicability_filtered_cross_encoder_top1",
+          "direction": "left_minus_right",
+          "metrics": {
+            "article_recall_at_1": {
+              "cases": 124,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "version_accuracy": {
+              "cases": 124,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "exact_evidence_accuracy": {
+              "cases": 124,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "invalid_applicability_rate": {
+              "cases": 124,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            }
+          }
+        }
+      },
+      "selection_changed_cases": 56,
+      "decision": {
+        "full_strictly_better_than_w_o_applicability": true,
+        "full_exact_gain_over_strongest_baseline_at_least_0_05": false,
+        "gate_2": "NO-GO",
+        "reason": "LawShift identifies expert-reviewed before/after statutory replacement, but the fair applicability-filtered Cross-Encoder baseline uses the same validity metadata; the dataset has no effective/expiry dates and is not a flood-response benchmark."
+      },
+      "limitations": [
+        "LawShift evaluates Chinese criminal-law judgment adaptation, not flood-response or district-government evidence retrieval.",
+        "The revised statutes are expert-reviewed hypothetical revisions rather than enacted historical versions with authoritative effective dates.",
+        "The benchmark identifies before/after version replacement but cannot test exact effective or expiry dates.",
+        "The frozen candidate pool is a retrieval stress slice built from the labeled article pair plus lexical hard negatives, not the paper's original legal-judgment-prediction protocol.",
+        "Only evidence selection is evaluated; charge and sentence generation are not scored in this retrieval ablation."
+      ],
+      "source_sha256": "4145413531b35a47413e7138e2107bca1bcf8bd5c0f5bf462444cd9a099bc444"
+    },
     "combined_ablation_coverage": {
       "planned_variants": [
         "full",
@@ -3035,17 +3730,26 @@
         "full",
         "random_role",
         "role_only",
+        "w/o_applicability",
         "w/o_conflict",
+        "w/o_field",
         "w/o_redundancy",
         "w/o_reranker",
         "w/o_role"
       ],
-      "run_count": 7,
+      "run_count": 9,
       "planned_count": 9,
-      "missing_variants": [
-        "w/o_applicability",
-        "w/o_field"
-      ]
+      "missing_variants": [],
+      "scope_qualifications": {
+        "w/o_field": "public expert HousingQA composite fields",
+        "w/o_applicability": "HousingQA jurisdiction plus LawShift expert-reviewed before/after revisions; authoritative effective/expiry dates untested"
+      }
+    },
+    "applicability_identifiability": {
+      "jurisdiction": "RUN_PUBLIC_EXPERT_REAL_MODEL",
+      "version_replacement": "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL",
+      "effective_or_expiry_dates": "NOT_IDENTIFIABLE_NO_EFFECTIVE_DATES",
+      "complete": false
     },
     "sensitivity_coverage": {
       "k_2_3_5_8": "RUN",
@@ -3056,7 +3760,7 @@
       "chunk_length": "RUN"
     },
     "coverage_complete": false,
-    "interpretation": "Real-model artifacts cover 7 of nine planned FRC ablations, all K and token-budget values, a ConditionalQA role/redundancy parameter grid, and multi-ratio missing-evidence diagnostics. Chunk-length status is RUN; controlled field/role/conflict sensitivity status is RUN_CONTROLLED_DOMAIN; public CONFLICTS ablation status is RUN_REAL_MODEL_CONFLICTS. Schema-blocked public dimensions remain unrun rather than being inferred from unrelated metrics or treated as passes."
+    "interpretation": "Real-model artifacts cover 9 of nine planned FRC ablations, all K and token-budget values, a ConditionalQA role/redundancy parameter grid, and multi-ratio missing-evidence diagnostics. Chunk-length status is RUN; controlled field/role/conflict sensitivity status is RUN_CONTROLLED_DOMAIN; public CONFLICTS ablation status is RUN_REAL_MODEL_CONFLICTS. public HousingQA field/jurisdiction ablation status is RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021. public LawShift version-replacement status is RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL. Even when all nine named variants have an execution artifact across compatible datasets, authoritative effective/expiry-date applicability and real flood-domain expert validity remain incomplete."
   },
   "challenge_slices": {
     "normal": {
@@ -3165,6 +3869,22 @@
       },
       "frc_outdated_recall": 0.564516,
       "note": "CONFLICTS retrieval and label classification are reproducible, but the paper's expected-behavior adherence evaluation and independent human judging are not reproduced; classification alone cannot authorize CANARY or DEFAULT."
+    },
+    "field_and_jurisdiction_applicability": {
+      "status": "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021",
+      "dataset": "reglab/housing_qa",
+      "cases": 40,
+      "fields": 160,
+      "jurisdictions": 22,
+      "snapshot_year": 2021,
+      "version_or_expiry": "NOT_IDENTIFIABLE_SINGLE_SNAPSHOT"
+    },
+    "version_replacement_applicability": {
+      "status": "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL",
+      "dataset": "triangularPeach/LawShift",
+      "cases": 124,
+      "revision_types": 31,
+      "effective_or_expiry_dates": "NOT_IDENTIFIABLE_NO_EFFECTIVE_DATES"
     }
   },
   "decision": {
@@ -3174,14 +3894,24 @@
     "full_outperforms_w_o_role_and_w_o_field": false,
     "design_16_2_experiment_coverage_complete": false,
     "gate_2": "NO-GO",
-    "reason": "real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; Full does not outperform w/o Role and w/o Field is schema-blocked on the primary public artifacts; the CONFLICTS Full variant also does not outperform w/o Conflict; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment"
+    "reason": "real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; Full does not outperform w/o Role; HousingQA Full does outperform w/o Field but ties the strongest field-decomposition baseline, and LawShift Full improves exact version evidence over w/o Applicability but ties the fair applicability-filtered Cross-Encoder baseline and has no authoritative effective/expiry dates; the CONFLICTS Full variant also does not outperform w/o Conflict; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment"
   },
   "limitations": [
     "The report imports existing real-model artifacts and recomputes paired evidence metrics; it does not retrain models.",
     "The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.",
     "ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.",
     "The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.",
-    "The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed. Field/role-weight sensitivity is controlled-domain only. Conflict-threshold sensitivity is now public real-model evidence on CONFLICTS but remains post hoc and does not supply field or applicability labels.",
-    "CONFLICTS conflict-type classification is complete, but the paper's expected-behavior adherence metric and independent human judging are not reproduced."
+    "The nine named ablation variants now have execution artifacts across compatible public datasets, but this is not complete construct coverage: HousingQA identifies jurisdiction under a single 2021 snapshot, LawShift identifies expert-reviewed hypothetical before/after revisions without authoritative effective/expiry dates, and field/role-weight sensitivity is controlled-domain only.",
+    "CONFLICTS conflict-type classification is complete, but the paper's expected-behavior adherence metric and independent human judging are not reproduced.",
+    "HousingQA is a public housing-law benchmark, not a flood-response or district-government benchmark.",
+    "The public corpus is explicitly accurate as of 2021; it has no paired historical/current statute versions, so version replacement and expiry remain untested.",
+    "Composite four-field cases and hard-negative pools are deterministic transformations of expert single-question annotations, not separately expert-reviewed composite tasks.",
+    "Public model pretraining contamination cannot be excluded.",
+    "The frozen test configuration was not tuned after observing these results.",
+    "LawShift evaluates Chinese criminal-law judgment adaptation, not flood-response or district-government evidence retrieval.",
+    "The revised statutes are expert-reviewed hypothetical revisions rather than enacted historical versions with authoritative effective dates.",
+    "The benchmark identifies before/after version replacement but cannot test exact effective or expiry dates.",
+    "The frozen candidate pool is a retrieval stress slice built from the labeled article pair plus lexical hard negatives, not the paper's original legal-judgment-prediction protocol.",
+    "Only evidence selection is evaluated; charge and sentence generation are not scored in this retrieval ablation."
   ]
 }

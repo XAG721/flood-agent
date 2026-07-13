@@ -288,13 +288,20 @@ python scripts/run_frc_chunk_length_sensitivity.py `
   --chunk-lengths 64,128,256 --overlap-ratio 0.2
 D:\anaconda3\envs\rag_exp\python.exe -m scripts.run_conflicts_frc_ablation `
   --generator-model-path D:\RAG_test\.hf_cache\local_models\Qwen2.5-7B-Instruct-GPTQ-Int4
+D:\anaconda3\envs\rag_exp\python.exe -m scripts.run_housing_frc_ablation `
+  --hf-home D:\RAG_test\.hf_cache `
+  --generator-model-path D:\RAG_test\.hf_cache\local_models\Qwen2.5-7B-Instruct-GPTQ-Int4
+D:\anaconda3\envs\rag_exp\python.exe -m scripts.run_lawshift_temporal_ablation `
+  --hf-home D:\RAG_test\.hf_cache
 python scripts/import_frc_public_reference.py `
   --reference-root D:\RAG_test\frc-select `
   --conflicts-path output\rag_evaluation\conflicts_frc\conflicts_frc_report.json `
   --supplemental-ablation output\rag_evaluation\public_frc_reference\wo_reranker_conditionalqa.json `
   --chunk-length-sensitivity output\rag_evaluation\public_frc_reference\chunk_length_sensitivity_conditionalqa.json `
   --controlled-domain-sensitivity output\rag_evaluation\controlled_domain_sensitivity\controlled_domain_sensitivity.json `
-  --conflicts-ablation output\rag_evaluation\conflicts_frc_ablation\conflicts_frc_ablation.json
+  --conflicts-ablation output\rag_evaluation\conflicts_frc_ablation\conflicts_frc_ablation.json `
+  --housing-ablation output\rag_evaluation\housing_frc_ablation\housing_frc_ablation.json `
+  --lawshift-ablation output\rag_evaluation\lawshift_temporal_ablation\lawshift_temporal_ablation.json
 ```
 
 字段/角色权重和冲突阈值的受控诊断可独立复现：
@@ -305,7 +312,7 @@ python scripts/run_frc_controlled_sensitivity.py
 
 该诊断使用仓库构造的 `SYNTHETIC` 小型领域基准和确定性选择器，不使用神经模型；它只证明参数可审计、阈值行为可辨识，不能替代公开数据真实模型实验或解除 Gate 2。
 
-`w/o Reranker` 会同时用 BGE 双编码器重算相关性和角色分，不复用 Cross-Encoder 角色分；当前 285 例 Evidence F1 为 0.697327，完整 FRC 为 0.705754。三套主公开集没有字段分、适用性和候选级冲突标注；另在 Google CONFLICTS 的 458 例冻结真实模型候选池上完成 `w/o Conflict`：只移除 `alternative_claim` 与 `temporal_validity`，36 例选择发生变化，Full/消融冲突类型准确率为 0.334061/0.338428，Full−消融差值 -0.004367，95% CI [-0.013100, +0.004367]。跨适用公开集的真实模型消融因此为 7/9，仍缺 `w/o Field` 与 `w/o Applicability`，且结果不支持 Full 更优。
+`w/o Reranker` 会同时用 BGE 双编码器重算相关性和角色分，不复用 Cross-Encoder 角色分；当前 285 例 Evidence F1 为 0.697327，完整 FRC 为 0.705754。Google CONFLICTS 的 458 例冻结真实模型候选池完成 `w/o Conflict`，Full/消融准确率为 0.334061/0.338428。HousingQA 的 40 个公开专家复合用例完成 `w/o Field` 与辖区适用性消融：Full 相对 `w/o Field` 字段覆盖提高 0.050000（95% CI [+0.018750, +0.087500]），但与最强字段分解基线持平；LawShift 的 124 例、31 类专家审阅修订完成版本替换消融，Full 相对 `w/o Applicability` 精确版本证据提高 0.137097（95% CI [+0.080645, +0.201613]），但与公平的适用性过滤 Cross-Encoder 基线持平，且没有权威生效/失效日期。9/9 命名消融均有执行工件，构造与领域覆盖仍为 `PARTIAL`，结果不支持 Gate 2 放行。
 
 分块长度敏感性对 ConditionalQA 全部 285 例执行 64/128/256-token、20% overlap 的真实 reranker 重评分，并按唯一父证据 ID 评价。FRC Evidence F1 为 0.614475/0.632662/0.679077，相对每档最强覆盖贪心代理均略低且 95% CI 跨 0；FRC 重复父证据率由 64-token 的 0.324912 降至 256-token 的 0.122807。
 

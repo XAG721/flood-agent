@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 
-AUDIT_VERSION = "progressive-completion-audit-v1"
+AUDIT_VERSION = "progressive-completion-audit-v2"
 
 SOFTWARE_DELIVERABLES: dict[str, tuple[str, ...]] = {
     "web_and_cesium": (
@@ -88,6 +88,10 @@ DATA_EXPERIMENT_DELIVERABLES: dict[str, tuple[str, ...]] = {
         "output/rag_evaluation/controlled_domain_sensitivity/controlled_domain_sensitivity.json",
         "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation.json",
         "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation_cases.jsonl.gz",
+        "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation.json",
+        "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation_cases.jsonl.gz",
+        "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation.json",
+        "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation_cases.jsonl.gz",
     ),
     "reproduction_entrypoints": (
         "scripts/run_candidate_evaluation.py",
@@ -96,6 +100,8 @@ DATA_EXPERIMENT_DELIVERABLES: dict[str, tuple[str, ...]] = {
         "scripts/run_conflicts_frc_evaluation.py",
         "scripts/run_frc_controlled_sensitivity.py",
         "scripts/run_conflicts_frc_ablation.py",
+        "scripts/run_housing_frc_ablation.py",
+        "scripts/run_lawshift_temporal_ablation.py",
     ),
 }
 
@@ -140,6 +146,10 @@ EVIDENCE_FILES = (
     "output/rag_evaluation/controlled_domain_sensitivity/controlled_domain_sensitivity.json",
     "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation.json",
     "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation_cases.jsonl.gz",
+    "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation.json",
+    "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation_cases.jsonl.gz",
+    "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation.json",
+    "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation_cases.jsonl.gz",
 )
 
 EXTERNAL_NO_GO_ITEMS = (
@@ -274,6 +284,8 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
     rag_decision = rag_report["decision"]
     conflict_slice = rag_report["challenge_slices"]["conflict_and_stale"]
     experiment_audit = rag_report["design_16_2_experiment_audit"]
+    housing_ablation = experiment_audit["housing_real_model_ablation"]
+    lawshift_ablation = experiment_audit["lawshift_temporal_ablation"]
     gate_two_is_safely_held = (
         rag_decision["gate_2"] == "NO-GO"
         and rag_decision["pipeline_feasible"] is True
@@ -282,7 +294,7 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
         and int(conflict_slice["cases"]) == 458
         and conflict_slice["strongest_reproducible_baseline"] == "coverage_greedy_proxy"
         and experiment_audit["status"] == "PARTIAL"
-        and experiment_audit["ablation"]["gate_required_comparison"]["passed"] is False
+        and rag_decision["full_outperforms_w_o_role_and_w_o_field"] is False
         and experiment_audit["token_budget_sensitivity"]["status"] == "RUN"
         and experiment_audit["token_budget_sensitivity"]["all_methods_within_budget"] is True
         and experiment_audit["missing_ratio_sensitivity"]["status"] == "RUN"
@@ -294,7 +306,34 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
         == "RUN_REAL_MODEL_CONFLICTS"
         and experiment_audit["conflicts_real_model_ablation"]["status"]
         == "RUN_REAL_MODEL_CONFLICTS"
-        and int(experiment_audit["combined_ablation_coverage"]["run_count"]) == 7
+        and housing_ablation["status"]
+        == "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021"
+        and housing_ablation["decision"]["gate_2"] == "NO-GO"
+        and housing_ablation["decision"]["full_strictly_better_than_w_o_field"] is True
+        and housing_ablation["decision"][
+            "full_field_coverage_gain_over_strongest_baseline_at_least_0_05"
+        ]
+        is False
+        and lawshift_ablation["status"]
+        == "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL"
+        and lawshift_ablation["decision"]["gate_2"] == "NO-GO"
+        and lawshift_ablation["decision"][
+            "full_strictly_better_than_w_o_applicability"
+        ]
+        is True
+        and lawshift_ablation["decision"][
+            "full_exact_gain_over_strongest_baseline_at_least_0_05"
+        ]
+        is False
+        and experiment_audit["applicability_identifiability"]["version_replacement"]
+        == "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL"
+        and experiment_audit["applicability_identifiability"][
+            "effective_or_expiry_dates"
+        ]
+        == "NOT_IDENTIFIABLE_NO_EFFECTIVE_DATES"
+        and experiment_audit["applicability_identifiability"]["complete"] is False
+        and int(experiment_audit["combined_ablation_coverage"]["run_count"]) == 9
+        and experiment_audit["combined_ablation_coverage"]["missing_variants"] == []
         and rag_decision["design_16_2_experiment_coverage_complete"] is False
     )
     service_source = (repo_root / "flood_system/response_workflow/service.py").read_text(encoding="utf-8")
@@ -391,6 +430,10 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
                 "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json",
                 "output/rag_evaluation/controlled_domain_sensitivity/controlled_domain_sensitivity.json",
                 "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation.json",
+                "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation.json",
+                "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation_cases.jsonl.gz",
+                "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation.json",
+                "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation_cases.jsonl.gz",
                 "flood_system/response_workflow/service.py",
             ],
             {
@@ -408,6 +451,22 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
                 "role_field_weight_sensitivity": experiment_audit["sensitivity_coverage"]["role_and_field_weights"],
                 "conflict_threshold_sensitivity": experiment_audit["sensitivity_coverage"]["conflict_threshold"],
                 "conflicts_real_model_ablation": experiment_audit["conflicts_real_model_ablation"]["status"],
+                "housing_real_model_ablation": housing_ablation["status"],
+                "housing_full_field_coverage": housing_ablation["aggregates"]["frc_full"][
+                    "field_coverage"
+                ],
+                "housing_strongest_baseline": housing_ablation["strongest_baseline"],
+                "lawshift_temporal_ablation": lawshift_ablation["status"],
+                "lawshift_full_exact_evidence_accuracy": lawshift_ablation["aggregates"][
+                    "frc_full"
+                ]["exact_evidence_accuracy"],
+                "lawshift_strongest_baseline": lawshift_ablation["strongest_baseline"],
+                "version_replacement_applicability": experiment_audit[
+                    "applicability_identifiability"
+                ]["version_replacement"],
+                "effective_or_expiry_dates": experiment_audit[
+                    "applicability_identifiability"
+                ]["effective_or_expiry_dates"],
                 "ablation_variants_run": experiment_audit["combined_ablation_coverage"]["run_count"],
             },
         ),

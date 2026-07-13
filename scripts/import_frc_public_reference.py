@@ -39,6 +39,24 @@ def main() -> None:
         help="Machine-readable public real-model CONFLICTS w/o Conflict and threshold artifact.",
     )
     parser.add_argument(
+        "--housing-ablation",
+        type=Path,
+        default=None,
+        help=(
+            "Machine-readable public expert HousingQA w/o Field and jurisdiction-only "
+            "w/o Applicability artifact."
+        ),
+    )
+    parser.add_argument(
+        "--lawshift-ablation",
+        type=Path,
+        default=None,
+        help=(
+            "Machine-readable public expert-reviewed LawShift before/after version "
+            "applicability artifact."
+        ),
+    )
+    parser.add_argument(
         "--output-dir",
         type=Path,
         default=Path("output/rag_evaluation/public_frc_reference"),
@@ -52,6 +70,8 @@ def main() -> None:
         chunk_length_sensitivity_path=args.chunk_length_sensitivity,
         controlled_domain_sensitivity_path=args.controlled_domain_sensitivity,
         conflicts_ablation_path=args.conflicts_ablation,
+        housing_ablation_path=args.housing_ablation,
+        lawshift_ablation_path=args.lawshift_ablation,
     )
     args.output_dir.mkdir(parents=True, exist_ok=True)
     json_path = args.output_dir / "public_frc_reference_report.json"

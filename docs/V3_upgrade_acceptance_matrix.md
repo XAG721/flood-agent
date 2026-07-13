@@ -28,7 +28,7 @@
 |---|---|---|
 | BM25、Dense、混合、MMR、Rerank、覆盖贪心代理基线 | 已证明（本地小规模集） | 工程基线覆盖 6 类可复现方法；覆盖贪心代理不使用 SetR 官方代码、权重或训练流程，不构成 SetR 复现；另以 `BAAI/bge-small-zh-v1.5`、CLS pooling、512 维 CPU 向量实跑 Neural Dense/Hybrid，并保存模型与运行时溯源 |
 | FRC-Select 集合选择 | 已证明（工程实现） | 有限预算下综合角色覆盖、可信度、新颖性、证据成本和冲突惩罚；响应任务草案已使用集合选择 |
-| 方法对比、消融与敏感性 | 部分完成（真实模型口径） | `output/rag_evaluation/` 保存三套公开数据逐样本配对统计；跨适用公开集真实模型消融完成 7/9，其中 `w/o Reranker` 使用 BGE 双编码器重新计算相关性与角色分，`w/o Conflict` 在 458 例 Google CONFLICTS 冻结真实模型候选池上运行；K=2/3/5/8、Token=512/1024/2048、ConditionalQA 80 组角色/冗余参数、0/25/50/75% 缺失比例、64/128/256-token 重评分及 CONFLICTS 0.25/0.40/0.55/0.70/0.85 冲突阈值已运行；字段/角色权重仍按 `RUN_CONTROLLED_DOMAIN_PUBLIC_SCHEMA_BLOCKED` 记录；`w/o Field`、`w/o Applicability` 因公开证据缺少对应标注保持 `SCHEMA_BLOCKED/NOT_RUN` |
+| 方法对比、消融与敏感性 | 部分完成（真实模型口径） | `output/rag_evaluation/` 保存逐样本配对统计；跨适用公开集 9/9 命名消融均有执行工件：`w/o Reranker` 使用 BGE 双编码器重评分，`w/o Conflict` 在 458 例 CONFLICTS 上运行，HousingQA 40 例/160 字段/22 辖区补齐 `w/o Field` 与辖区适用性，LawShift 124 例/31 类专家审阅修订补充版本替换；但 LawShift 无权威生效/失效日期，字段/角色权重仍为 `RUN_CONTROLLED_DOMAIN_PUBLIC_SCHEMA_BLOCKED`，同一防汛领域构造覆盖不完整 |
 | ConditionalQA、MultiHop-RAG、HotpotQA 复现 | 已证明（证据检索口径） | 全量可评测范围：MultiHop-RAG 2255、ConditionalQA 271、HotpotQA 7405；报告含排除规则、revision/SHA-256、候选规模、Recall、完整证据集命中率和 MRR；不是官方答案生成 leaderboard |
 | CONFLICTS 冲突与失效切片 | 已证明（检索与类型分类口径） | 官方 458 例、五类标签、同一真实 BGE/reranker、本地 Qwen 和统一预算；含 62 例过时信息与 5 例错误信息，未复现论文 expected-behavior adherence 人工评判 |
 | 区县数据独立人工标注与裁决 | 部分完成 | 已生成无 gold/检索分数/可信度/冲突信息的盲化包、双人独立表单、Cohen's kappa/Jaccard/角色与答案一致性比较、第三方裁决和哈希溯源工具；实际两名业务专家与独立裁决员尚未完成签署 |
@@ -49,7 +49,7 @@
 
 ## 当前验证基线
 
-- Python 全量测试：190 项通过（GitHub CI 持续复验）。
+- Python 全量测试：199 项通过（GitHub CI 持续复验）。
 - 前端全量测试：13 项通过；Chromium E2E 2 项通过。
 - 前端生产构建：通过。
 - 安全专项测试覆盖：密文落盘、密文篡改拒绝、哈希链校验、不可删除触发器、备份权限、文件哈希、数据库完整性、密钥匹配、跨实例导入、隔离恢复和加密密钥轮换。
@@ -57,7 +57,7 @@
 - 神经向量实测：`BAAI/bge-small-zh-v1.5`；Neural Dense Recall 0.7222、Role Coverage 0.8333；Neural Hybrid RRF 指标相同；FRC-Select 在同一小型集上 Recall/Role Coverage 为 1.0。
 - 公开全量可评测集：MultiHop-RAG Hybrid Recall 0.6237/完整集 0.3082；ConditionalQA Dense Recall 0.2627/完整集 0.1292；HotpotQA Dense Recall 0.8866/完整集 0.7815。
 - 真实 BGE/reranker 参考审计：ConditionalQA、MultiHop-RAG、HotpotQA 上 FRC 相对各自最强可复现基线的 Evidence F1 配对 95% CI 均跨 0；流水线可行，但优势未获证明，Gate 2 保持 `NO-GO/SHADOW`。
-- 真实模型消融/敏感性审计：计划消融完成 7/9；ConditionalQA Full Evidence F1 0.705754，低于 `w/o Role` 0.706158；`w/o Reranker` 为 0.697327，消融相对 Full 差值 -0.008427，95% CI [-0.018126, +0.001562]。CONFLICTS Full/`w/o Conflict` 准确率为 0.334061/0.338428，Full−消融差值 -0.004367，95% CI [-0.013100, +0.004367]；冲突阈值 0.85 时准确率降至 0.325328。`w/o Field` 与 `w/o Applicability` 仍因结构不可识别而未运行。三套数据 K=2/3/5/8 已覆盖，ConditionalQA 参数网格 80 组。受控领域扫描显示冻结字段/角色/冲突策略 Evidence F1 为 0.750000；字段权重 8 或选择器冲突风险阈值不低于 0.5 时降至 0.607143 且 1/3 用例选入冲突候选，但该结果不计为公开真实模型字段证据。
+- 真实模型消融/敏感性审计：9/9 命名消融已运行，但 Full 仍低于 `w/o Role`，CONFLICTS Full 也低于 `w/o Conflict`。HousingQA Full 相对 `w/o Field` 字段覆盖提高 0.050000（95% CI [+0.018750, +0.087500]），却与最强字段分解基线持平且 Answer Accuracy 仅 0.306250；LawShift Full 相对无版本过滤精确证据提高 0.137097（95% CI [+0.080645, +0.201613]），却与公平过滤基线持平、Article Recall@1 下降 0.064516且没有权威生效/失效日期。三套数据 K=2/3/5/8 已覆盖，ConditionalQA 参数网格 80 组；受控字段/角色权重扫描不计为公开真实模型防汛领域证据。
 - 分块长度真实重评分：64/128/256-token 下 FRC Evidence F1 为 0.614475/0.632662/0.679077，相对最强覆盖贪心代理差值为 -0.000379/-0.000038/-0.001155，三档 95% CI 均跨 0；FRC 重复父证据率随分块增大由 0.324912 降至 0.122807。
 - Token/缺失敏感性：三套数据 512/1024/2048 Token 预算均零超限，FRC 未呈现稳定优势；ConditionalQA 25/50/75% 目标缺失的实际删除率为 27.25%/51.63%/76.12%，25% 档错误完整声明率仍为 0.723005。
 - CONFLICTS 全量审计：覆盖贪心代理 Accuracy 0.344978，FRC 0.334061；FRC - 基线为 -0.010917，95% CI [-0.043668, +0.024017]。FRC 过时类型 Recall 0.564516，低于代理的 0.693548，因此不能据此切流。

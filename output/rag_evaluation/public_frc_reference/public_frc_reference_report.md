@@ -16,15 +16,15 @@
 
 ## 设计第 16.2 节消融审计
 
-- 覆盖状态：`PARTIAL`；跨适用公开集已运行 7/9 组。
+- 覆盖状态：`PARTIAL`；跨适用公开集已运行 9/9 组。
 - Gate 必需比较通过：`False`。缺失消融不得按通过处理。
 
 | 消融 | 状态 | Evidence F1 | Role Coverage |
 |---|---|---:|---:|
 | full | RUN | 0.705754 | 1.000000 |
 | w/o_role | RUN | 0.706158 | 0.975906 |
-| w/o_field | NOT_RUN | — | — |
-| w/o_applicability | NOT_RUN | — | — |
+| w/o_field | RUN_PUBLIC_EXPERT_REAL_MODEL | 0.656250 | — |
+| w/o_applicability | RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021 | 0.531250 | — |
 | w/o_redundancy | RUN | 0.705754 | 1.000000 |
 | w/o_conflict | RUN_REAL_MODEL_CONFLICTS | — | — |
 | w/o_reranker | RUN | 0.697327 | 1.000000 |
@@ -44,12 +44,38 @@
 
 Full−`w/o Conflict` 准确率差值为 -0.004367，95% CI=[-0.013100, +0.004367]。该结果不证明 Full 更优，也不替代独立 expected-behavior adherence 评判。
 
+### `w/o Field` 与 `w/o Applicability`（HousingQA，公开专家标注，真实模型）
+
+40 个确定性复合用例包含 160 个任务字段、22 个司法辖区；每个字段的正确答案与支持法条仅用于事后评分。适用性消融只识别 2021 快照下的司法辖区过滤，不能识别法规版本替换或失效。
+
+| 版本 | Field Coverage | Citation Support Precision | Wrong-jurisdiction Rate | Answer Accuracy |
+|---|---:|---:|---:|---:|
+| Full | 0.706250 | 0.706250 | 0.000000 | 0.306250 |
+| w/o Field | 0.656250 | 0.656250 | 0.000000 | 0.312500 |
+| w/o Applicability | 0.531250 | 0.531250 | 0.275000 | 0.337500 |
+
+Full−w/o Field 的字段覆盖差值为 +0.050000，95% CI=[+0.018750, +0.087500]；Full−w/o Applicability 的字段覆盖差值为 +0.175000，错误司法辖区率差值为 -0.275000。
+最强字段覆盖基线为 `field_decomposition_topk`；Full 相对其字段覆盖差值为 +0.000000，未达到 Gate 2 要求的 +0.05。
+
+### `w/o Applicability`（LawShift，31 类专家审阅修订，真实重排）
+
+124 个用例平衡覆盖修订前/后快照；候选池同时包含目标法条两个版本和三对词法难负例。法条版本是专家审阅的假设修订，不含权威生效或失效日期。
+
+| 版本 | Article Recall@1 | Version Accuracy | Exact Evidence Accuracy | Invalid Applicability |
+|---|---:|---:|---:|---:|
+| Full | 0.427419 | 1.000000 | 0.427419 | 0.000000 |
+| w/o Applicability | 0.491935 | 0.548387 | 0.290323 | 0.451613 |
+| Applicability-filtered Cross-Encoder | 0.427419 | 1.000000 | 0.427419 | 0.000000 |
+
+Full−w/o Applicability 的精确版本证据差值为 +0.137097，95% CI=[+0.080645, +0.201613]；错误版本率差值为 -0.451613。
+Full 的 Article Recall@1 相对无过滤版本差值为 -0.064516；相对公平过滤基线的精确版本证据差值为 +0.000000。因此版本过滤有效，但 FRC 独有优势未获证明。
+
 ### 消融数据可识别性
 
 | 消融 | 可识别状态 | 原因 |
 |---|---|---|
-| w/o_field | SCHEMA_BLOCKED | public artifacts contain neither required field schemas nor candidate field_scores |
-| w/o_applicability | SCHEMA_BLOCKED | public artifacts contain no standardized applicability/version/jurisdiction/effective-period fields |
+| w/o_field | RUN_PUBLIC_EXPERT_REAL_MODEL | HousingQA supplies expert questions and supporting statutes; four independent questions are deterministically composed into fields and evaluated with frozen BGE, Cross-Encoder, and local Qwen models |
+| w/o_applicability | RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_AND_REVISION | HousingQA identifies jurisdiction filtering under its 2021 snapshot; LawShift identifies expert-reviewed before/after statutory replacement. Neither supplies authoritative effective or expiry dates. |
 | w/o_conflict | RUN_REAL_MODEL_CONFLICTS | Google CONFLICTS supplies case-level conflict types; the ablation removes only alternative-claim and temporal-validity disclosure roles on the frozen real-model pool |
 | w/o_reranker | RUN_REAL_BIENCODER_RESCORING | supplemental artifact recomputed both relevance and role scores without a Cross-Encoder |
 
@@ -173,7 +199,7 @@ Only the two conflict-disclosure role thresholds change; this is a post-hoc diag
 
 - 状态：`THEORETICAL_PIPELINE_FEASIBLE_BUT_SUPERIORITY_NOT_PROVEN`
 - Gate 2：`NO-GO`
-- 结论：real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; Full does not outperform w/o Role and w/o Field is schema-blocked on the primary public artifacts; the CONFLICTS Full variant also does not outperform w/o Conflict; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment。
+- 结论：real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; Full does not outperform w/o Role; HousingQA Full does outperform w/o Field but ties the strongest field-decomposition baseline, and LawShift Full improves exact version evidence over w/o Applicability but ties the fair applicability-filtered Cross-Encoder baseline and has no authoritative effective/expiry dates; the CONFLICTS Full variant also does not outperform w/o Conflict; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment。
 
 这组结果证明真实模型、公开数据和 FRC 选择器可以形成可复现流水线，但不能证明 FRC 已经稳定优于强重排基线。
 
@@ -183,5 +209,15 @@ Only the two conflict-disclosure role thresholds change; this is a post-hoc diag
 - The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.
 - ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.
 - The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.
-- The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed. Field/role-weight sensitivity is controlled-domain only. Conflict-threshold sensitivity is now public real-model evidence on CONFLICTS but remains post hoc and does not supply field or applicability labels.
+- The nine named ablation variants now have execution artifacts across compatible public datasets, but this is not complete construct coverage: HousingQA identifies jurisdiction under a single 2021 snapshot, LawShift identifies expert-reviewed hypothetical before/after revisions without authoritative effective/expiry dates, and field/role-weight sensitivity is controlled-domain only.
 - CONFLICTS conflict-type classification is complete, but the paper's expected-behavior adherence metric and independent human judging are not reproduced.
+- HousingQA is a public housing-law benchmark, not a flood-response or district-government benchmark.
+- The public corpus is explicitly accurate as of 2021; it has no paired historical/current statute versions, so version replacement and expiry remain untested.
+- Composite four-field cases and hard-negative pools are deterministic transformations of expert single-question annotations, not separately expert-reviewed composite tasks.
+- Public model pretraining contamination cannot be excluded.
+- The frozen test configuration was not tuned after observing these results.
+- LawShift evaluates Chinese criminal-law judgment adaptation, not flood-response or district-government evidence retrieval.
+- The revised statutes are expert-reviewed hypothetical revisions rather than enacted historical versions with authoritative effective dates.
+- The benchmark identifies before/after version replacement but cannot test exact effective or expiry dates.
+- The frozen candidate pool is a retrieval stress slice built from the labeled article pair plus lexical hard negatives, not the paper's original legal-judgment-prediction protocol.
+- Only evidence selection is evaluated; charge and sentence generation are not scored in this retrieval ablation.
