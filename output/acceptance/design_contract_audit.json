@@ -137,7 +137,7 @@
         {
           "path": "docs/progressive_upgrade/completion_traceability_audit.md",
           "contains": "生产旧流量归零和账号撤权",
-          "sha256": "a87dcb3b7ef70fd4b7b4e5a7d97ba0af9c8ceec8bcf2932da8eab4ba29c10fd0"
+          "sha256": "54921202b7ec3da9c9d9950562ae6c71a362217e29c5e5b5509abadbb0389721"
         }
       ],
       "assigned_item_count": 2
@@ -231,7 +231,7 @@
         {
           "path": "docs/progressive_upgrade/completion_traceability_audit.md",
           "contains": "受控模拟",
-          "sha256": "a87dcb3b7ef70fd4b7b4e5a7d97ba0af9c8ceec8bcf2932da8eab4ba29c10fd0"
+          "sha256": "54921202b7ec3da9c9d9950562ae6c71a362217e29c5e5b5509abadbb0389721"
         }
       ],
       "assigned_item_count": 5
