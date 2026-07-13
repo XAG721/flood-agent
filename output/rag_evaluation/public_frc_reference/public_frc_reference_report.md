@@ -16,7 +16,7 @@
 
 ## 设计第 16.2 节消融审计
 
-- 覆盖状态：`PARTIAL`；已运行 6/9 组。
+- 覆盖状态：`PARTIAL`；跨适用公开集已运行 7/9 组。
 - Gate 必需比较通过：`False`。缺失消融不得按通过处理。
 
 | 消融 | 状态 | Evidence F1 | Role Coverage |
@@ -26,12 +26,23 @@
 | w/o_field | NOT_RUN | — | — |
 | w/o_applicability | NOT_RUN | — | — |
 | w/o_redundancy | RUN | 0.705754 | 1.000000 |
-| w/o_conflict | NOT_RUN | — | — |
+| w/o_conflict | RUN_REAL_MODEL_CONFLICTS | — | — |
 | w/o_reranker | RUN | 0.697327 | 1.000000 |
 | role_only | RUN | 0.694475 | 1.000000 |
 | random_role | RUN | 0.705086 | 0.997953 |
 
 `w/o Reranker` 相对 Full 的 Evidence F1 配对差值为 -0.008427，95% CI=[-0.018126, +0.001562]；区间跨 0。
+
+### `w/o Conflict`（Google CONFLICTS，真实模型）
+
+该事后诊断只移除 `alternative_claim` 与 `temporal_validity` 两个冲突披露角色；候选池、BGE、重排器、Qwen、K 和 Token 预算保持一致。
+
+| 版本 | 冲突类型准确率 | Macro F1 | 选择变化用例 |
+|---|---:|---:|---:|
+| Full | 0.334061 | 0.228111 | 0 |
+| w/o Conflict | 0.338428 | 0.232431 | 36 |
+
+Full−`w/o Conflict` 准确率差值为 -0.004367，95% CI=[-0.013100, +0.004367]。该结果不证明 Full 更优，也不替代独立 expected-behavior adherence 评判。
 
 ### 消融数据可识别性
 
@@ -39,7 +50,7 @@
 |---|---|---|
 | w/o_field | SCHEMA_BLOCKED | public artifacts contain neither required field schemas nor candidate field_scores |
 | w/o_applicability | SCHEMA_BLOCKED | public artifacts contain no standardized applicability/version/jurisdiction/effective-period fields |
-| w/o_conflict | SCHEMA_BLOCKED | the three primary public artifacts contain no candidate-level conflict annotations; CONFLICTS is a separate challenge dataset |
+| w/o_conflict | RUN_REAL_MODEL_CONFLICTS | Google CONFLICTS supplies case-level conflict types; the ablation removes only alternative-claim and temporal-validity disclosure roles on the frozen real-model pool |
 | w/o_reranker | RUN_REAL_BIENCODER_RESCORING | supplemental artifact recomputed both relevance and role scores without a Cross-Encoder |
 
 ## K 与参数敏感性审计
@@ -66,7 +77,7 @@ ConditionalQA 保存分数上共审计 80 组 FRC 参数；最佳 Evidence F1=0.
 | k_2_3_5_8 | RUN |
 | token_budget_512_1024_2048 | RUN |
 | role_and_field_weights | RUN_CONTROLLED_DOMAIN_PUBLIC_SCHEMA_BLOCKED |
-| conflict_threshold | RUN_CONTROLLED_DOMAIN_PUBLIC_SCHEMA_BLOCKED |
+| conflict_threshold | RUN_REAL_MODEL_CONFLICTS |
 | document_missing_ratio | RUN |
 | chunk_length | RUN |
 
@@ -91,6 +102,18 @@ This diagnostic uses a repository-constructed `SYNTHETIC` benchmark and no neura
 | conflict_threshold | 0.50 | 0.607143 | 0.573810 | 1.000000 | 1.000000 | 0.333333 | 0.000000 |
 | conflict_threshold | 0.80 | 0.607143 | 0.573810 | 1.000000 | 1.000000 | 0.333333 | 0.000000 |
 | conflict_threshold | 1.00 | 0.607143 | 0.573810 | 1.000000 | 1.000000 | 0.333333 | 0.000000 |
+
+### CONFLICTS conflict-threshold sensitivity (real model)
+
+Only the two conflict-disclosure role thresholds change; this is a post-hoc diagnostic.
+
+| Threshold | Accuracy | Macro F1 | Exact answer support | Newest-date retention |
+|---:|---:|---:|---:|---:|
+| 0.25 | 0.336245 | 0.230210 | 0.738397 | 0.532258 |
+| 0.40 | 0.336245 | 0.230210 | 0.738397 | 0.532258 |
+| 0.55 | 0.334061 | 0.228111 | 0.738397 | 0.532258 |
+| 0.70 | 0.334061 | 0.227926 | 0.738397 | 0.532258 |
+| 0.85 | 0.325328 | 0.221382 | 0.738397 | 0.532258 |
 
 ### 分块长度敏感性（ConditionalQA，真实重评分）
 
@@ -150,7 +173,7 @@ This diagnostic uses a repository-constructed `SYNTHETIC` benchmark and no neura
 
 - 状态：`THEORETICAL_PIPELINE_FEASIBLE_BUT_SUPERIORITY_NOT_PROVEN`
 - Gate 2：`NO-GO`
-- 结论：real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; Full does not outperform w/o Role and w/o Field is schema-blocked on the primary public artifacts; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment。
+- 结论：real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; Full does not outperform w/o Role and w/o Field is schema-blocked on the primary public artifacts; the CONFLICTS Full variant also does not outperform w/o Conflict; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment。
 
 这组结果证明真实模型、公开数据和 FRC 选择器可以形成可复现流水线，但不能证明 FRC 已经稳定优于强重排基线。
 
@@ -160,5 +183,5 @@ This diagnostic uses a repository-constructed `SYNTHETIC` benchmark and no neura
 - The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.
 - ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.
 - The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.
-- The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed. Field/role-weight and conflict-threshold sensitivity is controlled-domain only and is not counted as public real-model completion.
+- The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed. Field/role-weight sensitivity is controlled-domain only. Conflict-threshold sensitivity is now public real-model evidence on CONFLICTS but remains post hoc and does not supply field or applicability labels.
 - CONFLICTS conflict-type classification is complete, but the paper's expected-behavior adherence metric and independent human judging are not reproduced.

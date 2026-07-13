@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
 from flood_system.completion_audit import (
     _canonical_text_sha256,
+    _evidence_sha256,
     build_progressive_completion_audit,
     check_artifact_groups,
     check_gate_one,
@@ -81,3 +83,11 @@ def test_evidence_hash_is_independent_of_platform_newlines(tmp_path: Path) -> No
     crlf.write_bytes("第一行\r\n第二行\r\n".encode())
 
     assert _canonical_text_sha256(lf) == _canonical_text_sha256(crlf)
+
+
+def test_binary_evidence_hash_uses_exact_archive_bytes(tmp_path: Path) -> None:
+    archive = tmp_path / "cases.jsonl.gz"
+    payload = b"\x1f\x8b\x08\x00binary-evidence"
+    archive.write_bytes(payload)
+
+    assert _evidence_sha256(archive) == hashlib.sha256(payload).hexdigest()

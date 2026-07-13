@@ -86,6 +86,8 @@ DATA_EXPERIMENT_DELIVERABLES: dict[str, tuple[str, ...]] = {
         "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json",
         "output/rag_evaluation/conflicts_frc/conflicts_frc_report.json",
         "output/rag_evaluation/controlled_domain_sensitivity/controlled_domain_sensitivity.json",
+        "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation.json",
+        "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation_cases.jsonl.gz",
     ),
     "reproduction_entrypoints": (
         "scripts/run_candidate_evaluation.py",
@@ -93,6 +95,7 @@ DATA_EXPERIMENT_DELIVERABLES: dict[str, tuple[str, ...]] = {
         "scripts/run_public_rag_benchmarks.py",
         "scripts/run_conflicts_frc_evaluation.py",
         "scripts/run_frc_controlled_sensitivity.py",
+        "scripts/run_conflicts_frc_ablation.py",
     ),
 }
 
@@ -135,6 +138,8 @@ EVIDENCE_FILES = (
     "docs/progressive_upgrade/completion_traceability_audit.md",
     "docs/V3_upgrade_acceptance_matrix.md",
     "output/rag_evaluation/controlled_domain_sensitivity/controlled_domain_sensitivity.json",
+    "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation.json",
+    "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation_cases.jsonl.gz",
 )
 
 EXTERNAL_NO_GO_ITEMS = (
@@ -159,6 +164,13 @@ def _canonical_text_sha256(path: Path) -> str:
     text = path.read_text(encoding="utf-8-sig")
     canonical = text.replace("\r\n", "\n").replace("\r", "\n").encode("utf-8")
     return hashlib.sha256(canonical).hexdigest()
+
+
+def _evidence_sha256(path: Path) -> str:
+    """Hash text canonically and binary evidence as its exact stored bytes."""
+    if path.suffix.lower() in {".gz", ".zip"}:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+    return _canonical_text_sha256(path)
 
 
 def _check(
@@ -279,7 +291,10 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
         and experiment_audit["sensitivity_coverage"]["role_and_field_weights"]
         == "RUN_CONTROLLED_DOMAIN_PUBLIC_SCHEMA_BLOCKED"
         and experiment_audit["sensitivity_coverage"]["conflict_threshold"]
-        == "RUN_CONTROLLED_DOMAIN_PUBLIC_SCHEMA_BLOCKED"
+        == "RUN_REAL_MODEL_CONFLICTS"
+        and experiment_audit["conflicts_real_model_ablation"]["status"]
+        == "RUN_REAL_MODEL_CONFLICTS"
+        and int(experiment_audit["combined_ablation_coverage"]["run_count"]) == 7
         and rag_decision["design_16_2_experiment_coverage_complete"] is False
     )
     service_source = (repo_root / "flood_system/response_workflow/service.py").read_text(encoding="utf-8")
@@ -375,6 +390,7 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
             [
                 "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json",
                 "output/rag_evaluation/controlled_domain_sensitivity/controlled_domain_sensitivity.json",
+                "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation.json",
                 "flood_system/response_workflow/service.py",
             ],
             {
@@ -384,14 +400,15 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
                 "strongest_reproducible_baseline": conflict_slice["strongest_reproducible_baseline"],
                 "baseline_accuracy": conflict_slice["baseline_accuracy"],
                 "frc_accuracy": conflict_slice["frc_accuracy"],
-                "ablation_variants_run": len(experiment_audit["ablation"]["run_variants"]),
-                "ablation_variants_planned": len(experiment_audit["ablation"]["planned_variants"]),
+                "ablation_variants_planned": experiment_audit["combined_ablation_coverage"]["planned_count"],
                 "experiment_coverage_complete": experiment_audit["coverage_complete"],
                 "token_budget_sensitivity": experiment_audit["token_budget_sensitivity"]["status"],
                 "missing_ratio_sensitivity": experiment_audit["missing_ratio_sensitivity"]["status"],
                 "controlled_domain_sensitivity": experiment_audit["controlled_domain_sensitivity"]["status"],
                 "role_field_weight_sensitivity": experiment_audit["sensitivity_coverage"]["role_and_field_weights"],
                 "conflict_threshold_sensitivity": experiment_audit["sensitivity_coverage"]["conflict_threshold"],
+                "conflicts_real_model_ablation": experiment_audit["conflicts_real_model_ablation"]["status"],
+                "ablation_variants_run": experiment_audit["combined_ablation_coverage"]["run_count"],
             },
         ),
         _check(
@@ -415,7 +432,7 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
 
     passed_count = sum(item["status"] == "PASS" for item in requirements)
     evidence_hashes = {
-        relative: _canonical_text_sha256(repo_root / relative)
+        relative: _evidence_sha256(repo_root / relative)
         for relative in EVIDENCE_FILES
     }
     controlled_status = "PASS" if passed_count == len(requirements) else "FAIL"
@@ -424,7 +441,9 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
             "audit_version": AUDIT_VERSION,
             "scope": "single-district controlled simulation",
             "contract": "洪水预警响应系统_渐进式迭代开发与升级设计.md sections 18-23",
-            "evidence_hash_canonicalization": "UTF-8 without BOM; CRLF and CR normalized to LF",
+            "evidence_hash_canonicalization": (
+                "UTF-8 text without BOM with CRLF/CR normalized to LF; binary archives use raw bytes"
+            ),
         },
         "summary": {
             "controlled_first_iteration": controlled_status,

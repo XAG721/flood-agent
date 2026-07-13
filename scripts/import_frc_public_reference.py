@@ -33,6 +33,12 @@ def main() -> None:
         help="Machine-readable synthetic controlled-domain field/role/conflict sensitivity artifact.",
     )
     parser.add_argument(
+        "--conflicts-ablation",
+        type=Path,
+        default=None,
+        help="Machine-readable public real-model CONFLICTS w/o Conflict and threshold artifact.",
+    )
+    parser.add_argument(
         "--output-dir",
         type=Path,
         default=Path("output/rag_evaluation/public_frc_reference"),
@@ -45,6 +51,7 @@ def main() -> None:
         supplemental_ablation_paths=args.supplemental_ablation,
         chunk_length_sensitivity_path=args.chunk_length_sensitivity,
         controlled_domain_sensitivity_path=args.controlled_domain_sensitivity,
+        conflicts_ablation_path=args.conflicts_ablation,
     )
     args.output_dir.mkdir(parents=True, exist_ok=True)
     json_path = args.output_dir / "public_frc_reference_report.json"

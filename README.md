@@ -286,12 +286,15 @@ python scripts/run_frc_chunk_length_sensitivity.py `
   --output output\rag_evaluation\public_frc_reference\chunk_length_sensitivity_conditionalqa.json `
   --reranker-model-path $rerankerSnapshot --device cuda `
   --chunk-lengths 64,128,256 --overlap-ratio 0.2
+D:\anaconda3\envs\rag_exp\python.exe -m scripts.run_conflicts_frc_ablation `
+  --generator-model-path D:\RAG_test\.hf_cache\local_models\Qwen2.5-7B-Instruct-GPTQ-Int4
 python scripts/import_frc_public_reference.py `
   --reference-root D:\RAG_test\frc-select `
   --conflicts-path output\rag_evaluation\conflicts_frc\conflicts_frc_report.json `
   --supplemental-ablation output\rag_evaluation\public_frc_reference\wo_reranker_conditionalqa.json `
   --chunk-length-sensitivity output\rag_evaluation\public_frc_reference\chunk_length_sensitivity_conditionalqa.json `
-  --controlled-domain-sensitivity output\rag_evaluation\controlled_domain_sensitivity\controlled_domain_sensitivity.json
+  --controlled-domain-sensitivity output\rag_evaluation\controlled_domain_sensitivity\controlled_domain_sensitivity.json `
+  --conflicts-ablation output\rag_evaluation\conflicts_frc_ablation\conflicts_frc_ablation.json
 ```
 
 字段/角色权重和冲突阈值的受控诊断可独立复现：
@@ -302,7 +305,7 @@ python scripts/run_frc_controlled_sensitivity.py
 
 该诊断使用仓库构造的 `SYNTHETIC` 小型领域基准和确定性选择器，不使用神经模型；它只证明参数可审计、阈值行为可辨识，不能替代公开数据真实模型实验或解除 Gate 2。
 
-`w/o Reranker` 会同时用 BGE 双编码器重算相关性和角色分，不复用 Cross-Encoder 角色分；当前 285 例 Evidence F1 为 0.697327，完整 FRC 为 0.705754。三套主公开集没有字段分、适用性和候选级冲突标注，因此对应三项消融保持 `SCHEMA_BLOCKED/NOT_RUN`，不能按通过处理。
+`w/o Reranker` 会同时用 BGE 双编码器重算相关性和角色分，不复用 Cross-Encoder 角色分；当前 285 例 Evidence F1 为 0.697327，完整 FRC 为 0.705754。三套主公开集没有字段分、适用性和候选级冲突标注；另在 Google CONFLICTS 的 458 例冻结真实模型候选池上完成 `w/o Conflict`：只移除 `alternative_claim` 与 `temporal_validity`，36 例选择发生变化，Full/消融冲突类型准确率为 0.334061/0.338428，Full−消融差值 -0.004367，95% CI [-0.013100, +0.004367]。跨适用公开集的真实模型消融因此为 7/9，仍缺 `w/o Field` 与 `w/o Applicability`，且结果不支持 Full 更优。
 
 分块长度敏感性对 ConditionalQA 全部 285 例执行 64/128/256-token、20% overlap 的真实 reranker 重评分，并按唯一父证据 ID 评价。FRC Evidence F1 为 0.614475/0.632662/0.679077，相对每档最强覆盖贪心代理均略低且 95% CI 跨 0；FRC 重复父证据率由 64-token 的 0.324912 降至 256-token 的 0.122807。
 
@@ -317,6 +320,8 @@ conda run -n rag_exp python -m scripts.run_conflicts_frc_evaluation `
 ```
 
 该流程对 458 例官方数据执行六方法同预算选择与本地 Qwen 五类冲突分类，缓存逐样本分数和检查点，只提交汇总报告。结果位于 `output/rag_evaluation/conflicts_frc/`；它不是论文 expected-behavior adherence 的官方复现。
+
+`scripts.run_conflicts_frc_ablation` 复用同一真实模型候选池，并仅对证据序列发生变化的提示增量调用 Qwen；0.25/0.40/0.55/0.70/0.85 冲突角色阈值的准确率为 0.336245/0.336245/0.334061/0.334061/0.325328。该扫描为事后诊断，不能用于重新挑选测试参数或解除 Gate 2。
 
 区县证据集独立双人标注和第三方裁决：
 

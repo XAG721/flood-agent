@@ -1883,8 +1883,8 @@
           "reason": "public artifacts contain no standardized applicability/version/jurisdiction/effective-period fields"
         },
         "w/o_conflict": {
-          "status": "SCHEMA_BLOCKED",
-          "reason": "the three primary public artifacts contain no candidate-level conflict annotations; CONFLICTS is a separate challenge dataset"
+          "status": "RUN_REAL_MODEL_CONFLICTS",
+          "reason": "Google CONFLICTS supplies case-level conflict types; the ablation removes only alternative-claim and temporal-validity disclosure roles on the frozen real-model pool"
         },
         "w/o_reranker": {
           "status": "RUN_REAL_BIENCODER_RESCORING",
@@ -2461,16 +2461,602 @@
       ],
       "source_sha256": "8032a142586ea822ee115e31fab5365b795afc2dcf622c9532cbaa150dd39dda"
     },
+    "conflicts_real_model_ablation": {
+      "status": "RUN_REAL_MODEL_CONFLICTS",
+      "metadata": {
+        "dataset": "Google CONFLICTS",
+        "data_origin": "PUBLIC",
+        "is_simulated": false,
+        "real_model_scores": true,
+        "generator": "local_qwen",
+        "case_count": 458,
+        "top_k": 5,
+        "token_budget": 1500,
+        "frozen_role_threshold": 0.55,
+        "core_roles": [
+          "answer_claim",
+          "source_attribution"
+        ],
+        "conflict_disclosure_roles": [
+          "alternative_claim",
+          "temporal_validity"
+        ],
+        "conflict_thresholds": [
+          0.25,
+          0.4,
+          0.55,
+          0.7,
+          0.85
+        ],
+        "protocol": "post_hoc_one_factor_at_a_time_same_saved_real_model_candidate_pool",
+        "config": {
+          "embedding_model": "BAAI/bge-large-en-v1.5",
+          "reranker_model": "BAAI/bge-reranker-large",
+          "generator_model": "Qwen2.5-7B-Instruct-GPTQ-Int4",
+          "device": "cuda",
+          "hf_home": "D:\\RAG_test\\.hf_cache",
+          "embedding_batch_size": 32,
+          "rerank_batch_size": 16,
+          "generator_batch_size": 16,
+          "score_calibration": "per_case_minmax",
+          "role_relevance_mix": 0.15,
+          "alpha": 2.0,
+          "beta": 1.0,
+          "gamma": 0.0,
+          "top_k": 5,
+          "token_budget": 1500,
+          "sample_size": null,
+          "prediction_provenance": {
+            "total_variant_rows": 3206,
+            "reused_exact_reference_rows": 3116,
+            "changed_selection_rows": 90,
+            "changed_unique_prompts": 73,
+            "reuse_rule": "same case ID and identical ordered selected evidence IDs"
+          }
+        },
+        "source_sha256": {
+          "dataset": "9ed5907314a4907c36219aaab0fd570ce54892bbd6dd8386aa729a1a236a2781",
+          "reference_predictions": "be739f8d649e7cb841e99c6d318400a536f76cc84d0b44a072d0fbe2c1c39db8",
+          "reference_selected": "8241ee7d1592e4b4b8fa58baebfa43b59ebe78a6b09627ceac6cf36a9d21d728",
+          "scored_cache": "45973a7fa91c83119858dbe67d28c5b959a9ee79b0a6606abeb62ebdce4c4072",
+          "scored_metadata": "7e0a84e8f7d5d5a162f9da461b29923f6df15eae74139dc5445268695ac4d569"
+        }
+      },
+      "ablation": {
+        "status": "RUN_REAL_MODEL_CONFLICTS",
+        "full": {
+          "method": "frc_full",
+          "cases": 458,
+          "classification": {
+            "cases": 458,
+            "parsed_predictions": 458,
+            "parse_rate": 1.0,
+            "accuracy": 0.334061,
+            "macro_f1": 0.228111,
+            "per_type": {
+              "No conflict": {
+                "precision": 0.494624,
+                "recall": 0.571429,
+                "f1": 0.530259,
+                "support": 161
+              },
+              "Complementary information": {
+                "precision": 0.209877,
+                "recall": 0.147826,
+                "f1": 0.173469,
+                "support": 115
+              },
+              "Conflicting opinions and research outcomes": {
+                "precision": 1.0,
+                "recall": 0.078261,
+                "f1": 0.145161,
+                "support": 115
+              },
+              "Conflict due to outdated information": {
+                "precision": 0.196629,
+                "recall": 0.564516,
+                "f1": 0.291667,
+                "support": 62
+              },
+              "Conflict due to misinformation": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 5
+              }
+            }
+          },
+          "selection": {
+            "cases": 458,
+            "domain_coverage": 0.95262,
+            "lexical_diversity": 0.856176,
+            "mean_token_cost": 1222.428,
+            "answer_cases": 237,
+            "exact_answer_support": 0.738397,
+            "answer_token_recall": 0.827957,
+            "outdated_cases": 62,
+            "newest_date_retention": 0.532258,
+            "temporal_endpoint_coverage": 0.532258
+          },
+          "coverage_proxies": {
+            "prediction_parsed": 1.0,
+            "classification_correct": 0.334061,
+            "alternative_claim_coverage_proxy": 1.0,
+            "temporal_validity_coverage_proxy": 1.0,
+            "conflict_role_coverage_proxy": 1.0
+          }
+        },
+        "without_conflict": {
+          "method": "wo_conflict",
+          "cases": 458,
+          "classification": {
+            "cases": 458,
+            "parsed_predictions": 458,
+            "parse_rate": 1.0,
+            "accuracy": 0.338428,
+            "macro_f1": 0.232431,
+            "per_type": {
+              "No conflict": {
+                "precision": 0.494565,
+                "recall": 0.565217,
+                "f1": 0.527536,
+                "support": 161
+              },
+              "Complementary information": {
+                "precision": 0.222222,
+                "recall": 0.156522,
+                "f1": 0.183673,
+                "support": 115
+              },
+              "Conflicting opinions and research outcomes": {
+                "precision": 1.0,
+                "recall": 0.078261,
+                "f1": 0.145161,
+                "support": 115
+              },
+              "Conflict due to outdated information": {
+                "precision": 0.205556,
+                "recall": 0.596774,
+                "f1": 0.305785,
+                "support": 62
+              },
+              "Conflict due to misinformation": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 5
+              }
+            }
+          },
+          "selection": {
+            "cases": 458,
+            "domain_coverage": 0.95262,
+            "lexical_diversity": 0.856115,
+            "mean_token_cost": 1221.843,
+            "answer_cases": 237,
+            "exact_answer_support": 0.738397,
+            "answer_token_recall": 0.827957,
+            "outdated_cases": 62,
+            "newest_date_retention": 0.532258,
+            "temporal_endpoint_coverage": 0.532258
+          },
+          "coverage_proxies": {
+            "prediction_parsed": 1.0,
+            "classification_correct": 0.338428,
+            "alternative_claim_coverage_proxy": 1.0,
+            "temporal_validity_coverage_proxy": 1.0,
+            "conflict_role_coverage_proxy": 1.0
+          }
+        },
+        "comparison": {
+          "selection_changed_cases": 36,
+          "selection_unchanged_cases": 422,
+          "full_minus_wo_conflict": {
+            "classification_accuracy": {
+              "cases": 458,
+              "mean_difference": -0.004367,
+              "ci_low": -0.0131,
+              "ci_high": 0.004367
+            },
+            "conflict_role_coverage_proxy": {
+              "cases": 297,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "exact_answer_support": {
+              "cases": 237,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "newest_date_retention": {
+              "cases": 62,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "temporal_endpoint_coverage": {
+              "cases": 62,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            }
+          }
+        }
+      },
+      "conflict_threshold_sensitivity": {
+        "status": "RUN_REAL_MODEL_CONFLICTS",
+        "results": [
+          {
+            "conflict_threshold": 0.25,
+            "method": "conflict_threshold_0.25",
+            "cases": 458,
+            "classification": {
+              "cases": 458,
+              "parsed_predictions": 458,
+              "parse_rate": 1.0,
+              "accuracy": 0.336245,
+              "macro_f1": 0.23021,
+              "per_type": {
+                "No conflict": {
+                  "precision": 0.494624,
+                  "recall": 0.571429,
+                  "f1": 0.530259,
+                  "support": 161
+                },
+                "Complementary information": {
+                  "precision": 0.219512,
+                  "recall": 0.156522,
+                  "f1": 0.182741,
+                  "support": 115
+                },
+                "Conflicting opinions and research outcomes": {
+                  "precision": 1.0,
+                  "recall": 0.078261,
+                  "f1": 0.145161,
+                  "support": 115
+                },
+                "Conflict due to outdated information": {
+                  "precision": 0.19774,
+                  "recall": 0.564516,
+                  "f1": 0.292887,
+                  "support": 62
+                },
+                "Conflict due to misinformation": {
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "f1": 0.0,
+                  "support": 5
+                }
+              }
+            },
+            "selection": {
+              "cases": 458,
+              "domain_coverage": 0.95262,
+              "lexical_diversity": 0.856176,
+              "mean_token_cost": 1222.428,
+              "answer_cases": 237,
+              "exact_answer_support": 0.738397,
+              "answer_token_recall": 0.827957,
+              "outdated_cases": 62,
+              "newest_date_retention": 0.532258,
+              "temporal_endpoint_coverage": 0.532258
+            },
+            "coverage_proxies": {
+              "prediction_parsed": 1.0,
+              "classification_correct": 0.336245,
+              "alternative_claim_coverage_proxy": 1.0,
+              "temporal_validity_coverage_proxy": 1.0,
+              "conflict_role_coverage_proxy": 1.0
+            }
+          },
+          {
+            "conflict_threshold": 0.4,
+            "method": "conflict_threshold_0.40",
+            "cases": 458,
+            "classification": {
+              "cases": 458,
+              "parsed_predictions": 458,
+              "parse_rate": 1.0,
+              "accuracy": 0.336245,
+              "macro_f1": 0.23021,
+              "per_type": {
+                "No conflict": {
+                  "precision": 0.494624,
+                  "recall": 0.571429,
+                  "f1": 0.530259,
+                  "support": 161
+                },
+                "Complementary information": {
+                  "precision": 0.219512,
+                  "recall": 0.156522,
+                  "f1": 0.182741,
+                  "support": 115
+                },
+                "Conflicting opinions and research outcomes": {
+                  "precision": 1.0,
+                  "recall": 0.078261,
+                  "f1": 0.145161,
+                  "support": 115
+                },
+                "Conflict due to outdated information": {
+                  "precision": 0.19774,
+                  "recall": 0.564516,
+                  "f1": 0.292887,
+                  "support": 62
+                },
+                "Conflict due to misinformation": {
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "f1": 0.0,
+                  "support": 5
+                }
+              }
+            },
+            "selection": {
+              "cases": 458,
+              "domain_coverage": 0.95262,
+              "lexical_diversity": 0.856176,
+              "mean_token_cost": 1222.428,
+              "answer_cases": 237,
+              "exact_answer_support": 0.738397,
+              "answer_token_recall": 0.827957,
+              "outdated_cases": 62,
+              "newest_date_retention": 0.532258,
+              "temporal_endpoint_coverage": 0.532258
+            },
+            "coverage_proxies": {
+              "prediction_parsed": 1.0,
+              "classification_correct": 0.336245,
+              "alternative_claim_coverage_proxy": 1.0,
+              "temporal_validity_coverage_proxy": 1.0,
+              "conflict_role_coverage_proxy": 1.0
+            }
+          },
+          {
+            "conflict_threshold": 0.55,
+            "method": "conflict_threshold_0.55",
+            "cases": 458,
+            "classification": {
+              "cases": 458,
+              "parsed_predictions": 458,
+              "parse_rate": 1.0,
+              "accuracy": 0.334061,
+              "macro_f1": 0.228111,
+              "per_type": {
+                "No conflict": {
+                  "precision": 0.494624,
+                  "recall": 0.571429,
+                  "f1": 0.530259,
+                  "support": 161
+                },
+                "Complementary information": {
+                  "precision": 0.209877,
+                  "recall": 0.147826,
+                  "f1": 0.173469,
+                  "support": 115
+                },
+                "Conflicting opinions and research outcomes": {
+                  "precision": 1.0,
+                  "recall": 0.078261,
+                  "f1": 0.145161,
+                  "support": 115
+                },
+                "Conflict due to outdated information": {
+                  "precision": 0.196629,
+                  "recall": 0.564516,
+                  "f1": 0.291667,
+                  "support": 62
+                },
+                "Conflict due to misinformation": {
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "f1": 0.0,
+                  "support": 5
+                }
+              }
+            },
+            "selection": {
+              "cases": 458,
+              "domain_coverage": 0.95262,
+              "lexical_diversity": 0.856176,
+              "mean_token_cost": 1222.428,
+              "answer_cases": 237,
+              "exact_answer_support": 0.738397,
+              "answer_token_recall": 0.827957,
+              "outdated_cases": 62,
+              "newest_date_retention": 0.532258,
+              "temporal_endpoint_coverage": 0.532258
+            },
+            "coverage_proxies": {
+              "prediction_parsed": 1.0,
+              "classification_correct": 0.334061,
+              "alternative_claim_coverage_proxy": 1.0,
+              "temporal_validity_coverage_proxy": 1.0,
+              "conflict_role_coverage_proxy": 1.0
+            }
+          },
+          {
+            "conflict_threshold": 0.7,
+            "method": "conflict_threshold_0.70",
+            "cases": 458,
+            "classification": {
+              "cases": 458,
+              "parsed_predictions": 458,
+              "parse_rate": 1.0,
+              "accuracy": 0.334061,
+              "macro_f1": 0.227926,
+              "per_type": {
+                "No conflict": {
+                  "precision": 0.489362,
+                  "recall": 0.571429,
+                  "f1": 0.527221,
+                  "support": 161
+                },
+                "Complementary information": {
+                  "precision": 0.2125,
+                  "recall": 0.147826,
+                  "f1": 0.174359,
+                  "support": 115
+                },
+                "Conflicting opinions and research outcomes": {
+                  "precision": 1.0,
+                  "recall": 0.078261,
+                  "f1": 0.145161,
+                  "support": 115
+                },
+                "Conflict due to outdated information": {
+                  "precision": 0.19774,
+                  "recall": 0.564516,
+                  "f1": 0.292887,
+                  "support": 62
+                },
+                "Conflict due to misinformation": {
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "f1": 0.0,
+                  "support": 5
+                }
+              }
+            },
+            "selection": {
+              "cases": 458,
+              "domain_coverage": 0.95262,
+              "lexical_diversity": 0.856202,
+              "mean_token_cost": 1222.255,
+              "answer_cases": 237,
+              "exact_answer_support": 0.738397,
+              "answer_token_recall": 0.827957,
+              "outdated_cases": 62,
+              "newest_date_retention": 0.532258,
+              "temporal_endpoint_coverage": 0.532258
+            },
+            "coverage_proxies": {
+              "prediction_parsed": 1.0,
+              "classification_correct": 0.334061,
+              "alternative_claim_coverage_proxy": 1.0,
+              "temporal_validity_coverage_proxy": 1.0,
+              "conflict_role_coverage_proxy": 1.0
+            }
+          },
+          {
+            "conflict_threshold": 0.85,
+            "method": "conflict_threshold_0.85",
+            "cases": 458,
+            "classification": {
+              "cases": 458,
+              "parsed_predictions": 458,
+              "parse_rate": 1.0,
+              "accuracy": 0.325328,
+              "macro_f1": 0.221382,
+              "per_type": {
+                "No conflict": {
+                  "precision": 0.481481,
+                  "recall": 0.565217,
+                  "f1": 0.52,
+                  "support": 161
+                },
+                "Complementary information": {
+                  "precision": 0.197531,
+                  "recall": 0.13913,
+                  "f1": 0.163265,
+                  "support": 115
+                },
+                "Conflicting opinions and research outcomes": {
+                  "precision": 1.0,
+                  "recall": 0.078261,
+                  "f1": 0.145161,
+                  "support": 115
+                },
+                "Conflict due to outdated information": {
+                  "precision": 0.188571,
+                  "recall": 0.532258,
+                  "f1": 0.278481,
+                  "support": 62
+                },
+                "Conflict due to misinformation": {
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "f1": 0.0,
+                  "support": 5
+                }
+              }
+            },
+            "selection": {
+              "cases": 458,
+              "domain_coverage": 0.95262,
+              "lexical_diversity": 0.856252,
+              "mean_token_cost": 1221.666,
+              "answer_cases": 237,
+              "exact_answer_support": 0.738397,
+              "answer_token_recall": 0.827957,
+              "outdated_cases": 62,
+              "newest_date_retention": 0.532258,
+              "temporal_endpoint_coverage": 0.532258
+            },
+            "coverage_proxies": {
+              "prediction_parsed": 1.0,
+              "classification_correct": 0.325328,
+              "alternative_claim_coverage_proxy": 1.0,
+              "temporal_validity_coverage_proxy": 1.0,
+              "conflict_role_coverage_proxy": 1.0
+            }
+          }
+        ]
+      },
+      "decision": {
+        "full_superiority_over_wo_conflict_proven": false,
+        "gate_2": "NO-GO",
+        "interpretation": "This public real-model ablation measures the conflict-disclosure component on CONFLICTS. Gate 2 remains NO-GO unless all predeclared comparisons and independent expected-behavior judging pass."
+      },
+      "limitations": [
+        "The experiment was added after earlier aggregate results were inspected and is post hoc, not preregistered confirmatory evidence.",
+        "CONFLICTS supplies case-level conflict types but not candidate-level gold conflict spans; conflict-role coverage is therefore a reranker-score proxy.",
+        "Exact Qwen predictions are reused only when the case and ordered selected evidence IDs are identical; changed selections are regenerated locally.",
+        "Conflict-type classification is not the CONFLICTS paper's independent expected-behavior adherence judgment.",
+        "The experiment does not supply task-field or applicability annotations and cannot satisfy w/o Field or w/o Applicability."
+      ],
+      "source_sha256": "f3d73309005e7ba6d1baf7d3a0f5365954fd3463c1a4037f6cecc075552aca31"
+    },
+    "combined_ablation_coverage": {
+      "planned_variants": [
+        "full",
+        "w/o_role",
+        "w/o_field",
+        "w/o_applicability",
+        "w/o_redundancy",
+        "w/o_conflict",
+        "w/o_reranker",
+        "role_only",
+        "random_role"
+      ],
+      "run_variants": [
+        "full",
+        "random_role",
+        "role_only",
+        "w/o_conflict",
+        "w/o_redundancy",
+        "w/o_reranker",
+        "w/o_role"
+      ],
+      "run_count": 7,
+      "planned_count": 9,
+      "missing_variants": [
+        "w/o_applicability",
+        "w/o_field"
+      ]
+    },
     "sensitivity_coverage": {
       "k_2_3_5_8": "RUN",
       "token_budget_512_1024_2048": "RUN",
       "role_and_field_weights": "RUN_CONTROLLED_DOMAIN_PUBLIC_SCHEMA_BLOCKED",
-      "conflict_threshold": "RUN_CONTROLLED_DOMAIN_PUBLIC_SCHEMA_BLOCKED",
+      "conflict_threshold": "RUN_REAL_MODEL_CONFLICTS",
       "document_missing_ratio": "RUN",
       "chunk_length": "RUN"
     },
     "coverage_complete": false,
-    "interpretation": "Real-model artifacts cover 6 of nine planned FRC ablations, all K and token-budget values, a ConditionalQA role/redundancy parameter grid, and multi-ratio missing-evidence diagnostics. Chunk-length status is RUN; controlled field/role/conflict sensitivity status is RUN_CONTROLLED_DOMAIN. Schema-blocked public dimensions remain unrun rather than being inferred from unrelated metrics or treated as passes."
+    "interpretation": "Real-model artifacts cover 7 of nine planned FRC ablations, all K and token-budget values, a ConditionalQA role/redundancy parameter grid, and multi-ratio missing-evidence diagnostics. Chunk-length status is RUN; controlled field/role/conflict sensitivity status is RUN_CONTROLLED_DOMAIN; public CONFLICTS ablation status is RUN_REAL_MODEL_CONFLICTS. Schema-blocked public dimensions remain unrun rather than being inferred from unrelated metrics or treated as passes."
   },
   "challenge_slices": {
     "normal": {
@@ -2588,14 +3174,14 @@
     "full_outperforms_w_o_role_and_w_o_field": false,
     "design_16_2_experiment_coverage_complete": false,
     "gate_2": "NO-GO",
-    "reason": "real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; Full does not outperform w/o Role and w/o Field is schema-blocked on the primary public artifacts; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment"
+    "reason": "real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; Full does not outperform w/o Role and w/o Field is schema-blocked on the primary public artifacts; the CONFLICTS Full variant also does not outperform w/o Conflict; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment"
   },
   "limitations": [
     "The report imports existing real-model artifacts and recomputes paired evidence metrics; it does not retrain models.",
     "The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.",
     "ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.",
     "The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.",
-    "The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed. Field/role-weight and conflict-threshold sensitivity is controlled-domain only and is not counted as public real-model completion.",
+    "The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed. Field/role-weight sensitivity is controlled-domain only. Conflict-threshold sensitivity is now public real-model evidence on CONFLICTS but remains post hoc and does not supply field or applicability labels.",
     "CONFLICTS conflict-type classification is complete, but the paper's expected-behavior adherence metric and independent human judging are not reproduced."
   ]
 }

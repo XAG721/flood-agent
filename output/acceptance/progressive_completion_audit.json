@@ -3,7 +3,7 @@
     "audit_version": "progressive-completion-audit-v1",
     "scope": "single-district controlled simulation",
     "contract": "洪水预警响应系统_渐进式迭代开发与升级设计.md sections 18-23",
-    "evidence_hash_canonicalization": "UTF-8 without BOM; CRLF and CR normalized to LF"
+    "evidence_hash_canonicalization": "UTF-8 text without BOM with CRLF/CR normalized to LF; binary archives use raw bytes"
   },
   "summary": {
     "controlled_first_iteration": "PASS",
@@ -84,11 +84,14 @@
         "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json",
         "output/rag_evaluation/conflicts_frc/conflicts_frc_report.json",
         "output/rag_evaluation/controlled_domain_sensitivity/controlled_domain_sensitivity.json",
+        "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation.json",
+        "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation_cases.jsonl.gz",
         "scripts/run_candidate_evaluation.py",
         "scripts/run_rag_evaluation.py",
         "scripts/run_public_rag_benchmarks.py",
         "scripts/run_conflicts_frc_evaluation.py",
-        "scripts/run_frc_controlled_sensitivity.py"
+        "scripts/run_frc_controlled_sensitivity.py",
+        "scripts/run_conflicts_frc_ablation.py"
       ],
       "details": {
         "group_count": 4,
@@ -174,6 +177,7 @@
       "evidence": [
         "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json",
         "output/rag_evaluation/controlled_domain_sensitivity/controlled_domain_sensitivity.json",
+        "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation.json",
         "flood_system/response_workflow/service.py"
       ],
       "details": {
@@ -183,14 +187,15 @@
         "strongest_reproducible_baseline": "coverage_greedy_proxy",
         "baseline_accuracy": 0.344978,
         "frc_accuracy": 0.334061,
-        "ablation_variants_run": 6,
         "ablation_variants_planned": 9,
         "experiment_coverage_complete": false,
         "token_budget_sensitivity": "RUN",
         "missing_ratio_sensitivity": "RUN",
         "controlled_domain_sensitivity": "RUN_CONTROLLED_DOMAIN",
         "role_field_weight_sensitivity": "RUN_CONTROLLED_DOMAIN_PUBLIC_SCHEMA_BLOCKED",
-        "conflict_threshold_sensitivity": "RUN_CONTROLLED_DOMAIN_PUBLIC_SCHEMA_BLOCKED"
+        "conflict_threshold_sensitivity": "RUN_REAL_MODEL_CONFLICTS",
+        "conflicts_real_model_ablation": "RUN_REAL_MODEL_CONFLICTS",
+        "ablation_variants_run": 7
       }
     },
     {
@@ -221,14 +226,16 @@
     "output/floodagent_bench/scenario_acceptance_report.json": "806c53237599302277ba9aaaecf8fc95690416a9b1474145b3a8bccb50515ab1",
     "output/candidate_evaluation/report.json": "4f25d27e8411bae5906cc4bf8c33eeeba664201fc82e18cb4adfe36085f7c9eb",
     "output/performance/controlled_performance_report.json": "72881b8700ac867eaefc71a0ff770c8317c3c76531f06afafd55cf5a14f3b2b3",
-    "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json": "cab0b28afde1ff2760f51195fb044a4b21d2b4bee7a50f089475278e539bbd78",
+    "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json": "c4b589008c74694b1ec64f834e3aca874d3745923e042d9a26feabf2f05c55c0",
     "docs/openapi.json": "e338285b1b988a4ddf359bffa1d0249cfb12089f1f133d2a8696060b713ce73b",
     "docker-compose.yml": "8204abc75a6e82041d16e52d09e94e4f84de19f00f5a9cc9338dcd91ed76a33e",
-    "洪水预警响应系统_渐进式迭代开发与升级设计.md": "31182ea3280c684f666fa0f61797e6831c969685065c040af714f39c123f5f3c",
+    "洪水预警响应系统_渐进式迭代开发与升级设计.md": "12e7dfd02f9857ec73229f3e63b58ed394b95807d2fd1969d095125afbeffece",
     "面向区县防办的洪水预警响应系统_升级设计说明V3.md": "b059960b880d7bc2be0891e5e676d353548aca79a692438c8538721426f9e88d",
-    "docs/progressive_upgrade/completion_traceability_audit.md": "f1185df8d7d29a8026e262212593ea0ef31252fd4deab90c11a57c8e8b0359c1",
-    "docs/V3_upgrade_acceptance_matrix.md": "34c7a21328c9bf2b9ac5e52a6af848e831c7c20ca67b78766c1dec16d9f22fca",
-    "output/rag_evaluation/controlled_domain_sensitivity/controlled_domain_sensitivity.json": "55e100bca5db241c4bce411060f555e683ccfef48ed2a9ad36f2c660c8135256"
+    "docs/progressive_upgrade/completion_traceability_audit.md": "25a1b0ee4cfbf9441deb6f7575b398b38edcbf67fa749d7fff51e120f6d46d44",
+    "docs/V3_upgrade_acceptance_matrix.md": "f9975f73d5ac7e4e8230cd3f21bf3ccd1e1620a37933f8783b80977986ab640c",
+    "output/rag_evaluation/controlled_domain_sensitivity/controlled_domain_sensitivity.json": "55e100bca5db241c4bce411060f555e683ccfef48ed2a9ad36f2c660c8135256",
+    "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation.json": "f3d73309005e7ba6d1baf7d3a0f5365954fd3463c1a4037f6cecc075552aca31",
+    "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation_cases.jsonl.gz": "d4a60ed544c0c6701715f0036e673881d0a1fd4523c8e9f789fad2ac39501e55"
   },
   "external_no_go": [
     {

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import gzip
 import hashlib
 import json
 import math
@@ -243,6 +244,222 @@ def load_controlled_domain_sensitivity(path: Path) -> dict[str, Any]:
             }
             for row in results
         ],
+        "limitations": payload.get("limitations", []),
+        "source_sha256": sha256(path),
+    }
+
+
+def _conflicts_classification_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    labels = (
+        "No conflict",
+        "Complementary information",
+        "Conflicting opinions and research outcomes",
+        "Conflict due to outdated information",
+        "Conflict due to misinformation",
+    )
+    confusion = {label: defaultdict(int) for label in labels}
+    support = defaultdict(int)
+    parsed = 0
+    correct = 0
+    for row in rows:
+        gold = str(row["conflict_type"])
+        predicted = row.get("predicted_label")
+        if gold not in labels:
+            raise ValueError(f"unsupported CONFLICTS gold label: {gold}")
+        support[gold] += 1
+        if predicted in labels:
+            parsed += 1
+            confusion[gold][predicted] += 1
+            correct += int(predicted == gold)
+    per_type = {}
+    f1_values = []
+    for label in labels:
+        true_positive = confusion[label][label]
+        false_negative = support[label] - true_positive
+        false_positive = sum(confusion[other][label] for other in labels if other != label)
+        precision = true_positive / max(1, true_positive + false_positive)
+        recall = true_positive / max(1, true_positive + false_negative)
+        f1 = 2 * precision * recall / max(1e-12, precision + recall)
+        f1_values.append(f1)
+        per_type[label] = {
+            "precision": round(precision, 6),
+            "recall": round(recall, 6),
+            "f1": round(f1, 6),
+            "support": support[label],
+        }
+    return {
+        "cases": len(rows),
+        "parsed_predictions": parsed,
+        "parse_rate": round(parsed / max(1, len(rows)), 6),
+        "accuracy": round(correct / max(1, len(rows)), 6),
+        "macro_f1": round(sum(f1_values) / len(f1_values), 6),
+        "per_type": per_type,
+    }
+
+
+def _conflicts_selection_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    answer_rows = [row for row in rows if row.get("answer_annotated") is True]
+    outdated_rows = [
+        row
+        for row in rows
+        if row["conflict_type"] == "Conflict due to outdated information"
+    ]
+    return {
+        "cases": len(rows),
+        "domain_coverage": round(
+            sum(float(row["metrics"]["domain_coverage"]) for row in rows) / max(1, len(rows)),
+            6,
+        ),
+        "lexical_diversity": round(
+            sum(float(row["metrics"]["lexical_diversity"]) for row in rows)
+            / max(1, len(rows)),
+            6,
+        ),
+        "mean_token_cost": round(
+            sum(float(row["metrics"]["token_cost"]) for row in rows) / max(1, len(rows)),
+            3,
+        ),
+        "answer_cases": len(answer_rows),
+        "exact_answer_support": round(
+            sum(float(row["metrics"]["exact_answer_support"]) for row in answer_rows)
+            / max(1, len(answer_rows)),
+            6,
+        ),
+        "answer_token_recall": round(
+            sum(float(row["metrics"]["answer_token_recall"]) for row in answer_rows)
+            / max(1, len(answer_rows)),
+            6,
+        ),
+        "outdated_cases": len(outdated_rows),
+        "newest_date_retention": round(
+            sum(float(row["metrics"]["newest_date_retention"]) for row in outdated_rows)
+            / max(1, len(outdated_rows)),
+            6,
+        ),
+        "temporal_endpoint_coverage": round(
+            sum(float(row["metrics"]["temporal_endpoint_coverage"]) for row in outdated_rows)
+            / max(1, len(outdated_rows)),
+            6,
+        ),
+    }
+
+
+def load_conflicts_real_model_ablation(path: Path) -> dict[str, Any]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if payload.get("schema_version") != "frc-conflicts-real-model-ablation-v1":
+        raise ValueError(f"unsupported CONFLICTS ablation schema: {path}")
+    metadata = payload.get("metadata", {})
+    if metadata.get("data_origin") != "PUBLIC" or metadata.get("is_simulated") is not False:
+        raise ValueError("CONFLICTS ablation must preserve public non-simulated provenance")
+    if metadata.get("real_model_scores") is not True or metadata.get("generator") != "local_qwen":
+        raise ValueError("CONFLICTS ablation must use real-model scores and local Qwen generation")
+    case_count = int(metadata.get("case_count", 0))
+    if case_count != 458:
+        raise ValueError("CONFLICTS ablation must cover all 458 public cases")
+    thresholds = [float(value) for value in metadata.get("conflict_thresholds", [])]
+    if len(thresholds) < 2 or 0.55 not in thresholds:
+        raise ValueError("CONFLICTS ablation must scan multiple thresholds including 0.55")
+    expected_methods = {
+        "frc_full",
+        "wo_conflict",
+        *(f"conflict_threshold_{value:.2f}" for value in thresholds),
+    }
+    case_artifact = payload.get("case_results_artifact", {})
+    if case_artifact.get("format") != "gzip-jsonl":
+        raise ValueError("CONFLICTS ablation case results must use deterministic gzip JSONL")
+    case_path = path.parent / str(case_artifact.get("file", ""))
+    if not case_path.is_file() or sha256(case_path) != case_artifact.get("sha256"):
+        raise ValueError("CONFLICTS ablation case-result artifact is missing or hash-mismatched")
+    with gzip.open(case_path, "rt", encoding="utf-8") as handle:
+        case_results = [json.loads(line) for line in handle if line.strip()]
+    if len(case_results) != int(case_artifact.get("rows", -1)):
+        raise ValueError("CONFLICTS ablation case-result row count mismatch")
+    grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    seen: set[tuple[str, str]] = set()
+    for row in case_results:
+        key = (str(row["case_id"]), str(row["method"]))
+        if key in seen:
+            raise ValueError(f"duplicate CONFLICTS ablation case row: {key}")
+        seen.add(key)
+        grouped[key[1]].append(row)
+    if set(grouped) != expected_methods or any(len(rows) != case_count for rows in grouped.values()):
+        raise ValueError("CONFLICTS ablation must cover every case for every variant")
+    claimed = {row["method"]: row for row in payload.get("aggregates", [])}
+    if set(claimed) != expected_methods:
+        raise ValueError("CONFLICTS ablation aggregate method coverage mismatch")
+    proxy_names = (
+        "prediction_parsed",
+        "classification_correct",
+        "alternative_claim_coverage_proxy",
+        "temporal_validity_coverage_proxy",
+        "conflict_role_coverage_proxy",
+    )
+    for method, rows in grouped.items():
+        classification = _conflicts_classification_summary(rows)
+        selection = _conflicts_selection_summary(rows)
+        proxies = {
+            name: round(
+                sum(float(row["metrics"][name]) for row in rows) / len(rows),
+                6,
+            )
+            for name in proxy_names
+        }
+        if classification != claimed[method].get("classification"):
+            raise ValueError(f"CONFLICTS classification aggregate mismatch: {method}")
+        if selection != claimed[method].get("selection"):
+            raise ValueError(f"CONFLICTS selection aggregate mismatch: {method}")
+        if proxies != claimed[method].get("coverage_proxies"):
+            raise ValueError(f"CONFLICTS coverage aggregate mismatch: {method}")
+    ablation = payload.get("ablation", {})
+    if ablation.get("status") != "RUN_REAL_MODEL_CONFLICTS":
+        raise ValueError("CONFLICTS w/o Conflict ablation status is not complete")
+    if ablation.get("full") != claimed["frc_full"]:
+        raise ValueError("CONFLICTS Full summary does not match reaggregated cases")
+    if ablation.get("without_conflict") != claimed["wo_conflict"]:
+        raise ValueError("CONFLICTS w/o Conflict summary does not match reaggregated cases")
+    sensitivity = payload.get("conflict_threshold_sensitivity", {})
+    if sensitivity.get("status") != "RUN_REAL_MODEL_CONFLICTS":
+        raise ValueError("CONFLICTS conflict-threshold sensitivity status is not complete")
+    sensitivity_rows = sensitivity.get("results", [])
+    if [float(row["conflict_threshold"]) for row in sensitivity_rows] != thresholds:
+        raise ValueError("CONFLICTS conflict-threshold result ordering mismatch")
+    for row in sensitivity_rows:
+        method = f"conflict_threshold_{float(row['conflict_threshold']):.2f}"
+        expected = {"conflict_threshold": float(row["conflict_threshold"]), **claimed[method]}
+        if row != expected:
+            raise ValueError(f"CONFLICTS threshold summary mismatch: {method}")
+    full = {row["case_id"]: row for row in grouped["frc_full"]}
+    without = {row["case_id"]: row for row in grouped["wo_conflict"]}
+    changed = sum(full[case_id]["selected_ids"] != without[case_id]["selected_ids"] for case_id in full)
+    comparison = payload["ablation"]["comparison"]
+    if int(comparison.get("selection_changed_cases", -1)) != changed:
+        raise ValueError("CONFLICTS ablation changed-selection count mismatch")
+    if int(comparison.get("selection_unchanged_cases", -1)) != case_count - changed:
+        raise ValueError("CONFLICTS ablation unchanged-selection count mismatch")
+    correctness_differences = [
+        float(full[case_id]["metrics"]["classification_correct"])
+        - float(without[case_id]["metrics"]["classification_correct"])
+        for case_id in sorted(full)
+    ]
+    recomputed_ci = paired_bootstrap(correctness_differences, resamples=2000)
+    if recomputed_ci != comparison["full_minus_wo_conflict"]["classification_accuracy"]:
+        raise ValueError("CONFLICTS ablation paired classification interval mismatch")
+    source_hashes = metadata.get("source_sha256", {})
+    if not source_hashes or any(len(str(value)) != 64 for value in source_hashes.values()):
+        raise ValueError("CONFLICTS ablation source hashes are incomplete")
+    decision = payload.get("decision", {})
+    if decision.get("gate_2") != "NO-GO":
+        raise ValueError("CONFLICTS ablation must not independently promote Gate 2")
+    if decision.get("full_superiority_over_wo_conflict_proven") is not (
+        float(recomputed_ci["ci_low"]) > 0.0
+    ):
+        raise ValueError("CONFLICTS ablation superiority decision mismatch")
+    return {
+        "status": "RUN_REAL_MODEL_CONFLICTS",
+        "metadata": metadata,
+        "ablation": ablation,
+        "conflict_threshold_sensitivity": sensitivity,
+        "decision": decision,
         "limitations": payload.get("limitations", []),
         "source_sha256": sha256(path),
     }
@@ -498,6 +715,7 @@ def build_design_experiment_audit(
     supplemental_ablation_paths: Iterable[Path] = (),
     chunk_length_sensitivity_path: Path | None = None,
     controlled_domain_sensitivity_path: Path | None = None,
+    conflicts_ablation_path: Path | None = None,
 ) -> dict[str, Any]:
     supplemental_paths = tuple(supplemental_ablation_paths)
     ablation = load_ablation_audit(
@@ -536,6 +754,36 @@ def build_design_experiment_audit(
         }
     )
     controlled_status = controlled_sensitivity["status"]
+    conflicts_ablation = (
+        load_conflicts_real_model_ablation(conflicts_ablation_path)
+        if conflicts_ablation_path
+        else {
+            "status": "NOT_RUN",
+            "interpretation": "no public real-model CONFLICTS ablation artifact was supplied",
+        }
+    )
+    conflicts_ablation_status = conflicts_ablation["status"]
+    combined_run_variants = sorted(
+        {
+            *ablation["run_variants"],
+            *(
+                ["w/o_conflict"]
+                if conflicts_ablation_status == "RUN_REAL_MODEL_CONFLICTS"
+                else []
+            ),
+        }
+    )
+    schema_audit["variants"]["w/o_conflict"] = (
+        {
+            "status": "RUN_REAL_MODEL_CONFLICTS",
+            "reason": (
+                "Google CONFLICTS supplies case-level conflict types; the ablation removes only "
+                "alternative-claim and temporal-validity disclosure roles on the frozen real-model pool"
+            ),
+        }
+        if conflicts_ablation_status == "RUN_REAL_MODEL_CONFLICTS"
+        else schema_audit["variants"]["w/o_conflict"]
+    )
     controlled_only_status = (
         "RUN_CONTROLLED_DOMAIN_PUBLIC_SCHEMA_BLOCKED"
         if controlled_status == "RUN_CONTROLLED_DOMAIN"
@@ -547,7 +795,11 @@ def build_design_experiment_audit(
         "role_and_field_weights": (
             controlled_only_status if controlled_status == "RUN_CONTROLLED_DOMAIN" else "PARTIAL_ROLE_ONLY"
         ),
-        "conflict_threshold": controlled_only_status,
+        "conflict_threshold": (
+            "RUN_REAL_MODEL_CONFLICTS"
+            if conflicts_ablation_status == "RUN_REAL_MODEL_CONFLICTS"
+            else controlled_only_status
+        ),
         "document_missing_ratio": missing_ratios["status"],
         "chunk_length": chunk_lengths["status"],
     }
@@ -561,17 +813,26 @@ def build_design_experiment_audit(
         "ablation_schema_applicability": schema_audit,
         "chunk_length_sensitivity": chunk_lengths,
         "controlled_domain_sensitivity": controlled_sensitivity,
+        "conflicts_real_model_ablation": conflicts_ablation,
+        "combined_ablation_coverage": {
+            "planned_variants": list(PLANNED_ABLATIONS),
+            "run_variants": combined_run_variants,
+            "run_count": len(combined_run_variants),
+            "planned_count": len(PLANNED_ABLATIONS),
+            "missing_variants": sorted(set(PLANNED_ABLATIONS) - set(combined_run_variants)),
+        },
         "sensitivity_coverage": sensitivity_coverage,
         "coverage_complete": (
-            ablation["status"] == "RUN"
+            len(combined_run_variants) == len(PLANNED_ABLATIONS)
             and all(status == "RUN" for status in sensitivity_coverage.values())
         ),
         "interpretation": (
-            f"Real-model artifacts cover {len(ablation['run_variants'])} of nine planned FRC ablations, "
+            f"Real-model artifacts cover {len(combined_run_variants)} of nine planned FRC ablations, "
             "all K and token-budget values, a ConditionalQA role/redundancy parameter grid, and "
             "multi-ratio missing-evidence diagnostics. Chunk-length status is "
             f"{chunk_lengths['status']}; controlled field/role/conflict sensitivity status is "
-            f"{controlled_status}. Schema-blocked public dimensions remain unrun rather "
+            f"{controlled_status}; public CONFLICTS ablation status is {conflicts_ablation_status}. "
+            "Schema-blocked public dimensions remain unrun rather "
             "than being inferred from unrelated metrics or treated as passes."
         ),
     }
@@ -774,6 +1035,7 @@ def select_precomputed(
     k: int = 5,
     budget: int = 1500,
     threshold: float = 0.55,
+    role_thresholds: dict[str, float] | None = None,
 ) -> list[dict[str, Any]]:
     candidates = list(row.get("candidates", []))
     score_name = {
@@ -834,7 +1096,8 @@ def select_precomputed(
             improvements = []
             for role, old in role_best.items():
                 score = float(candidate.get("role_scores", {}).get(role, 0.0))
-                if old < threshold <= max(old, score):
+                role_threshold = float((role_thresholds or {}).get(role, threshold))
+                if old < role_threshold <= max(old, score):
                     improvements.append(1.0)
                 else:
                     improvements.append(max(0.0, score - old) * 0.25)
@@ -1146,6 +1409,7 @@ def build_public_reference_report(
     supplemental_ablation_paths: Iterable[Path] = (),
     chunk_length_sensitivity_path: Path | None = None,
     controlled_domain_sensitivity_path: Path | None = None,
+    conflicts_ablation_path: Path | None = None,
 ) -> dict[str, Any]:
     output = reference_root / "outputs"
     metrics_dir = output / "metrics"
@@ -1189,6 +1453,7 @@ def build_public_reference_report(
         supplemental_ablation_paths,
         chunk_length_sensitivity_path,
         controlled_domain_sensitivity_path,
+        conflicts_ablation_path,
     )
     ablation_gate = experiment_audit["ablation"]["gate_required_comparison"]
     limitations = [
@@ -1196,7 +1461,7 @@ def build_public_reference_report(
         "The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.",
         "ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.",
         "The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.",
-        "The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed. Field/role-weight and conflict-threshold sensitivity is controlled-domain only and is not counted as public real-model completion.",
+        "The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed. Field/role-weight sensitivity is controlled-domain only. Conflict-threshold sensitivity is now public real-model evidence on CONFLICTS but remains post hoc and does not supply field or applicability labels.",
     ]
     if conflict_run:
         limitations.append(
@@ -1243,6 +1508,7 @@ def build_public_reference_report(
             "reason": (
                 "real-model FRC runs are reproducible, but paired confidence intervals do not establish "
                 "consistent superiority; Full does not outperform w/o Role and w/o Field is schema-blocked on the primary public artifacts; "
+                "the CONFLICTS Full variant also does not outperform w/o Conflict; "
                 "CONFLICTS is run but does not reproduce the paper's independent expected-behavior "
                 "adherence judgment"
                 if conflict_run
@@ -1282,12 +1548,14 @@ def render_public_reference_markdown(report: dict[str, Any]) -> str:
         )
     experiment = report["design_16_2_experiment_audit"]
     ablation = experiment["ablation"]
+    combined_ablation = experiment["combined_ablation_coverage"]
+    conflicts_ablation = experiment["conflicts_real_model_ablation"]
     lines.extend(
         [
             "",
             "## 设计第 16.2 节消融审计",
             "",
-            f"- 覆盖状态：`{ablation['status']}`；已运行 {len(ablation['run_variants'])}/{len(ablation['planned_variants'])} 组。",
+            f"- 覆盖状态：`{ablation['status']}`；跨适用公开集已运行 {combined_ablation['run_count']}/{combined_ablation['planned_count']} 组。",
             f"- Gate 必需比较通过：`{ablation['gate_required_comparison']['passed']}`。缺失消融不得按通过处理。",
             "",
             "| 消融 | 状态 | Evidence F1 | Role Coverage |",
@@ -1300,6 +1568,8 @@ def render_public_reference_markdown(report: dict[str, Any]) -> str:
             lines.append(
                 f"| {variant} | RUN | {values['evidence_f1']:.6f} | {values['role_coverage']:.6f} |"
             )
+        elif variant == "w/o_conflict" and conflicts_ablation["status"] == "RUN_REAL_MODEL_CONFLICTS":
+            lines.append("| w/o_conflict | RUN_REAL_MODEL_CONFLICTS | — | — |")
         else:
             lines.append(f"| {variant} | NOT_RUN | — | — |")
     wo_reranker_source = ablation["supplemental_sources"].get("w/o_reranker")
@@ -1311,6 +1581,30 @@ def render_public_reference_markdown(report: dict[str, Any]) -> str:
                 "`w/o Reranker` 相对 Full 的 Evidence F1 配对差值为 "
                 f"{paired['mean_difference']:+.6f}，95% CI="
                 f"[{paired['ci_low']:+.6f}, {paired['ci_high']:+.6f}]；区间跨 0。",
+            ]
+        )
+    if conflicts_ablation["status"] == "RUN_REAL_MODEL_CONFLICTS":
+        full = conflicts_ablation["ablation"]["full"]
+        without = conflicts_ablation["ablation"]["without_conflict"]
+        paired = conflicts_ablation["ablation"]["comparison"]["full_minus_wo_conflict"][
+            "classification_accuracy"
+        ]
+        lines.extend(
+            [
+                "",
+                "### `w/o Conflict`（Google CONFLICTS，真实模型）",
+                "",
+                "该事后诊断只移除 `alternative_claim` 与 `temporal_validity` 两个冲突披露角色；"
+                "候选池、BGE、重排器、Qwen、K 和 Token 预算保持一致。",
+                "",
+                "| 版本 | 冲突类型准确率 | Macro F1 | 选择变化用例 |",
+                "|---|---:|---:|---:|",
+                f"| Full | {full['classification']['accuracy']:.6f} | {full['classification']['macro_f1']:.6f} | 0 |",
+                f"| w/o Conflict | {without['classification']['accuracy']:.6f} | {without['classification']['macro_f1']:.6f} | {conflicts_ablation['ablation']['comparison']['selection_changed_cases']} |",
+                "",
+                f"Full−`w/o Conflict` 准确率差值为 {paired['mean_difference']:+.6f}，95% CI="
+                f"[{paired['ci_low']:+.6f}, {paired['ci_high']:+.6f}]。该结果不证明 Full 更优，"
+                "也不替代独立 expected-behavior adherence 评判。",
             ]
         )
     schema_audit = experiment["ablation_schema_applicability"]
@@ -1375,6 +1669,25 @@ def render_public_reference_markdown(report: dict[str, Any]) -> str:
                 f"{aggregate['field_coverage']:.6f} | {aggregate['selector_field_coverage']:.6f} | "
                 f"{aggregate['role_coverage']:.6f} | "
                 f"{aggregate['flagged_evidence_case']:.6f} | {aggregate['case_accuracy']:.6f} |"
+            )
+    if conflicts_ablation["status"] == "RUN_REAL_MODEL_CONFLICTS":
+        lines.extend(
+            [
+                "",
+                "### CONFLICTS conflict-threshold sensitivity (real model)",
+                "",
+                "Only the two conflict-disclosure role thresholds change; this is a post-hoc diagnostic.",
+                "",
+                "| Threshold | Accuracy | Macro F1 | Exact answer support | Newest-date retention |",
+                "|---:|---:|---:|---:|---:|",
+            ]
+        )
+        for item in conflicts_ablation["conflict_threshold_sensitivity"]["results"]:
+            lines.append(
+                f"| {item['conflict_threshold']:.2f} | {item['classification']['accuracy']:.6f} | "
+                f"{item['classification']['macro_f1']:.6f} | "
+                f"{item['selection']['exact_answer_support']:.6f} | "
+                f"{item['selection']['newest_date_retention']:.6f} |"
             )
     chunk_lengths = experiment["chunk_length_sensitivity"]
     if chunk_lengths["status"] == "RUN":
