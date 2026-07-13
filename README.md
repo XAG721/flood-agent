@@ -272,6 +272,16 @@ python scripts/import_frc_public_reference.py --reference-root D:\RAG_test\frc-s
 
 该导入只读参考目录，关键输入写入 SHA-256；历史 `setr_style` 在报告中统一正名为 `coverage_greedy_proxy`。协议与 Gate 2 解释见 `docs/progressive_upgrade/frc_public_evaluation_protocol.md`。
 
+Google CONFLICTS 冲突与过时信息全量评测：
+
+```powershell
+conda run -n rag_exp python -m scripts.run_conflicts_frc_evaluation `
+  --hf-home D:\RAG_test\.hf_cache `
+  --generator-model-path D:\RAG_test\.hf_cache\local_models\Qwen2.5-7B-Instruct-GPTQ-Int4
+```
+
+该流程对 458 例官方数据执行六方法同预算选择与本地 Qwen 五类冲突分类，缓存逐样本分数和检查点，只提交汇总报告。结果位于 `output/rag_evaluation/conflicts_frc/`；它不是论文 expected-behavior adherence 的官方复现。
+
 区县证据集独立双人标注和第三方裁决：
 
 ```powershell

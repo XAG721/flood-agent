@@ -562,8 +562,32 @@
       "interpretation": "false_complete is the rate at which role scores still claim full coverage after a required gold passage was removed; lower is safer."
     },
     "conflict_and_stale": {
-      "status": "NOT_RUN",
-      "reason": "official Google CONFLICTS file is not locally available; no result is fabricated"
+      "status": "RUN",
+      "cases": 458,
+      "answer_annotated_cases": 237,
+      "conflict_types": {
+        "Complementary information": 115,
+        "Conflicting opinions and research outcomes": 115,
+        "No conflict": 161,
+        "Conflict due to misinformation": 5,
+        "Conflict due to outdated information": 62
+      },
+      "dataset_sha256": "9ed5907314a4907c36219aaab0fd570ce54892bbd6dd8386aa729a1a236a2781",
+      "report_sha256": "8b908a51cd47a8d3ca2998a3ea4d1289e051741971d232c8159aa69b995a6e5a",
+      "strongest_reproducible_baseline": "coverage_greedy_proxy",
+      "baseline_accuracy": 0.344978,
+      "frc_accuracy": 0.334061,
+      "paired_frc_minus_baseline_accuracy": {
+        "cases": 458,
+        "mean_difference": -0.010917,
+        "ci_low": -0.043668,
+        "ci_high": 0.024017,
+        "wins": 30,
+        "ties": 393,
+        "losses": 35
+      },
+      "frc_outdated_recall": 0.564516,
+      "note": "CONFLICTS retrieval and label classification are reproducible, but the paper's expected-behavior adherence evaluation and independent human judging are not reproduced; classification alone cannot authorize CANARY or DEFAULT."
     }
   },
   "decision": {
@@ -571,13 +595,13 @@
     "pipeline_feasible": true,
     "evidence_f1_superiority_on_all_primary_datasets": false,
     "gate_2": "NO-GO",
-    "reason": "real-model FRC runs are reproducible and competitive, but paired confidence intervals do not establish consistent superiority; conflict/stale comparison is not yet run"
+    "reason": "real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment"
   },
   "limitations": [
     "The report imports existing real-model artifacts and recomputes paired evidence metrics; it does not retrain models.",
     "The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.",
     "ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.",
     "The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.",
-    "CONFLICTS metrics remain NOT_RUN until the official file and an equal-scoring pass are available."
+    "CONFLICTS conflict-type classification is complete, but the paper's expected-behavior adherence metric and independent human judging are not reproduced."
   ]
 }

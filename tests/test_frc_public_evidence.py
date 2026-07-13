@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from flood_system.frc_public_evidence import (
+    conflict_inventory,
     evidence_metrics,
     paired_bootstrap,
     select_precomputed,
@@ -62,3 +63,37 @@ def test_evidence_metrics_and_paired_bootstrap_are_deterministic():
     second = paired_bootstrap([0.1, -0.1, 0.2], resamples=100)
     assert first == second
     assert first["cases"] == 3
+
+
+def test_conflict_inventory_imports_completed_audit_report(tmp_path):
+    path = tmp_path / "conflicts_report.json"
+    path.write_text(
+        """{
+          "metadata": {
+            "name": "Google CONFLICTS FRC retrieval and conflict-classification audit",
+            "status": "RUN",
+            "cases": 458,
+            "answer_annotated_cases": 237,
+            "conflict_type_counts": {"No conflict": 161},
+            "dataset_sha256": "dataset-hash"
+          },
+          "classification_metrics": {
+            "coverage_greedy_proxy": {"accuracy": 0.34},
+            "frc_select": {
+              "accuracy": 0.33,
+              "per_type": {"Conflict due to outdated information": {"recall": 0.56}}
+            }
+          },
+          "strongest_reproducible_baseline_by_accuracy": "coverage_greedy_proxy",
+          "paired_frc_minus_baseline_accuracy": {"ci_low": -0.04, "ci_high": 0.02},
+          "decision": {"reason": "classification is not independent human judging"}
+        }""",
+        encoding="utf-8",
+    )
+
+    inventory = conflict_inventory(path)
+
+    assert inventory["status"] == "RUN"
+    assert inventory["cases"] == 458
+    assert inventory["frc_accuracy"] == 0.33
+    assert inventory["frc_outdated_recall"] == 0.56

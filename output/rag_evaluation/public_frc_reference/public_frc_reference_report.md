@@ -29,14 +29,19 @@
 
 ## 冲突与失效证据
 
-- 状态：`NOT_RUN`
-- 说明：official Google CONFLICTS file is not locally available; no result is fabricated
+- 状态：`RUN`
+- 说明：CONFLICTS retrieval and label classification are reproducible, but the paper's expected-behavior adherence evaluation and independent human judging are not reproduced; classification alone cannot authorize CANARY or DEFAULT.
+- 用例：458；有正确答案标注：237
+- 最强可复现基线：`coverage_greedy_proxy`，Accuracy=0.344978
+- FRC Accuracy：0.334061
+- FRC - 基线：-0.010917，95% CI=[-0.043668, +0.024017]
+- FRC 过时信息类型 Recall：0.564516
 
 ## 判定
 
 - 状态：`THEORETICAL_PIPELINE_FEASIBLE_BUT_SUPERIORITY_NOT_PROVEN`
 - Gate 2：`NO-GO`
-- 结论：real-model FRC runs are reproducible and competitive, but paired confidence intervals do not establish consistent superiority; conflict/stale comparison is not yet run。
+- 结论：real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment。
 
 这组结果证明真实模型、公开数据和 FRC 选择器可以形成可复现流水线，但不能证明 FRC 已经稳定优于强重排基线。
 
@@ -46,4 +51,4 @@
 - The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.
 - ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.
 - The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.
-- CONFLICTS metrics remain NOT_RUN until the official file and an equal-scoring pass are available.
+- CONFLICTS conflict-type classification is complete, but the paper's expected-behavior adherence metric and independent human judging are not reproduced.

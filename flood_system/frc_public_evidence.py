@@ -311,6 +311,30 @@ def conflict_inventory(path: Path | None) -> dict[str, Any]:
             "status": "NOT_RUN",
             "reason": "official Google CONFLICTS file is not locally available; no result is fabricated",
         }
+    if path.suffix.lower() == ".json":
+        report = json.loads(path.read_text(encoding="utf-8"))
+        metadata = report.get("metadata", {})
+        if metadata.get("name") == "Google CONFLICTS FRC retrieval and conflict-classification audit":
+            strongest = report["strongest_reproducible_baseline_by_accuracy"]
+            return {
+                "status": metadata.get("status", "RUN"),
+                "cases": metadata["cases"],
+                "answer_annotated_cases": metadata["answer_annotated_cases"],
+                "conflict_types": metadata["conflict_type_counts"],
+                "dataset_sha256": metadata["dataset_sha256"],
+                "report_sha256": sha256(path),
+                "strongest_reproducible_baseline": strongest,
+                "baseline_accuracy": report["classification_metrics"][strongest]["accuracy"],
+                "frc_accuracy": report["classification_metrics"]["frc_select"]["accuracy"],
+                "paired_frc_minus_baseline_accuracy": report[
+                    "paired_frc_minus_baseline_accuracy"
+                ],
+                "frc_outdated_recall": report["classification_metrics"]["frc_select"][
+                    "per_type"
+                ]["Conflict due to outdated information"]["recall"],
+                "note": report["decision"]["reason"],
+            }
+        raise ValueError(f"unsupported CONFLICTS report format: {path}")
     counts: dict[str, int] = defaultdict(int)
     total = 0
     for row in read_jsonl(path):
@@ -365,6 +389,22 @@ def build_public_reference_report(
         dataset["paired_frc_minus_baseline"]["metrics"]["evidence_f1"]["ci_low"] > 0
         for dataset in datasets.values()
     )
+    conflict = conflict_inventory(conflicts_path)
+    conflict_run = conflict.get("status") == "RUN"
+    limitations = [
+        "The report imports existing real-model artifacts and recomputes paired evidence metrics; it does not retrain models.",
+        "The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.",
+        "ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.",
+        "The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.",
+    ]
+    if conflict_run:
+        limitations.append(
+            "CONFLICTS conflict-type classification is complete, but the paper's expected-behavior adherence metric and independent human judging are not reproduced."
+        )
+    else:
+        limitations.append(
+            "CONFLICTS metrics remain NOT_RUN until the official file and an equal-scoring pass are available."
+        )
     return {
         "metadata": {
             "name": "FRC-Select public-dataset real-model reference audit",
@@ -389,22 +429,23 @@ def build_public_reference_report(
             "missing_evidence": missing_evidence_challenge(
                 output / "role_scores" / "role_scores_conditionalqa.jsonl"
             ),
-            "conflict_and_stale": conflict_inventory(conflicts_path),
+            "conflict_and_stale": conflict,
         },
         "decision": {
             "status": "THEORETICAL_PIPELINE_FEASIBLE_BUT_SUPERIORITY_NOT_PROVEN",
             "pipeline_feasible": True,
             "evidence_f1_superiority_on_all_primary_datasets": superiority,
             "gate_2": "NO-GO",
-            "reason": "real-model FRC runs are reproducible and competitive, but paired confidence intervals do not establish consistent superiority; conflict/stale comparison is not yet run",
+            "reason": (
+                "real-model FRC runs are reproducible, but paired confidence intervals do not establish "
+                "consistent superiority; CONFLICTS is run but does not reproduce the paper's independent "
+                "expected-behavior adherence judgment"
+                if conflict_run
+                else "real-model FRC runs are reproducible and competitive, but paired confidence intervals "
+                "do not establish consistent superiority; conflict/stale comparison is not yet run"
+            ),
         },
-        "limitations": [
-            "The report imports existing real-model artifacts and recomputes paired evidence metrics; it does not retrain models.",
-            "The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.",
-            "ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.",
-            "The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.",
-            "CONFLICTS metrics remain NOT_RUN until the official file and an equal-scoring pass are available.",
-        ],
+        "limitations": limitations,
     }
 
 
@@ -459,6 +500,21 @@ def render_public_reference_markdown(report: dict[str, Any]) -> str:
             "",
             f"- 状态：`{conflict['status']}`",
             f"- 说明：{conflict.get('reason') or conflict.get('note')}",
+        ]
+    )
+    if conflict["status"] == "RUN":
+        paired = conflict["paired_frc_minus_baseline_accuracy"]
+        lines.extend(
+            [
+                f"- 用例：{conflict['cases']}；有正确答案标注：{conflict['answer_annotated_cases']}",
+                f"- 最强可复现基线：`{conflict['strongest_reproducible_baseline']}`，Accuracy={conflict['baseline_accuracy']:.6f}",
+                f"- FRC Accuracy：{conflict['frc_accuracy']:.6f}",
+                f"- FRC - 基线：{paired['mean_difference']:+.6f}，95% CI=[{paired['ci_low']:+.6f}, {paired['ci_high']:+.6f}]",
+                f"- FRC 过时信息类型 Recall：{conflict['frc_outdated_recall']:.6f}",
+            ]
+        )
+    lines.extend(
+        [
             "",
             "## 判定",
             "",

@@ -30,6 +30,7 @@
 | FRC-Select 集合选择 | 已证明（工程实现） | 有限预算下综合角色覆盖、可信度、新颖性、证据成本和冲突惩罚；响应任务草案已使用集合选择 |
 | 方法对比与消融 | 已证明（工程与公开参考审计） | `output/rag_evaluation/` 保存本地 7 方法对比、4 变体消融，以及三套公开数据真实模型的逐样本配对统计；报告明确代理指标与适用边界 |
 | ConditionalQA、MultiHop-RAG、HotpotQA 复现 | 已证明（证据检索口径） | 全量可评测范围：MultiHop-RAG 2255、ConditionalQA 271、HotpotQA 7405；报告含排除规则、revision/SHA-256、候选规模、Recall、完整证据集命中率和 MRR；不是官方答案生成 leaderboard |
+| CONFLICTS 冲突与失效切片 | 已证明（检索与类型分类口径） | 官方 458 例、五类标签、同一真实 BGE/reranker、本地 Qwen 和统一预算；含 62 例过时信息与 5 例错误信息，未复现论文 expected-behavior adherence 人工评判 |
 | 区县数据独立人工标注与裁决 | 部分完成 | 已生成无 gold/检索分数/可信度/冲突信息的盲化包、双人独立表单、Cohen's kappa/Jaccard/角色与答案一致性比较、第三方裁决和哈希溯源工具；实际两名业务专家与独立裁决员尚未完成签署 |
 
 ## 安全、合规与可靠性
@@ -55,7 +56,8 @@
 - RAG 专项测试：BM25、Dense、混合、MMR、Rerank、覆盖贪心代理、FRC-Select、神经/公开评测辅助逻辑、消融及独立标注约束均有自动测试；覆盖贪心代理不是 SetR 复现。报告位于 `output/rag_evaluation/`，空白标注包位于 `output/rag_annotation/round-1/`。
 - 神经向量实测：`BAAI/bge-small-zh-v1.5`；Neural Dense Recall 0.7222、Role Coverage 0.8333；Neural Hybrid RRF 指标相同；FRC-Select 在同一小型集上 Recall/Role Coverage 为 1.0。
 - 公开全量可评测集：MultiHop-RAG Hybrid Recall 0.6237/完整集 0.3082；ConditionalQA Dense Recall 0.2627/完整集 0.1292；HotpotQA Dense Recall 0.8866/完整集 0.7815。
-- 真实 BGE/reranker 参考审计：ConditionalQA、MultiHop-RAG、HotpotQA 上 FRC 相对各自最强可复现基线的 Evidence F1 配对 95% CI 均跨 0；流水线可行，但优势未获证明，Gate 2 保持 `NO-GO/SHADOW`。CONFLICTS 与失效文件切片为 `NOT_RUN`。
+- 真实 BGE/reranker 参考审计：ConditionalQA、MultiHop-RAG、HotpotQA 上 FRC 相对各自最强可复现基线的 Evidence F1 配对 95% CI 均跨 0；流水线可行，但优势未获证明，Gate 2 保持 `NO-GO/SHADOW`。
+- CONFLICTS 全量审计：覆盖贪心代理 Accuracy 0.344978，FRC 0.334061；FRC - 基线为 -0.010917，95% CI [-0.043668, +0.024017]。FRC 过时类型 Recall 0.564516，低于代理的 0.693548，因此不能据此切流。
 
 ## 后续完成门槛
 

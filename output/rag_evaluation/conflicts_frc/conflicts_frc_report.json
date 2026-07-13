@@ -1,0 +1,367 @@
+{
+  "metadata": {
+    "name": "Google CONFLICTS FRC retrieval and conflict-classification audit",
+    "status": "RUN",
+    "dataset_sha256": "9ed5907314a4907c36219aaab0fd570ce54892bbd6dd8386aa729a1a236a2781",
+    "scored_cache_sha256": "45973a7fa91c83119858dbe67d28c5b959a9ee79b0a6606abeb62ebdce4c4072",
+    "license": "Apache-2.0",
+    "cases": 458,
+    "answer_annotated_cases": 237,
+    "conflict_type_counts": {
+      "Complementary information": 115,
+      "Conflicting opinions and research outcomes": 115,
+      "No conflict": 161,
+      "Conflict due to misinformation": 5,
+      "Conflict due to outdated information": 62
+    },
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "generator_model": "Qwen2.5-7B-Instruct-GPTQ-Int4",
+    "device": "cuda",
+    "hf_home": "D:\\RAG_test\\.hf_cache",
+    "embedding_batch_size": 32,
+    "rerank_batch_size": 16,
+    "generator_batch_size": 16,
+    "score_calibration": "per_case_minmax",
+    "role_relevance_mix": 0.15,
+    "alpha": 2.0,
+    "beta": 1.0,
+    "gamma": 0.0,
+    "top_k": 5,
+    "token_budget": 1500,
+    "sample_size": null
+  },
+  "selection_diagnostics": {
+    "bm25_topk": {
+      "cases": 458,
+      "domain_coverage": 0.965211,
+      "lexical_diversity": 0.854142,
+      "mean_token_cost": 1270.395,
+      "answer_cases": 237,
+      "exact_answer_support": 0.71308,
+      "answer_token_recall": 0.810717,
+      "outdated_cases": 62,
+      "newest_date_retention": 0.548387,
+      "temporal_endpoint_coverage": 0.580645
+    },
+    "dense_topk": {
+      "cases": 458,
+      "domain_coverage": 0.961463,
+      "lexical_diversity": 0.854365,
+      "mean_token_cost": 1172.67,
+      "answer_cases": 237,
+      "exact_answer_support": 0.738397,
+      "answer_token_recall": 0.841596,
+      "outdated_cases": 62,
+      "newest_date_retention": 0.483871,
+      "temporal_endpoint_coverage": 0.540323
+    },
+    "hybrid_topk": {
+      "cases": 458,
+      "domain_coverage": 0.963028,
+      "lexical_diversity": 0.852046,
+      "mean_token_cost": 1232.712,
+      "answer_cases": 237,
+      "exact_answer_support": 0.742616,
+      "answer_token_recall": 0.835361,
+      "outdated_cases": 62,
+      "newest_date_retention": 0.451613,
+      "temporal_endpoint_coverage": 0.524194
+    },
+    "cross_encoder_topk": {
+      "cases": 458,
+      "domain_coverage": 0.95262,
+      "lexical_diversity": 0.855818,
+      "mean_token_cost": 1224.393,
+      "answer_cases": 237,
+      "exact_answer_support": 0.738397,
+      "answer_token_recall": 0.827957,
+      "outdated_cases": 62,
+      "newest_date_retention": 0.532258,
+      "temporal_endpoint_coverage": 0.532258
+    },
+    "coverage_greedy_proxy": {
+      "cases": 458,
+      "domain_coverage": 0.949672,
+      "lexical_diversity": 0.854774,
+      "mean_token_cost": 1327.465,
+      "answer_cases": 237,
+      "exact_answer_support": 0.742616,
+      "answer_token_recall": 0.83288,
+      "outdated_cases": 62,
+      "newest_date_retention": 0.580645,
+      "temporal_endpoint_coverage": 0.572581
+    },
+    "frc_select": {
+      "cases": 458,
+      "domain_coverage": 0.95262,
+      "lexical_diversity": 0.856176,
+      "mean_token_cost": 1222.428,
+      "answer_cases": 237,
+      "exact_answer_support": 0.738397,
+      "answer_token_recall": 0.827957,
+      "outdated_cases": 62,
+      "newest_date_retention": 0.532258,
+      "temporal_endpoint_coverage": 0.532258
+    }
+  },
+  "classification_metrics": {
+    "bm25_topk": {
+      "cases": 458,
+      "parsed_predictions": 458,
+      "parse_rate": 1.0,
+      "accuracy": 0.336245,
+      "macro_f1": 0.238886,
+      "per_type": {
+        "No conflict": {
+          "precision": 0.5,
+          "recall": 0.559006,
+          "f1": 0.527859,
+          "support": 161
+        },
+        "Complementary information": {
+          "precision": 0.211765,
+          "recall": 0.156522,
+          "f1": 0.18,
+          "support": 115
+        },
+        "Conflicting opinions and research outcomes": {
+          "precision": 0.933333,
+          "recall": 0.121739,
+          "f1": 0.215385,
+          "support": 115
+        },
+        "Conflict due to outdated information": {
+          "precision": 0.183908,
+          "recall": 0.516129,
+          "f1": 0.271186,
+          "support": 62
+        },
+        "Conflict due to misinformation": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 5
+        }
+      }
+    },
+    "dense_topk": {
+      "cases": 458,
+      "parsed_predictions": 458,
+      "parse_rate": 1.0,
+      "accuracy": 0.340611,
+      "macro_f1": 0.235845,
+      "per_type": {
+        "No conflict": {
+          "precision": 0.511111,
+          "recall": 0.571429,
+          "f1": 0.539589,
+          "support": 161
+        },
+        "Complementary information": {
+          "precision": 0.235294,
+          "recall": 0.173913,
+          "f1": 0.2,
+          "support": 115
+        },
+        "Conflicting opinions and research outcomes": {
+          "precision": 0.833333,
+          "recall": 0.086957,
+          "f1": 0.15748,
+          "support": 115
+        },
+        "Conflict due to outdated information": {
+          "precision": 0.189944,
+          "recall": 0.548387,
+          "f1": 0.282158,
+          "support": 62
+        },
+        "Conflict due to misinformation": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 5
+        }
+      }
+    },
+    "hybrid_topk": {
+      "cases": 458,
+      "parsed_predictions": 458,
+      "parse_rate": 1.0,
+      "accuracy": 0.318777,
+      "macro_f1": 0.218964,
+      "per_type": {
+        "No conflict": {
+          "precision": 0.483871,
+          "recall": 0.559006,
+          "f1": 0.518732,
+          "support": 161
+        },
+        "Complementary information": {
+          "precision": 0.13253,
+          "recall": 0.095652,
+          "f1": 0.111111,
+          "support": 115
+        },
+        "Conflicting opinions and research outcomes": {
+          "precision": 0.846154,
+          "recall": 0.095652,
+          "f1": 0.171875,
+          "support": 115
+        },
+        "Conflict due to outdated information": {
+          "precision": 0.2,
+          "recall": 0.548387,
+          "f1": 0.293103,
+          "support": 62
+        },
+        "Conflict due to misinformation": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 5
+        }
+      }
+    },
+    "cross_encoder_topk": {
+      "cases": 458,
+      "parsed_predictions": 458,
+      "parse_rate": 1.0,
+      "accuracy": 0.342795,
+      "macro_f1": 0.237312,
+      "per_type": {
+        "No conflict": {
+          "precision": 0.494565,
+          "recall": 0.565217,
+          "f1": 0.527536,
+          "support": 161
+        },
+        "Complementary information": {
+          "precision": 0.1875,
+          "recall": 0.130435,
+          "f1": 0.153846,
+          "support": 115
+        },
+        "Conflicting opinions and research outcomes": {
+          "precision": 0.916667,
+          "recall": 0.095652,
+          "f1": 0.173228,
+          "support": 115
+        },
+        "Conflict due to outdated information": {
+          "precision": 0.223464,
+          "recall": 0.645161,
+          "f1": 0.33195,
+          "support": 62
+        },
+        "Conflict due to misinformation": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 5
+        }
+      }
+    },
+    "coverage_greedy_proxy": {
+      "cases": 458,
+      "parsed_predictions": 457,
+      "parse_rate": 0.997817,
+      "accuracy": 0.344978,
+      "macro_f1": 0.244282,
+      "per_type": {
+        "No conflict": {
+          "precision": 0.508982,
+          "recall": 0.52795,
+          "f1": 0.518293,
+          "support": 161
+        },
+        "Complementary information": {
+          "precision": 0.210526,
+          "recall": 0.173913,
+          "f1": 0.190476,
+          "support": 115
+        },
+        "Conflicting opinions and research outcomes": {
+          "precision": 0.909091,
+          "recall": 0.086957,
+          "f1": 0.15873,
+          "support": 115
+        },
+        "Conflict due to outdated information": {
+          "precision": 0.237569,
+          "recall": 0.693548,
+          "f1": 0.353909,
+          "support": 62
+        },
+        "Conflict due to misinformation": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 5
+        }
+      }
+    },
+    "frc_select": {
+      "cases": 458,
+      "parsed_predictions": 458,
+      "parse_rate": 1.0,
+      "accuracy": 0.334061,
+      "macro_f1": 0.228111,
+      "per_type": {
+        "No conflict": {
+          "precision": 0.494624,
+          "recall": 0.571429,
+          "f1": 0.530259,
+          "support": 161
+        },
+        "Complementary information": {
+          "precision": 0.209877,
+          "recall": 0.147826,
+          "f1": 0.173469,
+          "support": 115
+        },
+        "Conflicting opinions and research outcomes": {
+          "precision": 1.0,
+          "recall": 0.078261,
+          "f1": 0.145161,
+          "support": 115
+        },
+        "Conflict due to outdated information": {
+          "precision": 0.196629,
+          "recall": 0.564516,
+          "f1": 0.291667,
+          "support": 62
+        },
+        "Conflict due to misinformation": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 5
+        }
+      }
+    }
+  },
+  "strongest_reproducible_baseline_by_accuracy": "coverage_greedy_proxy",
+  "paired_frc_minus_baseline_accuracy": {
+    "cases": 458,
+    "mean_difference": -0.010917,
+    "ci_low": -0.043668,
+    "ci_high": 0.024017,
+    "wins": 30,
+    "ties": 393,
+    "losses": 35
+  },
+  "decision": {
+    "pipeline_feasible": true,
+    "frc_accuracy_superiority": false,
+    "gate_2": "NO-GO",
+    "reason": "CONFLICTS retrieval and label classification are reproducible, but the paper's expected-behavior adherence evaluation and independent human judging are not reproduced; classification alone cannot authorize CANARY or DEFAULT."
+  },
+  "limitations": [
+    "This is a retrieval-selection and conflict-type classification audit, not the paper's official expected-behavior adherence reproduction.",
+    "Only 237 of 458 public cases have nonblank correct_answer values; answer-support diagnostics exclude the rest.",
+    "Date retention is a provenance diagnostic and does not imply that the newest source is factually correct.",
+    "The local Qwen2.5-7B-Instruct-GPTQ-Int4 classifier is shared by all methods and is not an expert judge.",
+    "coverage_greedy_proxy is not SetR and must not be reported as a SetR reproduction."
+  ]
+}
