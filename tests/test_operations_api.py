@@ -16,6 +16,9 @@ def test_health_readiness_metrics_and_openapi_are_available():
     metrics = client.get("/metrics")
     assert metrics.status_code == 200
     assert "flood_response_events_total" in metrics.text
+    assert "flood_risk_object_registry" in metrics.text
+    assert "flood_risk_object_registry_stale_candidate_runs" in metrics.text
+    assert "flood_risk_object_registry_quarantined_rows" in metrics.text
     assert "flood_api_latency_ms" in metrics.text
     assert metrics.headers["X-Correlation-ID"]
     openapi = client.get("/openapi.json")
@@ -25,3 +28,6 @@ def test_health_readiness_metrics_and_openapi_are_available():
     assert "/response/evidence-packages/{package_id}" in openapi.json()["paths"]
     assert "/response/events/{event_id}/replay" in openapi.json()["paths"]
     assert "/response/tasks/{task_id}/transitions" in openapi.json()["paths"]
+    assert "/response/risk-objects" in openapi.json()["paths"]
+    assert "/response/risk-objects/imports" in openapi.json()["paths"]
+    assert "/response/risk-objects/file-imports" in openapi.json()["paths"]

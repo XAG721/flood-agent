@@ -330,6 +330,35 @@ CREATE TABLE IF NOT EXISTS response_risk_object_versions (
     UNIQUE(event_id, object_id, version)
 );
 
+CREATE TABLE IF NOT EXISTS response_risk_object_registry (
+    area_id TEXT NOT NULL,
+    object_id TEXT NOT NULL,
+    registry_version INTEGER NOT NULL,
+    registry_status TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    PRIMARY KEY(area_id, object_id)
+);
+
+CREATE TABLE IF NOT EXISTS response_risk_object_registry_versions (
+    snapshot_id TEXT PRIMARY KEY,
+    area_id TEXT NOT NULL,
+    object_id TEXT NOT NULL,
+    registry_version INTEGER NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    UNIQUE(area_id, object_id, registry_version)
+);
+
+CREATE TABLE IF NOT EXISTS response_risk_object_imports (
+    import_id TEXT PRIMARY KEY,
+    area_id TEXT NOT NULL,
+    source_hash TEXT NOT NULL,
+    source_format TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS response_tasks (
     task_id TEXT PRIMARY KEY,
     event_id TEXT NOT NULL,
@@ -576,6 +605,38 @@ CREATE TABLE IF NOT EXISTS response_document_versions (
     UNIQUE(document_id, source_hash)
 );
 
+DROP TRIGGER IF EXISTS protect_response_registry_versions_update;
+CREATE TRIGGER protect_response_registry_versions_update
+BEFORE UPDATE ON response_risk_object_registry_versions
+WHEN NOT (
+    COALESCE(json_extract(OLD.payload, '$.protected'), 0) = 0
+    AND json_extract(NEW.payload, '$.protected') = 1
+    OR response_key_rotation_authorized() = 1
+)
+BEGIN
+    SELECT RAISE(ABORT, 'risk-object registry versions are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_registry_versions_delete;
+CREATE TRIGGER protect_response_registry_versions_delete
+BEFORE DELETE ON response_risk_object_registry_versions BEGIN
+    SELECT RAISE(ABORT, 'risk-object registry versions cannot be deleted');
+END;
+DROP TRIGGER IF EXISTS protect_response_registry_imports_update;
+CREATE TRIGGER protect_response_registry_imports_update
+BEFORE UPDATE ON response_risk_object_imports
+WHEN NOT (
+    COALESCE(json_extract(OLD.payload, '$.protected'), 0) = 0
+    AND json_extract(NEW.payload, '$.protected') = 1
+    OR response_key_rotation_authorized() = 1
+)
+BEGIN
+    SELECT RAISE(ABORT, 'risk-object registry imports are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_registry_imports_delete;
+CREATE TRIGGER protect_response_registry_imports_delete
+BEFORE DELETE ON response_risk_object_imports BEGIN
+    SELECT RAISE(ABORT, 'risk-object registry imports cannot be deleted');
+END;
 DROP TRIGGER IF EXISTS protect_response_alert_snapshots_update;
 CREATE TRIGGER protect_response_alert_snapshots_update
 BEFORE UPDATE ON response_alert_snapshots
@@ -746,6 +807,9 @@ CREATE INDEX IF NOT EXISTS idx_v2_long_term_memories_event_id ON v2_long_term_me
 CREATE INDEX IF NOT EXISTS idx_response_alerts_event_id ON response_alert_snapshots(event_id, version);
 CREATE INDEX IF NOT EXISTS idx_response_objects_event_id ON response_event_objects(event_id, verification_status);
 CREATE INDEX IF NOT EXISTS idx_response_object_versions ON response_risk_object_versions(event_id, object_id, version);
+CREATE INDEX IF NOT EXISTS idx_response_registry_area_status ON response_risk_object_registry(area_id, registry_status, updated_at);
+CREATE INDEX IF NOT EXISTS idx_response_registry_versions ON response_risk_object_registry_versions(area_id, object_id, registry_version);
+CREATE INDEX IF NOT EXISTS idx_response_risk_imports ON response_risk_object_imports(area_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_response_tasks_event_id ON response_tasks(event_id, status, updated_at);
 CREATE INDEX IF NOT EXISTS idx_response_task_versions_task_id ON response_task_versions(task_id, version);
 CREATE INDEX IF NOT EXISTS idx_response_task_assignments_task_id ON response_task_assignments(task_id, assignment_version);

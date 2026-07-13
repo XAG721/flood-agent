@@ -8,6 +8,8 @@ vi.mock("../api/responseWorkflowApi", () => ({
   responseWorkflowApi: {
     listEvents: vi.fn(),
     listDocuments: vi.fn(),
+    listRiskObjectRegistry: vi.fn(),
+    importRiskObjectFile: vi.fn(),
     registerDocument: vi.fn(),
     getDashboard: vi.fn(),
     bootstrapDemo: vi.fn(),
@@ -175,6 +177,7 @@ describe("ResponseWorkflowPage", () => {
     vi.clearAllMocks();
     vi.mocked(responseWorkflowApi.listEvents).mockResolvedValue([dashboard.event]);
     vi.mocked(responseWorkflowApi.listDocuments).mockResolvedValue([]);
+    vi.mocked(responseWorkflowApi.listRiskObjectRegistry).mockResolvedValue([]);
     vi.mocked(responseWorkflowApi.getDashboard).mockResolvedValue(dashboard);
     vi.mocked(responseWorkflowApi.listDispatchCallbacks).mockResolvedValue([]);
   });
@@ -187,6 +190,8 @@ describe("ResponseWorkflowPage", () => {
     expect(screen.getByText("已覆盖 · 触发条件")).toBeInTheDocument();
     expect(screen.getByText("已覆盖 · 版本归因")).toBeInTheDocument();
     expect(screen.getByText("查看 1 条来源证据")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "风险对象主数据" })).toBeInTheDocument();
+    expect(screen.getByText(/当前区域尚无带 EPSG:4326 坐标/)).toBeInTheDocument();
   });
 
   it("明确区域台账筛查边界并刷新候选对象", async () => {
@@ -200,6 +205,55 @@ describe("ResponseWorkflowPage", () => {
       expect(responseWorkflowApi.discoverRiskObjects).toHaveBeenCalledWith("FLOOD-TEST-001", "commander");
       expect(responseWorkflowApi.getDashboard).toHaveBeenCalledTimes(2);
     });
+  });
+
+  it("将带坐标的版本化风险对象主数据联动到 Cesium 图层", async () => {
+    vi.mocked(responseWorkflowApi.listRiskObjectRegistry).mockResolvedValue([
+      {
+        area_id: "beilin_10km2",
+        object_id: "SCHOOL-REGISTRY-001",
+        canonical_object_id: "SCHOOL-REGISTRY-001",
+        aliases: [],
+        duplicate_of: null,
+        name: "文艺路重点学校",
+        object_type: "学校",
+        location: "碑林区文艺路",
+        longitude: 108.958,
+        latitude: 34.244,
+        responsible_organization: "区教育局",
+        responsible_role: "学校防汛负责人",
+        trigger_reasons: ["纳入区级风险对象台账"],
+        source_refs: ["district-registry:school-2026"],
+        vulnerability: "低龄学生集中",
+        historical_risk: "",
+        risk_score: 88,
+        system_explanation: "主数据登记风险分",
+        sensitive_contacts: [],
+        special_population_notes: "",
+        source_type: "governed_registry",
+        source_version: "district-registry-2026.1",
+        data_version: "district-registry-2026.1:abc123",
+        is_simulated: true,
+        missing_fields: [],
+        registry_status: "active",
+        registry_valid_from: null,
+        registry_valid_until: null,
+        registry_version: 1,
+        source_hash: "a".repeat(64),
+        content_hash: "b".repeat(64),
+        source_filename: "risk-objects.xlsx",
+        created_by: "registry-reviewer",
+        terminal_id: "registry-console",
+        created_at: "2026-07-14T00:00:00Z",
+        updated_at: "2026-07-14T00:00:00Z",
+      },
+    ]);
+
+    render(<ResponseWorkflowPage />);
+
+    expect(await screen.findByLabelText("digital-twin-canvas")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /文艺路重点学校 \/ 监测中/ })).toBeInTheDocument();
+    expect(screen.getByText("1 个可定位对象")).toBeInTheDocument();
   });
 
   it("有预警多边形时标明采用 EPSG:4326 点落区筛查", async () => {

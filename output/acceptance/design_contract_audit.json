@@ -81,7 +81,7 @@
         {
           "path": "tests/test_postgis_migration.py",
           "contains": "test_simulated_response_projection_preserves_hashes_and_postgis_polygon",
-          "sha256": "225989ac38e224ecc273a50afb0460ffa67995e8bdd669f22e4c8a303eb2fdc8"
+          "sha256": "49c775e7cb37e577723c626479f3fc00c65758e70d954651fe2c0d0f9078d049"
         },
         {
           "path": "tests/test_response_workflow.py",
@@ -104,7 +104,7 @@
         {
           "path": "docs/progressive_upgrade/api_compatibility_mapping.md",
           "contains": null,
-          "sha256": "4200d4f9e784f9a23aa4ca124b7694dc709caf55774506556358e5681b6d2193"
+          "sha256": "940b493e6c6203480b2362811ff3597a44176d761a4f1f799a1b14cbef28bed5"
         },
         {
           "path": "tests/test_response_identity.py",
@@ -152,7 +152,7 @@
         {
           "path": "docs/progressive_upgrade/operations_and_rollback.md",
           "contains": "M7",
-          "sha256": "eae4e6c68bbd7a12dd021ac5efb364fcabda41b8a8b63d8448c34ed4f0f39553"
+          "sha256": "4e2c42e5601f194d56859607e5bb565e717dc6a1736a6f9538e990e880cd71fd"
         },
         {
           "path": "docs/progressive_upgrade/completion_traceability_audit.md",
@@ -170,7 +170,7 @@
         {
           "path": "frontend/src/pages/ResponseWorkflowPage.tsx",
           "contains": "受控模拟环境",
-          "sha256": "7bb85ddbb7f82cb8c726a499623afa9b1c7c38c6db792735d605eb3d08090337"
+          "sha256": "209248d1041baf6d9cb60cf70d33c02f62c6904ea7e4bc3ac620a1f3d97bf62d"
         },
         {
           "path": "frontend/e2e/response-workflow.spec.ts",
@@ -223,7 +223,7 @@
         {
           "path": "docs/progressive_upgrade/operations_and_rollback.md",
           "contains": null,
-          "sha256": "eae4e6c68bbd7a12dd021ac5efb364fcabda41b8a8b63d8448c34ed4f0f39553"
+          "sha256": "4e2c42e5601f194d56859607e5bb565e717dc6a1736a6f9538e990e880cd71fd"
         }
       ],
       "assigned_item_count": 10
@@ -241,12 +241,12 @@
         {
           "path": "README.md",
           "contains": "FRC-RAG",
-          "sha256": "be445a0fd21b5c42b91381ca149c721ef6d9a5bd30928c4163507a8924b92637"
+          "sha256": "3806faae7f37ede26ea395d8545db3e5df39a70640d817e0e2b8d0cd378bd2f4"
         },
         {
           "path": "docs/V3_upgrade_acceptance_matrix.md",
           "contains": "NO-GO/SHADOW",
-          "sha256": "ab86cf8fa241590a4cd6c2f7dde36caf74f8e3043ca38bd194af9fb26746aaa2"
+          "sha256": "85993aa58dbe70fdb9f2bb65f2fba7c9895fd9709d64b3bfb66ea13cbb972f0a"
         },
         {
           "path": "docs/progressive_upgrade/completion_traceability_audit.md",
@@ -365,7 +365,7 @@
         {
           "path": "tests/test_completion_audit.py",
           "contains": "test_completion_audit_proves_controlled_scope_without_overstating_production",
-          "sha256": "49cb10f47c0495c531865e9bc8ace6c709cb724f087ee27576ad4fada3b3a1c9"
+          "sha256": "b2d90f26ba48b7498439c9a3352528bc403650a44a55b3c181161bed083bee34"
         },
         {
           "path": "docs/progressive_upgrade/evaluation_and_gate_report.md",

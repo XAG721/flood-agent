@@ -5,9 +5,10 @@
 | 设计概念 | Core API 实现 | 说明 |
 |---|---|---|
 | Warning / revision | `POST /events`、`POST /events/{event_id}/alerts` | Event 固定工作流版本；AlertSnapshot 保存原始内容、哈希和生命周期。撤销/过期通过新 revision 的 `lifecycle_status` 表达，不覆盖旧版。 |
-| CandidateRun | `POST /events/{event_id}/risk-objects/discover`、`GET /events/{event_id}/candidate-runs` | 返回候选并持久化算法、特征、数据、校准和运行模式版本。 |
+| Risk-object master registry | `GET /risk-objects`、`GET /risk-objects/versions`、`GET /risk-objects/imports`、`POST /risk-objects/imports`、`POST /risk-objects/file-imports` | API/CSV/XLSX/JSON/Point GeoJSON 导入到区域主数据；AAL2、逐对象哈希版本、隔离区、字段脱敏和不可变历史。 |
+| CandidateRun | `POST /events/{event_id}/risk-objects/discover`、`GET /events/{event_id}/candidate-runs` | 优先读取 Core 主数据，空区域才使用旧 EntityProfile 只读适配器；持久化算法、特征、主数据指纹、校准和空间关联模式。主数据变化后运行进入 STALE。 |
 | Candidate confirm/exclude | `POST /events/{event_id}/risk-objects/{object_id}/verify` | 人工决定生成不可变对象版本；预警更新后对象变为 STALE。 |
-| Risk-object import | `POST /events/{event_id}/risk-objects` | 受控批量导入到事件上下文，禁止绕过事件版本。 |
+| Event risk-object supplement | `POST /events/{event_id}/risk-objects` | 人工补充到事件上下文，不替代区域主数据导入；仍需人工核验并形成事件对象版本。 |
 | Document/version/parse/publish | `POST /documents`、`GET /documents` | 单次命令完成源哈希、条款解析、版本登记和索引；相同内容幂等，替代版本令旧索引失效。 |
 | Evidence run/package | `POST /events/{event_id}/risk-objects/{object_id}/task-draft`、`GET /evidence-packages/{package_id}` | 草案请求先独立生成 EvidencePackageVersion；证据不足时不创建任务。 |
 | Manual evidence/freeze | `POST /evidence-packages/{id}/manual-evidence`、`POST /evidence-packages/{id}/freeze` | 人工补证和冻结均创建新版本；缺失或未决冲突时拒绝冻结。 |

@@ -1,8 +1,15 @@
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { responseWorkflowApi } from "../api/responseWorkflowApi";
 import { setApiOperatorContext } from "../lib/httpClient";
-import type { DeadlineExtensionRecord, DispatchCallbackRecord, DistrictScenarioReport, DocumentVersionRecord, EscalationRecord, EvidencePackageVersion, EvidenceRole, EventDashboard, EventReviewDraft, OutboxMessage, ResponseTask, ResponseTaskStatus, RetrievalMode, RuleEvaluationRecord, SimulationDispatchScenario, WorkflowRole } from "../types/response";
+import type { EntityType, RiskLevel, TwinObjectMapLayer } from "../types/api";
+import type { DeadlineExtensionRecord, DispatchCallbackRecord, DistrictScenarioReport, DocumentVersionRecord, EscalationRecord, EvidencePackageVersion, EvidenceRole, EventDashboard, EventReviewDraft, OutboxMessage, ResponseTask, ResponseTaskStatus, RetrievalMode, RiskObjectRegistryImportResult, RiskObjectRegistryRecord, RuleEvaluationRecord, SimulationDispatchScenario, WorkflowRole } from "../types/response";
 import styles from "./response-workflow-page.module.css";
+
+const DigitalTwinCesiumCanvas = lazy(() =>
+  import("../components/DigitalTwinCesiumCanvas").then((module) => ({
+    default: module.DigitalTwinCesiumCanvas,
+  })),
+);
 
 const roleText: Record<WorkflowRole, string> = {
   duty_officer: "防办值班员",
@@ -60,6 +67,7 @@ const actionText: Record<string, string> = {
   event_review_draft_generated: "事件复盘草稿已生成",
   scenario_evaluation_completed: "区县场景评测已完成",
   situation_feedback_recorded: "现场态势更新已记录",
+  risk_object_registry_imported: "风险对象主数据已更新，相关候选运行已失效",
 };
 
 const dispatchScenarioText: Record<SimulationDispatchScenario, string> = {
@@ -91,9 +99,91 @@ function formatDate(value?: string | null) {
   }).format(new Date(value));
 }
 
+const registryEntityTypes: Array<[string, EntityType]> = [
+  ["学校", "school"],
+  ["医院", "hospital"],
+  ["养老", "nursing_home"],
+  ["地铁", "metro_station"],
+  ["地下", "underground_space"],
+  ["下穿", "underground_space"],
+  ["工厂", "factory"],
+  ["企业", "factory"],
+  ["居民", "resident"],
+];
+
+function registryRiskLevel(score: number): RiskLevel {
+  if (score >= 85) return "Red";
+  if (score >= 70) return "Orange";
+  if (score >= 50) return "Yellow";
+  return "Blue";
+}
+
+function registryEntityType(value: string): EntityType {
+  const normalized = value.toLowerCase();
+  return registryEntityTypes.find(([keyword]) => normalized.includes(keyword))?.[1] ?? "community";
+}
+
+function registryMapLayers(records: RiskObjectRegistryRecord[]): TwinObjectMapLayer[] {
+  const anchorLon = 108.94921153512861;
+  const anchorLat = 34.24624474240188;
+  const metersPerLongitudeDegree = 111_320 * Math.cos((anchorLat * Math.PI) / 180);
+  return records
+    .filter((item) => item.longitude != null && item.latitude != null && item.duplicate_of == null)
+    .map((item, index) => ({
+      object_id: item.object_id,
+      name: item.name,
+      risk_level: registryRiskLevel(item.risk_score),
+      entity_type: registryEntityType(item.object_type),
+      east_offset_m: (Number(item.longitude) - anchorLon) * metersPerLongitudeDegree,
+      north_offset_m: (Number(item.latitude) - anchorLat) * 110_540,
+      height_offset_m: 0,
+      proposal_state: item.registry_status === "active" ? "monitoring" : "warning_generated",
+      is_lead: index === 0,
+    }));
+}
+
+function bytesToBase64(bytes: Uint8Array): string {
+  let binary = "";
+  for (let offset = 0; offset < bytes.length; offset += 0x8000) {
+    binary += String.fromCharCode(...bytes.subarray(offset, offset + 0x8000));
+  }
+  return btoa(binary);
+}
+
+async function prepareRegistryFile(file: File) {
+  if (file.size > 10 * 1024 * 1024) {
+    throw new Error("风险对象文件不得超过 10 MiB");
+  }
+  if (!globalThis.crypto?.subtle) {
+    throw new Error("当前浏览器不支持文件 SHA-256 校验");
+  }
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const digest = new Uint8Array(await globalThis.crypto.subtle.digest("SHA-256", bytes));
+  const sha256 = Array.from(digest, (value) => value.toString(16).padStart(2, "0")).join("");
+  const suffix = file.name.split(".").pop()?.toLowerCase();
+  const mediaType = file.type || {
+    csv: "text/csv",
+    xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    json: "application/json",
+    geojson: "application/geo+json",
+  }[suffix ?? ""];
+  if (!mediaType) {
+    throw new Error("只支持 CSV、XLSX、JSON 或 GeoJSON 风险对象文件");
+  }
+  return {
+    filename: file.name,
+    mediaType,
+    contentBase64: bytesToBase64(bytes),
+    sha256,
+  };
+}
+
 export function ResponseWorkflowPage() {
   const [dashboard, setDashboard] = useState<EventDashboard | null>(null);
   const [documents, setDocuments] = useState<DocumentVersionRecord[]>([]);
+  const [registry, setRegistry] = useState<RiskObjectRegistryRecord[]>([]);
+  const [lastRegistryImport, setLastRegistryImport] = useState<RiskObjectRegistryImportResult | null>(null);
+  const [selectedRegistryObjectId, setSelectedRegistryObjectId] = useState<string | null>(null);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [role, setRole] = useState<WorkflowRole>("commander");
   const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>("SHADOW");
@@ -113,9 +203,13 @@ export function ResponseWorkflowPage() {
     try {
       const events = await responseWorkflowApi.listEvents();
       const next = events.length ? await responseWorkflowApi.getDashboard(events[0].event_id) : await responseWorkflowApi.bootstrapDemo();
-      const nextDocuments = await responseWorkflowApi.listDocuments();
+      const [nextDocuments, nextRegistry] = await Promise.all([
+        responseWorkflowApi.listDocuments(),
+        responseWorkflowApi.listRiskObjectRegistry(next.event.area_id),
+      ]);
       setDashboard(next);
       setDocuments(nextDocuments);
+      setRegistry(nextRegistry);
       setSelectedTaskId((current) => current ?? next.tasks[0]?.task_id ?? null);
       setMessage("业务台账已同步");
     } catch (error) {
@@ -140,12 +234,14 @@ export function ResponseWorkflowPage() {
     try {
       await operation();
       if (dashboard) {
-        const [next, nextDocuments] = await Promise.all([
+        const [next, nextDocuments, nextRegistry] = await Promise.all([
           responseWorkflowApi.getDashboard(dashboard.event.event_id),
           responseWorkflowApi.listDocuments(),
+          responseWorkflowApi.listRiskObjectRegistry(dashboard.event.area_id),
         ]);
         setDashboard(next);
         setDocuments(nextDocuments);
+        setRegistry(nextRegistry);
       }
       setMessage(`${label}完成，已写入事件台账`);
     } catch (error) {
@@ -175,6 +271,41 @@ export function ResponseWorkflowPage() {
       setBusy(false);
     }
   };
+
+  const importRegistryFile = async (file: File) => {
+    if (!dashboard) return;
+    if (!["reviewer", "admin"].includes(role)) {
+      setMessage("只有业务复核岗或管理员可以导入风险对象主数据");
+      return;
+    }
+    setBusy(true);
+    setMessage("正在校验文件哈希并导入风险对象主数据……");
+    try {
+      const prepared = await prepareRegistryFile(file);
+      const result = await responseWorkflowApi.importRiskObjectFile({
+        areaId: dashboard.event.area_id,
+        sourceVersion: `web-${file.lastModified || Date.now()}`,
+        ...prepared,
+        operatorRole: role,
+      });
+      const [nextDashboard, nextRegistry] = await Promise.all([
+        responseWorkflowApi.getDashboard(dashboard.event.event_id),
+        responseWorkflowApi.listRiskObjectRegistry(dashboard.event.area_id),
+      ]);
+      setDashboard(nextDashboard);
+      setRegistry(nextRegistry);
+      setLastRegistryImport(result);
+      setMessage(
+        `主数据导入完成：新增 ${result.created_count}、更新 ${result.updated_count}、隔离 ${result.quarantined_count}；${result.stale_candidate_run_count} 个候选运行已标记 STALE`,
+      );
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "风险对象主数据导入失败");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const mapLayers = useMemo(() => registryMapLayers(registry), [registry]);
 
   if (!dashboard) {
     return (
@@ -248,6 +379,55 @@ export function ResponseWorkflowPage() {
       </section>
 
       <div className={styles.workspace}>
+        <section className={styles.registrySection} aria-labelledby="risk-registry-heading">
+          <header>
+            <div>
+              <h3 id="risk-registry-heading">风险对象主数据</h3>
+              <p>受控导入、逐对象内容哈希、不可变版本与 Cesium 空间定位共用同一份主数据。</p>
+            </div>
+            <div className={styles.sectionActions}>
+              <span>{registry.length} 个有效对象</span>
+              <span>{mapLayers.length} 个可定位对象</span>
+              <label className={styles.registryFileAction} aria-disabled={busy || !["reviewer", "admin"].includes(role)}>
+                导入主数据文件
+                <input
+                  type="file"
+                  accept=".csv,.xlsx,.json,.geojson"
+                  disabled={busy || !["reviewer", "admin"].includes(role)}
+                  onChange={(event) => {
+                    const file = event.currentTarget.files?.[0];
+                    event.currentTarget.value = "";
+                    if (file) void importRegistryFile(file);
+                  }}
+                />
+              </label>
+            </div>
+          </header>
+          {lastRegistryImport ? (
+            <div className={styles.registryImportResult} role="status">
+              <strong>{lastRegistryImport.source_filename}</strong>
+              <span>新增 {lastRegistryImport.created_count}</span>
+              <span>更新 {lastRegistryImport.updated_count}</span>
+              <span>未变 {lastRegistryImport.unchanged_count}</span>
+              <span>隔离 {lastRegistryImport.quarantined_count}</span>
+              <span>SHA-256 {lastRegistryImport.source_hash.slice(0, 12)}…</span>
+            </div>
+          ) : null}
+          {mapLayers.length ? (
+            <div className={styles.registryMap}>
+              <Suspense fallback={<p className={styles.emptyText}>正在加载 Cesium 风险对象图层……</p>}>
+                <DigitalTwinCesiumCanvas
+                  layers={mapLayers}
+                  dialogFocusObjectId={selectedRegistryObjectId}
+                  onSelectObject={setSelectedRegistryObjectId}
+                />
+              </Suspense>
+            </div>
+          ) : (
+            <p className={styles.emptyText}>当前区域尚无带 EPSG:4326 坐标的有效主数据；可导入文件后在此定位。</p>
+          )}
+        </section>
+
         <section className={styles.objectSection} aria-labelledby="risk-object-heading">
           <header>
             <div>

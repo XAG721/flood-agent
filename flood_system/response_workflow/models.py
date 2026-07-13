@@ -235,6 +235,8 @@ class RiskObjectInput(WorkflowModel):
     name: str
     object_type: str
     location: str
+    longitude: float | None = None
+    latitude: float | None = None
     location_classification: DataClassification = DataClassification.RESTRICTED
     responsible_organization: str
     responsible_role: str
@@ -261,6 +263,16 @@ class RiskObjectInput(WorkflowModel):
     registry_status: str = "active"
     registry_valid_from: datetime | None = None
     registry_valid_until: datetime | None = None
+
+    @model_validator(mode="after")
+    def validate_registry_coordinates(self):
+        if (self.longitude is None) != (self.latitude is None):
+            raise ValueError("longitude and latitude must be provided together")
+        if self.longitude is not None and not -180 <= self.longitude <= 180:
+            raise ValueError("longitude is outside EPSG:4326 bounds")
+        if self.latitude is not None and not -90 <= self.latitude <= 90:
+            raise ValueError("latitude is outside EPSG:4326 bounds")
+        return self
 
 
 class RiskObjectBatchRequest(WorkflowModel):
@@ -311,6 +323,8 @@ class CandidateRunRecord(WorkflowModel):
     missing_features: list[str] = Field(default_factory=list)
     limitations: list[str] = Field(default_factory=list)
     status: str = "completed"
+    stale_at: datetime | None = None
+    stale_reason: str = ""
     created_by: str
     terminal_id: str
     created_at: datetime
@@ -343,6 +357,30 @@ class RiskObjectVersionSnapshot(WorkflowModel):
     object_id: str
     version: int
     object: EventRiskObject
+    change_type: str
+    changed_by: str
+    terminal_id: str
+    created_at: datetime
+
+
+class RiskObjectRegistryRecord(RiskObjectInput):
+    area_id: str
+    registry_version: int = Field(ge=1)
+    source_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    content_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    source_filename: str
+    created_by: str
+    terminal_id: str
+    created_at: datetime
+    updated_at: datetime
+
+
+class RiskObjectRegistryVersionSnapshot(WorkflowModel):
+    snapshot_id: str
+    area_id: str
+    object_id: str
+    registry_version: int = Field(ge=1)
+    record: RiskObjectRegistryRecord
     change_type: str
     changed_by: str
     terminal_id: str
@@ -499,6 +537,56 @@ class TaskActionRequest(WorkflowModel):
     terminal_id: str = "unknown-terminal"
     expected_version: int | None = Field(default=None, ge=1)
     idempotency_key: str | None = None
+
+
+class IngestionFileEnvelope(WorkflowModel):
+    filename: str = Field(min_length=1, max_length=180)
+    media_type: str = Field(min_length=1, max_length=120)
+    content_base64: str = Field(min_length=1, repr=False)
+    sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
+class RiskObjectRegistryBatchImportRequest(TaskActionRequest):
+    area_id: str = Field(min_length=1, max_length=120)
+    source_version: str = Field(min_length=1, max_length=120)
+    source_filename: str = Field(default="api.json", min_length=1, max_length=180)
+    objects: list[RiskObjectInput] = Field(min_length=1, max_length=5000)
+
+
+class RiskObjectRegistryFileImportRequest(TaskActionRequest):
+    area_id: str = Field(min_length=1, max_length=120)
+    source_version: str = Field(min_length=1, max_length=120)
+    file: IngestionFileEnvelope
+
+
+class RiskObjectImportQuarantineItem(WorkflowModel):
+    source_row: int | None = None
+    source_id: str = ""
+    reason_code: str
+    reason: str
+
+
+class RiskObjectRegistryImportResult(WorkflowModel):
+    import_id: str
+    area_id: str
+    source_filename: str
+    source_format: str
+    source_version: str
+    source_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    source_bytes: int = Field(ge=0)
+    imported_count: int = Field(ge=0)
+    created_count: int = Field(ge=0)
+    updated_count: int = Field(ge=0)
+    unchanged_count: int = Field(ge=0)
+    quarantined_count: int = Field(ge=0)
+    changed_object_ids: list[str] = Field(default_factory=list)
+    affected_event_ids: list[str] = Field(default_factory=list)
+    stale_candidate_run_count: int = Field(ge=0)
+    quarantine: list[RiskObjectImportQuarantineItem] = Field(default_factory=list)
+    is_simulated: bool = False
+    imported_by: str
+    terminal_id: str
+    created_at: datetime
 
 
 class TaskAssignmentRequest(TaskActionRequest):

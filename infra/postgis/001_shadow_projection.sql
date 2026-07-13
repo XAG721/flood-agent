@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS flood_simulation.shadow_records (
     source_id TEXT NOT NULL,
     source_table TEXT NOT NULL,
     event_id TEXT,
+    area_id TEXT,
     object_id TEXT,
     task_id TEXT,
     version INTEGER,
@@ -38,20 +39,30 @@ CREATE TABLE IF NOT EXISTS flood_simulation.shadow_records (
     canonical_payload_sha256 CHAR(64) NOT NULL,
     is_simulated BOOLEAN NOT NULL CHECK (is_simulated),
     affected_geometry geometry(Polygon, 4326),
+    object_location geometry(Point, 4326),
     migration_batch TEXT NOT NULL REFERENCES flood_simulation.migration_batches(batch_id),
     mapping_version TEXT NOT NULL,
     migrated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (record_type, source_id)
 );
 
+ALTER TABLE flood_simulation.shadow_records
+    ADD COLUMN IF NOT EXISTS area_id TEXT;
+ALTER TABLE flood_simulation.shadow_records
+    ADD COLUMN IF NOT EXISTS object_location geometry(Point, 4326);
+
 CREATE INDEX IF NOT EXISTS idx_shadow_records_event
     ON flood_simulation.shadow_records(event_id, record_type);
 CREATE INDEX IF NOT EXISTS idx_shadow_records_object
     ON flood_simulation.shadow_records(object_id, record_type);
+CREATE INDEX IF NOT EXISTS idx_shadow_records_area
+    ON flood_simulation.shadow_records(area_id, record_type);
 CREATE INDEX IF NOT EXISTS idx_shadow_records_task
     ON flood_simulation.shadow_records(task_id, record_type);
 CREATE INDEX IF NOT EXISTS idx_shadow_records_geometry
     ON flood_simulation.shadow_records USING GIST(affected_geometry);
+CREATE INDEX IF NOT EXISTS idx_shadow_records_object_location
+    ON flood_simulation.shadow_records USING GIST(object_location);
 
 CREATE TABLE IF NOT EXISTS flood_simulation.migration_quarantine (
     quarantine_id BIGSERIAL PRIMARY KEY,
@@ -87,6 +98,12 @@ CREATE OR REPLACE VIEW flood_simulation.risk_objects AS
     SELECT * FROM flood_simulation.shadow_records WHERE record_type = 'risk_object';
 CREATE OR REPLACE VIEW flood_simulation.risk_object_versions AS
     SELECT * FROM flood_simulation.shadow_records WHERE record_type = 'risk_object_version';
+CREATE OR REPLACE VIEW flood_simulation.risk_object_registry AS
+    SELECT * FROM flood_simulation.shadow_records WHERE record_type = 'risk_object_registry';
+CREATE OR REPLACE VIEW flood_simulation.risk_object_registry_versions AS
+    SELECT * FROM flood_simulation.shadow_records WHERE record_type = 'risk_object_registry_version';
+CREATE OR REPLACE VIEW flood_simulation.risk_object_registry_imports AS
+    SELECT * FROM flood_simulation.shadow_records WHERE record_type = 'risk_object_registry_import';
 CREATE OR REPLACE VIEW flood_simulation.tasks AS
     SELECT * FROM flood_simulation.shadow_records WHERE record_type = 'task';
 CREATE OR REPLACE VIEW flood_simulation.task_versions AS

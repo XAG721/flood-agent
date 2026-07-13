@@ -71,6 +71,8 @@ export interface EventRiskObject {
   name: string;
   object_type: string;
   location: string;
+  longitude?: number | null;
+  latitude?: number | null;
   location_classification?: "internal" | "restricted" | "highly_sensitive";
   responsible_organization: string;
   responsible_role: string;
@@ -200,7 +202,81 @@ export interface CandidateRunRecord {
   missing_features: string[];
   limitations: string[];
   status: string;
+  stale_at?: string | null;
+  stale_reason?: string;
   created_by: string;
+  created_at: string;
+}
+
+export interface RiskObjectRegistryRecord {
+  area_id: string;
+  object_id: string;
+  canonical_object_id?: string | null;
+  aliases: string[];
+  duplicate_of?: string | null;
+  name: string;
+  object_type: string;
+  location: string;
+  longitude?: number | null;
+  latitude?: number | null;
+  responsible_organization: string;
+  responsible_role: string;
+  trigger_reasons: string[];
+  source_refs: string[];
+  vulnerability: string;
+  historical_risk: string;
+  risk_score: number;
+  system_explanation: string;
+  sensitive_contacts: Array<{
+    name: string;
+    role: string;
+    phone: string;
+    classification: "internal" | "restricted" | "highly_sensitive";
+  }>;
+  special_population_notes: string;
+  source_type: string;
+  source_version: string;
+  data_version: string;
+  is_simulated: boolean;
+  missing_fields: string[];
+  registry_status: string;
+  registry_valid_from?: string | null;
+  registry_valid_until?: string | null;
+  registry_version: number;
+  source_hash: string;
+  content_hash: string;
+  source_filename: string;
+  created_by: string;
+  terminal_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RiskObjectRegistryImportResult {
+  import_id: string;
+  area_id: string;
+  source_filename: string;
+  source_format: string;
+  source_version: string;
+  source_hash: string;
+  source_bytes: number;
+  imported_count: number;
+  created_count: number;
+  updated_count: number;
+  unchanged_count: number;
+  quarantined_count: number;
+  changed_object_ids: string[];
+  affected_event_ids: string[];
+  stale_candidate_run_count: number;
+  quarantine: Array<{
+    source_row?: number | null;
+    source_id: string;
+    reason_code: string;
+    reason: string;
+  }>;
+  is_simulated: boolean;
+  imported_by: string;
+  terminal_id: string;
   created_at: string;
 }
 

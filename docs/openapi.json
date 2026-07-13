@@ -405,6 +405,228 @@
         }
       }
     },
+    "/response/risk-objects": {
+      "get": {
+        "tags": [
+          "district-response-workflow"
+        ],
+        "summary": "List Risk Object Registry",
+        "operationId": "list_risk_object_registry_response_risk_objects_get",
+        "parameters": [
+          {
+            "name": "area_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Area Id"
+            }
+          },
+          {
+            "name": "include_inactive",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Include Inactive"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/response/risk-objects/versions": {
+      "get": {
+        "tags": [
+          "district-response-workflow"
+        ],
+        "summary": "List Risk Object Registry Versions",
+        "operationId": "list_risk_object_registry_versions_response_risk_objects_versions_get",
+        "parameters": [
+          {
+            "name": "area_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Area Id"
+            }
+          },
+          {
+            "name": "object_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Object Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/response/risk-objects/imports": {
+      "get": {
+        "tags": [
+          "district-response-workflow"
+        ],
+        "summary": "List Risk Object Imports",
+        "operationId": "list_risk_object_imports_response_risk_objects_imports_get",
+        "parameters": [
+          {
+            "name": "area_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Area Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "district-response-workflow"
+        ],
+        "summary": "Import Risk Object Registry",
+        "operationId": "import_risk_object_registry_response_risk_objects_imports_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskObjectRegistryBatchImportRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/response/risk-objects/file-imports": {
+      "post": {
+        "tags": [
+          "district-response-workflow"
+        ],
+        "summary": "Import Risk Object Registry File",
+        "operationId": "import_risk_object_registry_file_response_risk_objects_file_imports_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskObjectRegistryFileImportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/response/events/{event_id}": {
       "get": {
         "tags": [
@@ -7994,6 +8216,40 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
+      "IngestionFileEnvelope": {
+        "properties": {
+          "filename": {
+            "type": "string",
+            "maxLength": 180,
+            "minLength": 1,
+            "title": "Filename"
+          },
+          "media_type": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Media Type"
+          },
+          "content_base64": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Content Base64"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Sha256"
+          }
+        },
+        "type": "object",
+        "required": [
+          "filename",
+          "media_type",
+          "content_base64",
+          "sha256"
+        ],
+        "title": "IngestionFileEnvelope"
+      },
       "KeyRotationRequest": {
         "properties": {
           "operator_id": {
@@ -8662,6 +8918,28 @@
             "type": "string",
             "title": "Location"
           },
+          "longitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Longitude"
+          },
+          "latitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latitude"
+          },
           "location_classification": {
             "$ref": "#/components/schemas/DataClassification",
             "default": "restricted"
@@ -8833,6 +9111,155 @@
           "system_explanation"
         ],
         "title": "RiskObjectInput"
+      },
+      "RiskObjectRegistryBatchImportRequest": {
+        "properties": {
+          "operator_id": {
+            "type": "string",
+            "title": "Operator Id"
+          },
+          "operator_role": {
+            "$ref": "#/components/schemas/OperatorRole"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note",
+            "default": ""
+          },
+          "terminal_id": {
+            "type": "string",
+            "title": "Terminal Id",
+            "default": "unknown-terminal"
+          },
+          "expected_version": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Version"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idempotency Key"
+          },
+          "area_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Area Id"
+          },
+          "source_version": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Source Version"
+          },
+          "source_filename": {
+            "type": "string",
+            "maxLength": 180,
+            "minLength": 1,
+            "title": "Source Filename",
+            "default": "api.json"
+          },
+          "objects": {
+            "items": {
+              "$ref": "#/components/schemas/RiskObjectInput"
+            },
+            "type": "array",
+            "maxItems": 5000,
+            "minItems": 1,
+            "title": "Objects"
+          }
+        },
+        "type": "object",
+        "required": [
+          "operator_id",
+          "operator_role",
+          "area_id",
+          "source_version",
+          "objects"
+        ],
+        "title": "RiskObjectRegistryBatchImportRequest"
+      },
+      "RiskObjectRegistryFileImportRequest": {
+        "properties": {
+          "operator_id": {
+            "type": "string",
+            "title": "Operator Id"
+          },
+          "operator_role": {
+            "$ref": "#/components/schemas/OperatorRole"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note",
+            "default": ""
+          },
+          "terminal_id": {
+            "type": "string",
+            "title": "Terminal Id",
+            "default": "unknown-terminal"
+          },
+          "expected_version": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Version"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idempotency Key"
+          },
+          "area_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Area Id"
+          },
+          "source_version": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Source Version"
+          },
+          "file": {
+            "$ref": "#/components/schemas/IngestionFileEnvelope"
+          }
+        },
+        "type": "object",
+        "required": [
+          "operator_id",
+          "operator_role",
+          "area_id",
+          "source_version",
+          "file"
+        ],
+        "title": "RiskObjectRegistryFileImportRequest"
       },
       "RiskObjectVerificationRequest": {
         "properties": {

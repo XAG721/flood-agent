@@ -10,7 +10,7 @@
 
 Compose 中的 `worker` 独立执行幂等 Outbox 发送和四时限巡检；单次诊断可运行 `python scripts/run_response_worker.py --once`。Worker 只调用确定性工作流服务，异常保持失败关闭并在下一周期重试。
 
-SQLite 到 PostGIS 的演练使用 `scripts/migrate_response_to_postgis.py`，只写 `flood_simulation`，并生成批次、隔离、数量/哈希和空间投影报告。迁移失败或出现隔离项时 SQLite 继续保持权威源，不允许切换。
+SQLite 到 PostGIS 的演练使用 `scripts/migrate_response_to_postgis.py`，只写 `flood_simulation`，并生成批次、隔离、数量/哈希和空间投影报告。映射 v3 包含风险对象当前主数据、不可变版本、导入记录和 EPSG:4326 Point/GiST；非模拟记录继续失败关闭到隔离区。迁移失败或出现隔离项时 SQLite 继续保持权威源，不允许切换。
 
 Compose 演示环境显式设置 `FLOOD_ALLOW_DEV_IDENTITY_HEADERS=1`，让同一容器网络内的前端代理使用模拟岗位头；该分支在 `production/prod` 环境无条件禁用。试点和生产必须删除此配置，并由可信 IdP 网关签发短时 HMAC/OIDC 身份断言。Core API 所有写请求必须带 `Idempotency-Key`，前端同时生成 `X-Correlation-ID`。
 
@@ -18,7 +18,9 @@ Compose 演示环境显式设置 `FLOOD_ALLOW_DEV_IDENTITY_HEADERS=1`，让同�
 
 受控重建模拟环境：`python scripts/reset_simulation_environment.py --confirm RESET-SIMULATION`。命令拒绝生产环境、拒绝工作区外数据库路径，并重新生成 FloodAgent-Bench。开发管理员单次签名断言可用 `python scripts/build_dev_admin_assertion.py --method GET --path /response/configuration/feature-flags` 生成；生产管理员必须由真实 IdP/MFA 提供，不能使用该脚本。
 
-探针：`/health` 检查进程，`/ready` 检查数据库，`/metrics` 暴露响应事件、Outbox 和按 `processing/completed/indeterminate` 分组的幂等账本指标。指标查询只读取未过期记录，不产生清理写入。
+风险对象文件导入默认解码上限由 `FLOOD_INGESTION_MAX_FILE_BYTES=10485760` 控制，安全范围为 1 KiB—50 MiB；请求体上限按 Base64 膨胀和 1 MiB JSON 余量自动计算。调大前必须同时评估反向代理限制、进程内存、行数上限和上传超时，不得靠取消 ZIP/公式/哈希检查提高吞吐。
+
+探针：`/health` 检查进程，`/ready` 检查数据库，`/metrics` 暴露响应事件、Outbox、风险对象主数据 active/inactive 数、被台账变更失效的 CandidateRun、累计隔离行和按 `processing/completed/indeterminate` 分组的幂等账本指标。指标查询只读加密账本，不产生清理写入。
 
 ## 功能开关
 

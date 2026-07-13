@@ -1,5 +1,5 @@
 import { request } from "../lib/httpClient";
-import type { DispatchCallbackRecord, DistrictScenarioReport, DocumentVersionRecord, EventDashboard, OutboxMessage, ResponseEvent, RetrievalMode, SimulationDispatchScenario, TaskDraftGenerationResult, WorkflowRole } from "../types/response";
+import type { DispatchCallbackRecord, DistrictScenarioReport, DocumentVersionRecord, EventDashboard, OutboxMessage, ResponseEvent, RetrievalMode, RiskObjectRegistryImportResult, RiskObjectRegistryRecord, SimulationDispatchScenario, TaskDraftGenerationResult, WorkflowRole } from "../types/response";
 
 const actionPayload = (operatorRole: WorkflowRole, note = "") => ({
   operator_id: `console_${operatorRole}`,
@@ -14,6 +14,34 @@ export const responseWorkflowApi = {
   },
   listDocuments(): Promise<DocumentVersionRecord[]> {
     return request("/response/documents", { method: "GET" });
+  },
+  listRiskObjectRegistry(areaId: string): Promise<RiskObjectRegistryRecord[]> {
+    const query = new URLSearchParams({ area_id: areaId });
+    return request(`/response/risk-objects?${query.toString()}`, { method: "GET" });
+  },
+  importRiskObjectFile(input: {
+    areaId: string;
+    sourceVersion: string;
+    filename: string;
+    mediaType: string;
+    contentBase64: string;
+    sha256: string;
+    operatorRole: WorkflowRole;
+  }): Promise<RiskObjectRegistryImportResult> {
+    return request("/response/risk-objects/file-imports", {
+      method: "POST",
+      body: JSON.stringify({
+        area_id: input.areaId,
+        source_version: input.sourceVersion,
+        file: {
+          filename: input.filename,
+          media_type: input.mediaType,
+          content_base64: input.contentBase64,
+          sha256: input.sha256,
+        },
+        ...actionPayload(input.operatorRole, "导入受控风险对象主数据文件"),
+      }),
+    });
   },
   registerDocument(input: {
     document_id: string;

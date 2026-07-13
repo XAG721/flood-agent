@@ -1,6 +1,6 @@
 # 依赖供应链安全审计
 
-执行日期：2026-07-13。范围为 Python 隔离项目环境/PostGIS 依赖、主前端锁文件和 Cesium 前端锁文件。该审计查询公开漏洞数据库，只证明执行时已知公告状态，不替代渗透测试、源代码人工审计或生产配置评估。
+执行日期：2026-07-14。范围为 Python 隔离项目环境/PostGIS 依赖、主前端锁文件和 Cesium 前端锁文件。该审计查询公开漏洞数据库，只证明执行时已知公告状态，不替代渗透测试、源代码人工审计或生产配置评估。
 
 ## 修复前发现
 
@@ -13,6 +13,7 @@
 
 - CI 在审计前升级到 pip 26.1.2；
 - 测试运行器升级为 pytest 9.0.3 以上，当前实装验证版本为 9.1.1；
+- 风险对象 XLSX 导入增加 `openpyxl>=3.1.5,<4`；读取前先由标准库检查 OOXML ZIP 边界，随后使用 `read_only=True`、`data_only=True`、`keep_links=False`，并拒绝宏、外链和公式；
 - 主前端升级到 Vite 8.1.4、Vitest 4.1.10、`@vitejs/plugin-react` 6.0.3；
 - 主前端增加固定 Playwright 1.55.1 和 Chromium 验收；
 - Cesium 前端升级到 Vite 8.1.4、`@vitejs/plugin-react` 6.0.3、`vite-plugin-static-copy` 4.1.1；
@@ -25,7 +26,7 @@
 | Python 隔离项目环境 | pip-audit 2.10.1，`.[test,postgres]`，pip 26.1.2 | 0 个已知漏洞；本地项目包因不在 PyPI 而跳过，项目代码由自动测试和其他安全检查覆盖 |
 | 主前端 | npm audit，`--audit-level=high` | 0 个漏洞 |
 | Cesium 前端 | npm audit，`--audit-level=high` | 0 个漏洞 |
-| 主前端兼容性 | Vitest / TypeScript / Vite production build | 13/13 测试与构建通过 |
+| 主前端兼容性 | Vitest / TypeScript / Vite production build | 14/14 测试与构建通过 |
 | 主前端浏览器兼容性 | Playwright / Chromium | 2/2 新版与回退页面验收通过 |
 | Cesium 兼容性 | TypeScript / Vite production build | 构建通过 |
 | Python 代码质量 | Ruff 0.15.21 | 0 个问题；CI 持续门禁 |

@@ -10,9 +10,11 @@ from fastapi.responses import PlainTextResponse, StreamingResponse
 
 from .config import load_settings
 from .http.v3_router import create_v3_router
+from .http.body_limit import RequestBodyLimitMiddleware
 from .http.response_router import create_response_router
 from .infrastructure.sse import repeated_snapshot_stream
 from .system import FloodWarningSystem
+from .response_workflow.risk_object_ingestion import configured_max_file_bytes
 from .transport_security import TransportSecurityMiddleware
 from .v2.llm_gateway import LLMGenerationError
 from .v2.models import (
@@ -61,6 +63,14 @@ app.add_middleware(
     TransportSecurityMiddleware,
     require_https=settings.require_https,
     trust_proxy_headers=settings.trust_proxy_headers,
+)
+app.add_middleware(
+    RequestBodyLimitMiddleware,
+    max_bytes=(configured_max_file_bytes() * 4 // 3) + (1024 * 1024),
+    paths={
+        "/response/risk-objects/file-imports",
+        "/api/v1/risk-objects/file-imports",
+    },
 )
 system = FloodWarningSystem(settings.db_path)
 production = system.production_platform
@@ -116,6 +126,7 @@ def metrics():
         for event in events
         for item in system.repository.list_event_risk_objects(event.event_id)
     )
+    registry_metrics = system.repository.risk_object_registry_metrics()
     durations = sorted(api_request_durations_ms)
 
     def percentile(fraction: float) -> float:
@@ -166,6 +177,18 @@ def metrics():
             "# HELP flood_response_stale_objects Current stale event risk objects.",
             "# TYPE flood_response_stale_objects gauge",
             f"flood_response_stale_objects {stale_objects}",
+            "# HELP flood_risk_object_registry Registry master-data objects by status.",
+            "# TYPE flood_risk_object_registry gauge",
+            f'flood_risk_object_registry{{status="active"}} {registry_metrics["active"]}',
+            f'flood_risk_object_registry{{status="inactive"}} {registry_metrics["inactive"]}',
+            "# HELP flood_risk_object_registry_stale_candidate_runs Candidate runs invalidated by registry changes.",
+            "# TYPE flood_risk_object_registry_stale_candidate_runs gauge",
+            "flood_risk_object_registry_stale_candidate_runs "
+            f"{registry_metrics['stale_candidate_runs']}",
+            "# HELP flood_risk_object_registry_quarantined_rows Rows rejected by governed registry imports.",
+            "# TYPE flood_risk_object_registry_quarantined_rows gauge",
+            "flood_risk_object_registry_quarantined_rows "
+            f"{registry_metrics['quarantined_rows']}",
             "# HELP flood_api_requests_total Requests observed by the application middleware.",
             "# TYPE flood_api_requests_total counter",
             f"flood_api_requests_total {api_request_total}",

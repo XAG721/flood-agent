@@ -32,6 +32,8 @@ from ..response_workflow.models import (
     EventCreateRequest,
     FeedbackRequest,
     FeatureFlagUpdateRequest,
+    RiskObjectRegistryBatchImportRequest,
+    RiskObjectRegistryFileImportRequest,
     RiskObjectBatchRequest,
     RiskObjectVerificationRequest,
     ReviewDraftRequest,
@@ -199,6 +201,62 @@ def create_response_router(system_provider: Callable[[], Any]) -> APIRouter:
     @router.post("/events/bootstrap-demo")
     def bootstrap_demo(http_request: Request):
         return invoke(service().bootstrap_demo)
+
+    @router.get("/risk-objects")
+    def list_risk_object_registry(
+        area_id: str,
+        http_request: Request,
+        include_inactive: bool = False,
+    ):
+        identity = identity_for(http_request)
+        return invoke(
+            lambda: service().list_risk_object_registry(
+                area_id=area_id,
+                operator_role=identity.operator_role,
+                include_inactive=include_inactive,
+            )
+        )
+
+    @router.get("/risk-objects/versions")
+    def list_risk_object_registry_versions(
+        area_id: str,
+        http_request: Request,
+        object_id: str | None = None,
+    ):
+        identity = identity_for(http_request)
+        return invoke(
+            lambda: service().list_risk_object_registry_versions(
+                area_id=area_id,
+                object_id=object_id,
+                operator_role=identity.operator_role,
+            )
+        )
+
+    @router.get("/risk-objects/imports")
+    def list_risk_object_imports(area_id: str, http_request: Request):
+        identity = identity_for(http_request)
+        return invoke(
+            lambda: service().list_risk_object_imports(
+                area_id=area_id,
+                operator_role=identity.operator_role,
+            )
+        )
+
+    @router.post("/risk-objects/imports")
+    def import_risk_object_registry(
+        request: RiskObjectRegistryBatchImportRequest,
+        http_request: Request,
+    ):
+        bind_payload_identity(http_request, request, minimum_assurance="aal2")
+        return invoke(lambda: service().import_risk_object_registry(request))
+
+    @router.post("/risk-objects/file-imports")
+    def import_risk_object_registry_file(
+        request: RiskObjectRegistryFileImportRequest,
+        http_request: Request,
+    ):
+        bind_payload_identity(http_request, request, minimum_assurance="aal2")
+        return invoke(lambda: service().import_risk_object_registry_file(request))
 
     @router.get("/events/{event_id}")
     def get_event_dashboard(event_id: str, http_request: Request):

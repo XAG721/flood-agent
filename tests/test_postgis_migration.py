@@ -6,13 +6,21 @@ from datetime import datetime, timezone
 import pytest
 
 from flood_system.postgis_migration import build_projection_records
-from flood_system.response_workflow.models import AlertInput, EventCreateRequest, OperatorRole
+from flood_system.response_workflow.models import (
+    AlertInput,
+    EventCreateRequest,
+    OperatorRole,
+    RiskObjectInput,
+    RiskObjectRegistryBatchImportRequest,
+)
 from flood_system.system import FloodWarningSystem
 from flood_system.security import DataProtectionError
 from scripts.seed_response_migration_fixture import seed_fixture
 
 
-def test_simulated_response_projection_preserves_hashes_and_postgis_polygon(tmp_path) -> None:
+def test_simulated_response_projection_preserves_hashes_and_postgis_polygon(
+    tmp_path,
+) -> None:
     db_path = tmp_path / "postgis-source.db"
     seed_fixture(db_path)
 
@@ -33,7 +41,9 @@ def test_simulated_response_projection_preserves_hashes_and_postgis_polygon(tmp_
         "evidence_package",
         "timeline",
     }
-    alert = next(record for record in records if record["record_type"] == "alert_snapshot")
+    alert = next(
+        record for record in records if record["record_type"] == "alert_snapshot"
+    )
     assert alert["affected_geometry_wkt"].startswith("POLYGON((108.95 34.24")
     assert all(record["is_simulated"] is True for record in records)
     assert all(len(record["payload_sha256"]) == 64 for record in records)
@@ -76,6 +86,59 @@ def test_non_simulated_source_is_quarantined_from_simulation_schema(tmp_path) ->
     assert quarantined
     assert {item["error_code"] for item in quarantined} == {"ValueError"}
     assert all("non-simulated record" in item["error_detail"] for item in quarantined)
+
+
+def test_simulated_risk_object_registry_projects_versions_imports_and_point(
+    tmp_path,
+) -> None:
+    db_path = tmp_path / "postgis-registry-source.db"
+    workflow = FloodWarningSystem(db_path).response_workflow
+    workflow.import_risk_object_registry(
+        RiskObjectRegistryBatchImportRequest(
+            area_id="district-simulated-registry",
+            source_version="simulated-registry-v1",
+            objects=[
+                RiskObjectInput(
+                    object_id="SIM-REGISTRY-001",
+                    name="模拟重点学校",
+                    object_type="学校",
+                    location="模拟片区",
+                    longitude=108.958,
+                    latitude=34.244,
+                    responsible_organization="模拟教育局",
+                    responsible_role="模拟学校防汛负责人",
+                    trigger_reasons=["模拟台账导入"],
+                    source_refs=["simulation-registry-source"],
+                    vulnerability="模拟脆弱性",
+                    risk_score=80,
+                    system_explanation="仅用于 PostGIS 影子迁移测试",
+                    is_simulated=True,
+                )
+            ],
+            operator_id="simulation-reviewer",
+            operator_role=OperatorRole.REVIEWER,
+            terminal_id="simulation-console",
+        )
+    )
+
+    records, quarantined = build_projection_records(db_path)
+
+    assert quarantined == []
+    registry = next(
+        item for item in records if item["record_type"] == "risk_object_registry"
+    )
+    assert registry["area_id"] == "district-simulated-registry"
+    assert registry["version"] == 1
+    assert registry["object_location_wkt"] == "POINT(108.958 34.244)"
+    assert {
+        item["record_type"]
+        for item in records
+        if item["record_type"].startswith("risk_object_registry")
+    } == {
+        "risk_object_registry",
+        "risk_object_registry_version",
+        "risk_object_registry_import",
+    }
 
 
 def test_projection_refuses_to_create_a_replacement_source_key(tmp_path) -> None:

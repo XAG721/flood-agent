@@ -9,7 +9,7 @@ from typing import Any, Iterable
 from flood_system.design_contract_audit import build_design_contract_audit
 
 
-AUDIT_VERSION = "progressive-completion-audit-v6"
+AUDIT_VERSION = "progressive-completion-audit-v7"
 
 SOFTWARE_DELIVERABLES: dict[str, tuple[str, ...]] = {
     "web_and_cesium": (
@@ -143,6 +143,10 @@ REQUIRED_RESPONSE_PATHS = {
     "/response/events/{event_id}",
     "/response/events/{event_id}/risk-objects/discover",
     "/response/events/{event_id}/risk-objects/{object_id}/verify",
+    "/response/risk-objects",
+    "/response/risk-objects/versions",
+    "/response/risk-objects/imports",
+    "/response/risk-objects/file-imports",
     "/response/documents",
     "/response/events/{event_id}/evidence-packages",
     "/response/evidence-packages/{package_id}/conflicts/{conflict_id}/resolve",
@@ -373,9 +377,7 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
         == "RUN_PUBLIC_EXPERT_FIELD_REAL_MODEL_ROLE_DIAGNOSTIC"
         and housing_weights["status"]
         == "RUN_PUBLIC_EXPERT_FIELD_REAL_MODEL_ROLE_DIAGNOSTIC"
-        and housing_weights["decision"][
-            "public_real_model_weight_sensitivity_complete"
-        ]
+        and housing_weights["decision"]["public_real_model_weight_sensitivity_complete"]
         is True
         and housing_weights["decision"]["frozen_parameters_changed"] is False
         and housing_weights["decision"]["gate_2"] == "NO-GO"
