@@ -1,0 +1,1583 @@
+{
+  "schema_version": "frc-controlled-domain-sensitivity-v1",
+  "metadata": {
+    "benchmark": "flood_system/rag_benchmarks/controlled_frc_sensitivity_benchmark.json",
+    "benchmark_sha256": "689a0e9ee694982b15417f0a37b62cab70f7b17890417aeb7ea6dbcf9cdad7c8",
+    "data_origin": "SYNTHETIC",
+    "is_simulated": true,
+    "selector_backend": "deterministic_lexical_fields_and_metadata",
+    "neural_model_used": false,
+    "case_count": 3,
+    "document_count": 18,
+    "cases_with_field_evidence_map": 3,
+    "field_evidence_mapping_count": 16,
+    "top_k": 4,
+    "token_budget": 520,
+    "frozen_policy": {
+      "field_weight": 4.0,
+      "role_weight": 1.0,
+      "trust_weight": 1.4,
+      "applicability_weight": 1.5,
+      "novelty_weight": 1.0,
+      "support_weight": 1.0,
+      "conflict_penalty_weight": 2.4,
+      "cost_penalty_weight": 0.7,
+      "conflict_threshold": 0.0
+    },
+    "protocol": "one_factor_at_a_time",
+    "gold_usage": "field_evidence_map is used for scoring only and is never passed to the selector"
+  },
+  "coverage": {
+    "role_weight": "RUN_CONTROLLED_DOMAIN",
+    "field_weight": "RUN_CONTROLLED_DOMAIN",
+    "conflict_threshold": "RUN_CONTROLLED_DOMAIN"
+  },
+  "results": [
+    {
+      "dimension": "role_weight",
+      "value": 0.0,
+      "policy": {
+        "field_weight": 4.0,
+        "role_weight": 0.0,
+        "trust_weight": 1.4,
+        "applicability_weight": 1.5,
+        "novelty_weight": 1.0,
+        "support_weight": 1.0,
+        "conflict_penalty_weight": 2.4,
+        "cost_penalty_weight": 0.7,
+        "conflict_threshold": 0.0
+      },
+      "aggregate": {
+        "evidence_recall": 0.75,
+        "evidence_precision": 0.75,
+        "evidence_f1": 0.75,
+        "field_coverage": 0.77381,
+        "selector_field_coverage": 1.0,
+        "role_coverage": 0.888889,
+        "unsupported_evidence_ratio": 0.25,
+        "flagged_evidence_ratio": 0.0,
+        "flagged_evidence_case": 0.0,
+        "explicit_conflict_pair_selected": 0.0,
+        "case_accuracy": 0.333333,
+        "token_cost": 268.333333
+      },
+      "case_results": [
+        {
+          "case_id": "field_weight_identifiability",
+          "selected_doc_ids": [
+            "field_trigger",
+            "field_exception",
+            "field_generic_summary",
+            "field_generic_checklist"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.5,
+            "evidence_precision": 0.5,
+            "evidence_f1": 0.5,
+            "field_coverage": 0.571429,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.5,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 230
+          }
+        },
+        {
+          "case_id": "role_weight_identifiability",
+          "selected_doc_ids": [
+            "role_duplicate_fast",
+            "role_exception_source",
+            "role_procedure",
+            "role_condition"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.75,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 0.666667,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 260
+          }
+        },
+        {
+          "case_id": "conflict_threshold_identifiability",
+          "selected_doc_ids": [
+            "conflict_owner",
+            "conflict_exception",
+            "conflict_action",
+            "conflict_trigger"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 1.0,
+            "evidence_precision": 1.0,
+            "evidence_f1": 1.0,
+            "field_coverage": 1.0,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.0,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 1.0,
+            "token_cost": 315
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "role_weight",
+      "value": 0.5,
+      "policy": {
+        "field_weight": 4.0,
+        "role_weight": 0.5,
+        "trust_weight": 1.4,
+        "applicability_weight": 1.5,
+        "novelty_weight": 1.0,
+        "support_weight": 1.0,
+        "conflict_penalty_weight": 2.4,
+        "cost_penalty_weight": 0.7,
+        "conflict_threshold": 0.0
+      },
+      "aggregate": {
+        "evidence_recall": 0.75,
+        "evidence_precision": 0.75,
+        "evidence_f1": 0.75,
+        "field_coverage": 0.77381,
+        "selector_field_coverage": 1.0,
+        "role_coverage": 1.0,
+        "unsupported_evidence_ratio": 0.25,
+        "flagged_evidence_ratio": 0.0,
+        "flagged_evidence_case": 0.0,
+        "explicit_conflict_pair_selected": 0.0,
+        "case_accuracy": 0.333333,
+        "token_cost": 270.0
+      },
+      "case_results": [
+        {
+          "case_id": "field_weight_identifiability",
+          "selected_doc_ids": [
+            "field_trigger",
+            "field_exception",
+            "field_generic_checklist",
+            "field_generic_summary"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.5,
+            "evidence_precision": 0.5,
+            "evidence_f1": 0.5,
+            "field_coverage": 0.571429,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.5,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 230
+          }
+        },
+        {
+          "case_id": "role_weight_identifiability",
+          "selected_doc_ids": [
+            "role_duplicate_fast",
+            "role_exception_source",
+            "role_object_owner",
+            "role_condition"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.75,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 265
+          }
+        },
+        {
+          "case_id": "conflict_threshold_identifiability",
+          "selected_doc_ids": [
+            "conflict_owner",
+            "conflict_exception",
+            "conflict_action",
+            "conflict_trigger"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 1.0,
+            "evidence_precision": 1.0,
+            "evidence_f1": 1.0,
+            "field_coverage": 1.0,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.0,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 1.0,
+            "token_cost": 315
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "role_weight",
+      "value": 1.0,
+      "policy": {
+        "field_weight": 4.0,
+        "role_weight": 1.0,
+        "trust_weight": 1.4,
+        "applicability_weight": 1.5,
+        "novelty_weight": 1.0,
+        "support_weight": 1.0,
+        "conflict_penalty_weight": 2.4,
+        "cost_penalty_weight": 0.7,
+        "conflict_threshold": 0.0
+      },
+      "aggregate": {
+        "evidence_recall": 0.75,
+        "evidence_precision": 0.75,
+        "evidence_f1": 0.75,
+        "field_coverage": 0.77381,
+        "selector_field_coverage": 1.0,
+        "role_coverage": 1.0,
+        "unsupported_evidence_ratio": 0.25,
+        "flagged_evidence_ratio": 0.0,
+        "flagged_evidence_case": 0.0,
+        "explicit_conflict_pair_selected": 0.0,
+        "case_accuracy": 0.333333,
+        "token_cost": 270.0
+      },
+      "case_results": [
+        {
+          "case_id": "field_weight_identifiability",
+          "selected_doc_ids": [
+            "field_trigger",
+            "field_exception",
+            "field_generic_checklist",
+            "field_generic_summary"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.5,
+            "evidence_precision": 0.5,
+            "evidence_f1": 0.5,
+            "field_coverage": 0.571429,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.5,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 230
+          }
+        },
+        {
+          "case_id": "role_weight_identifiability",
+          "selected_doc_ids": [
+            "role_object_owner",
+            "role_exception_source",
+            "role_duplicate_fast",
+            "role_condition"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.75,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 265
+          }
+        },
+        {
+          "case_id": "conflict_threshold_identifiability",
+          "selected_doc_ids": [
+            "conflict_owner",
+            "conflict_exception",
+            "conflict_action",
+            "conflict_trigger"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 1.0,
+            "evidence_precision": 1.0,
+            "evidence_f1": 1.0,
+            "field_coverage": 1.0,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.0,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 1.0,
+            "token_cost": 315
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "role_weight",
+      "value": 2.0,
+      "policy": {
+        "field_weight": 4.0,
+        "role_weight": 2.0,
+        "trust_weight": 1.4,
+        "applicability_weight": 1.5,
+        "novelty_weight": 1.0,
+        "support_weight": 1.0,
+        "conflict_penalty_weight": 2.4,
+        "cost_penalty_weight": 0.7,
+        "conflict_threshold": 0.0
+      },
+      "aggregate": {
+        "evidence_recall": 0.75,
+        "evidence_precision": 0.75,
+        "evidence_f1": 0.75,
+        "field_coverage": 0.77381,
+        "selector_field_coverage": 1.0,
+        "role_coverage": 1.0,
+        "unsupported_evidence_ratio": 0.25,
+        "flagged_evidence_ratio": 0.0,
+        "flagged_evidence_case": 0.0,
+        "explicit_conflict_pair_selected": 0.0,
+        "case_accuracy": 0.333333,
+        "token_cost": 270.0
+      },
+      "case_results": [
+        {
+          "case_id": "field_weight_identifiability",
+          "selected_doc_ids": [
+            "field_trigger",
+            "field_exception",
+            "field_generic_checklist",
+            "field_generic_summary"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.5,
+            "evidence_precision": 0.5,
+            "evidence_f1": 0.5,
+            "field_coverage": 0.571429,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.5,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 230
+          }
+        },
+        {
+          "case_id": "role_weight_identifiability",
+          "selected_doc_ids": [
+            "role_object_owner",
+            "role_exception_source",
+            "role_duplicate_fast",
+            "role_condition"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.75,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 265
+          }
+        },
+        {
+          "case_id": "conflict_threshold_identifiability",
+          "selected_doc_ids": [
+            "conflict_owner",
+            "conflict_exception",
+            "conflict_action",
+            "conflict_trigger"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 1.0,
+            "evidence_precision": 1.0,
+            "evidence_f1": 1.0,
+            "field_coverage": 1.0,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.0,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 1.0,
+            "token_cost": 315
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "role_weight",
+      "value": 4.0,
+      "policy": {
+        "field_weight": 4.0,
+        "role_weight": 4.0,
+        "trust_weight": 1.4,
+        "applicability_weight": 1.5,
+        "novelty_weight": 1.0,
+        "support_weight": 1.0,
+        "conflict_penalty_weight": 2.4,
+        "cost_penalty_weight": 0.7,
+        "conflict_threshold": 0.0
+      },
+      "aggregate": {
+        "evidence_recall": 0.583333,
+        "evidence_precision": 0.638889,
+        "evidence_f1": 0.607143,
+        "field_coverage": 0.57381,
+        "selector_field_coverage": 1.0,
+        "role_coverage": 1.0,
+        "unsupported_evidence_ratio": 0.361111,
+        "flagged_evidence_ratio": 0.111111,
+        "flagged_evidence_case": 0.333333,
+        "explicit_conflict_pair_selected": 0.0,
+        "case_accuracy": 0.0,
+        "token_cost": 225.0
+      },
+      "case_results": [
+        {
+          "case_id": "field_weight_identifiability",
+          "selected_doc_ids": [
+            "field_trigger",
+            "field_generic_checklist",
+            "field_exception",
+            "field_generic_summary"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.5,
+            "evidence_precision": 0.5,
+            "evidence_f1": 0.5,
+            "field_coverage": 0.571429,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.5,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 230
+          }
+        },
+        {
+          "case_id": "role_weight_identifiability",
+          "selected_doc_ids": [
+            "role_object_owner",
+            "role_exception_source",
+            "role_duplicate_fast",
+            "role_condition"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.75,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 265
+          }
+        },
+        {
+          "case_id": "conflict_threshold_identifiability",
+          "selected_doc_ids": [
+            "conflict_unverified_no_check",
+            "conflict_owner",
+            "conflict_trigger"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.5,
+            "evidence_precision": 0.666667,
+            "evidence_f1": 0.571429,
+            "field_coverage": 0.4,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.333333,
+            "flagged_evidence_ratio": 0.333333,
+            "flagged_evidence_case": 1.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 180
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "field_weight",
+      "value": 0.0,
+      "policy": {
+        "field_weight": 0.0,
+        "role_weight": 1.0,
+        "trust_weight": 1.4,
+        "applicability_weight": 1.5,
+        "novelty_weight": 1.0,
+        "support_weight": 1.0,
+        "conflict_penalty_weight": 2.4,
+        "cost_penalty_weight": 0.7,
+        "conflict_threshold": 0.0
+      },
+      "aggregate": {
+        "evidence_recall": 0.75,
+        "evidence_precision": 0.75,
+        "evidence_f1": 0.75,
+        "field_coverage": 0.77381,
+        "selector_field_coverage": 0.944444,
+        "role_coverage": 1.0,
+        "unsupported_evidence_ratio": 0.25,
+        "flagged_evidence_ratio": 0.0,
+        "flagged_evidence_case": 0.0,
+        "explicit_conflict_pair_selected": 0.0,
+        "case_accuracy": 0.333333,
+        "token_cost": 271.666667
+      },
+      "case_results": [
+        {
+          "case_id": "field_weight_identifiability",
+          "selected_doc_ids": [
+            "field_generic_summary",
+            "field_trigger",
+            "field_generic_checklist",
+            "field_action"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.5,
+            "evidence_precision": 0.5,
+            "evidence_f1": 0.5,
+            "field_coverage": 0.571429,
+            "selector_field_coverage": 0.833333,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.5,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 235
+          }
+        },
+        {
+          "case_id": "role_weight_identifiability",
+          "selected_doc_ids": [
+            "role_object_owner",
+            "role_exception_source",
+            "role_duplicate_fast",
+            "role_condition"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.75,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 265
+          }
+        },
+        {
+          "case_id": "conflict_threshold_identifiability",
+          "selected_doc_ids": [
+            "conflict_exception",
+            "conflict_owner",
+            "conflict_action",
+            "conflict_trigger"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 1.0,
+            "evidence_precision": 1.0,
+            "evidence_f1": 1.0,
+            "field_coverage": 1.0,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.0,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 1.0,
+            "token_cost": 315
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "field_weight",
+      "value": 1.0,
+      "policy": {
+        "field_weight": 1.0,
+        "role_weight": 1.0,
+        "trust_weight": 1.4,
+        "applicability_weight": 1.5,
+        "novelty_weight": 1.0,
+        "support_weight": 1.0,
+        "conflict_penalty_weight": 2.4,
+        "cost_penalty_weight": 0.7,
+        "conflict_threshold": 0.0
+      },
+      "aggregate": {
+        "evidence_recall": 0.75,
+        "evidence_precision": 0.75,
+        "evidence_f1": 0.75,
+        "field_coverage": 0.77381,
+        "selector_field_coverage": 1.0,
+        "role_coverage": 1.0,
+        "unsupported_evidence_ratio": 0.25,
+        "flagged_evidence_ratio": 0.0,
+        "flagged_evidence_case": 0.0,
+        "explicit_conflict_pair_selected": 0.0,
+        "case_accuracy": 0.333333,
+        "token_cost": 270.0
+      },
+      "case_results": [
+        {
+          "case_id": "field_weight_identifiability",
+          "selected_doc_ids": [
+            "field_trigger",
+            "field_generic_checklist",
+            "field_exception",
+            "field_generic_summary"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.5,
+            "evidence_precision": 0.5,
+            "evidence_f1": 0.5,
+            "field_coverage": 0.571429,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.5,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 230
+          }
+        },
+        {
+          "case_id": "role_weight_identifiability",
+          "selected_doc_ids": [
+            "role_object_owner",
+            "role_exception_source",
+            "role_duplicate_fast",
+            "role_condition"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.75,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 265
+          }
+        },
+        {
+          "case_id": "conflict_threshold_identifiability",
+          "selected_doc_ids": [
+            "conflict_owner",
+            "conflict_exception",
+            "conflict_action",
+            "conflict_trigger"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 1.0,
+            "evidence_precision": 1.0,
+            "evidence_f1": 1.0,
+            "field_coverage": 1.0,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.0,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 1.0,
+            "token_cost": 315
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "field_weight",
+      "value": 2.0,
+      "policy": {
+        "field_weight": 2.0,
+        "role_weight": 1.0,
+        "trust_weight": 1.4,
+        "applicability_weight": 1.5,
+        "novelty_weight": 1.0,
+        "support_weight": 1.0,
+        "conflict_penalty_weight": 2.4,
+        "cost_penalty_weight": 0.7,
+        "conflict_threshold": 0.0
+      },
+      "aggregate": {
+        "evidence_recall": 0.75,
+        "evidence_precision": 0.75,
+        "evidence_f1": 0.75,
+        "field_coverage": 0.77381,
+        "selector_field_coverage": 1.0,
+        "role_coverage": 1.0,
+        "unsupported_evidence_ratio": 0.25,
+        "flagged_evidence_ratio": 0.0,
+        "flagged_evidence_case": 0.0,
+        "explicit_conflict_pair_selected": 0.0,
+        "case_accuracy": 0.333333,
+        "token_cost": 270.0
+      },
+      "case_results": [
+        {
+          "case_id": "field_weight_identifiability",
+          "selected_doc_ids": [
+            "field_trigger",
+            "field_generic_checklist",
+            "field_exception",
+            "field_generic_summary"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.5,
+            "evidence_precision": 0.5,
+            "evidence_f1": 0.5,
+            "field_coverage": 0.571429,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.5,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 230
+          }
+        },
+        {
+          "case_id": "role_weight_identifiability",
+          "selected_doc_ids": [
+            "role_object_owner",
+            "role_exception_source",
+            "role_duplicate_fast",
+            "role_condition"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.75,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 265
+          }
+        },
+        {
+          "case_id": "conflict_threshold_identifiability",
+          "selected_doc_ids": [
+            "conflict_owner",
+            "conflict_exception",
+            "conflict_action",
+            "conflict_trigger"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 1.0,
+            "evidence_precision": 1.0,
+            "evidence_f1": 1.0,
+            "field_coverage": 1.0,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.0,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 1.0,
+            "token_cost": 315
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "field_weight",
+      "value": 4.0,
+      "policy": {
+        "field_weight": 4.0,
+        "role_weight": 1.0,
+        "trust_weight": 1.4,
+        "applicability_weight": 1.5,
+        "novelty_weight": 1.0,
+        "support_weight": 1.0,
+        "conflict_penalty_weight": 2.4,
+        "cost_penalty_weight": 0.7,
+        "conflict_threshold": 0.0
+      },
+      "aggregate": {
+        "evidence_recall": 0.75,
+        "evidence_precision": 0.75,
+        "evidence_f1": 0.75,
+        "field_coverage": 0.77381,
+        "selector_field_coverage": 1.0,
+        "role_coverage": 1.0,
+        "unsupported_evidence_ratio": 0.25,
+        "flagged_evidence_ratio": 0.0,
+        "flagged_evidence_case": 0.0,
+        "explicit_conflict_pair_selected": 0.0,
+        "case_accuracy": 0.333333,
+        "token_cost": 270.0
+      },
+      "case_results": [
+        {
+          "case_id": "field_weight_identifiability",
+          "selected_doc_ids": [
+            "field_trigger",
+            "field_exception",
+            "field_generic_checklist",
+            "field_generic_summary"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.5,
+            "evidence_precision": 0.5,
+            "evidence_f1": 0.5,
+            "field_coverage": 0.571429,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.5,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 230
+          }
+        },
+        {
+          "case_id": "role_weight_identifiability",
+          "selected_doc_ids": [
+            "role_object_owner",
+            "role_exception_source",
+            "role_duplicate_fast",
+            "role_condition"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.75,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 265
+          }
+        },
+        {
+          "case_id": "conflict_threshold_identifiability",
+          "selected_doc_ids": [
+            "conflict_owner",
+            "conflict_exception",
+            "conflict_action",
+            "conflict_trigger"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 1.0,
+            "evidence_precision": 1.0,
+            "evidence_f1": 1.0,
+            "field_coverage": 1.0,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.0,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 1.0,
+            "token_cost": 315
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "field_weight",
+      "value": 8.0,
+      "policy": {
+        "field_weight": 8.0,
+        "role_weight": 1.0,
+        "trust_weight": 1.4,
+        "applicability_weight": 1.5,
+        "novelty_weight": 1.0,
+        "support_weight": 1.0,
+        "conflict_penalty_weight": 2.4,
+        "cost_penalty_weight": 0.7,
+        "conflict_threshold": 0.0
+      },
+      "aggregate": {
+        "evidence_recall": 0.583333,
+        "evidence_precision": 0.638889,
+        "evidence_f1": 0.607143,
+        "field_coverage": 0.57381,
+        "selector_field_coverage": 1.0,
+        "role_coverage": 1.0,
+        "unsupported_evidence_ratio": 0.361111,
+        "flagged_evidence_ratio": 0.111111,
+        "flagged_evidence_case": 0.333333,
+        "explicit_conflict_pair_selected": 0.0,
+        "case_accuracy": 0.0,
+        "token_cost": 225.0
+      },
+      "case_results": [
+        {
+          "case_id": "field_weight_identifiability",
+          "selected_doc_ids": [
+            "field_trigger",
+            "field_exception",
+            "field_generic_checklist",
+            "field_generic_summary"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.5,
+            "evidence_precision": 0.5,
+            "evidence_f1": 0.5,
+            "field_coverage": 0.571429,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.5,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 230
+          }
+        },
+        {
+          "case_id": "role_weight_identifiability",
+          "selected_doc_ids": [
+            "role_object_owner",
+            "role_exception_source",
+            "role_duplicate_fast",
+            "role_condition"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.75,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 265
+          }
+        },
+        {
+          "case_id": "conflict_threshold_identifiability",
+          "selected_doc_ids": [
+            "conflict_unverified_no_check",
+            "conflict_owner",
+            "conflict_trigger"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.5,
+            "evidence_precision": 0.666667,
+            "evidence_f1": 0.571429,
+            "field_coverage": 0.4,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.333333,
+            "flagged_evidence_ratio": 0.333333,
+            "flagged_evidence_case": 1.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 180
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "conflict_threshold",
+      "value": 0.0,
+      "policy": {
+        "field_weight": 4.0,
+        "role_weight": 1.0,
+        "trust_weight": 1.4,
+        "applicability_weight": 1.5,
+        "novelty_weight": 1.0,
+        "support_weight": 1.0,
+        "conflict_penalty_weight": 2.4,
+        "cost_penalty_weight": 0.7,
+        "conflict_threshold": 0.0
+      },
+      "aggregate": {
+        "evidence_recall": 0.75,
+        "evidence_precision": 0.75,
+        "evidence_f1": 0.75,
+        "field_coverage": 0.77381,
+        "selector_field_coverage": 1.0,
+        "role_coverage": 1.0,
+        "unsupported_evidence_ratio": 0.25,
+        "flagged_evidence_ratio": 0.0,
+        "flagged_evidence_case": 0.0,
+        "explicit_conflict_pair_selected": 0.0,
+        "case_accuracy": 0.333333,
+        "token_cost": 270.0
+      },
+      "case_results": [
+        {
+          "case_id": "field_weight_identifiability",
+          "selected_doc_ids": [
+            "field_trigger",
+            "field_exception",
+            "field_generic_checklist",
+            "field_generic_summary"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.5,
+            "evidence_precision": 0.5,
+            "evidence_f1": 0.5,
+            "field_coverage": 0.571429,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.5,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 230
+          }
+        },
+        {
+          "case_id": "role_weight_identifiability",
+          "selected_doc_ids": [
+            "role_object_owner",
+            "role_exception_source",
+            "role_duplicate_fast",
+            "role_condition"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.75,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 265
+          }
+        },
+        {
+          "case_id": "conflict_threshold_identifiability",
+          "selected_doc_ids": [
+            "conflict_owner",
+            "conflict_exception",
+            "conflict_action",
+            "conflict_trigger"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 1.0,
+            "evidence_precision": 1.0,
+            "evidence_f1": 1.0,
+            "field_coverage": 1.0,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.0,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 1.0,
+            "token_cost": 315
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "conflict_threshold",
+      "value": 0.35,
+      "policy": {
+        "field_weight": 4.0,
+        "role_weight": 1.0,
+        "trust_weight": 1.4,
+        "applicability_weight": 1.5,
+        "novelty_weight": 1.0,
+        "support_weight": 1.0,
+        "conflict_penalty_weight": 2.4,
+        "cost_penalty_weight": 0.7,
+        "conflict_threshold": 0.35
+      },
+      "aggregate": {
+        "evidence_recall": 0.75,
+        "evidence_precision": 0.75,
+        "evidence_f1": 0.75,
+        "field_coverage": 0.77381,
+        "selector_field_coverage": 1.0,
+        "role_coverage": 1.0,
+        "unsupported_evidence_ratio": 0.25,
+        "flagged_evidence_ratio": 0.0,
+        "flagged_evidence_case": 0.0,
+        "explicit_conflict_pair_selected": 0.0,
+        "case_accuracy": 0.333333,
+        "token_cost": 270.0
+      },
+      "case_results": [
+        {
+          "case_id": "field_weight_identifiability",
+          "selected_doc_ids": [
+            "field_trigger",
+            "field_exception",
+            "field_generic_checklist",
+            "field_generic_summary"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.5,
+            "evidence_precision": 0.5,
+            "evidence_f1": 0.5,
+            "field_coverage": 0.571429,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.5,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 230
+          }
+        },
+        {
+          "case_id": "role_weight_identifiability",
+          "selected_doc_ids": [
+            "role_object_owner",
+            "role_exception_source",
+            "role_duplicate_fast",
+            "role_condition"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.75,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 265
+          }
+        },
+        {
+          "case_id": "conflict_threshold_identifiability",
+          "selected_doc_ids": [
+            "conflict_owner",
+            "conflict_exception",
+            "conflict_action",
+            "conflict_trigger"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 1.0,
+            "evidence_precision": 1.0,
+            "evidence_f1": 1.0,
+            "field_coverage": 1.0,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.0,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 1.0,
+            "token_cost": 315
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "conflict_threshold",
+      "value": 0.5,
+      "policy": {
+        "field_weight": 4.0,
+        "role_weight": 1.0,
+        "trust_weight": 1.4,
+        "applicability_weight": 1.5,
+        "novelty_weight": 1.0,
+        "support_weight": 1.0,
+        "conflict_penalty_weight": 2.4,
+        "cost_penalty_weight": 0.7,
+        "conflict_threshold": 0.5
+      },
+      "aggregate": {
+        "evidence_recall": 0.583333,
+        "evidence_precision": 0.638889,
+        "evidence_f1": 0.607143,
+        "field_coverage": 0.57381,
+        "selector_field_coverage": 1.0,
+        "role_coverage": 1.0,
+        "unsupported_evidence_ratio": 0.361111,
+        "flagged_evidence_ratio": 0.111111,
+        "flagged_evidence_case": 0.333333,
+        "explicit_conflict_pair_selected": 0.0,
+        "case_accuracy": 0.0,
+        "token_cost": 225.0
+      },
+      "case_results": [
+        {
+          "case_id": "field_weight_identifiability",
+          "selected_doc_ids": [
+            "field_trigger",
+            "field_exception",
+            "field_generic_checklist",
+            "field_generic_summary"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.5,
+            "evidence_precision": 0.5,
+            "evidence_f1": 0.5,
+            "field_coverage": 0.571429,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.5,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 230
+          }
+        },
+        {
+          "case_id": "role_weight_identifiability",
+          "selected_doc_ids": [
+            "role_object_owner",
+            "role_exception_source",
+            "role_duplicate_fast",
+            "role_condition"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.75,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 265
+          }
+        },
+        {
+          "case_id": "conflict_threshold_identifiability",
+          "selected_doc_ids": [
+            "conflict_unverified_no_check",
+            "conflict_owner",
+            "conflict_trigger"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.5,
+            "evidence_precision": 0.666667,
+            "evidence_f1": 0.571429,
+            "field_coverage": 0.4,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.333333,
+            "flagged_evidence_ratio": 0.333333,
+            "flagged_evidence_case": 1.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 180
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "conflict_threshold",
+      "value": 0.8,
+      "policy": {
+        "field_weight": 4.0,
+        "role_weight": 1.0,
+        "trust_weight": 1.4,
+        "applicability_weight": 1.5,
+        "novelty_weight": 1.0,
+        "support_weight": 1.0,
+        "conflict_penalty_weight": 2.4,
+        "cost_penalty_weight": 0.7,
+        "conflict_threshold": 0.8
+      },
+      "aggregate": {
+        "evidence_recall": 0.583333,
+        "evidence_precision": 0.638889,
+        "evidence_f1": 0.607143,
+        "field_coverage": 0.57381,
+        "selector_field_coverage": 1.0,
+        "role_coverage": 1.0,
+        "unsupported_evidence_ratio": 0.361111,
+        "flagged_evidence_ratio": 0.111111,
+        "flagged_evidence_case": 0.333333,
+        "explicit_conflict_pair_selected": 0.0,
+        "case_accuracy": 0.0,
+        "token_cost": 225.0
+      },
+      "case_results": [
+        {
+          "case_id": "field_weight_identifiability",
+          "selected_doc_ids": [
+            "field_trigger",
+            "field_exception",
+            "field_generic_checklist",
+            "field_generic_summary"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.5,
+            "evidence_precision": 0.5,
+            "evidence_f1": 0.5,
+            "field_coverage": 0.571429,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.5,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 230
+          }
+        },
+        {
+          "case_id": "role_weight_identifiability",
+          "selected_doc_ids": [
+            "role_object_owner",
+            "role_exception_source",
+            "role_duplicate_fast",
+            "role_condition"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.75,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 265
+          }
+        },
+        {
+          "case_id": "conflict_threshold_identifiability",
+          "selected_doc_ids": [
+            "conflict_unverified_no_check",
+            "conflict_owner",
+            "conflict_trigger"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.5,
+            "evidence_precision": 0.666667,
+            "evidence_f1": 0.571429,
+            "field_coverage": 0.4,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.333333,
+            "flagged_evidence_ratio": 0.333333,
+            "flagged_evidence_case": 1.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 180
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "conflict_threshold",
+      "value": 1.0,
+      "policy": {
+        "field_weight": 4.0,
+        "role_weight": 1.0,
+        "trust_weight": 1.4,
+        "applicability_weight": 1.5,
+        "novelty_weight": 1.0,
+        "support_weight": 1.0,
+        "conflict_penalty_weight": 2.4,
+        "cost_penalty_weight": 0.7,
+        "conflict_threshold": 1.0
+      },
+      "aggregate": {
+        "evidence_recall": 0.583333,
+        "evidence_precision": 0.638889,
+        "evidence_f1": 0.607143,
+        "field_coverage": 0.57381,
+        "selector_field_coverage": 1.0,
+        "role_coverage": 1.0,
+        "unsupported_evidence_ratio": 0.361111,
+        "flagged_evidence_ratio": 0.111111,
+        "flagged_evidence_case": 0.333333,
+        "explicit_conflict_pair_selected": 0.0,
+        "case_accuracy": 0.0,
+        "token_cost": 225.0
+      },
+      "case_results": [
+        {
+          "case_id": "field_weight_identifiability",
+          "selected_doc_ids": [
+            "field_trigger",
+            "field_exception",
+            "field_generic_checklist",
+            "field_generic_summary"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.5,
+            "evidence_precision": 0.5,
+            "evidence_f1": 0.5,
+            "field_coverage": 0.571429,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.5,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 230
+          }
+        },
+        {
+          "case_id": "role_weight_identifiability",
+          "selected_doc_ids": [
+            "role_object_owner",
+            "role_exception_source",
+            "role_duplicate_fast",
+            "role_condition"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.75,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 265
+          }
+        },
+        {
+          "case_id": "conflict_threshold_identifiability",
+          "selected_doc_ids": [
+            "conflict_unverified_no_check",
+            "conflict_owner",
+            "conflict_trigger"
+          ],
+          "explicit_conflict_pairs": [],
+          "metrics": {
+            "evidence_recall": 0.5,
+            "evidence_precision": 0.666667,
+            "evidence_f1": 0.571429,
+            "field_coverage": 0.4,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.333333,
+            "flagged_evidence_ratio": 0.333333,
+            "flagged_evidence_case": 1.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 180
+          }
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "This small benchmark was repository-constructed and validated for parameter identifiability; it is not held out and is not a public real-model result.",
+    "It demonstrates selector behavior and parameter traceability; it cannot establish production effectiveness or Gate 2 superiority.",
+    "Primary public artifacts still lack standardized field, applicability, and candidate-conflict annotations.",
+    "The sweep is descriptive and must not be used to tune the frozen public test configuration after evaluation."
+  ]
+}

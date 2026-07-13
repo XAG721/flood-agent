@@ -2096,16 +2096,381 @@
       "source_sha256": "33eeb470f2026020e525d4e356e75e1c9d555b42fcaea43aee8fa5f7c566ba92",
       "interpretation": "Every chunk length is rescored by the real reranker for question relevance and all five role queries. Evidence metrics use unique parent evidence IDs, while token cost and duplicate-parent ratio remain chunk-level diagnostics."
     },
+    "controlled_domain_sensitivity": {
+      "status": "RUN_CONTROLLED_DOMAIN",
+      "scope": "SYNTHETIC_CONTROLLED_NO_NEURAL_MODEL",
+      "metadata": {
+        "benchmark": "flood_system/rag_benchmarks/controlled_frc_sensitivity_benchmark.json",
+        "benchmark_sha256": "689a0e9ee694982b15417f0a37b62cab70f7b17890417aeb7ea6dbcf9cdad7c8",
+        "data_origin": "SYNTHETIC",
+        "is_simulated": true,
+        "selector_backend": "deterministic_lexical_fields_and_metadata",
+        "neural_model_used": false,
+        "case_count": 3,
+        "document_count": 18,
+        "cases_with_field_evidence_map": 3,
+        "field_evidence_mapping_count": 16,
+        "top_k": 4,
+        "token_budget": 520,
+        "frozen_policy": {
+          "field_weight": 4.0,
+          "role_weight": 1.0,
+          "trust_weight": 1.4,
+          "applicability_weight": 1.5,
+          "novelty_weight": 1.0,
+          "support_weight": 1.0,
+          "conflict_penalty_weight": 2.4,
+          "cost_penalty_weight": 0.7,
+          "conflict_threshold": 0.0
+        },
+        "protocol": "one_factor_at_a_time",
+        "gold_usage": "field_evidence_map is used for scoring only and is never passed to the selector"
+      },
+      "dimensions": {
+        "conflict_threshold": [
+          0.0,
+          0.35,
+          0.5,
+          0.8,
+          1.0
+        ],
+        "field_weight": [
+          0.0,
+          1.0,
+          2.0,
+          4.0,
+          8.0
+        ],
+        "role_weight": [
+          0.0,
+          0.5,
+          1.0,
+          2.0,
+          4.0
+        ]
+      },
+      "identifiability": {
+        "role_weight": {
+          "role_coverage": [
+            0.888889,
+            1.0
+          ],
+          "evidence_f1": [
+            0.607143,
+            0.75
+          ]
+        },
+        "field_weight": {
+          "field_coverage": [
+            0.57381,
+            0.77381
+          ],
+          "evidence_f1": [
+            0.607143,
+            0.75
+          ]
+        },
+        "conflict_threshold": {
+          "flagged_evidence_case": [
+            0.0,
+            0.333333
+          ],
+          "evidence_f1": [
+            0.607143,
+            0.75
+          ]
+        }
+      },
+      "results": [
+        {
+          "dimension": "role_weight",
+          "value": 0.0,
+          "aggregate": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.77381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 0.888889,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.333333,
+            "token_cost": 268.333333
+          }
+        },
+        {
+          "dimension": "role_weight",
+          "value": 0.5,
+          "aggregate": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.77381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.333333,
+            "token_cost": 270.0
+          }
+        },
+        {
+          "dimension": "role_weight",
+          "value": 1.0,
+          "aggregate": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.77381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.333333,
+            "token_cost": 270.0
+          }
+        },
+        {
+          "dimension": "role_weight",
+          "value": 2.0,
+          "aggregate": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.77381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.333333,
+            "token_cost": 270.0
+          }
+        },
+        {
+          "dimension": "role_weight",
+          "value": 4.0,
+          "aggregate": {
+            "evidence_recall": 0.583333,
+            "evidence_precision": 0.638889,
+            "evidence_f1": 0.607143,
+            "field_coverage": 0.57381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.361111,
+            "flagged_evidence_ratio": 0.111111,
+            "flagged_evidence_case": 0.333333,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 225.0
+          }
+        },
+        {
+          "dimension": "field_weight",
+          "value": 0.0,
+          "aggregate": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.77381,
+            "selector_field_coverage": 0.944444,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.333333,
+            "token_cost": 271.666667
+          }
+        },
+        {
+          "dimension": "field_weight",
+          "value": 1.0,
+          "aggregate": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.77381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.333333,
+            "token_cost": 270.0
+          }
+        },
+        {
+          "dimension": "field_weight",
+          "value": 2.0,
+          "aggregate": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.77381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.333333,
+            "token_cost": 270.0
+          }
+        },
+        {
+          "dimension": "field_weight",
+          "value": 4.0,
+          "aggregate": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.77381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.333333,
+            "token_cost": 270.0
+          }
+        },
+        {
+          "dimension": "field_weight",
+          "value": 8.0,
+          "aggregate": {
+            "evidence_recall": 0.583333,
+            "evidence_precision": 0.638889,
+            "evidence_f1": 0.607143,
+            "field_coverage": 0.57381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.361111,
+            "flagged_evidence_ratio": 0.111111,
+            "flagged_evidence_case": 0.333333,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 225.0
+          }
+        },
+        {
+          "dimension": "conflict_threshold",
+          "value": 0.0,
+          "aggregate": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.77381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.333333,
+            "token_cost": 270.0
+          }
+        },
+        {
+          "dimension": "conflict_threshold",
+          "value": 0.35,
+          "aggregate": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.77381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.333333,
+            "token_cost": 270.0
+          }
+        },
+        {
+          "dimension": "conflict_threshold",
+          "value": 0.5,
+          "aggregate": {
+            "evidence_recall": 0.583333,
+            "evidence_precision": 0.638889,
+            "evidence_f1": 0.607143,
+            "field_coverage": 0.57381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.361111,
+            "flagged_evidence_ratio": 0.111111,
+            "flagged_evidence_case": 0.333333,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 225.0
+          }
+        },
+        {
+          "dimension": "conflict_threshold",
+          "value": 0.8,
+          "aggregate": {
+            "evidence_recall": 0.583333,
+            "evidence_precision": 0.638889,
+            "evidence_f1": 0.607143,
+            "field_coverage": 0.57381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.361111,
+            "flagged_evidence_ratio": 0.111111,
+            "flagged_evidence_case": 0.333333,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 225.0
+          }
+        },
+        {
+          "dimension": "conflict_threshold",
+          "value": 1.0,
+          "aggregate": {
+            "evidence_recall": 0.583333,
+            "evidence_precision": 0.638889,
+            "evidence_f1": 0.607143,
+            "field_coverage": 0.57381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.361111,
+            "flagged_evidence_ratio": 0.111111,
+            "flagged_evidence_case": 0.333333,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 225.0
+          }
+        }
+      ],
+      "limitations": [
+        "This small benchmark was repository-constructed and validated for parameter identifiability; it is not held out and is not a public real-model result.",
+        "It demonstrates selector behavior and parameter traceability; it cannot establish production effectiveness or Gate 2 superiority.",
+        "Primary public artifacts still lack standardized field, applicability, and candidate-conflict annotations.",
+        "The sweep is descriptive and must not be used to tune the frozen public test configuration after evaluation."
+      ],
+      "source_sha256": "8032a142586ea822ee115e31fab5365b795afc2dcf622c9532cbaa150dd39dda"
+    },
     "sensitivity_coverage": {
       "k_2_3_5_8": "RUN",
       "token_budget_512_1024_2048": "RUN",
-      "role_and_field_weights": "PARTIAL_ROLE_ONLY",
-      "conflict_threshold": "NOT_RUN",
+      "role_and_field_weights": "RUN_CONTROLLED_DOMAIN_PUBLIC_SCHEMA_BLOCKED",
+      "conflict_threshold": "RUN_CONTROLLED_DOMAIN_PUBLIC_SCHEMA_BLOCKED",
       "document_missing_ratio": "RUN",
       "chunk_length": "RUN"
     },
     "coverage_complete": false,
-    "interpretation": "Real-model artifacts cover 6 of nine planned FRC ablations, all K and token-budget values, a ConditionalQA role/redundancy parameter grid, and multi-ratio missing-evidence diagnostics. Chunk-length status is RUN. Schema-blocked dimensions remain unrun rather than being inferred from unrelated metrics or treated as passes."
+    "interpretation": "Real-model artifacts cover 6 of nine planned FRC ablations, all K and token-budget values, a ConditionalQA role/redundancy parameter grid, and multi-ratio missing-evidence diagnostics. Chunk-length status is RUN; controlled field/role/conflict sensitivity status is RUN_CONTROLLED_DOMAIN. Schema-blocked public dimensions remain unrun rather than being inferred from unrelated metrics or treated as passes."
   },
   "challenge_slices": {
     "normal": {
@@ -2230,7 +2595,7 @@
     "The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.",
     "ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.",
     "The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.",
-    "The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed, and field-weight/conflict-threshold sensitivity remains NOT_RUN.",
+    "The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed. Field/role-weight and conflict-threshold sensitivity is controlled-domain only and is not counted as public real-model completion.",
     "CONFLICTS conflict-type classification is complete, but the paper's expected-behavior adherence metric and independent human judging are not reproduced."
   ]
 }

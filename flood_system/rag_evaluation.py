@@ -4,7 +4,7 @@ import hashlib
 import json
 import math
 import time
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Iterable
 
@@ -32,6 +32,7 @@ class RAGEvaluationCase:
     relevant_doc_ids: list[str]
     required_roles: list[str]
     corpus: CorpusType = CorpusType.POLICY
+    field_evidence_map: dict[str, list[str]] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -71,6 +72,10 @@ class RAGBaselineEvaluator:
                 relevant_doc_ids=item["relevant_doc_ids"],
                 required_roles=item["required_roles"],
                 corpus=CorpusType(item.get("corpus", "policy")),
+                field_evidence_map={
+                    str(field_id): [str(doc_id) for doc_id in doc_ids]
+                    for field_id, doc_ids in item.get("field_evidence_map", {}).items()
+                },
             )
             for item in payload["cases"]
         ]

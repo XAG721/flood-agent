@@ -27,6 +27,12 @@ def main() -> None:
         help="Machine-readable real-model chunk-length sensitivity artifact.",
     )
     parser.add_argument(
+        "--controlled-domain-sensitivity",
+        type=Path,
+        default=None,
+        help="Machine-readable synthetic controlled-domain field/role/conflict sensitivity artifact.",
+    )
+    parser.add_argument(
         "--output-dir",
         type=Path,
         default=Path("output/rag_evaluation/public_frc_reference"),
@@ -38,6 +44,7 @@ def main() -> None:
         conflicts_path=args.conflicts_path,
         supplemental_ablation_paths=args.supplemental_ablation,
         chunk_length_sensitivity_path=args.chunk_length_sensitivity,
+        controlled_domain_sensitivity_path=args.controlled_domain_sensitivity,
     )
     args.output_dir.mkdir(parents=True, exist_ok=True)
     json_path = args.output_dir / "public_frc_reference_report.json"

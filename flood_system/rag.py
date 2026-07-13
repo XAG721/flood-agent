@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import re
 from datetime import UTC, datetime
 from dataclasses import dataclass
@@ -129,6 +130,58 @@ class _EvidenceSlot:
     slot_id: str
     text: str
     tokens: set[str]
+
+
+@dataclass(frozen=True)
+class EvidenceSelectionPolicy:
+    """Frozen, auditable weights for FRC evidence-set selection.
+
+    Defaults carry forward the original field/trust/applicability coefficients
+    and make the previously hard role constraint explicit in ranking, while
+    exposing all dimensions for one-factor sensitivity experiments.
+    ``conflict_threshold`` controls when a detected conflict
+    score starts contributing to the penalty; it does not suppress conflict
+    metadata or turn a selected conflict into a safe result.
+    """
+
+    field_weight: float = 4.0
+    role_weight: float = 1.0
+    trust_weight: float = 1.4
+    applicability_weight: float = 1.5
+    novelty_weight: float = 1.0
+    support_weight: float = 1.0
+    conflict_penalty_weight: float = 2.4
+    cost_penalty_weight: float = 0.7
+    conflict_threshold: float = 0.0
+
+    def __post_init__(self) -> None:
+        weights = (
+            self.field_weight,
+            self.role_weight,
+            self.trust_weight,
+            self.applicability_weight,
+            self.novelty_weight,
+            self.support_weight,
+            self.conflict_penalty_weight,
+            self.cost_penalty_weight,
+        )
+        if any(not math.isfinite(value) or value < 0 for value in weights):
+            raise ValueError("evidence selection weights must be finite and non-negative")
+        if not 0.0 <= self.conflict_threshold <= 1.0:
+            raise ValueError("conflict_threshold must be between 0 and 1")
+
+    def as_dict(self) -> dict[str, float]:
+        return {
+            "field_weight": self.field_weight,
+            "role_weight": self.role_weight,
+            "trust_weight": self.trust_weight,
+            "applicability_weight": self.applicability_weight,
+            "novelty_weight": self.novelty_weight,
+            "support_weight": self.support_weight,
+            "conflict_penalty_weight": self.conflict_penalty_weight,
+            "cost_penalty_weight": self.cost_penalty_weight,
+            "conflict_threshold": self.conflict_threshold,
+        }
 
 
 @dataclass(frozen=True)
@@ -289,6 +342,7 @@ class SimpleRAGStore:
         token_budget: int | None = 1200,
         slots: list[str] | None = None,
         required_roles: list[str] | None = None,
+        selection_policy: EvidenceSelectionPolicy | None = None,
     ) -> list[RAGDocument]:
         if top_k <= 0:
             return []
@@ -305,6 +359,7 @@ class SimpleRAGStore:
             return []
 
         evidence_slots = self._build_evidence_slots(query, slots=slots)
+        policy = selection_policy or EvidenceSelectionPolicy()
         evidence_candidates = [
             self._build_evidence_candidate(document, evidence_slots, query=query)
             for document in candidates
@@ -315,11 +370,13 @@ class SimpleRAGStore:
             top_k=top_k,
             token_budget=token_budget,
             required_roles=set(required_roles or []),
+            policy=policy,
         )
         return self._attach_evidence_selection(
             selected,
             evidence_slots,
             token_budget=token_budget,
+            policy=policy,
         )
 
     def get_by_ids(self, doc_ids: list[str]) -> list[RAGDocument]:
@@ -432,6 +489,7 @@ class SimpleRAGStore:
         top_k: int,
         token_budget: int | None,
         required_roles: set[str],
+        policy: EvidenceSelectionPolicy,
     ) -> list[tuple[_EvidenceCandidate, dict[str, float]]]:
         selected: list[tuple[_EvidenceCandidate, dict[str, float]]] = []
         selected_candidates: list[_EvidenceCandidate] = []
@@ -452,27 +510,42 @@ class SimpleRAGStore:
                     if slot_id not in covered_slots
                 )
                 coverage_score = coverage_gain / max(1, len(slots))
+                role_values = candidate.document.metadata.get("evidence_roles", [])
+                if isinstance(role_values, str):
+                    role_values = [role_values]
+                candidate_roles = {str(item) for item in role_values}
+                role_gain = len((candidate_roles & required_roles) - covered_roles)
+                role_score = role_gain / max(1, len(required_roles))
                 novelty_score = cls._novelty_score(candidate, selected_candidates)
-                conflict_score = cls._conflict_score(candidate, selected_candidates)
+                raw_conflict_score = cls._conflict_score(candidate, selected_candidates)
+                conflict_score = (
+                    raw_conflict_score
+                    if raw_conflict_score > 0 and raw_conflict_score >= policy.conflict_threshold
+                    else 0.0
+                )
                 cost_score = candidate.token_cost / max(1, token_budget or candidate.token_cost)
                 total_score = (
-                    4.0 * coverage_score
-                    + 1.4 * candidate.trust_score
-                    + 1.5 * candidate.applicability_score
-                    + 1.0 * novelty_score
-                    + 1.0 * candidate.support_score
-                    - 2.4 * conflict_score
-                    - 0.7 * cost_score
+                    policy.field_weight * coverage_score
+                    + policy.role_weight * role_score
+                    + policy.trust_weight * candidate.trust_score
+                    + policy.applicability_weight * candidate.applicability_score
+                    + policy.novelty_weight * novelty_score
+                    + policy.support_weight * candidate.support_score
+                    - policy.conflict_penalty_weight * conflict_score
+                    - policy.cost_penalty_weight * cost_score
                 )
                 score_terms = {
                     "total_score": round(total_score, 4),
                     "coverage_score": round(coverage_score, 4),
                     "coverage_gain": round(coverage_gain, 4),
+                    "role_score": round(role_score, 4),
+                    "role_gain": round(float(role_gain), 4),
                     "trust_score": round(candidate.trust_score, 4),
                     "applicability_score": round(candidate.applicability_score, 4),
                     "novelty_score": round(novelty_score, 4),
                     "support_score": round(candidate.support_score, 4),
                     "conflict_score": round(conflict_score, 4),
+                    "raw_conflict_score": round(raw_conflict_score, 4),
                     "cost_score": round(cost_score, 4),
                 }
                 scored.append((total_score, candidate, score_terms))
@@ -506,6 +579,7 @@ class SimpleRAGStore:
         slots: list[_EvidenceSlot],
         *,
         token_budget: int | None,
+        policy: EvidenceSelectionPolicy,
     ) -> list[RAGDocument]:
         selected_token_cost = sum(candidate.token_cost for candidate, _ in selected)
         selected_slot_ids = set().union(*(candidate.covered_slot_ids for candidate, _ in selected)) if selected else set()
@@ -541,6 +615,7 @@ class SimpleRAGStore:
                 "token_cost": candidate.token_cost,
                 "selected_token_cost": selected_token_cost,
                 "token_budget": token_budget,
+                "selection_policy": policy.as_dict(),
                 "score_terms": score_terms,
                 "source": cls._selection_source_summary(document),
             }
@@ -624,7 +699,7 @@ class SimpleRAGStore:
 
     @classmethod
     def _conflict_score(cls, candidate: _EvidenceCandidate, selected: list[_EvidenceCandidate]) -> float:
-        score = 0.0
+        score = cls._coerce_score(candidate.document.metadata.get("conflict_risk_score")) or 0.0
         if cls._mapped_prior(candidate.document.metadata.get("source_label"), TRUST_LABEL_PRIOR) in {0.08, 0.12, 0.25}:
             score = max(score, 0.35)
 
@@ -642,7 +717,13 @@ class SimpleRAGStore:
 
             selected_has_marker = cls._has_conflict_marker(selected_candidate.document)
             shared_token_ratio = cls._token_overlap_ratio(candidate.doc_tokens, selected_candidate.doc_tokens)
-            if shared_token_ratio >= 0.18 and candidate_has_marker != selected_has_marker:
+            low_trust_pair = candidate.trust_score < 0.6 or selected_candidate.trust_score < 0.6
+            if (
+                shared_slots
+                and shared_token_ratio >= 0.18
+                and candidate_has_marker != selected_has_marker
+                and low_trust_pair
+            ):
                 score = max(score, 0.45)
 
         return round(cls._clamp(score), 4)

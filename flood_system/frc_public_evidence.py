@@ -160,6 +160,94 @@ def load_supplemental_ablation(path: Path) -> tuple[str, dict[str, Any], dict[st
     return variant, metrics, provenance
 
 
+def load_controlled_domain_sensitivity(path: Path) -> dict[str, Any]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if payload.get("schema_version") != "frc-controlled-domain-sensitivity-v1":
+        raise ValueError(f"unsupported controlled sensitivity schema: {path}")
+    metadata = payload.get("metadata", {})
+    if metadata.get("data_origin") != "SYNTHETIC" or metadata.get("is_simulated") is not True:
+        raise ValueError("controlled sensitivity must preserve synthetic provenance")
+    if metadata.get("neural_model_used") is not False:
+        raise ValueError("controlled sensitivity must not be presented as a real-model run")
+    if int(metadata.get("cases_with_field_evidence_map", 0)) != int(metadata.get("case_count", -1)):
+        raise ValueError("controlled sensitivity requires an independent field-to-evidence map for every case")
+    results = payload.get("results", [])
+    if not results:
+        raise ValueError("controlled sensitivity has no result rows")
+    required_dimensions = {"role_weight", "field_weight", "conflict_threshold"}
+    dimensions: dict[str, set[float]] = defaultdict(set)
+    aggregates_by_dimension: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    metric_names = (
+        "evidence_recall",
+        "evidence_precision",
+        "evidence_f1",
+        "field_coverage",
+        "selector_field_coverage",
+        "role_coverage",
+        "unsupported_evidence_ratio",
+        "flagged_evidence_ratio",
+        "flagged_evidence_case",
+        "explicit_conflict_pair_selected",
+        "case_accuracy",
+        "token_cost",
+    )
+    for row in results:
+        dimension = str(row.get("dimension", ""))
+        if dimension not in required_dimensions:
+            raise ValueError(f"unsupported controlled sensitivity dimension: {dimension}")
+        dimensions[dimension].add(float(row["value"]))
+        case_rows = row.get("case_results", [])
+        if not case_rows:
+            raise ValueError(f"controlled sensitivity row has no cases: {dimension}")
+        aggregate = row.get("aggregate", {})
+        aggregates_by_dimension[dimension].append(aggregate)
+        for metric in metric_names:
+            recomputed = round(
+                sum(float(case["metrics"][metric]) for case in case_rows) / len(case_rows),
+                6,
+            )
+            if not math.isclose(recomputed, float(aggregate.get(metric, float("nan"))), abs_tol=1e-6):
+                raise ValueError(
+                    f"controlled sensitivity aggregate mismatch for {dimension}/{metric}: {path}"
+                )
+    if set(dimensions) != required_dimensions or any(len(values) < 2 for values in dimensions.values()):
+        raise ValueError("controlled sensitivity must scan every required dimension at multiple values")
+    frozen_policy = metadata.get("frozen_policy", {})
+    if any(float(frozen_policy.get(dimension, float("nan"))) not in values for dimension, values in dimensions.items()):
+        raise ValueError("controlled sensitivity must include every frozen parameter value")
+    identifiability_metrics = {
+        "role_weight": ("role_coverage", "evidence_f1"),
+        "field_weight": ("field_coverage", "evidence_f1"),
+        "conflict_threshold": ("flagged_evidence_case", "evidence_f1"),
+    }
+    identifiability: dict[str, dict[str, list[float]]] = {}
+    for dimension, names in identifiability_metrics.items():
+        ranges = {
+            name: sorted({float(aggregate[name]) for aggregate in aggregates_by_dimension[dimension]})
+            for name in names
+        }
+        if all(len(values) == 1 for values in ranges.values()):
+            raise ValueError(f"controlled sensitivity dimension is not identifiable: {dimension}")
+        identifiability[dimension] = ranges
+    return {
+        "status": "RUN_CONTROLLED_DOMAIN",
+        "scope": "SYNTHETIC_CONTROLLED_NO_NEURAL_MODEL",
+        "metadata": metadata,
+        "dimensions": {key: sorted(values) for key, values in sorted(dimensions.items())},
+        "identifiability": identifiability,
+        "results": [
+            {
+                "dimension": row["dimension"],
+                "value": row["value"],
+                "aggregate": row["aggregate"],
+            }
+            for row in results
+        ],
+        "limitations": payload.get("limitations", []),
+        "source_sha256": sha256(path),
+    }
+
+
 def load_ablation_audit(
     path: Path,
     supplemental_paths: Iterable[Path] = (),
@@ -409,6 +497,7 @@ def build_design_experiment_audit(
     metrics_dir: Path,
     supplemental_ablation_paths: Iterable[Path] = (),
     chunk_length_sensitivity_path: Path | None = None,
+    controlled_domain_sensitivity_path: Path | None = None,
 ) -> dict[str, Any]:
     supplemental_paths = tuple(supplemental_ablation_paths)
     ablation = load_ablation_audit(
@@ -438,11 +527,27 @@ def build_design_experiment_audit(
             "interpretation": "no real-model chunk-length sensitivity artifact was supplied",
         }
     )
+    controlled_sensitivity = (
+        load_controlled_domain_sensitivity(controlled_domain_sensitivity_path)
+        if controlled_domain_sensitivity_path
+        else {
+            "status": "NOT_RUN",
+            "interpretation": "no controlled-domain field/role/conflict sensitivity artifact was supplied",
+        }
+    )
+    controlled_status = controlled_sensitivity["status"]
+    controlled_only_status = (
+        "RUN_CONTROLLED_DOMAIN_PUBLIC_SCHEMA_BLOCKED"
+        if controlled_status == "RUN_CONTROLLED_DOMAIN"
+        else "NOT_RUN"
+    )
     sensitivity_coverage = {
         "k_2_3_5_8": "RUN",
         "token_budget_512_1024_2048": token_budgets["status"],
-        "role_and_field_weights": "PARTIAL_ROLE_ONLY",
-        "conflict_threshold": "NOT_RUN",
+        "role_and_field_weights": (
+            controlled_only_status if controlled_status == "RUN_CONTROLLED_DOMAIN" else "PARTIAL_ROLE_ONLY"
+        ),
+        "conflict_threshold": controlled_only_status,
         "document_missing_ratio": missing_ratios["status"],
         "chunk_length": chunk_lengths["status"],
     }
@@ -455,6 +560,7 @@ def build_design_experiment_audit(
         "missing_ratio_sensitivity": missing_ratios,
         "ablation_schema_applicability": schema_audit,
         "chunk_length_sensitivity": chunk_lengths,
+        "controlled_domain_sensitivity": controlled_sensitivity,
         "sensitivity_coverage": sensitivity_coverage,
         "coverage_complete": (
             ablation["status"] == "RUN"
@@ -464,7 +570,8 @@ def build_design_experiment_audit(
             f"Real-model artifacts cover {len(ablation['run_variants'])} of nine planned FRC ablations, "
             "all K and token-budget values, a ConditionalQA role/redundancy parameter grid, and "
             "multi-ratio missing-evidence diagnostics. Chunk-length status is "
-            f"{chunk_lengths['status']}. Schema-blocked dimensions remain unrun rather "
+            f"{chunk_lengths['status']}; controlled field/role/conflict sensitivity status is "
+            f"{controlled_status}. Schema-blocked public dimensions remain unrun rather "
             "than being inferred from unrelated metrics or treated as passes."
         ),
     }
@@ -1038,6 +1145,7 @@ def build_public_reference_report(
     conflicts_path: Path | None = None,
     supplemental_ablation_paths: Iterable[Path] = (),
     chunk_length_sensitivity_path: Path | None = None,
+    controlled_domain_sensitivity_path: Path | None = None,
 ) -> dict[str, Any]:
     output = reference_root / "outputs"
     metrics_dir = output / "metrics"
@@ -1080,6 +1188,7 @@ def build_public_reference_report(
         metrics_dir,
         supplemental_ablation_paths,
         chunk_length_sensitivity_path,
+        controlled_domain_sensitivity_path,
     )
     ablation_gate = experiment_audit["ablation"]["gate_required_comparison"]
     limitations = [
@@ -1087,7 +1196,7 @@ def build_public_reference_report(
         "The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.",
         "ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.",
         "The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.",
-        "The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed, and field-weight/conflict-threshold sensitivity remains NOT_RUN.",
+        "The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed. Field/role-weight and conflict-threshold sensitivity is controlled-domain only and is not counted as public real-model completion.",
     ]
     if conflict_run:
         limitations.append(
@@ -1245,6 +1354,28 @@ def render_public_reference_markdown(report: dict[str, Any]) -> str:
     )
     for dimension, status in experiment["sensitivity_coverage"].items():
         lines.append(f"| {dimension} | {status} |")
+    controlled = experiment["controlled_domain_sensitivity"]
+    if controlled["status"] == "RUN_CONTROLLED_DOMAIN":
+        lines.extend(
+            [
+                "",
+                "### Controlled-domain role/field/conflict sensitivity",
+                "",
+                "This diagnostic uses a repository-constructed `SYNTHETIC` benchmark and no neural model. "
+                "It verifies selector behavior but does not satisfy the public real-model Gate 2 requirement.",
+                "",
+                "| Dimension | Value | Evidence F1 | Gold field coverage | Selector field coverage | Role coverage | Flagged cases | Case accuracy |",
+                "|---|---:|---:|---:|---:|---:|---:|---:|",
+            ]
+        )
+        for item in controlled["results"]:
+            aggregate = item["aggregate"]
+            lines.append(
+                f"| {item['dimension']} | {item['value']:.2f} | {aggregate['evidence_f1']:.6f} | "
+                f"{aggregate['field_coverage']:.6f} | {aggregate['selector_field_coverage']:.6f} | "
+                f"{aggregate['role_coverage']:.6f} | "
+                f"{aggregate['flagged_evidence_case']:.6f} | {aggregate['case_accuracy']:.6f} |"
+            )
     chunk_lengths = experiment["chunk_length_sensitivity"]
     if chunk_lengths["status"] == "RUN":
         lines.extend(

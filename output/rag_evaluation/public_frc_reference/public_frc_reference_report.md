@@ -65,10 +65,32 @@ ConditionalQA 保存分数上共审计 80 组 FRC 参数；最佳 Evidence F1=0.
 |---|---|
 | k_2_3_5_8 | RUN |
 | token_budget_512_1024_2048 | RUN |
-| role_and_field_weights | PARTIAL_ROLE_ONLY |
-| conflict_threshold | NOT_RUN |
+| role_and_field_weights | RUN_CONTROLLED_DOMAIN_PUBLIC_SCHEMA_BLOCKED |
+| conflict_threshold | RUN_CONTROLLED_DOMAIN_PUBLIC_SCHEMA_BLOCKED |
 | document_missing_ratio | RUN |
 | chunk_length | RUN |
+
+### Controlled-domain role/field/conflict sensitivity
+
+This diagnostic uses a repository-constructed `SYNTHETIC` benchmark and no neural model. It verifies selector behavior but does not satisfy the public real-model Gate 2 requirement.
+
+| Dimension | Value | Evidence F1 | Gold field coverage | Selector field coverage | Role coverage | Flagged cases | Case accuracy |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| role_weight | 0.00 | 0.750000 | 0.773810 | 1.000000 | 0.888889 | 0.000000 | 0.333333 |
+| role_weight | 0.50 | 0.750000 | 0.773810 | 1.000000 | 1.000000 | 0.000000 | 0.333333 |
+| role_weight | 1.00 | 0.750000 | 0.773810 | 1.000000 | 1.000000 | 0.000000 | 0.333333 |
+| role_weight | 2.00 | 0.750000 | 0.773810 | 1.000000 | 1.000000 | 0.000000 | 0.333333 |
+| role_weight | 4.00 | 0.607143 | 0.573810 | 1.000000 | 1.000000 | 0.333333 | 0.000000 |
+| field_weight | 0.00 | 0.750000 | 0.773810 | 0.944444 | 1.000000 | 0.000000 | 0.333333 |
+| field_weight | 1.00 | 0.750000 | 0.773810 | 1.000000 | 1.000000 | 0.000000 | 0.333333 |
+| field_weight | 2.00 | 0.750000 | 0.773810 | 1.000000 | 1.000000 | 0.000000 | 0.333333 |
+| field_weight | 4.00 | 0.750000 | 0.773810 | 1.000000 | 1.000000 | 0.000000 | 0.333333 |
+| field_weight | 8.00 | 0.607143 | 0.573810 | 1.000000 | 1.000000 | 0.333333 | 0.000000 |
+| conflict_threshold | 0.00 | 0.750000 | 0.773810 | 1.000000 | 1.000000 | 0.000000 | 0.333333 |
+| conflict_threshold | 0.35 | 0.750000 | 0.773810 | 1.000000 | 1.000000 | 0.000000 | 0.333333 |
+| conflict_threshold | 0.50 | 0.607143 | 0.573810 | 1.000000 | 1.000000 | 0.333333 | 0.000000 |
+| conflict_threshold | 0.80 | 0.607143 | 0.573810 | 1.000000 | 1.000000 | 0.333333 | 0.000000 |
+| conflict_threshold | 1.00 | 0.607143 | 0.573810 | 1.000000 | 1.000000 | 0.333333 | 0.000000 |
 
 ### 分块长度敏感性（ConditionalQA，真实重评分）
 
@@ -138,5 +160,5 @@ ConditionalQA 保存分数上共审计 80 组 FRC 参数；最佳 Evidence F1=0.
 - The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.
 - ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.
 - The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.
-- The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed, and field-weight/conflict-threshold sensitivity remains NOT_RUN.
+- The real-model design audit remains incomplete; schema-blocked variants are not treated as run or passed. Field/role-weight and conflict-threshold sensitivity is controlled-domain only and is not counted as public real-model completion.
 - CONFLICTS conflict-type classification is complete, but the paper's expected-behavior adherence metric and independent human judging are not reproduced.

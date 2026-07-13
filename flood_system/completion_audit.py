@@ -85,12 +85,14 @@ DATA_EXPERIMENT_DELIVERABLES: dict[str, tuple[str, ...]] = {
         "output/rag_evaluation/full_public/public_benchmark_report.md",
         "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json",
         "output/rag_evaluation/conflicts_frc/conflicts_frc_report.json",
+        "output/rag_evaluation/controlled_domain_sensitivity/controlled_domain_sensitivity.json",
     ),
     "reproduction_entrypoints": (
         "scripts/run_candidate_evaluation.py",
         "scripts/run_rag_evaluation.py",
         "scripts/run_public_rag_benchmarks.py",
         "scripts/run_conflicts_frc_evaluation.py",
+        "scripts/run_frc_controlled_sensitivity.py",
     ),
 }
 
@@ -132,6 +134,7 @@ EVIDENCE_FILES = (
     "面向区县防办的洪水预警响应系统_升级设计说明V3.md",
     "docs/progressive_upgrade/completion_traceability_audit.md",
     "docs/V3_upgrade_acceptance_matrix.md",
+    "output/rag_evaluation/controlled_domain_sensitivity/controlled_domain_sensitivity.json",
 )
 
 EXTERNAL_NO_GO_ITEMS = (
@@ -271,6 +274,12 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
         and experiment_audit["token_budget_sensitivity"]["status"] == "RUN"
         and experiment_audit["token_budget_sensitivity"]["all_methods_within_budget"] is True
         and experiment_audit["missing_ratio_sensitivity"]["status"] == "RUN"
+        and experiment_audit["controlled_domain_sensitivity"]["status"]
+        == "RUN_CONTROLLED_DOMAIN"
+        and experiment_audit["sensitivity_coverage"]["role_and_field_weights"]
+        == "RUN_CONTROLLED_DOMAIN_PUBLIC_SCHEMA_BLOCKED"
+        and experiment_audit["sensitivity_coverage"]["conflict_threshold"]
+        == "RUN_CONTROLLED_DOMAIN_PUBLIC_SCHEMA_BLOCKED"
         and rag_decision["design_16_2_experiment_coverage_complete"] is False
     )
     service_source = (repo_root / "flood_system/response_workflow/service.py").read_text(encoding="utf-8")
@@ -365,6 +374,7 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
             gate_two_is_safely_held,
             [
                 "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json",
+                "output/rag_evaluation/controlled_domain_sensitivity/controlled_domain_sensitivity.json",
                 "flood_system/response_workflow/service.py",
             ],
             {
@@ -379,6 +389,9 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
                 "experiment_coverage_complete": experiment_audit["coverage_complete"],
                 "token_budget_sensitivity": experiment_audit["token_budget_sensitivity"]["status"],
                 "missing_ratio_sensitivity": experiment_audit["missing_ratio_sensitivity"]["status"],
+                "controlled_domain_sensitivity": experiment_audit["controlled_domain_sensitivity"]["status"],
+                "role_field_weight_sensitivity": experiment_audit["sensitivity_coverage"]["role_and_field_weights"],
+                "conflict_threshold_sensitivity": experiment_audit["sensitivity_coverage"]["conflict_threshold"],
             },
         ),
         _check(

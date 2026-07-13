@@ -290,8 +290,17 @@ python scripts/import_frc_public_reference.py `
   --reference-root D:\RAG_test\frc-select `
   --conflicts-path output\rag_evaluation\conflicts_frc\conflicts_frc_report.json `
   --supplemental-ablation output\rag_evaluation\public_frc_reference\wo_reranker_conditionalqa.json `
-  --chunk-length-sensitivity output\rag_evaluation\public_frc_reference\chunk_length_sensitivity_conditionalqa.json
+  --chunk-length-sensitivity output\rag_evaluation\public_frc_reference\chunk_length_sensitivity_conditionalqa.json `
+  --controlled-domain-sensitivity output\rag_evaluation\controlled_domain_sensitivity\controlled_domain_sensitivity.json
 ```
+
+字段/角色权重和冲突阈值的受控诊断可独立复现：
+
+```powershell
+python scripts/run_frc_controlled_sensitivity.py
+```
+
+该诊断使用仓库构造的 `SYNTHETIC` 小型领域基准和确定性选择器，不使用神经模型；它只证明参数可审计、阈值行为可辨识，不能替代公开数据真实模型实验或解除 Gate 2。
 
 `w/o Reranker` 会同时用 BGE 双编码器重算相关性和角色分，不复用 Cross-Encoder 角色分；当前 285 例 Evidence F1 为 0.697327，完整 FRC 为 0.705754。三套主公开集没有字段分、适用性和候选级冲突标注，因此对应三项消融保持 `SCHEMA_BLOCKED/NOT_RUN`，不能按通过处理。
 
