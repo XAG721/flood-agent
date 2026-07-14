@@ -11,6 +11,11 @@ vi.mock("../api/responseWorkflowApi", () => ({
     listRiskObjectRegistry: vi.fn(),
     importRiskObjectFile: vi.fn(),
     registerDocument: vi.fn(),
+    createDocumentVersion: vi.fn(),
+    parseDocumentVersion: vi.fn(),
+    publishDocumentVersion: vi.fn(),
+    retireDocumentVersion: vi.fn(),
+    rebuildDocumentIndex: vi.fn(),
     getDashboard: vi.fn(),
     bootstrapDemo: vi.fn(),
     discoverRiskObjects: vi.fn(),
@@ -145,6 +150,7 @@ const dashboard: EventDashboard = {
         },
       ],
       validation_warnings: [],
+      task_schema_version: "response-task-schema-v2",
       rule_set_version: "response-rules-v2",
       data_version: "response-schema-v1",
       is_simulated: true,
@@ -293,6 +299,111 @@ describe("ResponseWorkflowPage", () => {
       "commander",
       ["TUNNEL-017"],
       undefined,
+    ));
+  });
+
+  it("展示文档不可变版本状态并按角色执行解析", async () => {
+    const draftDocument = {
+      version_id: "DOCVER-1",
+      document_id: "SIM-DOC-下穿通道响应规程",
+      version_number: 1,
+      version_label: "2026-A",
+      title: "下穿通道响应规程",
+      issuer: "模拟区防办",
+      jurisdiction: "district-simulation",
+      effective_at: "2026-07-14T00:00:00Z",
+      expires_at: null,
+      replaces_version_id: null,
+      lifecycle_status: "draft" as const,
+      source_hash: "a".repeat(64),
+      source_filename: "2026-A.txt",
+      media_type: "text/plain",
+      source_size: 64,
+      clauses: [],
+      parser_version: null,
+      parse_method: null,
+      parse_hash: null,
+      parsed_at: null,
+      index_status: "not_indexed",
+      index_version: "",
+      index_build_id: null,
+      published_at: null,
+      retired_at: null,
+      superseded_by_version_id: null,
+      is_simulated: true,
+      created_by: "admin-1",
+      terminal_id: "document-terminal",
+      created_at: "2026-07-14T00:00:00Z",
+    };
+    vi.mocked(responseWorkflowApi.listDocuments).mockResolvedValue([draftDocument]);
+    vi.mocked(responseWorkflowApi.parseDocumentVersion).mockResolvedValue({
+      ...draftDocument,
+      lifecycle_status: "parsed",
+    });
+
+    render(<ResponseWorkflowPage />);
+
+    expect(await screen.findByText("2026-A · 待解析")).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("当前业务岗位"), { target: { value: "admin" } });
+    fireEvent.click(screen.getByRole("button", { name: "解析条款" }));
+
+    await waitFor(() => expect(responseWorkflowApi.parseDocumentVersion).toHaveBeenCalledWith(
+      "DOCVER-1",
+      "admin",
+      1,
+    ));
+  });
+
+  it("以草稿方式登记人工条款并自动绑定上一版本", async () => {
+    const currentDocument = {
+      version_id: "DOCVER-CURRENT",
+      document_id: "SIM-DOC-下穿通道响应规程",
+      version_number: 1,
+      version_label: "2026-A",
+      title: "下穿通道响应规程",
+      issuer: "模拟区防办",
+      jurisdiction: "district-simulation",
+      effective_at: "2026-07-14T00:00:00Z",
+      lifecycle_status: "published" as const,
+      source_hash: "b".repeat(64),
+      source_filename: "2026-A.txt",
+      media_type: "text/plain",
+      source_size: 64,
+      clauses: [],
+      index_status: "indexed",
+      index_version: "frc-index-v1",
+      is_simulated: true,
+      created_by: "admin-1",
+      terminal_id: "document-terminal",
+      created_at: "2026-07-14T00:00:00Z",
+    };
+    vi.mocked(responseWorkflowApi.listDocuments).mockResolvedValue([currentDocument]);
+    vi.mocked(responseWorkflowApi.createDocumentVersion).mockResolvedValue({
+      ...currentDocument,
+      version_id: "DOCVER-DRAFT",
+      version_number: 2,
+      version_label: "2026-B",
+      lifecycle_status: "draft",
+      index_status: "not_indexed",
+      index_version: "",
+    });
+
+    render(<ResponseWorkflowPage />);
+    await screen.findByText("2026-A · 已发布");
+    fireEvent.change(screen.getByLabelText("当前业务岗位"), { target: { value: "admin" } });
+    fireEvent.change(screen.getByLabelText("文档名称"), { target: { value: "下穿通道响应规程" } });
+    fireEvent.change(screen.getByLabelText("版本"), { target: { value: "2026-B" } });
+    fireEvent.change(screen.getByLabelText("条款原文"), { target: { value: "第一条 红色预警时应立即封控下穿通道。" } });
+    fireEvent.click(screen.getByRole("button", { name: "登记草稿" }));
+
+    await waitFor(() => expect(responseWorkflowApi.createDocumentVersion).toHaveBeenCalledWith(
+      expect.objectContaining({
+        documentId: "SIM-DOC-下穿通道响应规程",
+        versionLabel: "2026-B",
+        content: "第一条 红色预警时应立即封控下穿通道。",
+        replacesVersionId: "DOCVER-CURRENT",
+        operatorRole: "admin",
+      }),
     ));
   });
 

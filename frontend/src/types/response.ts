@@ -177,6 +177,7 @@ export interface ResponseTask {
   evidence_package_hash?: string | null;
   evidence_package_id?: string | null;
   evidence_package_version?: number | null;
+  task_schema_version: string;
   rule_set_version: string;
   dispatch_message_id?: string | null;
   data_version: string;
@@ -376,14 +377,54 @@ export interface DocumentVersionRecord {
   effective_at: string;
   expires_at?: string | null;
   replaces_version_id?: string | null;
-  lifecycle_status: string;
+  lifecycle_status: "active" | "draft" | "parsed" | "published" | "superseded" | "retired" | "parse_failed" | "index_failed";
   source_hash: string;
-  clauses: Array<{ clause_id: string; heading: string; text: string; page_number?: number | null }>;
+  source_filename: string;
+  media_type: string;
+  source_size: number;
+  clauses: Array<{
+    clause_id: string;
+    heading: string;
+    text: string;
+    page_number?: number | null;
+    section_path: string[];
+    clause_number?: string | null;
+    table_name?: string | null;
+    row_start?: number | null;
+    row_end?: number | null;
+    source_locator: string;
+    content_type: string;
+    text_hash: string;
+  }>;
+  parser_version?: string | null;
+  parse_method?: string | null;
+  parse_hash?: string | null;
+  parsed_at?: string | null;
   index_status: string;
   index_version: string;
+  index_build_id?: string | null;
+  published_at?: string | null;
+  retired_at?: string | null;
+  superseded_by_version_id?: string | null;
   is_simulated: boolean;
   created_by: string;
   created_at: string;
+}
+
+export interface IndexBuildRecord {
+  build_id: string;
+  document_version_id: string;
+  corpus_version: string;
+  parser_version: string;
+  embedding_version: string;
+  index_version: string;
+  status: "completed" | "failed";
+  clause_count: number;
+  error: string;
+  source_hash: string;
+  created_by: string;
+  created_at: string;
+  finished_at: string;
 }
 
 export interface OutboxMessage {

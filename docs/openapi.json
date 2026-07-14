@@ -3243,6 +3243,86 @@
         }
       }
     },
+    "/response/document-versions/{version_id}": {
+      "get": {
+        "tags": [
+          "district-response-workflow"
+        ],
+        "summary": "Get Document Version",
+        "operationId": "get_document_version_response_document_versions__version_id__get",
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Version Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/response/document-versions/{version_id}/history": {
+      "get": {
+        "tags": [
+          "district-response-workflow"
+        ],
+        "summary": "Document Version History",
+        "operationId": "document_version_history_response_document_versions__version_id__history_get",
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Version Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/response/contracts/task-schema": {
       "get": {
         "tags": [
@@ -3275,6 +3355,325 @@
             "content": {
               "application/json": {
                 "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/response/contracts/{contract_type}/versions": {
+      "get": {
+        "tags": [
+          "district-response-workflow"
+        ],
+        "summary": "List Contract Versions",
+        "operationId": "list_contract_versions_response_contracts__contract_type__versions_get",
+        "parameters": [
+          {
+            "name": "contract_type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Contract Type"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/response/documents/{document_id}/versions": {
+      "post": {
+        "tags": [
+          "district-response-workflow"
+        ],
+        "summary": "Create Document Version",
+        "operationId": "create_document_version_response_documents__document_id__versions_post",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Document Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentVersionCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/response/document-versions/{version_id}/parse": {
+      "post": {
+        "tags": [
+          "district-response-workflow"
+        ],
+        "summary": "Parse Document Version",
+        "operationId": "parse_document_version_response_document_versions__version_id__parse_post",
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Version Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentParseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/response/document-versions/{version_id}/publish": {
+      "post": {
+        "tags": [
+          "district-response-workflow"
+        ],
+        "summary": "Publish Document Version",
+        "operationId": "publish_document_version_response_document_versions__version_id__publish_post",
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Version Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentPublishRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/response/document-versions/{version_id}/retire": {
+      "post": {
+        "tags": [
+          "district-response-workflow"
+        ],
+        "summary": "Retire Document Version",
+        "operationId": "retire_document_version_response_document_versions__version_id__retire_post",
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Version Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentRetireRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/response/index-builds": {
+      "post": {
+        "tags": [
+          "district-response-workflow"
+        ],
+        "summary": "Create Index Build",
+        "operationId": "create_index_build_response_index_builds_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IndexBuildRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/response/index-builds/{build_id}": {
+      "get": {
+        "tags": [
+          "district-response-workflow"
+        ],
+        "summary": "Get Index Build",
+        "operationId": "get_index_build_response_index_builds__build_id__get",
+        "parameters": [
+          {
+            "name": "build_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Build Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
               }
             }
           }
@@ -7634,9 +8033,336 @@
             ],
             "title": "Idempotency Key"
           },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "version_label": {
+            "type": "string",
+            "title": "Version Label"
+          },
+          "issuer": {
+            "type": "string",
+            "title": "Issuer"
+          },
+          "jurisdiction": {
+            "type": "string",
+            "title": "Jurisdiction"
+          },
+          "effective_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Effective At"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 8
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content"
+          },
+          "file": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/IngestionFileEnvelope"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ocr_text": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 8
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ocr Text"
+          },
+          "ocr_engine_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ocr Engine Version"
+          },
+          "replaces_version_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Replaces Version Id"
+          },
+          "auto_publish": {
+            "type": "boolean",
+            "title": "Auto Publish",
+            "default": true
+          },
+          "is_simulated": {
+            "type": "boolean",
+            "title": "Is Simulated",
+            "default": true
+          },
           "document_id": {
             "type": "string",
             "title": "Document Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "operator_id",
+          "operator_role",
+          "title",
+          "version_label",
+          "issuer",
+          "jurisdiction",
+          "effective_at",
+          "document_id"
+        ],
+        "title": "DocumentImportRequest"
+      },
+      "DocumentParseRequest": {
+        "properties": {
+          "operator_id": {
+            "type": "string",
+            "title": "Operator Id"
+          },
+          "operator_role": {
+            "$ref": "#/components/schemas/OperatorRole"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note",
+            "default": ""
+          },
+          "terminal_id": {
+            "type": "string",
+            "title": "Terminal Id",
+            "default": "unknown-terminal"
+          },
+          "expected_version": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Version"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idempotency Key"
+          },
+          "parser_version": {
+            "type": "string",
+            "title": "Parser Version",
+            "default": "document-parser-v2"
+          }
+        },
+        "type": "object",
+        "required": [
+          "operator_id",
+          "operator_role"
+        ],
+        "title": "DocumentParseRequest"
+      },
+      "DocumentPublishRequest": {
+        "properties": {
+          "operator_id": {
+            "type": "string",
+            "title": "Operator Id"
+          },
+          "operator_role": {
+            "$ref": "#/components/schemas/OperatorRole"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note",
+            "default": ""
+          },
+          "terminal_id": {
+            "type": "string",
+            "title": "Terminal Id",
+            "default": "unknown-terminal"
+          },
+          "expected_version": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Version"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idempotency Key"
+          },
+          "corpus_version": {
+            "type": "string",
+            "title": "Corpus Version",
+            "default": "district-policy-corpus-v1"
+          },
+          "embedding_version": {
+            "type": "string",
+            "title": "Embedding Version",
+            "default": "deterministic-hybrid-v1"
+          }
+        },
+        "type": "object",
+        "required": [
+          "operator_id",
+          "operator_role"
+        ],
+        "title": "DocumentPublishRequest"
+      },
+      "DocumentRetireRequest": {
+        "properties": {
+          "operator_id": {
+            "type": "string",
+            "title": "Operator Id"
+          },
+          "operator_role": {
+            "$ref": "#/components/schemas/OperatorRole"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note",
+            "default": ""
+          },
+          "terminal_id": {
+            "type": "string",
+            "title": "Terminal Id",
+            "default": "unknown-terminal"
+          },
+          "expected_version": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Version"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idempotency Key"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 3,
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "operator_id",
+          "operator_role",
+          "reason"
+        ],
+        "title": "DocumentRetireRequest"
+      },
+      "DocumentVersionCreateRequest": {
+        "properties": {
+          "operator_id": {
+            "type": "string",
+            "title": "Operator Id"
+          },
+          "operator_role": {
+            "$ref": "#/components/schemas/OperatorRole"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note",
+            "default": ""
+          },
+          "terminal_id": {
+            "type": "string",
+            "title": "Terminal Id",
+            "default": "unknown-terminal"
+          },
+          "expected_version": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Version"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idempotency Key"
           },
           "title": {
             "type": "string",
@@ -7672,9 +8398,49 @@
             "title": "Expires At"
           },
           "content": {
-            "type": "string",
-            "minLength": 8,
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 8
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Content"
+          },
+          "file": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/IngestionFileEnvelope"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ocr_text": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 8
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ocr Text"
+          },
+          "ocr_engine_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ocr Engine Version"
           },
           "replaces_version_id": {
             "anyOf": [
@@ -7686,21 +8452,29 @@
               }
             ],
             "title": "Replaces Version Id"
+          },
+          "auto_publish": {
+            "type": "boolean",
+            "title": "Auto Publish",
+            "default": false
+          },
+          "is_simulated": {
+            "type": "boolean",
+            "title": "Is Simulated",
+            "default": true
           }
         },
         "type": "object",
         "required": [
           "operator_id",
           "operator_role",
-          "document_id",
           "title",
           "version_label",
           "issuer",
           "jurisdiction",
-          "effective_at",
-          "content"
+          "effective_at"
         ],
-        "title": "DocumentImportRequest"
+        "title": "DocumentVersionCreateRequest"
       },
       "EntityProfile": {
         "properties": {
@@ -8363,6 +9137,76 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "IndexBuildRequest": {
+        "properties": {
+          "operator_id": {
+            "type": "string",
+            "title": "Operator Id"
+          },
+          "operator_role": {
+            "$ref": "#/components/schemas/OperatorRole"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note",
+            "default": ""
+          },
+          "terminal_id": {
+            "type": "string",
+            "title": "Terminal Id",
+            "default": "unknown-terminal"
+          },
+          "expected_version": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Version"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idempotency Key"
+          },
+          "document_version_id": {
+            "type": "string",
+            "title": "Document Version Id"
+          },
+          "corpus_version": {
+            "type": "string",
+            "title": "Corpus Version",
+            "default": "district-policy-corpus-v1"
+          },
+          "parser_version": {
+            "type": "string",
+            "title": "Parser Version",
+            "default": "document-parser-v2"
+          },
+          "embedding_version": {
+            "type": "string",
+            "title": "Embedding Version",
+            "default": "deterministic-hybrid-v1"
+          }
+        },
+        "type": "object",
+        "required": [
+          "operator_id",
+          "operator_role",
+          "document_version_id"
+        ],
+        "title": "IndexBuildRequest"
       },
       "IngestionFileEnvelope": {
         "properties": {

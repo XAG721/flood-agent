@@ -16,13 +16,19 @@ class RequestBodyLimitMiddleware:
         *,
         max_bytes: int,
         paths: set[str],
+        path_prefixes: set[str] | None = None,
     ) -> None:
         self.app = app
         self.max_bytes = max(1, int(max_bytes))
         self.paths = frozenset(paths)
+        self.path_prefixes = frozenset(path_prefixes or set())
 
     async def __call__(self, scope: dict[str, Any], receive, send) -> None:
-        if scope.get("type") != "http" or scope.get("path") not in self.paths:
+        path = str(scope.get("path", ""))
+        if scope.get("type") != "http" or not (
+            path in self.paths
+            or any(path.startswith(prefix) for prefix in self.path_prefixes)
+        ):
             await self.app(scope, receive, send)
             return
 
@@ -59,7 +65,7 @@ class RequestBodyLimitMiddleware:
                 "detail": {
                     "code": "REQUEST_TOO_LARGE",
                     "message": (
-                        "risk-object import request exceeds the configured body limit"
+                        "file import request exceeds the configured body limit"
                     ),
                     "retryable": False,
                 }

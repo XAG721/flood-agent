@@ -120,6 +120,11 @@ class SQLiteRepository(
             "response_migration_batches",
             "response_legacy_adapter_calls",
             "response_document_versions",
+            "response_document_sources",
+            "response_document_parses",
+            "response_document_lifecycle_events",
+            "response_index_builds",
+            "response_contract_versions",
         )
         self._rotation_in_progress = True
         try:

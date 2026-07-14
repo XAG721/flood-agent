@@ -10,7 +10,10 @@
 | Candidate confirm/exclude | `POST /events/{event_id}/risk-objects/{object_id}/verify` | 人工决定生成不可变对象版本；预警更新后对象变为 STALE。 |
 | Confirmed candidate list | `GET /events/{event_id}/candidate-object-lists`、`POST /events/{event_id}/candidate-object-lists/freeze` | 业务复核/授权审批冻结最新预警下已确认对象；清单按版本追加、哈希稳定且不可更新删除，后续任务绑定最新清单 ID、版本和哈希。 |
 | Event risk-object supplement | `POST /events/{event_id}/risk-objects` | 人工补充到事件上下文，不替代区域主数据导入；仍需人工核验并形成事件对象版本。 |
-| Document/version/parse/publish | `POST /documents`、`GET /documents` | 单次命令完成源哈希、条款解析、版本登记和索引；相同内容幂等，替代版本令旧索引失效。 |
+| Document/version | `POST /documents/{document_id}/versions`、`GET /documents`、`GET /document-versions/{id}`、`GET /document-versions/{id}/history` | 草稿登记原始文件哈希、格式、大小和替代关系；源文件加密保存且历史接口不回显 Base64/OCR 全文。旧 `POST /documents` 保留为自动解析发布的兼容入口。 |
+| Document parse/publish/retire | `POST /document-versions/{id}/parse`、`publish`、`retire` | 解析、复核发布和退役各自形成不可变生命周期记录；发布生成页/章节/条款/表格定位，替代版本令旧索引失效。 |
+| Index build | `POST /index-builds`、`GET /index-builds/{id}` | 索引结果绑定文档源哈希、语料、解析器和嵌入版本；失败记录可审计，重建失败不覆盖最后有效索引。 |
+| Task schema / rule-set version | `GET /contracts/task-schema`、`GET /contracts/rule-set`、`GET /contracts/{type}/versions` | 当前规范按规范 JSON SHA-256 固化为不可变版本；同一版本内容漂移失败关闭。 |
 | Evidence run/package | `POST /events/{event_id}/risk-objects/{object_id}/task-draft`、`GET /evidence-packages/{package_id}` | 草案请求先独立生成 EvidencePackageVersion；证据不足时不创建任务。 |
 | Manual evidence/freeze | `POST /evidence-packages/{id}/manual-evidence`、`POST /evidence-packages/{id}/freeze` | 人工补证和冻结均创建新版本；缺失或未决冲突时拒绝冻结。 |
 | Conflict resolve | `POST /evidence-packages/{id}/conflicts/{conflict_id}/resolve` | 选中来源、理由和裁决人写入新证据包版本。 |

@@ -70,7 +70,10 @@ app.add_middleware(
     paths={
         "/response/risk-objects/file-imports",
         "/api/v1/risk-objects/file-imports",
+        "/response/documents",
+        "/api/v1/documents",
     },
+    path_prefixes={"/response/documents/", "/api/v1/documents/"},
 )
 system = FloodWarningSystem(settings.db_path)
 production = system.production_platform
@@ -127,6 +130,7 @@ def metrics():
         for item in system.repository.list_event_risk_objects(event.event_id)
     )
     registry_metrics = system.repository.risk_object_registry_metrics()
+    document_metrics = system.repository.document_governance_metrics()
     durations = sorted(api_request_durations_ms)
 
     def percentile(fraction: float) -> float:
@@ -193,6 +197,19 @@ def metrics():
             "# TYPE flood_candidate_object_lists_frozen gauge",
             "flood_candidate_object_lists_frozen "
             f"{registry_metrics['frozen_candidate_lists']}",
+            "# HELP flood_document_versions Immutable governed document versions.",
+            "# TYPE flood_document_versions gauge",
+            f"flood_document_versions {document_metrics['document_versions']}",
+            "# HELP flood_document_parse_records Immutable parse results.",
+            "# TYPE flood_document_parse_records gauge",
+            f"flood_document_parse_records {document_metrics['parse_records']}",
+            "# HELP flood_document_index_builds Index builds by terminal status.",
+            "# TYPE flood_document_index_builds gauge",
+            f'flood_document_index_builds{{status="completed"}} {document_metrics["index_builds_completed"]}',
+            f'flood_document_index_builds{{status="failed"}} {document_metrics["index_builds_failed"]}',
+            "# HELP flood_contract_versions Immutable task-schema and rule-set versions.",
+            "# TYPE flood_contract_versions gauge",
+            f"flood_contract_versions {document_metrics['contract_versions']}",
             "# HELP flood_api_requests_total Requests observed by the application middleware.",
             "# TYPE flood_api_requests_total counter",
             f"flood_api_requests_total {api_request_total}",

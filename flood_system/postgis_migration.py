@@ -17,8 +17,13 @@ from .response_workflow.models import (
     ApprovalRecord,
     CandidateObjectListVersion,
     DispatchCallbackRecord,
+    DocumentLifecycleEvent,
+    DocumentParseRecord,
+    DocumentSourceRecord,
+    DocumentVersionRecord,
     EventRiskObject,
     EvidencePackageVersion,
+    IndexBuildRecord,
     OutboxMessage,
     ResponseEvent,
     ResponseTask,
@@ -34,7 +39,7 @@ from .security import DataProtectionError, DataProtector
 
 
 POSTGIS_SCHEMA = "flood_simulation"
-DEFAULT_MAPPING_VERSION = "sqlite-response-to-postgis-shadow-v4"
+DEFAULT_MAPPING_VERSION = "sqlite-response-to-postgis-shadow-v5"
 
 
 @dataclass(frozen=True)
@@ -85,6 +90,36 @@ PROJECTION_SPECS = (
         "candidate_object_list",
         ("list_id", "version"),
         CandidateObjectListVersion,
+    ),
+    ProjectionSpec(
+        "response_document_versions",
+        "document_version",
+        ("version_id",),
+        DocumentVersionRecord,
+    ),
+    ProjectionSpec(
+        "response_document_sources",
+        "document_source",
+        ("version_id",),
+        DocumentSourceRecord,
+    ),
+    ProjectionSpec(
+        "response_document_parses",
+        "document_parse",
+        ("parse_id",),
+        DocumentParseRecord,
+    ),
+    ProjectionSpec(
+        "response_document_lifecycle_events",
+        "document_lifecycle",
+        ("lifecycle_event_id",),
+        DocumentLifecycleEvent,
+    ),
+    ProjectionSpec(
+        "response_index_builds",
+        "index_build",
+        ("build_id",),
+        IndexBuildRecord,
     ),
     ProjectionSpec("response_tasks", "task", ("task_id",), ResponseTask),
     ProjectionSpec(
@@ -174,6 +209,7 @@ def build_projection_records(
     records: list[dict[str, Any]] = []
     quarantined: list[dict[str, str]] = []
     event_simulation: dict[str, bool] = {}
+    document_simulation: dict[str, bool] = {}
     try:
         connection.execute("BEGIN")
         for spec in PROJECTION_SPECS:
@@ -206,10 +242,22 @@ def build_projection_records(
                     is_simulated = bool(
                         explicit_simulated
                         if explicit_simulated is not None
-                        else event_simulation.get(str(event_id), False)
+                        else document_simulation.get(
+                            str(
+                                getattr(
+                                    model,
+                                    "document_version_id",
+                                    getattr(model, "version_id", ""),
+                                )
+                            ),
+                            event_simulation.get(str(event_id), False),
+                        )
                     )
                     if spec.record_type == "response_event":
                         event_simulation[str(model.event_id)] = bool(model.is_simulated)
+                        is_simulated = bool(model.is_simulated)
+                    if isinstance(model, DocumentVersionRecord):
+                        document_simulation[model.version_id] = bool(model.is_simulated)
                         is_simulated = bool(model.is_simulated)
                     if not is_simulated:
                         raise ValueError(

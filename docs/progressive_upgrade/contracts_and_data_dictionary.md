@@ -12,6 +12,8 @@
 | 导入风险对象主数据（AAL2） | 否 | 是 | 否 | 否 | 否 | 否 | 是 | 否 |
 | 确认或排除对象 | 是 | 是 | 是 | 否 | 否 | 否 | 是 | 否 |
 | 冻结人工确认对象清单 | 否 | 是 | 是 | 否 | 否 | 否 | 否 | 否 |
+| 登记/解析文档草稿 | 是 | 是 | 否 | 否 | 否 | 只读 | 是 | 否 |
+| 发布/退役文档和重建索引 | 否 | 是 | 否 | 否 | 否 | 只读 | 是 | 否 |
 | 审查证据/裁决冲突 | 否 | 是 | 是 | 否 | 否 | 只读 | 是 | 否 |
 | 编辑并提交草案 | 是 | 是 | 是 | 否 | 否 | 否 | 是 | 否 |
 | 一般审批 | 否 | 是 | 是 | 否 | 否 | 否 | 否 | 否 |
@@ -57,7 +59,12 @@
 | RiskObjectRegistryImportResult | `import_id`、源文件 SHA-256 | 保存格式、字节数、新增/更新/未变/隔离数量、隔离原因、受影响事件和 STALE 运行数；不保存文件明文 |
 | CandidateRunRecord | `run_id` | 绑定预警、对象数据、算法、参数和运行模式版本；逐候选保存排名及空间、时效、属性、语义、数据质量五类特征快照、解释和缺失项 |
 | CandidateObjectListVersion | `list_id + version` | 业务复核/授权审批把已确认、非 STALE、属于最新预警修订的对象冻结为不可更新/删除的清单；内容哈希绑定对象版本、核验哈希、CandidateRun 和数据版本 |
-| DocumentVersionRecord | `version_id` | 发布单位、辖区、生效时间、替代关系、条款、源哈希和索引版本 |
+| DocumentVersionRecord | `version_id`、文档内 `version_number` | 不可变版本头，保存发布单位、辖区、生效/失效时间、替代关系、源文件哈希/格式/大小和模拟标记；派生状态由追加记录物化 |
+| DocumentSourceRecord | `version_id` | 原始字节、OCR 文本和 OCR 引擎版本认证加密；列表/历史 API 只返回哈希、格式和大小，不回显 Base64 或 OCR 全文 |
+| DocumentParseRecord | `parse_id`、`version_id + parser_version + source_hash` | 保存页码、章节路径、条款号、表名、行号、原文定位、逐条文本哈希和整体解析哈希；结果不可覆盖 |
+| DocumentLifecycleEvent | `lifecycle_event_id` | `draft/parsed/published/index_failed/superseded/retired` 追加历史；只有已发布且当前有效版本可进入检索 |
+| IndexBuildRecord | `build_id` | 绑定文档、语料、解析器、嵌入配置、索引版本、条款数和成功/失败结果；失败不伪造成功状态，可在同一源快照上重试 |
+| ContractVersionRecord | `contract_type + version_id` | 任务 JSON Schema 和规则集的规范 JSON、SHA-256 及替代版本不可变保存；同版本内容漂移使服务失败关闭 |
 | EvidencePackageVersion | `package_id + version` | 字段 `SUPPORTED/CONFLICTED/MISSING`；冲突裁决生成新版本；冻结后哈希稳定 |
 | ResponseTask | `task_id + version` | 对象、责任、动作、四时限、依据、证据、审批和下发哈希完整；存在冻结清单时必须绑定最新 `list_id/version/content_hash` 且对象仍与冻结核验快照一致 |
 | RuleEvaluationRecord | `evaluation_id` | `PASS/SOFT_WARNING/HARD_BLOCK`；HARD_BLOCK 不得审批 |
@@ -85,7 +92,7 @@
 | 409 | `IDEMPOTENCY_REQUEST_IN_PROGRESS` | 等价写请求正在处理，可使用同一请求稍后重试 |
 | 409 | `IDEMPOTENCY_OUTCOME_INDETERMINATE` | 原请求可能已写入但未安全完成，必须先人工对账 |
 | 409 | `IDEMPOTENCY_RESPONSE_NOT_REPLAYABLE` | 原请求已完成但响应超过重放上限，按记录的资源引用查询 |
-| 413 | `REQUEST_TOO_LARGE` | 风险对象文件导入请求超过服务端请求体上限，在 JSON/Base64 解析前拒绝 |
+| 413 | `REQUEST_TOO_LARGE` | 风险对象或文档文件导入请求超过服务端请求体上限，在 JSON/Base64 解析前拒绝 |
 
 错误响应统一为 `detail: { code, message, retryable }`。
 
@@ -104,3 +111,12 @@
 - 清单只接受最新预警修订下、来源 CandidateRun 未失效且对象已人工确认/非 STALE 的记录；人工补录对象可以没有 CandidateRun，但仍必须有不可变对象版本和核验哈希。
 - 清单载荷认证加密，SQLite 触发器禁止普通 UPDATE/DELETE；启动加密迁移和授权密钥轮换只允许密文替换，不改变清单业务内容。
 - 一旦事件存在冻结清单，任务创建和证据草案都只能绑定最新清单；历史清单、清单外对象或对象核验版本漂移均失败关闭。
+
+## 文档、索引与契约版本合同
+
+- `POST /response/documents/{document_id}/versions` 只登记不可变草稿源文件；兼容入口 `POST /response/documents` 默认依次执行解析和发布，但仍产生相同的源、解析、生命周期和索引历史。
+- 支持 TXT/Markdown、UTF-8/GB18030 CSV、受限 XLSX、DOCX、数字 PDF，以及附带人工核验 `ocr_text`/`ocr_engine_version` 的扫描图片或扫描 PDF。文件名路径、MIME、Base64、SHA-256、大小、OOXML ZIP 成员和图片完整性均先校验；没有核验 OCR 的扫描件失败关闭。
+- `POST /response/document-versions/{id}/parse|publish|retire` 分离职责；发布/退役只允许业务复核或管理员，更新携带 `expected_version`。同一文档同时只允许一个当前发布版本，新版本必须显式指向其替代版本。
+- 检索仅接受 `active/published` 且已经生效、尚未过期的文档；`draft/parsed/index_failed/superseded/retired`、未来生效、日期损坏和过期版本全部排除。
+- `POST /response/index-builds` 在已发布版本上重建索引，结果绑定语料/解析器/嵌入版本；失败的重建不会撤销最后一个已发布索引。`GET /response/document-versions/{id}/history` 返回生命周期、解析和构建历史，但不返回原始文件内容。
+- `GET /response/contracts/task-schema` 与 `/rule-set` 会把当前规范内容固化为不可变 `ContractVersionRecord`；`GET /response/contracts/{contract_type}/versions` 用于历史回放。任务和审批同时保存 `task_schema_version` 与 `rule_set_version`。

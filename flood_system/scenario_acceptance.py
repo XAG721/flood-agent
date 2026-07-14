@@ -28,6 +28,7 @@ SCENARIO_TEST_EVIDENCE: dict[str, tuple[str, ...]] = {
     ),
     "SIMSCENARIO-08": (
         "tests/test_response_workflow.py::test_document_versions_are_clause_indexed_and_superseded_versions_leave_current_retrieval",
+        "tests/test_document_governance.py::test_document_lifecycle_is_append_only_and_retrieval_uses_only_current_versions",
     ),
     "SIMSCENARIO-09": (
         "tests/test_response_workflow.py::test_evidence_conflicts_are_separate_from_applicability_and_require_human_resolution",
@@ -44,9 +45,11 @@ SCENARIO_TEST_EVIDENCE: dict[str, tuple[str, ...]] = {
     ),
     "SIMSCENARIO-14": (
         "tests/test_response_workflow.py::test_document_parse_and_index_dependency_failures_are_isolated",
+        "tests/test_document_governance.py::test_supported_document_formats_produce_traceable_clauses",
     ),
     "SIMSCENARIO-15": (
         "tests/test_response_workflow.py::test_document_parse_and_index_dependency_failures_are_isolated",
+        "tests/test_document_governance.py::test_document_upload_rejects_path_hash_mismatch_and_unverified_scans",
         "tests/test_system.py::test_supervisor_loop_retries_and_records_warning",
     ),
     "SIMSCENARIO-16": ("tests/test_system.py::test_platform_api_returns_explicit_llm_errors_without_rule_fallback",),

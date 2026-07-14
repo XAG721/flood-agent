@@ -26,6 +26,10 @@ from ..response_workflow.models import (
     DeadlineExtensionRequest,
     DispatchCallbackRequest,
     DocumentImportRequest,
+    DocumentParseRequest,
+    DocumentPublishRequest,
+    DocumentRetireRequest,
+    DocumentVersionCreateRequest,
     EventCloseRequest,
     EvidenceConflictResolutionRequest,
     EvidenceFreezeRequest,
@@ -40,6 +44,7 @@ from ..response_workflow.models import (
     ReviewDraftRequest,
     ScenarioEvaluationRequest,
     KeyRotationRequest,
+    IndexBuildRequest,
     LegacyMigrationRequest,
     OperatorRole,
     OutboxProcessRequest,
@@ -641,6 +646,14 @@ def create_response_router(system_provider: Callable[[], Any]) -> APIRouter:
     def list_document_versions(http_request: Request, document_id: str | None = None):
         return invoke(lambda: service().list_document_versions(document_id))
 
+    @router.get("/document-versions/{version_id}")
+    def get_document_version(version_id: str, http_request: Request):
+        return invoke(lambda: service().get_document_version(version_id))
+
+    @router.get("/document-versions/{version_id}/history")
+    def document_version_history(version_id: str, http_request: Request):
+        return invoke(lambda: service().document_version_history(version_id))
+
     @router.get("/contracts/task-schema")
     def task_schema_contract(http_request: Request):
         return invoke(service().task_schema_contract)
@@ -649,10 +662,53 @@ def create_response_router(system_provider: Callable[[], Any]) -> APIRouter:
     def rule_set_contract(http_request: Request):
         return invoke(service().rule_set_contract)
 
+    @router.get("/contracts/{contract_type}/versions")
+    def list_contract_versions(contract_type: str, http_request: Request):
+        return invoke(lambda: service().list_contract_versions(contract_type))
+
     @router.post("/documents")
     def register_document(request: DocumentImportRequest, http_request: Request):
         bind_payload_identity(http_request, request)
         return invoke(lambda: service().register_document(request))
+
+    @router.post("/documents/{document_id}/versions")
+    def create_document_version(
+        document_id: str,
+        request: DocumentVersionCreateRequest,
+        http_request: Request,
+    ):
+        bind_payload_identity(http_request, request)
+        return invoke(lambda: service().create_document_version(document_id, request))
+
+    @router.post("/document-versions/{version_id}/parse")
+    def parse_document_version(
+        version_id: str, request: DocumentParseRequest, http_request: Request
+    ):
+        bind_payload_identity(http_request, request)
+        return invoke(lambda: service().parse_document_version(version_id, request))
+
+    @router.post("/document-versions/{version_id}/publish")
+    def publish_document_version(
+        version_id: str, request: DocumentPublishRequest, http_request: Request
+    ):
+        bind_payload_identity(http_request, request)
+        return invoke(lambda: service().publish_document_version(version_id, request))
+
+    @router.post("/document-versions/{version_id}/retire")
+    def retire_document_version(
+        version_id: str, request: DocumentRetireRequest, http_request: Request
+    ):
+        bind_payload_identity(http_request, request)
+        return invoke(lambda: service().retire_document_version(version_id, request))
+
+    @router.post("/index-builds")
+    def create_index_build(request: IndexBuildRequest, http_request: Request):
+        bind_payload_identity(http_request, request)
+        return invoke(lambda: service().create_index_build(request))
+
+    @router.get("/index-builds/{build_id}")
+    def get_index_build(build_id: str, http_request: Request):
+        return invoke(lambda: service().get_index_build(build_id))
 
     @router.post("/migration/inventory")
     def run_migration_inventory(request: LegacyMigrationRequest, http_request: Request):

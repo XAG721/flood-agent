@@ -581,9 +581,26 @@
   padding-top: 0.65rem;
 }
 
+.documentList article > small {
+  display: block;
+  margin-top: 0.3rem;
+  overflow-wrap: anywhere;
+}
+
+.documentRegistry article > .documentActions {
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 0.65rem;
+}
+
+.documentActions button {
+  min-height: 2rem;
+}
+
 .documentForm {
   display: grid;
-  grid-template-columns: minmax(12rem, 1fr) minmax(8rem, 0.4fr) auto;
+  grid-template-columns: minmax(12rem, 1fr) minmax(8rem, 0.4fr) minmax(13rem, 1fr) auto;
   gap: 0.75rem;
   align-items: end;
   margin-top: 1rem;

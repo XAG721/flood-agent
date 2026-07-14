@@ -179,6 +179,42 @@ async function prepareRegistryFile(file: File) {
   };
 }
 
+async function prepareDocumentFile(file: File) {
+  if (file.size > 10 * 1024 * 1024) {
+    throw new Error("文档文件不得超过 10 MiB");
+  }
+  if (!globalThis.crypto?.subtle) {
+    throw new Error("当前浏览器不支持文件 SHA-256 校验");
+  }
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const digest = new Uint8Array(await globalThis.crypto.subtle.digest("SHA-256", bytes));
+  const sha256 = Array.from(digest, (value) => value.toString(16).padStart(2, "0")).join("");
+  const suffix = file.name.split(".").pop()?.toLowerCase();
+  const mediaType = file.type || {
+    pdf: "application/pdf",
+    docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    csv: "text/csv",
+    txt: "text/plain",
+    md: "text/markdown",
+    png: "image/png",
+    jpg: "image/jpeg",
+    jpeg: "image/jpeg",
+    tif: "image/tiff",
+    tiff: "image/tiff",
+  }[suffix ?? ""];
+  if (!mediaType) {
+    throw new Error("只支持 PDF、DOCX、XLSX、CSV、TXT、Markdown 或扫描图片");
+  }
+  return {
+    filename: file.name,
+    mediaType,
+    contentBase64: bytesToBase64(bytes),
+    sha256,
+    scanned: mediaType.startsWith("image/"),
+  };
+}
+
 export function ResponseWorkflowPage() {
   const [dashboard, setDashboard] = useState<EventDashboard | null>(null);
   const [documents, setDocuments] = useState<DocumentVersionRecord[]>([]);
@@ -668,6 +704,7 @@ function TaskDetail({ task, escalation, evidencePackage, outboxMessage, ruleEval
         <div><dt>完成时限</dt><dd>{formatDate(task.effective_completion_deadline_at ?? task.deadline_at)}</dd></div>
         <div><dt>核验时限</dt><dd>{formatDate(task.effective_verification_deadline_at ?? task.verification_deadline_at)}</dd></div>
         <div><dt>审批要求</dt><dd>{task.approval_policy === "commander_required" ? "指挥审批员批准" : "防办审核员批准"}</dd></div>
+        <div><dt>执行合同</dt><dd>{task.task_schema_version} · {task.rule_set_version}</dd></div>
         <div><dt>现场执行人</dt><dd>{task.assignee_name ? `${task.assignee_name} · 分派 V${task.assignment_version}` : "待成员单位联络员分派"}</dd></div>
       </dl>
       <div className={styles.taskEvidence}>
@@ -881,7 +918,20 @@ function DocumentRegistry({ documents, role, busy, run }: { documents: DocumentV
   const [title, setTitle] = useState("");
   const [version, setVersion] = useState("");
   const [content, setContent] = useState("");
+  const [sourceFile, setSourceFile] = useState<File | null>(null);
+  const [ocrText, setOcrText] = useState("");
   const latest = [...documents].sort((a, b) => b.created_at.localeCompare(a.created_at)).slice(0, 6);
+  const lifecycleText: Record<DocumentVersionRecord["lifecycle_status"], string> = {
+    active: "兼容有效",
+    draft: "待解析",
+    parsed: "待发布",
+    published: "已发布",
+    superseded: "已替代",
+    retired: "已退役",
+    parse_failed: "解析失败",
+    index_failed: "索引失败",
+  };
+  const canGovern = role === "admin" || role === "reviewer";
   return (
     <section className={styles.documentRegistry} aria-labelledby="document-registry-heading">
       <header>
@@ -891,9 +941,29 @@ function DocumentRegistry({ documents, role, busy, run }: { documents: DocumentV
       <div className={styles.documentList}>
         {latest.map((item) => (
           <article key={item.version_id}>
-            <div><strong>{item.title}</strong><span>{item.version_label} · {item.lifecycle_status}</span></div>
-            <p>{item.issuer} · {item.jurisdiction} · {item.clauses.length} 条</p>
-            <small>{item.index_version} · {item.source_hash.slice(0, 12)} · {item.is_simulated ? "模拟" : "正式"}</small>
+            <div><strong>{item.title}</strong><span>{item.version_label} · {lifecycleText[item.lifecycle_status]}</span></div>
+            <p>{item.issuer} · {item.jurisdiction} · {item.source_filename} · {item.clauses.length} 条</p>
+            <small>{item.parser_version ?? "未解析"} · {item.index_version || "未建索引"} · {item.source_hash.slice(0, 12)} · {item.is_simulated ? "模拟" : "正式"}</small>
+            {item.clauses[0]?.source_locator ? <small>原文定位：{item.clauses[0].source_locator}</small> : null}
+            {canGovern ? (
+              <div className={styles.documentActions}>
+                {item.lifecycle_status === "draft" || item.lifecycle_status === "parse_failed" ? (
+                  <button type="button" disabled={busy} onClick={() => void run("解析文档版本", () => responseWorkflowApi.parseDocumentVersion(item.version_id, role, item.version_number))}>解析条款</button>
+                ) : null}
+                {item.lifecycle_status === "parsed" || item.lifecycle_status === "index_failed" ? (
+                  <button type="button" disabled={busy} onClick={() => void run("发布文档版本", () => responseWorkflowApi.publishDocumentVersion(item.version_id, role, item.version_number))}>复核并发布</button>
+                ) : null}
+                {item.lifecycle_status === "published" ? (
+                  <>
+                    <button type="button" disabled={busy} onClick={() => void run("重建文档索引", () => responseWorkflowApi.rebuildDocumentIndex(item.version_id, role))}>重建索引</button>
+                    <button type="button" disabled={busy} onClick={() => {
+                      const reason = window.prompt("退役后该版本不得进入当前证据集合。请输入退役理由：");
+                      if (reason?.trim()) void run("退役文档版本", () => responseWorkflowApi.retireDocumentVersion(item.version_id, role, item.version_number, reason.trim()));
+                    }}>退役</button>
+                  </>
+                ) : null}
+              </div>
+            ) : null}
           </article>
         ))}
         {!latest.length ? <p className={styles.emptyText}>尚未登记文档版本。</p> : null}
@@ -901,25 +971,40 @@ function DocumentRegistry({ documents, role, busy, run }: { documents: DocumentV
       {role === "admin" ? (
         <form className={styles.documentForm} onSubmit={(event) => {
           event.preventDefault();
-          if (!title.trim() || !version.trim() || content.trim().length < 8) return;
+          if (!title.trim() || !version.trim() || (!sourceFile && content.trim().length < 8)) return;
           const documentId = `SIM-DOC-${title.trim().replace(/\s+/g, "-").toUpperCase()}`;
-          void run("登记文档版本", () => responseWorkflowApi.registerDocument({
-            document_id: documentId,
-            title: title.trim(),
-            version_label: version.trim(),
-            issuer: "模拟区防办",
-            jurisdiction: "district-simulation",
-            effective_at: new Date().toISOString(),
-            content: content.trim(),
-          }));
+          const replacement = documents.filter((item) => item.document_id === documentId).sort((a, b) => b.version_number - a.version_number)[0];
+          void run("登记文档源文件", async () => {
+            const prepared = sourceFile ? await prepareDocumentFile(sourceFile) : undefined;
+            if (prepared?.scanned && ocrText.trim().length < 8) {
+              throw new Error("扫描图片需要填写经人工核验的 OCR 文本");
+            }
+            return responseWorkflowApi.createDocumentVersion({
+              documentId,
+              title: title.trim(),
+              versionLabel: version.trim(),
+              issuer: "模拟区防办",
+              jurisdiction: "district-simulation",
+              effectiveAt: new Date().toISOString(),
+              content: prepared ? undefined : content.trim(),
+              file: prepared,
+              ocrText: ocrText.trim() || undefined,
+              ocrEngineVersion: ocrText.trim() ? "human-verified-ocr-v1" : undefined,
+              replacesVersionId: replacement?.version_id,
+              operatorRole: role,
+            });
+          });
           setTitle("");
           setVersion("");
           setContent("");
+          setSourceFile(null);
+          setOcrText("");
         }}>
           <label><span>文档名称</span><input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="例如：下穿通道响应规程" disabled={busy} /></label>
           <label><span>版本</span><input value={version} onChange={(event) => setVersion(event.target.value)} placeholder="2026-A" disabled={busy} /></label>
-          <label className={styles.documentContent}><span>条款原文</span><textarea value={content} onChange={(event) => setContent(event.target.value)} placeholder="每个自然段形成可定位条款。" disabled={busy} /></label>
-          <button type="submit" disabled={busy || content.trim().length < 8}>登记并索引</button>
+          <label><span>源文件</span><input type="file" accept=".pdf,.docx,.xlsx,.csv,.txt,.md,.png,.jpg,.jpeg,.tif,.tiff" onChange={(event) => setSourceFile(event.target.files?.[0] ?? null)} disabled={busy} /></label>
+          <label className={styles.documentContent}><span>{sourceFile ? "OCR 文本（扫描件必填）" : "条款原文"}</span><textarea value={sourceFile ? ocrText : content} onChange={(event) => sourceFile ? setOcrText(event.target.value) : setContent(event.target.value)} placeholder={sourceFile ? "扫描件需粘贴经人工核验的 OCR 文本；数字文档可留空。" : "每个自然段形成可定位条款。"} disabled={busy} /></label>
+          <button type="submit" disabled={busy || (!sourceFile && content.trim().length < 8)}>登记草稿</button>
         </form>
       ) : null}
     </section>

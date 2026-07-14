@@ -116,6 +116,22 @@ class RetrievalMode(StrEnum):
     DEFAULT = "DEFAULT"
 
 
+class DocumentLifecycleStatus(StrEnum):
+    ACTIVE = "active"
+    DRAFT = "draft"
+    PARSED = "parsed"
+    PUBLISHED = "published"
+    SUPERSEDED = "superseded"
+    RETIRED = "retired"
+    PARSE_FAILED = "parse_failed"
+    INDEX_FAILED = "index_failed"
+
+
+class IndexBuildStatus(StrEnum):
+    COMPLETED = "completed"
+    FAILED = "failed"
+
+
 class FeedbackCategory(StrEnum):
     COMPLETION = "completion"
     PARTIAL_COMPLETION = "partial_completion"
@@ -466,7 +482,7 @@ class EvidencePackageVersion(WorkflowModel):
     object_id: str
     version: int = 1
     status: str
-    task_schema_version: str = "response-task-schema-v1"
+    task_schema_version: str = "response-task-schema-v2"
     retrieval_strategy: str = "FRC-RAG"
     retrieval_run_id: str
     field_states: dict[str, EvidenceFieldState]
@@ -711,7 +727,8 @@ class ResponseTask(WorkflowModel):
     candidate_object_list_id: str | None = None
     candidate_object_list_version: int | None = None
     candidate_object_list_hash: str | None = None
-    rule_set_version: str = "response-rules-v1"
+    task_schema_version: str = "response-task-schema-v2"
+    rule_set_version: str = "response-rules-v2"
     dispatch_message_id: str | None = None
     data_version: str = "response-schema-v1"
     is_simulated: bool = True
@@ -841,18 +858,130 @@ class DocumentClause(WorkflowModel):
     heading: str
     text: str
     page_number: int | None = None
+    section_path: list[str] = Field(default_factory=list)
+    clause_number: str | None = None
+    table_name: str | None = None
+    row_start: int | None = None
+    row_end: int | None = None
+    source_locator: str = ""
+    content_type: str = "paragraph"
+    text_hash: str = ""
 
 
-class DocumentImportRequest(TaskActionRequest):
-    document_id: str
+class DocumentVersionCreateRequest(TaskActionRequest):
     title: str
     version_label: str
     issuer: str
     jurisdiction: str
     effective_at: datetime
     expires_at: datetime | None = None
-    content: str = Field(min_length=8)
+    content: str | None = Field(default=None, min_length=8)
+    file: IngestionFileEnvelope | None = None
+    ocr_text: str | None = Field(default=None, min_length=8, repr=False)
+    ocr_engine_version: str | None = None
     replaces_version_id: str | None = None
+    auto_publish: bool = False
+    is_simulated: bool = True
+
+    @model_validator(mode="after")
+    def validate_document_source(self):
+        if bool(self.content) == bool(self.file):
+            raise ValueError("provide exactly one of content or file")
+        if self.ocr_text and not self.file:
+            raise ValueError("ocr_text is only valid for a file source")
+        if self.ocr_engine_version and not self.ocr_text:
+            raise ValueError("ocr_engine_version requires ocr_text")
+        if self.expires_at is not None and self.expires_at <= self.effective_at:
+            raise ValueError("document expiry must be after effective_at")
+        return self
+
+
+class DocumentImportRequest(DocumentVersionCreateRequest):
+    document_id: str
+    auto_publish: bool = True
+
+
+class DocumentParseRequest(TaskActionRequest):
+    parser_version: str = "document-parser-v2"
+
+
+class DocumentPublishRequest(TaskActionRequest):
+    corpus_version: str = "district-policy-corpus-v1"
+    embedding_version: str = "deterministic-hybrid-v1"
+
+
+class DocumentRetireRequest(TaskActionRequest):
+    reason: str = Field(min_length=3, max_length=500)
+
+
+class IndexBuildRequest(TaskActionRequest):
+    document_version_id: str
+    corpus_version: str = "district-policy-corpus-v1"
+    parser_version: str = "document-parser-v2"
+    embedding_version: str = "deterministic-hybrid-v1"
+
+
+class DocumentSourceRecord(WorkflowModel):
+    version_id: str
+    filename: str
+    media_type: str
+    source_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    source_size: int = Field(ge=1)
+    content_base64: str = Field(min_length=1, repr=False)
+    ocr_text: str | None = Field(default=None, repr=False)
+    ocr_engine_version: str | None = None
+    created_at: datetime
+
+
+class DocumentParseRecord(WorkflowModel):
+    parse_id: str
+    version_id: str
+    parser_version: str
+    parse_method: str
+    source_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    result_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    clauses: list[DocumentClause] = Field(min_length=1)
+    created_by: str
+    terminal_id: str
+    created_at: datetime
+
+
+class DocumentLifecycleEvent(WorkflowModel):
+    lifecycle_event_id: str
+    version_id: str
+    status: DocumentLifecycleStatus
+    reason: str = ""
+    related_version_id: str | None = None
+    actor_id: str
+    actor_role: OperatorRole
+    terminal_id: str
+    created_at: datetime
+
+
+class IndexBuildRecord(WorkflowModel):
+    build_id: str
+    document_version_id: str
+    corpus_version: str
+    parser_version: str
+    embedding_version: str
+    index_version: str
+    status: IndexBuildStatus
+    clause_count: int = 0
+    error: str = ""
+    source_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    created_by: str
+    terminal_id: str
+    created_at: datetime
+    finished_at: datetime
+
+
+class ContractVersionRecord(WorkflowModel):
+    contract_type: str
+    version_id: str
+    content_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    payload: dict[str, Any]
+    supersedes_version_id: str | None = None
+    created_at: datetime
 
 
 class DocumentVersionRecord(WorkflowModel):
@@ -866,11 +995,22 @@ class DocumentVersionRecord(WorkflowModel):
     effective_at: datetime
     expires_at: datetime | None = None
     replaces_version_id: str | None = None
-    lifecycle_status: str = "active"
+    lifecycle_status: DocumentLifecycleStatus = DocumentLifecycleStatus.DRAFT
     source_hash: str
-    clauses: list[DocumentClause]
-    index_status: str
-    index_version: str
+    source_filename: str = "manual.txt"
+    media_type: str = "text/plain"
+    source_size: int = 0
+    clauses: list[DocumentClause] = Field(default_factory=list)
+    parser_version: str | None = None
+    parse_method: str | None = None
+    parse_hash: str | None = None
+    parsed_at: datetime | None = None
+    index_status: str = "not_indexed"
+    index_version: str = ""
+    index_build_id: str | None = None
+    published_at: datetime | None = None
+    retired_at: datetime | None = None
+    superseded_by_version_id: str | None = None
     is_simulated: bool = True
     created_by: str
     terminal_id: str
@@ -1085,7 +1225,8 @@ class ApprovalRecord(WorkflowModel):
     created_at: datetime
     task_payload_hash: str = ""
     evidence_package_hash: str = ""
-    rule_set_version: str = "response-rules-v1"
+    task_schema_version: str = "response-task-schema-v2"
+    rule_set_version: str = "response-rules-v2"
     rule_evaluation_id: str | None = None
 
 

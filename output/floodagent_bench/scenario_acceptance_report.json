@@ -104,7 +104,8 @@
         "DOCUMENT_VERSION_CONFLICT"
       ],
       "automated_evidence": [
-        "tests/test_response_workflow.py::test_document_versions_are_clause_indexed_and_superseded_versions_leave_current_retrieval"
+        "tests/test_response_workflow.py::test_document_versions_are_clause_indexed_and_superseded_versions_leave_current_retrieval",
+        "tests/test_document_governance.py::test_document_lifecycle_is_append_only_and_retrieval_uses_only_current_versions"
       ],
       "missing_evidence_refs": [],
       "status": "covered"
@@ -176,7 +177,8 @@
         "DOCUMENT_PARSE_FAILED"
       ],
       "automated_evidence": [
-        "tests/test_response_workflow.py::test_document_parse_and_index_dependency_failures_are_isolated"
+        "tests/test_response_workflow.py::test_document_parse_and_index_dependency_failures_are_isolated",
+        "tests/test_document_governance.py::test_supported_document_formats_produce_traceable_clauses"
       ],
       "missing_evidence_refs": [],
       "status": "covered"
@@ -189,6 +191,7 @@
       ],
       "automated_evidence": [
         "tests/test_response_workflow.py::test_document_parse_and_index_dependency_failures_are_isolated",
+        "tests/test_document_governance.py::test_document_upload_rejects_path_hash_mismatch_and_unverified_scans",
         "tests/test_system.py::test_supervisor_loop_retries_and_records_warning"
       ],
       "missing_evidence_refs": [],

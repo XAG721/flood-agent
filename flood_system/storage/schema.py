@@ -616,6 +616,126 @@ CREATE TABLE IF NOT EXISTS response_document_versions (
     UNIQUE(document_id, source_hash)
 );
 
+CREATE TABLE IF NOT EXISTS response_document_sources (
+    version_id TEXT PRIMARY KEY,
+    source_hash TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    FOREIGN KEY(version_id) REFERENCES response_document_versions(version_id)
+);
+
+CREATE TABLE IF NOT EXISTS response_document_parses (
+    parse_id TEXT PRIMARY KEY,
+    version_id TEXT NOT NULL,
+    parser_version TEXT NOT NULL,
+    source_hash TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    UNIQUE(version_id, parser_version, source_hash),
+    FOREIGN KEY(version_id) REFERENCES response_document_versions(version_id)
+);
+
+CREATE TABLE IF NOT EXISTS response_document_lifecycle_events (
+    lifecycle_event_id TEXT PRIMARY KEY,
+    version_id TEXT NOT NULL,
+    status TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    FOREIGN KEY(version_id) REFERENCES response_document_versions(version_id)
+);
+
+CREATE TABLE IF NOT EXISTS response_index_builds (
+    build_id TEXT PRIMARY KEY,
+    document_version_id TEXT NOT NULL,
+    status TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    FOREIGN KEY(document_version_id) REFERENCES response_document_versions(version_id)
+);
+
+CREATE TABLE IF NOT EXISTS response_contract_versions (
+    contract_type TEXT NOT NULL,
+    version_id TEXT NOT NULL,
+    content_hash TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    PRIMARY KEY(contract_type, version_id),
+    UNIQUE(contract_type, content_hash)
+);
+
+DROP TRIGGER IF EXISTS protect_response_document_versions_update;
+CREATE TRIGGER protect_response_document_versions_update
+BEFORE UPDATE ON response_document_versions
+WHEN response_key_rotation_authorized() != 1
+BEGIN
+    SELECT RAISE(ABORT, 'document versions are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_document_versions_delete;
+CREATE TRIGGER protect_response_document_versions_delete
+BEFORE DELETE ON response_document_versions BEGIN
+    SELECT RAISE(ABORT, 'document versions cannot be deleted');
+END;
+DROP TRIGGER IF EXISTS protect_response_document_sources_update;
+CREATE TRIGGER protect_response_document_sources_update
+BEFORE UPDATE ON response_document_sources
+WHEN response_key_rotation_authorized() != 1
+BEGIN
+    SELECT RAISE(ABORT, 'document source snapshots are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_document_sources_delete;
+CREATE TRIGGER protect_response_document_sources_delete
+BEFORE DELETE ON response_document_sources BEGIN
+    SELECT RAISE(ABORT, 'document source snapshots cannot be deleted');
+END;
+DROP TRIGGER IF EXISTS protect_response_document_parses_update;
+CREATE TRIGGER protect_response_document_parses_update
+BEFORE UPDATE ON response_document_parses
+WHEN response_key_rotation_authorized() != 1
+BEGIN
+    SELECT RAISE(ABORT, 'document parse records are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_document_parses_delete;
+CREATE TRIGGER protect_response_document_parses_delete
+BEFORE DELETE ON response_document_parses BEGIN
+    SELECT RAISE(ABORT, 'document parse records cannot be deleted');
+END;
+DROP TRIGGER IF EXISTS protect_response_document_lifecycle_update;
+CREATE TRIGGER protect_response_document_lifecycle_update
+BEFORE UPDATE ON response_document_lifecycle_events
+WHEN response_key_rotation_authorized() != 1
+BEGIN
+    SELECT RAISE(ABORT, 'document lifecycle events are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_document_lifecycle_delete;
+CREATE TRIGGER protect_response_document_lifecycle_delete
+BEFORE DELETE ON response_document_lifecycle_events BEGIN
+    SELECT RAISE(ABORT, 'document lifecycle events cannot be deleted');
+END;
+DROP TRIGGER IF EXISTS protect_response_index_builds_update;
+CREATE TRIGGER protect_response_index_builds_update
+BEFORE UPDATE ON response_index_builds
+WHEN response_key_rotation_authorized() != 1
+BEGIN
+    SELECT RAISE(ABORT, 'index build records are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_index_builds_delete;
+CREATE TRIGGER protect_response_index_builds_delete
+BEFORE DELETE ON response_index_builds BEGIN
+    SELECT RAISE(ABORT, 'index build records cannot be deleted');
+END;
+DROP TRIGGER IF EXISTS protect_response_contract_versions_update;
+CREATE TRIGGER protect_response_contract_versions_update
+BEFORE UPDATE ON response_contract_versions
+WHEN response_key_rotation_authorized() != 1
+BEGIN
+    SELECT RAISE(ABORT, 'contract versions are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_contract_versions_delete;
+CREATE TRIGGER protect_response_contract_versions_delete
+BEFORE DELETE ON response_contract_versions BEGIN
+    SELECT RAISE(ABORT, 'contract versions cannot be deleted');
+END;
+
 DROP TRIGGER IF EXISTS protect_response_registry_versions_update;
 CREATE TRIGGER protect_response_registry_versions_update
 BEFORE UPDATE ON response_risk_object_registry_versions
@@ -865,6 +985,10 @@ CREATE INDEX IF NOT EXISTS idx_response_deadline_extensions_task ON response_dea
 CREATE INDEX IF NOT EXISTS idx_response_migration_batches_version ON response_migration_batches(mapping_version, created_at);
 CREATE INDEX IF NOT EXISTS idx_response_legacy_calls_endpoint ON response_legacy_adapter_calls(legacy_endpoint, created_at);
 CREATE INDEX IF NOT EXISTS idx_response_document_versions ON response_document_versions(document_id, version_number);
+CREATE INDEX IF NOT EXISTS idx_response_document_parses_version ON response_document_parses(version_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_document_lifecycle_version ON response_document_lifecycle_events(version_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_index_builds_version ON response_index_builds(document_version_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_contract_versions_type ON response_contract_versions(contract_type, created_at);
 CREATE INDEX IF NOT EXISTS idx_response_dispatch_callbacks
     ON response_dispatch_callbacks(message_id, external_id, version, created_at);
 """

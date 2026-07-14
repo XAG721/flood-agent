@@ -10,6 +10,7 @@ from flood_system.response_workflow.models import (
     AlertInput,
     CandidateDiscoveryRequest,
     CandidateObjectListFreezeRequest,
+    DocumentImportRequest,
     EventCreateRequest,
     ObjectVerificationStatus,
     OperatorRole,
@@ -90,6 +91,50 @@ def test_non_simulated_source_is_quarantined_from_simulation_schema(tmp_path) ->
     assert quarantined
     assert {item["error_code"] for item in quarantined} == {"ValueError"}
     assert all("non-simulated record" in item["error_detail"] for item in quarantined)
+
+
+def test_document_governance_history_projects_to_simulation_shadow_without_plaintext(
+    tmp_path,
+) -> None:
+    db_path = tmp_path / "document-shadow.db"
+    workflow = FloodWarningSystem(db_path).response_workflow
+    document = workflow.register_document(
+        DocumentImportRequest(
+            document_id="DISTRICT-PLAN-SHADOW",
+            title="模拟区级下穿通道规程",
+            version_label="2026-shadow",
+            issuer="模拟区防办",
+            jurisdiction="district-simulation",
+            effective_at=datetime.now(timezone.utc),
+            content="第一条 橙色预警时住建局应核查下穿通道。",
+            operator_id="simulation-admin",
+            operator_role=OperatorRole.ADMIN,
+            terminal_id="simulation-console",
+        )
+    )
+
+    records, quarantined = build_projection_records(db_path)
+
+    assert quarantined == []
+    document_records = {
+        item["record_type"]: item
+        for item in records
+        if item["record_type"].startswith("document_")
+        or item["record_type"] == "index_build"
+    }
+    assert set(document_records) == {
+        "document_version",
+        "document_source",
+        "document_parse",
+        "document_lifecycle",
+        "index_build",
+    }
+    assert document_records["document_version"]["source_id"] == document.version_id
+    assert all(item["is_simulated"] is True for item in document_records.values())
+    assert all(
+        "橙色预警" not in item["payload_ciphertext"]
+        for item in document_records.values()
+    )
 
 
 def test_simulated_risk_object_registry_projects_versions_imports_and_point(

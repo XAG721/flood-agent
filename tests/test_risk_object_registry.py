@@ -19,6 +19,7 @@ from flood_system.response_workflow.models import (
     AlertInput,
     CandidateDiscoveryRequest,
     CandidateObjectListFreezeRequest,
+    DocumentImportRequest,
     EventCreateRequest,
     GeoPolygon,
     IngestionFileEnvelope,
@@ -971,6 +972,22 @@ def test_registry_history_survives_encryption_key_rotation(tmp_path, monkeypatch
             terminal_id="registry-console",
         ),
     )
+    document = workflow.register_document(
+        DocumentImportRequest(
+            document_id="DISTRICT-PLAN-ROTATION",
+            title="区级密钥轮换模拟规程",
+            version_label="2026-rotation",
+            issuer="模拟区防办",
+            jurisdiction="district-registry",
+            effective_at=datetime.now(timezone.utc),
+            content="第一条 橙色预警时住建局应核查下穿通道。",
+            operator_id="rotation-admin",
+            operator_role=OperatorRole.ADMIN,
+            terminal_id="rotation-console",
+        )
+    )
+    workflow.task_schema_contract()
+    workflow.rule_set_contract()
     rotation = system.response_workflow.rotate_data_encryption_key(
         # Key rotation is intentionally exercised after immutable history exists.
         KeyRotationRequest(
@@ -988,12 +1005,22 @@ def test_registry_history_survives_encryption_key_rotation(tmp_path, monkeypatch
         is not None
     )
     assert workflow.list_candidate_object_lists(dashboard.event.event_id) == [frozen]
+    assert (
+        workflow.get_document_version(document.version_id).source_hash
+        == document.source_hash
+    )
     with system.repository._connect() as connection:
         for table in (
             "response_risk_object_registry",
             "response_risk_object_registry_versions",
             "response_risk_object_imports",
             "response_candidate_object_lists",
+            "response_document_versions",
+            "response_document_sources",
+            "response_document_parses",
+            "response_document_lifecycle_events",
+            "response_index_builds",
+            "response_contract_versions",
         ):
             key_ids = {
                 row[0]
