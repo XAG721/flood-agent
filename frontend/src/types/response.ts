@@ -187,6 +187,24 @@ export interface ResponseTask {
   effective_verification_deadline_at?: string | null;
   active_extension_id?: string | null;
   creation_idempotency_key?: string | null;
+  candidate_object_list_id?: string | null;
+  candidate_object_list_version?: number | null;
+  candidate_object_list_hash?: string | null;
+}
+
+export interface CandidateFeatureSnapshot {
+  object_id: string;
+  rank: number;
+  spatial_score: number;
+  temporal_score: number;
+  attribute_score: number;
+  semantic_score: number;
+  data_quality_score: number;
+  raw_score: number;
+  calibrated_confidence: number;
+  missing_features: string[];
+  explanations: Record<string, string>;
+  feature_version: string;
 }
 
 export interface CandidateRunRecord {
@@ -199,13 +217,40 @@ export interface CandidateRunRecord {
   association_mode: string;
   parameters: Record<string, unknown>;
   candidate_object_ids: string[];
+  candidate_features: CandidateFeatureSnapshot[];
   missing_features: string[];
   limitations: string[];
   status: string;
   stale_at?: string | null;
   stale_reason?: string;
   created_by: string;
+  terminal_id: string;
   created_at: string;
+}
+
+export interface CandidateObjectReference {
+  object_id: string;
+  object_version: number;
+  candidate_run_id?: string | null;
+  data_version: string;
+  verification_hash: string;
+}
+
+export interface CandidateObjectListVersion {
+  list_id: string;
+  event_id: string;
+  version: number;
+  status: "frozen";
+  alert_snapshot_id: string;
+  source_run_ids: string[];
+  objects: CandidateObjectReference[];
+  content_hash: string;
+  note: string;
+  is_simulated: boolean;
+  frozen_by: string;
+  frozen_role: WorkflowRole;
+  terminal_id: string;
+  frozen_at: string;
 }
 
 export interface RiskObjectRegistryRecord {
@@ -584,6 +629,7 @@ export interface EventDashboard {
   review_draft?: EventReviewDraft | null;
   scenario_report?: DistrictScenarioReport | null;
   candidate_runs: CandidateRunRecord[];
+  candidate_object_lists: CandidateObjectListVersion[];
   evidence_packages: EvidencePackageVersion[];
   outbox: OutboxMessage[];
   rule_evaluations: RuleEvaluationRecord[];
@@ -594,6 +640,7 @@ export interface EventDashboard {
     alert_versions: number;
     candidate_objects: number;
     confirmed_objects: number;
+    frozen_candidate_lists?: number;
     task_count: number;
     completed_tasks: number;
     escalated_tasks: number;

@@ -11,7 +11,7 @@
 - 预警范围以 `geometry(Polygon, 4326)` 写入并建立 GiST 索引；
 - 映射失败记录只保存来源 ID、载荷哈希和错误，不把敏感明文写入隔离表；
 - 每张来源表必须同时通过数量和规范载荷哈希对账，批次才标记 `completed`。
-- 当前映射版本为 `sqlite-response-to-postgis-shadow-v2`，覆盖 12 类响应记录；受控夹具为 28 条、0 隔离，并包含 Outbox 与异步回调投影。
+- 当前映射版本为 `sqlite-response-to-postgis-shadow-v4`，支持 16 类响应记录，在既有事件、任务、Outbox、异步回调和风险对象主数据基础上加入 CandidateObjectListVersion；受控基础夹具仍为 12 类、28 条、0 隔离，主数据和冻结清单另有专项投影测试。
 
 Compose 演练：
 

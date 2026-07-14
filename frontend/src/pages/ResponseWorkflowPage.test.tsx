@@ -14,6 +14,8 @@ vi.mock("../api/responseWorkflowApi", () => ({
     getDashboard: vi.fn(),
     bootstrapDemo: vi.fn(),
     discoverRiskObjects: vi.fn(),
+    verifyRiskObject: vi.fn(),
+    freezeCandidateObjectList: vi.fn(),
     generateTaskDraft: vi.fn(),
     resolveEvidenceConflict: vi.fn(),
     supplementEvidence: vi.fn(),
@@ -153,6 +155,7 @@ const dashboard: EventDashboard = {
   escalations: [],
   timeline: [],
   candidate_runs: [],
+  candidate_object_lists: [],
   evidence_packages: [],
   outbox: [],
   rule_evaluations: [],
@@ -205,6 +208,92 @@ describe("ResponseWorkflowPage", () => {
       expect(responseWorkflowApi.discoverRiskObjects).toHaveBeenCalledWith("FLOOD-TEST-001", "commander");
       expect(responseWorkflowApi.getDashboard).toHaveBeenCalledTimes(2);
     });
+  });
+
+  it("展示可追溯候选特征并允许人工确认", async () => {
+    const candidateDashboard = structuredClone(dashboard);
+    candidateDashboard.tasks = [];
+    candidateDashboard.risk_objects[0].verification_status = "pending";
+    candidateDashboard.candidate_runs = [{
+      run_id: "CANDRUN-1",
+      event_id: candidateDashboard.event.event_id,
+      alert_snapshot_id: "ALT-1",
+      risk_object_data_version: "risk-object-v1",
+      algorithm_version: "candidate-registry-rules-v1",
+      feature_version: "candidate-registry-features-v2",
+      association_mode: "area_registry",
+      parameters: {},
+      candidate_object_ids: ["TUNNEL-017"],
+      candidate_features: [{
+        object_id: "TUNNEL-017",
+        rank: 1,
+        spatial_score: 0.6,
+        temporal_score: 0.75,
+        attribute_score: 0.87,
+        semantic_score: 0.5,
+        data_quality_score: 1,
+        raw_score: 87,
+        calibrated_confidence: 0.935,
+        missing_features: ["affected_geometry"],
+        explanations: { spatial: "按区域关联" },
+        feature_version: "candidate-registry-features-v2",
+      }],
+      missing_features: ["affected_geometry"],
+      limitations: ["区域关联不代表精确空间相交"],
+      status: "completed",
+      created_by: "console_commander",
+      terminal_id: "district-response-console",
+      created_at: "2026-07-11T08:01:00Z",
+    }];
+    vi.mocked(responseWorkflowApi.getDashboard).mockResolvedValue(candidateDashboard);
+    vi.mocked(responseWorkflowApi.verifyRiskObject).mockResolvedValue({});
+
+    render(<ResponseWorkflowPage />);
+
+    expect(await screen.findByText("候选排名 #1")).toBeInTheDocument();
+    expect(screen.getByText("空间 60")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "人工确认" }));
+
+    await waitFor(() => expect(responseWorkflowApi.verifyRiskObject).toHaveBeenCalledWith(
+      "FLOOD-TEST-001",
+      "TUNNEL-017",
+      "commander",
+      "confirmed",
+    ));
+  });
+
+  it("以最新版本号冻结人工确认对象清单", async () => {
+    vi.mocked(responseWorkflowApi.freezeCandidateObjectList).mockResolvedValue({
+      list_id: "CANDLIST-1",
+      event_id: dashboard.event.event_id,
+      version: 1,
+      status: "frozen",
+      alert_snapshot_id: "ALT-1",
+      source_run_ids: [],
+      objects: [{
+        object_id: "TUNNEL-017",
+        object_version: 1,
+        data_version: "risk-object-v1",
+        verification_hash: "a".repeat(64),
+      }],
+      content_hash: "b".repeat(64),
+      note: "冻结确认清单",
+      is_simulated: true,
+      frozen_by: "console_commander",
+      frozen_role: "commander",
+      terminal_id: "district-response-console",
+      frozen_at: "2026-07-11T08:05:00Z",
+    });
+
+    render(<ResponseWorkflowPage />);
+    fireEvent.click(await screen.findByRole("button", { name: "冻结确认清单" }));
+
+    await waitFor(() => expect(responseWorkflowApi.freezeCandidateObjectList).toHaveBeenCalledWith(
+      "FLOOD-TEST-001",
+      "commander",
+      ["TUNNEL-017"],
+      undefined,
+    ));
   });
 
   it("将带坐标的版本化风险对象主数据联动到 Cesium 图层", async () => {

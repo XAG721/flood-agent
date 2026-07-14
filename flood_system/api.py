@@ -189,6 +189,10 @@ def metrics():
             "# TYPE flood_risk_object_registry_quarantined_rows gauge",
             "flood_risk_object_registry_quarantined_rows "
             f"{registry_metrics['quarantined_rows']}",
+            "# HELP flood_candidate_object_lists_frozen Immutable confirmed candidate lists.",
+            "# TYPE flood_candidate_object_lists_frozen gauge",
+            "flood_candidate_object_lists_frozen "
+            f"{registry_metrics['frozen_candidate_lists']}",
             "# HELP flood_api_requests_total Requests observed by the application middleware.",
             "# TYPE flood_api_requests_total counter",
             f"flood_api_requests_total {api_request_total}",

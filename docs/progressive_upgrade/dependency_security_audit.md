@@ -26,7 +26,7 @@
 | Python 隔离项目环境 | pip-audit 2.10.1，`.[test,postgres]`，pip 26.1.2 | 0 个已知漏洞；本地项目包因不在 PyPI 而跳过，项目代码由自动测试和其他安全检查覆盖 |
 | 主前端 | npm audit，`--audit-level=high` | 0 个漏洞 |
 | Cesium 前端 | npm audit，`--audit-level=high` | 0 个漏洞 |
-| 主前端兼容性 | Vitest / TypeScript / Vite production build | 14/14 测试与构建通过 |
+| 主前端兼容性 | Vitest / TypeScript / Vite production build | 16/16 测试与构建通过 |
 | 主前端浏览器兼容性 | Playwright / Chromium | 2/2 新版与回退页面验收通过 |
 | Cesium 兼容性 | TypeScript / Vite production build | 构建通过 |
 | Python 代码质量 | Ruff 0.15.21 | 0 个问题；CI 持续门禁 |

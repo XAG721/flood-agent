@@ -19,6 +19,7 @@ def test_health_readiness_metrics_and_openapi_are_available():
     assert "flood_risk_object_registry" in metrics.text
     assert "flood_risk_object_registry_stale_candidate_runs" in metrics.text
     assert "flood_risk_object_registry_quarantined_rows" in metrics.text
+    assert "flood_candidate_object_lists_frozen" in metrics.text
     assert "flood_api_latency_ms" in metrics.text
     assert metrics.headers["X-Correlation-ID"]
     openapi = client.get("/openapi.json")
@@ -31,3 +32,8 @@ def test_health_readiness_metrics_and_openapi_are_available():
     assert "/response/risk-objects" in openapi.json()["paths"]
     assert "/response/risk-objects/imports" in openapi.json()["paths"]
     assert "/response/risk-objects/file-imports" in openapi.json()["paths"]
+    assert "/response/events/{event_id}/candidate-object-lists" in openapi.json()["paths"]
+    assert (
+        "/response/events/{event_id}/candidate-object-lists/freeze"
+        in openapi.json()["paths"]
+    )

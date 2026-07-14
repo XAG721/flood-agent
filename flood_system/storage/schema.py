@@ -541,6 +541,17 @@ CREATE TABLE IF NOT EXISTS response_candidate_runs (
     payload TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS response_candidate_object_lists (
+    list_id TEXT NOT NULL,
+    event_id TEXT NOT NULL,
+    version INTEGER NOT NULL,
+    content_hash TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    PRIMARY KEY(list_id, version),
+    UNIQUE(event_id, version)
+);
+
 CREATE TABLE IF NOT EXISTS response_evidence_packages (
     package_id TEXT NOT NULL,
     event_id TEXT NOT NULL,
@@ -636,6 +647,22 @@ DROP TRIGGER IF EXISTS protect_response_registry_imports_delete;
 CREATE TRIGGER protect_response_registry_imports_delete
 BEFORE DELETE ON response_risk_object_imports BEGIN
     SELECT RAISE(ABORT, 'risk-object registry imports cannot be deleted');
+END;
+DROP TRIGGER IF EXISTS protect_response_candidate_object_lists_update;
+CREATE TRIGGER protect_response_candidate_object_lists_update
+BEFORE UPDATE ON response_candidate_object_lists
+WHEN NOT (
+    COALESCE(json_extract(OLD.payload, '$.protected'), 0) = 0
+    AND json_extract(NEW.payload, '$.protected') = 1
+    OR response_key_rotation_authorized() = 1
+)
+BEGIN
+    SELECT RAISE(ABORT, 'candidate object lists are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_candidate_object_lists_delete;
+CREATE TRIGGER protect_response_candidate_object_lists_delete
+BEFORE DELETE ON response_candidate_object_lists BEGIN
+    SELECT RAISE(ABORT, 'candidate object lists cannot be deleted');
 END;
 DROP TRIGGER IF EXISTS protect_response_alert_snapshots_update;
 CREATE TRIGGER protect_response_alert_snapshots_update
@@ -830,6 +857,8 @@ CREATE INDEX IF NOT EXISTS idx_response_feature_flags_scope ON response_feature_
 CREATE INDEX IF NOT EXISTS idx_response_outbox_status ON response_outbox(status, updated_at);
 CREATE INDEX IF NOT EXISTS idx_response_outbox_event ON response_outbox(event_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_response_candidate_runs_event ON response_candidate_runs(event_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_candidate_object_lists_event
+    ON response_candidate_object_lists(event_id, version);
 CREATE INDEX IF NOT EXISTS idx_response_evidence_packages_event ON response_evidence_packages(event_id, object_id, version);
 CREATE INDEX IF NOT EXISTS idx_response_rule_evaluations_task ON response_rule_evaluations(task_id, task_version, created_at);
 CREATE INDEX IF NOT EXISTS idx_response_deadline_extensions_task ON response_deadline_extensions(task_id, status, created_at);

@@ -81,7 +81,7 @@
         {
           "path": "tests/test_postgis_migration.py",
           "contains": "test_simulated_response_projection_preserves_hashes_and_postgis_polygon",
-          "sha256": "49c775e7cb37e577723c626479f3fc00c65758e70d954651fe2c0d0f9078d049"
+          "sha256": "184822a762af1ddfc551080f83cdee4c5d000949920dee845bfb7e581d4e0f1c"
         },
         {
           "path": "tests/test_response_workflow.py",
@@ -104,7 +104,7 @@
         {
           "path": "docs/progressive_upgrade/api_compatibility_mapping.md",
           "contains": null,
-          "sha256": "940b493e6c6203480b2362811ff3597a44176d761a4f1f799a1b14cbef28bed5"
+          "sha256": "ccbbc6d490f1c38945c0a8288b6d7aa01c36fa37d00f216a5c7b17afc256ab6a"
         },
         {
           "path": "tests/test_response_identity.py",
@@ -152,12 +152,12 @@
         {
           "path": "docs/progressive_upgrade/operations_and_rollback.md",
           "contains": "M7",
-          "sha256": "4e2c42e5601f194d56859607e5bb565e717dc6a1736a6f9538e990e880cd71fd"
+          "sha256": "4964d41c98687ca2a4e150b35cc74fbaa5945e1bed936d8b8f3a0a27dc3040b0"
         },
         {
           "path": "docs/progressive_upgrade/completion_traceability_audit.md",
           "contains": "生产旧流量归零和账号撤权",
-          "sha256": "aa4341c0487f89bcff0067a841e545a390f743c4ee4895d395ed164b33cf9c88"
+          "sha256": "1e1c97b630d8ca8f5fe92c45616ff7c42bbd352a75475b13ba3ca263511e3c09"
         }
       ],
       "assigned_item_count": 2
@@ -170,7 +170,7 @@
         {
           "path": "frontend/src/pages/ResponseWorkflowPage.tsx",
           "contains": "受控模拟环境",
-          "sha256": "209248d1041baf6d9cb60cf70d33c02f62c6904ea7e4bc3ac620a1f3d97bf62d"
+          "sha256": "387a554669fa06c8a9d262dd79b898da8c54cb70832145126a6651677b675c1d"
         },
         {
           "path": "frontend/e2e/response-workflow.spec.ts",
@@ -223,7 +223,7 @@
         {
           "path": "docs/progressive_upgrade/operations_and_rollback.md",
           "contains": null,
-          "sha256": "4e2c42e5601f194d56859607e5bb565e717dc6a1736a6f9538e990e880cd71fd"
+          "sha256": "4964d41c98687ca2a4e150b35cc74fbaa5945e1bed936d8b8f3a0a27dc3040b0"
         }
       ],
       "assigned_item_count": 10
@@ -241,17 +241,17 @@
         {
           "path": "README.md",
           "contains": "FRC-RAG",
-          "sha256": "3806faae7f37ede26ea395d8545db3e5df39a70640d817e0e2b8d0cd378bd2f4"
+          "sha256": "85f5d5ba9244f0136d4cf683d69cbfd4fdc8f613660c718940afa56dbb5a8324"
         },
         {
           "path": "docs/V3_upgrade_acceptance_matrix.md",
           "contains": "NO-GO/SHADOW",
-          "sha256": "85993aa58dbe70fdb9f2bb65f2fba7c9895fd9709d64b3bfb66ea13cbb972f0a"
+          "sha256": "7eed5807d13ca091d50b7150402dab2304964c3f3cebf31c6c4345fb01967b2f"
         },
         {
           "path": "docs/progressive_upgrade/completion_traceability_audit.md",
           "contains": "受控模拟",
-          "sha256": "aa4341c0487f89bcff0067a841e545a390f743c4ee4895d395ed164b33cf9c88"
+          "sha256": "1e1c97b630d8ca8f5fe92c45616ff7c42bbd352a75475b13ba3ca263511e3c09"
         }
       ],
       "assigned_item_count": 5
@@ -365,12 +365,12 @@
         {
           "path": "tests/test_completion_audit.py",
           "contains": "test_completion_audit_proves_controlled_scope_without_overstating_production",
-          "sha256": "b2d90f26ba48b7498439c9a3352528bc403650a44a55b3c181161bed083bee34"
+          "sha256": "c5078bebf9e1cfc64c74ad9d28cb0b48d9f283d063e6960dbe82ab524806cde0"
         },
         {
           "path": "docs/progressive_upgrade/evaluation_and_gate_report.md",
           "contains": null,
-          "sha256": "5a3c272f9b93756e866d2ae324d469aae321f6ce1ba3531383f25064a7f4378f"
+          "sha256": "b7098160a0a1b2c6c77956336aedd096e13c6f03121dc6ea7be139c3259a7058"
         }
       ],
       "assigned_item_count": 11

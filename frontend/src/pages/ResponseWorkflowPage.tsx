@@ -45,6 +45,7 @@ const actionText: Record<string, string> = {
   candidate_discovery_completed: "区域对象台账筛查已完成",
   candidate_confirmed: "风险对象已确认",
   candidate_excluded: "风险对象已排除",
+  candidate_object_list_frozen: "确认对象清单已冻结",
   task_draft_created: "任务草案已生成",
   task_draft_revised: "任务草案已修订",
   task_submitted: "任务已提交审批",
@@ -256,7 +257,14 @@ export function ResponseWorkflowPage() {
     setBusy(true);
     setMessage("正在检索预案并检查六类证据角色……");
     try {
-      const result = await responseWorkflowApi.generateTaskDraft(dashboard.event.event_id, objectId, role, retrievalMode);
+      const latestCandidateList = dashboard.candidate_object_lists[dashboard.candidate_object_lists.length - 1];
+      const result = await responseWorkflowApi.generateTaskDraft(
+        dashboard.event.event_id,
+        objectId,
+        role,
+        retrievalMode,
+        latestCandidateList?.version,
+      );
       const next = await responseWorkflowApi.getDashboard(dashboard.event.event_id);
       setDashboard(next);
       if (result.task) setSelectedTaskId(result.task.task_id);
@@ -318,9 +326,16 @@ export function ResponseWorkflowPage() {
   }
 
   const latestAlert = dashboard.alert_snapshots[dashboard.alert_snapshots.length - 1];
+  const latestCandidateRun = dashboard.candidate_runs[dashboard.candidate_runs.length - 1];
+  const latestCandidateList = dashboard.candidate_object_lists[dashboard.candidate_object_lists.length - 1];
+  const confirmedObjectIds = dashboard.risk_objects
+    .filter((item) => item.verification_status === "confirmed" && !item.stale)
+    .map((item) => item.object_id);
   const allTasksClosed = dashboard.tasks.length > 0 && dashboard.tasks.every((task) => ["completed", "waived"].includes(task.status));
   const draftableObject = dashboard.risk_objects.find(
-    (item) => item.verification_status === "confirmed" && !dashboard.tasks.some((task) => task.object_id === item.object_id),
+    (item) => item.verification_status === "confirmed"
+      && !dashboard.tasks.some((task) => task.object_id === item.object_id)
+      && (!latestCandidateList || latestCandidateList.objects.some((reference) => reference.object_id === item.object_id)),
   );
 
   return (
@@ -440,13 +455,26 @@ export function ResponseWorkflowPage() {
             </div>
             <div className={styles.sectionActions}>
               <span>{dashboard.risk_objects.length} 个候选</span>
-              <span>{dashboard.candidate_runs.length ? `运行 ${dashboard.candidate_runs[dashboard.candidate_runs.length - 1]?.run_id}` : "尚未运行"}</span>
+              <span>{latestCandidateRun ? `运行 ${latestCandidateRun.run_id}` : "尚未运行"}</span>
+              <span>{latestCandidateList ? `冻结清单 V${latestCandidateList.version} · ${latestCandidateList.objects.length} 项` : "尚未冻结确认清单"}</span>
               <button
                 type="button"
                 disabled={busy || dashboard.event.status === "closed" || !["duty_officer", "reviewer", "commander", "admin"].includes(role)}
                 onClick={() => void run("风险对象筛查", () => responseWorkflowApi.discoverRiskObjects(dashboard.event.event_id, role))}
               >
                 筛查预警范围
+              </button>
+              <button
+                type="button"
+                disabled={busy || !confirmedObjectIds.length || !["reviewer", "commander"].includes(role)}
+                onClick={() => void run("冻结确认对象清单", () => responseWorkflowApi.freezeCandidateObjectList(
+                  dashboard.event.event_id,
+                  role,
+                  confirmedObjectIds,
+                  latestCandidateList?.version,
+                ))}
+              >
+                冻结确认清单
               </button>
             </div>
           </header>
@@ -465,6 +493,37 @@ export function ResponseWorkflowPage() {
                   <small>{item.source_type} · {item.source_version} · {item.data_version}{item.stale ? " · STALE" : ""}</small>
                   <small>{item.association_mode} · 校准置信度 {item.calibrated_confidence == null ? "待计算" : `${Math.round(item.calibrated_confidence * 100)}%`} · {item.calibration_version}</small>
                   {item.missing_fields.length ? <small className={styles.missingData}>缺失字段：{item.missing_fields.join("、")}</small> : null}
+                  {latestCandidateRun?.candidate_features
+                    .filter((feature) => feature.object_id === item.object_id)
+                    .map((feature) => (
+                      <div className={styles.featureSnapshot} key={`${latestCandidateRun.run_id}-${feature.object_id}`}>
+                        <strong>候选排名 #{feature.rank}</strong>
+                        <span>空间 {Math.round(feature.spatial_score * 100)}</span>
+                        <span>时效 {Math.round(feature.temporal_score * 100)}</span>
+                        <span>属性 {Math.round(feature.attribute_score * 100)}</span>
+                        <span>语义 {Math.round(feature.semantic_score * 100)}</span>
+                        <span>质量 {Math.round(feature.data_quality_score * 100)}</span>
+                        <small>{feature.feature_version}</small>
+                      </div>
+                    ))}
+                  {item.verification_status === "pending" ? (
+                    <div className={styles.objectActions}>
+                      <button
+                        type="button"
+                        disabled={busy || !["duty_officer", "reviewer", "commander", "admin"].includes(role)}
+                        onClick={() => void run("确认候选对象", () => responseWorkflowApi.verifyRiskObject(dashboard.event.event_id, item.object_id, role, "confirmed"))}
+                      >
+                        人工确认
+                      </button>
+                      <button
+                        type="button"
+                        disabled={busy || !["duty_officer", "reviewer", "commander", "admin"].includes(role)}
+                        onClick={() => void run("排除候选对象", () => responseWorkflowApi.verifyRiskObject(dashboard.event.event_id, item.object_id, role, "excluded"))}
+                      >
+                        排除
+                      </button>
+                    </div>
+                  ) : null}
                 </div>
                 <span className={`${styles.stateBadge} ${styles[item.verification_status]}`}>{item.verification_status === "confirmed" ? "已人工确认" : item.verification_status === "excluded" ? "已排除" : "待核验"}</span>
               </article>

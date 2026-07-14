@@ -21,6 +21,7 @@ from ..response_workflow.models import (
     BackupRestoreRequest,
     BackupRetentionRequest,
     CandidateDiscoveryRequest,
+    CandidateObjectListFreezeRequest,
     DeadlineExtensionDecisionRequest,
     DeadlineExtensionRequest,
     DispatchCallbackRequest,
@@ -296,6 +297,21 @@ def create_response_router(system_provider: Callable[[], Any]) -> APIRouter:
     @router.get("/events/{event_id}/candidate-runs")
     def list_candidate_runs(event_id: str, http_request: Request):
         return invoke(lambda: service().list_candidate_runs(event_id))
+
+    @router.get("/events/{event_id}/candidate-object-lists")
+    def list_candidate_object_lists(event_id: str, http_request: Request):
+        return invoke(lambda: service().list_candidate_object_lists(event_id))
+
+    @router.post("/events/{event_id}/candidate-object-lists/freeze")
+    def freeze_candidate_object_list(
+        event_id: str,
+        request: CandidateObjectListFreezeRequest,
+        http_request: Request,
+    ):
+        bind_payload_identity(http_request, request)
+        return invoke(
+            lambda: service().freeze_candidate_object_list(event_id, request)
+        )
 
     @router.get("/events/{event_id}/evidence-packages")
     def list_evidence_packages(

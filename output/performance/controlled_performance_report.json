@@ -12,39 +12,39 @@
       "method": "GET",
       "path": "/response/events",
       "sample_count": 40,
-      "p50_ms": 10.787,
-      "p95_ms": 12.816,
-      "max_ms": 13.322,
+      "p50_ms": 10.837,
+      "p95_ms": 12.006,
+      "max_ms": 15.887,
       "error_count": 0,
       "error_rate": 0.0
     },
     "event_dashboard": {
       "method": "GET",
-      "path": "/response/events/FLOOD-20260712-ED476A",
+      "path": "/response/events/FLOOD-20260713-CDF679",
       "sample_count": 40,
-      "p50_ms": 27.366,
-      "p95_ms": 30.641,
-      "max_ms": 31.239,
+      "p50_ms": 29.842,
+      "p95_ms": 31.663,
+      "max_ms": 33.77,
       "error_count": 0,
       "error_rate": 0.0
     },
     "event_timeline": {
       "method": "GET",
-      "path": "/response/events/FLOOD-20260712-ED476A/timeline",
+      "path": "/response/events/FLOOD-20260713-CDF679/timeline",
       "sample_count": 40,
-      "p50_ms": 26.269,
-      "p95_ms": 27.958,
-      "max_ms": 30.891,
+      "p50_ms": 29.54,
+      "p95_ms": 32.445,
+      "max_ms": 33.556,
       "error_count": 0,
       "error_rate": 0.0
     },
     "event_audit_trail": {
       "method": "GET",
-      "path": "/response/events/FLOOD-20260712-ED476A/audit-trail",
+      "path": "/response/events/FLOOD-20260713-CDF679/audit-trail",
       "sample_count": 40,
-      "p50_ms": 29.212,
-      "p95_ms": 31.603,
-      "max_ms": 34.24,
+      "p50_ms": 31.59,
+      "p95_ms": 34.329,
+      "max_ms": 37.747,
       "error_count": 0,
       "error_rate": 0.0
     }
@@ -55,7 +55,7 @@
       {
         "endpoint_id": "event_list",
         "passed": true,
-        "actual_p95_ms": 12.816,
+        "actual_p95_ms": 12.006,
         "max_p95_ms": 150.0,
         "actual_error_rate": 0.0,
         "max_error_rate": 0.0
@@ -63,7 +63,7 @@
       {
         "endpoint_id": "event_dashboard",
         "passed": true,
-        "actual_p95_ms": 30.641,
+        "actual_p95_ms": 31.663,
         "max_p95_ms": 250.0,
         "actual_error_rate": 0.0,
         "max_error_rate": 0.0
@@ -71,7 +71,7 @@
       {
         "endpoint_id": "event_timeline",
         "passed": true,
-        "actual_p95_ms": 27.958,
+        "actual_p95_ms": 32.445,
         "max_p95_ms": 200.0,
         "actual_error_rate": 0.0,
         "max_error_rate": 0.0
@@ -79,7 +79,7 @@
       {
         "endpoint_id": "event_audit_trail",
         "passed": true,
-        "actual_p95_ms": 31.603,
+        "actual_p95_ms": 34.329,
         "max_p95_ms": 300.0,
         "actual_error_rate": 0.0,
         "max_error_rate": 0.0

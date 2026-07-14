@@ -15,6 +15,7 @@ from pydantic import BaseModel
 
 from ..response_workflow.models import (
     AlertSnapshot,
+    CandidateObjectListVersion,
     CandidateRunRecord,
     AuditArchiveRecord,
     AuditArchiveVerificationResult,
@@ -257,12 +258,18 @@ class ResponseRepositoryMixin:
             import_rows = conn.execute(
                 "SELECT payload FROM response_risk_object_imports"
             ).fetchall()
+            candidate_list_count = int(
+                conn.execute(
+                    "SELECT COUNT(*) AS count FROM response_candidate_object_lists"
+                ).fetchone()["count"]
+            )
         metrics = {
             "total": sum(int(row["count"]) for row in status_rows),
             "active": 0,
             "inactive": 0,
             "stale_candidate_runs": 0,
             "quarantined_rows": 0,
+            "frozen_candidate_lists": candidate_list_count,
         }
         for row in status_rows:
             status = str(row["registry_status"])
@@ -738,6 +745,38 @@ class ResponseRepositoryMixin:
                     self._secure_dump(run),
                 ),
             )
+
+    def save_candidate_object_list(
+        self, record: CandidateObjectListVersion
+    ) -> None:
+        with self._connect() as conn:
+            conn.execute(
+                "INSERT INTO response_candidate_object_lists("
+                "list_id, event_id, version, content_hash, created_at, payload"
+                ") VALUES (?, ?, ?, ?, ?, ?)",
+                (
+                    record.list_id,
+                    record.event_id,
+                    record.version,
+                    record.content_hash,
+                    record.frozen_at.isoformat(),
+                    self._secure_dump(record),
+                ),
+            )
+
+    def list_candidate_object_lists(
+        self, event_id: str
+    ) -> list[CandidateObjectListVersion]:
+        with self._connect() as conn:
+            rows = conn.execute(
+                "SELECT payload FROM response_candidate_object_lists "
+                "WHERE event_id = ? ORDER BY version",
+                (event_id,),
+            ).fetchall()
+        return [
+            self._secure_load(CandidateObjectListVersion, row["payload"])
+            for row in rows
+        ]
 
     def list_candidate_runs(self, event_id: str) -> list[CandidateRunRecord]:
         with self._connect() as conn:
@@ -1716,6 +1755,7 @@ class ResponseRepositoryMixin:
             "response_outbox",
             "response_dispatch_callbacks",
             "response_candidate_runs",
+            "response_candidate_object_lists",
             "response_evidence_packages",
             "response_rule_evaluations",
             "response_deadline_extensions",

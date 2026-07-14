@@ -104,6 +104,8 @@ CREATE OR REPLACE VIEW flood_simulation.risk_object_registry_versions AS
     SELECT * FROM flood_simulation.shadow_records WHERE record_type = 'risk_object_registry_version';
 CREATE OR REPLACE VIEW flood_simulation.risk_object_registry_imports AS
     SELECT * FROM flood_simulation.shadow_records WHERE record_type = 'risk_object_registry_import';
+CREATE OR REPLACE VIEW flood_simulation.candidate_object_lists AS
+    SELECT * FROM flood_simulation.shadow_records WHERE record_type = 'candidate_object_list';
 CREATE OR REPLACE VIEW flood_simulation.tasks AS
     SELECT * FROM flood_simulation.shadow_records WHERE record_type = 'task';
 CREATE OR REPLACE VIEW flood_simulation.task_versions AS

@@ -310,6 +310,21 @@ class CandidateDiscoveryResult(WorkflowModel):
     calibration_version: str = "candidate-logistic-v1"
 
 
+class CandidateFeatureSnapshot(WorkflowModel):
+    object_id: str
+    rank: int = Field(ge=1)
+    spatial_score: float = Field(ge=0, le=1)
+    temporal_score: float = Field(ge=0, le=1)
+    attribute_score: float = Field(ge=0, le=1)
+    semantic_score: float = Field(ge=0, le=1)
+    data_quality_score: float = Field(ge=0, le=1)
+    raw_score: float = Field(ge=0, le=100)
+    calibrated_confidence: float = Field(ge=0, le=1)
+    missing_features: list[str] = Field(default_factory=list)
+    explanations: dict[str, str] = Field(default_factory=dict)
+    feature_version: str = "candidate-features-v2"
+
+
 class CandidateRunRecord(WorkflowModel):
     run_id: str
     event_id: str
@@ -320,6 +335,7 @@ class CandidateRunRecord(WorkflowModel):
     association_mode: str
     parameters: dict[str, Any] = Field(default_factory=dict)
     candidate_object_ids: list[str] = Field(default_factory=list)
+    candidate_features: list[CandidateFeatureSnapshot] = Field(default_factory=list)
     missing_features: list[str] = Field(default_factory=list)
     limitations: list[str] = Field(default_factory=list)
     status: str = "completed"
@@ -349,6 +365,31 @@ class EventRiskObject(RiskObjectInput):
     candidate_run_id: str | None = None
     version: int = 1
     updated_at: datetime | None = None
+
+
+class CandidateObjectReference(WorkflowModel):
+    object_id: str
+    object_version: int = Field(ge=1)
+    candidate_run_id: str | None = None
+    data_version: str
+    verification_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
+class CandidateObjectListVersion(WorkflowModel):
+    list_id: str
+    event_id: str
+    version: int = Field(ge=1)
+    status: str = "frozen"
+    alert_snapshot_id: str
+    source_run_ids: list[str] = Field(default_factory=list)
+    objects: list[CandidateObjectReference] = Field(min_length=1)
+    content_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    note: str = ""
+    is_simulated: bool = True
+    frozen_by: str
+    frozen_role: OperatorRole
+    terminal_id: str
+    frozen_at: datetime
 
 
 class RiskObjectVersionSnapshot(WorkflowModel):
@@ -472,6 +513,12 @@ class TaskCreateRequest(WorkflowModel):
     evidence_package_id: str | None = None
     evidence_package_version: int | None = None
     evidence_package_hash: str | None = None
+    candidate_object_list_id: str | None = None
+    candidate_object_list_version: int | None = Field(default=None, ge=1)
+    candidate_object_list_hash: str | None = Field(
+        default=None,
+        pattern=r"^[0-9a-f]{64}$",
+    )
     idempotency_key: str | None = None
 
     @model_validator(mode="after")
@@ -503,6 +550,17 @@ class TaskCreateRequest(WorkflowModel):
             )
         if self.generated_by_ai and not self.generation_version:
             raise ValueError("AI-generated drafts must include generation_version")
+        candidate_list_binding = (
+            self.candidate_object_list_id,
+            self.candidate_object_list_version,
+            self.candidate_object_list_hash,
+        )
+        if any(value is not None for value in candidate_list_binding) and not all(
+            value is not None for value in candidate_list_binding
+        ):
+            raise ValueError(
+                "candidate object list id, version and hash must be provided together"
+            )
         return self
 
 
@@ -537,6 +595,10 @@ class TaskActionRequest(WorkflowModel):
     terminal_id: str = "unknown-terminal"
     expected_version: int | None = Field(default=None, ge=1)
     idempotency_key: str | None = None
+
+
+class CandidateObjectListFreezeRequest(TaskActionRequest):
+    object_ids: list[str] = Field(default_factory=list, max_length=200)
 
 
 class IngestionFileEnvelope(WorkflowModel):
@@ -646,6 +708,9 @@ class ResponseTask(WorkflowModel):
     evidence_package_hash: str | None = None
     evidence_package_id: str | None = None
     evidence_package_version: int | None = None
+    candidate_object_list_id: str | None = None
+    candidate_object_list_version: int | None = None
+    candidate_object_list_hash: str | None = None
     rule_set_version: str = "response-rules-v1"
     dispatch_message_id: str | None = None
     data_version: str = "response-schema-v1"
@@ -1251,6 +1316,9 @@ class EventDashboard(WorkflowModel):
     review_draft: EventReviewDraft | None = None
     scenario_report: DistrictScenarioReport | None = None
     candidate_runs: list[CandidateRunRecord] = Field(default_factory=list)
+    candidate_object_lists: list[CandidateObjectListVersion] = Field(
+        default_factory=list
+    )
     evidence_packages: list[EvidencePackageVersion] = Field(default_factory=list)
     outbox: list[OutboxMessage] = Field(default_factory=list)
     rule_evaluations: list[RuleEvaluationRecord] = Field(default_factory=list)
@@ -1270,6 +1338,7 @@ class ReviewDraftRequest(TaskActionRequest):
 
 class TaskDraftGenerationRequest(TaskActionRequest):
     query: str = ""
+    candidate_object_list_version: int | None = Field(default=None, ge=1)
     acknowledge_minutes: int = Field(default=15, ge=5, le=240)
     deadline_minutes: int = Field(default=120, ge=15, le=1440)
     retrieval_mode: RetrievalMode = RetrievalMode.SHADOW

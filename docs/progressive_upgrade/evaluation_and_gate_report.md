@@ -27,15 +27,15 @@ npm.cmd run test:e2e
 | Chromium 浏览器验收 | 2/2；新版桌面与 390px 移动视口、旧页面回退截图、0 横向溢出、0 控制台错误 | 通过 |
 | Compose 服务健康 | Web、API、Worker、PostGIS 均 healthy | 通过 |
 | PostGIS 版本 | PostgreSQL 17 镜像，PostGIS 3.5 | 通过 |
-| SQLite→PostGIS 影子迁移 | 映射 v2，12 类、28 条；来源/目标数量一致 | 通过 |
+| SQLite→PostGIS 影子迁移 | 映射 v4 支持 16 类；既有 12 类、28 条夹具来源/目标数量一致，另含风险对象主数据和 CandidateObjectListVersion 专项投影 | 通过 |
 | PostGIS 空间投影 | 1 个 EPSG:4326 Polygon，GiST 索引已建 | 通过 |
 | 迁移隔离 | 0 条 | 通过 |
 | 迁移幂等 | 同一源快照连续执行两次，批次 ID 与目标计数不变 | 通过 |
 | 迁移对账 | 12/12 类规范载荷 SHA-256 一致 | 通过 |
-| 受控 event list P95 | 12.816 ms / 预算 150 ms | 通过 |
-| 受控 event dashboard P95 | 30.641 ms / 预算 250 ms | 通过 |
-| 受控 event timeline P95 | 27.958 ms / 预算 200 ms | 通过 |
-| 受控 audit trail P95 | 31.603 ms / 预算 300 ms | 通过 |
+| 受控 event list P95 | 12.006 ms / 预算 150 ms | 通过 |
+| 受控 event dashboard P95 | 31.663 ms / 预算 250 ms | 通过 |
+| 受控 event timeline P95 | 32.445 ms / 预算 200 ms | 通过 |
+| 受控 audit trail P95 | 34.329 ms / 预算 300 ms | 通过 |
 | 受控 API 错误率 | 4 条路径各 40 次采样，均为 0 | 通过 |
 | Python 依赖漏洞 | pip-audit 2.10.1：0 个已知漏洞 | 通过 |
 | 主前端依赖漏洞 | npm audit：0 个漏洞 | 通过 |
@@ -78,7 +78,7 @@ EUR-Lex/CELLAR 的权威日期切片包含 30 对废止/替代法案和 60 个�
 
 Google CONFLICTS 已完成 458 例全量同预算比较，其中包含 62 例过时信息和 5 例错误信息冲突。覆盖贪心代理冲突类型 Accuracy 为 0.344978，FRC 为 0.334061；FRC 相对基线差值 -0.010917，配对 95% CI [-0.043668, +0.024017]。FRC 过时类型 Recall 为 0.564516，低于覆盖代理的 0.693548。该结果覆盖了冲突和失效/时效难例，但只复现检索选择与本地 Qwen 五分类，没有复现论文 expected-behavior adherence 的独立人类评判。
 
-PostGIS v2 数值、两条 Chromium 生产路由验收和浏览器截图归档由 PR #1 最新 GitHub Actions 受控容器运行持续复验。该结果证明模拟 Schema 的 DDL、空间扩展、12 类单向投影、重复执行、对账及容器化新版/回退页面可运行，不代表真实生产库已经切换，也不替代生产密钥、权限、性能、恢复或真实岗位验收。
+PostGIS v4 映射、两条 Chromium 生产路由验收和浏览器截图归档由 PR #1 最新 GitHub Actions 受控容器运行持续复验。该结果证明模拟 Schema 的 DDL、空间扩展、16 类映射、CandidateObjectListVersion、重复执行、对账及容器化新版/回退页面可运行，不代表真实生产库已经切换，也不替代生产密钥、权限、性能、恢复或真实岗位验收。
 
 受控性能数值来自 Windows 单进程 FastAPI TestClient，包含加密 SQLite、可信身份签名和 nonce 防重放；预算文件为 `benchmarks/controlled_performance_budget.json`，原始报告位于 `output/performance/`。它只冻结仓库回归预算，不包含网络、TLS、反向代理、外部 IdP、生产 PostgreSQL、多主机并发或真实数据规模。
 

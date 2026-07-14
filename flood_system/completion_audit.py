@@ -9,7 +9,7 @@ from typing import Any, Iterable
 from flood_system.design_contract_audit import build_design_contract_audit
 
 
-AUDIT_VERSION = "progressive-completion-audit-v7"
+AUDIT_VERSION = "progressive-completion-audit-v8"
 
 SOFTWARE_DELIVERABLES: dict[str, tuple[str, ...]] = {
     "web_and_cesium": (
@@ -143,6 +143,8 @@ REQUIRED_RESPONSE_PATHS = {
     "/response/events/{event_id}",
     "/response/events/{event_id}/risk-objects/discover",
     "/response/events/{event_id}/risk-objects/{object_id}/verify",
+    "/response/events/{event_id}/candidate-object-lists",
+    "/response/events/{event_id}/candidate-object-lists/freeze",
     "/response/risk-objects",
     "/response/risk-objects/versions",
     "/response/risk-objects/imports",

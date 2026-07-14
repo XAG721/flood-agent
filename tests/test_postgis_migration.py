@@ -8,10 +8,14 @@ import pytest
 from flood_system.postgis_migration import build_projection_records
 from flood_system.response_workflow.models import (
     AlertInput,
+    CandidateDiscoveryRequest,
+    CandidateObjectListFreezeRequest,
     EventCreateRequest,
+    ObjectVerificationStatus,
     OperatorRole,
     RiskObjectInput,
     RiskObjectRegistryBatchImportRequest,
+    RiskObjectVerificationRequest,
 )
 from flood_system.system import FloodWarningSystem
 from flood_system.security import DataProtectionError
@@ -120,6 +124,59 @@ def test_simulated_risk_object_registry_projects_versions_imports_and_point(
             terminal_id="simulation-console",
         )
     )
+    now = datetime.now(timezone.utc)
+    dashboard = workflow.create_event(
+        EventCreateRequest(
+            title="模拟候选对象清单迁移",
+            area_id="district-simulated-registry",
+            alert=AlertInput(
+                alert_id="SIM-CANDIDATE-ALERT-001",
+                source_department="模拟气象部门",
+                disaster_type="暴雨",
+                level="橙色",
+                issued_at=now,
+                affected_area="模拟片区",
+                raw_content="仅用于 PostGIS 影子迁移测试",
+                source_type="simulation",
+                source_version="simulation-v1",
+                is_simulated=True,
+            ),
+            operator_id="simulation-duty",
+            operator_role=OperatorRole.DUTY_OFFICER,
+            terminal_id="simulation-console",
+        )
+    )
+    discovery = workflow.discover_risk_objects(
+        dashboard.event.event_id,
+        CandidateDiscoveryRequest(
+            entity_types=["学校"],
+            min_risk_score=40,
+            operator_id="simulation-duty",
+            operator_role=OperatorRole.DUTY_OFFICER,
+            terminal_id="simulation-console",
+        ),
+    )
+    object_id = discovery.candidates[0].object_id
+    workflow.verify_risk_object(
+        dashboard.event.event_id,
+        object_id,
+        RiskObjectVerificationRequest(
+            decision=ObjectVerificationStatus.CONFIRMED,
+            note="模拟确认",
+            operator_id="simulation-reviewer",
+            operator_role=OperatorRole.REVIEWER,
+            terminal_id="simulation-console",
+        ),
+    )
+    frozen = workflow.freeze_candidate_object_list(
+        dashboard.event.event_id,
+        CandidateObjectListFreezeRequest(
+            object_ids=[object_id],
+            operator_id="simulation-reviewer",
+            operator_role=OperatorRole.REVIEWER,
+            terminal_id="simulation-console",
+        ),
+    )
 
     records, quarantined = build_projection_records(db_path)
 
@@ -130,6 +187,13 @@ def test_simulated_risk_object_registry_projects_versions_imports_and_point(
     assert registry["area_id"] == "district-simulated-registry"
     assert registry["version"] == 1
     assert registry["object_location_wkt"] == "POINT(108.958 34.244)"
+    candidate_list = next(
+        item for item in records if item["record_type"] == "candidate_object_list"
+    )
+    assert candidate_list["version"] == frozen.version
+    assert candidate_list["event_id"] == dashboard.event.event_id
+    assert candidate_list["is_simulated"] is True
+    assert len(candidate_list["canonical_payload_sha256"]) == 64
     assert {
         item["record_type"]
         for item in records

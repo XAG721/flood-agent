@@ -18,17 +18,20 @@ from flood_system.identity import TrustedIdentityVerifier
 from flood_system.response_workflow.models import (
     AlertInput,
     CandidateDiscoveryRequest,
+    CandidateObjectListFreezeRequest,
     EventCreateRequest,
     GeoPolygon,
     IngestionFileEnvelope,
     KeyRotationRequest,
     ObjectVerificationStatus,
     OperatorRole,
+    PlanBasis,
     RiskObjectInput,
     RiskObjectRegistryBatchImportRequest,
     RiskObjectRegistryFileImportRequest,
     RiskObjectVerificationRequest,
     SensitiveContact,
+    TaskCreateRequest,
     TaskDraftGenerationRequest,
 )
 from flood_system.response_workflow.risk_object_ingestion import (
@@ -284,6 +287,189 @@ def test_registry_drives_candidate_discovery_and_changes_mark_dependents_stale(
         json.loads(payload)["protected"] is True for payload in payloads.values()
     )
     assert all("张老师" not in payload for payload in payloads.values())
+
+
+def test_candidate_features_and_confirmed_object_list_are_frozen_and_task_bound(
+    tmp_path,
+):
+    system = FloodWarningSystem(tmp_path / "candidate-object-list.db")
+    workflow = system.response_workflow
+    workflow.import_risk_object_registry(
+        _batch_request(
+            _risk_object(object_id="SCHOOL-FREEZE-001", risk_score=92),
+            _risk_object(object_id="SCHOOL-FREEZE-002", risk_score=78),
+        )
+    )
+    dashboard = _event(system)
+    discovery = workflow.discover_risk_objects(
+        dashboard.event.event_id,
+        CandidateDiscoveryRequest(
+            entity_types=["学校"],
+            min_risk_score=40,
+            operator_id="duty-1",
+            operator_role=OperatorRole.DUTY_OFFICER,
+            terminal_id="duty-console",
+        ),
+    )
+    run = workflow.list_candidate_runs(dashboard.event.event_id)[0]
+    assert run.feature_version == "candidate-registry-features-v2"
+    assert [item.rank for item in run.candidate_features] == [1, 2]
+    assert [item.object_id for item in run.candidate_features] == [
+        item.object_id for item in discovery.candidates
+    ]
+    assert all(
+        0 <= score <= 1
+        for item in run.candidate_features
+        for score in (
+            item.spatial_score,
+            item.temporal_score,
+            item.attribute_score,
+            item.semantic_score,
+            item.data_quality_score,
+        )
+    )
+    assert all(
+        {"spatial", "temporal", "attribute", "semantic", "data_quality"}
+        <= set(item.explanations)
+        for item in run.candidate_features
+    )
+
+    first_id, second_id = [item.object_id for item in discovery.candidates]
+    for object_id in (first_id, second_id):
+        workflow.verify_risk_object(
+            dashboard.event.event_id,
+            object_id,
+            RiskObjectVerificationRequest(
+                decision=ObjectVerificationStatus.CONFIRMED,
+                note="属地复核确认",
+                operator_id="candidate-reviewer",
+                operator_role=OperatorRole.REVIEWER,
+                terminal_id="candidate-console",
+            ),
+        )
+
+    with pytest.raises(PermissionError, match="not authorized"):
+        workflow.freeze_candidate_object_list(
+            dashboard.event.event_id,
+            CandidateObjectListFreezeRequest(
+                object_ids=[first_id],
+                operator_id="duty-1",
+                operator_role=OperatorRole.DUTY_OFFICER,
+                terminal_id="duty-console",
+            ),
+        )
+
+    frozen_v1 = workflow.freeze_candidate_object_list(
+        dashboard.event.event_id,
+        CandidateObjectListFreezeRequest(
+            object_ids=[first_id],
+            operator_id="candidate-reviewer",
+            operator_role=OperatorRole.REVIEWER,
+            terminal_id="candidate-console",
+            note="冻结首批确认对象",
+        ),
+    )
+    assert frozen_v1.version == 1
+    assert frozen_v1.status == "frozen"
+    assert frozen_v1.source_run_ids == [run.run_id]
+    assert [item.object_id for item in frozen_v1.objects] == [first_id]
+    repeated = workflow.freeze_candidate_object_list(
+        dashboard.event.event_id,
+        CandidateObjectListFreezeRequest(
+            object_ids=[first_id],
+            operator_id="candidate-reviewer",
+            operator_role=OperatorRole.REVIEWER,
+            terminal_id="candidate-console",
+            note="相同对象集合不虚增版本",
+        ),
+    )
+    assert repeated.version == 1
+
+    frozen_v2 = workflow.freeze_candidate_object_list(
+        dashboard.event.event_id,
+        CandidateObjectListFreezeRequest(
+            object_ids=[first_id, second_id],
+            expected_version=1,
+            operator_id="candidate-reviewer",
+            operator_role=OperatorRole.REVIEWER,
+            terminal_id="candidate-console",
+            note="补充第二个确认对象",
+        ),
+    )
+    assert frozen_v2.version == 2
+    assert len(workflow.list_candidate_object_lists(dashboard.event.event_id)) == 2
+    with pytest.raises(ValueError, match="version conflict"):
+        workflow.freeze_candidate_object_list(
+            dashboard.event.event_id,
+            CandidateObjectListFreezeRequest(
+                object_ids=[first_id],
+                expected_version=1,
+                operator_id="candidate-reviewer",
+                operator_role=OperatorRole.REVIEWER,
+                terminal_id="candidate-console",
+            ),
+        )
+
+    now = datetime.now(timezone.utc)
+    with pytest.raises(ValueError, match="must bind the latest frozen"):
+        workflow.create_task(
+            dashboard.event.event_id,
+            TaskCreateRequest(
+                object_id=first_id,
+                title="冻结清单绑定验证",
+                action="现场核查并反馈",
+                responsible_organization="区教育局",
+                responsible_role="学校防汛负责人",
+                deadline_at=now + timedelta(hours=1),
+                acknowledge_deadline_at=now + timedelta(minutes=10),
+                required_evidence=["现场照片"],
+                plan_basis=[
+                    PlanBasis(document="区防汛预案", version="2026", clause="4.2")
+                ],
+                escalation_rule="超时升级至防办审核员",
+                operator_id="duty-1",
+                operator_role=OperatorRole.DUTY_OFFICER,
+                terminal_id="duty-console",
+            ),
+        )
+    task = workflow.create_task(
+        dashboard.event.event_id,
+        TaskCreateRequest(
+            object_id=first_id,
+            title="冻结清单绑定验证",
+            action="现场核查并反馈",
+            responsible_organization="区教育局",
+            responsible_role="学校防汛负责人",
+            deadline_at=now + timedelta(hours=1),
+            acknowledge_deadline_at=now + timedelta(minutes=10),
+            required_evidence=["现场照片"],
+            plan_basis=[
+                PlanBasis(document="区防汛预案", version="2026", clause="4.2")
+            ],
+            escalation_rule="超时升级至防办审核员",
+            operator_id="duty-1",
+            operator_role=OperatorRole.DUTY_OFFICER,
+            terminal_id="duty-console",
+            candidate_object_list_id=frozen_v2.list_id,
+            candidate_object_list_version=frozen_v2.version,
+            candidate_object_list_hash=frozen_v2.content_hash,
+        ),
+    )
+    assert task.candidate_object_list_id == frozen_v2.list_id
+    assert task.candidate_object_list_version == 2
+    assert task.candidate_object_list_hash == frozen_v2.content_hash
+
+    with system.repository._connect() as connection:
+        stored = connection.execute(
+            "SELECT payload FROM response_candidate_object_lists LIMIT 1"
+        ).fetchone()[0]
+        assert json.loads(stored)["protected"] is True
+        with pytest.raises(sqlite3.IntegrityError, match="immutable"):
+            connection.execute(
+                "UPDATE response_candidate_object_lists SET payload = payload"
+            )
+        with pytest.raises(sqlite3.IntegrityError, match="cannot be deleted"):
+            connection.execute("DELETE FROM response_candidate_object_lists")
 
 
 def test_csv_import_quarantines_bad_rows_and_rejects_unsafe_envelopes(tmp_path):
@@ -643,6 +829,103 @@ def test_registry_api_requires_aal2_is_idempotent_and_redacts_by_role(tmp_path):
     )
     assert forbidden_history.status_code == 403
 
+    dashboard = _event(system)
+    discovery = system.response_workflow.discover_risk_objects(
+        dashboard.event.event_id,
+        CandidateDiscoveryRequest(
+            entity_types=["学校"],
+            min_risk_score=40,
+            operator_id="duty-1",
+            operator_role=OperatorRole.DUTY_OFFICER,
+            terminal_id="duty-console",
+        ),
+    )
+    object_id = discovery.candidates[0].object_id
+    system.response_workflow.verify_risk_object(
+        dashboard.event.event_id,
+        object_id,
+        RiskObjectVerificationRequest(
+            decision=ObjectVerificationStatus.CONFIRMED,
+            note="API freeze prerequisite",
+            operator_id="registry-reviewer",
+            operator_role=OperatorRole.REVIEWER,
+            terminal_id="registry-console",
+        ),
+    )
+    freeze_path = (
+        f"/response/events/{dashboard.event.event_id}/candidate-object-lists/freeze"
+    )
+    freeze_payload = {
+        "object_ids": [object_id],
+        "note": "API freeze",
+        "operator_id": "registry-reviewer",
+        "operator_role": OperatorRole.REVIEWER.value,
+        "terminal_id": "registry-console",
+    }
+    denied_freeze = client.post(
+        freeze_path,
+        headers=_signed_headers(
+            method="POST",
+            path=freeze_path,
+            nonce="candidate-freeze-duty-denied",
+            role=OperatorRole.DUTY_OFFICER,
+            operator_id="duty-1",
+            terminal_id="duty-console",
+        ),
+        json={
+            **freeze_payload,
+            "operator_id": "duty-1",
+            "operator_role": OperatorRole.DUTY_OFFICER.value,
+            "terminal_id": "duty-console",
+        },
+    )
+    assert denied_freeze.status_code == 403
+
+    first_freeze = client.post(
+        freeze_path,
+        headers=_signed_headers(
+            method="POST",
+            path=freeze_path,
+            nonce="candidate-freeze-first",
+            role=OperatorRole.REVIEWER,
+            idempotency_key="candidate-freeze-stable-key",
+        ),
+        json=freeze_payload,
+    )
+    replay_freeze = client.post(
+        freeze_path,
+        headers=_signed_headers(
+            method="POST",
+            path=freeze_path,
+            nonce="candidate-freeze-replay",
+            role=OperatorRole.REVIEWER,
+            idempotency_key="candidate-freeze-stable-key",
+        ),
+        json=freeze_payload,
+    )
+    assert first_freeze.status_code == 200, first_freeze.json()
+    assert replay_freeze.status_code == 200
+    assert replay_freeze.headers["X-Idempotent-Replay"] == "true"
+    assert first_freeze.content == replay_freeze.content
+    assert first_freeze.json()["version"] == 1
+
+    lists_path = (
+        f"/response/events/{dashboard.event.event_id}/candidate-object-lists"
+    )
+    listed = client.get(
+        lists_path,
+        headers=_signed_headers(
+            method="GET",
+            path=lists_path,
+            nonce="candidate-lists-read",
+            role=OperatorRole.REVIEWER,
+        ),
+    )
+    assert listed.status_code == 200
+    assert [item["content_hash"] for item in listed.json()] == [
+        first_freeze.json()["content_hash"]
+    ]
+
 
 def test_registry_history_survives_encryption_key_rotation(tmp_path, monkeypatch):
     monkeypatch.setenv(
@@ -654,7 +937,40 @@ def test_registry_history_survives_encryption_key_rotation(tmp_path, monkeypatch
         Fernet.generate_key().decode("ascii"),
     )
     system = FloodWarningSystem(tmp_path / "risk-registry-rotation.db")
-    system.response_workflow.import_risk_object_registry(_batch_request(_risk_object()))
+    workflow = system.response_workflow
+    workflow.import_risk_object_registry(_batch_request(_risk_object()))
+    dashboard = _event(system)
+    discovery = workflow.discover_risk_objects(
+        dashboard.event.event_id,
+        CandidateDiscoveryRequest(
+            entity_types=["学校"],
+            min_risk_score=40,
+            operator_id="duty-1",
+            operator_role=OperatorRole.DUTY_OFFICER,
+            terminal_id="duty-console",
+        ),
+    )
+    object_id = discovery.candidates[0].object_id
+    workflow.verify_risk_object(
+        dashboard.event.event_id,
+        object_id,
+        RiskObjectVerificationRequest(
+            decision=ObjectVerificationStatus.CONFIRMED,
+            note="rotation prerequisite",
+            operator_id="registry-reviewer",
+            operator_role=OperatorRole.REVIEWER,
+            terminal_id="registry-console",
+        ),
+    )
+    frozen = workflow.freeze_candidate_object_list(
+        dashboard.event.event_id,
+        CandidateObjectListFreezeRequest(
+            object_ids=[object_id],
+            operator_id="registry-reviewer",
+            operator_role=OperatorRole.REVIEWER,
+            terminal_id="registry-console",
+        ),
+    )
     rotation = system.response_workflow.rotate_data_encryption_key(
         # Key rotation is intentionally exercised after immutable history exists.
         KeyRotationRequest(
@@ -671,11 +987,13 @@ def test_registry_history_survives_encryption_key_rotation(tmp_path, monkeypatch
         )
         is not None
     )
+    assert workflow.list_candidate_object_lists(dashboard.event.event_id) == [frozen]
     with system.repository._connect() as connection:
         for table in (
             "response_risk_object_registry",
             "response_risk_object_registry_versions",
             "response_risk_object_imports",
+            "response_candidate_object_lists",
         ):
             key_ids = {
                 row[0]

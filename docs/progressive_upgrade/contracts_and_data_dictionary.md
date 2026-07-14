@@ -11,6 +11,7 @@
 | 创建预警事件/候选 | 是 | 是 | 是 | 否 | 否 | 否 | 是 | 否 |
 | 导入风险对象主数据（AAL2） | 否 | 是 | 否 | 否 | 否 | 否 | 是 | 否 |
 | 确认或排除对象 | 是 | 是 | 是 | 否 | 否 | 否 | 是 | 否 |
+| 冻结人工确认对象清单 | 否 | 是 | 是 | 否 | 否 | 否 | 否 | 否 |
 | 审查证据/裁决冲突 | 否 | 是 | 是 | 否 | 否 | 只读 | 是 | 否 |
 | 编辑并提交草案 | 是 | 是 | 是 | 否 | 否 | 否 | 是 | 否 |
 | 一般审批 | 否 | 是 | 是 | 否 | 否 | 否 | 否 | 否 |
@@ -54,10 +55,11 @@
 | RiskObjectRegistryRecord | `area_id + object_id`、`registry_version` | CSV/XLSX/JSON/GeoJSON/API 共用主数据；逐对象内容哈希控制版本；重复记录只指向规范对象；状态、有效期、坐标和敏感字段受控 |
 | RiskObjectRegistryVersionSnapshot | `snapshot_id`、`area_id + object_id + registry_version` | 每次实际对象内容/来源版本变化形成不可更新、不可删除的完整快照；密钥轮换只能通过授权事务重加密 |
 | RiskObjectRegistryImportResult | `import_id`、源文件 SHA-256 | 保存格式、字节数、新增/更新/未变/隔离数量、隔离原因、受影响事件和 STALE 运行数；不保存文件明文 |
-| CandidateRunRecord | `run_id` | 绑定预警、对象数据、算法、特征、参数和运行模式版本 |
+| CandidateRunRecord | `run_id` | 绑定预警、对象数据、算法、参数和运行模式版本；逐候选保存排名及空间、时效、属性、语义、数据质量五类特征快照、解释和缺失项 |
+| CandidateObjectListVersion | `list_id + version` | 业务复核/授权审批把已确认、非 STALE、属于最新预警修订的对象冻结为不可更新/删除的清单；内容哈希绑定对象版本、核验哈希、CandidateRun 和数据版本 |
 | DocumentVersionRecord | `version_id` | 发布单位、辖区、生效时间、替代关系、条款、源哈希和索引版本 |
 | EvidencePackageVersion | `package_id + version` | 字段 `SUPPORTED/CONFLICTED/MISSING`；冲突裁决生成新版本；冻结后哈希稳定 |
-| ResponseTask | `task_id + version` | 对象、责任、动作、四时限、依据、证据、审批和下发哈希完整 |
+| ResponseTask | `task_id + version` | 对象、责任、动作、四时限、依据、证据、审批和下发哈希完整；存在冻结清单时必须绑定最新 `list_id/version/content_hash` 且对象仍与冻结核验快照一致 |
 | RuleEvaluationRecord | `evaluation_id` | `PASS/SOFT_WARNING/HARD_BLOCK`；HARD_BLOCK 不得审批 |
 | ApprovalRecord | `approval_id` | 绑定任务版本、载荷哈希、证据哈希和规则集版本；不可修改删除 |
 | OutboxMessage | `message_id`、唯一 `idempotency_key` | 发送前重算审批载荷哈希；不一致失败关闭 |
@@ -94,3 +96,11 @@
 - 非法行进入 `RiskObjectImportQuarantineItem`，合法行仍可在同一事务导入；同批重复 ID、悬空/自引用/链式 `duplicate_of` 不会污染主数据。
 - 逐对象 `content_hash` 决定是否增加 `registry_version`；整个源文件 SHA-256 只用于来源溯源，文件中其他行变化不会令未变化对象虚增版本。
 - 主数据实际变化使同区域既有 CandidateRun 进入 `stale`，已形成的相同事件对象也进入 `STALE` 并生成不可变版本；重新筛查和人工核验前禁止成案。
+
+## 候选特征与冻结清单合同
+
+- CandidateRun 对每个入选对象保存确定性排名、原始分、校准置信度以及空间、时效、属性、语义、数据质量五类 `[0,1]` 特征；每类特征都有版本、解释和显式缺失项，不能只保存最终分数。
+- `POST /response/events/{event_id}/candidate-object-lists/freeze` 只允许业务复核岗或授权审批岗；`expected_version` 提供乐观锁，相同内容返回既有版本，内容变化才追加新版本。
+- 清单只接受最新预警修订下、来源 CandidateRun 未失效且对象已人工确认/非 STALE 的记录；人工补录对象可以没有 CandidateRun，但仍必须有不可变对象版本和核验哈希。
+- 清单载荷认证加密，SQLite 触发器禁止普通 UPDATE/DELETE；启动加密迁移和授权密钥轮换只允许密文替换，不改变清单业务内容。
+- 一旦事件存在冻结清单，任务创建和证据草案都只能绑定最新清单；历史清单、清单外对象或对象核验版本漂移均失败关闭。

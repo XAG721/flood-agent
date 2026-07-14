@@ -679,6 +679,45 @@
   background: rgba(122, 170, 199, 0.12);
 }
 
+.featureSnapshot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.featureSnapshot strong,
+.featureSnapshot span {
+  padding: 4px 7px;
+  border: 1px solid rgba(122, 170, 199, 0.18);
+  border-radius: 5px;
+  color: #d8e8f2;
+  background: rgba(122, 170, 199, 0.08);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.featureSnapshot strong {
+  color: #9fd2ed;
+}
+
+.featureSnapshot small {
+  flex-basis: 100%;
+  margin-top: 0;
+}
+
+.objectActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.objectActions button {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
 .stateBadge {
   color: var(--fg-secondary);
   background: rgba(151, 169, 185, 0.12);

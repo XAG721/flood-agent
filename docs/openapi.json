@@ -897,6 +897,96 @@
         }
       }
     },
+    "/response/events/{event_id}/candidate-object-lists": {
+      "get": {
+        "tags": [
+          "district-response-workflow"
+        ],
+        "summary": "List Candidate Object Lists",
+        "operationId": "list_candidate_object_lists_response_events__event_id__candidate_object_lists_get",
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/response/events/{event_id}/candidate-object-lists/freeze": {
+      "post": {
+        "tags": [
+          "district-response-workflow"
+        ],
+        "summary": "Freeze Candidate Object List",
+        "operationId": "freeze_candidate_object_list_response_events__event_id__candidate_object_lists_freeze_post",
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CandidateObjectListFreezeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/response/events/{event_id}/evidence-packages": {
       "get": {
         "tags": [
@@ -7088,6 +7178,64 @@
         ],
         "title": "CandidateDiscoveryRequest"
       },
+      "CandidateObjectListFreezeRequest": {
+        "properties": {
+          "operator_id": {
+            "type": "string",
+            "title": "Operator Id"
+          },
+          "operator_role": {
+            "$ref": "#/components/schemas/OperatorRole"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note",
+            "default": ""
+          },
+          "terminal_id": {
+            "type": "string",
+            "title": "Terminal Id",
+            "default": "unknown-terminal"
+          },
+          "expected_version": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Version"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idempotency Key"
+          },
+          "object_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 200,
+            "title": "Object Ids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "operator_id",
+          "operator_role"
+        ],
+        "title": "CandidateObjectListFreezeRequest"
+      },
       "ContactProfile": {
         "properties": {
           "name": {
@@ -9788,6 +9936,41 @@
             ],
             "title": "Evidence Package Hash"
           },
+          "candidate_object_list_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Candidate Object List Id"
+          },
+          "candidate_object_list_version": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Candidate Object List Version"
+          },
+          "candidate_object_list_hash": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Candidate Object List Hash"
+          },
           "idempotency_key": {
             "anyOf": [
               {
@@ -9863,6 +10046,18 @@
             "type": "string",
             "title": "Query",
             "default": ""
+          },
+          "candidate_object_list_version": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Candidate Object List Version"
           },
           "acknowledge_minutes": {
             "type": "integer",

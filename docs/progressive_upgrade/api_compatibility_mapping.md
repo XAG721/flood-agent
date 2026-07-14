@@ -8,6 +8,7 @@
 | Risk-object master registry | `GET /risk-objects`、`GET /risk-objects/versions`、`GET /risk-objects/imports`、`POST /risk-objects/imports`、`POST /risk-objects/file-imports` | API/CSV/XLSX/JSON/Point GeoJSON 导入到区域主数据；AAL2、逐对象哈希版本、隔离区、字段脱敏和不可变历史。 |
 | CandidateRun | `POST /events/{event_id}/risk-objects/discover`、`GET /events/{event_id}/candidate-runs` | 优先读取 Core 主数据，空区域才使用旧 EntityProfile 只读适配器；持久化算法、特征、主数据指纹、校准和空间关联模式。主数据变化后运行进入 STALE。 |
 | Candidate confirm/exclude | `POST /events/{event_id}/risk-objects/{object_id}/verify` | 人工决定生成不可变对象版本；预警更新后对象变为 STALE。 |
+| Confirmed candidate list | `GET /events/{event_id}/candidate-object-lists`、`POST /events/{event_id}/candidate-object-lists/freeze` | 业务复核/授权审批冻结最新预警下已确认对象；清单按版本追加、哈希稳定且不可更新删除，后续任务绑定最新清单 ID、版本和哈希。 |
 | Event risk-object supplement | `POST /events/{event_id}/risk-objects` | 人工补充到事件上下文，不替代区域主数据导入；仍需人工核验并形成事件对象版本。 |
 | Document/version/parse/publish | `POST /documents`、`GET /documents` | 单次命令完成源哈希、条款解析、版本登记和索引；相同内容幂等，替代版本令旧索引失效。 |
 | Evidence run/package | `POST /events/{event_id}/risk-objects/{object_id}/task-draft`、`GET /evidence-packages/{package_id}` | 草案请求先独立生成 EvidencePackageVersion；证据不足时不创建任务。 |

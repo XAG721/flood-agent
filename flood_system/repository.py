@@ -113,6 +113,7 @@ class SQLiteRepository(
             "response_outbox",
             "response_dispatch_callbacks",
             "response_candidate_runs",
+            "response_candidate_object_lists",
             "response_evidence_packages",
             "response_rule_evaluations",
             "response_deadline_extensions",
