@@ -131,6 +131,7 @@ def metrics():
     )
     registry_metrics = system.repository.risk_object_registry_metrics()
     document_metrics = system.repository.document_governance_metrics()
+    evidence_metrics = system.repository.evidence_governance_metrics()
     durations = sorted(api_request_durations_ms)
 
     def percentile(fraction: float) -> float:
@@ -210,6 +211,24 @@ def metrics():
             "# HELP flood_contract_versions Immutable task-schema and rule-set versions.",
             "# TYPE flood_contract_versions gauge",
             f"flood_contract_versions {document_metrics['contract_versions']}",
+            "# HELP flood_evidence_package_versions Immutable evidence package versions.",
+            "# TYPE flood_evidence_package_versions gauge",
+            f"flood_evidence_package_versions {evidence_metrics['package_versions']}",
+            "# HELP flood_evidence_packages Current logical evidence packages.",
+            "# TYPE flood_evidence_packages gauge",
+            f"flood_evidence_packages {evidence_metrics['packages']}",
+            "# HELP flood_evidence_unresolved_conflicts Unresolved conflicts in current evidence packages.",
+            "# TYPE flood_evidence_unresolved_conflicts gauge",
+            f"flood_evidence_unresolved_conflicts {evidence_metrics['unresolved_conflicts']}",
+            "# HELP flood_evidence_missing_fields Missing task fields in current evidence packages.",
+            "# TYPE flood_evidence_missing_fields gauge",
+            f'flood_evidence_missing_fields{{blocking="false"}} {evidence_metrics["missing_fields"]}',
+            f'flood_evidence_missing_fields{{blocking="true"}} {evidence_metrics["blocking_missing_fields"]}',
+            "# HELP flood_evidence_nli_packages Current evidence packages by degraded NLI state.",
+            "# TYPE flood_evidence_nli_packages gauge",
+            f'flood_evidence_nli_packages{{status="unavailable"}} {evidence_metrics["nli_unavailable"]}',
+            f'flood_evidence_nli_packages{{status="partial"}} {evidence_metrics["nli_partial"]}',
+            f'flood_evidence_nli_packages{{status="error"}} {evidence_metrics["nli_error"]}',
             "# HELP flood_api_requests_total Requests observed by the application middleware.",
             "# TYPE flood_api_requests_total counter",
             f"flood_api_requests_total {api_request_total}",

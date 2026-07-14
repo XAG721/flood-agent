@@ -33,6 +33,15 @@ from .document_governance import (
     build_document_source,
     parse_document_source,
 )
+from .evidence_governance import (
+    REQUIRED_TASK_FIELDS,
+    TASK_FIELD_QUERIES,
+    UnavailableNliAdapter,
+    build_field_evidence_map,
+    candidate_nli_pairs,
+    infer_task_field_support,
+    task_field_slots,
+)
 from .state_machine import ensure_transition
 from .risk_object_ingestion import parse_risk_object_file
 
@@ -99,7 +108,9 @@ from .models import (
     EvidenceConflict,
     EvidenceConflictResolutionRequest,
     EvidenceFreezeRequest,
+    EvidenceMissingReason,
     EvidenceManualSupplementRequest,
+    EvidenceNliAssessment,
     EvidencePackageVersion,
     FeedbackCategory,
     FeedbackRequest,
@@ -112,6 +123,7 @@ from .models import (
     OutboxStatus,
     MigrationBatchRecord,
     MigrationQuarantineItem,
+    NliRelation,
     ResponseEvent,
     ResponseTask,
     RiskObjectBatchRequest,
@@ -175,10 +187,17 @@ class ResponseWorkflowService:
     TASK_SCHEMA_VERSION = "response-task-schema-v2"
     DOCUMENT_PARSER_VERSION = PARSER_VERSION
 
-    def __init__(self, repository, rag_service=None, simulation_gateway=None) -> None:
+    def __init__(
+        self,
+        repository,
+        rag_service=None,
+        simulation_gateway=None,
+        nli_adapter=None,
+    ) -> None:
         self.repository = repository
         self.rag_service = rag_service
         self.simulation_gateway = simulation_gateway or SimulatedExternalGateway()
+        self.nli_adapter = nli_adapter or UnavailableNliAdapter()
 
     @staticmethod
     def _now() -> datetime:
@@ -1519,16 +1538,31 @@ class ResponseWorkflowService:
         policy_documents, retrieval_trace = self._run_retrieval_strategy(
             query, request.retrieval_mode
         )
-        evidence = self._build_task_evidence(alert, risk_object, policy_documents)
-        conflicts = self._detect_evidence_conflicts(evidence)
-        covered_roles = {role.value for item in evidence for role in item.roles}
+        evidence = self._build_task_evidence(
+            alert, risk_object, policy_documents, request=request
+        )
+        conflicts, nli_assessments = self._analyze_evidence_conflicts(evidence)
+        covered_roles = {
+            role.value
+            for item in evidence
+            if item.source_type != "workflow_contract"
+            for role in item.roles
+        }
         role_coverage = {
             role.value: role.value in covered_roles for role in EvidenceRole
         }
         missing_roles = [role for role, covered in role_coverage.items() if not covered]
+        field_evidence_map = build_field_evidence_map(evidence)
+        blocking_missing_fields = [
+            field for field in REQUIRED_TASK_FIELDS if not field_evidence_map[field]
+        ]
         plan_basis = self._build_plan_basis(policy_documents)
         action = self._extract_supported_action(policy_documents, risk_object)
         validation_errors = [f"缺少 {role} 证据" for role in missing_roles]
+        validation_errors.extend(
+            f"关键任务字段缺少证据：{field}"
+            for field in blocking_missing_fields
+        )
         if not plan_basis:
             validation_errors.append("缺少带版本和条款号的预案引用")
         if not action:
@@ -1549,6 +1583,7 @@ class ResponseWorkflowService:
             role_coverage=role_coverage,
             validation_errors=validation_errors,
             conflicts=conflicts,
+            nli_assessments=nli_assessments,
             retrieval_mode=request.retrieval_mode,
             retrieval_trace=retrieval_trace,
             action=action,
@@ -1682,6 +1717,83 @@ class ResponseWorkflowService:
             raise LookupError(f"evidence package not found: {package_id}")
         return package
 
+    def list_evidence_package_versions(
+        self, package_id: str
+    ) -> list[EvidencePackageVersion]:
+        versions = self.repository.list_evidence_package_versions(package_id)
+        if not versions:
+            raise LookupError(f"evidence package not found: {package_id}")
+        return versions
+
+    def compare_evidence_package_versions(
+        self,
+        package_id: str,
+        *,
+        from_version: int | None = None,
+        to_version: int | None = None,
+    ) -> dict:
+        versions = self.list_evidence_package_versions(package_id)
+        by_version = {item.version: item for item in versions}
+        target_version = to_version or versions[-1].version
+        base_version = from_version or max(1, target_version - 1)
+        before = by_version.get(base_version)
+        after = by_version.get(target_version)
+        if before is None or after is None:
+            raise LookupError(
+                f"evidence package comparison versions not found: {base_version}->{target_version}"
+            )
+        if before.version >= after.version:
+            raise ValueError("from_version must be earlier than to_version")
+        fields = sorted(set(before.field_states) | set(after.field_states))
+        field_state_changes = {
+            field: {
+                "before": before.field_states.get(field),
+                "after": after.field_states.get(field),
+            }
+            for field in fields
+            if before.field_states.get(field) != after.field_states.get(field)
+        }
+        missing_reason_changes = {
+            field: {
+                "before": before.missing_reasons.get(field),
+                "after": after.missing_reasons.get(field),
+            }
+            for field in sorted(set(before.missing_reasons) | set(after.missing_reasons))
+            if before.missing_reasons.get(field) != after.missing_reasons.get(field)
+        }
+        before_sources = {item.source_id for item in before.evidence}
+        after_sources = {item.source_id for item in after.evidence}
+        before_conflicts = {
+            item.conflict_id: item.resolution_status for item in before.conflicts
+        }
+        after_conflicts = {
+            item.conflict_id: item.resolution_status for item in after.conflicts
+        }
+        conflict_changes = {
+            conflict_id: {
+                "before": before_conflicts.get(conflict_id),
+                "after": after_conflicts.get(conflict_id),
+            }
+            for conflict_id in sorted(set(before_conflicts) | set(after_conflicts))
+            if before_conflicts.get(conflict_id) != after_conflicts.get(conflict_id)
+        }
+        return {
+            "package_id": package_id,
+            "from_version": before.version,
+            "to_version": after.version,
+            "from_hash": before.content_hash,
+            "to_hash": after.content_hash,
+            "field_state_changes": field_state_changes,
+            "missing_reason_changes": missing_reason_changes,
+            "added_source_ids": sorted(after_sources - before_sources),
+            "removed_source_ids": sorted(before_sources - after_sources),
+            "conflict_changes": conflict_changes,
+            "nli_status_change": {
+                "before": before.nli_status,
+                "after": after.nli_status,
+            },
+        }
+
     def list_task_transitions(self, task_id: str) -> list[TimelineEntry]:
         task = self._task(task_id)
         return [
@@ -1719,32 +1831,40 @@ class ResponseWorkflowService:
         role_coverage: dict[str, bool],
         validation_errors: list[str],
         conflicts: list[EvidenceConflict],
+        nli_assessments: list[EvidenceNliAssessment] | None = None,
         retrieval_mode: RetrievalMode = RetrievalMode.SHADOW,
         retrieval_trace: dict | None = None,
         action: str,
         plan_basis: list,
         operator_id: str,
     ) -> EvidencePackageVersion:
+        evidence = self._normalize_evidence_refs(evidence)
+        nli_assessments = nli_assessments or []
         supported = EvidenceFieldState.SUPPORTED
         missing = EvidenceFieldState.MISSING
+        field_evidence_map = build_field_evidence_map(evidence)
         field_states = {
-            "action": supported if action else missing,
-            "responsible_party": supported
-            if role_coverage.get(EvidenceRole.RESPONSIBILITY.value)
-            else missing,
-            "trigger_condition": supported
-            if role_coverage.get(EvidenceRole.CONDITION.value)
-            else missing,
-            "procedure": supported
-            if role_coverage.get(EvidenceRole.PROCEDURE.value)
-            else missing,
-            "exception": supported
-            if role_coverage.get(EvidenceRole.EXCEPTION.value)
-            else missing,
-            "plan_basis": supported if plan_basis else missing,
+            field: supported if field_evidence_map[field] else missing
+            for field in TASK_FIELD_QUERIES
         }
         for conflict in conflicts:
             field_states[conflict.field_name] = EvidenceFieldState.CONFLICTED
+        missing_fields = [
+            key for key, value in field_states.items() if value == missing
+        ]
+        blocking_missing_fields = [
+            field for field in REQUIRED_TASK_FIELDS if field in missing_fields
+        ]
+        missing_reason = (
+            EvidenceMissingReason.SOURCE_UNAVAILABLE
+            if self.rag_service is None
+            else EvidenceMissingReason.NOT_RETRIEVED
+        )
+        missing_reasons = {field: missing_reason for field in missing_fields}
+        nli_status = self._nli_status(nli_assessments)
+        nli_model_version = str(
+            getattr(self.nli_adapter, "model_version", "nli-unavailable")
+        )
         canonical = json.dumps(
             {
                 "event_id": event_id,
@@ -1754,15 +1874,25 @@ class ResponseWorkflowService:
                     key: value.value for key, value in field_states.items()
                 },
                 "role_coverage": role_coverage,
+                "required_fields": list(REQUIRED_TASK_FIELDS),
+                "field_evidence_map": field_evidence_map,
+                "missing_reasons": {
+                    key: value.value for key, value in missing_reasons.items()
+                },
                 "evidence": [item.model_dump(mode="json") for item in evidence],
                 "conflicts": [item.model_dump(mode="json") for item in conflicts],
+                "nli_status": nli_status,
+                "nli_model_version": nli_model_version,
+                "nli_assessments": [
+                    item.model_dump(mode="json") for item in nli_assessments
+                ],
             },
             ensure_ascii=False,
             sort_keys=True,
             separators=(",", ":"),
         )
         now = self._now()
-        complete = not validation_errors
+        complete = not validation_errors and not blocking_missing_fields and not conflicts
         return EvidencePackageVersion(
             package_id=self._id("EVID"),
             event_id=event_id,
@@ -1774,9 +1904,14 @@ class ResponseWorkflowService:
             role_coverage=role_coverage,
             evidence=evidence,
             conflicts=conflicts,
-            missing_fields=[
-                key for key, value in field_states.items() if value == missing
-            ],
+            missing_fields=missing_fields,
+            required_fields=list(REQUIRED_TASK_FIELDS),
+            blocking_missing_fields=blocking_missing_fields,
+            missing_reasons=missing_reasons,
+            field_evidence_map=field_evidence_map,
+            nli_status=nli_status,
+            nli_model_version=nli_model_version,
+            nli_assessments=nli_assessments,
             content_hash=hashlib.sha256(canonical.encode("utf-8")).hexdigest(),
             created_by=operator_id,
             reviewed_by=operator_id if complete else None,
@@ -1848,7 +1983,7 @@ class ResponseWorkflowService:
             separators=(",", ":"),
         )
         now = self._now()
-        frozen = not unresolved and not current.missing_fields
+        frozen = not unresolved and not current.blocking_missing_fields
         updated = current.model_copy(
             update={
                 "version": current.version + 1,
@@ -1941,37 +2076,63 @@ class ResponseWorkflowService:
         freeze_when_complete: bool,
         action: str,
     ) -> EvidencePackageVersion:
-        covered_roles = {role.value for item in evidence for role in item.roles}
+        evidence = self._normalize_evidence_refs(evidence)
+        covered_roles = {
+            role.value
+            for item in evidence
+            if item.source_type != "workflow_contract"
+            for role in item.roles
+        }
         role_coverage = {
             role.value: role.value in covered_roles for role in EvidenceRole
         }
-        field_states = dict(current.field_states)
-        role_fields = {
-            EvidenceRole.CONDITION: ("trigger_condition",),
-            EvidenceRole.RESPONSIBILITY: ("responsible_party",),
-            EvidenceRole.PROCEDURE: ("procedure", "action"),
-            EvidenceRole.EXCEPTION: ("exception",),
-            EvidenceRole.ATTRIBUTION: ("plan_basis",),
+        field_evidence_map = build_field_evidence_map(evidence)
+        field_states = {
+            field: EvidenceFieldState.SUPPORTED
+            if field_evidence_map[field]
+            else EvidenceFieldState.MISSING
+            for field in TASK_FIELD_QUERIES
         }
-        for role, fields in role_fields.items():
-            if role.value in covered_roles:
-                for field in fields:
-                    if field_states.get(field) != EvidenceFieldState.CONFLICTED:
-                        field_states[field] = EvidenceFieldState.SUPPORTED
+        detected_conflicts, nli_assessments = self._analyze_evidence_conflicts(evidence)
+        prior_conflicts = {item.conflict_id: item for item in current.conflicts}
+        conflicts = []
+        for conflict in detected_conflicts:
+            previous = prior_conflicts.get(conflict.conflict_id)
+            if previous is not None and previous.resolution_status == "resolved":
+                conflict = conflict.model_copy(
+                    update={
+                        "resolution_status": previous.resolution_status,
+                        "resolution_reason": previous.resolution_reason,
+                        "selected_source_ids": previous.selected_source_ids,
+                    }
+                )
+            conflicts.append(conflict)
         unresolved = [
-            item for item in current.conflicts if item.resolution_status != "resolved"
+            item for item in conflicts if item.resolution_status != "resolved"
         ]
+        for conflict in unresolved:
+            field_states[conflict.field_name] = EvidenceFieldState.CONFLICTED
         missing_fields = [
             field
             for field, state in field_states.items()
             if state == EvidenceFieldState.MISSING
         ]
-        complete = (
-            not missing_fields
-            and not unresolved
-            and all(
-                state == EvidenceFieldState.SUPPORTED for state in field_states.values()
+        blocking_missing_fields = [
+            field for field in REQUIRED_TASK_FIELDS if field in missing_fields
+        ]
+        missing_reasons = {
+            field: current.missing_reasons.get(
+                field,
+                EvidenceMissingReason.SOURCE_UNAVAILABLE
+                if self.rag_service is None
+                else EvidenceMissingReason.NOT_RETRIEVED,
             )
+            for field in missing_fields
+        }
+        complete = (
+            not blocking_missing_fields
+            and not unresolved
+            and all(role_coverage.values())
         )
         if freeze_when_complete and not complete:
             raise ValueError(
@@ -1984,9 +2145,15 @@ class ResponseWorkflowService:
                     key: value.value for key, value in field_states.items()
                 },
                 "role_coverage": role_coverage,
+                "required_fields": list(REQUIRED_TASK_FIELDS),
+                "field_evidence_map": field_evidence_map,
+                "missing_reasons": {
+                    key: value.value for key, value in missing_reasons.items()
+                },
                 "evidence": [item.model_dump(mode="json") for item in evidence],
-                "conflicts": [
-                    item.model_dump(mode="json") for item in current.conflicts
+                "conflicts": [item.model_dump(mode="json") for item in conflicts],
+                "nli_assessments": [
+                    item.model_dump(mode="json") for item in nli_assessments
                 ],
                 "reason": reason,
             },
@@ -2003,7 +2170,17 @@ class ResponseWorkflowService:
                 "field_states": field_states,
                 "role_coverage": role_coverage,
                 "evidence": evidence,
+                "conflicts": conflicts,
                 "missing_fields": missing_fields,
+                "required_fields": list(REQUIRED_TASK_FIELDS),
+                "blocking_missing_fields": blocking_missing_fields,
+                "missing_reasons": missing_reasons,
+                "field_evidence_map": field_evidence_map,
+                "nli_status": self._nli_status(nli_assessments),
+                "nli_model_version": str(
+                    getattr(self.nli_adapter, "model_version", "nli-unavailable")
+                ),
+                "nli_assessments": nli_assessments,
                 "content_hash": hashlib.sha256(canonical.encode("utf-8")).hexdigest(),
                 "reviewed_by": actor_id,
                 "frozen_at": now if frozen else None,
@@ -2026,6 +2203,29 @@ class ResponseWorkflowService:
             },
         )
         return updated
+
+    @staticmethod
+    def _normalize_evidence_refs(
+        evidence: list[TaskEvidenceRef],
+    ) -> list[TaskEvidenceRef]:
+        normalized: list[TaskEvidenceRef] = []
+        for item in evidence:
+            support = item.field_support or infer_task_field_support(
+                item.excerpt,
+                [role.value for role in item.roles],
+            )
+            source_locator = item.source_locator or (
+                f"{item.source_type or 'evidence'}://{item.source_id}"
+            )
+            normalized.append(
+                item.model_copy(
+                    update={
+                        "field_support": support,
+                        "source_locator": source_locator,
+                    }
+                )
+            )
+        return normalized
 
     def update_task(self, task_id: str, request: TaskUpdateRequest) -> ResponseTask:
         self._require_role(request.operator_role, EDIT_ROLES, "edit a task draft")
@@ -2333,11 +2533,20 @@ class ResponseWorkflowService:
             else "任务标题、动作、证据要求或预案依据缺失",
         )
         if task.generated_by_ai:
+            unresolved_conflicts = (
+                [
+                    item
+                    for item in package.conflicts
+                    if item.resolution_status != "resolved"
+                ]
+                if package
+                else []
+            )
             package_ok = bool(
                 package
                 and package.status == "frozen"
-                and not package.conflicts
-                and not package.missing_fields
+                and not unresolved_conflicts
+                and not package.blocking_missing_fields
                 and package.content_hash == task.evidence_package_hash
             )
             add(
@@ -2345,11 +2554,24 @@ class ResponseWorkflowService:
                 RuleOutcome.PASS if package_ok else RuleOutcome.HARD_BLOCK,
                 "冻结证据包与草案哈希一致"
                 if package_ok
-                else "AI 草案缺少冻结证据包、存在未决冲突/缺失或哈希不一致",
+                else "AI 草案缺少冻结证据包、存在未决冲突/关键字段缺失或哈希不一致",
                 "evidence_package_id",
             )
+            critical_field_sources = (
+                package.field_evidence_map if package is not None else {}
+            )
+            evidence_by_id = {
+                item.source_id: item for item in task.source_evidence
+            }
             bound = bool(task.source_evidence) and all(
-                item.source_id and item.roles for item in task.source_evidence
+                critical_field_sources.get(field)
+                and any(
+                    source_id in evidence_by_id
+                    and evidence_by_id[source_id].source_locator
+                    and evidence_by_id[source_id].field_support.get(field, 0) >= 0.18
+                    for source_id in critical_field_sources[field]
+                )
+                for field in REQUIRED_TASK_FIELDS
             )
             add(
                 "RULE-EVIDENCE-BOUND",
@@ -3022,6 +3244,13 @@ class ResponseWorkflowService:
                             role.value
                             for role in self._document_roles_from_text(clause.text)
                         ],
+                        "task_field_support": infer_task_field_support(
+                            clause.text,
+                            [
+                                role.value
+                                for role in self._document_roles_from_text(clause.text)
+                            ],
+                        ),
                     },
                 )
                 for clause in parsed.clauses
@@ -5340,14 +5569,7 @@ class ResponseWorkflowService:
             top_k=6,
             candidate_k=20,
             token_budget=1800,
-            slots=[
-                "触发条件和适用范围",
-                "风险对象特征",
-                "责任部门和责任岗位",
-                "处置动作和执行顺序",
-                "例外情况和升级条件",
-                "文件版本和条款来源",
-            ],
+            slots=task_field_slots(),
             required_roles=[role.value for role in EvidenceRole],
         )
         return self._filter_current_policy_documents(documents)
@@ -5439,12 +5661,18 @@ class ResponseWorkflowService:
                 risk_object.name,
                 risk_object.vulnerability,
                 *risk_object.trigger_reasons,
-                "触发条件 责任岗位 处置流程 反馈要求 例外升级 条款依据",
+                "触发条件 风险对象 责任主体 处置动作 完成时限 资源依赖 "
+                "反馈要求 升级条件 例外条件 文件版本 条款依据",
             ]
         )
 
     def _build_task_evidence(
-        self, alert, risk_object: EventRiskObject, documents: list[RAGDocument]
+        self,
+        alert,
+        risk_object: EventRiskObject,
+        documents: list[RAGDocument],
+        *,
+        request: TaskDraftGenerationRequest,
     ) -> list[TaskEvidenceRef]:
         evidence = [
             TaskEvidenceRef(
@@ -5455,6 +5683,8 @@ class ResponseWorkflowService:
                 roles=[EvidenceRole.CONDITION],
                 document_version=str(alert.version),
                 trust_score=1.0,
+                source_locator=f"response://alerts/{alert.snapshot_id}",
+                field_support={"trigger_condition": 1.0},
             ),
             TaskEvidenceRef(
                 source_type="risk_object_registry",
@@ -5466,6 +5696,52 @@ class ResponseWorkflowService:
                 ),
                 roles=[EvidenceRole.OBJECT, EvidenceRole.RESPONSIBILITY],
                 document_version="event-snapshot-v1",
+                trust_score=1.0,
+                source_locator=(
+                    f"response://events/{risk_object.event_id}/risk-objects/"
+                    f"{risk_object.object_id}"
+                ),
+                field_support={
+                    "risk_object": 1.0,
+                    "responsible_party": 1.0,
+                },
+            ),
+            TaskEvidenceRef(
+                source_type="workflow_contract",
+                source_id="response-task-schema-v2:deadline",
+                title="响应任务时限字段契约",
+                excerpt=(
+                    f"任务必须在 {request.acknowledge_minutes} 分钟内确认，并在 "
+                    f"{request.deadline_minutes} 分钟内完成；审批时校验接收、开始、完成和核验时限顺序。"
+                ),
+                roles=[EvidenceRole.ATTRIBUTION],
+                document_version=self.TASK_SCHEMA_VERSION,
+                source_locator="contract://response-task-schema-v2#deadline",
+                field_support={"deadline": 1.0},
+                trust_score=1.0,
+            ),
+            TaskEvidenceRef(
+                source_type="workflow_contract",
+                source_id="response-task-schema-v2:feedback",
+                title="响应任务反馈证据契约",
+                excerpt=(
+                    "任务反馈必须绑定时间、位置和附件证据；系统按风险对象类型校验照片、视频、回执或检查记录。"
+                ),
+                roles=[EvidenceRole.ATTRIBUTION],
+                document_version=self.TASK_SCHEMA_VERSION,
+                source_locator="contract://response-task-schema-v2#required-evidence",
+                field_support={"feedback_requirement": 1.0},
+                trust_score=1.0,
+            ),
+            TaskEvidenceRef(
+                source_type="workflow_contract",
+                source_id=f"{self.RULE_SET_VERSION}:escalation",
+                title="响应任务升级规则契约",
+                excerpt="任务未确认、执行超时或反馈受阻时，系统升级至防办审核员并保留人工接管和改派记录。",
+                roles=[EvidenceRole.ATTRIBUTION],
+                document_version=self.RULE_SET_VERSION,
+                source_locator=f"contract://{self.RULE_SET_VERSION}#escalation",
+                field_support={"escalation_condition": 1.0},
                 trust_score=1.0,
             ),
         ]
@@ -5486,7 +5762,28 @@ class ResponseWorkflowService:
                     excerpt=document.content[:180],
                     roles=roles,
                     document_version=self._document_version(document),
+                    document_version_id=self._metadata_value(
+                        metadata, "document_version_id"
+                    ),
                     clause=self._metadata_value(metadata, "section_number", "clause"),
+                    source_locator=self._metadata_value(metadata, "source_locator")
+                    or (
+                        f"rag://policy/{document.doc_id}#clause="
+                        f"{self._metadata_value(metadata, 'section_number', 'clause') or 'unknown'}"
+                    ),
+                    page_number=self._metadata_positive_int(metadata, "page_number"),
+                    section_path=self._metadata_string_list(metadata, "section_path"),
+                    table_name=self._metadata_value(metadata, "table_name"),
+                    row_start=self._metadata_positive_int(metadata, "row_start"),
+                    row_end=self._metadata_positive_int(metadata, "row_end"),
+                    field_support=infer_task_field_support(
+                        document.content,
+                        [role.value for role in roles],
+                        metadata,
+                    ),
+                    conflicts_with=self._metadata_string_list(
+                        metadata, "conflicts_with"
+                    ),
                     trust_score=trust_score
                     if isinstance(trust_score, (int, float))
                     else None,
@@ -5505,31 +5802,174 @@ class ResponseWorkflowService:
             )
         return evidence
 
-    def _detect_evidence_conflicts(
+    @staticmethod
+    def _metadata_positive_int(metadata: dict, key: str) -> int | None:
+        try:
+            value = int(metadata.get(key))
+        except (TypeError, ValueError):
+            return None
+        return value if value >= 1 else None
+
+    @staticmethod
+    def _metadata_string_list(metadata: dict, key: str) -> list[str]:
+        value = metadata.get(key, [])
+        if isinstance(value, str):
+            return [item.strip() for item in value.split(",") if item.strip()]
+        if isinstance(value, (list, tuple, set)):
+            return [str(item).strip() for item in value if str(item).strip()]
+        return []
+
+    @staticmethod
+    def _stable_evidence_id(prefix: str, *parts: object) -> str:
+        canonical = "|".join(str(part) for part in parts)
+        digest = hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:20]
+        return f"{prefix}-{digest}"
+
+    @staticmethod
+    def _conflict_dimensions(field_name: str) -> list[str]:
+        lowered = field_name.casefold()
+        mapping = {
+            "version": ("version", "版本", "effective", "时效", "status"),
+            "jurisdiction": ("jurisdiction", "辖区", "区域", "area"),
+            "subject": ("subject", "主体", "责任", "department", "role"),
+            "threshold": ("threshold", "阈值", "level", "等级"),
+            "time": ("time", "deadline", "时限", "时间", "minute", "hour"),
+            "action": ("action", "动作", "处置", "procedure", "流程"),
+        }
+        dimensions = [
+            dimension
+            for dimension, keywords in mapping.items()
+            if any(keyword in lowered for keyword in keywords)
+        ]
+        return dimensions or ["semantic"]
+
+    @staticmethod
+    def _nli_status(assessments: list[EvidenceNliAssessment]) -> str:
+        statuses = {item.status for item in assessments}
+        if not assessments:
+            return "not_required"
+        if "error" in statuses:
+            return "error"
+        if statuses == {"unavailable"}:
+            return "unavailable"
+        if "unavailable" in statuses:
+            return "partial"
+        return "completed"
+
+    def _analyze_evidence_conflicts(
         self, evidence: list[TaskEvidenceRef]
-    ) -> list[EvidenceConflict]:
+    ) -> tuple[list[EvidenceConflict], list[EvidenceNliAssessment]]:
         groups: dict[str, list[TaskEvidenceRef]] = {}
         for item in evidence:
             if item.superseded or not item.conflict_key or not item.conflict_value:
                 continue
             groups.setdefault(item.conflict_key, []).append(item)
-        conflicts: list[EvidenceConflict] = []
+
+        conflicts: dict[str, EvidenceConflict] = {}
         for key, items in groups.items():
             values = {item.conflict_value for item in items}
-            if len(values) < 2:
+            source_ids = sorted({item.source_id for item in items})
+            if len(values) < 2 or len(source_ids) < 2:
                 continue
-            source_ids = list(dict.fromkeys(item.source_id for item in items))
-            if len(source_ids) < 2:
-                continue
-            conflicts.append(
-                EvidenceConflict(
-                    conflict_id=self._id("CONFLICT"),
-                    field_name=key,
-                    conflict_type="DECISION_VALUE",
-                    severity="critical",
-                    evidence_source_ids=source_ids,
-                )
+            conflict_id = self._stable_evidence_id(
+                "CONFLICT", "decision_value", key, *source_ids
             )
+            conflicts[conflict_id] = EvidenceConflict(
+                conflict_id=conflict_id,
+                field_name=key,
+                conflict_type="DECISION_VALUE",
+                severity="critical",
+                evidence_source_ids=source_ids,
+                conflict_dimensions=self._conflict_dimensions(key),
+                detection_methods=["deterministic_rule"],
+            )
+
+        by_id = {item.source_id: item for item in evidence}
+        for item in evidence:
+            for other_id in item.conflicts_with:
+                if other_id not in by_id or other_id == item.source_id:
+                    continue
+                source_ids = sorted({item.source_id, other_id})
+                shared_fields = sorted(
+                    set(item.field_support) & set(by_id[other_id].field_support)
+                )
+                field_name = shared_fields[0] if shared_fields else "source_assertion"
+                conflict_id = self._stable_evidence_id(
+                    "CONFLICT", "explicit_source", field_name, *source_ids
+                )
+                conflicts.setdefault(
+                    conflict_id,
+                    EvidenceConflict(
+                        conflict_id=conflict_id,
+                        field_name=field_name,
+                        conflict_type="EXPLICIT_SOURCE_CONFLICT",
+                        severity="high",
+                        evidence_source_ids=source_ids,
+                        conflict_dimensions=self._conflict_dimensions(field_name),
+                        detection_methods=["source_metadata"],
+                    ),
+                )
+
+        assessments: list[EvidenceNliAssessment] = []
+        for left, right, shared_fields in candidate_nli_pairs(evidence):
+            source_ids = sorted([left.source_id, right.source_id])
+            assessment_id = self._stable_evidence_id(
+                "NLI", *source_ids, *shared_fields
+            )
+            try:
+                result = self.nli_adapter.classify(left.excerpt, right.excerpt)
+                relation = NliRelation(str(result.relation).lower())
+                confidence = max(0.0, min(1.0, float(result.confidence)))
+                status = str(result.status)
+                model_version = str(result.model_version)
+                error = str(result.error)
+            except Exception as exc:  # fail explicit; rule-based detection remains active
+                relation = NliRelation.ERROR
+                confidence = 0.0
+                status = "error"
+                model_version = str(
+                    getattr(self.nli_adapter, "model_version", "nli-unknown")
+                )
+                error = f"{type(exc).__name__}: {exc}"
+            assessment = EvidenceNliAssessment(
+                assessment_id=assessment_id,
+                left_source_id=left.source_id,
+                right_source_id=right.source_id,
+                shared_fields=shared_fields,
+                relation=relation,
+                confidence=confidence,
+                model_version=model_version,
+                status=status,
+                error=error,
+            )
+            assessments.append(assessment)
+            if relation != NliRelation.CONTRADICTION:
+                continue
+            for field_name in shared_fields:
+                conflict_id = self._stable_evidence_id(
+                    "CONFLICT", "nli", field_name, *source_ids
+                )
+                conflicts.setdefault(
+                    conflict_id,
+                    EvidenceConflict(
+                        conflict_id=conflict_id,
+                        field_name=field_name,
+                        conflict_type="SEMANTIC_CONTRADICTION",
+                        severity="high",
+                        evidence_source_ids=source_ids,
+                        conflict_dimensions=self._conflict_dimensions(field_name),
+                        detection_methods=["versioned_nli"],
+                        nli_assessment_id=assessment_id,
+                        nli_relation=relation,
+                        nli_confidence=confidence,
+                    ),
+                )
+        return list(conflicts.values()), assessments
+
+    def _detect_evidence_conflicts(
+        self, evidence: list[TaskEvidenceRef]
+    ) -> list[EvidenceConflict]:
+        conflicts, _ = self._analyze_evidence_conflicts(evidence)
         return conflicts
 
     @classmethod

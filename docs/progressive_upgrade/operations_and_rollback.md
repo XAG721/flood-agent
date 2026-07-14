@@ -20,7 +20,9 @@ Compose 演示环境显式设置 `FLOOD_ALLOW_DEV_IDENTITY_HEADERS=1`，让同�
 
 风险对象文件导入默认解码上限由 `FLOOD_INGESTION_MAX_FILE_BYTES=10485760` 控制，安全范围为 1 KiB—50 MiB；请求体上限按 Base64 膨胀和 1 MiB JSON 余量自动计算。调大前必须同时评估反向代理限制、进程内存、行数上限和上传超时，不得靠取消 ZIP/公式/哈希检查提高吞吐。
 
-探针：`/health` 检查进程，`/ready` 检查数据库，`/metrics` 暴露响应事件、Outbox、风险对象主数据 active/inactive 数、被冻结候选清单数、被台账变更失效的 CandidateRun、累计隔离行和按 `processing/completed/indeterminate` 分组的幂等账本指标。指标查询只读加密账本，不产生清理写入。
+探针：`/health` 检查进程，`/ready` 检查数据库，`/metrics` 暴露响应事件、Outbox、风险对象主数据 active/inactive 数、被冻结候选清单数、被台账变更失效的 CandidateRun、累计隔离行、证据包/版本数、未决冲突、全部/阻断缺失字段、NLI unavailable/partial/error 包数，以及按 `processing/completed/indeterminate` 分组的幂等账本指标。指标查询只读加密账本，不产生清理写入。
+
+生产 NLI 必须以实现 `NliAdapter` 的版本化适配器注入，并固定模型名、权重版本和输出标签映射。未配置时服务报告 `nli-unavailable`，继续执行确定性冲突规则；不得把该降级状态改写为“无语义冲突”。回滚 NLI 模型时保留既有 `EvidenceNliAssessment` 和证据包版本，重新运行生成新版本比较，不覆盖历史结果。
 
 回滚旧应用时保留 `response_candidate_object_lists`。它是成案来源凭证，不得删表或修改历史版本来绕过绑定检查；恢复新版本后应先核对最新预警、最新冻结版本、对象核验哈希和已有任务绑定，再恢复写流量。
 
@@ -37,6 +39,7 @@ Compose 演示环境显式设置 `FLOOD_ALLOW_DEV_IDENTITY_HEADERS=1`，让同�
 1. 代码：恢复上一个可运行镜像或提交；不删除升级后产生的数据。
 2. 配置：把事件级功能开关恢复到前一版本，保留操作者和原因。
 3. 检索：FRC-RAG 未通过门禁时切回 `BASELINE_ONLY`，证据包保留只读。
+   NLI 单独故障时只关闭 NLI 适配器，保留确定性冲突规则、人工裁决和已有版本；不得自动解除未决冲突。
 4. 下发：失败消息保持在 Outbox；哈希不一致不得重试为成功，转人工接管。
 5. 数据：优先向前修复；审批、任务、反馈、时间线和归档不得因技术回滚删除。
 6. 业务：状态机不可用时暂停受影响功能，不允许旧页面直接修改新版正式状态。

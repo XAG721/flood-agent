@@ -431,7 +431,7 @@ class SimpleRAGStore:
             ]
             if len(raw_slots) < 2:
                 fragments = [fragment for fragment in _query_fragments(query) if len(fragment) >= 2]
-                raw_slots = fragments[:6] or [query]
+                raw_slots = fragments[:12] or [query]
 
         normalized_slots: list[str] = []
         seen: set[str] = set()
@@ -441,7 +441,7 @@ class SimpleRAGStore:
                 continue
             seen.add(cleaned)
             normalized_slots.append(str(slot).strip())
-            if len(normalized_slots) >= 6:
+            if len(normalized_slots) >= 12:
                 break
 
         if not normalized_slots:

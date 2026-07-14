@@ -64,6 +64,7 @@ from flood_system.response_workflow.state_machine import (
     TERMINAL_TASK_STATUSES,
     can_transition,
 )
+from flood_system.response_workflow.evidence_governance import NliResult
 
 
 def seed_workflow(tmp_path, *, approval_policy=ApprovalPolicy.COMMANDER_REQUIRED):
@@ -1403,6 +1404,22 @@ def test_grounded_task_draft_covers_all_roles_and_keeps_plan_attribution(tmp_pat
     assert task.plan_basis
     assert all(item.version == "2026 演示有效版" for item in task.plan_basis)
     assert "6/6" in task.grounding_summary
+    package = dashboard.evidence_packages[-1]
+    assert len(package.field_states) == 9
+    assert set(package.required_fields) == {
+        "trigger_condition",
+        "risk_object",
+        "responsible_party",
+        "action",
+        "deadline",
+        "feedback_requirement",
+        "escalation_condition",
+    }
+    assert not package.blocking_missing_fields
+    assert package.nli_status == "unavailable"
+    assert package.nli_model_version == "nli-unavailable"
+    assert all(item.source_locator for item in package.evidence)
+    assert all(item.field_support for item in package.evidence)
 
 
 def test_grounded_task_draft_is_blocked_when_policy_evidence_is_missing(tmp_path):
@@ -1426,6 +1443,12 @@ def test_grounded_task_draft_is_blocked_when_policy_evidence_is_missing(tmp_path
     assert result.task is None
     assert {"procedure", "exception", "attribution"}.issubset(result.missing_roles)
     assert result.validation_errors
+    assert result.evidence_package is not None
+    assert len(result.evidence_package.field_states) == 9
+    assert result.evidence_package.missing_reasons
+    assert set(result.evidence_package.missing_reasons.values()) == {
+        "NOT_RETRIEVED"
+    }
     timeline = workflow.repository.list_timeline_entries(event_id)
     assert timeline[-1].action == "task_draft_blocked_by_evidence_gate"
 
@@ -1940,6 +1963,15 @@ def test_evidence_conflicts_are_separate_from_applicability_and_require_human_re
             clause="4.1",
             conflict_key="action",
             conflict_value="close_road",
+            field_support={
+                "trigger_condition": 0.8,
+                "risk_object": 0.8,
+                "responsible_party": 0.8,
+                "action": 0.9,
+                "deadline": 0.8,
+                "feedback_requirement": 0.8,
+                "escalation_condition": 0.8,
+            },
         ),
         TaskEvidenceRef(
             source_type="plan_document",
@@ -1985,6 +2017,63 @@ def test_evidence_conflicts_are_separate_from_applicability_and_require_human_re
     assert resolved.status == "frozen"
     assert resolved.conflicts[0].resolution_status == "resolved"
     assert resolved.field_states["action"].value == "SUPPORTED"
+    versions = workflow.list_evidence_package_versions(package.package_id)
+    assert [item.version for item in versions] == [1, 2]
+    comparison = workflow.compare_evidence_package_versions(package.package_id)
+    assert comparison["from_version"] == 1
+    assert comparison["to_version"] == 2
+    assert comparison["conflict_changes"][conflicts[0].conflict_id] == {
+        "before": "unresolved",
+        "after": "resolved",
+    }
+
+
+def test_versioned_nli_adapter_creates_auditable_semantic_conflict(tmp_path):
+    _, workflow, _, _ = seed_workflow(tmp_path)
+
+    class ContradictionNli:
+        model_version = "test-nli-v1"
+
+        def classify(self, premise: str, hypothesis: str) -> NliResult:
+            return NliResult(
+                relation="contradiction",
+                confidence=0.94,
+                model_version=self.model_version,
+            )
+
+    workflow.nli_adapter = ContradictionNli()
+    evidence = [
+        TaskEvidenceRef(
+            source_type="plan_document",
+            source_id="DOC-CLOSE",
+            title="道路封控规程",
+            excerpt="达到橙色阈值后必须立即封闭下穿道路。",
+            roles=[EvidenceRole.PROCEDURE],
+            source_locator="document://DOC-CLOSE#4.1",
+            field_support={"action": 0.92},
+        ),
+        TaskEvidenceRef(
+            source_type="plan_document",
+            source_id="DOC-OPEN",
+            title="道路保通规程",
+            excerpt="达到橙色阈值后禁止封闭下穿道路，应保持通行。",
+            roles=[EvidenceRole.PROCEDURE],
+            source_locator="document://DOC-OPEN#2.3",
+            field_support={"action": 0.9},
+        ),
+    ]
+
+    conflicts, assessments = workflow._analyze_evidence_conflicts(evidence)
+    repeated, repeated_assessments = workflow._analyze_evidence_conflicts(evidence)
+
+    assert len(assessments) == 1
+    assert assessments[0].relation.value == "contradiction"
+    assert assessments[0].model_version == "test-nli-v1"
+    assert conflicts[0].conflict_type == "SEMANTIC_CONTRADICTION"
+    assert conflicts[0].nli_assessment_id == assessments[0].assessment_id
+    assert conflicts[0].detection_methods == ["versioned_nli"]
+    assert repeated[0].conflict_id == conflicts[0].conflict_id
+    assert repeated_assessments[0].assessment_id == assessments[0].assessment_id
 
 
 def test_task_transition_table_is_exhaustive_and_terminal_states_have_no_outgoing_edges():

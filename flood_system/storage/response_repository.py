@@ -328,6 +328,40 @@ class ResponseRepositoryMixin:
                 metrics[key] = int(row["count"])
         return metrics
 
+    def evidence_governance_metrics(self) -> dict[str, int]:
+        with self._connect() as conn:
+            rows = conn.execute(
+                "SELECT payload FROM response_evidence_packages ORDER BY package_id, version"
+            ).fetchall()
+        versions = [
+            self._secure_load(EvidencePackageVersion, row["payload"]) for row in rows
+        ]
+        latest: dict[str, EvidencePackageVersion] = {}
+        for package in versions:
+            latest[package.package_id] = package
+        metrics = {
+            "package_versions": len(versions),
+            "packages": len(latest),
+            "unresolved_conflicts": 0,
+            "missing_fields": 0,
+            "blocking_missing_fields": 0,
+            "nli_unavailable": 0,
+            "nli_partial": 0,
+            "nli_error": 0,
+        }
+        for package in latest.values():
+            metrics["unresolved_conflicts"] += sum(
+                item.resolution_status != "resolved" for item in package.conflicts
+            )
+            metrics["missing_fields"] += len(package.missing_fields)
+            metrics["blocking_missing_fields"] += len(
+                package.blocking_missing_fields
+            )
+            key = f"nli_{package.nli_status}"
+            if key in metrics:
+                metrics[key] += 1
+        return metrics
+
     def commit_risk_object_registry_import(
         self,
         *,
@@ -868,6 +902,19 @@ class ResponseRepositoryMixin:
         return (
             self._secure_load(EvidencePackageVersion, row["payload"]) if row else None
         )
+
+    def list_evidence_package_versions(
+        self, package_id: str
+    ) -> list[EvidencePackageVersion]:
+        with self._connect() as conn:
+            rows = conn.execute(
+                "SELECT payload FROM response_evidence_packages WHERE package_id = ? "
+                "ORDER BY version",
+                (package_id,),
+            ).fetchall()
+        return [
+            self._secure_load(EvidencePackageVersion, row["payload"]) for row in rows
+        ]
 
     def save_rule_evaluation(self, record: RuleEvaluationRecord) -> None:
         with self._connect() as conn:

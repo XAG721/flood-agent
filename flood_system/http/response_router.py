@@ -330,6 +330,25 @@ def create_response_router(system_provider: Callable[[], Any]) -> APIRouter:
     def get_evidence_package(package_id: str, http_request: Request):
         return invoke(lambda: service().get_evidence_package(package_id))
 
+    @router.get("/evidence-packages/{package_id}/versions")
+    def list_evidence_package_versions(package_id: str, http_request: Request):
+        return invoke(lambda: service().list_evidence_package_versions(package_id))
+
+    @router.get("/evidence-packages/{package_id}/compare")
+    def compare_evidence_package_versions(
+        package_id: str,
+        http_request: Request,
+        from_version: int | None = None,
+        to_version: int | None = None,
+    ):
+        return invoke(
+            lambda: service().compare_evidence_package_versions(
+                package_id,
+                from_version=from_version,
+                to_version=to_version,
+            )
+        )
+
     @router.get("/events/{event_id}/timeline")
     def list_event_timeline(event_id: str, http_request: Request):
         return invoke(lambda: service().get_dashboard(event_id).timeline)

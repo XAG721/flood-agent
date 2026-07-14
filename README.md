@@ -46,7 +46,7 @@
 - CandidateRun、原始评分、校准置信度、算法/特征/数据版本、五类逐候选特征快照和缺失特征；
 - 人工确认对象的不可变 CandidateObjectListVersion、乐观锁、认证加密与任务成案绑定；
 - 多格式文档原件快照、页码/章节/条款/表格行定位、草稿—解析—发布—退役生命周期、可复现索引构建、生效/替代/失效检索隔离，以及任务 Schema/规则集不可变版本；
-- FRC-RAG 证据包字段三态、冲突原子组、人工裁决与冻结版本；
+- FRC-RAG 九任务字段证据矩阵、`SUPPORTED/CONFLICTED/MISSING` 三态、显式缺失原因、可定位原文、冲突原子组、版本化 NLI 候选、人工裁决、冻结版本与相邻版本差异；
 - 固定任务 JSON Schema、`PASS/SOFT_WARNING/HARD_BLOCK` 规则结果、乐观锁；
 - 审批载荷/证据哈希、幂等 Outbox、接收/开始/完成/核验四类时限；
 - 身份绑定的通用写请求幂等账本、原响应重放、并发预留和失败不确定态；
@@ -102,6 +102,7 @@ python scripts/run_progressive_completion_audit.py
 - `flood_system/config.py`：运行配置与 `FLOOD_DB_PATH` 解析。
 - `flood_system/http/`：AgentTwin HTTP 路由层。
 - `flood_system/response_workflow/`：区县防办确定性响应工作流模型与服务。
+- `flood_system/response_workflow/evidence_governance.py`：九字段查询分解、字段—证据映射、稳定冲突 ID、NLI 适配器边界和缺失原因规则。
 - `flood_system/rag_evaluation.py`：BM25、哈希向量 Dense、混合、MMR、Rerank、覆盖贪心代理和 FRC-Select 的可重复工程评测、w/o Role / w/o Field 消融与机器可读 Gate 2 判定；覆盖贪心代理不是 SetR 复现。
 - `flood_system/frc_public_evidence.py`：导入真实 BGE/reranker 公共数据产物，重算逐样本配对置信区间，并执行缺失证据压力切片。
 - `flood_system/frc_housing_weight_sensitivity.py`：复用 HousingQA 冻结真实模型分数，执行字段/角色权重单因素扫描并生成可失败关闭的逐例工件；该跨领域诊断不改变 Gate 2。

@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { responseWorkflowApi } from "../api/responseWorkflowApi";
-import type { EventDashboard } from "../types/response";
+import type { EvidencePackageVersion, EvidenceRole, EventDashboard } from "../types/response";
 import { ResponseWorkflowPage } from "./ResponseWorkflowPage";
 
 vi.mock("../api/responseWorkflowApi", () => ({
@@ -147,6 +147,10 @@ const dashboard: EventDashboard = {
           roles: ["condition", "procedure", "attribution"],
           document_version: "2026 演示有效版",
           clause: "3.4",
+          source_locator: "rag://policy/policy-1#clause=3.4",
+          section_path: ["第三章", "3.4"],
+          field_support: { trigger_condition: 0.9, action: 0.85 },
+          conflicts_with: [],
         },
       ],
       validation_warnings: [],
@@ -201,6 +205,89 @@ describe("ResponseWorkflowPage", () => {
     expect(screen.getByText("查看 1 条来源证据")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "风险对象主数据" })).toBeInTheDocument();
     expect(screen.getByText(/当前区域尚无带 EPSG:4326 坐标/)).toBeInTheDocument();
+  });
+
+  it("展示九字段证据、原文定位、NLI 降级状态和版本差异", async () => {
+    const evidenceDashboard = structuredClone(dashboard);
+    const evidence = {
+      source_type: "plan_document",
+      source_id: "DOC-2026-4.1",
+      title: "碑林区下穿通道响应规程",
+      excerpt: "达到橙色预警阈值后，应由区住建局立即封控下穿通道。",
+      roles: ["condition", "procedure", "attribution"] as EvidenceRole[],
+      document_version: "2026-A",
+      document_version_id: "DOCVER-2026-A",
+      clause: "4.1",
+      source_locator: "document://DOCVER-2026-A?page=12#clause=4.1",
+      page_number: 12,
+      section_path: ["第四章", "4.1"],
+      field_support: { trigger_condition: 0.92, action: 0.88 },
+      conflicts_with: [],
+    };
+    const common = {
+      package_id: "EVID-1",
+      event_id: evidenceDashboard.event.event_id,
+      object_id: "TUNNEL-017",
+      status: "needs_review",
+      task_schema_version: "response-task-schema-v2",
+      retrieval_strategy: "FRC-RAG",
+      retrieval_run_id: "RETRIEVAL-1",
+      retrieval_mode: "SHADOW" as const,
+      baseline_source_ids: ["DOC-2026-4.1"],
+      frc_source_ids: ["DOC-2026-4.1"],
+      shadow_comparison: { overlap: ["DOC-2026-4.1"], baseline_only: [], frc_only: [] },
+      role_coverage: { condition: true, object: true, responsibility: true, procedure: true, exception: true, attribution: true },
+      evidence: [evidence],
+      conflicts: [],
+      required_fields: ["trigger_condition", "risk_object", "responsible_party", "action", "deadline", "feedback_requirement", "escalation_condition"],
+      nli_status: "unavailable",
+      nli_model_version: "nli-unavailable",
+      nli_assessments: [{
+        assessment_id: "NLI-1",
+        left_source_id: "DOC-2026-4.1",
+        right_source_id: "REGISTRY-1",
+        shared_fields: ["action"],
+        relation: "unavailable" as const,
+        confidence: 0,
+        model_version: "nli-unavailable",
+        status: "unavailable",
+        error: "No versioned NLI model adapter is configured",
+      }],
+      created_by: "duty-1",
+      created_at: "2026-07-15T08:00:00Z",
+    };
+    const version1 = {
+      ...common,
+      version: 1,
+      field_states: { trigger_condition: "SUPPORTED", action: "MISSING" },
+      missing_fields: ["action"],
+      blocking_missing_fields: ["action"],
+      missing_reasons: { action: "NOT_RETRIEVED" },
+      field_evidence_map: { trigger_condition: ["DOC-2026-4.1"], action: [] },
+      content_hash: "a".repeat(64),
+    } satisfies EvidencePackageVersion;
+    const version2 = {
+      ...common,
+      version: 2,
+      field_states: { trigger_condition: "SUPPORTED", action: "SUPPORTED" },
+      missing_fields: [],
+      blocking_missing_fields: [],
+      missing_reasons: {},
+      field_evidence_map: { trigger_condition: ["DOC-2026-4.1"], action: ["DOC-2026-4.1"] },
+      content_hash: "b".repeat(64),
+      created_at: "2026-07-15T08:05:00Z",
+    } satisfies EvidencePackageVersion;
+    evidenceDashboard.evidence_packages = [version1, version2];
+    vi.mocked(responseWorkflowApi.getDashboard).mockResolvedValue(evidenceDashboard);
+
+    render(<ResponseWorkflowPage />);
+
+    expect(await screen.findByText("NLI unavailable · nli-unavailable")).toBeInTheDocument();
+    expect(screen.getByText("V1 → V2")).toBeInTheDocument();
+    expect(screen.getByText("字段状态变化 1")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "查看原文定位" }));
+    expect(screen.getByText("document://DOCVER-2026-A?page=12#clause=4.1")).toBeInTheDocument();
+    expect(screen.getByRole("complementary", { name: "证据原文定位" })).toBeInTheDocument();
   });
 
   it("明确区域台账筛查边界并刷新候选对象", async () => {

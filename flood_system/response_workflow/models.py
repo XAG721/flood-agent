@@ -108,6 +108,21 @@ class EvidenceFieldState(StrEnum):
     MISSING = "MISSING"
 
 
+class EvidenceMissingReason(StrEnum):
+    SOURCE_ABSENT_CONFIRMED = "SOURCE_ABSENT_CONFIRMED"
+    NOT_RETRIEVED = "NOT_RETRIEVED"
+    INDEX_INCOMPLETE = "INDEX_INCOMPLETE"
+    SOURCE_UNAVAILABLE = "SOURCE_UNAVAILABLE"
+
+
+class NliRelation(StrEnum):
+    ENTAILMENT = "entailment"
+    CONTRADICTION = "contradiction"
+    NEUTRAL = "neutral"
+    UNAVAILABLE = "unavailable"
+    ERROR = "error"
+
+
 class RetrievalMode(StrEnum):
     BASELINE_ONLY = "BASELINE_ONLY"
     SHADOW = "SHADOW"
@@ -463,6 +478,27 @@ class TaskEvidenceRef(WorkflowModel):
     conflict_value: str | None = None
     jurisdiction: str | None = None
     superseded: bool = False
+    document_version_id: str | None = None
+    source_locator: str = ""
+    page_number: int | None = Field(default=None, ge=1)
+    section_path: list[str] = Field(default_factory=list)
+    table_name: str | None = None
+    row_start: int | None = Field(default=None, ge=1)
+    row_end: int | None = Field(default=None, ge=1)
+    field_support: dict[str, float] = Field(default_factory=dict)
+    conflicts_with: list[str] = Field(default_factory=list)
+
+
+class EvidenceNliAssessment(WorkflowModel):
+    assessment_id: str
+    left_source_id: str
+    right_source_id: str
+    shared_fields: list[str] = Field(min_length=1)
+    relation: NliRelation
+    confidence: float = Field(ge=0, le=1)
+    model_version: str
+    status: str
+    error: str = ""
 
 
 class EvidenceConflict(WorkflowModel):
@@ -474,6 +510,12 @@ class EvidenceConflict(WorkflowModel):
     resolution_status: str = "unresolved"
     resolution_reason: str = ""
     selected_source_ids: list[str] = Field(default_factory=list)
+    conflict_dimensions: list[str] = Field(default_factory=list)
+    detection_methods: list[str] = Field(default_factory=lambda: ["deterministic_rule"])
+    detector_version: str = "evidence-conflict-v2"
+    nli_assessment_id: str | None = None
+    nli_relation: NliRelation | None = None
+    nli_confidence: float | None = Field(default=None, ge=0, le=1)
 
 
 class EvidencePackageVersion(WorkflowModel):
@@ -490,6 +532,13 @@ class EvidencePackageVersion(WorkflowModel):
     evidence: list[TaskEvidenceRef] = Field(default_factory=list)
     conflicts: list[EvidenceConflict] = Field(default_factory=list)
     missing_fields: list[str] = Field(default_factory=list)
+    required_fields: list[str] = Field(default_factory=list)
+    blocking_missing_fields: list[str] = Field(default_factory=list)
+    missing_reasons: dict[str, EvidenceMissingReason] = Field(default_factory=dict)
+    field_evidence_map: dict[str, list[str]] = Field(default_factory=dict)
+    nli_status: str = "not_run"
+    nli_model_version: str = "nli-unavailable"
+    nli_assessments: list[EvidenceNliAssessment] = Field(default_factory=list)
     content_hash: str
     created_by: str
     reviewed_by: str | None = None

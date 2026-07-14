@@ -139,6 +139,19 @@ export interface TaskEvidenceRef {
   document_version?: string | null;
   clause?: string | null;
   trust_score?: number | null;
+  conflict_key?: string | null;
+  conflict_value?: string | null;
+  jurisdiction?: string | null;
+  superseded?: boolean;
+  document_version_id?: string | null;
+  source_locator: string;
+  page_number?: number | null;
+  section_path: string[];
+  table_name?: string | null;
+  row_start?: number | null;
+  row_end?: number | null;
+  field_support: Record<string, number>;
+  conflicts_with: string[];
 }
 
 export interface ResponseTask {
@@ -327,7 +340,21 @@ export interface RiskObjectRegistryImportResult {
 }
 
 export type EvidenceFieldState = "SUPPORTED" | "CONFLICTED" | "MISSING";
+export type EvidenceMissingReason = "SOURCE_ABSENT_CONFIRMED" | "NOT_RETRIEVED" | "INDEX_INCOMPLETE" | "SOURCE_UNAVAILABLE";
+export type NliRelation = "entailment" | "contradiction" | "neutral" | "unavailable" | "error";
 export type RetrievalMode = "BASELINE_ONLY" | "SHADOW" | "REVIEW" | "CANARY" | "DEFAULT";
+
+export interface EvidenceNliAssessment {
+  assessment_id: string;
+  left_source_id: string;
+  right_source_id: string;
+  shared_fields: string[];
+  relation: NliRelation;
+  confidence: number;
+  model_version: string;
+  status: string;
+  error: string;
+}
 
 export interface EvidencePackageVersion {
   package_id: string;
@@ -357,8 +384,22 @@ export interface EvidencePackageVersion {
     evidence_source_ids: string[];
     resolution_status: string;
     resolution_reason: string;
+    selected_source_ids: string[];
+    conflict_dimensions: string[];
+    detection_methods: string[];
+    detector_version: string;
+    nli_assessment_id?: string | null;
+    nli_relation?: NliRelation | null;
+    nli_confidence?: number | null;
   }>;
   missing_fields: string[];
+  required_fields: string[];
+  blocking_missing_fields: string[];
+  missing_reasons: Partial<Record<string, EvidenceMissingReason>>;
+  field_evidence_map: Record<string, string[]>;
+  nli_status: string;
+  nli_model_version: string;
+  nli_assessments: EvidenceNliAssessment[];
   content_hash: string;
   created_by: string;
   reviewed_by?: string | null;

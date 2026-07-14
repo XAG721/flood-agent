@@ -89,6 +89,25 @@ const evidenceRoleText: Record<EvidenceRole, string> = {
   attribution: "版本归因",
 };
 
+const taskFieldText: Record<string, string> = {
+  trigger_condition: "触发条件",
+  risk_object: "风险对象",
+  responsible_party: "责任主体",
+  action: "处置动作",
+  deadline: "完成时限",
+  resource_dependency: "资源依赖",
+  feedback_requirement: "反馈要求",
+  escalation_condition: "升级条件",
+  exception_condition: "例外条件",
+};
+
+const missingReasonText: Record<string, string> = {
+  SOURCE_ABSENT_CONFIRMED: "已确认来源无此规定",
+  NOT_RETRIEVED: "本次检索未命中",
+  INDEX_INCOMPLETE: "索引尚不完整",
+  SOURCE_UNAVAILABLE: "来源当前不可用",
+};
+
 function formatDate(value?: string | null) {
   if (!value) return "—";
   return new Intl.DateTimeFormat("zh-CN", {
@@ -831,6 +850,7 @@ function EvidenceWorkbench({ packages, role, busy, run }: { packages: EvidencePa
   const [manualSourceId, setManualSourceId] = useState("");
   const [manualExcerpt, setManualExcerpt] = useState("");
   const [manualRole, setManualRole] = useState<EvidenceRole>("procedure");
+  const [selectedSourceId, setSelectedSourceId] = useState<string | null>(null);
   const latest = packages[packages.length - 1];
   if (!latest) {
     return (
@@ -839,17 +859,31 @@ function EvidenceWorkbench({ packages, role, busy, run }: { packages: EvidencePa
       </section>
     );
   }
+  const packageVersions = packages.filter((item) => item.package_id === latest.package_id);
+  const previous = packageVersions.length > 1 ? packageVersions[packageVersions.length - 2] : null;
+  const selectedEvidence = latest.evidence.find((item) => item.source_id === selectedSourceId) ?? null;
+  const changedFields = previous
+    ? Object.keys(latest.field_states).filter((field) => previous.field_states[field] !== latest.field_states[field])
+    : [];
+  const previousSources = new Set(previous?.evidence.map((item) => item.source_id) ?? []);
+  const latestSources = new Set(latest.evidence.map((item) => item.source_id));
+  const addedSources = previous ? [...latestSources].filter((sourceId) => !previousSources.has(sourceId)) : [];
+  const removedSources = previous ? [...previousSources].filter((sourceId) => !latestSources.has(sourceId)) : [];
+  const unresolvedConflicts = latest.conflicts.filter((item) => item.resolution_status !== "resolved");
   return (
     <section className={styles.evidenceWorkbench} aria-labelledby="evidence-workbench-heading">
       <header>
         <div><h3 id="evidence-workbench-heading">证据工作台</h3><p>字段状态、冲突和缺失项与任务草案分离保存。</p></div>
-        <span>{latest.retrieval_strategy} · {latest.retrieval_mode} · {packages.length} 个版本</span>
+        <span>{latest.retrieval_strategy} · {latest.retrieval_mode} · {packageVersions.length} 个版本</span>
       </header>
       <div className={styles.fieldStateList}>
         {Object.entries(latest.field_states).map(([field, state]) => (
           <div key={field}>
-            <span>{field}</span>
-            <strong data-state={state}>{state === "SUPPORTED" ? "有支持" : state === "CONFLICTED" ? "有冲突" : "缺失"}</strong>
+            <span>{taskFieldText[field] ?? field}</span>
+            <span>
+              <strong data-state={state}>{state === "SUPPORTED" ? "有支持" : state === "CONFLICTED" ? "有冲突" : "缺失"}</strong>
+              {state === "MISSING" ? <small>{missingReasonText[latest.missing_reasons[field] ?? ""] ?? "原因待核验"}</small> : null}
+            </span>
           </div>
         ))}
       </div>
@@ -859,17 +893,56 @@ function EvidenceWorkbench({ packages, role, busy, run }: { packages: EvidencePa
         <span>重合 {latest.shadow_comparison.overlap?.length ?? 0}</span>
         <span>仅基线 {latest.shadow_comparison.baseline_only?.length ?? 0}</span>
         <span>仅 FRC {latest.shadow_comparison.frc_only?.length ?? 0}</span>
+        <span>NLI {latest.nli_status} · {latest.nli_model_version}</span>
+        <span>语义评估 {latest.nli_assessments.length}</span>
       </div>
+      {previous ? (
+        <div className={styles.evidenceVersionDiff} aria-label="证据包版本差异">
+          <strong>V{previous.version} → V{latest.version}</strong>
+          <span>字段状态变化 {changedFields.length}</span>
+          <span>新增来源 {addedSources.length}</span>
+          <span>移除来源 {removedSources.length}</span>
+          <span>冲突 {previous.conflicts.length} → {latest.conflicts.length}</span>
+        </div>
+      ) : null}
+      <div className={styles.evidenceSourceGrid} aria-label="证据来源列表">
+        {latest.evidence.map((item) => (
+          <article key={`${item.source_type}:${item.source_id}`}>
+            <header>
+              <strong>{item.title}</strong>
+              <span>{item.document_version ?? "无版本"}{item.clause ? ` · ${item.clause}` : ""}</span>
+            </header>
+            <p>{item.excerpt}</p>
+            <div>
+              {item.roles.map((itemRole) => <span key={itemRole}>{evidenceRoleText[itemRole]}</span>)}
+              {Object.keys(item.field_support).map((field) => <span key={field}>{taskFieldText[field] ?? field}</span>)}
+            </div>
+            <button type="button" onClick={() => setSelectedSourceId(item.source_id)}>查看原文定位</button>
+          </article>
+        ))}
+      </div>
+      {selectedEvidence ? (
+        <aside className={styles.evidenceSourceDetail} aria-label="证据原文定位">
+          <header><strong>{selectedEvidence.title}</strong><button type="button" onClick={() => setSelectedSourceId(null)}>关闭</button></header>
+          <dl>
+            <div><dt>定位</dt><dd>{selectedEvidence.source_locator}</dd></div>
+            <div><dt>版本/条款</dt><dd>{selectedEvidence.document_version ?? "—"} / {selectedEvidence.clause ?? "—"}</dd></div>
+            <div><dt>页码/表格</dt><dd>{selectedEvidence.page_number ?? "—"} / {selectedEvidence.table_name ?? "—"}{selectedEvidence.row_start ? ` 第 ${selectedEvidence.row_start}-${selectedEvidence.row_end ?? selectedEvidence.row_start} 行` : ""}</dd></div>
+          </dl>
+          <blockquote>{selectedEvidence.excerpt}</blockquote>
+        </aside>
+      ) : null}
       <footer>
         <span>{latest.package_id} · V{latest.version} · {latest.status}</span>
-        <span>{latest.conflicts.length} 个冲突 · {latest.missing_fields.length} 个缺失字段 · 哈希 {latest.content_hash.slice(0, 12)}</span>
+        <span>{unresolvedConflicts.length} 个未决冲突 · {latest.blocking_missing_fields.length} 个关键缺失 / {latest.missing_fields.length} 个全部缺失 · 哈希 {latest.content_hash.slice(0, 12)}</span>
       </footer>
       {latest.conflicts.length ? (
         <div className={styles.conflictList}>
           {latest.conflicts.map((conflict) => (
             <article key={conflict.conflict_id}>
-              <div><strong>{conflict.field_name} · {conflict.conflict_type}</strong><span>{conflict.severity} · {conflict.resolution_status}</span></div>
+              <div><strong>{taskFieldText[conflict.field_name] ?? conflict.field_name} · {conflict.conflict_type}</strong><span>{conflict.severity} · {conflict.resolution_status}</span></div>
               <p>冲突来源：{conflict.evidence_source_ids.join("、")}</p>
+              <p>检测：{conflict.detection_methods.join("、")} · 维度：{conflict.conflict_dimensions.join("、")}{conflict.nli_relation ? ` · NLI ${conflict.nli_relation} ${Math.round((conflict.nli_confidence ?? 0) * 100)}%` : ""}</p>
               {conflict.resolution_status !== "resolved" && ["reviewer", "commander"].includes(role) ? (
                 <button type="button" disabled={busy} onClick={() => {
                   const selected = window.prompt(`请输入采用的来源 ID：${conflict.evidence_source_ids.join(" / ")}`, conflict.evidence_source_ids[0]);
@@ -904,7 +977,7 @@ function EvidenceWorkbench({ packages, role, busy, run }: { packages: EvidencePa
           <button type="submit" disabled={busy || manualExcerpt.trim().length < 8}>保存补证版本</button>
         </form>
       ) : null}
-      {latest.status !== "frozen" && latest.missing_fields.length === 0 && latest.conflicts.every((item) => item.resolution_status === "resolved") && ["reviewer", "commander", "admin"].includes(role) ? (
+      {latest.status !== "frozen" && latest.blocking_missing_fields.length === 0 && latest.conflicts.every((item) => item.resolution_status === "resolved") && ["reviewer", "commander", "admin"].includes(role) ? (
         <button type="button" className={styles.secondaryButton} disabled={busy} onClick={() => {
           const reason = window.prompt("冻结后证据包不可修改。请输入独立复核理由：");
           if (reason?.trim()) void run("冻结证据包", () => responseWorkflowApi.freezeEvidencePackage(latest.package_id, role, reason.trim()));

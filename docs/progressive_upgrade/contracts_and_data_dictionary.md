@@ -65,7 +65,10 @@
 | DocumentLifecycleEvent | `lifecycle_event_id` | `draft/parsed/published/index_failed/superseded/retired` 追加历史；只有已发布且当前有效版本可进入检索 |
 | IndexBuildRecord | `build_id` | 绑定文档、语料、解析器、嵌入配置、索引版本、条款数和成功/失败结果；失败不伪造成功状态，可在同一源快照上重试 |
 | ContractVersionRecord | `contract_type + version_id` | 任务 JSON Schema 和规则集的规范 JSON、SHA-256 及替代版本不可变保存；同版本内容漂移使服务失败关闭 |
-| EvidencePackageVersion | `package_id + version` | 字段 `SUPPORTED/CONFLICTED/MISSING`；冲突裁决生成新版本；冻结后哈希稳定 |
+| EvidencePackageVersion | `package_id + version` | 九字段逐项为 `SUPPORTED/CONFLICTED/MISSING`；保存核心字段、阻断缺失、缺失原因、字段—来源映射、NLI 状态/模型/逐对判断；补证和冲突裁决生成新版本，冻结后哈希稳定 |
+| TaskEvidenceRef | `source_type + source_id` | 保存版本 ID/标签、条款、页码、章节路径、表格行、原文定位、字段支持度、角色、可信分和显式冲突关系；正式字段不得绑定无法定位的来源 |
+| EvidenceConflict | `conflict_id` | 由冲突类型、字段和有序来源生成稳定 ID；保存版本/辖区/主体/阈值/时间/动作等维度、检测方法、NLI 判断、严重度、人工选定来源和裁决理由 |
+| EvidenceNliAssessment | `assessment_id` | 保存证据对、共享字段、`entailment/contradiction/neutral/unavailable/error`、置信度、模型版本、执行状态和错误；只标记候选，不裁定法规优先级 |
 | ResponseTask | `task_id + version` | 对象、责任、动作、四时限、依据、证据、审批和下发哈希完整；存在冻结清单时必须绑定最新 `list_id/version/content_hash` 且对象仍与冻结核验快照一致 |
 | RuleEvaluationRecord | `evaluation_id` | `PASS/SOFT_WARNING/HARD_BLOCK`；HARD_BLOCK 不得审批 |
 | ApprovalRecord | `approval_id` | 绑定任务版本、载荷哈希、证据哈希和规则集版本；不可修改删除 |

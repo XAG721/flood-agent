@@ -211,6 +211,10 @@ export const responseWorkflowApi = {
           roles: [evidenceRole],
           document_version: "manual-reviewed",
           clause: "manual-reference",
+          source_locator: `manual://verified/${sourceId}`,
+          section_path: [],
+          field_support: {},
+          conflicts_with: [],
         }],
       }),
     });

@@ -14,8 +14,8 @@
 | Document parse/publish/retire | `POST /document-versions/{id}/parse`、`publish`、`retire` | 解析、复核发布和退役各自形成不可变生命周期记录；发布生成页/章节/条款/表格定位，替代版本令旧索引失效。 |
 | Index build | `POST /index-builds`、`GET /index-builds/{id}` | 索引结果绑定文档源哈希、语料、解析器和嵌入版本；失败记录可审计，重建失败不覆盖最后有效索引。 |
 | Task schema / rule-set version | `GET /contracts/task-schema`、`GET /contracts/rule-set`、`GET /contracts/{type}/versions` | 当前规范按规范 JSON SHA-256 固化为不可变版本；同一版本内容漂移失败关闭。 |
-| Evidence run/package | `POST /events/{event_id}/risk-objects/{object_id}/task-draft`、`GET /evidence-packages/{package_id}` | 草案请求先独立生成 EvidencePackageVersion；证据不足时不创建任务。 |
-| Manual evidence/freeze | `POST /evidence-packages/{id}/manual-evidence`、`POST /evidence-packages/{id}/freeze` | 人工补证和冻结均创建新版本；缺失或未决冲突时拒绝冻结。 |
+| Evidence run/package | `POST /events/{event_id}/risk-objects/{object_id}/task-draft`、`GET /evidence-packages/{package_id}`、`GET /evidence-packages/{package_id}/versions`、`GET /evidence-packages/{package_id}/compare` | 草案请求先独立生成 EvidencePackageVersion；证据不足时不创建任务。版本接口返回不可变历史，比较接口返回字段状态、缺失原因、来源、冲突和 NLI 状态差异。 |
+| Manual evidence/freeze | `POST /evidence-packages/{id}/manual-evidence`、`POST /evidence-packages/{id}/freeze` | 人工补证和冻结均创建新版本；核心字段缺失或存在未决冲突时拒绝冻结，可选的资源/例外字段保持 MISSING 并附原因。 |
 | Conflict resolve | `POST /evidence-packages/{id}/conflicts/{conflict_id}/resolve` | 选中来源、理由和裁决人写入新证据包版本。 |
 | Task draft/version/validate/submit | `POST .../task-draft`、`PATCH /tasks/{id}`、`GET /tasks/{id}/versions`、`POST /tasks/{id}/submit` | 更新携带 `expected_version`；提交前运行规则与证据门禁。 |
 | Approval approve/reject/revision | `POST /tasks/{id}/decision` | 决定绑定任务、证据和规则哈希；拒绝返回草稿并形成新版本路径。 |

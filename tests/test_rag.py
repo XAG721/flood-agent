@@ -4,6 +4,7 @@ from datetime import UTC, datetime, timedelta
 
 from flood_system.models import CorpusType, RAGDocument
 from flood_system.rag import SimpleRAGStore
+from flood_system.response_workflow.evidence_governance import task_field_slots
 
 
 def build_store(documents: list[RAGDocument]) -> SimpleRAGStore:
@@ -161,6 +162,43 @@ def test_query_evidence_set_selects_complementary_slots_under_budget() -> None:
     assert first_selection["covered_slots"][0]["text"] == "elder evacuation"
     assert second_selection["covered_slots"][0]["text"] == "school closure"
     assert second_selection["selected_token_cost"] == 160
+
+
+def test_query_evidence_set_preserves_all_nine_task_field_slots() -> None:
+    slots = task_field_slots()
+    store = build_store(
+        [
+            RAGDocument(
+                doc_id="district_response_contract",
+                corpus=CorpusType.POLICY,
+                title="洪水响应九字段规程",
+                content=" ".join(slots),
+                metadata={"source_tier": "official", "token_cost": 120},
+            )
+        ]
+    )
+
+    results = store.query_evidence_set(
+        CorpusType.POLICY,
+        "洪水响应九字段规程",
+        top_k=1,
+        slots=slots,
+    )
+
+    assert len(slots) == 9
+    selection = store.explain(results[0])["evidence_selection"]
+    assert len(selection["all_slots"]) == 9
+    assert [item["text"].split("｜", 1)[0] for item in selection["all_slots"]] == [
+        "trigger_condition",
+        "risk_object",
+        "responsible_party",
+        "action",
+        "deadline",
+        "resource_dependency",
+        "feedback_requirement",
+        "escalation_condition",
+        "exception_condition",
+    ]
 
 
 def test_query_evidence_set_respects_token_budget_and_records_ledger() -> None:

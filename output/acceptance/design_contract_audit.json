@@ -76,7 +76,7 @@
         {
           "path": "tests/test_response_workflow.py",
           "contains": "test_schema_ledger_migration_quarantine_and_legacy_adapter_are_traceable",
-          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
         },
         {
           "path": "tests/test_postgis_migration.py",
@@ -86,7 +86,7 @@
         {
           "path": "tests/test_response_workflow.py",
           "contains": "test_database_backup_and_isolated_restore_drill_are_hash_verified",
-          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
         },
         {
           "path": "infra/migrations/README.md",
@@ -104,7 +104,7 @@
         {
           "path": "docs/progressive_upgrade/api_compatibility_mapping.md",
           "contains": null,
-          "sha256": "62cea0fe608034309fe503819ae76f7f719662b1afaf3ac91964c704f981beb7"
+          "sha256": "d024e1704926d015a9d50372a115b793fc4dc2c409c1493784110ede5662bc86"
         },
         {
           "path": "tests/test_response_identity.py",
@@ -134,12 +134,12 @@
         {
           "path": "tests/test_response_workflow.py",
           "contains": "test_rule_engine_hard_blocks_ungrounded_ai_draft_and_optimistic_lock_conflict",
-          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
         },
         {
           "path": "tests/test_response_workflow.py",
           "contains": "test_external_service_callback_is_token_bound_idempotent_and_state_safe",
-          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
         }
       ],
       "assigned_item_count": 13
@@ -152,12 +152,12 @@
         {
           "path": "docs/progressive_upgrade/operations_and_rollback.md",
           "contains": "M7",
-          "sha256": "50a2bb607f25e13a8c34ddafb0238860fe139718f4cb55f4fa6654d87ac6071c"
+          "sha256": "3283b0f8b2ea87c401fcd8ab2af7f2db93dadde711bc7e1bc35aed6a6176f0fc"
         },
         {
           "path": "docs/progressive_upgrade/completion_traceability_audit.md",
           "contains": "生产旧流量归零和账号撤权",
-          "sha256": "f62b6e0f10f1eb4e6e849341784dd589a1b600ac6b8cf067b8ed7e8da9932721"
+          "sha256": "f9a239ca8865da78e5e4c1efa61d5df80ea3297d796bccc39f18367a997a9f5f"
         }
       ],
       "assigned_item_count": 2
@@ -170,7 +170,7 @@
         {
           "path": "frontend/src/pages/ResponseWorkflowPage.tsx",
           "contains": "受控模拟环境",
-          "sha256": "f435dd99aa2692707548de328bdf3bdfad24d5913742884bc469be1d7eec91b6"
+          "sha256": "a765617e89f7073b906f3cd3d376608cc52f0e9b9a7aa839a0565e67048fa680"
         },
         {
           "path": "frontend/e2e/response-workflow.spec.ts",
@@ -185,7 +185,7 @@
         {
           "path": "tests/test_response_workflow.py",
           "contains": "test_task_creation_idempotency_key_prevents_duplicate_formal_tasks",
-          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
         }
       ],
       "assigned_item_count": 10
@@ -208,12 +208,12 @@
         {
           "path": "tests/test_response_workflow.py",
           "contains": "test_feature_flags_are_scoped_versioned_and_admin_only",
-          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
         },
         {
           "path": "tests/test_response_workflow.py",
           "contains": "test_retrieval_modes_compare_baseline_and_frc_without_shadow_side_effects",
-          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
         },
         {
           "path": "tests/test_simulation_dataset.py",
@@ -223,7 +223,7 @@
         {
           "path": "docs/progressive_upgrade/operations_and_rollback.md",
           "contains": null,
-          "sha256": "50a2bb607f25e13a8c34ddafb0238860fe139718f4cb55f4fa6654d87ac6071c"
+          "sha256": "3283b0f8b2ea87c401fcd8ab2af7f2db93dadde711bc7e1bc35aed6a6176f0fc"
         }
       ],
       "assigned_item_count": 10
@@ -241,17 +241,17 @@
         {
           "path": "README.md",
           "contains": "FRC-RAG",
-          "sha256": "db595fac480d2092e88e554126adf1d5766ef18c679634af52101f1e88bbf098"
+          "sha256": "f9eb917aa3a96841e7f2550a9fc1f7d914a51ded2d440f84e02c8da6c990f210"
         },
         {
           "path": "docs/V3_upgrade_acceptance_matrix.md",
           "contains": "NO-GO/SHADOW",
-          "sha256": "ce93e3014338cb210160bec58bd471a4ea93b70532f7660998837481a7e81d13"
+          "sha256": "61da2b20c6ffcdde37f32cf8170a9e7b4f10daa887260406e894cd2ba6350888"
         },
         {
           "path": "docs/progressive_upgrade/completion_traceability_audit.md",
           "contains": "受控模拟",
-          "sha256": "f62b6e0f10f1eb4e6e849341784dd589a1b600ac6b8cf067b8ed7e8da9932721"
+          "sha256": "f9a239ca8865da78e5e4c1efa61d5df80ea3297d796bccc39f18367a997a9f5f"
         }
       ],
       "assigned_item_count": 5
@@ -269,17 +269,17 @@
         {
           "path": "tests/test_response_workflow.py",
           "contains": "test_grounded_task_draft_covers_all_roles_and_keeps_plan_attribution",
-          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
         },
         {
           "path": "tests/test_response_workflow.py",
           "contains": "test_evidence_conflicts_are_separate_from_applicability_and_require_human_resolution",
-          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
         },
         {
           "path": "flood_system/rag.py",
           "contains": "EvidenceSelectionPolicy",
-          "sha256": "b7da1ab79737db0d7cd1686fba2dc6bba7bc6c739d44c76ebbdc5938d4d20f8b"
+          "sha256": "b85708d112b8f672fa33fbd48af182b3a5b88a0cff4a69b3d9da86375a0c638b"
         },
         {
           "path": "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
@@ -307,27 +307,27 @@
         {
           "path": "tests/test_response_workflow.py",
           "contains": "test_full_deterministic_response_loop_and_close",
-          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
         },
         {
           "path": "tests/test_response_workflow.py",
           "contains": "test_approved_dispatch_uses_idempotent_outbox_and_payload_hash",
-          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
         },
         {
           "path": "tests/test_response_workflow.py",
           "contains": "test_high_risk_task_cannot_be_self_approved_or_approved_by_reviewer",
-          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
         },
         {
           "path": "tests/test_response_workflow.py",
           "contains": "test_all_four_deadline_types_escalate_with_explicit_audit",
-          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
         },
         {
           "path": "tests/test_response_workflow.py",
           "contains": "test_read_only_event_replay_requires_integrity_and_returns_traceable_snapshot",
-          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
         },
         {
           "path": "flood_system/response_workflow/state_machine.py",
@@ -355,7 +355,7 @@
         {
           "path": "tests/test_response_workflow.py",
           "contains": "test_task_transition_table_is_exhaustive_and_terminal_states_have_no_outgoing_edges",
-          "sha256": "58b46359e729425f78f2900f75c0e81fadb2ac9c3837f9842faa769ca03e5439"
+          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
         },
         {
           "path": "scripts/run_progressive_completion_audit.py",
@@ -365,12 +365,12 @@
         {
           "path": "tests/test_completion_audit.py",
           "contains": "test_completion_audit_proves_controlled_scope_without_overstating_production",
-          "sha256": "c95caab811354c707ed9b5e95992d27c133df056a4b813ef75235fa01c01ca4f"
+          "sha256": "f5629f583e12a0b51da5229678f8ca5e2a89d2bec0170aaf541bb16a694bfca9"
         },
         {
           "path": "docs/progressive_upgrade/evaluation_and_gate_report.md",
           "contains": null,
-          "sha256": "cf9252ff7f95202623c0f38c2ce43577bf41451f991e78067569f998d2d4232d"
+          "sha256": "02a1c474eded80ca898928c037eb42aa6c94ade71656098322aa97a4e27218de"
         }
       ],
       "assigned_item_count": 11

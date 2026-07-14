@@ -23,6 +23,9 @@ def test_health_readiness_metrics_and_openapi_are_available():
     assert "flood_document_versions" in metrics.text
     assert "flood_document_index_builds" in metrics.text
     assert "flood_contract_versions" in metrics.text
+    assert "flood_evidence_package_versions" in metrics.text
+    assert "flood_evidence_unresolved_conflicts" in metrics.text
+    assert "flood_evidence_nli_packages" in metrics.text
     assert "flood_api_latency_ms" in metrics.text
     assert metrics.headers["X-Correlation-ID"]
     openapi = client.get("/openapi.json")
@@ -30,6 +33,8 @@ def test_health_readiness_metrics_and_openapi_are_available():
     assert "/response/contracts/task-schema" in openapi.json()["paths"]
     assert "/response/dispatch/outbox" in openapi.json()["paths"]
     assert "/response/evidence-packages/{package_id}" in openapi.json()["paths"]
+    assert "/response/evidence-packages/{package_id}/versions" in openapi.json()["paths"]
+    assert "/response/evidence-packages/{package_id}/compare" in openapi.json()["paths"]
     assert "/response/events/{event_id}/replay" in openapi.json()["paths"]
     assert "/response/tasks/{task_id}/transitions" in openapi.json()["paths"]
     assert "/response/risk-objects" in openapi.json()["paths"]

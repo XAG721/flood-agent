@@ -9,7 +9,7 @@ from typing import Any, Iterable
 from flood_system.design_contract_audit import build_design_contract_audit
 
 
-AUDIT_VERSION = "progressive-completion-audit-v9"
+AUDIT_VERSION = "progressive-completion-audit-v10"
 
 SOFTWARE_DELIVERABLES: dict[str, tuple[str, ...]] = {
     "web_and_cesium": (
@@ -30,6 +30,11 @@ SOFTWARE_DELIVERABLES: dict[str, tuple[str, ...]] = {
     "frc_rag_service": (
         "flood_system/rag.py",
         "flood_system/response_workflow/service.py",
+    ),
+    "evidence_governance": (
+        "flood_system/response_workflow/evidence_governance.py",
+        "tests/test_response_workflow.py",
+        "frontend/src/pages/ResponseWorkflowPage.tsx",
     ),
     "draft_rules_state_machine": (
         "flood_system/response_workflow/service.py",
@@ -155,6 +160,10 @@ REQUIRED_RESPONSE_PATHS = {
     "/response/risk-objects/file-imports",
     "/response/documents",
     "/response/events/{event_id}/evidence-packages",
+    "/response/evidence-packages/{package_id}",
+    "/response/evidence-packages/{package_id}/versions",
+    "/response/evidence-packages/{package_id}/compare",
+    "/response/evidence-packages/{package_id}/manual-evidence",
     "/response/evidence-packages/{package_id}/conflicts/{conflict_id}/resolve",
     "/response/evidence-packages/{package_id}/freeze",
     "/response/events/{event_id}/risk-objects/{object_id}/task-draft",
