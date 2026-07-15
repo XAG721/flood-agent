@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from flood_system.frc_lawshift_ablation import (
+from research.frc_rag.lawshift_temporal_ablation import (
     LAWSHIFT_METHODS,
     build_lawshift_ablation_report,
     build_lawshift_temporal_cases,
@@ -13,7 +13,7 @@ from flood_system.frc_lawshift_ablation import (
     select_lawshift_evidence,
     select_lawshift_methods,
 )
-from flood_system.frc_public_evidence import load_lawshift_temporal_ablation
+from research.frc_rag.public_evidence import load_lawshift_temporal_ablation
 
 
 def _write_fixture(root: Path) -> Path:

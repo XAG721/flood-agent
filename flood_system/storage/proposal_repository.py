@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..v2.models import ActionProposal, Advisory, ProposalStatus
+from ..compat.legacy_platform.models import ActionProposal, Advisory, ProposalStatus
 
 
 class ProposalRepositoryMixin:

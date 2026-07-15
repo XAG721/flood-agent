@@ -24,9 +24,9 @@
       "status": "PASS_CONTROLLED",
       "scope": "迁移账本、隔离、数量/哈希/外键对账、备份恢复和只读影子投影",
       "evidence": [
-        {"path": "tests/test_response_workflow.py", "contains": "test_schema_ledger_migration_quarantine_and_legacy_adapter_are_traceable"},
+        {"path": "tests/test_response_governance.py", "contains": "test_schema_ledger_migration_quarantine_and_legacy_adapter_are_traceable"},
         {"path": "tests/test_postgis_migration.py", "contains": "test_simulated_response_projection_preserves_hashes_and_postgis_polygon"},
-        {"path": "tests/test_response_workflow.py", "contains": "test_database_backup_and_isolated_restore_drill_are_hash_verified"},
+        {"path": "tests/test_response_resilience.py", "contains": "test_database_backup_and_isolated_restore_drill_are_hash_verified"},
         {"path": "infra/migrations/README.md"}
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -41,8 +41,8 @@
         {"path": "tests/test_response_idempotency.py", "contains": "test_core_write_replays_completed_response_and_rejects_key_reuse"},
         {"path": "tests/test_response_idempotency.py", "contains": "test_repository_reservation_is_atomic_and_completion_is_encrypted"},
         {"path": "tests/test_response_idempotency.py", "contains": "test_completed_idempotency_response_survives_encryption_key_rotation"},
-        {"path": "tests/test_response_workflow.py", "contains": "test_rule_engine_hard_blocks_ungrounded_ai_draft_and_optimistic_lock_conflict"},
-        {"path": "tests/test_response_workflow.py", "contains": "test_external_service_callback_is_token_bound_idempotent_and_state_safe"}
+        {"path": "tests/test_response_tasks.py", "contains": "test_rule_engine_hard_blocks_ungrounded_ai_draft_and_optimistic_lock_conflict"},
+        {"path": "tests/test_response_dispatch.py", "contains": "test_external_service_callback_is_token_bound_idempotent_and_state_safe"}
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -62,7 +62,7 @@
         {"path": "frontend/src/pages/ResponseWorkflowPage.tsx", "contains": "受控模拟环境"},
         {"path": "frontend/e2e/response-workflow.spec.ts", "contains": "await page.reload()"},
         {"path": "frontend/e2e/response-workflow.spec.ts", "contains": "legacy-operations-baseline.png"},
-        {"path": "tests/test_response_workflow.py", "contains": "test_task_creation_idempotency_key_prevents_duplicate_formal_tasks"}
+        {"path": "tests/test_response_governance.py", "contains": "test_task_creation_idempotency_key_prevents_duplicate_formal_tasks"}
       ],
       "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
     },
@@ -72,8 +72,8 @@
       "evidence": [
         {"path": ".github/workflows/ci.yml", "contains": "Compose build and smoke test"},
         {"path": "docker-compose.yml"},
-        {"path": "tests/test_response_workflow.py", "contains": "test_feature_flags_are_scoped_versioned_and_admin_only"},
-        {"path": "tests/test_response_workflow.py", "contains": "test_retrieval_modes_compare_baseline_and_frc_without_shadow_side_effects"},
+        {"path": "tests/test_response_dispatch.py", "contains": "test_feature_flags_are_scoped_versioned_and_admin_only"},
+        {"path": "tests/test_response_tasks.py", "contains": "test_retrieval_modes_compare_baseline_and_frc_without_shadow_side_effects"},
         {"path": "tests/test_simulation_dataset.py", "contains": "test_simulation_gateway_cannot_contact_real_endpoints"},
         {"path": "docs/progressive_upgrade/operations_and_rollback.md"}
       ],
@@ -95,8 +95,8 @@
       "scope": "来源/版本/模拟标记、候选解释、两层 Schema、证据三态、冲突与适用性分离及测试隔离",
       "evidence": [
         {"path": "tests/test_simulation_dataset.py", "contains": "test_floodagent_bench_is_deterministic_traceable_and_family_isolated"},
-        {"path": "tests/test_response_workflow.py", "contains": "test_grounded_task_draft_covers_all_roles_and_keeps_plan_attribution"},
-        {"path": "tests/test_response_workflow.py", "contains": "test_evidence_conflicts_are_separate_from_applicability_and_require_human_resolution"},
+        {"path": "tests/test_response_tasks.py", "contains": "test_grounded_task_draft_covers_all_roles_and_keeps_plan_attribution"},
+        {"path": "tests/test_response_governance.py", "contains": "test_evidence_conflicts_are_separate_from_applicability_and_require_human_resolution"},
         {"path": "flood_system/rag.py", "contains": "EvidenceSelectionPolicy"},
         {"path": "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json", "contains": "RUN_PUBLIC_EXPERT_FIELD_REAL_MODEL_ROLE_DIAGNOSTIC"},
         {"path": "tests/test_frc_housing_weight_sensitivity.py", "contains": "test_public_loader_reaggregates_committed_weight_sensitivity"},
@@ -108,11 +108,11 @@
       "status": "PASS_CONTROLLED",
       "scope": "AI 无正式写权限、审批重审、哈希、Outbox、职责分离、异常分支、四时限、失败关闭和回放",
       "evidence": [
-        {"path": "tests/test_response_workflow.py", "contains": "test_full_deterministic_response_loop_and_close"},
-        {"path": "tests/test_response_workflow.py", "contains": "test_approved_dispatch_uses_idempotent_outbox_and_payload_hash"},
-        {"path": "tests/test_response_workflow.py", "contains": "test_high_risk_task_cannot_be_self_approved_or_approved_by_reviewer"},
-        {"path": "tests/test_response_workflow.py", "contains": "test_all_four_deadline_types_escalate_with_explicit_audit"},
-        {"path": "tests/test_response_workflow.py", "contains": "test_read_only_event_replay_requires_integrity_and_returns_traceable_snapshot"},
+        {"path": "tests/test_response_dispatch.py", "contains": "test_full_deterministic_response_loop_and_close"},
+        {"path": "tests/test_response_dispatch.py", "contains": "test_approved_dispatch_uses_idempotent_outbox_and_payload_hash"},
+        {"path": "tests/test_response_resilience.py", "contains": "test_high_risk_task_cannot_be_self_approved_or_approved_by_reviewer"},
+        {"path": "tests/test_response_tasks.py", "contains": "test_all_four_deadline_types_escalate_with_explicit_audit"},
+        {"path": "tests/test_response_governance.py", "contains": "test_read_only_event_replay_requires_integrity_and_returns_traceable_snapshot"},
         {"path": "flood_system/response_workflow/state_machine.py", "contains": "ALLOWED_TASK_TRANSITIONS"}
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -123,7 +123,7 @@
       "evidence": [
         {"path": "docs/progressive_upgrade/asset_inventory.md"},
         {"path": "output/floodagent_bench/scenario_acceptance_report.json"},
-        {"path": "tests/test_response_workflow.py", "contains": "test_task_transition_table_is_exhaustive_and_terminal_states_have_no_outgoing_edges"},
+        {"path": "tests/test_response_governance.py", "contains": "test_task_transition_table_is_exhaustive_and_terminal_states_have_no_outgoing_edges"},
         {"path": "scripts/run_progressive_completion_audit.py"},
         {"path": "tests/test_completion_audit.py", "contains": "test_completion_audit_proves_controlled_scope_without_overstating_production"},
         {"path": "docs/progressive_upgrade/evaluation_and_gate_report.md"}

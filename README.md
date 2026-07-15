@@ -1,7 +1,7 @@
 # 基于多源时空语义关联与 FRC-RAG 的洪水预警响应系统
 
 [![CI](https://github.com/XAG721/flood-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/XAG721/flood-agent/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.3.0-2563eb)
+![Version](https://img.shields.io/badge/version-0.3.1-2563eb)
 ![Python](https://img.shields.io/badge/Python-3.12-3776ab?logo=python&logoColor=white)
 ![React](https://img.shields.io/badge/React-18-149eca?logo=react&logoColor=white)
 
@@ -13,7 +13,7 @@
 - **FRC-RAG**：以任务字段和功能角色覆盖为约束组织证据集合，显式处理证据冲突、缺失、失效与跨文档关系，为结构化任务草案提供可定位、可比较、可冻结的依据。
 
 > [!IMPORTANT]
-> 当前 `v0.3.0` 已完成单一区域、暴雨预警类型下的**受控模拟闭环**，不进行洪水预测，也不替代防汛指挥决策。FRC-RAG 的工程链路与公开数据实验可复现，但尚未证明稳定优于最强公平基线，Gate 2 保持 `NO-GO / SHADOW`；真实生产部署仍需权威数据、机构 UAT、安全与基础设施验收。
+> 当前 `v0.3.1` 已完成单一区域、暴雨预警类型下的**受控模拟闭环**，并完成三轮模块边界重构；不进行洪水预测，也不替代防汛指挥决策。FRC-RAG 的工程链路与公开数据实验可复现，但尚未证明稳定优于最强公平基线，Gate 2 保持 `NO-GO / SHADOW`；真实生产部署仍需权威数据、机构 UAT、安全与基础设施验收。
 
 ## 研究问题与系统目标
 
@@ -254,14 +254,17 @@ FRC-RAG 当前可证明的是：多字段、功能角色、适用性和冲突约
 ## 目录结构
 
 ```text
-flood_system/                         FastAPI 后端与平台兼容能力
-  response_workflow/                 响应域模型、状态机、服务与持久化
-  http/response_router.py            Core API 路由
-  response_workflow/evidence_governance.py
-                                      九字段证据与冲突治理
-frontend/                             React 响应工作台
-3D_visual/                            Cesium/CityEngine 独立可视化工程
-scripts/                              迁移、演示、评测、审计与 Worker 脚本
+flood_system/                         FastAPI 运行时
+  api.py                              应用工厂与兼容路径装配
+  http/                               运维、Core、旧平台和 AgentTwin 路由
+  response_workflow/                 响应域服务、端口、状态机与证据治理
+  storage/                            分域仓储、聚合指标与有序迁移
+  compat/                             M7 前保留的旧平台/AgentTwin 兼容实现
+frontend/src/features/response/      React 响应工作台面板、文件和 API 分域
+3D_visual/src/scene*.ts               Cesium 场景配置、类型和模型放置
+research/frc_rag/                    不进入运行时发行包的 FRC-RAG 实验
+tests/support/                        跨领域测试构造器与公共夹具
+scripts/                              迁移、演示、评测、审计与 Worker 入口
 infra/                                PostGIS 影子迁移与基础设施合同
 benchmarks/                           冻结预算与受控基准配置
 output/                               可复现评测与验收摘要
@@ -279,7 +282,8 @@ docs/                                 当前设计、运维、安全和验收文
 - [用户手册](docs/progressive_upgrade/user_manual.md)
 - [评测与 Gate 报告](docs/progressive_upgrade/evaluation_and_gate_report.md)
 - [全目标完成度追溯审计](docs/progressive_upgrade/completion_traceability_audit.md)
-- [v0.3.0 版本更新报告](docs/releases/v0.3.0.md)
+- [v0.3.1 三轮结构重构报告](docs/releases/v0.3.1.md)
+- [v0.3.0 功能更新报告](docs/releases/v0.3.0.md)
 - [OpenAPI 快照](docs/openapi.json)
 
 ## 项目定位

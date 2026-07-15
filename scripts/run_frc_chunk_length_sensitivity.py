@@ -1,6 +1,8 @@
 from __future__ import annotations
+# ruff: noqa: E402 -- research stays outside the runtime wheel.
 
 import argparse
+import sys
 import json
 import random
 from collections import defaultdict
@@ -9,7 +11,11 @@ from typing import Any
 
 import numpy as np
 
-from flood_system.frc_public_evidence import (
+REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
+if str(REPOSITORY_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPOSITORY_ROOT))
+
+from research.frc_rag.public_evidence import (
     evidence_metrics,
     read_jsonl,
     select_precomputed,

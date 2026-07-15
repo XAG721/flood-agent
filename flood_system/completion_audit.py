@@ -9,15 +9,21 @@ from typing import Any, Iterable
 from flood_system.design_contract_audit import build_design_contract_audit
 
 
-AUDIT_VERSION = "progressive-completion-audit-v10"
+AUDIT_VERSION = "progressive-completion-audit-v11"
 
 SOFTWARE_DELIVERABLES: dict[str, tuple[str, ...]] = {
     "web_and_cesium": (
         "frontend/src/pages/ResponseWorkflowPage.tsx",
+        "frontend/src/features/response/ResponseWorkflowPanels.tsx",
+        "frontend/src/features/response/api/shared.ts",
         "3D_visual/src/App.tsx",
+        "3D_visual/src/scenePlacement.ts",
     ),
     "core_api": (
         "flood_system/api.py",
+        "flood_system/http/operations_router.py",
+        "flood_system/http/legacy_platform_router.py",
+        "flood_system/http/agent_twin_router.py",
         "flood_system/http/idempotency.py",
         "flood_system/http/response_router.py",
     ),
@@ -29,15 +35,18 @@ SOFTWARE_DELIVERABLES: dict[str, tuple[str, ...]] = {
     ),
     "frc_rag_service": (
         "flood_system/rag.py",
-        "flood_system/response_workflow/service.py",
+        "flood_system/response_workflow/service_evidence.py",
+        "flood_system/response_workflow/service_tasks.py",
     ),
     "evidence_governance": (
         "flood_system/response_workflow/evidence_governance.py",
-        "tests/test_response_workflow.py",
-        "frontend/src/pages/ResponseWorkflowPage.tsx",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
+        "frontend/src/features/response/ResponseWorkflowPanels.tsx",
     ),
     "draft_rules_state_machine": (
-        "flood_system/response_workflow/service.py",
+        "flood_system/response_workflow/service_tasks.py",
+        "flood_system/response_workflow/service_dispatch.py",
         "flood_system/response_workflow/state_machine.py",
     ),
     "simulation": (
@@ -45,6 +54,8 @@ SOFTWARE_DELIVERABLES: dict[str, tuple[str, ...]] = {
         "scripts/run_simulation_scenario_acceptance.py",
     ),
     "migration": (
+        "flood_system/storage/migrations.py",
+        "tests/test_repository_migrations.py",
         "scripts/migrate_response_schema.py",
         "scripts/migrate_response_to_postgis.py",
         "infra/postgis/001_shadow_projection.sql",
@@ -137,8 +148,8 @@ DATA_EXPERIMENT_DELIVERABLES: dict[str, tuple[str, ...]] = {
         "scripts/run_lawshift_temporal_ablation.py",
         "scripts/prepare_eurlex_temporal_source.py",
         "scripts/run_eurlex_temporal_ablation.py",
-        "flood_system/frc_eurlex_temporal_ablation.py",
-        "flood_system/frc_housing_weight_sensitivity.py",
+        "research/frc_rag/eurlex_temporal_ablation.py",
+        "research/frc_rag/housing_weight_sensitivity.py",
     ),
     "contract_and_legacy_baseline_evidence": (
         "output/acceptance/legacy_baseline_manifest.json",
@@ -439,9 +450,12 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
         and experiment_audit["combined_ablation_coverage"]["missing_variants"] == []
         and rag_decision["design_16_2_experiment_coverage_complete"] is False
     )
-    service_source = (
-        repo_root / "flood_system/response_workflow/service.py"
-    ).read_text(encoding="utf-8")
+    service_source = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in sorted(
+            (repo_root / "flood_system/response_workflow").glob("service*.py")
+        )
+    )
     gate_two_is_safely_held = gate_two_is_safely_held and all(
         marker in service_source
         for marker in (
@@ -552,7 +566,8 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
                 "benchmarks/eurlex_temporal_selection.json",
                 "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.json",
                 "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation_cases.jsonl.gz",
-                "flood_system/response_workflow/service.py",
+                "flood_system/response_workflow/service_evidence.py",
+                "flood_system/response_workflow/service_tasks.py",
             ],
             {
                 "gate_2": rag_decision["gate_2"],

@@ -5,14 +5,14 @@ from pathlib import Path
 
 import pytest
 
-from flood_system.frc_conflicts_ablation import (
+from research.frc_rag.conflicts_ablation import (
     FULL_METHOD,
     WITHOUT_CONFLICT_METHOD,
     build_conflict_ablation_report,
     seed_equivalent_predictions,
     select_conflict_ablation_evidence,
 )
-from flood_system.frc_public_evidence import load_conflicts_real_model_ablation, select_precomputed
+from research.frc_rag.public_evidence import load_conflicts_real_model_ablation, select_precomputed
 
 
 def _candidate(

@@ -28,7 +28,7 @@ jobs:
       - name: Run backend suite
         run: python -m pytest -q --basetemp "${RUNNER_TEMP}/flood-pytest"
       - name: Check Python code quality
-        run: python -m ruff check flood_system scripts tests
+        run: python -m ruff check flood_system research scripts tests
       - name: Reproduce controlled acceptance evaluations
         run: |
           python scripts/generate_floodagent_bench.py --output "${RUNNER_TEMP}/acceptance/floodagent_bench.json"

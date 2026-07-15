@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "audit_version": "progressive-completion-audit-v10",
+    "audit_version": "progressive-completion-audit-v11",
     "scope": "single-district controlled simulation",
     "contract": "洪水预警响应系统_渐进式迭代开发与升级设计.md sections 18-23",
     "evidence_hash_canonicalization": "UTF-8 text without BOM with CRLF/CR normalized to LF; binary archives use raw bytes"
@@ -20,8 +20,14 @@
       "status": "PASS",
       "evidence": [
         "frontend/src/pages/ResponseWorkflowPage.tsx",
+        "frontend/src/features/response/ResponseWorkflowPanels.tsx",
+        "frontend/src/features/response/api/shared.ts",
         "3D_visual/src/App.tsx",
+        "3D_visual/src/scenePlacement.ts",
         "flood_system/api.py",
+        "flood_system/http/operations_router.py",
+        "flood_system/http/legacy_platform_router.py",
+        "flood_system/http/agent_twin_router.py",
         "flood_system/http/idempotency.py",
         "flood_system/http/response_router.py",
         "scripts/run_response_worker.py",
@@ -29,12 +35,17 @@
         "flood_system/response_workflow/document_governance.py",
         "tests/test_document_governance.py",
         "flood_system/rag.py",
-        "flood_system/response_workflow/service.py",
+        "flood_system/response_workflow/service_evidence.py",
+        "flood_system/response_workflow/service_tasks.py",
         "flood_system/response_workflow/evidence_governance.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
+        "flood_system/response_workflow/service_dispatch.py",
         "flood_system/response_workflow/state_machine.py",
         "flood_system/simulation_dataset.py",
         "scripts/run_simulation_scenario_acceptance.py",
+        "flood_system/storage/migrations.py",
+        "tests/test_repository_migrations.py",
         "scripts/migrate_response_schema.py",
         "scripts/migrate_response_to_postgis.py",
         "infra/postgis/001_shadow_projection.sql",
@@ -119,8 +130,8 @@
         "scripts/run_lawshift_temporal_ablation.py",
         "scripts/prepare_eurlex_temporal_source.py",
         "scripts/run_eurlex_temporal_ablation.py",
-        "flood_system/frc_eurlex_temporal_ablation.py",
-        "flood_system/frc_housing_weight_sensitivity.py",
+        "research/frc_rag/eurlex_temporal_ablation.py",
+        "research/frc_rag/housing_weight_sensitivity.py",
         "output/acceptance/legacy_baseline_manifest.json",
         "output/acceptance/design_contract_audit.json",
         "tests/test_design_contract_audit.py"
@@ -219,7 +230,8 @@
         "benchmarks/eurlex_temporal_selection.json",
         "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.json",
         "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation_cases.jsonl.gz",
-        "flood_system/response_workflow/service.py"
+        "flood_system/response_workflow/service_evidence.py",
+        "flood_system/response_workflow/service_tasks.py"
       ],
       "details": {
         "gate_2": "NO-GO",
@@ -317,11 +329,11 @@
     }
   ],
   "evidence_sha256": {
-    "output/floodagent_bench/scenario_acceptance_report.json": "4ffee56ef50bfca5de88d27ea20f5dbb510f0a2c585371e3de9d5e95eebb87d6",
+    "output/floodagent_bench/scenario_acceptance_report.json": "be0d3f9a570afe8c0650ade3451da899d285e20dae925d80f16269baebde23bf",
     "output/candidate_evaluation/report.json": "4f25d27e8411bae5906cc4bf8c33eeeba664201fc82e18cb4adfe36085f7c9eb",
     "output/performance/controlled_performance_report.json": "1395a8157033f4229c4c6dc896558b93fea41f10742f068d772b9cc91f8d7fc0",
     "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json": "3266eb691c29f512dc72af6f73d2716a163f79ac55d928c0d9646d2e80e57863",
-    "docs/openapi.json": "9bf7fe76a2709065d6a89abc598ad1e347d5730377a443ff854a280622f62d57",
+    "docs/openapi.json": "e22a27974753e160c319e508fedb2fdd80da4ee05ac316155a637fde57377ac7",
     "docker-compose.yml": "8204abc75a6e82041d16e52d09e94e4f84de19f00f5a9cc9338dcd91ed76a33e",
     "洪水预警响应系统_渐进式迭代开发与升级设计.md": "33dca029185977e943e566693f2bd9f52a63ffa9581ef8310036819aac2c0080",
     "面向区县防办的洪水预警响应系统_升级设计说明V3.md": "9516b012df4dddb29f1b605cfd908887f3517cae7b3eded18b43130b15a6a700",
@@ -341,10 +353,10 @@
     "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.json": "0c707d3ea3ee5138ee041b5b10b7a3b1fbbb70f91acfee7d0727e7fcc4faae1f",
     "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.md": "42f9b0e8815c531abd3dee4326cdfa2fa6af7a00bfa7fb9389be9b58f05a6f79",
     "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation_cases.jsonl.gz": "3d895269322eafea152cb366aaa50714beb6e209ac16b1d7c0df53464c31eda0",
-    "docs/progressive_upgrade/design_contract_evidence_policy.json": "b91aeaf972912b47d396f0e86bfdc64e636bda83cd31dde799abb6b627afa088",
+    "docs/progressive_upgrade/design_contract_evidence_policy.json": "cec96b737a39210e3c3df7dcb1f6977727bfdc275cd3a3c410549398c7729e1f",
     "output/acceptance/legacy_baseline_manifest.json": "f950ac1274207a32650813d288beb91302392e60d96f762346f579d7f4c46230",
     "output/acceptance/legacy_baseline_manifest.md": "dae91658b9192b8e1a0cd71378e444bc1a38c76a7aa8901656b0cd6cd35b5180",
-    "output/acceptance/design_contract_audit.json": "a6d4859409798d42061536b0dad6dda0d6afbd6c2ddf0b7058faafe0605ab5e8",
+    "output/acceptance/design_contract_audit.json": "2e7fe910c8ad4415f0b9bea2c1905ae910396d60807db0567c5ab81ee716e7ea",
     "output/acceptance/design_contract_audit.md": "58e520542908d60f94a80dd08b9806add51c71d61c688e4271350fc3fc110894"
   },
   "external_no_go": [

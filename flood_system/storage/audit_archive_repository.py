@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from datetime import datetime, timezone
 
-from ..v2.models import (
+from ..compat.legacy_platform.models import (
     ArchiveRunRecord,
     ArchiveStatusView,
     AuditRecord,

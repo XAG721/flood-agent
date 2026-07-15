@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 
-from flood_system.frc_public_evidence import (
+from research.frc_rag.public_evidence import (
     _stable_missing_evidence_ids,
     aggregate_precomputed_selectors,
     audit_public_ablation_schema,
@@ -327,7 +327,7 @@ def test_k_sensitivity_uses_coverage_proxy_name_instead_of_setr(tmp_path):
             encoding="utf-8",
         )
 
-    from flood_system.frc_public_evidence import load_k_sensitivity_audit
+    from research.frc_rag.public_evidence import load_k_sensitivity_audit
 
     audit = load_k_sensitivity_audit(metrics)
 

@@ -9,77 +9,79 @@ from .simulation_dataset import DEFAULT_SIMULATION_SEED, build_floodagent_bench
 
 
 SCENARIO_TEST_EVIDENCE: dict[str, tuple[str, ...]] = {
-    "SIMSCENARIO-01": ("tests/test_response_workflow.py::test_full_deterministic_response_loop_and_close",),
+    "SIMSCENARIO-01": ("tests/test_response_dispatch.py::test_full_deterministic_response_loop_and_close",),
     "SIMSCENARIO-02": (
-        "tests/test_response_workflow.py::test_candidate_discovery_excludes_missing_coordinates_with_explicit_limitation",
+        "tests/test_response_registry.py::test_candidate_discovery_excludes_missing_coordinates_with_explicit_limitation",
     ),
     "SIMSCENARIO-03": (
         "tests/test_response_policies.py::test_geo_polygon_rejects_wrong_crs_and_out_of_bounds_coordinates",
     ),
     "SIMSCENARIO-04": (
-        "tests/test_response_workflow.py::test_risk_object_alias_duplicate_is_merged_and_expired_registry_is_blocked",
+        "tests/test_response_registry.py::test_risk_object_alias_duplicate_is_merged_and_expired_registry_is_blocked",
     ),
     "SIMSCENARIO-05": ("tests/test_response_policies.py::test_point_in_polygon_includes_boundary_and_excludes_outside_point",),
     "SIMSCENARIO-06": (
-        "tests/test_response_workflow.py::test_risk_object_alias_duplicate_is_merged_and_expired_registry_is_blocked",
+        "tests/test_response_registry.py::test_risk_object_alias_duplicate_is_merged_and_expired_registry_is_blocked",
     ),
     "SIMSCENARIO-07": (
-        "tests/test_response_workflow.py::test_missing_registry_object_can_be_manually_added_and_confirmed",
+        "tests/test_response_registry.py::test_missing_registry_object_can_be_manually_added_and_confirmed",
     ),
     "SIMSCENARIO-08": (
-        "tests/test_response_workflow.py::test_document_versions_are_clause_indexed_and_superseded_versions_leave_current_retrieval",
+        "tests/test_response_governance.py::test_document_versions_are_clause_indexed_and_superseded_versions_leave_current_retrieval",
         "tests/test_document_governance.py::test_document_lifecycle_is_append_only_and_retrieval_uses_only_current_versions",
     ),
     "SIMSCENARIO-09": (
-        "tests/test_response_workflow.py::test_evidence_conflicts_are_separate_from_applicability_and_require_human_resolution",
+        "tests/test_response_governance.py::test_evidence_conflicts_are_separate_from_applicability_and_require_human_resolution",
     ),
     "SIMSCENARIO-10": ("tests/test_frc_evaluation.py::test_conflict_detection_benchmark_reports_gate_two_metrics",),
     "SIMSCENARIO-11": (
-        "tests/test_response_workflow.py::test_evidence_conflicts_are_separate_from_applicability_and_require_human_resolution",
+        "tests/test_response_governance.py::test_evidence_conflicts_are_separate_from_applicability_and_require_human_resolution",
     ),
     "SIMSCENARIO-12": (
-        "tests/test_response_workflow.py::test_grounded_task_draft_covers_all_roles_and_keeps_plan_attribution",
+        "tests/test_response_tasks.py::test_grounded_task_draft_covers_all_roles_and_keeps_plan_attribution",
     ),
     "SIMSCENARIO-13": (
-        "tests/test_response_workflow.py::test_grounded_task_draft_is_blocked_when_policy_evidence_is_missing",
+        "tests/test_response_tasks.py::test_grounded_task_draft_is_blocked_when_policy_evidence_is_missing",
     ),
     "SIMSCENARIO-14": (
-        "tests/test_response_workflow.py::test_document_parse_and_index_dependency_failures_are_isolated",
+        "tests/test_response_governance.py::test_document_parse_and_index_dependency_failures_are_isolated",
         "tests/test_document_governance.py::test_supported_document_formats_produce_traceable_clauses",
     ),
     "SIMSCENARIO-15": (
-        "tests/test_response_workflow.py::test_document_parse_and_index_dependency_failures_are_isolated",
+        "tests/test_response_governance.py::test_document_parse_and_index_dependency_failures_are_isolated",
         "tests/test_document_governance.py::test_document_upload_rejects_path_hash_mismatch_and_unverified_scans",
-        "tests/test_system.py::test_supervisor_loop_retries_and_records_warning",
+        "tests/test_compat_agents.py::test_supervisor_loop_retries_and_records_warning",
     ),
-    "SIMSCENARIO-16": ("tests/test_system.py::test_platform_api_returns_explicit_llm_errors_without_rule_fallback",),
+    "SIMSCENARIO-16": (
+        "tests/test_legacy_platform_api.py::test_platform_api_returns_explicit_llm_errors_without_rule_fallback",
+    ),
     "SIMSCENARIO-17": (
-        "tests/test_response_workflow.py::test_task_versions_keep_complete_immutable_snapshots_and_approval_history",
+        "tests/test_response_resilience.py::test_task_versions_keep_complete_immutable_snapshots_and_approval_history",
     ),
     "SIMSCENARIO-18": (
-        "tests/test_response_workflow.py::test_rule_engine_hard_blocks_ungrounded_ai_draft_and_optimistic_lock_conflict",
+        "tests/test_response_tasks.py::test_rule_engine_hard_blocks_ungrounded_ai_draft_and_optimistic_lock_conflict",
     ),
     "SIMSCENARIO-19": (
-        "tests/test_response_workflow.py::test_simulated_dispatch_fault_matrix_is_audited_without_mutating_task_state",
-        "tests/test_response_workflow.py::test_external_service_callback_is_token_bound_idempotent_and_state_safe",
+        "tests/test_response_dispatch.py::test_simulated_dispatch_fault_matrix_is_audited_without_mutating_task_state",
+        "tests/test_response_dispatch.py::test_external_service_callback_is_token_bound_idempotent_and_state_safe",
     ),
     "SIMSCENARIO-20": (
-        "tests/test_response_workflow.py::test_simulated_dispatch_fault_matrix_is_audited_without_mutating_task_state",
+        "tests/test_response_dispatch.py::test_simulated_dispatch_fault_matrix_is_audited_without_mutating_task_state",
     ),
     "SIMSCENARIO-21": (
-        "tests/test_response_workflow.py::test_liaison_assignment_and_reassignment_control_the_field_executor",
-        "tests/test_response_workflow.py::test_deadline_extension_is_independently_approved_without_mutating_approved_payload",
-        "tests/test_response_workflow.py::test_resource_shortage_feedback_creates_escalation_with_alternatives",
+        "tests/test_response_resilience.py::test_liaison_assignment_and_reassignment_control_the_field_executor",
+        "tests/test_response_tasks.py::test_deadline_extension_is_independently_approved_without_mutating_approved_payload",
+        "tests/test_response_tasks.py::test_resource_shortage_feedback_creates_escalation_with_alternatives",
     ),
     "SIMSCENARIO-22": (
-        "tests/test_response_workflow.py::test_all_four_deadline_types_escalate_with_explicit_audit",
+        "tests/test_response_tasks.py::test_all_four_deadline_types_escalate_with_explicit_audit",
     ),
     "SIMSCENARIO-23": (
-        "tests/test_response_workflow.py::test_verification_can_return_completion_for_rework_without_losing_feedback",
+        "tests/test_response_dispatch.py::test_verification_can_return_completion_for_rework_without_losing_feedback",
     ),
     "SIMSCENARIO-24": (
-        "tests/test_response_workflow.py::test_manual_takeover_and_commander_cancellation_are_audited_terminal_branches",
-        "tests/test_response_workflow.py::test_simulated_dispatch_timeout_stays_pending_and_recovers_idempotently",
+        "tests/test_response_tasks.py::test_manual_takeover_and_commander_cancellation_are_audited_terminal_branches",
+        "tests/test_response_dispatch.py::test_simulated_dispatch_timeout_stays_pending_and_recovers_idempotently",
     ),
 }
 

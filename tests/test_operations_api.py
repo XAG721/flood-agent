@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
-from flood_system.api import app
+from flood_system.api import app, create_app
+from flood_system.system import FloodWarningSystem
 
 
 def test_health_readiness_metrics_and_openapi_are_available():
@@ -33,14 +34,18 @@ def test_health_readiness_metrics_and_openapi_are_available():
     assert "/response/contracts/task-schema" in openapi.json()["paths"]
     assert "/response/dispatch/outbox" in openapi.json()["paths"]
     assert "/response/evidence-packages/{package_id}" in openapi.json()["paths"]
-    assert "/response/evidence-packages/{package_id}/versions" in openapi.json()["paths"]
+    assert (
+        "/response/evidence-packages/{package_id}/versions" in openapi.json()["paths"]
+    )
     assert "/response/evidence-packages/{package_id}/compare" in openapi.json()["paths"]
     assert "/response/events/{event_id}/replay" in openapi.json()["paths"]
     assert "/response/tasks/{task_id}/transitions" in openapi.json()["paths"]
     assert "/response/risk-objects" in openapi.json()["paths"]
     assert "/response/risk-objects/imports" in openapi.json()["paths"]
     assert "/response/risk-objects/file-imports" in openapi.json()["paths"]
-    assert "/response/events/{event_id}/candidate-object-lists" in openapi.json()["paths"]
+    assert (
+        "/response/events/{event_id}/candidate-object-lists" in openapi.json()["paths"]
+    )
     assert (
         "/response/events/{event_id}/candidate-object-lists/freeze"
         in openapi.json()["paths"]
@@ -51,3 +56,18 @@ def test_health_readiness_metrics_and_openapi_are_available():
     assert "/response/document-versions/{version_id}/retire" in openapi.json()["paths"]
     assert "/response/index-builds" in openapi.json()["paths"]
     assert "/response/contracts/{contract_type}/versions" in openapi.json()["paths"]
+
+
+def test_metrics_snapshot_uses_aggregated_repository_read(tmp_path):
+    system = FloodWarningSystem(tmp_path / "operations-metrics.db")
+    system.response_workflow.bootstrap_demo()
+
+    snapshot = system.repository.response_metrics_snapshot()
+
+    assert snapshot["events_total"] == 1
+    assert snapshot["events_active"] == 1
+    assert snapshot["rules"]["PASS"] >= 1
+    with TestClient(create_app(system_override=system)) as client:
+        metrics = client.get("/metrics")
+    assert metrics.status_code == 200
+    assert "flood_response_events_total 1" in metrics.text

@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 from ..models import ResourceStatus
-from ..v2.models import EntityProfile
+from ..compat.legacy_platform.models import EntityProfile
 
 
 class RuntimeRepositoryMixin:

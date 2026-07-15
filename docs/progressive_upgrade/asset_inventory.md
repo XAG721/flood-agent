@@ -8,7 +8,7 @@
 |---|---|---|---|---|---|---|---|---|---|---|
 | LEGACY-FE-01 | 页面 | `frontend/src/components/DigitalTwinCesiumCanvas.tsx` | Cesium 三维场景、对象标注和相机交互 | 否 | Cesium 静态资源、3D 模型 | 部分可复现 | 前端回归 | REUSE/REFACTOR | 新版预警、对象和任务数据访问层 | 关闭响应页开关，保留旧展示入口 |
 | LEGACY-FE-02 | 页面 | `frontend/src/features/copilot/` | 智能问答与 AgentTwin 演示 | 间接 | V2 API、模型网关 | 部分可复现 | 前端回归 | WRAP/RETIRE | 证据工作台、结构化草案 | 只读保留，不允许写正式响应状态 |
-| LEGACY-BE-01 | 后端 | `flood_system/v2/`、`flood_system/v3/` | 事件展示、智能体编排、方案雏形 | 是，写旧 V2/V3 表 | SQLite、模型网关 | 可复现 | Python 回归 | WRAP/RETIRE | `response_workflow` Core API | 旧入口只读；恢复旧展示但禁止绕过新状态机 |
+| LEGACY-BE-01 | 后端兼容层 | `flood_system/compat/legacy_platform/`、`flood_system/compat/agent_twin/` | 事件展示、智能体编排、方案雏形 | 是，写旧 V2/V3 表 | SQLite、模型网关 | 可复现 | Python 回归 | WRAP/RETIRE | `response_workflow` Core API | 已隔离到 `compat`；旧入口只读，M7 前禁止删除或绕过新状态机 |
 | LEGACY-RAG-01 | 算法 | `flood_system/rag.py`、`rag_runtime.py` | BM25、Dense、Hybrid 等基础检索 | 否 | 本地文档、可选神经模型 | 可复现 | RAG 专项测试 | REUSE/WRAP | RetrievalStrategy 与 FRC-RAG | `BASELINE_ONLY` |
 | LEGACY-DATA-01 | 数据 | `data/flood_warning_system_v2.db` | V2/V3 演示数据和页面状态 | 是 | SQLite | 可复现 | 存储回归 | WRAP/RETIRE | `response_*` 新业务表 | 旧表只读，新数据不双写 |
 | LEGACY-OBJ-01 | 数据 | `v2_entity_profiles`、`bootstrap_data` | 重点对象登记台账与部分坐标 | 是 | JSON/SQLite | 可复现 | 候选筛查测试 | WRAP | 风险对象版本与 CandidateRun | 缺字段时降级为区域关联并显示限制 |

@@ -20,7 +20,7 @@
       "name": "正常预警—对象—任务闭环",
       "expected_error_codes": [],
       "automated_evidence": [
-        "tests/test_response_workflow.py::test_full_deterministic_response_loop_and_close"
+        "tests/test_response_dispatch.py::test_full_deterministic_response_loop_and_close"
       ],
       "missing_evidence_refs": [],
       "status": "covered"
@@ -32,7 +32,7 @@
         "SPATIAL_DATA_MISSING"
       ],
       "automated_evidence": [
-        "tests/test_response_workflow.py::test_candidate_discovery_excludes_missing_coordinates_with_explicit_limitation"
+        "tests/test_response_registry.py::test_candidate_discovery_excludes_missing_coordinates_with_explicit_limitation"
       ],
       "missing_evidence_refs": [],
       "status": "covered"
@@ -56,7 +56,7 @@
         "DUPLICATE_RISK_OBJECT"
       ],
       "automated_evidence": [
-        "tests/test_response_workflow.py::test_risk_object_alias_duplicate_is_merged_and_expired_registry_is_blocked"
+        "tests/test_response_registry.py::test_risk_object_alias_duplicate_is_merged_and_expired_registry_is_blocked"
       ],
       "missing_evidence_refs": [],
       "status": "covered"
@@ -80,7 +80,7 @@
         "STALE_DATA"
       ],
       "automated_evidence": [
-        "tests/test_response_workflow.py::test_risk_object_alias_duplicate_is_merged_and_expired_registry_is_blocked"
+        "tests/test_response_registry.py::test_risk_object_alias_duplicate_is_merged_and_expired_registry_is_blocked"
       ],
       "missing_evidence_refs": [],
       "status": "covered"
@@ -92,7 +92,7 @@
         "MANUAL_SUPPLEMENT_REQUIRED"
       ],
       "automated_evidence": [
-        "tests/test_response_workflow.py::test_missing_registry_object_can_be_manually_added_and_confirmed"
+        "tests/test_response_registry.py::test_missing_registry_object_can_be_manually_added_and_confirmed"
       ],
       "missing_evidence_refs": [],
       "status": "covered"
@@ -104,7 +104,7 @@
         "DOCUMENT_VERSION_CONFLICT"
       ],
       "automated_evidence": [
-        "tests/test_response_workflow.py::test_document_versions_are_clause_indexed_and_superseded_versions_leave_current_retrieval",
+        "tests/test_response_governance.py::test_document_versions_are_clause_indexed_and_superseded_versions_leave_current_retrieval",
         "tests/test_document_governance.py::test_document_lifecycle_is_append_only_and_retrieval_uses_only_current_versions"
       ],
       "missing_evidence_refs": [],
@@ -117,7 +117,7 @@
         "JURISDICTION_CONFLICT"
       ],
       "automated_evidence": [
-        "tests/test_response_workflow.py::test_evidence_conflicts_are_separate_from_applicability_and_require_human_resolution"
+        "tests/test_response_governance.py::test_evidence_conflicts_are_separate_from_applicability_and_require_human_resolution"
       ],
       "missing_evidence_refs": [],
       "status": "covered"
@@ -141,7 +141,7 @@
         "RESPONSIBILITY_CONFLICT"
       ],
       "automated_evidence": [
-        "tests/test_response_workflow.py::test_evidence_conflicts_are_separate_from_applicability_and_require_human_resolution"
+        "tests/test_response_governance.py::test_evidence_conflicts_are_separate_from_applicability_and_require_human_resolution"
       ],
       "missing_evidence_refs": [],
       "status": "covered"
@@ -153,7 +153,7 @@
         "RULE_EXCEPTION_REVIEW_REQUIRED"
       ],
       "automated_evidence": [
-        "tests/test_response_workflow.py::test_grounded_task_draft_covers_all_roles_and_keeps_plan_attribution"
+        "tests/test_response_tasks.py::test_grounded_task_draft_covers_all_roles_and_keeps_plan_attribution"
       ],
       "missing_evidence_refs": [],
       "status": "covered"
@@ -165,7 +165,7 @@
         "EVIDENCE_MISSING"
       ],
       "automated_evidence": [
-        "tests/test_response_workflow.py::test_grounded_task_draft_is_blocked_when_policy_evidence_is_missing"
+        "tests/test_response_tasks.py::test_grounded_task_draft_is_blocked_when_policy_evidence_is_missing"
       ],
       "missing_evidence_refs": [],
       "status": "covered"
@@ -177,7 +177,7 @@
         "DOCUMENT_PARSE_FAILED"
       ],
       "automated_evidence": [
-        "tests/test_response_workflow.py::test_document_parse_and_index_dependency_failures_are_isolated",
+        "tests/test_response_governance.py::test_document_parse_and_index_dependency_failures_are_isolated",
         "tests/test_document_governance.py::test_supported_document_formats_produce_traceable_clauses"
       ],
       "missing_evidence_refs": [],
@@ -190,9 +190,9 @@
         "DEPENDENCY_UNAVAILABLE"
       ],
       "automated_evidence": [
-        "tests/test_response_workflow.py::test_document_parse_and_index_dependency_failures_are_isolated",
+        "tests/test_response_governance.py::test_document_parse_and_index_dependency_failures_are_isolated",
         "tests/test_document_governance.py::test_document_upload_rejects_path_hash_mismatch_and_unverified_scans",
-        "tests/test_system.py::test_supervisor_loop_retries_and_records_warning"
+        "tests/test_compat_agents.py::test_supervisor_loop_retries_and_records_warning"
       ],
       "missing_evidence_refs": [],
       "status": "covered"
@@ -204,7 +204,7 @@
         "MODEL_OUTPUT_INVALID"
       ],
       "automated_evidence": [
-        "tests/test_system.py::test_platform_api_returns_explicit_llm_errors_without_rule_fallback"
+        "tests/test_legacy_platform_api.py::test_platform_api_returns_explicit_llm_errors_without_rule_fallback"
       ],
       "missing_evidence_refs": [],
       "status": "covered"
@@ -216,7 +216,7 @@
         "APPROVAL_REJECTED"
       ],
       "automated_evidence": [
-        "tests/test_response_workflow.py::test_task_versions_keep_complete_immutable_snapshots_and_approval_history"
+        "tests/test_response_resilience.py::test_task_versions_keep_complete_immutable_snapshots_and_approval_history"
       ],
       "missing_evidence_refs": [],
       "status": "covered"
@@ -228,7 +228,7 @@
         "VERSION_CONFLICT"
       ],
       "automated_evidence": [
-        "tests/test_response_workflow.py::test_rule_engine_hard_blocks_ungrounded_ai_draft_and_optimistic_lock_conflict"
+        "tests/test_response_tasks.py::test_rule_engine_hard_blocks_ungrounded_ai_draft_and_optimistic_lock_conflict"
       ],
       "missing_evidence_refs": [],
       "status": "covered"
@@ -240,8 +240,8 @@
         "IDEMPOTENCY_REPLAY"
       ],
       "automated_evidence": [
-        "tests/test_response_workflow.py::test_simulated_dispatch_fault_matrix_is_audited_without_mutating_task_state",
-        "tests/test_response_workflow.py::test_external_service_callback_is_token_bound_idempotent_and_state_safe"
+        "tests/test_response_dispatch.py::test_simulated_dispatch_fault_matrix_is_audited_without_mutating_task_state",
+        "tests/test_response_dispatch.py::test_external_service_callback_is_token_bound_idempotent_and_state_safe"
       ],
       "missing_evidence_refs": [],
       "status": "covered"
@@ -253,7 +253,7 @@
         "DISPATCH_PARTIAL_SUCCESS"
       ],
       "automated_evidence": [
-        "tests/test_response_workflow.py::test_simulated_dispatch_fault_matrix_is_audited_without_mutating_task_state"
+        "tests/test_response_dispatch.py::test_simulated_dispatch_fault_matrix_is_audited_without_mutating_task_state"
       ],
       "missing_evidence_refs": [],
       "status": "covered"
@@ -265,9 +265,9 @@
         "TASK_BLOCKED"
       ],
       "automated_evidence": [
-        "tests/test_response_workflow.py::test_liaison_assignment_and_reassignment_control_the_field_executor",
-        "tests/test_response_workflow.py::test_deadline_extension_is_independently_approved_without_mutating_approved_payload",
-        "tests/test_response_workflow.py::test_resource_shortage_feedback_creates_escalation_with_alternatives"
+        "tests/test_response_resilience.py::test_liaison_assignment_and_reassignment_control_the_field_executor",
+        "tests/test_response_tasks.py::test_deadline_extension_is_independently_approved_without_mutating_approved_payload",
+        "tests/test_response_tasks.py::test_resource_shortage_feedback_creates_escalation_with_alternatives"
       ],
       "missing_evidence_refs": [],
       "status": "covered"
@@ -279,7 +279,7 @@
         "DEADLINE_EXCEEDED"
       ],
       "automated_evidence": [
-        "tests/test_response_workflow.py::test_all_four_deadline_types_escalate_with_explicit_audit"
+        "tests/test_response_tasks.py::test_all_four_deadline_types_escalate_with_explicit_audit"
       ],
       "missing_evidence_refs": [],
       "status": "covered"
@@ -291,7 +291,7 @@
         "VERIFICATION_REMEDIATION_REQUIRED"
       ],
       "automated_evidence": [
-        "tests/test_response_workflow.py::test_verification_can_return_completion_for_rework_without_losing_feedback"
+        "tests/test_response_dispatch.py::test_verification_can_return_completion_for_rework_without_losing_feedback"
       ],
       "missing_evidence_refs": [],
       "status": "covered"
@@ -303,8 +303,8 @@
         "MANUAL_TAKEOVER"
       ],
       "automated_evidence": [
-        "tests/test_response_workflow.py::test_manual_takeover_and_commander_cancellation_are_audited_terminal_branches",
-        "tests/test_response_workflow.py::test_simulated_dispatch_timeout_stays_pending_and_recovers_idempotently"
+        "tests/test_response_tasks.py::test_manual_takeover_and_commander_cancellation_are_audited_terminal_branches",
+        "tests/test_response_dispatch.py::test_simulated_dispatch_timeout_stays_pending_and_recovers_idempotently"
       ],
       "missing_evidence_refs": [],
       "status": "covered"

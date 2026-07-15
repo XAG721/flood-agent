@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from ..v2.models import (
+from ..compat.legacy_platform.models import (
     AlertSeverity,
     DatasetBuildRequest,
     DatasetFetchRequest,

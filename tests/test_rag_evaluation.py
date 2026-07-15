@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flood_system.frc_evaluation import default_conflict_benchmark, evaluate_conflict_cases
+from research.frc_rag.evaluation import default_conflict_benchmark, evaluate_conflict_cases
 from flood_system.rag_evaluation import RAGBaselineEvaluator, RAG_METHODS, evaluate_frc_gate, render_rag_evaluation_markdown
 
 

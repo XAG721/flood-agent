@@ -10,15 +10,15 @@ from .repository import SQLiteRepository
 from .identity import TrustedIdentityVerifier
 from .response_workflow import ResponseWorkflowService
 from .sample_data import build_area_profiles, build_rag_documents, build_resource_status
-from .v3.service import AgentTwinService
-from .v2.bootstrap import build_entity_profiles
-from .v2.multi_agent import HousekeepingService, SupervisorLoopService
-from .v2.platform import ProductionPlatform
-from .v2.reporting import DailySummaryService, EventPostmortemService
+from .compat.agent_twin.service import AgentTwinService
+from .compat.legacy_platform.bootstrap import build_entity_profiles
+from .compat.legacy_platform.multi_agent import HousekeepingService, SupervisorLoopService
+from .compat.legacy_platform.platform import ProductionPlatform
+from .compat.legacy_platform.reporting import DailySummaryService, EventPostmortemService
 
 
 class FloodWarningSystem:
-    """V2-only application container."""
+    """Application container for the response domain and isolated compatibility services."""
 
     def __init__(self, db_path: str | Path, *, llm_gateway=None) -> None:
         self.db_path = Path(db_path)
@@ -30,42 +30,44 @@ class FloodWarningSystem:
         self.rag_provider = RuntimeRAGDocumentProvider(self.rag_runtime_path, build_rag_documents())
         self.rag_service = RAGService(self.rag_provider)
         self._seed_runtime_data()
-        self.production_platform = ProductionPlatform(
+        self.legacy_platform = ProductionPlatform(
             repository=self.repository,
             rag_service=self.rag_service,
             area_profiles=self.area_profiles,
             bootstrap_resource_status=self.bootstrap_resource_status,
             llm_gateway=llm_gateway,
         )
-        self.agent_twin = AgentTwinService(
-            platform=self.production_platform,
+        self.production_platform = self.legacy_platform
+        self.agent_twin_compat = AgentTwinService(
+            platform=self.legacy_platform,
             repository=self.repository,
         )
+        self.agent_twin = self.agent_twin_compat
         self.response_workflow = ResponseWorkflowService(self.repository, self.rag_service)
         self.dataset_service = BeilinDatasetService(
             repo_root=self.db_path.parent.parent,
             db_path=self.db_path,
-            add_audit_record=self.production_platform.add_audit_record,
+            add_audit_record=self.legacy_platform.add_audit_record,
         )
         self.supervisor_loop = SupervisorLoopService(
-            self.production_platform.agent_supervisor,
+            self.legacy_platform.agent_supervisor,
             interval_seconds=self._supervisor_loop_interval_seconds(),
         )
         self.housekeeping_service = HousekeepingService(
             repository=self.repository,
-            platform=self.production_platform,
+            platform=self.legacy_platform,
             interval_seconds=self._housekeeping_interval_seconds(),
         )
         self.daily_summary_service = DailySummaryService(
             repository=self.repository,
-            platform=self.production_platform,
+            platform=self.legacy_platform,
         )
         self.event_postmortem_service = EventPostmortemService(
             repository=self.repository,
-            platform=self.production_platform,
-            long_term_memory_store=self.production_platform.long_term_memory_store,
+            platform=self.legacy_platform,
+            long_term_memory_store=self.legacy_platform.long_term_memory_store,
         )
-        self.production_platform.event_postmortem_service = self.event_postmortem_service
+        self.legacy_platform.event_postmortem_service = self.event_postmortem_service
 
     def _seed_runtime_data(self) -> None:
         if not self.repository.has_v2_entity_profiles():

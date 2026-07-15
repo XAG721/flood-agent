@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from flood_system.frc_housing_ablation import (
+from research.frc_rag.housing_ablation import (
     HOUSING_ABLATION_SCHEMA,
     HOUSING_METHODS,
     build_housing_ablation_report,
@@ -15,7 +15,7 @@ from flood_system.frc_housing_ablation import (
     select_housing_evidence,
     select_housing_methods,
 )
-from flood_system.frc_public_evidence import load_housing_real_model_ablation
+from research.frc_rag.public_evidence import load_housing_real_model_ablation
 
 
 def _source_row(

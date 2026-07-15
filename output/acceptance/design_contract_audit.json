@@ -4,7 +4,7 @@
     "source_document": "洪水预警响应系统_渐进式迭代开发与升级设计.md",
     "source_contract_sha256": "629534dcf060ae6f4fc7908b25ffbd38b5872538793e20b8f05531e6dc6c36a5",
     "policy": "docs/progressive_upgrade/design_contract_evidence_policy.json",
-    "policy_sha256": "b91aeaf972912b47d396f0e86bfdc64e636bda83cd31dde799abb6b627afa088",
+    "policy_sha256": "cec96b737a39210e3c3df7dcb1f6977727bfdc275cd3a3c410549398c7729e1f",
     "baseline_manifest": "output/acceptance/legacy_baseline_manifest.json",
     "baseline_manifest_sha256": "f950ac1274207a32650813d288beb91302392e60d96f762346f579d7f4c46230",
     "scope": "sections 18.3-18.6, 22 and 23 controlled acceptance contract"
@@ -63,7 +63,7 @@
         {
           "path": "docs/progressive_upgrade/asset_inventory.md",
           "contains": "2db016a",
-          "sha256": "6bb264ce40a2cd54e7559bce01a85dbf45bb68d71ddf2a47ff6857690ef2c15e"
+          "sha256": "228a679f2f3f27f8de623c6e5605bdf4b711143d08164798f4cf8a6ac53d9e66"
         }
       ],
       "assigned_item_count": 2
@@ -74,9 +74,9 @@
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。",
       "evidence": [
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_governance.py",
           "contains": "test_schema_ledger_migration_quarantine_and_legacy_adapter_are_traceable",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "ec897e0d7e2da99a50dc9a79f4a5b1e793247543a17c4def8fd5dee23ab2c8ed"
         },
         {
           "path": "tests/test_postgis_migration.py",
@@ -84,9 +84,9 @@
           "sha256": "d088086865de41d1236f6c774f52005e81c5707c209fbd54010102700026c624"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_resilience.py",
           "contains": "test_database_backup_and_isolated_restore_drill_are_hash_verified",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "917a8305df736af7d9548979d9f8d49e743bcb282c33343a7e46ac2261ff8bb4"
         },
         {
           "path": "infra/migrations/README.md",
@@ -132,14 +132,14 @@
           "sha256": "3f43b3bb6b16d8e4837aaa4a1a7cbb3ed2b53709ff2c04efd68f531eebea0c96"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_tasks.py",
           "contains": "test_rule_engine_hard_blocks_ungrounded_ai_draft_and_optimistic_lock_conflict",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "3d899334924c10b7a57fbbb3f6c89ecf874c759a2884b3a3c56df464a5409a3e"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_dispatch.py",
           "contains": "test_external_service_callback_is_token_bound_idempotent_and_state_safe",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "902bf664fdc869278a92cfe582097ff0def3b5e867d28e5b6b5bc38fc711e44e"
         }
       ],
       "assigned_item_count": 13
@@ -170,7 +170,7 @@
         {
           "path": "frontend/src/pages/ResponseWorkflowPage.tsx",
           "contains": "受控模拟环境",
-          "sha256": "a765617e89f7073b906f3cd3d376608cc52f0e9b9a7aa839a0565e67048fa680"
+          "sha256": "07f4d67a7c473e895640f291ed5dee039730a4461d2816a37c33ac9d382da2cc"
         },
         {
           "path": "frontend/e2e/response-workflow.spec.ts",
@@ -183,9 +183,9 @@
           "sha256": "5e9b401d2f059610dc1037b5fb61a95c2efa99c5c307df91693ebb9b94daa3e8"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_governance.py",
           "contains": "test_task_creation_idempotency_key_prevents_duplicate_formal_tasks",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "ec897e0d7e2da99a50dc9a79f4a5b1e793247543a17c4def8fd5dee23ab2c8ed"
         }
       ],
       "assigned_item_count": 10
@@ -198,7 +198,7 @@
         {
           "path": ".github/workflows/ci.yml",
           "contains": "Compose build and smoke test",
-          "sha256": "b9dcc885baa2a4ff258c1d4530d098040bf34cfef2885e514dbf2fdad9131654"
+          "sha256": "ad67229a58865d5bdd203b4a999b832e3fedd289e4feae6bfbfcf9d9470c7f49"
         },
         {
           "path": "docker-compose.yml",
@@ -206,14 +206,14 @@
           "sha256": "8204abc75a6e82041d16e52d09e94e4f84de19f00f5a9cc9338dcd91ed76a33e"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_dispatch.py",
           "contains": "test_feature_flags_are_scoped_versioned_and_admin_only",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "902bf664fdc869278a92cfe582097ff0def3b5e867d28e5b6b5bc38fc711e44e"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_tasks.py",
           "contains": "test_retrieval_modes_compare_baseline_and_frc_without_shadow_side_effects",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "3d899334924c10b7a57fbbb3f6c89ecf874c759a2884b3a3c56df464a5409a3e"
         },
         {
           "path": "tests/test_simulation_dataset.py",
@@ -241,7 +241,7 @@
         {
           "path": "README.md",
           "contains": "FRC-RAG",
-          "sha256": "13a9af8d54e173d74562d012a52297332e5b69231cba766da903c12f6ea73051"
+          "sha256": "a4a59de61c46728d3441f28cd86507a0501e188edc7d78a07660e56e48c98722"
         },
         {
           "path": "docs/V3_upgrade_acceptance_matrix.md",
@@ -267,14 +267,14 @@
           "sha256": "5be3e3b4d6cffabeb666ad13cefecfdf86573d0972589b8a515434509488ab19"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_tasks.py",
           "contains": "test_grounded_task_draft_covers_all_roles_and_keeps_plan_attribution",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "3d899334924c10b7a57fbbb3f6c89ecf874c759a2884b3a3c56df464a5409a3e"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_governance.py",
           "contains": "test_evidence_conflicts_are_separate_from_applicability_and_require_human_resolution",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "ec897e0d7e2da99a50dc9a79f4a5b1e793247543a17c4def8fd5dee23ab2c8ed"
         },
         {
           "path": "flood_system/rag.py",
@@ -289,7 +289,7 @@
         {
           "path": "tests/test_frc_housing_weight_sensitivity.py",
           "contains": "test_public_loader_reaggregates_committed_weight_sensitivity",
-          "sha256": "5dfb104b850c6f06837d529e1af3b7083d0ef91c9cca776d500bdf8b665e0cc4"
+          "sha256": "2cc682e684f7abf3d8ec2310a6dee57a6fb120b1f84d002ddef079188a9b0465"
         },
         {
           "path": "docs/progressive_upgrade/frc_public_evaluation_protocol.md",
@@ -305,29 +305,29 @@
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。",
       "evidence": [
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_dispatch.py",
           "contains": "test_full_deterministic_response_loop_and_close",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "902bf664fdc869278a92cfe582097ff0def3b5e867d28e5b6b5bc38fc711e44e"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_dispatch.py",
           "contains": "test_approved_dispatch_uses_idempotent_outbox_and_payload_hash",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "902bf664fdc869278a92cfe582097ff0def3b5e867d28e5b6b5bc38fc711e44e"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_resilience.py",
           "contains": "test_high_risk_task_cannot_be_self_approved_or_approved_by_reviewer",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "917a8305df736af7d9548979d9f8d49e743bcb282c33343a7e46ac2261ff8bb4"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_tasks.py",
           "contains": "test_all_four_deadline_types_escalate_with_explicit_audit",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "3d899334924c10b7a57fbbb3f6c89ecf874c759a2884b3a3c56df464a5409a3e"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_governance.py",
           "contains": "test_read_only_event_replay_requires_integrity_and_returns_traceable_snapshot",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "ec897e0d7e2da99a50dc9a79f4a5b1e793247543a17c4def8fd5dee23ab2c8ed"
         },
         {
           "path": "flood_system/response_workflow/state_machine.py",
@@ -345,17 +345,17 @@
         {
           "path": "docs/progressive_upgrade/asset_inventory.md",
           "contains": null,
-          "sha256": "6bb264ce40a2cd54e7559bce01a85dbf45bb68d71ddf2a47ff6857690ef2c15e"
+          "sha256": "228a679f2f3f27f8de623c6e5605bdf4b711143d08164798f4cf8a6ac53d9e66"
         },
         {
           "path": "output/floodagent_bench/scenario_acceptance_report.json",
           "contains": null,
-          "sha256": "4ffee56ef50bfca5de88d27ea20f5dbb510f0a2c585371e3de9d5e95eebb87d6"
+          "sha256": "be0d3f9a570afe8c0650ade3451da899d285e20dae925d80f16269baebde23bf"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_governance.py",
           "contains": "test_task_transition_table_is_exhaustive_and_terminal_states_have_no_outgoing_edges",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "ec897e0d7e2da99a50dc9a79f4a5b1e793247543a17c4def8fd5dee23ab2c8ed"
         },
         {
           "path": "scripts/run_progressive_completion_audit.py",
@@ -365,7 +365,7 @@
         {
           "path": "tests/test_completion_audit.py",
           "contains": "test_completion_audit_proves_controlled_scope_without_overstating_production",
-          "sha256": "f5629f583e12a0b51da5229678f8ca5e2a89d2bec0170aaf541bb16a694bfca9"
+          "sha256": "0a54aea0cf607eb291e37aaf07d729d3c82cf3757be46c98a8c8a499a12ea122"
         },
         {
           "path": "docs/progressive_upgrade/evaluation_and_gate_report.md",
@@ -386,9 +386,9 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -402,9 +402,9 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -418,9 +418,9 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -434,9 +434,9 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -450,9 +450,9 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -466,9 +466,9 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -482,9 +482,9 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -498,9 +498,9 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -514,9 +514,9 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -530,9 +530,9 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -552,8 +552,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -572,8 +572,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -592,8 +592,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -612,8 +612,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -632,8 +632,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -652,8 +652,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -672,8 +672,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -692,8 +692,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -712,8 +712,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -743,7 +743,7 @@
         "frontend/src/pages/ResponseWorkflowPage.tsx",
         "frontend/e2e/response-workflow.spec.ts",
         "frontend/e2e/response-workflow.spec.ts",
-        "tests/test_response_workflow.py"
+        "tests/test_response_governance.py"
       ],
       "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
     },
@@ -759,7 +759,7 @@
         "frontend/src/pages/ResponseWorkflowPage.tsx",
         "frontend/e2e/response-workflow.spec.ts",
         "frontend/e2e/response-workflow.spec.ts",
-        "tests/test_response_workflow.py"
+        "tests/test_response_governance.py"
       ],
       "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
     },
@@ -775,7 +775,7 @@
         "frontend/src/pages/ResponseWorkflowPage.tsx",
         "frontend/e2e/response-workflow.spec.ts",
         "frontend/e2e/response-workflow.spec.ts",
-        "tests/test_response_workflow.py"
+        "tests/test_response_governance.py"
       ],
       "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
     },
@@ -791,7 +791,7 @@
         "frontend/src/pages/ResponseWorkflowPage.tsx",
         "frontend/e2e/response-workflow.spec.ts",
         "frontend/e2e/response-workflow.spec.ts",
-        "tests/test_response_workflow.py"
+        "tests/test_response_governance.py"
       ],
       "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
     },
@@ -807,7 +807,7 @@
         "frontend/src/pages/ResponseWorkflowPage.tsx",
         "frontend/e2e/response-workflow.spec.ts",
         "frontend/e2e/response-workflow.spec.ts",
-        "tests/test_response_workflow.py"
+        "tests/test_response_governance.py"
       ],
       "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
     },
@@ -823,7 +823,7 @@
         "frontend/src/pages/ResponseWorkflowPage.tsx",
         "frontend/e2e/response-workflow.spec.ts",
         "frontend/e2e/response-workflow.spec.ts",
-        "tests/test_response_workflow.py"
+        "tests/test_response_governance.py"
       ],
       "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
     },
@@ -839,7 +839,7 @@
         "frontend/src/pages/ResponseWorkflowPage.tsx",
         "frontend/e2e/response-workflow.spec.ts",
         "frontend/e2e/response-workflow.spec.ts",
-        "tests/test_response_workflow.py"
+        "tests/test_response_governance.py"
       ],
       "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
     },
@@ -855,7 +855,7 @@
         "frontend/src/pages/ResponseWorkflowPage.tsx",
         "frontend/e2e/response-workflow.spec.ts",
         "frontend/e2e/response-workflow.spec.ts",
-        "tests/test_response_workflow.py"
+        "tests/test_response_governance.py"
       ],
       "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
     },
@@ -871,7 +871,7 @@
         "frontend/src/pages/ResponseWorkflowPage.tsx",
         "frontend/e2e/response-workflow.spec.ts",
         "frontend/e2e/response-workflow.spec.ts",
-        "tests/test_response_workflow.py"
+        "tests/test_response_governance.py"
       ],
       "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
     },
@@ -887,7 +887,7 @@
         "frontend/src/pages/ResponseWorkflowPage.tsx",
         "frontend/e2e/response-workflow.spec.ts",
         "frontend/e2e/response-workflow.spec.ts",
-        "tests/test_response_workflow.py"
+        "tests/test_response_governance.py"
       ],
       "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
     },
@@ -902,8 +902,8 @@
       "evidence": [
         ".github/workflows/ci.yml",
         "docker-compose.yml",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_tasks.py",
         "tests/test_simulation_dataset.py",
         "docs/progressive_upgrade/operations_and_rollback.md"
       ],
@@ -920,8 +920,8 @@
       "evidence": [
         ".github/workflows/ci.yml",
         "docker-compose.yml",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_tasks.py",
         "tests/test_simulation_dataset.py",
         "docs/progressive_upgrade/operations_and_rollback.md"
       ],
@@ -938,8 +938,8 @@
       "evidence": [
         ".github/workflows/ci.yml",
         "docker-compose.yml",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_tasks.py",
         "tests/test_simulation_dataset.py",
         "docs/progressive_upgrade/operations_and_rollback.md"
       ],
@@ -956,8 +956,8 @@
       "evidence": [
         ".github/workflows/ci.yml",
         "docker-compose.yml",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_tasks.py",
         "tests/test_simulation_dataset.py",
         "docs/progressive_upgrade/operations_and_rollback.md"
       ],
@@ -974,8 +974,8 @@
       "evidence": [
         ".github/workflows/ci.yml",
         "docker-compose.yml",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_tasks.py",
         "tests/test_simulation_dataset.py",
         "docs/progressive_upgrade/operations_and_rollback.md"
       ],
@@ -992,8 +992,8 @@
       "evidence": [
         ".github/workflows/ci.yml",
         "docker-compose.yml",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_tasks.py",
         "tests/test_simulation_dataset.py",
         "docs/progressive_upgrade/operations_and_rollback.md"
       ],
@@ -1010,8 +1010,8 @@
       "evidence": [
         ".github/workflows/ci.yml",
         "docker-compose.yml",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_tasks.py",
         "tests/test_simulation_dataset.py",
         "docs/progressive_upgrade/operations_and_rollback.md"
       ],
@@ -1028,8 +1028,8 @@
       "evidence": [
         ".github/workflows/ci.yml",
         "docker-compose.yml",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_tasks.py",
         "tests/test_simulation_dataset.py",
         "docs/progressive_upgrade/operations_and_rollback.md"
       ],
@@ -1125,8 +1125,8 @@
       "evidence_group": "data_algorithm_controlled",
       "evidence": [
         "tests/test_simulation_dataset.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/rag.py",
         "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
         "tests/test_frc_housing_weight_sensitivity.py",
@@ -1144,8 +1144,8 @@
       "evidence_group": "data_algorithm_controlled",
       "evidence": [
         "tests/test_simulation_dataset.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/rag.py",
         "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
         "tests/test_frc_housing_weight_sensitivity.py",
@@ -1163,8 +1163,8 @@
       "evidence_group": "data_algorithm_controlled",
       "evidence": [
         "tests/test_simulation_dataset.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/rag.py",
         "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
         "tests/test_frc_housing_weight_sensitivity.py",
@@ -1182,8 +1182,8 @@
       "evidence_group": "data_algorithm_controlled",
       "evidence": [
         "tests/test_simulation_dataset.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/rag.py",
         "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
         "tests/test_frc_housing_weight_sensitivity.py",
@@ -1201,8 +1201,8 @@
       "evidence_group": "data_algorithm_controlled",
       "evidence": [
         "tests/test_simulation_dataset.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/rag.py",
         "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
         "tests/test_frc_housing_weight_sensitivity.py",
@@ -1220,8 +1220,8 @@
       "evidence_group": "data_algorithm_controlled",
       "evidence": [
         "tests/test_simulation_dataset.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/rag.py",
         "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
         "tests/test_frc_housing_weight_sensitivity.py",
@@ -1239,8 +1239,8 @@
       "evidence_group": "data_algorithm_controlled",
       "evidence": [
         "tests/test_simulation_dataset.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/rag.py",
         "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
         "tests/test_frc_housing_weight_sensitivity.py",
@@ -1257,11 +1257,11 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1275,11 +1275,11 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1293,11 +1293,11 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1311,11 +1311,11 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1329,11 +1329,11 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1347,11 +1347,11 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1365,11 +1365,11 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1383,11 +1383,11 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1401,11 +1401,11 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1419,11 +1419,11 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1455,7 +1455,7 @@
       "evidence": [
         "docs/progressive_upgrade/asset_inventory.md",
         "output/floodagent_bench/scenario_acceptance_report.json",
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "scripts/run_progressive_completion_audit.py",
         "tests/test_completion_audit.py",
         "docs/progressive_upgrade/evaluation_and_gate_report.md"
@@ -1477,8 +1477,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -1497,8 +1497,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -1517,8 +1517,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -1531,9 +1531,9 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -1547,9 +1547,9 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -1565,7 +1565,7 @@
       "evidence": [
         "docs/progressive_upgrade/asset_inventory.md",
         "output/floodagent_bench/scenario_acceptance_report.json",
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "scripts/run_progressive_completion_audit.py",
         "tests/test_completion_audit.py",
         "docs/progressive_upgrade/evaluation_and_gate_report.md"
@@ -1583,8 +1583,8 @@
       "evidence": [
         ".github/workflows/ci.yml",
         "docker-compose.yml",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_tasks.py",
         "tests/test_simulation_dataset.py",
         "docs/progressive_upgrade/operations_and_rollback.md"
       ],
@@ -1615,7 +1615,7 @@
       "evidence": [
         "docs/progressive_upgrade/asset_inventory.md",
         "output/floodagent_bench/scenario_acceptance_report.json",
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "scripts/run_progressive_completion_audit.py",
         "tests/test_completion_audit.py",
         "docs/progressive_upgrade/evaluation_and_gate_report.md"
@@ -1633,7 +1633,7 @@
       "evidence": [
         "docs/progressive_upgrade/asset_inventory.md",
         "output/floodagent_bench/scenario_acceptance_report.json",
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "scripts/run_progressive_completion_audit.py",
         "tests/test_completion_audit.py",
         "docs/progressive_upgrade/evaluation_and_gate_report.md"
@@ -1651,7 +1651,7 @@
       "evidence": [
         "docs/progressive_upgrade/asset_inventory.md",
         "output/floodagent_bench/scenario_acceptance_report.json",
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "scripts/run_progressive_completion_audit.py",
         "tests/test_completion_audit.py",
         "docs/progressive_upgrade/evaluation_and_gate_report.md"
@@ -1669,7 +1669,7 @@
       "evidence": [
         "docs/progressive_upgrade/asset_inventory.md",
         "output/floodagent_bench/scenario_acceptance_report.json",
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "scripts/run_progressive_completion_audit.py",
         "tests/test_completion_audit.py",
         "docs/progressive_upgrade/evaluation_and_gate_report.md"
@@ -1687,7 +1687,7 @@
       "evidence": [
         "docs/progressive_upgrade/asset_inventory.md",
         "output/floodagent_bench/scenario_acceptance_report.json",
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "scripts/run_progressive_completion_audit.py",
         "tests/test_completion_audit.py",
         "docs/progressive_upgrade/evaluation_and_gate_report.md"
@@ -1705,7 +1705,7 @@
       "evidence": [
         "docs/progressive_upgrade/asset_inventory.md",
         "output/floodagent_bench/scenario_acceptance_report.json",
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "scripts/run_progressive_completion_audit.py",
         "tests/test_completion_audit.py",
         "docs/progressive_upgrade/evaluation_and_gate_report.md"
@@ -1723,7 +1723,7 @@
       "evidence": [
         "docs/progressive_upgrade/asset_inventory.md",
         "output/floodagent_bench/scenario_acceptance_report.json",
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "scripts/run_progressive_completion_audit.py",
         "tests/test_completion_audit.py",
         "docs/progressive_upgrade/evaluation_and_gate_report.md"
@@ -1761,8 +1761,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -1775,11 +1775,11 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1793,9 +1793,9 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -1811,8 +1811,8 @@
       "evidence": [
         ".github/workflows/ci.yml",
         "docker-compose.yml",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_tasks.py",
         "tests/test_simulation_dataset.py",
         "docs/progressive_upgrade/operations_and_rollback.md"
       ],
@@ -1829,7 +1829,7 @@
       "evidence": [
         "docs/progressive_upgrade/asset_inventory.md",
         "output/floodagent_bench/scenario_acceptance_report.json",
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "scripts/run_progressive_completion_audit.py",
         "tests/test_completion_audit.py",
         "docs/progressive_upgrade/evaluation_and_gate_report.md"
@@ -1845,11 +1845,11 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1863,11 +1863,11 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1882,8 +1882,8 @@
       "evidence_group": "data_algorithm_controlled",
       "evidence": [
         "tests/test_simulation_dataset.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/rag.py",
         "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
         "tests/test_frc_housing_weight_sensitivity.py",
@@ -1900,11 +1900,11 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1918,11 +1918,11 @@
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1938,7 +1938,7 @@
       "evidence": [
         "docs/progressive_upgrade/asset_inventory.md",
         "output/floodagent_bench/scenario_acceptance_report.json",
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "scripts/run_progressive_completion_audit.py",
         "tests/test_completion_audit.py",
         "docs/progressive_upgrade/evaluation_and_gate_report.md"

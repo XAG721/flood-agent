@@ -7,12 +7,12 @@ from pathlib import Path
 
 import pytest
 
-from flood_system.frc_housing_ablation import HOUSING_SOURCE_JSON_SHA256
-from flood_system.frc_housing_weight_sensitivity import (
+from research.frc_rag.housing_ablation import HOUSING_SOURCE_JSON_SHA256
+from research.frc_rag.housing_weight_sensitivity import (
     STATUS,
     evaluate_housing_weight_sensitivity,
 )
-from flood_system.frc_public_evidence import load_housing_public_weight_sensitivity
+from research.frc_rag.public_evidence import load_housing_public_weight_sensitivity
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]

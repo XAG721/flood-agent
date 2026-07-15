@@ -1,6 +1,6 @@
 from unittest.mock import Mock
 
-from flood_system.v2.llm_gateway import (
+from flood_system.compat.legacy_platform.llm_gateway import (
     MockLLMGateway,
     RegionalAnalysisPackageOutput,
     ResponsesLLMGateway,

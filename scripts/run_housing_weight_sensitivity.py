@@ -1,16 +1,22 @@
 from __future__ import annotations
+# ruff: noqa: E402 -- research stays outside the runtime wheel.
 
 import argparse
+import sys
 import gzip
 import json
 from pathlib import Path
 
-from flood_system.frc_housing_weight_sensitivity import (
+REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
+if str(REPOSITORY_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPOSITORY_ROOT))
+
+from research.frc_rag.housing_weight_sensitivity import (
     evaluate_housing_weight_sensitivity,
     read_scored_cases,
     render_housing_weight_sensitivity_markdown,
 )
-from flood_system.frc_housing_ablation import sha256
+from research.frc_rag.housing_ablation import sha256
 
 
 def _write_text(path: Path, value: str) -> None:

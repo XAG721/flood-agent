@@ -10,7 +10,8 @@
 
 ## 当前实现与验收
 
-- [`releases/v0.3.0.md`](./releases/v0.3.0.md)：当前版本的外部接口仿真、场景目录、浏览器验收、性能和安全更新报告。
+- [`releases/v0.3.1.md`](./releases/v0.3.1.md)：当前版本的三轮代码结构重构、运行时边界、性能与安全影响报告。
+- [`releases/v0.3.0.md`](./releases/v0.3.0.md)：上一版本的外部接口仿真、场景目录、浏览器验收、性能和安全更新报告。
 - [`progressive_upgrade/`](./progressive_upgrade/)：资产处置、合同、数据字典、运维、安全、评测和阶段验收。
 - [`progressive_upgrade/frc_public_evaluation_protocol.md`](./progressive_upgrade/frc_public_evaluation_protocol.md)：FRC-RAG 公开数据真实模型参考审计的公平协议、难例覆盖和 Gate 2 判据。
 - [`../output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.md`](../output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.md)：HousingQA 冻结真实模型字段/角色权重敏感性与限制。

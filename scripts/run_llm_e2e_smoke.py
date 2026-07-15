@@ -8,8 +8,8 @@ from pathlib import Path
 from typing import Any, Callable
 
 from flood_system.system import FloodWarningSystem
-from flood_system.v2.llm_gateway import LLMGenerationError
-from flood_system.v2.models import (
+from flood_system.compat.legacy_platform.llm_gateway import LLMGenerationError
+from flood_system.compat.legacy_platform.models import (
     AdvisoryRequest,
     EventCreateRequest,
     ObservationBatchRequest,

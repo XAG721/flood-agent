@@ -1,4 +1,4 @@
-from flood_system.frc_evaluation import default_conflict_benchmark, evaluate_conflict_cases
+from research.frc_rag.evaluation import default_conflict_benchmark, evaluate_conflict_cases
 
 
 def test_conflict_detection_benchmark_reports_gate_two_metrics():
