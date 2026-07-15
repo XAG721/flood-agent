@@ -413,7 +413,7 @@ def render_rag_evaluation_markdown(
             f"{row['answer_f1']:.4f} | {row['task_element_completeness']:.4f} | "
             f"{row['citation_precision']:.4f} | {row['unsupported_evidence_ratio']:.4f} | {row['latency_ms']:.4f} |"
         )
-    lines.extend(["", "## FRC-Select 消融", "", "| 变体 | Evidence Recall | Role Coverage | 引用正确率 | 无依据证据比例 | 延迟 ms |", "|---|---:|---:|---:|---:|---:|"])
+    lines.extend(["", "## FRC-RAG 消融", "", "| 变体 | Evidence Recall | Role Coverage | 引用正确率 | 无依据证据比例 | 延迟 ms |", "|---|---:|---:|---:|---:|---:|"])
     for name, row in ablations["variants"].items():
         lines.append(
             f"| {name} | {row['evidence_recall']:.4f} | {row['role_coverage']:.4f} | "

@@ -1,4 +1,4 @@
-# FRC-Select 公开数据真实模型参考审计
+# FRC-RAG 公开数据真实模型参考审计
 
 - Embedding：`BAAI/bge-large-en-v1.5`
 - Reranker：`BAAI/bge-reranker-large`

@@ -9,7 +9,7 @@ from flood_system.frc_evaluation import default_conflict_benchmark, evaluate_con
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Run the V3 local RAG baseline and FRC-Select evaluation.")
+    parser = argparse.ArgumentParser(description="Run the V3 local RAG baseline and FRC-RAG evaluation.")
     parser.add_argument("--benchmark", type=Path, default=Path("flood_system/rag_benchmarks/district_policy_benchmark.json"))
     parser.add_argument("--output-dir", type=Path, default=Path("output/rag_evaluation"))
     parser.add_argument("--top-k", type=int, default=4)
