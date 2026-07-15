@@ -1,14 +1,21 @@
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
+from collections import deque
+import time
+from uuid import uuid4
 
 from fastapi import FastAPI, Header, HTTPException
-from fastapi.responses import StreamingResponse
+from fastapi.responses import PlainTextResponse, StreamingResponse
 
 from .config import load_settings
 from .http.v3_router import create_v3_router
+from .http.body_limit import RequestBodyLimitMiddleware
+from .http.response_router import create_response_router
 from .infrastructure.sse import repeated_snapshot_stream
 from .system import FloodWarningSystem
+from .response_workflow.risk_object_ingestion import configured_max_file_bytes
+from .transport_security import TransportSecurityMiddleware
 from .v2.llm_gateway import LLMGenerationError
 from .v2.models import (
     AdvisoryRequest,
@@ -28,10 +35,18 @@ from .v2.models import (
     V2CopilotMessageRequest,
     V2CopilotSessionRequest,
 )
-from .v2.security import AuthorizationError, ensure_operator_role, list_operator_capabilities, normalize_operator_role
+from .v2.security import (
+    AuthorizationError,
+    ensure_operator_role,
+    list_operator_capabilities,
+    normalize_operator_role,
+)
 
 
 settings = load_settings()
+api_request_durations_ms: deque[float] = deque(maxlen=2000)
+api_request_total = 0
+api_error_total = 0
 
 
 @asynccontextmanager
@@ -44,28 +59,219 @@ async def lifespan(_app: FastAPI):
 
 
 app = FastAPI(title=settings.title, version=settings.version, lifespan=lifespan)
+app.add_middleware(
+    TransportSecurityMiddleware,
+    require_https=settings.require_https,
+    trust_proxy_headers=settings.trust_proxy_headers,
+)
+app.add_middleware(
+    RequestBodyLimitMiddleware,
+    max_bytes=(configured_max_file_bytes() * 4 // 3) + (1024 * 1024),
+    paths={
+        "/response/risk-objects/file-imports",
+        "/api/v1/risk-objects/file-imports",
+        "/response/documents",
+        "/api/v1/documents",
+    },
+    path_prefixes={"/response/documents/", "/api/v1/documents/"},
+)
 system = FloodWarningSystem(settings.db_path)
 production = system.production_platform
 app.include_router(create_v3_router(lambda: system))
+app.include_router(create_response_router(lambda: system))
+
+
+@app.get("/health", tags=["operations"])
+def health():
+    return {"status": "ok", "service": settings.title, "version": settings.version}
+
+
+@app.get("/ready", tags=["operations"])
+def readiness():
+    try:
+        with system.repository._connect() as connection:
+            connection.execute("SELECT 1").fetchone()
+        return {"status": "ready", "database": "ok"}
+    except Exception as exc:
+        raise HTTPException(
+            status_code=503, detail={"code": "DATABASE_NOT_READY", "message": str(exc)}
+        ) from exc
+
+
+@app.get("/metrics", response_class=PlainTextResponse, tags=["operations"])
+def metrics():
+    events = system.repository.list_response_events()
+    active = sum(item.status.value != "closed" for item in events)
+    outbox = system.repository.list_outbox_messages(limit=10000)
+    pending = sum(item.status.value == "pending" for item in outbox)
+    failed = sum(item.status.value == "failed" for item in outbox)
+    sent = sum(item.status.value == "sent" for item in outbox)
+    partially_sent = sum(item.status.value == "partially_sent" for item in outbox)
+    manual_takeover = sum(item.status.value == "manual_takeover" for item in outbox)
+    dispatch_callbacks = sum(item.callback_count for item in outbox)
+    idempotency_records = system.repository.count_idempotency_records()
+    rule_evaluations = system.repository.list_rule_evaluations()
+    rule_pass = sum(item.overall_outcome.value == "PASS" for item in rule_evaluations)
+    rule_warning = sum(
+        item.overall_outcome.value == "SOFT_WARNING" for item in rule_evaluations
+    )
+    rule_block = sum(
+        item.overall_outcome.value == "HARD_BLOCK" for item in rule_evaluations
+    )
+    timeline = [
+        entry
+        for event in events
+        for entry in system.repository.list_timeline_entries(event.event_id)
+    ]
+    takeovers = sum(item.action == "task_taken_over" for item in timeline)
+    stale_objects = sum(
+        item.stale
+        for event in events
+        for item in system.repository.list_event_risk_objects(event.event_id)
+    )
+    registry_metrics = system.repository.risk_object_registry_metrics()
+    document_metrics = system.repository.document_governance_metrics()
+    evidence_metrics = system.repository.evidence_governance_metrics()
+    durations = sorted(api_request_durations_ms)
+
+    def percentile(fraction: float) -> float:
+        if not durations:
+            return 0.0
+        return durations[min(len(durations) - 1, int((len(durations) - 1) * fraction))]
+
+    return "\n".join(
+        (
+            "# HELP flood_response_events_total Response events persisted by the core workflow.",
+            "# TYPE flood_response_events_total gauge",
+            f"flood_response_events_total {len(events)}",
+            "# HELP flood_response_events_active Active response events.",
+            "# TYPE flood_response_events_active gauge",
+            f"flood_response_events_active {active}",
+            "# HELP flood_response_outbox_pending Pending simulated dispatch messages.",
+            "# TYPE flood_response_outbox_pending gauge",
+            f"flood_response_outbox_pending {pending}",
+            "# HELP flood_response_outbox_failed Failed-closed simulated dispatch messages.",
+            "# TYPE flood_response_outbox_failed gauge",
+            f"flood_response_outbox_failed {failed}",
+            "# HELP flood_response_outbox_sent Successfully processed simulated dispatch messages.",
+            "# TYPE flood_response_outbox_sent gauge",
+            f"flood_response_outbox_sent {sent}",
+            "# HELP flood_response_outbox_partially_sent Partially accepted simulated dispatch messages.",
+            "# TYPE flood_response_outbox_partially_sent gauge",
+            f"flood_response_outbox_partially_sent {partially_sent}",
+            "# HELP flood_response_outbox_manual_takeover Dispatch messages requiring manual takeover.",
+            "# TYPE flood_response_outbox_manual_takeover gauge",
+            f"flood_response_outbox_manual_takeover {manual_takeover}",
+            "# HELP flood_response_dispatch_callbacks_total Unique simulated callbacks recorded.",
+            "# TYPE flood_response_dispatch_callbacks_total gauge",
+            f"flood_response_dispatch_callbacks_total {dispatch_callbacks}",
+            "# HELP flood_response_idempotency_records Persisted Core API idempotency records by status.",
+            "# TYPE flood_response_idempotency_records gauge",
+            *(
+                f'flood_response_idempotency_records{{status="{status}"}} {count}'
+                for status, count in sorted(idempotency_records.items())
+            ),
+            "# HELP flood_response_rule_evaluations Rule outcomes by result.",
+            "# TYPE flood_response_rule_evaluations gauge",
+            f'flood_response_rule_evaluations{{outcome="PASS"}} {rule_pass}',
+            f'flood_response_rule_evaluations{{outcome="SOFT_WARNING"}} {rule_warning}',
+            f'flood_response_rule_evaluations{{outcome="HARD_BLOCK"}} {rule_block}',
+            "# HELP flood_response_manual_takeovers_total Audited manual takeover actions.",
+            "# TYPE flood_response_manual_takeovers_total gauge",
+            f"flood_response_manual_takeovers_total {takeovers}",
+            "# HELP flood_response_stale_objects Current stale event risk objects.",
+            "# TYPE flood_response_stale_objects gauge",
+            f"flood_response_stale_objects {stale_objects}",
+            "# HELP flood_risk_object_registry Registry master-data objects by status.",
+            "# TYPE flood_risk_object_registry gauge",
+            f'flood_risk_object_registry{{status="active"}} {registry_metrics["active"]}',
+            f'flood_risk_object_registry{{status="inactive"}} {registry_metrics["inactive"]}',
+            "# HELP flood_risk_object_registry_stale_candidate_runs Candidate runs invalidated by registry changes.",
+            "# TYPE flood_risk_object_registry_stale_candidate_runs gauge",
+            "flood_risk_object_registry_stale_candidate_runs "
+            f"{registry_metrics['stale_candidate_runs']}",
+            "# HELP flood_risk_object_registry_quarantined_rows Rows rejected by governed registry imports.",
+            "# TYPE flood_risk_object_registry_quarantined_rows gauge",
+            "flood_risk_object_registry_quarantined_rows "
+            f"{registry_metrics['quarantined_rows']}",
+            "# HELP flood_candidate_object_lists_frozen Immutable confirmed candidate lists.",
+            "# TYPE flood_candidate_object_lists_frozen gauge",
+            "flood_candidate_object_lists_frozen "
+            f"{registry_metrics['frozen_candidate_lists']}",
+            "# HELP flood_document_versions Immutable governed document versions.",
+            "# TYPE flood_document_versions gauge",
+            f"flood_document_versions {document_metrics['document_versions']}",
+            "# HELP flood_document_parse_records Immutable parse results.",
+            "# TYPE flood_document_parse_records gauge",
+            f"flood_document_parse_records {document_metrics['parse_records']}",
+            "# HELP flood_document_index_builds Index builds by terminal status.",
+            "# TYPE flood_document_index_builds gauge",
+            f'flood_document_index_builds{{status="completed"}} {document_metrics["index_builds_completed"]}',
+            f'flood_document_index_builds{{status="failed"}} {document_metrics["index_builds_failed"]}',
+            "# HELP flood_contract_versions Immutable task-schema and rule-set versions.",
+            "# TYPE flood_contract_versions gauge",
+            f"flood_contract_versions {document_metrics['contract_versions']}",
+            "# HELP flood_evidence_package_versions Immutable evidence package versions.",
+            "# TYPE flood_evidence_package_versions gauge",
+            f"flood_evidence_package_versions {evidence_metrics['package_versions']}",
+            "# HELP flood_evidence_packages Current logical evidence packages.",
+            "# TYPE flood_evidence_packages gauge",
+            f"flood_evidence_packages {evidence_metrics['packages']}",
+            "# HELP flood_evidence_unresolved_conflicts Unresolved conflicts in current evidence packages.",
+            "# TYPE flood_evidence_unresolved_conflicts gauge",
+            f"flood_evidence_unresolved_conflicts {evidence_metrics['unresolved_conflicts']}",
+            "# HELP flood_evidence_missing_fields Missing task fields in current evidence packages.",
+            "# TYPE flood_evidence_missing_fields gauge",
+            f'flood_evidence_missing_fields{{blocking="false"}} {evidence_metrics["missing_fields"]}',
+            f'flood_evidence_missing_fields{{blocking="true"}} {evidence_metrics["blocking_missing_fields"]}',
+            "# HELP flood_evidence_nli_packages Current evidence packages by degraded NLI state.",
+            "# TYPE flood_evidence_nli_packages gauge",
+            f'flood_evidence_nli_packages{{status="unavailable"}} {evidence_metrics["nli_unavailable"]}',
+            f'flood_evidence_nli_packages{{status="partial"}} {evidence_metrics["nli_partial"]}',
+            f'flood_evidence_nli_packages{{status="error"}} {evidence_metrics["nli_error"]}',
+            "# HELP flood_api_requests_total Requests observed by the application middleware.",
+            "# TYPE flood_api_requests_total counter",
+            f"flood_api_requests_total {api_request_total}",
+            "# HELP flood_api_errors_total HTTP 5xx responses observed by the application middleware.",
+            "# TYPE flood_api_errors_total counter",
+            f"flood_api_errors_total {api_error_total}",
+            "# HELP flood_api_latency_ms Recent in-process request latency percentiles.",
+            "# TYPE flood_api_latency_ms gauge",
+            f'flood_api_latency_ms{{quantile="0.50"}} {percentile(0.50):.3f}',
+            f'flood_api_latency_ms{{quantile="0.95"}} {percentile(0.95):.3f}',
+            "",
+        )
+    )
 
 
 @app.middleware("http")
 async def rewrite_unified_agent_twin_paths(request, call_next):
     """Expose unified public prefixes while keeping existing internal routes stable."""
 
+    global api_request_total, api_error_total
+    started = time.perf_counter()
+    correlation_id = request.headers.get("x-correlation-id", "").strip() or uuid4().hex
+    request.state.correlation_id = correlation_id
     path = request.scope.get("path", "")
     alias_pairs = (
         ("/agent-twin", "/v3"),
         ("/platform", "/v2"),
+        ("/api/v1", "/response"),
     )
     for public_prefix, internal_prefix in alias_pairs:
         if path == public_prefix:
             request.scope["path"] = internal_prefix
             break
         if path.startswith(f"{public_prefix}/"):
-            request.scope["path"] = f"{internal_prefix}{path[len(public_prefix):]}"
+            request.scope["path"] = f"{internal_prefix}{path[len(public_prefix) :]}"
             break
-    return await call_next(request)
+    response = await call_next(request)
+    api_request_total += 1
+    if response.status_code >= 500:
+        api_error_total += 1
+    api_request_durations_ms.append((time.perf_counter() - started) * 1000)
+    response.headers["X-Correlation-ID"] = correlation_id
+    return response
 
 
 def _resolve_operator_role(
@@ -78,11 +284,6 @@ def _resolve_operator_role(
     if action is not None:
         ensure_operator_role(action, role)
     return role
-
-
-@app.get("/health")
-def health() -> dict[str, str]:
-    return {"status": "ok"}
 
 
 @app.get("/v2/security/capabilities")
@@ -142,7 +343,9 @@ def get_v2_archive_status():
 
 
 @app.post("/v2/archive/run")
-def run_v2_archive_cycle(x_operator_role: str | None = Header(default=None, alias="X-Operator-Role")):
+def run_v2_archive_cycle(
+    x_operator_role: str | None = Header(default=None, alias="X-Operator-Role"),
+):
     try:
         _resolve_operator_role(header_role=x_operator_role, action="archive_run")
         return production.run_archive_cycle()
@@ -185,7 +388,9 @@ def build_v2_dataset(
 
 
 @app.post("/v2/admin/dataset/validate")
-def validate_v2_dataset(x_operator_role: str | None = Header(default=None, alias="X-Operator-Role")):
+def validate_v2_dataset(
+    x_operator_role: str | None = Header(default=None, alias="X-Operator-Role"),
+):
     try:
         _resolve_operator_role(header_role=x_operator_role, action="dataset_manage")
         return system.dataset_service.start_validate()
@@ -206,7 +411,10 @@ def sync_v2_dataset(
 
 
 @app.post("/v2/admin/dataset/jobs/{job_id}/cancel")
-def cancel_v2_dataset_job(job_id: str, x_operator_role: str | None = Header(default=None, alias="X-Operator-Role")):
+def cancel_v2_dataset_job(
+    job_id: str,
+    x_operator_role: str | None = Header(default=None, alias="X-Operator-Role"),
+):
     try:
         _resolve_operator_role(header_role=x_operator_role, action="dataset_manage")
         return system.dataset_service.cancel_job(job_id)
@@ -217,7 +425,10 @@ def cancel_v2_dataset_job(job_id: str, x_operator_role: str | None = Header(defa
 
 
 @app.post("/v2/admin/dataset/jobs/{job_id}/retry")
-def retry_v2_dataset_job(job_id: str, x_operator_role: str | None = Header(default=None, alias="X-Operator-Role")):
+def retry_v2_dataset_job(
+    job_id: str,
+    x_operator_role: str | None = Header(default=None, alias="X-Operator-Role"),
+):
     try:
         _resolve_operator_role(header_role=x_operator_role, action="dataset_manage")
         return system.dataset_service.retry_job(job_id)
@@ -296,7 +507,9 @@ def list_v2_regional_proposals(event_id: str, status: str | None = None):
 @app.get("/v2/events/{event_id}/regional-analysis-packages")
 def list_v2_regional_analysis_packages(event_id: str, include_pending: bool = True):
     try:
-        return production.list_regional_analysis_packages(event_id, include_pending=include_pending)
+        return production.list_regional_analysis_packages(
+            event_id, include_pending=include_pending
+        )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
@@ -315,7 +528,9 @@ def update_v2_regional_proposal_draft(
     request: ProposalDraftUpdateRequest,
 ):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="proposal_draft_edit")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="proposal_draft_edit"
+        )
         return production.update_regional_proposal_draft(proposal_id, request)
     except AuthorizationError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
@@ -329,7 +544,9 @@ def approve_v2_regional_proposal(
     request: ProposalResolutionRequest,
 ):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="proposal_resolve")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="proposal_resolve"
+        )
         return production.approve_regional_proposal(proposal_id, request)
     except LLMGenerationError as exc:
         raise HTTPException(status_code=503, detail=f"{exc.code}: {exc}") from exc
@@ -345,7 +562,9 @@ def reject_v2_regional_proposal(
     request: ProposalResolutionRequest,
 ):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="proposal_resolve")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="proposal_resolve"
+        )
         return production.reject_regional_proposal(proposal_id, request)
     except AuthorizationError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
@@ -359,7 +578,9 @@ def approve_v2_regional_analysis_package(
     request: ProposalResolutionRequest,
 ):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="proposal_resolve")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="proposal_resolve"
+        )
         return production.approve_regional_analysis_package(package_id, request)
     except LLMGenerationError as exc:
         raise HTTPException(status_code=503, detail=f"{exc.code}: {exc}") from exc
@@ -375,7 +596,9 @@ def reject_v2_regional_analysis_package(
     request: ProposalResolutionRequest,
 ):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="proposal_resolve")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="proposal_resolve"
+        )
         return production.reject_regional_analysis_package(package_id, request)
     except AuthorizationError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
@@ -478,7 +701,9 @@ def approve_v2_copilot_proposal(
     request: ProposalResolutionRequest,
 ):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="proposal_resolve")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="proposal_resolve"
+        )
         return production.approve_copilot_proposal(session_id, proposal_id, request)
     except AuthorizationError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
@@ -493,7 +718,9 @@ def reject_v2_copilot_proposal(
     request: ProposalResolutionRequest,
 ):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="proposal_resolve")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="proposal_resolve"
+        )
         return production.reject_copilot_proposal(session_id, proposal_id, request)
     except AuthorizationError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
@@ -507,7 +734,9 @@ def batch_approve_v2_copilot_proposals(
     request: BatchProposalResolutionRequest,
 ):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="proposal_resolve")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="proposal_resolve"
+        )
         return production.batch_approve_copilot_proposals(session_id, request)
     except AuthorizationError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
@@ -521,7 +750,9 @@ def batch_reject_v2_copilot_proposals(
     request: BatchProposalResolutionRequest,
 ):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="proposal_resolve")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="proposal_resolve"
+        )
         return production.batch_reject_copilot_proposals(session_id, request)
     except AuthorizationError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
@@ -548,7 +779,9 @@ def get_v2_admin_entity_profile(entity_id: str):
 @app.post("/v2/admin/entity-profiles")
 def create_v2_admin_entity_profile(request: EntityProfileUpsertRequest):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="runtime_admin_write")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="runtime_admin_write"
+        )
         return production.save_entity_profile(request.profile)
     except AuthorizationError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
@@ -559,7 +792,9 @@ def create_v2_admin_entity_profile(request: EntityProfileUpsertRequest):
 @app.put("/v2/admin/entity-profiles/{entity_id}")
 def update_v2_admin_entity_profile(entity_id: str, request: EntityProfileUpsertRequest):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="runtime_admin_write")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="runtime_admin_write"
+        )
         if request.profile.entity_id != entity_id:
             raise ValueError("entity_id in path and payload must match.")
         return production.save_entity_profile(request.profile)
@@ -570,9 +805,14 @@ def update_v2_admin_entity_profile(entity_id: str, request: EntityProfileUpsertR
 
 
 @app.delete("/v2/admin/entity-profiles/{entity_id}")
-def delete_v2_admin_entity_profile(entity_id: str, x_operator_role: str | None = Header(default=None, alias="X-Operator-Role")):
+def delete_v2_admin_entity_profile(
+    entity_id: str,
+    x_operator_role: str | None = Header(default=None, alias="X-Operator-Role"),
+):
     try:
-        _resolve_operator_role(header_role=x_operator_role, action="runtime_admin_write")
+        _resolve_operator_role(
+            header_role=x_operator_role, action="runtime_admin_write"
+        )
         production.delete_entity_profile(entity_id)
         return {"status": "deleted", "entity_id": entity_id}
     except AuthorizationError as exc:
@@ -592,7 +832,9 @@ def get_v2_area_resource_status(area_id: str):
 @app.put("/v2/admin/areas/{area_id}/resource-status")
 def update_v2_area_resource_status(area_id: str, request: ResourceStatusUpdateRequest):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="runtime_admin_write")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="runtime_admin_write"
+        )
         if request.resource_status.area_id != area_id:
             raise ValueError("area_id in path and payload must match.")
         production.save_area_resource_status(request.resource_status)
@@ -612,9 +854,13 @@ def get_v2_event_resource_status(event_id: str):
 
 
 @app.put("/v2/admin/events/{event_id}/resource-status")
-def update_v2_event_resource_status(event_id: str, request: ResourceStatusUpdateRequest):
+def update_v2_event_resource_status(
+    event_id: str, request: ResourceStatusUpdateRequest
+):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="runtime_admin_write")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="runtime_admin_write"
+        )
         production.save_event_resource_status(event_id, request.resource_status)
         return production.get_event_resource_status_view(event_id)
     except AuthorizationError as exc:
@@ -624,9 +870,14 @@ def update_v2_event_resource_status(event_id: str, request: ResourceStatusUpdate
 
 
 @app.delete("/v2/admin/events/{event_id}/resource-status")
-def delete_v2_event_resource_status(event_id: str, x_operator_role: str | None = Header(default=None, alias="X-Operator-Role")):
+def delete_v2_event_resource_status(
+    event_id: str,
+    x_operator_role: str | None = Header(default=None, alias="X-Operator-Role"),
+):
     try:
-        _resolve_operator_role(header_role=x_operator_role, action="runtime_admin_write")
+        _resolve_operator_role(
+            header_role=x_operator_role, action="runtime_admin_write"
+        )
         production.delete_event_resource_status(event_id)
         return {"status": "deleted", "event_id": event_id}
     except AuthorizationError as exc:
@@ -643,9 +894,15 @@ def list_v2_rag_documents():
 @app.post("/v2/admin/rag-documents/import")
 def import_v2_rag_documents(request: RAGDocumentImportRequest):
     try:
-        _resolve_operator_role(explicit_role=request.operator_role, action="runtime_admin_write")
+        _resolve_operator_role(
+            explicit_role=request.operator_role, action="runtime_admin_write"
+        )
         documents = production.import_rag_documents(request)
-        return {"status": "imported", "document_count": len(documents), "documents": documents}
+        return {
+            "status": "imported",
+            "document_count": len(documents),
+            "documents": documents,
+        }
     except AuthorizationError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
     except ValueError as exc:
@@ -653,11 +910,19 @@ def import_v2_rag_documents(request: RAGDocumentImportRequest):
 
 
 @app.post("/v2/admin/rag-documents/reload")
-def reload_v2_rag_documents(x_operator_role: str | None = Header(default=None, alias="X-Operator-Role")):
+def reload_v2_rag_documents(
+    x_operator_role: str | None = Header(default=None, alias="X-Operator-Role"),
+):
     try:
-        _resolve_operator_role(header_role=x_operator_role, action="runtime_admin_write")
+        _resolve_operator_role(
+            header_role=x_operator_role, action="runtime_admin_write"
+        )
         documents = production.reload_rag_documents()
-        return {"status": "reloaded", "document_count": len(documents), "documents": documents}
+        return {
+            "status": "reloaded",
+            "document_count": len(documents),
+            "documents": documents,
+        }
     except AuthorizationError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
     except ValueError as exc:
@@ -707,7 +972,9 @@ def list_v2_evaluation_benchmarks():
 
 
 @app.post("/v2/evaluation/run")
-def run_v2_evaluation(x_operator_role: str | None = Header(default=None, alias="X-Operator-Role")):
+def run_v2_evaluation(
+    x_operator_role: str | None = Header(default=None, alias="X-Operator-Role"),
+):
     try:
         _resolve_operator_role(header_role=x_operator_role, action="evaluation_run")
         return production.run_evaluation()
@@ -724,7 +991,10 @@ def get_v2_evaluation_report(report_id: str):
 
 
 @app.post("/v2/evaluation/reports/{report_id}/replay")
-def replay_v2_evaluation_report(report_id: str, x_operator_role: str | None = Header(default=None, alias="X-Operator-Role")):
+def replay_v2_evaluation_report(
+    report_id: str,
+    x_operator_role: str | None = Header(default=None, alias="X-Operator-Role"),
+):
     try:
         _resolve_operator_role(header_role=x_operator_role, action="evaluation_run")
         return production.replay_evaluation_report(report_id)

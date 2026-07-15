@@ -14,6 +14,7 @@ import {
 } from "./config/consoleConfig";
 import { useAgentTwinConsole } from "./hooks/useAgentTwinConsole";
 import { DataPage } from "./pages/DataPage";
+import { ResponseWorkflowPage } from "./pages/ResponseWorkflowPage";
 import panelStyles from "./styles/shared-panels.module.css";
 import {
   appShellText,
@@ -27,6 +28,54 @@ import { formatProposalStreamStatus } from "./lib/displayText";
 import type { OperatorRole } from "./types/api";
 
 export default function App() {
+  const location = useLocation();
+  const responseWorkbenchEnabled = import.meta.env.VITE_RESPONSE_WORKBENCH_ENABLED !== "false";
+  if (location.pathname === "/response" && !responseWorkbenchEnabled) {
+    return <Navigate to="/operations" replace />;
+  }
+  return location.pathname === "/response" ? <ResponseApplication /> : <LegacyApplication />;
+}
+
+function ResponseApplication() {
+  const primaryPaths = new Set(["/", "/response", "/operations", "/agents", "/copilot"]);
+  const navigation = Object.entries(pageMeta)
+    .filter(([path]) => primaryPaths.has(path))
+    .map(([path, meta]) => ({ path, label: meta.label }));
+  const utilityNavigation = Object.entries(pageMeta)
+    .filter(([path]) => !primaryPaths.has(path))
+    .map(([path, meta]) => ({ path, label: meta.label }));
+  const meta = pageMeta["/response"];
+
+  return (
+    <AppShell
+      brandTitle="面向区县防办的洪水预警响应系统"
+      brandCopy="专业预警输入、对象核验、人工审批、任务执行与反馈复盘形成统一业务闭环。"
+      currentPageLabel={meta.label}
+      currentPageTitle={meta.title}
+      currentPageDescription={meta.description}
+      operatorControl={null}
+      statusSignals={
+        <>
+          <div className={panelStyles.statusSignal}>
+            <span className={panelStyles.statusSignalLabel}>业务模式</span>
+            <strong className={panelStyles.statusSignalValue}>确定性闭环</strong>
+          </div>
+          <div className={panelStyles.statusSignal}>
+            <span className={panelStyles.statusSignalLabel}>高风险任务</span>
+            <strong className={panelStyles.statusSignalValue}>人工审批</strong>
+          </div>
+        </>
+      }
+      navigation={navigation}
+      utilityNavigation={utilityNavigation}
+      metrics={null}
+    >
+      <ResponseWorkflowPage />
+    </AppShell>
+  );
+}
+
+function LegacyApplication() {
   const location = useLocation();
   const navigate = useNavigate();
   const consoleState = useAgentTwinConsole();
@@ -44,6 +93,7 @@ export default function App() {
   const isOverviewPage = location.pathname === "/";
   const isCopilotPage = location.pathname === "/copilot";
   const isOperationsPage = location.pathname === "/operations";
+  const isResponsePage = location.pathname === "/response";
   const isDataPage = location.pathname === "/data";
   const isAgentsPage = location.pathname === "/agents";
   const isReliabilityPage = location.pathname === "/reliability";
@@ -61,7 +111,7 @@ export default function App() {
   const warningDraftCount = consoleState.twinOverview?.warning_draft_count ?? 0;
   const latestToolExecutions = consoleState.latestAnswer?.tool_executions ?? [];
 
-  const primaryPaths = new Set(["/", "/copilot", "/operations", "/agents"]);
+  const primaryPaths = new Set(["/", "/response", "/operations", "/agents", "/copilot"]);
   const navigation = Object.entries(pageMeta)
     .filter(([path]) => primaryPaths.has(path))
     .map(([path, meta]) => ({ path, label: meta.label }));
@@ -146,7 +196,7 @@ export default function App() {
   return (
     <>
       <GlobalRegionalProposalDialog
-        open={!isCopilotPage && consoleState.regionalProposalModalOpen}
+        open={!isCopilotPage && !isResponsePage && consoleState.regionalProposalModalOpen}
         busy={consoleState.isBusy}
         snapshot={consoleState.regionalProposalQueueSnapshot}
         onApprove={(proposalId, note) => consoleState.resolveProposal(proposalId, "approve", note)}
@@ -155,14 +205,15 @@ export default function App() {
         onSnooze={consoleState.snoozeRegionalProposalModal}
       />
       <AppShell
-        brandTitle="数字孪生智能体洪水预警系统"
+        brandTitle="面向区县防办的洪水预警响应系统"
+        brandCopy="专业预警输入、对象核验、人工审批、任务执行与反馈复盘形成统一业务闭环。"
         currentPageLabel={shellCurrentPageLabel}
         currentPageTitle={shellCurrentPageTitle}
         currentPageDescription={shellCurrentPageDescription}
         immersive={isImmersivePage}
         navigation={navigation}
         utilityNavigation={utilityNavigation}
-        operatorControl={
+        operatorControl={isResponsePage ? null : (
           <div className={styles.topbarActions}>
             <label className={styles.fieldBlock}>
               <span>{appShellText.currentRole}</span>
@@ -183,7 +234,7 @@ export default function App() {
               {appShellText.refresh}
             </button>
           </div>
-        }
+        )}
         statusSignals={
           <>
             <div className={panelStyles.statusSignal}>
@@ -208,8 +259,9 @@ export default function App() {
             ) : null}
           </>
         }
-        metrics={<MetricStrip items={pageMetricItems} />}
+        metrics={isResponsePage ? null : <MetricStrip items={pageMetricItems} />}
       >
+        {isResponsePage ? <ResponseWorkflowPage /> : null}
         {isCopilotPage ? (
           <CopilotTwinScreen
             overview={consoleState.twinOverview}
@@ -247,7 +299,6 @@ export default function App() {
             onResolveProposal={(proposalId, decision, note) => void consoleState.resolveProposal(proposalId, decision, note)}
             onOpenOperations={() => navigate("/operations")}
             actionBusy={consoleState.isBusy}
-            twinBusy={consoleState.twinBusy}
           />
         ) : null}
 

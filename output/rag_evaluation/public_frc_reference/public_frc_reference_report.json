@@ -1,0 +1,4440 @@
+{
+  "metadata": {
+    "name": "FRC-Select public-dataset real-model reference audit",
+    "reference_root": "D:\\RAG_test\\frc-select",
+    "scoring_backend": "real",
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "generator": "Qwen2.5-7B-Instruct-GPTQ-Int4",
+    "top_k": 5,
+    "token_budget": 1500,
+    "score_calibration": "per_case_minmax",
+    "role_relevance_mix": 0.15,
+    "selection_parameters": {
+      "alpha": 2.0,
+      "beta": 1.0,
+      "gamma": 0.0
+    },
+    "setr_status": "not reproduced; setr_style source rows are reported as coverage_greedy_proxy"
+  },
+  "datasets": {
+    "conditionalqa": {
+      "evidence_metrics": {
+        "bm25_topk": {
+          "evidence_recall": 0.6939547267378455,
+          "evidence_precision": 0.7935672514619883,
+          "evidence_f1": 0.6951231937557575,
+          "role_coverage": 0.9605263157894737,
+          "condition_coverage": 0.9809160305343512,
+          "redundancy": 0.2650095754887046,
+          "token_cost": 928.519298245614,
+          "cases": 285
+        },
+        "dense_topk": {
+          "evidence_recall": 0.6951882976618189,
+          "evidence_precision": 0.7935672514619883,
+          "evidence_f1": 0.6969141232711452,
+          "role_coverage": 0.9738011695906432,
+          "condition_coverage": 0.9770992366412213,
+          "redundancy": 0.26409428892585146,
+          "token_cost": 924.5017543859649,
+          "cases": 285
+        },
+        "hybrid_topk": {
+          "evidence_recall": 0.699072795230527,
+          "evidence_precision": 0.8026900584795321,
+          "evidence_f1": 0.7024022791927377,
+          "role_coverage": 0.9845029239766082,
+          "condition_coverage": 0.9770992366412213,
+          "redundancy": 0.2639196319361747,
+          "token_cost": 925.8912280701754,
+          "cases": 285
+        },
+        "cross_encoder_topk": {
+          "evidence_recall": 0.7048687731317681,
+          "evidence_precision": 0.804093567251462,
+          "evidence_f1": 0.7061581666947552,
+          "role_coverage": 0.975906432748538,
+          "condition_coverage": 0.9809160305343512,
+          "redundancy": 0.263924517458768,
+          "token_cost": 929.8491228070176,
+          "cases": 285
+        },
+        "mmr": {
+          "evidence_recall": 0.6840067716428316,
+          "evidence_precision": 0.780233918128655,
+          "evidence_f1": 0.6860301963965062,
+          "role_coverage": 0.9839181286549707,
+          "condition_coverage": 0.9770992366412213,
+          "redundancy": 0.24865004608798538,
+          "token_cost": 915.0912280701755,
+          "cases": 285
+        },
+        "coverage_greedy_proxy": {
+          "evidence_recall": 0.7010958939641521,
+          "evidence_precision": 0.8019883040935673,
+          "evidence_f1": 0.7038732322735979,
+          "role_coverage": 1.0,
+          "condition_coverage": 0.9770992366412213,
+          "redundancy": 0.26094145090714294,
+          "token_cost": 924.7368421052631,
+          "cases": 285
+        },
+        "frc_select": {
+          "evidence_recall": 0.7045471357048675,
+          "evidence_precision": 0.804093567251462,
+          "evidence_f1": 0.7057543794488627,
+          "role_coverage": 1.0,
+          "condition_coverage": 0.9809160305343512,
+          "redundancy": 0.2626265616153989,
+          "token_cost": 927.6385964912281,
+          "cases": 285
+        }
+      },
+      "answer_metrics": {
+        "bm25_topk": {
+          "answer_em": 0.0,
+          "answer_f1": 0.06747211930701293,
+          "conditional_f1": 0.06747211930701293,
+          "not_answerable_accuracy": 0.0,
+          "answer_accuracy": null,
+          "supporting_fact_f1": null,
+          "joint_f1": null,
+          "cases": 285
+        },
+        "dense_topk": {
+          "answer_em": 0.0,
+          "answer_f1": 0.06885192144437033,
+          "conditional_f1": 0.06885192144437033,
+          "not_answerable_accuracy": 0.0,
+          "answer_accuracy": null,
+          "supporting_fact_f1": null,
+          "joint_f1": null,
+          "cases": 285
+        },
+        "hybrid_topk": {
+          "answer_em": 0.0,
+          "answer_f1": 0.06924545164995298,
+          "conditional_f1": 0.06924545164995298,
+          "not_answerable_accuracy": 0.0,
+          "answer_accuracy": null,
+          "supporting_fact_f1": null,
+          "joint_f1": null,
+          "cases": 285
+        },
+        "cross_encoder_topk": {
+          "answer_em": 0.0,
+          "answer_f1": 0.07139045642396678,
+          "conditional_f1": 0.07139045642396678,
+          "not_answerable_accuracy": 0.0,
+          "answer_accuracy": null,
+          "supporting_fact_f1": null,
+          "joint_f1": null,
+          "cases": 285
+        },
+        "mmr": {
+          "answer_em": 0.0,
+          "answer_f1": 0.07166240020545889,
+          "conditional_f1": 0.07166240020545889,
+          "not_answerable_accuracy": 0.0,
+          "answer_accuracy": null,
+          "supporting_fact_f1": null,
+          "joint_f1": null,
+          "cases": 285
+        },
+        "coverage_greedy_proxy": {
+          "answer_em": 0.0,
+          "answer_f1": 0.07283678488077107,
+          "conditional_f1": 0.07283678488077107,
+          "not_answerable_accuracy": 0.0,
+          "answer_accuracy": null,
+          "supporting_fact_f1": null,
+          "joint_f1": null,
+          "cases": 285
+        },
+        "frc_select": {
+          "answer_em": 0.0,
+          "answer_f1": 0.07294375633820123,
+          "conditional_f1": 0.07294375633820123,
+          "not_answerable_accuracy": 0.0,
+          "answer_accuracy": null,
+          "supporting_fact_f1": null,
+          "joint_f1": null,
+          "cases": 285
+        }
+      },
+      "strongest_reproducible_baseline_by_evidence_f1": "cross_encoder_topk",
+      "paired_frc_minus_baseline": {
+        "cases": 285,
+        "metrics": {
+          "evidence_recall": {
+            "cases": 285,
+            "mean_difference": -0.000322,
+            "ci_low": -0.003465,
+            "ci_high": 0.002851,
+            "wins": 3,
+            "ties": 279,
+            "losses": 3
+          },
+          "evidence_precision": {
+            "cases": 285,
+            "mean_difference": -0.0,
+            "ci_low": -0.003509,
+            "ci_high": 0.003509,
+            "wins": 3,
+            "ties": 279,
+            "losses": 3
+          },
+          "evidence_f1": {
+            "cases": 285,
+            "mean_difference": -0.000404,
+            "ci_low": -0.003311,
+            "ci_high": 0.002423,
+            "wins": 3,
+            "ties": 279,
+            "losses": 3
+          },
+          "role_coverage": {
+            "cases": 285,
+            "mean_difference": 0.024094,
+            "ci_low": 0.011053,
+            "ci_high": 0.040058,
+            "wins": 13,
+            "ties": 272,
+            "losses": 0
+          }
+        }
+      },
+      "source_hashes": {
+        "evidence_csv": "fc258db23906d8f9f24bb93f334090f9f2911bcedc336bba2034257b89f7cfb2",
+        "answer_csv": "fa0d1365e6a42822c3ac1157132eddaa8ce4b3049678e6b6bc0e49049f8bad16",
+        "frc_selected": "57e3cb853412763ed9585a04d821e6d7a2ef2cd2823429bd4417dd8cf1b2144b",
+        "baseline_selected": "25ae29258e644b8b79c7a3a7e334478659e71830b3ec40abb11a7124bf89507f"
+      }
+    },
+    "multihoprag": {
+      "evidence_metrics": {
+        "cross_encoder_topk": {
+          "evidence_recall": 0.602112676056338,
+          "evidence_precision": 0.2993740219092332,
+          "evidence_f1": 0.39365979829594855,
+          "role_coverage": 0.9842853416797078,
+          "condition_coverage": 0.7300411522633745,
+          "redundancy": 0.1082933711041518,
+          "token_cost": 1215.746870109546,
+          "cases": 2556
+        },
+        "mmr": {
+          "evidence_recall": 0.5175078247261345,
+          "evidence_precision": 0.25735524256651016,
+          "evidence_f1": 0.3384364830961075,
+          "role_coverage": 0.9825247782994262,
+          "condition_coverage": 0.7185185185185186,
+          "redundancy": 0.0755753596612648,
+          "token_cost": 1215.679186228482,
+          "cases": 2556
+        },
+        "coverage_greedy_proxy": {
+          "evidence_recall": 0.6003195096504955,
+          "evidence_precision": 0.29812206572769956,
+          "evidence_f1": 0.39221595002111437,
+          "role_coverage": 1.0,
+          "condition_coverage": 0.7267489711934156,
+          "redundancy": 0.10638619937204064,
+          "token_cost": 1216.1013302034428,
+          "cases": 2556
+        },
+        "frc_select": {
+          "evidence_recall": 0.6027647365675535,
+          "evidence_precision": 0.2996087636932708,
+          "evidence_f1": 0.39400135380182333,
+          "role_coverage": 1.0,
+          "condition_coverage": 0.7308641975308642,
+          "redundancy": 0.1079086426941063,
+          "token_cost": 1215.8227699530516,
+          "cases": 2556
+        }
+      },
+      "answer_metrics": {
+        "cross_encoder_topk": {
+          "answer_em": 0.0,
+          "answer_f1": 0.019809261268707794,
+          "conditional_f1": null,
+          "not_answerable_accuracy": null,
+          "answer_accuracy": 0.0,
+          "supporting_fact_f1": null,
+          "joint_f1": null,
+          "cases": 2556
+        },
+        "mmr": {
+          "answer_em": 0.0003912363067292645,
+          "answer_f1": 0.020368883754864855,
+          "conditional_f1": null,
+          "not_answerable_accuracy": null,
+          "answer_accuracy": 0.0003912363067292645,
+          "supporting_fact_f1": null,
+          "joint_f1": null,
+          "cases": 2556
+        },
+        "coverage_greedy_proxy": {
+          "answer_em": 0.0,
+          "answer_f1": 0.020375324749915793,
+          "conditional_f1": null,
+          "not_answerable_accuracy": null,
+          "answer_accuracy": 0.0,
+          "supporting_fact_f1": null,
+          "joint_f1": null,
+          "cases": 2556
+        },
+        "frc_select": {
+          "answer_em": 0.0,
+          "answer_f1": 0.019973745266669934,
+          "conditional_f1": null,
+          "not_answerable_accuracy": null,
+          "answer_accuracy": 0.0,
+          "supporting_fact_f1": null,
+          "joint_f1": null,
+          "cases": 2556
+        }
+      },
+      "strongest_reproducible_baseline_by_evidence_f1": "cross_encoder_topk",
+      "paired_frc_minus_baseline": {
+        "cases": 2556,
+        "metrics": {
+          "evidence_recall": {
+            "cases": 2556,
+            "mean_difference": 0.000652,
+            "ci_low": -0.001174,
+            "ci_high": 0.00251,
+            "wins": 15,
+            "ties": 2529,
+            "losses": 12
+          },
+          "evidence_precision": {
+            "cases": 2556,
+            "mean_difference": 0.000235,
+            "ci_low": -0.000548,
+            "ci_high": 0.001017,
+            "wins": 15,
+            "ties": 2529,
+            "losses": 12
+          },
+          "evidence_f1": {
+            "cases": 2556,
+            "mean_difference": 0.000342,
+            "ci_low": -0.000705,
+            "ci_high": 0.001385,
+            "wins": 15,
+            "ties": 2529,
+            "losses": 12
+          },
+          "role_coverage": {
+            "cases": 2556,
+            "mean_difference": 0.015715,
+            "ci_low": 0.012226,
+            "ci_high": 0.019366,
+            "wins": 84,
+            "ties": 2472,
+            "losses": 0
+          }
+        }
+      },
+      "source_hashes": {
+        "evidence_csv": "bde0fc12ce491e1552f3914d826b1f3fe118ef18386841eaf884b80d2353f9af",
+        "answer_csv": "59774e39771f2a20f01790d8342af5529b3f3811e8980b81c8452ac6362a7773",
+        "frc_selected": "c637c10e014764009168ddb4c176adc6a5911c454ed9e863ee603ee1d08bf9ac",
+        "baseline_selected": "f6aad7bc959b45a571124ba44386f3dbd7c6c8f9d431f638ec27afd2f4ddcddf"
+      }
+    },
+    "hotpotqa": {
+      "evidence_metrics": {
+        "cross_encoder_topk": {
+          "evidence_recall": 0.8657119047619047,
+          "evidence_precision": 0.41300000000000003,
+          "evidence_f1": 0.5507541125541126,
+          "role_coverage": 1.0,
+          "condition_coverage": null,
+          "redundancy": 0.10744034239067549,
+          "token_cost": 133.964,
+          "cases": 1000
+        },
+        "mmr": {
+          "evidence_recall": 0.8271785714285714,
+          "evidence_precision": 0.3926,
+          "evidence_f1": 0.5245873015873016,
+          "role_coverage": 0.9995,
+          "condition_coverage": null,
+          "redundancy": 0.0865155906139412,
+          "token_cost": 130.853,
+          "cases": 1000
+        },
+        "coverage_greedy_proxy": {
+          "evidence_recall": 0.8659619047619047,
+          "evidence_precision": 0.41300000000000003,
+          "evidence_f1": 0.5508176046176047,
+          "role_coverage": 1.0,
+          "condition_coverage": null,
+          "redundancy": 0.10740489716711717,
+          "token_cost": 133.969,
+          "cases": 1000
+        },
+        "frc_select": {
+          "evidence_recall": 0.8657119047619047,
+          "evidence_precision": 0.41300000000000003,
+          "evidence_f1": 0.5507541125541126,
+          "role_coverage": 1.0,
+          "condition_coverage": null,
+          "redundancy": 0.10744034239067549,
+          "token_cost": 133.964,
+          "cases": 1000
+        }
+      },
+      "answer_metrics": {
+        "cross_encoder_topk": {
+          "answer_em": 0.023,
+          "answer_f1": 0.11766114432002565,
+          "conditional_f1": null,
+          "not_answerable_accuracy": null,
+          "answer_accuracy": null,
+          "supporting_fact_f1": 0.5507541125541126,
+          "joint_f1": 0.067586569837533,
+          "cases": 1000
+        },
+        "mmr": {
+          "answer_em": 0.016,
+          "answer_f1": 0.10848433612625598,
+          "conditional_f1": null,
+          "not_answerable_accuracy": null,
+          "answer_accuracy": null,
+          "supporting_fact_f1": 0.5245873015873016,
+          "joint_f1": 0.06019340356951349,
+          "cases": 1000
+        },
+        "coverage_greedy_proxy": {
+          "answer_em": 0.021,
+          "answer_f1": 0.11634410192037993,
+          "conditional_f1": null,
+          "not_answerable_accuracy": null,
+          "answer_accuracy": null,
+          "supporting_fact_f1": 0.5508176046176047,
+          "joint_f1": 0.06675299567924826,
+          "cases": 1000
+        },
+        "frc_select": {
+          "answer_em": 0.023,
+          "answer_f1": 0.11750372670709351,
+          "conditional_f1": null,
+          "not_answerable_accuracy": null,
+          "answer_accuracy": null,
+          "supporting_fact_f1": 0.5507541125541126,
+          "joint_f1": 0.06750532417058742,
+          "cases": 1000
+        }
+      },
+      "strongest_reproducible_baseline_by_evidence_f1": "coverage_greedy_proxy",
+      "paired_frc_minus_baseline": {
+        "cases": 1000,
+        "metrics": {
+          "evidence_recall": {
+            "cases": 1000,
+            "mean_difference": -0.00025,
+            "ci_low": -0.0015,
+            "ci_high": 0.00075,
+            "wins": 1,
+            "ties": 998,
+            "losses": 1
+          },
+          "evidence_precision": {
+            "cases": 1000,
+            "mean_difference": -0.0,
+            "ci_low": -0.0006,
+            "ci_high": 0.0006,
+            "wins": 1,
+            "ties": 998,
+            "losses": 1
+          },
+          "evidence_f1": {
+            "cases": 1000,
+            "mean_difference": -6.3e-05,
+            "ci_low": -0.000857,
+            "ci_high": 0.000667,
+            "wins": 1,
+            "ties": 998,
+            "losses": 1
+          },
+          "role_coverage": {
+            "cases": 1000,
+            "mean_difference": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "wins": 0,
+            "ties": 1000,
+            "losses": 0
+          }
+        }
+      },
+      "source_hashes": {
+        "evidence_csv": "7f586b47e3e9bc849cf3d9901d8d69318448145f6fb01d61412f90fd007cacdd",
+        "answer_csv": "3a43ded06bae82f554dd032c1bd9587faf2afed38399714e37b1ab513449baec",
+        "frc_selected": "a1a66092059a6e265ce57a8e4a82b920124d2938233d52e720c2bf292ad43407",
+        "baseline_selected": "da693e0a66ed3e1aea227d48f15caa3dce186334e1116bee9c51b8ed409d6c3b"
+      }
+    }
+  },
+  "design_16_2_experiment_audit": {
+    "status": "PARTIAL",
+    "ablation": {
+      "status": "PARTIAL",
+      "dataset": "conditionalqa",
+      "planned_variants": [
+        "full",
+        "w/o_role",
+        "w/o_field",
+        "w/o_applicability",
+        "w/o_redundancy",
+        "w/o_conflict",
+        "w/o_reranker",
+        "role_only",
+        "random_role"
+      ],
+      "run_variants": [
+        "full",
+        "w/o_role",
+        "w/o_redundancy",
+        "w/o_reranker",
+        "role_only",
+        "random_role"
+      ],
+      "missing_variants": [
+        "w/o_field",
+        "w/o_applicability",
+        "w/o_conflict"
+      ],
+      "variants": {
+        "full": {
+          "evidence_recall": 0.7045471357048675,
+          "evidence_precision": 0.804093567251462,
+          "evidence_f1": 0.7057543794488627,
+          "role_coverage": 1.0,
+          "condition_coverage": 0.9809160305343512,
+          "redundancy": 0.2626265616153989,
+          "token_cost": 927.6385964912281,
+          "cases": 285
+        },
+        "w/o_role": {
+          "evidence_recall": 0.7048687731317681,
+          "evidence_precision": 0.804093567251462,
+          "evidence_f1": 0.7061581666947552,
+          "role_coverage": 0.975906432748538,
+          "condition_coverage": 0.9809160305343512,
+          "redundancy": 0.263924517458768,
+          "token_cost": 929.8491228070176,
+          "cases": 285
+        },
+        "w/o_redundancy": {
+          "evidence_recall": 0.7045471357048675,
+          "evidence_precision": 0.804093567251462,
+          "evidence_f1": 0.7057543794488627,
+          "role_coverage": 1.0,
+          "condition_coverage": 0.9809160305343512,
+          "redundancy": 0.2626265616153989,
+          "token_cost": 927.6385964912281,
+          "cases": 285
+        },
+        "role_only": {
+          "evidence_recall": 0.6933746148419442,
+          "evidence_precision": 0.7907602339181287,
+          "evidence_f1": 0.6944747320237044,
+          "role_coverage": 1.0,
+          "condition_coverage": 0.9809160305343512,
+          "redundancy": 0.27958711501004807,
+          "token_cost": 936.5859649122807,
+          "cases": 285
+        },
+        "random_role": {
+          "evidence_recall": 0.7041085392136395,
+          "evidence_precision": 0.8026900584795321,
+          "evidence_f1": 0.7050860419384198,
+          "role_coverage": 0.997953216374269,
+          "condition_coverage": 0.9809160305343512,
+          "redundancy": 0.2628865111011671,
+          "token_cost": 927.6526315789474,
+          "cases": 285
+        },
+        "coverage_greedy_proxy": {
+          "evidence_recall": 0.7010958939641521,
+          "evidence_precision": 0.8019883040935673,
+          "evidence_f1": 0.7038732322735979,
+          "role_coverage": 1.0,
+          "condition_coverage": 0.9770992366412213,
+          "redundancy": 0.26094145090714294,
+          "token_cost": 924.7368421052631,
+          "cases": 285
+        },
+        "w/o_reranker": {
+          "evidence_recall": 0.695481,
+          "evidence_precision": 0.794269,
+          "evidence_f1": 0.697327,
+          "role_coverage": 1.0,
+          "token_cost": 924.463158,
+          "condition_coverage": null,
+          "redundancy": null,
+          "cases": 285
+        }
+      },
+      "gate_required_comparison": {
+        "full_beats_w_o_role": false,
+        "full_beats_w_o_field": false,
+        "passed": false,
+        "interpretation": "Gate 2 requires Full to outperform both w/o Role and w/o Field. A missing ablation is not treated as a pass."
+      },
+      "source_sha256": "7d2dcbce1904530261e2d6bc04db4e52253fe92a02abdbc18b397683a5530ca4",
+      "supplemental_sources": {
+        "w/o_reranker": {
+          "artifact": "D:\\graduation_project\\output\\rag_evaluation\\public_frc_reference\\wo_reranker_conditionalqa.json",
+          "artifact_sha256": "c0e97a29dfb8c7f0002dc3428da3765f11ac2d37fbc273c5b7f79186c3b260b2",
+          "metadata": {
+            "model": "D:\\RAG_test\\.hf_cache\\hub\\models--BAAI--bge-large-en-v1.5\\snapshots\\d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+            "sentence_transformers_version": "3.3.1",
+            "source_role_scores_sha256": "feb0d75957c1bb09f07985979bb0816abc761ce6fafc66b40d9d99b02c1374b5",
+            "scoring_backend": "bge_biencoder_no_cross_encoder",
+            "cross_encoder_used": false,
+            "score_calibration": "per_case_minmax",
+            "role_relevance_mix": 0.15,
+            "selection_parameters": {
+              "alpha": 2.0,
+              "beta": 1.0,
+              "gamma": 0.0
+            },
+            "top_k": 5,
+            "token_budget": 1500,
+            "protocol": "replace Cross-Encoder relevance with saved normalized BGE dense relevance and recompute every role score from normalized BGE passage/role-query embeddings"
+          },
+          "paired_against_full_evidence_f1": {
+            "cases": 285,
+            "mean_difference": -0.008427,
+            "ci_low": -0.018126,
+            "ci_high": 0.001562
+          }
+        }
+      }
+    },
+    "k_sensitivity": {
+      "status": "RUN",
+      "expected_k": [
+        2,
+        3,
+        5,
+        8
+      ],
+      "datasets": {
+        "conditionalqa": {
+          "status": "RUN",
+          "k_values": [
+            2,
+            3,
+            5,
+            8
+          ],
+          "rows": [
+            {
+              "k": 2,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.3588244725600111,
+              "role_coverage": 0.9314035087719298,
+              "condition_coverage": 0.9618320610687023,
+              "answer_f1": 0.09826285380695421,
+              "token_cost": 394.89122807017543,
+              "cases": 285
+            },
+            {
+              "k": 2,
+              "method": "mmr",
+              "evidence_recall": 0.3514560515073795,
+              "role_coverage": 0.9349122807017544,
+              "condition_coverage": 0.9618320610687023,
+              "answer_f1": 0.09717174140254389,
+              "token_cost": 393.4982456140351,
+              "cases": 285
+            },
+            {
+              "k": 2,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.3586256036614518,
+              "role_coverage": 1.0,
+              "condition_coverage": 0.9618320610687023,
+              "answer_f1": 0.0985338550756108,
+              "token_cost": 393.5684210526316,
+              "cases": 285
+            },
+            {
+              "k": 2,
+              "method": "frc_select",
+              "evidence_recall": 0.3632396772383737,
+              "role_coverage": 0.9964912280701754,
+              "condition_coverage": 0.9694656488549618,
+              "answer_f1": 0.0994405883453827,
+              "token_cost": 392.93333333333334,
+              "cases": 285
+            },
+            {
+              "k": 3,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.502514403109971,
+              "role_coverage": 0.9542105263157895,
+              "condition_coverage": 0.9732824427480916,
+              "answer_f1": 0.09567973216813194,
+              "token_cost": 592.9403508771929,
+              "cases": 285
+            },
+            {
+              "k": 3,
+              "method": "mmr",
+              "evidence_recall": 0.49036907767517185,
+              "role_coverage": 0.9542105263157895,
+              "condition_coverage": 0.9732824427480916,
+              "answer_f1": 0.09452430853697255,
+              "token_cost": 585.5859649122807,
+              "cases": 285
+            },
+            {
+              "k": 3,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.4997898907801955,
+              "role_coverage": 1.0,
+              "condition_coverage": 0.9694656488549618,
+              "answer_f1": 0.09487775444852292,
+              "token_cost": 588.7263157894737,
+              "cases": 285
+            },
+            {
+              "k": 3,
+              "method": "frc_select",
+              "evidence_recall": 0.5041810697766377,
+              "role_coverage": 0.9991228070175439,
+              "condition_coverage": 0.9732824427480916,
+              "answer_f1": 0.09591163820044808,
+              "token_cost": 590.6561403508772,
+              "cases": 285
+            },
+            {
+              "k": 5,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.7048687731317681,
+              "role_coverage": 0.975906432748538,
+              "condition_coverage": 0.9809160305343512,
+              "answer_f1": 0.0942350260360738,
+              "token_cost": 929.8491228070176,
+              "cases": 285
+            },
+            {
+              "k": 5,
+              "method": "mmr",
+              "evidence_recall": 0.6840067716428316,
+              "role_coverage": 0.9839181286549707,
+              "condition_coverage": 0.9770992366412213,
+              "answer_f1": 0.0935286128800625,
+              "token_cost": 915.0912280701755,
+              "cases": 285
+            },
+            {
+              "k": 5,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.7010958939641521,
+              "role_coverage": 1.0,
+              "condition_coverage": 0.9770992366412213,
+              "answer_f1": 0.09355465113261935,
+              "token_cost": 924.7368421052631,
+              "cases": 285
+            },
+            {
+              "k": 5,
+              "method": "frc_select",
+              "evidence_recall": 0.7045471357048675,
+              "role_coverage": 1.0,
+              "condition_coverage": 0.9809160305343512,
+              "answer_f1": 0.09435567851106376,
+              "token_cost": 927.6385964912281,
+              "cases": 285
+            },
+            {
+              "k": 8,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.8117566024703062,
+              "role_coverage": 0.993859649122807,
+              "condition_coverage": 0.9809160305343512,
+              "answer_f1": 0.09471213076223164,
+              "token_cost": 1189.6561403508772,
+              "cases": 285
+            },
+            {
+              "k": 8,
+              "method": "mmr",
+              "evidence_recall": 0.7978706011307445,
+              "role_coverage": 0.9956140350877193,
+              "condition_coverage": 0.9809160305343512,
+              "answer_f1": 0.09264714916138402,
+              "token_cost": 1183.8245614035088,
+              "cases": 285
+            },
+            {
+              "k": 8,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.8116835030551015,
+              "role_coverage": 1.0,
+              "condition_coverage": 0.9809160305343512,
+              "answer_f1": 0.0932636186771644,
+              "token_cost": 1188.8666666666666,
+              "cases": 285
+            },
+            {
+              "k": 8,
+              "method": "frc_select",
+              "evidence_recall": 0.8108794094878501,
+              "role_coverage": 1.0,
+              "condition_coverage": 0.9809160305343512,
+              "answer_f1": 0.09434266089825337,
+              "token_cost": 1189.1543859649123,
+              "cases": 285
+            }
+          ],
+          "summary": [
+            {
+              "k": 2,
+              "frc_evidence_recall": 0.3632396772383737,
+              "frc_role_coverage": 0.9964912280701754,
+              "strongest_baseline": "cross_encoder_topk",
+              "baseline_evidence_recall": 0.3588244725600111,
+              "frc_minus_baseline_recall": 0.004415
+            },
+            {
+              "k": 3,
+              "frc_evidence_recall": 0.5041810697766377,
+              "frc_role_coverage": 0.9991228070175439,
+              "strongest_baseline": "cross_encoder_topk",
+              "baseline_evidence_recall": 0.502514403109971,
+              "frc_minus_baseline_recall": 0.001667
+            },
+            {
+              "k": 5,
+              "frc_evidence_recall": 0.7045471357048675,
+              "frc_role_coverage": 1.0,
+              "strongest_baseline": "cross_encoder_topk",
+              "baseline_evidence_recall": 0.7048687731317681,
+              "frc_minus_baseline_recall": -0.000322
+            },
+            {
+              "k": 8,
+              "frc_evidence_recall": 0.8108794094878501,
+              "frc_role_coverage": 1.0,
+              "strongest_baseline": "cross_encoder_topk",
+              "baseline_evidence_recall": 0.8117566024703062,
+              "frc_minus_baseline_recall": -0.000877
+            }
+          ],
+          "source_sha256": "42fd2a9031f6680b05bee7f8e1b67fc6fefd57a8200122e8c747cb3b7f71ffa7"
+        },
+        "multihoprag": {
+          "status": "RUN",
+          "k_values": [
+            2,
+            3,
+            5,
+            8
+          ],
+          "rows": [
+            {
+              "k": 2,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.4215571205007825,
+              "role_coverage": 0.9460745957224831,
+              "condition_coverage": 0.6625514403292181,
+              "answer_f1": 0.011386936378916676,
+              "token_cost": 486.3137715179969,
+              "cases": 2556
+            },
+            {
+              "k": 2,
+              "method": "mmr",
+              "evidence_recall": 0.4018648930620762,
+              "role_coverage": 0.9445748565466875,
+              "condition_coverage": 0.6592592592592592,
+              "answer_f1": 0.01133689379713391,
+              "token_cost": 486.23826291079814,
+              "cases": 2556
+            },
+            {
+              "k": 2,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.40874413145539906,
+              "role_coverage": 0.9924360980699009,
+              "condition_coverage": 0.6460905349794238,
+              "answer_f1": 0.010998309646987042,
+              "token_cost": 486.9389671361502,
+              "cases": 2556
+            },
+            {
+              "k": 2,
+              "method": "frc_select",
+              "evidence_recall": 0.42237219613980176,
+              "role_coverage": 0.9980112154407929,
+              "condition_coverage": 0.6625514403292181,
+              "answer_f1": 0.011504358574094506,
+              "token_cost": 486.46048513302037,
+              "cases": 2556
+            },
+            {
+              "k": 3,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.5061945748565467,
+              "role_coverage": 0.9689293166405842,
+              "condition_coverage": 0.6995884773662552,
+              "answer_f1": 0.010606901468269708,
+              "token_cost": 729.5258215962441,
+              "cases": 2556
+            },
+            {
+              "k": 3,
+              "method": "mmr",
+              "evidence_recall": 0.4574530516431925,
+              "role_coverage": 0.9654733959311425,
+              "condition_coverage": 0.6888888888888889,
+              "answer_f1": 0.01070400589118218,
+              "token_cost": 729.339593114241,
+              "cases": 2556
+            },
+            {
+              "k": 3,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.5005542514345331,
+              "role_coverage": 0.9991197183098591,
+              "condition_coverage": 0.6872427983539094,
+              "answer_f1": 0.010141968184457045,
+              "token_cost": 730.0645539906103,
+              "cases": 2556
+            },
+            {
+              "k": 3,
+              "method": "frc_select",
+              "evidence_recall": 0.5070748565466875,
+              "role_coverage": 0.9997717788210746,
+              "condition_coverage": 0.6995884773662552,
+              "answer_f1": 0.01053691935644109,
+              "token_cost": 729.6298904538342,
+              "cases": 2556
+            },
+            {
+              "k": 5,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.602112676056338,
+              "role_coverage": 0.9842853416797078,
+              "condition_coverage": 0.7300411522633745,
+              "answer_f1": 0.008392652288369126,
+              "token_cost": 1215.746870109546,
+              "cases": 2556
+            },
+            {
+              "k": 5,
+              "method": "mmr",
+              "evidence_recall": 0.5175078247261345,
+              "role_coverage": 0.9825247782994262,
+              "condition_coverage": 0.7185185185185186,
+              "answer_f1": 0.008713998873034048,
+              "token_cost": 1215.679186228482,
+              "cases": 2556
+            },
+            {
+              "k": 5,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.6003195096504955,
+              "role_coverage": 1.0,
+              "condition_coverage": 0.7267489711934156,
+              "answer_f1": 0.008439435952499325,
+              "token_cost": 1216.1013302034428,
+              "cases": 2556
+            },
+            {
+              "k": 5,
+              "method": "frc_select",
+              "evidence_recall": 0.6027647365675535,
+              "role_coverage": 1.0,
+              "condition_coverage": 0.7308641975308642,
+              "answer_f1": 0.00837825577330781,
+              "token_cost": 1215.8227699530516,
+              "cases": 2556
+            },
+            {
+              "k": 8,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.6355959833072509,
+              "role_coverage": 0.9884259259259259,
+              "condition_coverage": 0.739917695473251,
+              "answer_f1": 0.007933693424156117,
+              "token_cost": 1458.6553208137716,
+              "cases": 2556
+            },
+            {
+              "k": 8,
+              "method": "mmr",
+              "evidence_recall": 0.5375260824204486,
+              "role_coverage": 0.985263432446531,
+              "condition_coverage": 0.725925925925926,
+              "answer_f1": 0.008139964475400694,
+              "token_cost": 1458.5199530516431,
+              "cases": 2556
+            },
+            {
+              "k": 8,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.6350743348982786,
+              "role_coverage": 1.0,
+              "condition_coverage": 0.7390946502057614,
+              "answer_f1": 0.007865217777369104,
+              "token_cost": 1458.9589201877934,
+              "cases": 2556
+            },
+            {
+              "k": 8,
+              "method": "frc_select",
+              "evidence_recall": 0.6358242044861763,
+              "role_coverage": 1.0,
+              "condition_coverage": 0.7407407407407407,
+              "answer_f1": 0.00789594808405539,
+              "token_cost": 1458.7147887323943,
+              "cases": 2556
+            }
+          ],
+          "summary": [
+            {
+              "k": 2,
+              "frc_evidence_recall": 0.42237219613980176,
+              "frc_role_coverage": 0.9980112154407929,
+              "strongest_baseline": "cross_encoder_topk",
+              "baseline_evidence_recall": 0.4215571205007825,
+              "frc_minus_baseline_recall": 0.000815
+            },
+            {
+              "k": 3,
+              "frc_evidence_recall": 0.5070748565466875,
+              "frc_role_coverage": 0.9997717788210746,
+              "strongest_baseline": "cross_encoder_topk",
+              "baseline_evidence_recall": 0.5061945748565467,
+              "frc_minus_baseline_recall": 0.00088
+            },
+            {
+              "k": 5,
+              "frc_evidence_recall": 0.6027647365675535,
+              "frc_role_coverage": 1.0,
+              "strongest_baseline": "cross_encoder_topk",
+              "baseline_evidence_recall": 0.602112676056338,
+              "frc_minus_baseline_recall": 0.000652
+            },
+            {
+              "k": 8,
+              "frc_evidence_recall": 0.6358242044861763,
+              "frc_role_coverage": 1.0,
+              "strongest_baseline": "cross_encoder_topk",
+              "baseline_evidence_recall": 0.6355959833072509,
+              "frc_minus_baseline_recall": 0.000228
+            }
+          ],
+          "source_sha256": "c5704f5e6cf079a988b86d9878e4cb0a4c49bda9b461d4c8cdb4e320be765497"
+        },
+        "hotpotqa": {
+          "status": "RUN",
+          "k_values": [
+            2,
+            3,
+            5,
+            8
+          ],
+          "rows": [
+            {
+              "k": 2,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.6444857142857143,
+              "role_coverage": 0.998,
+              "condition_coverage": null,
+              "answer_f1": 0.08366568518232874,
+              "token_cost": 55.282,
+              "cases": 1000
+            },
+            {
+              "k": 2,
+              "method": "mmr",
+              "evidence_recall": 0.6225690476190476,
+              "role_coverage": 0.998,
+              "condition_coverage": null,
+              "answer_f1": 0.08253038417765533,
+              "token_cost": 54.91,
+              "cases": 1000
+            },
+            {
+              "k": 2,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.6427357142857143,
+              "role_coverage": 1.0,
+              "condition_coverage": null,
+              "answer_f1": 0.08365737048577593,
+              "token_cost": 54.536,
+              "cases": 1000
+            },
+            {
+              "k": 2,
+              "method": "frc_select",
+              "evidence_recall": 0.643902380952381,
+              "role_coverage": 1.0,
+              "condition_coverage": null,
+              "answer_f1": 0.08246683979810483,
+              "token_cost": 55.302,
+              "cases": 1000
+            },
+            {
+              "k": 3,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.7654119047619048,
+              "role_coverage": 0.999,
+              "condition_coverage": null,
+              "answer_f1": 0.08223286042978366,
+              "token_cost": 81.601,
+              "cases": 1000
+            },
+            {
+              "k": 3,
+              "method": "mmr",
+              "evidence_recall": 0.7408285714285714,
+              "role_coverage": 0.9985,
+              "condition_coverage": null,
+              "answer_f1": 0.08009703614251902,
+              "token_cost": 81.139,
+              "cases": 1000
+            },
+            {
+              "k": 3,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.7659119047619047,
+              "role_coverage": 1.0,
+              "condition_coverage": null,
+              "answer_f1": 0.08230928587787778,
+              "token_cost": 81.557,
+              "cases": 1000
+            },
+            {
+              "k": 3,
+              "method": "frc_select",
+              "evidence_recall": 0.7651619047619047,
+              "role_coverage": 1.0,
+              "condition_coverage": null,
+              "answer_f1": 0.08203931204268688,
+              "token_cost": 81.611,
+              "cases": 1000
+            },
+            {
+              "k": 5,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.8657119047619047,
+              "role_coverage": 1.0,
+              "condition_coverage": null,
+              "answer_f1": 0.07859165307509934,
+              "token_cost": 133.964,
+              "cases": 1000
+            },
+            {
+              "k": 5,
+              "method": "mmr",
+              "evidence_recall": 0.8271785714285714,
+              "role_coverage": 0.9995,
+              "condition_coverage": null,
+              "answer_f1": 0.07867244188340378,
+              "token_cost": 130.853,
+              "cases": 1000
+            },
+            {
+              "k": 5,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.8659619047619047,
+              "role_coverage": 1.0,
+              "condition_coverage": null,
+              "answer_f1": 0.0800425617886211,
+              "token_cost": 133.969,
+              "cases": 1000
+            },
+            {
+              "k": 5,
+              "method": "frc_select",
+              "evidence_recall": 0.8657119047619047,
+              "role_coverage": 1.0,
+              "condition_coverage": null,
+              "answer_f1": 0.07839810468800257,
+              "token_cost": 133.964,
+              "cases": 1000
+            },
+            {
+              "k": 8,
+              "method": "cross_encoder_topk",
+              "evidence_recall": 0.922647619047619,
+              "role_coverage": 1.0,
+              "condition_coverage": null,
+              "answer_f1": 0.0736165399321898,
+              "token_cost": 214.27,
+              "cases": 1000
+            },
+            {
+              "k": 8,
+              "method": "mmr",
+              "evidence_recall": 0.8767952380952381,
+              "role_coverage": 0.9995,
+              "condition_coverage": null,
+              "answer_f1": 0.07714055369717608,
+              "token_cost": 205.357,
+              "cases": 1000
+            },
+            {
+              "k": 8,
+              "method": "coverage_greedy_proxy",
+              "evidence_recall": 0.922647619047619,
+              "role_coverage": 1.0,
+              "condition_coverage": null,
+              "answer_f1": 0.07446263624327108,
+              "token_cost": 214.27,
+              "cases": 1000
+            },
+            {
+              "k": 8,
+              "method": "frc_select",
+              "evidence_recall": 0.922647619047619,
+              "role_coverage": 1.0,
+              "condition_coverage": null,
+              "answer_f1": 0.0736165399321898,
+              "token_cost": 214.27,
+              "cases": 1000
+            }
+          ],
+          "summary": [
+            {
+              "k": 2,
+              "frc_evidence_recall": 0.643902380952381,
+              "frc_role_coverage": 1.0,
+              "strongest_baseline": "cross_encoder_topk",
+              "baseline_evidence_recall": 0.6444857142857143,
+              "frc_minus_baseline_recall": -0.000583
+            },
+            {
+              "k": 3,
+              "frc_evidence_recall": 0.7651619047619047,
+              "frc_role_coverage": 1.0,
+              "strongest_baseline": "coverage_greedy_proxy",
+              "baseline_evidence_recall": 0.7659119047619047,
+              "frc_minus_baseline_recall": -0.00075
+            },
+            {
+              "k": 5,
+              "frc_evidence_recall": 0.8657119047619047,
+              "frc_role_coverage": 1.0,
+              "strongest_baseline": "coverage_greedy_proxy",
+              "baseline_evidence_recall": 0.8659619047619047,
+              "frc_minus_baseline_recall": -0.00025
+            },
+            {
+              "k": 8,
+              "frc_evidence_recall": 0.922647619047619,
+              "frc_role_coverage": 1.0,
+              "strongest_baseline": "cross_encoder_topk",
+              "baseline_evidence_recall": 0.922647619047619,
+              "frc_minus_baseline_recall": 0.0
+            }
+          ],
+          "source_sha256": "d3f5c74fa48688e92e620ef13a68115eef48407fe62b6c3eca278b966f26d954"
+        }
+      }
+    },
+    "parameter_sensitivity": {
+      "status": "RUN",
+      "dataset": "conditionalqa",
+      "configuration_count": 80,
+      "grid": {
+        "alpha": [
+          0.5,
+          1.0,
+          2.0,
+          4.0
+        ],
+        "gamma": [
+          0.0,
+          0.05,
+          0.1,
+          0.2,
+          0.5
+        ],
+        "role_threshold": [
+          0.35,
+          0.5,
+          0.55,
+          0.7
+        ],
+        "role_mix": [
+          0.15
+        ]
+      },
+      "best_by_evidence_f1": {
+        "alpha": 1.0,
+        "gamma": 0.0,
+        "role_threshold": 0.55,
+        "role_mix": 0.15,
+        "evidence_recall": 0.7045471357048675,
+        "evidence_f1": 0.7057543794488627,
+        "role_coverage": 1.0,
+        "condition_coverage": 0.9809160305343512,
+        "redundancy": 0.2626265616153989,
+        "token_cost": 927.6385964912281,
+        "cases": 285
+      },
+      "frozen_configuration": {
+        "alpha": 2.0,
+        "gamma": 0.0,
+        "role_threshold": 0.55,
+        "role_mix": 0.15,
+        "evidence_recall": 0.7045471357048675,
+        "evidence_f1": 0.7057543794488627,
+        "role_coverage": 1.0,
+        "condition_coverage": 0.9809160305343512,
+        "redundancy": 0.2626265616153989,
+        "token_cost": 927.6385964912281,
+        "cases": 285
+      },
+      "frozen_minus_best_evidence_f1": 0.0,
+      "interpretation": "This is a descriptive sweep over saved ConditionalQA real-model scores. It is not a held-out tuning result and does not authorize changing the frozen test configuration.",
+      "source_sha256": "81b7e4d08a23010893bf3a0ca8681217c6e4d94d0cc43f1b0c2cc417285e2b25"
+    },
+    "token_budget_sensitivity": {
+      "status": "RUN",
+      "k": 5,
+      "token_budgets": [
+        512,
+        1024,
+        2048
+      ],
+      "datasets": {
+        "conditionalqa": {
+          "status": "RUN",
+          "cases": 285,
+          "budgets": [
+            {
+              "token_budget": 512,
+              "metrics": {
+                "cross_encoder_topk": {
+                  "evidence_recall": 0.384791,
+                  "evidence_precision": 0.811111,
+                  "evidence_f1": 0.480334,
+                  "complete_evidence_set": 0.101754,
+                  "role_coverage": 0.936959,
+                  "token_cost": 432.908772,
+                  "budget_violation": 0.0,
+                  "cases": 285
+                },
+                "coverage_greedy_proxy": {
+                  "evidence_recall": 0.385704,
+                  "evidence_precision": 0.81462,
+                  "evidence_f1": 0.481744,
+                  "complete_evidence_set": 0.098246,
+                  "role_coverage": 1.0,
+                  "token_cost": 432.375439,
+                  "budget_violation": 0.0,
+                  "cases": 285
+                },
+                "frc_select": {
+                  "evidence_recall": 0.389908,
+                  "evidence_precision": 0.816959,
+                  "evidence_f1": 0.484816,
+                  "complete_evidence_set": 0.105263,
+                  "role_coverage": 0.997368,
+                  "token_cost": 432.252632,
+                  "budget_violation": 0.0,
+                  "cases": 285
+                }
+              },
+              "strongest_baseline": "coverage_greedy_proxy",
+              "frc_minus_baseline_evidence_f1": 0.003072
+            },
+            {
+              "token_budget": 1024,
+              "metrics": {
+                "cross_encoder_topk": {
+                  "evidence_recall": 0.695043,
+                  "evidence_precision": 0.794094,
+                  "evidence_f1": 0.696673,
+                  "complete_evidence_set": 0.42807,
+                  "role_coverage": 0.968889,
+                  "token_cost": 919.947368,
+                  "budget_violation": 0.0,
+                  "cases": 285
+                },
+                "coverage_greedy_proxy": {
+                  "evidence_recall": 0.692228,
+                  "evidence_precision": 0.793392,
+                  "evidence_f1": 0.695484,
+                  "complete_evidence_set": 0.421053,
+                  "role_coverage": 1.0,
+                  "token_cost": 915.129825,
+                  "budget_violation": 0.0,
+                  "cases": 285
+                },
+                "frc_select": {
+                  "evidence_recall": 0.69513,
+                  "evidence_precision": 0.794094,
+                  "evidence_f1": 0.696558,
+                  "complete_evidence_set": 0.42807,
+                  "role_coverage": 1.0,
+                  "token_cost": 917.347368,
+                  "budget_violation": 0.0,
+                  "cases": 285
+                }
+              },
+              "strongest_baseline": "cross_encoder_topk",
+              "frc_minus_baseline_evidence_f1": -0.000115
+            },
+            {
+              "token_budget": 2048,
+              "metrics": {
+                "cross_encoder_topk": {
+                  "evidence_recall": 0.704869,
+                  "evidence_precision": 0.804094,
+                  "evidence_f1": 0.706158,
+                  "complete_evidence_set": 0.445614,
+                  "role_coverage": 0.975906,
+                  "token_cost": 929.849123,
+                  "budget_violation": 0.0,
+                  "cases": 285
+                },
+                "coverage_greedy_proxy": {
+                  "evidence_recall": 0.701096,
+                  "evidence_precision": 0.801988,
+                  "evidence_f1": 0.703873,
+                  "complete_evidence_set": 0.438596,
+                  "role_coverage": 1.0,
+                  "token_cost": 924.736842,
+                  "budget_violation": 0.0,
+                  "cases": 285
+                },
+                "frc_select": {
+                  "evidence_recall": 0.704547,
+                  "evidence_precision": 0.804094,
+                  "evidence_f1": 0.705754,
+                  "complete_evidence_set": 0.445614,
+                  "role_coverage": 1.0,
+                  "token_cost": 927.638596,
+                  "budget_violation": 0.0,
+                  "cases": 285
+                }
+              },
+              "strongest_baseline": "cross_encoder_topk",
+              "frc_minus_baseline_evidence_f1": -0.000404
+            }
+          ],
+          "source_sha256": "feb0d75957c1bb09f07985979bb0816abc761ce6fafc66b40d9d99b02c1374b5"
+        },
+        "multihoprag": {
+          "status": "RUN",
+          "cases": 2556,
+          "budgets": [
+            {
+              "token_budget": 512,
+              "metrics": {
+                "cross_encoder_topk": {
+                  "evidence_recall": 0.420579,
+                  "evidence_precision": 0.507825,
+                  "evidence_f1": 0.452804,
+                  "complete_evidence_set": 0.271909,
+                  "role_coverage": 0.946009,
+                  "token_cost": 486.278951,
+                  "budget_violation": 0.0,
+                  "cases": 2556
+                },
+                "coverage_greedy_proxy": {
+                  "evidence_recall": 0.407766,
+                  "evidence_precision": 0.489632,
+                  "evidence_f1": 0.438054,
+                  "complete_evidence_set": 0.269562,
+                  "role_coverage": 0.992567,
+                  "token_cost": 486.9018,
+                  "budget_violation": 0.0,
+                  "cases": 2556
+                },
+                "frc_select": {
+                  "evidence_recall": 0.421394,
+                  "evidence_precision": 0.507629,
+                  "evidence_f1": 0.453156,
+                  "complete_evidence_set": 0.274257,
+                  "role_coverage": 0.998011,
+                  "token_cost": 486.426056,
+                  "budget_violation": 0.0,
+                  "cases": 2556
+                }
+              },
+              "strongest_baseline": "cross_encoder_topk",
+              "frc_minus_baseline_evidence_f1": 0.000352
+            },
+            {
+              "token_budget": 1024,
+              "metrics": {
+                "cross_encoder_topk": {
+                  "evidence_recall": 0.559468,
+                  "evidence_precision": 0.345364,
+                  "evidence_f1": 0.420154,
+                  "complete_evidence_set": 0.422926,
+                  "role_coverage": 0.979167,
+                  "token_cost": 972.684664,
+                  "budget_violation": 0.0,
+                  "cases": 2556
+                },
+                "coverage_greedy_proxy": {
+                  "evidence_recall": 0.556012,
+                  "evidence_precision": 0.342234,
+                  "evidence_f1": 0.416827,
+                  "complete_evidence_set": 0.420579,
+                  "role_coverage": 1.0,
+                  "token_cost": 973.083333,
+                  "budget_violation": 0.0,
+                  "cases": 2556
+                },
+                "frc_select": {
+                  "evidence_recall": 0.561261,
+                  "evidence_precision": 0.346049,
+                  "evidence_f1": 0.421133,
+                  "complete_evidence_set": 0.426448,
+                  "role_coverage": 0.99987,
+                  "token_cost": 972.742175,
+                  "budget_violation": 0.0,
+                  "cases": 2556
+                }
+              },
+              "strongest_baseline": "cross_encoder_topk",
+              "frc_minus_baseline_evidence_f1": 0.000979
+            },
+            {
+              "token_budget": 2048,
+              "metrics": {
+                "cross_encoder_topk": {
+                  "evidence_recall": 0.602113,
+                  "evidence_precision": 0.299374,
+                  "evidence_f1": 0.39366,
+                  "complete_evidence_set": 0.472222,
+                  "role_coverage": 0.984285,
+                  "token_cost": 1215.74687,
+                  "budget_violation": 0.0,
+                  "cases": 2556
+                },
+                "coverage_greedy_proxy": {
+                  "evidence_recall": 0.60032,
+                  "evidence_precision": 0.298122,
+                  "evidence_f1": 0.392216,
+                  "complete_evidence_set": 0.472222,
+                  "role_coverage": 1.0,
+                  "token_cost": 1216.10133,
+                  "budget_violation": 0.0,
+                  "cases": 2556
+                },
+                "frc_select": {
+                  "evidence_recall": 0.602765,
+                  "evidence_precision": 0.299609,
+                  "evidence_f1": 0.394001,
+                  "complete_evidence_set": 0.474178,
+                  "role_coverage": 1.0,
+                  "token_cost": 1215.82277,
+                  "budget_violation": 0.0,
+                  "cases": 2556
+                }
+              },
+              "strongest_baseline": "cross_encoder_topk",
+              "frc_minus_baseline_evidence_f1": 0.000341
+            }
+          ],
+          "source_sha256": "de5333ecea96ed274afd5d28b4d69af5a63e975fc75c9fa991ade9ce52f296e7"
+        },
+        "hotpotqa": {
+          "status": "RUN",
+          "cases": 1000,
+          "budgets": [
+            {
+              "token_budget": 512,
+              "metrics": {
+                "cross_encoder_topk": {
+                  "evidence_recall": 0.865712,
+                  "evidence_precision": 0.413,
+                  "evidence_f1": 0.550754,
+                  "complete_evidence_set": 0.689,
+                  "role_coverage": 1.0,
+                  "token_cost": 133.964,
+                  "budget_violation": 0.0,
+                  "cases": 1000
+                },
+                "coverage_greedy_proxy": {
+                  "evidence_recall": 0.865962,
+                  "evidence_precision": 0.413,
+                  "evidence_f1": 0.550818,
+                  "complete_evidence_set": 0.69,
+                  "role_coverage": 1.0,
+                  "token_cost": 133.969,
+                  "budget_violation": 0.0,
+                  "cases": 1000
+                },
+                "frc_select": {
+                  "evidence_recall": 0.865712,
+                  "evidence_precision": 0.413,
+                  "evidence_f1": 0.550754,
+                  "complete_evidence_set": 0.689,
+                  "role_coverage": 1.0,
+                  "token_cost": 133.964,
+                  "budget_violation": 0.0,
+                  "cases": 1000
+                }
+              },
+              "strongest_baseline": "coverage_greedy_proxy",
+              "frc_minus_baseline_evidence_f1": -6.4e-05
+            },
+            {
+              "token_budget": 1024,
+              "metrics": {
+                "cross_encoder_topk": {
+                  "evidence_recall": 0.865712,
+                  "evidence_precision": 0.413,
+                  "evidence_f1": 0.550754,
+                  "complete_evidence_set": 0.689,
+                  "role_coverage": 1.0,
+                  "token_cost": 133.964,
+                  "budget_violation": 0.0,
+                  "cases": 1000
+                },
+                "coverage_greedy_proxy": {
+                  "evidence_recall": 0.865962,
+                  "evidence_precision": 0.413,
+                  "evidence_f1": 0.550818,
+                  "complete_evidence_set": 0.69,
+                  "role_coverage": 1.0,
+                  "token_cost": 133.969,
+                  "budget_violation": 0.0,
+                  "cases": 1000
+                },
+                "frc_select": {
+                  "evidence_recall": 0.865712,
+                  "evidence_precision": 0.413,
+                  "evidence_f1": 0.550754,
+                  "complete_evidence_set": 0.689,
+                  "role_coverage": 1.0,
+                  "token_cost": 133.964,
+                  "budget_violation": 0.0,
+                  "cases": 1000
+                }
+              },
+              "strongest_baseline": "coverage_greedy_proxy",
+              "frc_minus_baseline_evidence_f1": -6.4e-05
+            },
+            {
+              "token_budget": 2048,
+              "metrics": {
+                "cross_encoder_topk": {
+                  "evidence_recall": 0.865712,
+                  "evidence_precision": 0.413,
+                  "evidence_f1": 0.550754,
+                  "complete_evidence_set": 0.689,
+                  "role_coverage": 1.0,
+                  "token_cost": 133.964,
+                  "budget_violation": 0.0,
+                  "cases": 1000
+                },
+                "coverage_greedy_proxy": {
+                  "evidence_recall": 0.865962,
+                  "evidence_precision": 0.413,
+                  "evidence_f1": 0.550818,
+                  "complete_evidence_set": 0.69,
+                  "role_coverage": 1.0,
+                  "token_cost": 133.969,
+                  "budget_violation": 0.0,
+                  "cases": 1000
+                },
+                "frc_select": {
+                  "evidence_recall": 0.865712,
+                  "evidence_precision": 0.413,
+                  "evidence_f1": 0.550754,
+                  "complete_evidence_set": 0.689,
+                  "role_coverage": 1.0,
+                  "token_cost": 133.964,
+                  "budget_violation": 0.0,
+                  "cases": 1000
+                }
+              },
+              "strongest_baseline": "coverage_greedy_proxy",
+              "frc_minus_baseline_evidence_f1": -6.4e-05
+            }
+          ],
+          "source_sha256": "ac5189e4f64e799ca7915a0eff9a304e6d09e0bbc6c4ef233335b17c6d56e6af"
+        }
+      },
+      "all_methods_within_budget": true,
+      "interpretation": "Selectors are rerun from the same saved real-model candidate and role scores. No generation metric is reused as a retrieval-selection claim."
+    },
+    "missing_ratio_sensitivity": {
+      "status": "RUN",
+      "protocol": "For each case/evidence pair, a fixed SHA-256 uniform score is compared with the target ratio, producing nested deterministic removals from the same saved real-model pool.",
+      "target_ratios": [
+        0.0,
+        0.25,
+        0.5,
+        0.75
+      ],
+      "results": [
+        {
+          "target_missing_ratio": 0.0,
+          "achieved_missing_ratio": 0.0,
+          "cases": 261,
+          "cases_with_removal": 0,
+          "empty_available_evidence_rate": 0.0,
+          "metrics": {
+            "cross_encoder_topk": {
+              "evidence_recall": 0.73137,
+              "evidence_precision": 0.869093,
+              "evidence_f1": 0.756661,
+              "complete_available_evidence_set": 0.394636,
+              "role_coverage": 0.976373,
+              "false_complete_on_removed_cases": 0.0
+            },
+            "coverage_greedy_proxy": {
+              "evidence_recall": 0.731082,
+              "evidence_precision": 0.867561,
+              "evidence_f1": 0.755443,
+              "complete_available_evidence_set": 0.390805,
+              "role_coverage": 1.0,
+              "false_complete_on_removed_cases": 0.0
+            },
+            "frc_select": {
+              "evidence_recall": 0.731019,
+              "evidence_precision": 0.869093,
+              "evidence_f1": 0.75622,
+              "complete_available_evidence_set": 0.394636,
+              "role_coverage": 1.0,
+              "false_complete_on_removed_cases": 0.0
+            }
+          },
+          "strongest_baseline": "cross_encoder_topk",
+          "frc_minus_baseline_evidence_f1": -0.000441
+        },
+        {
+          "target_missing_ratio": 0.25,
+          "achieved_missing_ratio": 0.272472,
+          "cases": 261,
+          "cases_with_removal": 213,
+          "empty_available_evidence_rate": 0.0,
+          "metrics": {
+            "cross_encoder_topk": {
+              "evidence_recall": 0.813964,
+              "evidence_precision": 0.819476,
+              "evidence_f1": 0.782533,
+              "complete_available_evidence_set": 0.563218,
+              "role_coverage": 0.804278,
+              "false_complete_on_removed_cases": 0.713615
+            },
+            "coverage_greedy_proxy": {
+              "evidence_recall": 0.813073,
+              "evidence_precision": 0.81871,
+              "evidence_f1": 0.781499,
+              "complete_available_evidence_set": 0.559387,
+              "role_coverage": 0.811941,
+              "false_complete_on_removed_cases": 0.723005
+            },
+            "frc_select": {
+              "evidence_recall": 0.812139,
+              "evidence_precision": 0.817944,
+              "evidence_f1": 0.780936,
+              "complete_available_evidence_set": 0.563218,
+              "role_coverage": 0.811941,
+              "false_complete_on_removed_cases": 0.723005
+            }
+          },
+          "strongest_baseline": "cross_encoder_topk",
+          "frc_minus_baseline_evidence_f1": -0.001597
+        },
+        {
+          "target_missing_ratio": 0.5,
+          "achieved_missing_ratio": 0.516292,
+          "cases": 261,
+          "cases_with_removal": 249,
+          "empty_available_evidence_rate": 0.057471,
+          "metrics": {
+            "cross_encoder_topk": {
+              "evidence_recall": 0.832588,
+              "evidence_precision": 0.711367,
+              "evidence_f1": 0.732827,
+              "complete_available_evidence_set": 0.727969,
+              "role_coverage": 0.598978,
+              "false_complete_on_removed_cases": 0.51004
+            },
+            "coverage_greedy_proxy": {
+              "evidence_recall": 0.833811,
+              "evidence_precision": 0.712133,
+              "evidence_f1": 0.733618,
+              "complete_available_evidence_set": 0.727969,
+              "role_coverage": 0.600894,
+              "false_complete_on_removed_cases": 0.514056
+            },
+            "frc_select": {
+              "evidence_recall": 0.83131,
+              "evidence_precision": 0.7106,
+              "evidence_f1": 0.731869,
+              "complete_available_evidence_set": 0.727969,
+              "role_coverage": 0.600894,
+              "false_complete_on_removed_cases": 0.514056
+            }
+          },
+          "strongest_baseline": "coverage_greedy_proxy",
+          "frc_minus_baseline_evidence_f1": -0.001749
+        },
+        {
+          "target_missing_ratio": 0.75,
+          "achieved_missing_ratio": 0.761236,
+          "cases": 261,
+          "cases_with_removal": 257,
+          "empty_available_evidence_rate": 0.264368,
+          "metrics": {
+            "cross_encoder_topk": {
+              "evidence_recall": 0.684483,
+              "evidence_precision": 0.524968,
+              "evidence_f1": 0.57043,
+              "complete_available_evidence_set": 0.896552,
+              "role_coverage": 0.350894,
+              "false_complete_on_removed_cases": 0.280156
+            },
+            "coverage_greedy_proxy": {
+              "evidence_recall": 0.685951,
+              "evidence_precision": 0.524968,
+              "evidence_f1": 0.570865,
+              "complete_available_evidence_set": 0.900383,
+              "role_coverage": 0.350894,
+              "false_complete_on_removed_cases": 0.280156
+            },
+            "frc_select": {
+              "evidence_recall": 0.684483,
+              "evidence_precision": 0.524968,
+              "evidence_f1": 0.57043,
+              "complete_available_evidence_set": 0.896552,
+              "role_coverage": 0.350894,
+              "false_complete_on_removed_cases": 0.280156
+            }
+          },
+          "strongest_baseline": "coverage_greedy_proxy",
+          "frc_minus_baseline_evidence_f1": -0.000435
+        }
+      ],
+      "source_sha256": "feb0d75957c1bb09f07985979bb0816abc761ce6fafc66b40d9d99b02c1374b5"
+    },
+    "ablation_schema_applicability": {
+      "datasets": {
+        "conditionalqa": {
+          "cases": 285,
+          "cases_with_required_field_schema": 0,
+          "candidates": 2601,
+          "candidates_with_field_scores": 0,
+          "candidates_with_applicability": 0,
+          "candidates_with_standardized_validity_fields": 0,
+          "candidates_with_conflict_annotations": 0,
+          "candidates_with_cross_encoder_score": 2601,
+          "candidates_with_role_scores": 2601
+        },
+        "multihoprag": {
+          "cases": 2556,
+          "cases_with_required_field_schema": 0,
+          "candidates": 127800,
+          "candidates_with_field_scores": 0,
+          "candidates_with_applicability": 0,
+          "candidates_with_standardized_validity_fields": 0,
+          "candidates_with_conflict_annotations": 0,
+          "candidates_with_cross_encoder_score": 127800,
+          "candidates_with_role_scores": 127800
+        },
+        "hotpotqa": {
+          "cases": 1000,
+          "cases_with_required_field_schema": 0,
+          "candidates": 41811,
+          "candidates_with_field_scores": 0,
+          "candidates_with_applicability": 0,
+          "candidates_with_standardized_validity_fields": 0,
+          "candidates_with_conflict_annotations": 0,
+          "candidates_with_cross_encoder_score": 41811,
+          "candidates_with_role_scores": 41811
+        }
+      },
+      "totals": {
+        "cases": 3841,
+        "cases_with_required_field_schema": 0,
+        "candidates": 172212,
+        "candidates_with_field_scores": 0,
+        "candidates_with_applicability": 0,
+        "candidates_with_standardized_validity_fields": 0,
+        "candidates_with_conflict_annotations": 0,
+        "candidates_with_cross_encoder_score": 172212,
+        "candidates_with_role_scores": 172212
+      },
+      "variants": {
+        "w/o_field": {
+          "status": "RUN_PUBLIC_EXPERT_REAL_MODEL",
+          "reason": "HousingQA supplies expert questions and supporting statutes; four independent questions are deterministically composed into fields and evaluated with frozen BGE, Cross-Encoder, and local Qwen models"
+        },
+        "w/o_applicability": {
+          "status": "RUN_PUBLIC_REAL_MODEL_JURISDICTION_REVISION_EFFECTIVE_EXPIRY",
+          "reason": "HousingQA identifies jurisdiction filtering under its 2021 snapshot; LawShift identifies expert-reviewed before/after statutory replacement; EUR-Lex/CELLAR supplies official effective and expiry dates at adjacent repeal boundaries."
+        },
+        "w/o_conflict": {
+          "status": "RUN_REAL_MODEL_CONFLICTS",
+          "reason": "Google CONFLICTS supplies case-level conflict types; the ablation removes only alternative-claim and temporal-validity disclosure roles on the frozen real-model pool"
+        },
+        "w/o_reranker": {
+          "status": "RUN_REAL_BIENCODER_RESCORING",
+          "reason": "supplemental artifact recomputed both relevance and role scores without a Cross-Encoder"
+        }
+      },
+      "interpretation": "SCHEMA_BLOCKED means the variant cannot be identified on these public artifacts. It is not counted as RUN or PASS and must be evaluated on a field-, applicability-, or conflict-annotated benchmark."
+    },
+    "chunk_length_sensitivity": {
+      "status": "RUN",
+      "dataset": "conditionalqa",
+      "chunk_lengths": [
+        64,
+        128,
+        256
+      ],
+      "methods": [
+        "cross_encoder_topk",
+        "coverage_greedy_proxy",
+        "frc_select"
+      ],
+      "metadata": {
+        "reranker_model": "BAAI/bge-reranker-large",
+        "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+        "sentence_transformers_version": "3.3.1",
+        "source_role_scores_sha256": "feb0d75957c1bb09f07985979bb0816abc761ce6fafc66b40d9d99b02c1374b5",
+        "score_calibration": "per_case_minmax",
+        "role_relevance_mix": 0.15,
+        "selection_parameters": {
+          "alpha": 2.0,
+          "beta": 1.0,
+          "gamma": 0.0
+        },
+        "chunk_lengths": [
+          64,
+          128,
+          256
+        ],
+        "overlap_ratio": 0.2,
+        "chunk_tokenizer": "BAAI/bge-reranker-large",
+        "methods": [
+          "cross_encoder_topk",
+          "coverage_greedy_proxy",
+          "frc_select"
+        ],
+        "top_k": 5,
+        "token_budget": 1500,
+        "seed": 20260713,
+        "parent_evidence_protocol": "one or more selected chunks recall their unique parent evidence ID",
+        "dense_embedding_status": "not used because frozen gamma=0.0 and all compared selectors use reranker scores",
+        "chunk_inventory": [
+          {
+            "chunk_length": 64,
+            "cases": 285,
+            "chunks": 13240
+          },
+          {
+            "chunk_length": 128,
+            "cases": 285,
+            "chunks": 7468
+          },
+          {
+            "chunk_length": 256,
+            "cases": 285,
+            "chunks": 3950
+          }
+        ]
+      },
+      "results": [
+        {
+          "chunk_length": 64,
+          "metrics": {
+            "cross_encoder_topk": {
+              "evidence_recall": 0.541712,
+              "evidence_precision": 0.83883,
+              "evidence_f1": 0.610207,
+              "role_coverage": 0.959649,
+              "token_cost": 302.414035,
+              "selected_chunk_count": 5.0,
+              "unique_parent_count": 3.350877,
+              "duplicate_parent_ratio": 0.329825,
+              "cases": 285
+            },
+            "coverage_greedy_proxy": {
+              "evidence_recall": 0.547563,
+              "evidence_precision": 0.834912,
+              "evidence_f1": 0.614854,
+              "role_coverage": 1.0,
+              "token_cost": 300.407018,
+              "selected_chunk_count": 5.0,
+              "unique_parent_count": 3.421053,
+              "duplicate_parent_ratio": 0.315789,
+              "cases": 285
+            },
+            "frc_select": {
+              "evidence_recall": 0.546306,
+              "evidence_precision": 0.839649,
+              "evidence_f1": 0.614475,
+              "role_coverage": 1.0,
+              "token_cost": 302.140351,
+              "selected_chunk_count": 5.0,
+              "unique_parent_count": 3.375439,
+              "duplicate_parent_ratio": 0.324912,
+              "cases": 285
+            }
+          },
+          "strongest_baseline": "coverage_greedy_proxy",
+          "frc_minus_baseline_evidence_f1": -0.000379,
+          "paired_frc_minus_baseline_evidence_f1": {
+            "cases": 285,
+            "mean_difference": -0.000379,
+            "ci_low": -0.006775,
+            "ci_high": 0.006388
+          }
+        },
+        {
+          "chunk_length": 128,
+          "metrics": {
+            "cross_encoder_topk": {
+              "evidence_recall": 0.564653,
+              "evidence_precision": 0.830643,
+              "evidence_f1": 0.629299,
+              "role_coverage": 0.971345,
+              "token_cost": 565.684211,
+              "selected_chunk_count": 5.0,
+              "unique_parent_count": 3.575439,
+              "duplicate_parent_ratio": 0.284912,
+              "cases": 285
+            },
+            "coverage_greedy_proxy": {
+              "evidence_recall": 0.570986,
+              "evidence_precision": 0.833333,
+              "evidence_f1": 0.6327,
+              "role_coverage": 1.0,
+              "token_cost": 560.407018,
+              "selected_chunk_count": 5.0,
+              "unique_parent_count": 3.585965,
+              "duplicate_parent_ratio": 0.282807,
+              "cases": 285
+            },
+            "frc_select": {
+              "evidence_recall": 0.570845,
+              "evidence_precision": 0.831754,
+              "evidence_f1": 0.632662,
+              "role_coverage": 1.0,
+              "token_cost": 564.785965,
+              "selected_chunk_count": 5.0,
+              "unique_parent_count": 3.603509,
+              "duplicate_parent_ratio": 0.279298,
+              "cases": 285
+            }
+          },
+          "strongest_baseline": "coverage_greedy_proxy",
+          "frc_minus_baseline_evidence_f1": -3.8e-05,
+          "paired_frc_minus_baseline_evidence_f1": {
+            "cases": 285,
+            "mean_difference": -3.8e-05,
+            "ci_low": -0.00476,
+            "ci_high": 0.005067
+          }
+        },
+        {
+          "chunk_length": 256,
+          "metrics": {
+            "cross_encoder_topk": {
+              "evidence_recall": 0.653689,
+              "evidence_precision": 0.814035,
+              "evidence_f1": 0.678986,
+              "role_coverage": 0.983041,
+              "token_cost": 1051.2,
+              "selected_chunk_count": 4.901754,
+              "unique_parent_count": 4.287719,
+              "duplicate_parent_ratio": 0.122807,
+              "cases": 285
+            },
+            "coverage_greedy_proxy": {
+              "evidence_recall": 0.654403,
+              "evidence_precision": 0.817368,
+              "evidence_f1": 0.680232,
+              "role_coverage": 1.0,
+              "token_cost": 1034.414035,
+              "selected_chunk_count": 4.901754,
+              "unique_parent_count": 4.259649,
+              "duplicate_parent_ratio": 0.128421,
+              "cases": 285
+            },
+            "frc_select": {
+              "evidence_recall": 0.654302,
+              "evidence_precision": 0.813333,
+              "evidence_f1": 0.679077,
+              "role_coverage": 1.0,
+              "token_cost": 1046.880702,
+              "selected_chunk_count": 4.901754,
+              "unique_parent_count": 4.287719,
+              "duplicate_parent_ratio": 0.122807,
+              "cases": 285
+            }
+          },
+          "strongest_baseline": "coverage_greedy_proxy",
+          "frc_minus_baseline_evidence_f1": -0.001155,
+          "paired_frc_minus_baseline_evidence_f1": {
+            "cases": 285,
+            "mean_difference": -0.001155,
+            "ci_low": -0.006445,
+            "ci_high": 0.003629
+          }
+        }
+      ],
+      "source_sha256": "33eeb470f2026020e525d4e356e75e1c9d555b42fcaea43aee8fa5f7c566ba92",
+      "interpretation": "Every chunk length is rescored by the real reranker for question relevance and all five role queries. Evidence metrics use unique parent evidence IDs, while token cost and duplicate-parent ratio remain chunk-level diagnostics."
+    },
+    "controlled_domain_sensitivity": {
+      "status": "RUN_CONTROLLED_DOMAIN",
+      "scope": "SYNTHETIC_CONTROLLED_NO_NEURAL_MODEL",
+      "metadata": {
+        "benchmark": "flood_system/rag_benchmarks/controlled_frc_sensitivity_benchmark.json",
+        "benchmark_sha256": "689a0e9ee694982b15417f0a37b62cab70f7b17890417aeb7ea6dbcf9cdad7c8",
+        "data_origin": "SYNTHETIC",
+        "is_simulated": true,
+        "selector_backend": "deterministic_lexical_fields_and_metadata",
+        "neural_model_used": false,
+        "case_count": 3,
+        "document_count": 18,
+        "cases_with_field_evidence_map": 3,
+        "field_evidence_mapping_count": 16,
+        "top_k": 4,
+        "token_budget": 520,
+        "frozen_policy": {
+          "field_weight": 4.0,
+          "role_weight": 1.0,
+          "trust_weight": 1.4,
+          "applicability_weight": 1.5,
+          "novelty_weight": 1.0,
+          "support_weight": 1.0,
+          "conflict_penalty_weight": 2.4,
+          "cost_penalty_weight": 0.7,
+          "conflict_threshold": 0.0
+        },
+        "protocol": "one_factor_at_a_time",
+        "gold_usage": "field_evidence_map is used for scoring only and is never passed to the selector"
+      },
+      "dimensions": {
+        "conflict_threshold": [
+          0.0,
+          0.35,
+          0.5,
+          0.8,
+          1.0
+        ],
+        "field_weight": [
+          0.0,
+          1.0,
+          2.0,
+          4.0,
+          8.0
+        ],
+        "role_weight": [
+          0.0,
+          0.5,
+          1.0,
+          2.0,
+          4.0
+        ]
+      },
+      "identifiability": {
+        "role_weight": {
+          "role_coverage": [
+            0.888889,
+            1.0
+          ],
+          "evidence_f1": [
+            0.607143,
+            0.75
+          ]
+        },
+        "field_weight": {
+          "field_coverage": [
+            0.57381,
+            0.77381
+          ],
+          "evidence_f1": [
+            0.607143,
+            0.75
+          ]
+        },
+        "conflict_threshold": {
+          "flagged_evidence_case": [
+            0.0,
+            0.333333
+          ],
+          "evidence_f1": [
+            0.607143,
+            0.75
+          ]
+        }
+      },
+      "results": [
+        {
+          "dimension": "role_weight",
+          "value": 0.0,
+          "aggregate": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.77381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 0.888889,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.333333,
+            "token_cost": 268.333333
+          }
+        },
+        {
+          "dimension": "role_weight",
+          "value": 0.5,
+          "aggregate": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.77381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.333333,
+            "token_cost": 270.0
+          }
+        },
+        {
+          "dimension": "role_weight",
+          "value": 1.0,
+          "aggregate": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.77381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.333333,
+            "token_cost": 270.0
+          }
+        },
+        {
+          "dimension": "role_weight",
+          "value": 2.0,
+          "aggregate": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.77381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.333333,
+            "token_cost": 270.0
+          }
+        },
+        {
+          "dimension": "role_weight",
+          "value": 4.0,
+          "aggregate": {
+            "evidence_recall": 0.583333,
+            "evidence_precision": 0.638889,
+            "evidence_f1": 0.607143,
+            "field_coverage": 0.57381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.361111,
+            "flagged_evidence_ratio": 0.111111,
+            "flagged_evidence_case": 0.333333,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 225.0
+          }
+        },
+        {
+          "dimension": "field_weight",
+          "value": 0.0,
+          "aggregate": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.77381,
+            "selector_field_coverage": 0.944444,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.333333,
+            "token_cost": 271.666667
+          }
+        },
+        {
+          "dimension": "field_weight",
+          "value": 1.0,
+          "aggregate": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.77381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.333333,
+            "token_cost": 270.0
+          }
+        },
+        {
+          "dimension": "field_weight",
+          "value": 2.0,
+          "aggregate": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.77381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.333333,
+            "token_cost": 270.0
+          }
+        },
+        {
+          "dimension": "field_weight",
+          "value": 4.0,
+          "aggregate": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.77381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.333333,
+            "token_cost": 270.0
+          }
+        },
+        {
+          "dimension": "field_weight",
+          "value": 8.0,
+          "aggregate": {
+            "evidence_recall": 0.583333,
+            "evidence_precision": 0.638889,
+            "evidence_f1": 0.607143,
+            "field_coverage": 0.57381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.361111,
+            "flagged_evidence_ratio": 0.111111,
+            "flagged_evidence_case": 0.333333,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 225.0
+          }
+        },
+        {
+          "dimension": "conflict_threshold",
+          "value": 0.0,
+          "aggregate": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.77381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.333333,
+            "token_cost": 270.0
+          }
+        },
+        {
+          "dimension": "conflict_threshold",
+          "value": 0.35,
+          "aggregate": {
+            "evidence_recall": 0.75,
+            "evidence_precision": 0.75,
+            "evidence_f1": 0.75,
+            "field_coverage": 0.77381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.25,
+            "flagged_evidence_ratio": 0.0,
+            "flagged_evidence_case": 0.0,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.333333,
+            "token_cost": 270.0
+          }
+        },
+        {
+          "dimension": "conflict_threshold",
+          "value": 0.5,
+          "aggregate": {
+            "evidence_recall": 0.583333,
+            "evidence_precision": 0.638889,
+            "evidence_f1": 0.607143,
+            "field_coverage": 0.57381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.361111,
+            "flagged_evidence_ratio": 0.111111,
+            "flagged_evidence_case": 0.333333,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 225.0
+          }
+        },
+        {
+          "dimension": "conflict_threshold",
+          "value": 0.8,
+          "aggregate": {
+            "evidence_recall": 0.583333,
+            "evidence_precision": 0.638889,
+            "evidence_f1": 0.607143,
+            "field_coverage": 0.57381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.361111,
+            "flagged_evidence_ratio": 0.111111,
+            "flagged_evidence_case": 0.333333,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 225.0
+          }
+        },
+        {
+          "dimension": "conflict_threshold",
+          "value": 1.0,
+          "aggregate": {
+            "evidence_recall": 0.583333,
+            "evidence_precision": 0.638889,
+            "evidence_f1": 0.607143,
+            "field_coverage": 0.57381,
+            "selector_field_coverage": 1.0,
+            "role_coverage": 1.0,
+            "unsupported_evidence_ratio": 0.361111,
+            "flagged_evidence_ratio": 0.111111,
+            "flagged_evidence_case": 0.333333,
+            "explicit_conflict_pair_selected": 0.0,
+            "case_accuracy": 0.0,
+            "token_cost": 225.0
+          }
+        }
+      ],
+      "limitations": [
+        "This small benchmark was repository-constructed and validated for parameter identifiability; it is not held out and is not a public real-model result.",
+        "It demonstrates selector behavior and parameter traceability; it cannot establish production effectiveness or Gate 2 superiority.",
+        "Primary public artifacts still lack standardized field, applicability, and candidate-conflict annotations.",
+        "The sweep is descriptive and must not be used to tune the frozen public test configuration after evaluation."
+      ],
+      "source_sha256": "8032a142586ea822ee115e31fab5365b795afc2dcf622c9532cbaa150dd39dda"
+    },
+    "conflicts_real_model_ablation": {
+      "status": "RUN_REAL_MODEL_CONFLICTS",
+      "metadata": {
+        "dataset": "Google CONFLICTS",
+        "data_origin": "PUBLIC",
+        "is_simulated": false,
+        "real_model_scores": true,
+        "generator": "local_qwen",
+        "case_count": 458,
+        "top_k": 5,
+        "token_budget": 1500,
+        "frozen_role_threshold": 0.55,
+        "core_roles": [
+          "answer_claim",
+          "source_attribution"
+        ],
+        "conflict_disclosure_roles": [
+          "alternative_claim",
+          "temporal_validity"
+        ],
+        "conflict_thresholds": [
+          0.25,
+          0.4,
+          0.55,
+          0.7,
+          0.85
+        ],
+        "protocol": "post_hoc_one_factor_at_a_time_same_saved_real_model_candidate_pool",
+        "config": {
+          "embedding_model": "BAAI/bge-large-en-v1.5",
+          "reranker_model": "BAAI/bge-reranker-large",
+          "generator_model": "Qwen2.5-7B-Instruct-GPTQ-Int4",
+          "device": "cuda",
+          "hf_home": "D:\\RAG_test\\.hf_cache",
+          "embedding_batch_size": 32,
+          "rerank_batch_size": 16,
+          "generator_batch_size": 16,
+          "score_calibration": "per_case_minmax",
+          "role_relevance_mix": 0.15,
+          "alpha": 2.0,
+          "beta": 1.0,
+          "gamma": 0.0,
+          "top_k": 5,
+          "token_budget": 1500,
+          "sample_size": null,
+          "prediction_provenance": {
+            "total_variant_rows": 3206,
+            "reused_exact_reference_rows": 3116,
+            "changed_selection_rows": 90,
+            "changed_unique_prompts": 73,
+            "reuse_rule": "same case ID and identical ordered selected evidence IDs"
+          }
+        },
+        "source_sha256": {
+          "dataset": "9ed5907314a4907c36219aaab0fd570ce54892bbd6dd8386aa729a1a236a2781",
+          "reference_predictions": "be739f8d649e7cb841e99c6d318400a536f76cc84d0b44a072d0fbe2c1c39db8",
+          "reference_selected": "8241ee7d1592e4b4b8fa58baebfa43b59ebe78a6b09627ceac6cf36a9d21d728",
+          "scored_cache": "45973a7fa91c83119858dbe67d28c5b959a9ee79b0a6606abeb62ebdce4c4072",
+          "scored_metadata": "7e0a84e8f7d5d5a162f9da461b29923f6df15eae74139dc5445268695ac4d569"
+        }
+      },
+      "ablation": {
+        "status": "RUN_REAL_MODEL_CONFLICTS",
+        "full": {
+          "method": "frc_full",
+          "cases": 458,
+          "classification": {
+            "cases": 458,
+            "parsed_predictions": 458,
+            "parse_rate": 1.0,
+            "accuracy": 0.334061,
+            "macro_f1": 0.228111,
+            "per_type": {
+              "No conflict": {
+                "precision": 0.494624,
+                "recall": 0.571429,
+                "f1": 0.530259,
+                "support": 161
+              },
+              "Complementary information": {
+                "precision": 0.209877,
+                "recall": 0.147826,
+                "f1": 0.173469,
+                "support": 115
+              },
+              "Conflicting opinions and research outcomes": {
+                "precision": 1.0,
+                "recall": 0.078261,
+                "f1": 0.145161,
+                "support": 115
+              },
+              "Conflict due to outdated information": {
+                "precision": 0.196629,
+                "recall": 0.564516,
+                "f1": 0.291667,
+                "support": 62
+              },
+              "Conflict due to misinformation": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 5
+              }
+            }
+          },
+          "selection": {
+            "cases": 458,
+            "domain_coverage": 0.95262,
+            "lexical_diversity": 0.856176,
+            "mean_token_cost": 1222.428,
+            "answer_cases": 237,
+            "exact_answer_support": 0.738397,
+            "answer_token_recall": 0.827957,
+            "outdated_cases": 62,
+            "newest_date_retention": 0.532258,
+            "temporal_endpoint_coverage": 0.532258
+          },
+          "coverage_proxies": {
+            "prediction_parsed": 1.0,
+            "classification_correct": 0.334061,
+            "alternative_claim_coverage_proxy": 1.0,
+            "temporal_validity_coverage_proxy": 1.0,
+            "conflict_role_coverage_proxy": 1.0
+          }
+        },
+        "without_conflict": {
+          "method": "wo_conflict",
+          "cases": 458,
+          "classification": {
+            "cases": 458,
+            "parsed_predictions": 458,
+            "parse_rate": 1.0,
+            "accuracy": 0.338428,
+            "macro_f1": 0.232431,
+            "per_type": {
+              "No conflict": {
+                "precision": 0.494565,
+                "recall": 0.565217,
+                "f1": 0.527536,
+                "support": 161
+              },
+              "Complementary information": {
+                "precision": 0.222222,
+                "recall": 0.156522,
+                "f1": 0.183673,
+                "support": 115
+              },
+              "Conflicting opinions and research outcomes": {
+                "precision": 1.0,
+                "recall": 0.078261,
+                "f1": 0.145161,
+                "support": 115
+              },
+              "Conflict due to outdated information": {
+                "precision": 0.205556,
+                "recall": 0.596774,
+                "f1": 0.305785,
+                "support": 62
+              },
+              "Conflict due to misinformation": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 5
+              }
+            }
+          },
+          "selection": {
+            "cases": 458,
+            "domain_coverage": 0.95262,
+            "lexical_diversity": 0.856115,
+            "mean_token_cost": 1221.843,
+            "answer_cases": 237,
+            "exact_answer_support": 0.738397,
+            "answer_token_recall": 0.827957,
+            "outdated_cases": 62,
+            "newest_date_retention": 0.532258,
+            "temporal_endpoint_coverage": 0.532258
+          },
+          "coverage_proxies": {
+            "prediction_parsed": 1.0,
+            "classification_correct": 0.338428,
+            "alternative_claim_coverage_proxy": 1.0,
+            "temporal_validity_coverage_proxy": 1.0,
+            "conflict_role_coverage_proxy": 1.0
+          }
+        },
+        "comparison": {
+          "selection_changed_cases": 36,
+          "selection_unchanged_cases": 422,
+          "full_minus_wo_conflict": {
+            "classification_accuracy": {
+              "cases": 458,
+              "mean_difference": -0.004367,
+              "ci_low": -0.0131,
+              "ci_high": 0.004367
+            },
+            "conflict_role_coverage_proxy": {
+              "cases": 297,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "exact_answer_support": {
+              "cases": 237,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "newest_date_retention": {
+              "cases": 62,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "temporal_endpoint_coverage": {
+              "cases": 62,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            }
+          }
+        }
+      },
+      "conflict_threshold_sensitivity": {
+        "status": "RUN_REAL_MODEL_CONFLICTS",
+        "results": [
+          {
+            "conflict_threshold": 0.25,
+            "method": "conflict_threshold_0.25",
+            "cases": 458,
+            "classification": {
+              "cases": 458,
+              "parsed_predictions": 458,
+              "parse_rate": 1.0,
+              "accuracy": 0.336245,
+              "macro_f1": 0.23021,
+              "per_type": {
+                "No conflict": {
+                  "precision": 0.494624,
+                  "recall": 0.571429,
+                  "f1": 0.530259,
+                  "support": 161
+                },
+                "Complementary information": {
+                  "precision": 0.219512,
+                  "recall": 0.156522,
+                  "f1": 0.182741,
+                  "support": 115
+                },
+                "Conflicting opinions and research outcomes": {
+                  "precision": 1.0,
+                  "recall": 0.078261,
+                  "f1": 0.145161,
+                  "support": 115
+                },
+                "Conflict due to outdated information": {
+                  "precision": 0.19774,
+                  "recall": 0.564516,
+                  "f1": 0.292887,
+                  "support": 62
+                },
+                "Conflict due to misinformation": {
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "f1": 0.0,
+                  "support": 5
+                }
+              }
+            },
+            "selection": {
+              "cases": 458,
+              "domain_coverage": 0.95262,
+              "lexical_diversity": 0.856176,
+              "mean_token_cost": 1222.428,
+              "answer_cases": 237,
+              "exact_answer_support": 0.738397,
+              "answer_token_recall": 0.827957,
+              "outdated_cases": 62,
+              "newest_date_retention": 0.532258,
+              "temporal_endpoint_coverage": 0.532258
+            },
+            "coverage_proxies": {
+              "prediction_parsed": 1.0,
+              "classification_correct": 0.336245,
+              "alternative_claim_coverage_proxy": 1.0,
+              "temporal_validity_coverage_proxy": 1.0,
+              "conflict_role_coverage_proxy": 1.0
+            }
+          },
+          {
+            "conflict_threshold": 0.4,
+            "method": "conflict_threshold_0.40",
+            "cases": 458,
+            "classification": {
+              "cases": 458,
+              "parsed_predictions": 458,
+              "parse_rate": 1.0,
+              "accuracy": 0.336245,
+              "macro_f1": 0.23021,
+              "per_type": {
+                "No conflict": {
+                  "precision": 0.494624,
+                  "recall": 0.571429,
+                  "f1": 0.530259,
+                  "support": 161
+                },
+                "Complementary information": {
+                  "precision": 0.219512,
+                  "recall": 0.156522,
+                  "f1": 0.182741,
+                  "support": 115
+                },
+                "Conflicting opinions and research outcomes": {
+                  "precision": 1.0,
+                  "recall": 0.078261,
+                  "f1": 0.145161,
+                  "support": 115
+                },
+                "Conflict due to outdated information": {
+                  "precision": 0.19774,
+                  "recall": 0.564516,
+                  "f1": 0.292887,
+                  "support": 62
+                },
+                "Conflict due to misinformation": {
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "f1": 0.0,
+                  "support": 5
+                }
+              }
+            },
+            "selection": {
+              "cases": 458,
+              "domain_coverage": 0.95262,
+              "lexical_diversity": 0.856176,
+              "mean_token_cost": 1222.428,
+              "answer_cases": 237,
+              "exact_answer_support": 0.738397,
+              "answer_token_recall": 0.827957,
+              "outdated_cases": 62,
+              "newest_date_retention": 0.532258,
+              "temporal_endpoint_coverage": 0.532258
+            },
+            "coverage_proxies": {
+              "prediction_parsed": 1.0,
+              "classification_correct": 0.336245,
+              "alternative_claim_coverage_proxy": 1.0,
+              "temporal_validity_coverage_proxy": 1.0,
+              "conflict_role_coverage_proxy": 1.0
+            }
+          },
+          {
+            "conflict_threshold": 0.55,
+            "method": "conflict_threshold_0.55",
+            "cases": 458,
+            "classification": {
+              "cases": 458,
+              "parsed_predictions": 458,
+              "parse_rate": 1.0,
+              "accuracy": 0.334061,
+              "macro_f1": 0.228111,
+              "per_type": {
+                "No conflict": {
+                  "precision": 0.494624,
+                  "recall": 0.571429,
+                  "f1": 0.530259,
+                  "support": 161
+                },
+                "Complementary information": {
+                  "precision": 0.209877,
+                  "recall": 0.147826,
+                  "f1": 0.173469,
+                  "support": 115
+                },
+                "Conflicting opinions and research outcomes": {
+                  "precision": 1.0,
+                  "recall": 0.078261,
+                  "f1": 0.145161,
+                  "support": 115
+                },
+                "Conflict due to outdated information": {
+                  "precision": 0.196629,
+                  "recall": 0.564516,
+                  "f1": 0.291667,
+                  "support": 62
+                },
+                "Conflict due to misinformation": {
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "f1": 0.0,
+                  "support": 5
+                }
+              }
+            },
+            "selection": {
+              "cases": 458,
+              "domain_coverage": 0.95262,
+              "lexical_diversity": 0.856176,
+              "mean_token_cost": 1222.428,
+              "answer_cases": 237,
+              "exact_answer_support": 0.738397,
+              "answer_token_recall": 0.827957,
+              "outdated_cases": 62,
+              "newest_date_retention": 0.532258,
+              "temporal_endpoint_coverage": 0.532258
+            },
+            "coverage_proxies": {
+              "prediction_parsed": 1.0,
+              "classification_correct": 0.334061,
+              "alternative_claim_coverage_proxy": 1.0,
+              "temporal_validity_coverage_proxy": 1.0,
+              "conflict_role_coverage_proxy": 1.0
+            }
+          },
+          {
+            "conflict_threshold": 0.7,
+            "method": "conflict_threshold_0.70",
+            "cases": 458,
+            "classification": {
+              "cases": 458,
+              "parsed_predictions": 458,
+              "parse_rate": 1.0,
+              "accuracy": 0.334061,
+              "macro_f1": 0.227926,
+              "per_type": {
+                "No conflict": {
+                  "precision": 0.489362,
+                  "recall": 0.571429,
+                  "f1": 0.527221,
+                  "support": 161
+                },
+                "Complementary information": {
+                  "precision": 0.2125,
+                  "recall": 0.147826,
+                  "f1": 0.174359,
+                  "support": 115
+                },
+                "Conflicting opinions and research outcomes": {
+                  "precision": 1.0,
+                  "recall": 0.078261,
+                  "f1": 0.145161,
+                  "support": 115
+                },
+                "Conflict due to outdated information": {
+                  "precision": 0.19774,
+                  "recall": 0.564516,
+                  "f1": 0.292887,
+                  "support": 62
+                },
+                "Conflict due to misinformation": {
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "f1": 0.0,
+                  "support": 5
+                }
+              }
+            },
+            "selection": {
+              "cases": 458,
+              "domain_coverage": 0.95262,
+              "lexical_diversity": 0.856202,
+              "mean_token_cost": 1222.255,
+              "answer_cases": 237,
+              "exact_answer_support": 0.738397,
+              "answer_token_recall": 0.827957,
+              "outdated_cases": 62,
+              "newest_date_retention": 0.532258,
+              "temporal_endpoint_coverage": 0.532258
+            },
+            "coverage_proxies": {
+              "prediction_parsed": 1.0,
+              "classification_correct": 0.334061,
+              "alternative_claim_coverage_proxy": 1.0,
+              "temporal_validity_coverage_proxy": 1.0,
+              "conflict_role_coverage_proxy": 1.0
+            }
+          },
+          {
+            "conflict_threshold": 0.85,
+            "method": "conflict_threshold_0.85",
+            "cases": 458,
+            "classification": {
+              "cases": 458,
+              "parsed_predictions": 458,
+              "parse_rate": 1.0,
+              "accuracy": 0.325328,
+              "macro_f1": 0.221382,
+              "per_type": {
+                "No conflict": {
+                  "precision": 0.481481,
+                  "recall": 0.565217,
+                  "f1": 0.52,
+                  "support": 161
+                },
+                "Complementary information": {
+                  "precision": 0.197531,
+                  "recall": 0.13913,
+                  "f1": 0.163265,
+                  "support": 115
+                },
+                "Conflicting opinions and research outcomes": {
+                  "precision": 1.0,
+                  "recall": 0.078261,
+                  "f1": 0.145161,
+                  "support": 115
+                },
+                "Conflict due to outdated information": {
+                  "precision": 0.188571,
+                  "recall": 0.532258,
+                  "f1": 0.278481,
+                  "support": 62
+                },
+                "Conflict due to misinformation": {
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "f1": 0.0,
+                  "support": 5
+                }
+              }
+            },
+            "selection": {
+              "cases": 458,
+              "domain_coverage": 0.95262,
+              "lexical_diversity": 0.856252,
+              "mean_token_cost": 1221.666,
+              "answer_cases": 237,
+              "exact_answer_support": 0.738397,
+              "answer_token_recall": 0.827957,
+              "outdated_cases": 62,
+              "newest_date_retention": 0.532258,
+              "temporal_endpoint_coverage": 0.532258
+            },
+            "coverage_proxies": {
+              "prediction_parsed": 1.0,
+              "classification_correct": 0.325328,
+              "alternative_claim_coverage_proxy": 1.0,
+              "temporal_validity_coverage_proxy": 1.0,
+              "conflict_role_coverage_proxy": 1.0
+            }
+          }
+        ]
+      },
+      "decision": {
+        "full_superiority_over_wo_conflict_proven": false,
+        "gate_2": "NO-GO",
+        "interpretation": "This public real-model ablation measures the conflict-disclosure component on CONFLICTS. Gate 2 remains NO-GO unless all predeclared comparisons and independent expected-behavior judging pass."
+      },
+      "limitations": [
+        "The experiment was added after earlier aggregate results were inspected and is post hoc, not preregistered confirmatory evidence.",
+        "CONFLICTS supplies case-level conflict types but not candidate-level gold conflict spans; conflict-role coverage is therefore a reranker-score proxy.",
+        "Exact Qwen predictions are reused only when the case and ordered selected evidence IDs are identical; changed selections are regenerated locally.",
+        "Conflict-type classification is not the CONFLICTS paper's independent expected-behavior adherence judgment.",
+        "The experiment does not supply task-field or applicability annotations and cannot satisfy w/o Field or w/o Applicability."
+      ],
+      "source_sha256": "f3d73309005e7ba6d1baf7d3a0f5365954fd3463c1a4037f6cecc075552aca31"
+    },
+    "housing_real_model_ablation": {
+      "status": "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021",
+      "metadata": {
+        "public_dataset": true,
+        "expert_annotated_supporting_statutes": true,
+        "source_repository": "reglab/housing_qa",
+        "source_revision": "761550cc974fa1d9141ffd39014db89efa2a7230",
+        "source_url": "https://huggingface.co/datasets/reglab/housing_qa/resolve/761550cc974fa1d9141ffd39014db89efa2a7230/data/questions.json.zip?download=true",
+        "source_license": "CC-BY-SA-4.0",
+        "source_json_sha256": "4f6eb35e1b865a6c5cfd0cf73a0b514a86bd1d8306bf6719f2b4fb94793c7e4b",
+        "source_zip_sha256": "7e7722c267d44ecc1f9f52d69109116d8a0a352b89f002438585872f67de9985",
+        "scored_cases_sha256": "2f7b25941f436e39d58521ff6604376837f093d9d061d413e335e4b321383d52",
+        "case_count": 40,
+        "field_count": 160,
+        "jurisdiction_count": 22,
+        "snapshot_year": 2021,
+        "candidate_occurrences": 400,
+        "methods": [
+          "bm25_topk",
+          "dense_topk",
+          "hybrid_topk",
+          "cross_encoder_topk",
+          "field_decomposition_topk",
+          "frc_full",
+          "w/o_field",
+          "w/o_applicability"
+        ],
+        "models": {
+          "embedding": "BAAI/bge-large-en-v1.5",
+          "reranker": "BAAI/bge-reranker-large",
+          "generator": "Qwen2.5-7B-Instruct-GPTQ-Int4"
+        },
+        "real_model_scores": true,
+        "generator": "local_qwen",
+        "selection_parameters": {
+          "top_k": 4,
+          "token_budget": 1200,
+          "field_threshold": 0.55,
+          "role_threshold": 0.55,
+          "field_weight": 2.0,
+          "role_weight": 1.0
+        },
+        "frozen_protocol": "deterministically selected jurisdiction-rounds form composite cases; four original expert questions become task fields; each field has one annotated statute; same-field opposite-answer statutes from other jurisdictions are hard negatives",
+        "gold_usage": "expected answers and field_evidence_map are used only after selection and generation for scoring; neither is included in scorer queries or generator prompts",
+        "manifest_sha256": "3b73c422d0ea25315e516bc167ac1558fa1bdc6373544deda0142e45b5dbfde5",
+        "prediction_provenance": {
+          "total_method_rows": 320,
+          "unique_case_selection_prompts": 232,
+          "equivalent_selection_reuse_rows": 88
+        }
+      },
+      "coverage": {
+        "w/o_field": "RUN_PUBLIC_EXPERT_REAL_MODEL",
+        "w/o_applicability": "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021",
+        "jurisdiction": "IDENTIFIABLE",
+        "snapshot_year": "FROZEN_2021",
+        "version_or_expiry_variation": "NOT_IDENTIFIABLE_SINGLE_SNAPSHOT"
+      },
+      "aggregates": {
+        "bm25_topk": {
+          "cases": 40,
+          "evidence_recall": 0.64375,
+          "evidence_precision": 0.64375,
+          "evidence_f1": 0.64375,
+          "field_coverage": 0.64375,
+          "core_field_coverage": 0.64375,
+          "citation_support_precision": 0.64375,
+          "unsupported_field_rate": 0.35625,
+          "wrong_jurisdiction_rate": 0.0,
+          "wrong_jurisdiction_case": 0.0,
+          "answer_accuracy": 0.30625,
+          "valid_answer_rate": 1.0,
+          "case_accuracy": 0.0,
+          "token_cost": 458.725
+        },
+        "dense_topk": {
+          "cases": 40,
+          "evidence_recall": 0.7,
+          "evidence_precision": 0.7,
+          "evidence_f1": 0.7,
+          "field_coverage": 0.7,
+          "core_field_coverage": 0.7,
+          "citation_support_precision": 0.7,
+          "unsupported_field_rate": 0.3,
+          "wrong_jurisdiction_rate": 0.0,
+          "wrong_jurisdiction_case": 0.0,
+          "answer_accuracy": 0.325,
+          "valid_answer_rate": 1.0,
+          "case_accuracy": 0.0,
+          "token_cost": 428.975
+        },
+        "hybrid_topk": {
+          "cases": 40,
+          "evidence_recall": 0.68125,
+          "evidence_precision": 0.68125,
+          "evidence_f1": 0.68125,
+          "field_coverage": 0.68125,
+          "core_field_coverage": 0.68125,
+          "citation_support_precision": 0.68125,
+          "unsupported_field_rate": 0.31875,
+          "wrong_jurisdiction_rate": 0.0,
+          "wrong_jurisdiction_case": 0.0,
+          "answer_accuracy": 0.31875,
+          "valid_answer_rate": 1.0,
+          "case_accuracy": 0.0,
+          "token_cost": 454.925
+        },
+        "cross_encoder_topk": {
+          "cases": 40,
+          "evidence_recall": 0.65,
+          "evidence_precision": 0.65,
+          "evidence_f1": 0.65,
+          "field_coverage": 0.65,
+          "core_field_coverage": 0.65,
+          "citation_support_precision": 0.65,
+          "unsupported_field_rate": 0.35,
+          "wrong_jurisdiction_rate": 0.0,
+          "wrong_jurisdiction_case": 0.0,
+          "answer_accuracy": 0.3125,
+          "valid_answer_rate": 1.0,
+          "case_accuracy": 0.0,
+          "token_cost": 395.875
+        },
+        "field_decomposition_topk": {
+          "cases": 40,
+          "evidence_recall": 0.70625,
+          "evidence_precision": 0.70625,
+          "evidence_f1": 0.70625,
+          "field_coverage": 0.70625,
+          "core_field_coverage": 0.70625,
+          "citation_support_precision": 0.70625,
+          "unsupported_field_rate": 0.29375,
+          "wrong_jurisdiction_rate": 0.0,
+          "wrong_jurisdiction_case": 0.0,
+          "answer_accuracy": 0.31875,
+          "valid_answer_rate": 1.0,
+          "case_accuracy": 0.0,
+          "token_cost": 398.85
+        },
+        "frc_full": {
+          "cases": 40,
+          "evidence_recall": 0.70625,
+          "evidence_precision": 0.70625,
+          "evidence_f1": 0.70625,
+          "field_coverage": 0.70625,
+          "core_field_coverage": 0.70625,
+          "citation_support_precision": 0.70625,
+          "unsupported_field_rate": 0.29375,
+          "wrong_jurisdiction_rate": 0.0,
+          "wrong_jurisdiction_case": 0.0,
+          "answer_accuracy": 0.30625,
+          "valid_answer_rate": 1.0,
+          "case_accuracy": 0.0,
+          "token_cost": 401.0
+        },
+        "w/o_field": {
+          "cases": 40,
+          "evidence_recall": 0.65625,
+          "evidence_precision": 0.65625,
+          "evidence_f1": 0.65625,
+          "field_coverage": 0.65625,
+          "core_field_coverage": 0.65625,
+          "citation_support_precision": 0.65625,
+          "unsupported_field_rate": 0.34375,
+          "wrong_jurisdiction_rate": 0.0,
+          "wrong_jurisdiction_case": 0.0,
+          "answer_accuracy": 0.3125,
+          "valid_answer_rate": 1.0,
+          "case_accuracy": 0.0,
+          "token_cost": 398.875
+        },
+        "w/o_applicability": {
+          "cases": 40,
+          "evidence_recall": 0.53125,
+          "evidence_precision": 0.53125,
+          "evidence_f1": 0.53125,
+          "field_coverage": 0.53125,
+          "core_field_coverage": 0.53125,
+          "citation_support_precision": 0.53125,
+          "unsupported_field_rate": 0.46875,
+          "wrong_jurisdiction_rate": 0.275,
+          "wrong_jurisdiction_case": 0.775,
+          "answer_accuracy": 0.3375,
+          "valid_answer_rate": 1.0,
+          "case_accuracy": 0.0,
+          "token_cost": 410.35
+        }
+      },
+      "strongest_baseline": "field_decomposition_topk",
+      "paired_comparisons": {
+        "full_minus_w_o_field": {
+          "left": "frc_full",
+          "right": "w/o_field",
+          "direction": "left_minus_right",
+          "metrics": {
+            "evidence_f1": {
+              "cases": 40,
+              "mean_difference": 0.05,
+              "ci_low": 0.01875,
+              "ci_high": 0.0875
+            },
+            "field_coverage": {
+              "cases": 40,
+              "mean_difference": 0.05,
+              "ci_low": 0.01875,
+              "ci_high": 0.0875
+            },
+            "citation_support_precision": {
+              "cases": 40,
+              "mean_difference": 0.05,
+              "ci_low": 0.01875,
+              "ci_high": 0.0875
+            },
+            "answer_accuracy": {
+              "cases": 40,
+              "mean_difference": -0.00625,
+              "ci_low": -0.05,
+              "ci_high": 0.04375
+            },
+            "case_accuracy": {
+              "cases": 40,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "wrong_jurisdiction_rate": {
+              "cases": 40,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            }
+          }
+        },
+        "full_minus_w_o_applicability": {
+          "left": "frc_full",
+          "right": "w/o_applicability",
+          "direction": "left_minus_right",
+          "metrics": {
+            "evidence_f1": {
+              "cases": 40,
+              "mean_difference": 0.175,
+              "ci_low": 0.125,
+              "ci_high": 0.225
+            },
+            "field_coverage": {
+              "cases": 40,
+              "mean_difference": 0.175,
+              "ci_low": 0.125,
+              "ci_high": 0.225
+            },
+            "citation_support_precision": {
+              "cases": 40,
+              "mean_difference": 0.175,
+              "ci_low": 0.125,
+              "ci_high": 0.225
+            },
+            "answer_accuracy": {
+              "cases": 40,
+              "mean_difference": -0.03125,
+              "ci_low": -0.08125,
+              "ci_high": 0.0125
+            },
+            "case_accuracy": {
+              "cases": 40,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "wrong_jurisdiction_rate": {
+              "cases": 40,
+              "mean_difference": -0.275,
+              "ci_low": -0.3375,
+              "ci_high": -0.2125
+            }
+          }
+        },
+        "full_minus_strongest_baseline": {
+          "left": "frc_full",
+          "right": "field_decomposition_topk",
+          "direction": "left_minus_right",
+          "metrics": {
+            "evidence_f1": {
+              "cases": 40,
+              "mean_difference": 0.0,
+              "ci_low": -0.01875,
+              "ci_high": 0.01875
+            },
+            "field_coverage": {
+              "cases": 40,
+              "mean_difference": 0.0,
+              "ci_low": -0.01875,
+              "ci_high": 0.01875
+            },
+            "citation_support_precision": {
+              "cases": 40,
+              "mean_difference": 0.0,
+              "ci_low": -0.01875,
+              "ci_high": 0.01875
+            },
+            "answer_accuracy": {
+              "cases": 40,
+              "mean_difference": -0.0125,
+              "ci_low": -0.03125,
+              "ci_high": 0.0
+            },
+            "case_accuracy": {
+              "cases": 40,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "wrong_jurisdiction_rate": {
+              "cases": 40,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            }
+          }
+        }
+      },
+      "selection_changed_cases": {
+        "w/o_field": 29,
+        "w/o_applicability": 31
+      },
+      "decision": {
+        "full_strictly_better_than_w_o_field": true,
+        "full_w_o_field_ci_excludes_zero": true,
+        "full_field_coverage_gain_over_strongest_baseline_at_least_0_05": false,
+        "gate_2": "NO-GO",
+        "reason": "This public expert benchmark can test field coverage and jurisdiction filtering, but a single 2021 snapshot cannot identify version/expiry behavior and the cross-domain result cannot override the existing failed public comparisons."
+      },
+      "limitations": [
+        "HousingQA is a public housing-law benchmark, not a flood-response or district-government benchmark.",
+        "The public corpus is explicitly accurate as of 2021; it has no paired historical/current statute versions, so version replacement and expiry remain untested.",
+        "Composite four-field cases and hard-negative pools are deterministic transformations of expert single-question annotations, not separately expert-reviewed composite tasks.",
+        "Public model pretraining contamination cannot be excluded.",
+        "The frozen test configuration was not tuned after observing these results."
+      ],
+      "source_sha256": "439b7e4438658dad4c9e44783bf946bfca07d60bd7b1ed83a81b79e8a53e6597"
+    },
+    "housing_public_weight_sensitivity": {
+      "status": "RUN_PUBLIC_EXPERT_FIELD_REAL_MODEL_ROLE_DIAGNOSTIC",
+      "metadata": {
+        "data_origin": "PUBLIC",
+        "is_simulated": false,
+        "public_dataset": true,
+        "expert_annotated_supporting_statutes": true,
+        "source_repository": "reglab/housing_qa",
+        "source_revision": "761550cc974fa1d9141ffd39014db89efa2a7230",
+        "source_license": "CC-BY-SA-4.0",
+        "source_json_sha256": "4f6eb35e1b865a6c5cfd0cf73a0b514a86bd1d8306bf6719f2b4fb94793c7e4b",
+        "scored_cases_sha256": "2f7b25941f436e39d58521ff6604376837f093d9d061d413e335e4b321383d52",
+        "scored_metadata_sha256": "bef75f97982836720e1f4108893cf1797d6a19097b0c1a9c3f748ac8c02184a3",
+        "case_signature": "6ccedfe46b819226452dd4b847dabb1f8c728c9c1aaac9cbc2f66f6b7a71f5b4",
+        "case_count": 40,
+        "field_count": 160,
+        "jurisdiction_count": 22,
+        "role_count_per_case": [
+          3
+        ],
+        "candidate_occurrences": 400,
+        "real_model_scores": true,
+        "generator_used": false,
+        "models": {
+          "embedding": "BAAI/bge-large-en-v1.5",
+          "reranker": "BAAI/bge-reranker-large"
+        },
+        "score_calibration": "per_case_minmax",
+        "frozen_parameters": {
+          "top_k": 4,
+          "token_budget": 1200,
+          "field_threshold": 0.55,
+          "role_threshold": 0.55,
+          "field_weight": 2.0,
+          "role_weight": 1.0
+        },
+        "gold_usage": "field_evidence_map and gold_evidence_ids are used only after selection for evaluation; the selector receives only frozen real-model relevance, field, role, applicability, and cost features",
+        "protocol": "one-factor-at-a-time descriptive sweep over the frozen HousingQA real-model candidate pool; observed results do not retune the frozen test configuration"
+      },
+      "dimensions": {
+        "field_weight": [
+          0.0,
+          0.5,
+          1.0,
+          2.0,
+          4.0,
+          8.0
+        ],
+        "role_weight": [
+          0.0,
+          0.5,
+          1.0,
+          2.0,
+          4.0
+        ]
+      },
+      "identifiability": {
+        "field_weight": {
+          "status": "IDENTIFIABLE",
+          "metric_values": {
+            "field_coverage": [
+              0.65625,
+              0.68125,
+              0.6875,
+              0.70625,
+              0.7125
+            ],
+            "evidence_f1": [
+              0.65625,
+              0.68125,
+              0.6875,
+              0.70625,
+              0.7125
+            ]
+          }
+        },
+        "role_weight": {
+          "status": "IDENTIFIABLE",
+          "metric_values": {
+            "role_coverage": [
+              0.6,
+              0.616667,
+              0.625,
+              0.633333
+            ],
+            "evidence_f1": [
+              0.70625,
+              0.7125
+            ]
+          }
+        }
+      },
+      "results": [
+        {
+          "dimension": "field_weight",
+          "value": 0.0,
+          "aggregate": {
+            "cases": 40,
+            "evidence_recall": 0.65625,
+            "evidence_precision": 0.65625,
+            "evidence_f1": 0.65625,
+            "field_coverage": 0.65625,
+            "selector_field_coverage": 0.66875,
+            "role_coverage": 0.633333,
+            "unsupported_field_rate": 0.34375,
+            "wrong_jurisdiction_rate": 0.0,
+            "token_cost": 398.875,
+            "selected_count": 4.0
+          },
+          "selection_changed_cases_from_frozen": 29
+        },
+        {
+          "dimension": "field_weight",
+          "value": 0.5,
+          "aggregate": {
+            "cases": 40,
+            "evidence_recall": 0.68125,
+            "evidence_precision": 0.68125,
+            "evidence_f1": 0.68125,
+            "field_coverage": 0.68125,
+            "selector_field_coverage": 0.70625,
+            "role_coverage": 0.625,
+            "unsupported_field_rate": 0.31875,
+            "wrong_jurisdiction_rate": 0.0,
+            "token_cost": 407.95,
+            "selected_count": 4.0
+          },
+          "selection_changed_cases_from_frozen": 23
+        },
+        {
+          "dimension": "field_weight",
+          "value": 1.0,
+          "aggregate": {
+            "cases": 40,
+            "evidence_recall": 0.6875,
+            "evidence_precision": 0.6875,
+            "evidence_f1": 0.6875,
+            "field_coverage": 0.6875,
+            "selector_field_coverage": 0.7125,
+            "role_coverage": 0.625,
+            "unsupported_field_rate": 0.3125,
+            "wrong_jurisdiction_rate": 0.0,
+            "token_cost": 405.55,
+            "selected_count": 4.0
+          },
+          "selection_changed_cases_from_frozen": 15
+        },
+        {
+          "dimension": "field_weight",
+          "value": 2.0,
+          "aggregate": {
+            "cases": 40,
+            "evidence_recall": 0.70625,
+            "evidence_precision": 0.70625,
+            "evidence_f1": 0.70625,
+            "field_coverage": 0.70625,
+            "selector_field_coverage": 0.7375,
+            "role_coverage": 0.625,
+            "unsupported_field_rate": 0.29375,
+            "wrong_jurisdiction_rate": 0.0,
+            "token_cost": 401.0,
+            "selected_count": 4.0
+          },
+          "selection_changed_cases_from_frozen": 0
+        },
+        {
+          "dimension": "field_weight",
+          "value": 4.0,
+          "aggregate": {
+            "cases": 40,
+            "evidence_recall": 0.7125,
+            "evidence_precision": 0.7125,
+            "evidence_f1": 0.7125,
+            "field_coverage": 0.7125,
+            "selector_field_coverage": 0.74375,
+            "role_coverage": 0.625,
+            "unsupported_field_rate": 0.2875,
+            "wrong_jurisdiction_rate": 0.0,
+            "token_cost": 404.425,
+            "selected_count": 4.0
+          },
+          "selection_changed_cases_from_frozen": 10
+        },
+        {
+          "dimension": "field_weight",
+          "value": 8.0,
+          "aggregate": {
+            "cases": 40,
+            "evidence_recall": 0.7125,
+            "evidence_precision": 0.7125,
+            "evidence_f1": 0.7125,
+            "field_coverage": 0.7125,
+            "selector_field_coverage": 0.74375,
+            "role_coverage": 0.625,
+            "unsupported_field_rate": 0.2875,
+            "wrong_jurisdiction_rate": 0.0,
+            "token_cost": 406.6,
+            "selected_count": 4.0
+          },
+          "selection_changed_cases_from_frozen": 16
+        },
+        {
+          "dimension": "role_weight",
+          "value": 0.0,
+          "aggregate": {
+            "cases": 40,
+            "evidence_recall": 0.70625,
+            "evidence_precision": 0.70625,
+            "evidence_f1": 0.70625,
+            "field_coverage": 0.70625,
+            "selector_field_coverage": 0.7375,
+            "role_coverage": 0.6,
+            "unsupported_field_rate": 0.29375,
+            "wrong_jurisdiction_rate": 0.0,
+            "token_cost": 398.85,
+            "selected_count": 4.0
+          },
+          "selection_changed_cases_from_frozen": 12
+        },
+        {
+          "dimension": "role_weight",
+          "value": 0.5,
+          "aggregate": {
+            "cases": 40,
+            "evidence_recall": 0.7125,
+            "evidence_precision": 0.7125,
+            "evidence_f1": 0.7125,
+            "field_coverage": 0.7125,
+            "selector_field_coverage": 0.7375,
+            "role_coverage": 0.616667,
+            "unsupported_field_rate": 0.2875,
+            "wrong_jurisdiction_rate": 0.0,
+            "token_cost": 400.275,
+            "selected_count": 4.0
+          },
+          "selection_changed_cases_from_frozen": 4
+        },
+        {
+          "dimension": "role_weight",
+          "value": 1.0,
+          "aggregate": {
+            "cases": 40,
+            "evidence_recall": 0.70625,
+            "evidence_precision": 0.70625,
+            "evidence_f1": 0.70625,
+            "field_coverage": 0.70625,
+            "selector_field_coverage": 0.7375,
+            "role_coverage": 0.625,
+            "unsupported_field_rate": 0.29375,
+            "wrong_jurisdiction_rate": 0.0,
+            "token_cost": 401.0,
+            "selected_count": 4.0
+          },
+          "selection_changed_cases_from_frozen": 0
+        },
+        {
+          "dimension": "role_weight",
+          "value": 2.0,
+          "aggregate": {
+            "cases": 40,
+            "evidence_recall": 0.7125,
+            "evidence_precision": 0.7125,
+            "evidence_f1": 0.7125,
+            "field_coverage": 0.7125,
+            "selector_field_coverage": 0.73125,
+            "role_coverage": 0.633333,
+            "unsupported_field_rate": 0.2875,
+            "wrong_jurisdiction_rate": 0.0,
+            "token_cost": 398.55,
+            "selected_count": 4.0
+          },
+          "selection_changed_cases_from_frozen": 9
+        },
+        {
+          "dimension": "role_weight",
+          "value": 4.0,
+          "aggregate": {
+            "cases": 40,
+            "evidence_recall": 0.7125,
+            "evidence_precision": 0.7125,
+            "evidence_f1": 0.7125,
+            "field_coverage": 0.7125,
+            "selector_field_coverage": 0.73125,
+            "role_coverage": 0.633333,
+            "unsupported_field_rate": 0.2875,
+            "wrong_jurisdiction_rate": 0.0,
+            "token_cost": 398.55,
+            "selected_count": 4.0
+          },
+          "selection_changed_cases_from_frozen": 13
+        }
+      ],
+      "decision": {
+        "gate_2": "NO-GO",
+        "public_real_model_weight_sensitivity_complete": true,
+        "frozen_parameters_changed": false,
+        "reason": "Both field and role weights are behaviorally identifiable on frozen public real-model scores, but this post-hoc cross-domain sensitivity does not prove FRC superiority or flood-domain validity."
+      },
+      "limitations": [
+        "HousingQA is a public housing-law benchmark, not a flood-response benchmark.",
+        "Field evidence comes from public expert question/statute mappings; the three FRC functional roles are deterministic evaluation labels rather than HousingQA expert role annotations.",
+        "The sweep reuses frozen real-model scores and evaluates evidence selection only; it does not rerun answer generation for every weight setting.",
+        "The sweep is descriptive and post-hoc; it cannot authorize parameter tuning or Gate 2 promotion."
+      ],
+      "source_sha256": "a3829ca843fca740443e8b97c431daf3a791a5fc699bd20b66351a303d762975"
+    },
+    "lawshift_temporal_ablation": {
+      "status": "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL",
+      "metadata": {
+        "public_dataset": true,
+        "expert_annotated_revisions": true,
+        "real_model_scores": true,
+        "source_repository": "triangularPeach/LawShift",
+        "source_revision": "0fce4f3821140bde29081ae0b20500e79aa065d5",
+        "source_license": "Apache-2.0",
+        "source_file_count": 124,
+        "source_manifest_sha256": "35448c34e3d2a26504d57f1f1e0c741bc8caecf927b2126f567f158b32d08687",
+        "scored_cases_sha256": "d50ed624afc4edbeabef047a7a28c1583070f1af779e321f0cc1b3cb9e1cf0a2",
+        "case_count": 124,
+        "paired_case_count": 62,
+        "revision_type_count": 31,
+        "original_case_count": 62,
+        "revised_case_count": 62,
+        "candidate_occurrences": 992,
+        "methods": [
+          "char_bm25_top1",
+          "cross_encoder_top1",
+          "applicability_filtered_cross_encoder_top1",
+          "frc_full",
+          "w/o_applicability"
+        ],
+        "models": {
+          "reranker": "BAAI/bge-reranker-large"
+        },
+        "selection_parameters": {
+          "top_k": 1,
+          "token_budget": 512,
+          "pairs_per_revision": 2,
+          "distractor_articles": 3,
+          "seed": 20260713
+        },
+        "frozen_protocol": "two deterministic paired case indices per each of 31 expert-reviewed revision types; both original and revised snapshots are evaluated; candidate pools contain both versions of the gold article and three lexical hard-negative article pairs",
+        "gold_usage": "relevant_articles identify the gold evidence only after retrieval; facts and before/after time scope are scorer inputs, while charge and prison_time are not",
+        "case_manifest_sha256": "404a09edbe6ad88e726651e717d03556e2562b69d5f8b48112f531fb748587a3"
+      },
+      "coverage": {
+        "version_replacement": "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL",
+        "original_and_revised_snapshots": "IDENTIFIABLE",
+        "effective_or_expiry_dates": "NOT_IDENTIFIABLE_NO_EFFECTIVE_DATES"
+      },
+      "aggregates": {
+        "char_bm25_top1": {
+          "cases": 124,
+          "article_recall_at_1": 0.282258,
+          "version_accuracy": 0.572581,
+          "exact_evidence_accuracy": 0.185484,
+          "invalid_applicability_rate": 0.427419,
+          "token_cost": 109.991935
+        },
+        "cross_encoder_top1": {
+          "cases": 124,
+          "article_recall_at_1": 0.491935,
+          "version_accuracy": 0.548387,
+          "exact_evidence_accuracy": 0.290323,
+          "invalid_applicability_rate": 0.451613,
+          "token_cost": 79.782258
+        },
+        "applicability_filtered_cross_encoder_top1": {
+          "cases": 124,
+          "article_recall_at_1": 0.427419,
+          "version_accuracy": 1.0,
+          "exact_evidence_accuracy": 0.427419,
+          "invalid_applicability_rate": 0.0,
+          "token_cost": 80.064516
+        },
+        "frc_full": {
+          "cases": 124,
+          "article_recall_at_1": 0.427419,
+          "version_accuracy": 1.0,
+          "exact_evidence_accuracy": 0.427419,
+          "invalid_applicability_rate": 0.0,
+          "token_cost": 80.064516
+        },
+        "w/o_applicability": {
+          "cases": 124,
+          "article_recall_at_1": 0.491935,
+          "version_accuracy": 0.548387,
+          "exact_evidence_accuracy": 0.290323,
+          "invalid_applicability_rate": 0.451613,
+          "token_cost": 79.782258
+        }
+      },
+      "by_revision_type": [
+        {
+          "revision_type": "action_explicit_extend",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.25,
+          "w_o_applicability_exact_evidence_accuracy": 0.25
+        },
+        {
+          "revision_type": "action_explicit_reduce",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.5,
+          "w_o_applicability_exact_evidence_accuracy": 0.25
+        },
+        {
+          "revision_type": "action_implicit_expand",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 1.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.75
+        },
+        {
+          "revision_type": "action_implicit_reduce",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.75,
+          "w_o_applicability_exact_evidence_accuracy": 0.75
+        },
+        {
+          "revision_type": "action_reallocated_expand",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 1.0,
+          "w_o_applicability_exact_evidence_accuracy": 1.0
+        },
+        {
+          "revision_type": "action_reallocated_reduce",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.75,
+          "w_o_applicability_exact_evidence_accuracy": 0.75
+        },
+        {
+          "revision_type": "objCon_addition",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        },
+        {
+          "revision_type": "objCon_explicit_extend",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.5,
+          "w_o_applicability_exact_evidence_accuracy": 0.5
+        },
+        {
+          "revision_type": "objCon_implicit_expand",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        },
+        {
+          "revision_type": "objCon_implicit_reduce",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.5,
+          "w_o_applicability_exact_evidence_accuracy": 0.25
+        },
+        {
+          "revision_type": "objCon_reallocated_expand",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        },
+        {
+          "revision_type": "objCon_reallocated_reduce",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        },
+        {
+          "revision_type": "objCon_removal",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.5,
+          "w_o_applicability_exact_evidence_accuracy": 0.5
+        },
+        {
+          "revision_type": "object_explicit_extend",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.5,
+          "w_o_applicability_exact_evidence_accuracy": 0.25
+        },
+        {
+          "revision_type": "object_explicit_reduce",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.25,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        },
+        {
+          "revision_type": "object_implicit_expand",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.5,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        },
+        {
+          "revision_type": "object_implicit_reduce",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.5,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        },
+        {
+          "revision_type": "object_reallocated_expand",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 1.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.5
+        },
+        {
+          "revision_type": "object_reallocated_reduce",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.75,
+          "w_o_applicability_exact_evidence_accuracy": 0.5
+        },
+        {
+          "revision_type": "sbCon_addition",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.5,
+          "w_o_applicability_exact_evidence_accuracy": 0.5
+        },
+        {
+          "revision_type": "sbCon_removal",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.5,
+          "w_o_applicability_exact_evidence_accuracy": 0.25
+        },
+        {
+          "revision_type": "subject_explicit_extend",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        },
+        {
+          "revision_type": "subject_explicit_reduce",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        },
+        {
+          "revision_type": "subject_implicit_expand",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.5,
+          "w_o_applicability_exact_evidence_accuracy": 0.5
+        },
+        {
+          "revision_type": "subject_implicit_reduce",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        },
+        {
+          "revision_type": "subject_reallocated_expand",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.25,
+          "w_o_applicability_exact_evidence_accuracy": 0.25
+        },
+        {
+          "revision_type": "subject_reallocated_reduce",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        },
+        {
+          "revision_type": "term_down",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.5,
+          "w_o_applicability_exact_evidence_accuracy": 0.25
+        },
+        {
+          "revision_type": "term_extremity_in",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 1.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.5
+        },
+        {
+          "revision_type": "term_extremity_out",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.75,
+          "w_o_applicability_exact_evidence_accuracy": 0.5
+        },
+        {
+          "revision_type": "term_up",
+          "cases": 4,
+          "frc_full_exact_evidence_accuracy": 0.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.0
+        }
+      ],
+      "strongest_baseline": "applicability_filtered_cross_encoder_top1",
+      "paired_comparisons": {
+        "full_minus_w_o_applicability": {
+          "left": "frc_full",
+          "right": "w/o_applicability",
+          "direction": "left_minus_right",
+          "metrics": {
+            "article_recall_at_1": {
+              "cases": 124,
+              "mean_difference": -0.064516,
+              "ci_low": -0.112903,
+              "ci_high": -0.024194
+            },
+            "version_accuracy": {
+              "cases": 124,
+              "mean_difference": 0.451613,
+              "ci_low": 0.362903,
+              "ci_high": 0.532258
+            },
+            "exact_evidence_accuracy": {
+              "cases": 124,
+              "mean_difference": 0.137097,
+              "ci_low": 0.080645,
+              "ci_high": 0.201613
+            },
+            "invalid_applicability_rate": {
+              "cases": 124,
+              "mean_difference": -0.451613,
+              "ci_low": -0.532258,
+              "ci_high": -0.362903
+            }
+          }
+        },
+        "full_minus_strongest_baseline": {
+          "left": "frc_full",
+          "right": "applicability_filtered_cross_encoder_top1",
+          "direction": "left_minus_right",
+          "metrics": {
+            "article_recall_at_1": {
+              "cases": 124,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "version_accuracy": {
+              "cases": 124,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "exact_evidence_accuracy": {
+              "cases": 124,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "invalid_applicability_rate": {
+              "cases": 124,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            }
+          }
+        }
+      },
+      "selection_changed_cases": 56,
+      "decision": {
+        "full_strictly_better_than_w_o_applicability": true,
+        "full_exact_gain_over_strongest_baseline_at_least_0_05": false,
+        "gate_2": "NO-GO",
+        "reason": "LawShift identifies expert-reviewed before/after statutory replacement, but the fair applicability-filtered Cross-Encoder baseline uses the same validity metadata; the dataset has no effective/expiry dates and is not a flood-response benchmark."
+      },
+      "limitations": [
+        "LawShift evaluates Chinese criminal-law judgment adaptation, not flood-response or district-government evidence retrieval.",
+        "The revised statutes are expert-reviewed hypothetical revisions rather than enacted historical versions with authoritative effective dates.",
+        "The benchmark identifies before/after version replacement but cannot test exact effective or expiry dates.",
+        "The frozen candidate pool is a retrieval stress slice built from the labeled article pair plus lexical hard negatives, not the paper's original legal-judgment-prediction protocol.",
+        "Only evidence selection is evaluated; charge and sentence generation are not scored in this retrieval ablation."
+      ],
+      "source_sha256": "4145413531b35a47413e7138e2107bca1bcf8bd5c0f5bf462444cd9a099bc444"
+    },
+    "eurlex_temporal_ablation": {
+      "status": "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL",
+      "metadata": {
+        "public_dataset": true,
+        "official_temporal_metadata": true,
+        "real_model_scores": true,
+        "source_snapshot_date": "2026-07-14",
+        "source_manifest_sha256": "9e1f23319ebff661b861107a7a2d3c50104024b93403d99ae0d6f421554bfc1d",
+        "source_query_sha256": "bcfc39e8812178fb36a51ccbdaae9b4a1ed3e8dd2f1db1fda04fb0a2c1b9aaa5",
+        "source_reuse_notice": "https://eur-lex.europa.eu/content/help/data-reuse/reuse-contents-eurlex-details.html?locale=en",
+        "scored_cases_sha256": "2ace39d5ac0a2b715b0bf661364a5cd9ed4c57cf13ead51f709e56cd3b4d09be",
+        "pair_count": 30,
+        "case_count": 60,
+        "candidate_occurrences": 360,
+        "family_counts": {
+          "decision": 12,
+          "directive": 6,
+          "regulation": 12
+        },
+        "methods": [
+          "bm25_top1",
+          "cross_encoder_top1",
+          "applicability_filtered_cross_encoder_top1",
+          "frc_full",
+          "w/o_applicability"
+        ],
+        "models": {
+          "reranker": "BAAI/bge-reranker-large"
+        },
+        "selection_parameters": {
+          "top_k": 1,
+          "token_budget": 512,
+          "distractor_pairs": 2,
+          "seed": 20260714
+        },
+        "frozen_protocol": "thirty CELEX repeal pairs with a unique one-day adjacent expiry/effective boundary; evaluate the last valid day of the old act and first effective day of the new act; add two deterministic unrelated repeal-pair distractors",
+        "gold_usage": "CELEX repeal relation and applicability dates determine labels after retrieval; the scorer sees only the natural-language question and candidate legal text, while frc_full and the fair filtered baseline may use validity metadata",
+        "case_manifest_sha256": "09c5a2f5d0bfd2a17999f32fe0cb8f4c228bfb3494f36ef0608b9df2fca7910b"
+      },
+      "coverage": {
+        "effective_dates": "IDENTIFIABLE_OFFICIAL_CELLAR_METADATA",
+        "expiry_dates": "IDENTIFIABLE_OFFICIAL_CELLAR_METADATA",
+        "adjacent_repeal_boundary": "IDENTIFIABLE",
+        "old_and_new_boundary_snapshots": "RUN"
+      },
+      "aggregates": {
+        "bm25_top1": {
+          "cases": 60,
+          "exact_evidence_accuracy": 0.466667,
+          "validity_accuracy": 0.466667,
+          "invalid_applicability_rate": 0.533333,
+          "wrong_boundary_version_rate": 0.5,
+          "token_cost": 292.316667
+        },
+        "cross_encoder_top1": {
+          "cases": 60,
+          "exact_evidence_accuracy": 0.483333,
+          "validity_accuracy": 0.483333,
+          "invalid_applicability_rate": 0.516667,
+          "wrong_boundary_version_rate": 0.516667,
+          "token_cost": 292.75
+        },
+        "applicability_filtered_cross_encoder_top1": {
+          "cases": 60,
+          "exact_evidence_accuracy": 1.0,
+          "validity_accuracy": 1.0,
+          "invalid_applicability_rate": 0.0,
+          "wrong_boundary_version_rate": 0.0,
+          "token_cost": 291.833333
+        },
+        "frc_full": {
+          "cases": 60,
+          "exact_evidence_accuracy": 1.0,
+          "validity_accuracy": 1.0,
+          "invalid_applicability_rate": 0.0,
+          "wrong_boundary_version_rate": 0.0,
+          "token_cost": 291.833333
+        },
+        "w/o_applicability": {
+          "cases": 60,
+          "exact_evidence_accuracy": 0.483333,
+          "validity_accuracy": 0.483333,
+          "invalid_applicability_rate": 0.516667,
+          "wrong_boundary_version_rate": 0.516667,
+          "token_cost": 292.75
+        }
+      },
+      "by_boundary": [
+        {
+          "boundary": "first_effective_day",
+          "cases": 30,
+          "frc_full_exact_evidence_accuracy": 1.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.766667
+        },
+        {
+          "boundary": "last_valid_day",
+          "cases": 30,
+          "frc_full_exact_evidence_accuracy": 1.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.2
+        }
+      ],
+      "by_family": [
+        {
+          "family": "decision",
+          "cases": 24,
+          "frc_full_exact_evidence_accuracy": 1.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.5
+        },
+        {
+          "family": "directive",
+          "cases": 12,
+          "frc_full_exact_evidence_accuracy": 1.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.583333
+        },
+        {
+          "family": "regulation",
+          "cases": 24,
+          "frc_full_exact_evidence_accuracy": 1.0,
+          "w_o_applicability_exact_evidence_accuracy": 0.416667
+        }
+      ],
+      "strongest_baseline": "applicability_filtered_cross_encoder_top1",
+      "paired_comparisons": {
+        "full_minus_w_o_applicability": {
+          "left": "frc_full",
+          "right": "w/o_applicability",
+          "direction": "left_minus_right",
+          "metrics": {
+            "exact_evidence_accuracy": {
+              "cases": 60,
+              "mean_difference": 0.516667,
+              "ci_low": 0.383333,
+              "ci_high": 0.65
+            },
+            "validity_accuracy": {
+              "cases": 60,
+              "mean_difference": 0.516667,
+              "ci_low": 0.383333,
+              "ci_high": 0.65
+            },
+            "invalid_applicability_rate": {
+              "cases": 60,
+              "mean_difference": -0.516667,
+              "ci_low": -0.65,
+              "ci_high": -0.383333
+            },
+            "wrong_boundary_version_rate": {
+              "cases": 60,
+              "mean_difference": -0.516667,
+              "ci_low": -0.65,
+              "ci_high": -0.383333
+            }
+          }
+        },
+        "full_minus_strongest_baseline": {
+          "left": "frc_full",
+          "right": "applicability_filtered_cross_encoder_top1",
+          "direction": "left_minus_right",
+          "metrics": {
+            "exact_evidence_accuracy": {
+              "cases": 60,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "validity_accuracy": {
+              "cases": 60,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "invalid_applicability_rate": {
+              "cases": 60,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            },
+            "wrong_boundary_version_rate": {
+              "cases": 60,
+              "mean_difference": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0
+            }
+          }
+        }
+      },
+      "selection_changed_cases": 31,
+      "decision": {
+        "full_strictly_better_than_w_o_applicability": true,
+        "full_exact_gain_over_strongest_baseline_at_least_0_05": false,
+        "gate_2": "NO-GO",
+        "reason": "Official effective and expiry dates make temporal applicability identifiable, but the fair applicability-filtered Cross-Encoder baseline receives the same metadata and the corpus is EU law rather than flood-response evidence."
+      },
+      "limitations": [
+        "The corpus covers EU legal acts and does not establish performance on district flood-response documents.",
+        "CELLAR may expose multiple partial-application dates; the frozen slice keeps only repeal pairs with one unique adjacent expiry/effective boundary.",
+        "EUR-Lex legal texts and consolidated representations are reused for research and are not legal advice or an official legal edition claim.",
+        "The experiment evaluates evidence selection at the document boundary, not answer generation or article-level expected-behavior adherence.",
+        "FRC and the fair filtered Cross-Encoder baseline intentionally share validity metadata, preventing an unfair metadata advantage."
+      ],
+      "source_sha256": "0c707d3ea3ee5138ee041b5b10b7a3b1fbbb70f91acfee7d0727e7fcc4faae1f"
+    },
+    "combined_ablation_coverage": {
+      "planned_variants": [
+        "full",
+        "w/o_role",
+        "w/o_field",
+        "w/o_applicability",
+        "w/o_redundancy",
+        "w/o_conflict",
+        "w/o_reranker",
+        "role_only",
+        "random_role"
+      ],
+      "run_variants": [
+        "full",
+        "random_role",
+        "role_only",
+        "w/o_applicability",
+        "w/o_conflict",
+        "w/o_field",
+        "w/o_redundancy",
+        "w/o_reranker",
+        "w/o_role"
+      ],
+      "run_count": 9,
+      "planned_count": 9,
+      "missing_variants": [],
+      "scope_qualifications": {
+        "w/o_field": "public expert HousingQA composite fields",
+        "w/o_applicability": "HousingQA jurisdiction, LawShift expert-reviewed before/after revisions, and EUR-Lex/CELLAR official effective/expiry dates"
+      }
+    },
+    "applicability_identifiability": {
+      "jurisdiction": "RUN_PUBLIC_EXPERT_REAL_MODEL",
+      "version_replacement": "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL",
+      "effective_or_expiry_dates": "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL",
+      "complete": true
+    },
+    "sensitivity_coverage": {
+      "k_2_3_5_8": "RUN",
+      "token_budget_512_1024_2048": "RUN",
+      "role_and_field_weights": "RUN_PUBLIC_EXPERT_FIELD_REAL_MODEL_ROLE_DIAGNOSTIC",
+      "conflict_threshold": "RUN_REAL_MODEL_CONFLICTS",
+      "document_missing_ratio": "RUN",
+      "chunk_length": "RUN"
+    },
+    "technical_sensitivity_matrix_complete": true,
+    "flood_domain_expert_validation_complete": false,
+    "coverage_complete": false,
+    "interpretation": "Real-model artifacts cover 9 of nine planned FRC ablations, all K and token-budget values, a ConditionalQA role/redundancy parameter grid, and multi-ratio missing-evidence diagnostics. Chunk-length status is RUN; controlled field/role/conflict sensitivity status is RUN_CONTROLLED_DOMAIN; public CONFLICTS ablation status is RUN_REAL_MODEL_CONFLICTS. public HousingQA field/jurisdiction ablation status is RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021. public HousingQA field/role-weight sensitivity status is RUN_PUBLIC_EXPERT_FIELD_REAL_MODEL_ROLE_DIAGNOSTIC. public LawShift version-replacement status is RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL. public EUR-Lex effective/expiry-date status is RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL. Even when all nine named variants have an execution artifact across compatible datasets, the three-part applicability construct is identifiable, and the public real-model weight matrix is complete, same-domain flood-response expert validity and independent behavior judging remain incomplete."
+  },
+  "challenge_slices": {
+    "normal": {
+      "status": "RUN",
+      "datasets": [
+        "conditionalqa",
+        "multihoprag",
+        "hotpotqa"
+      ]
+    },
+    "exception_and_condition": {
+      "status": "RUN",
+      "dataset": "conditionalqa"
+    },
+    "cross_document": {
+      "status": "RUN",
+      "dataset": "multihoprag"
+    },
+    "multi_hop": {
+      "status": "RUN",
+      "datasets": [
+        "multihoprag",
+        "hotpotqa"
+      ]
+    },
+    "missing_evidence": {
+      "protocol": "remove the first gold passage from every ConditionalQA case with at least two gold passages, then rerun selectors from saved real-model scores",
+      "cases": 261,
+      "removed_gold_per_case": 1,
+      "metrics": {
+        "bm25_topk": {
+          "evidence_recall": 0.762184,
+          "evidence_precision": 0.822542,
+          "evidence_f1": 0.745676,
+          "complete_evidence_set": 0.467433,
+          "role_coverage": 0.814496,
+          "false_complete": 0.777778
+        },
+        "dense_topk": {
+          "evidence_recall": 0.769794,
+          "evidence_precision": 0.82484,
+          "evidence_f1": 0.749762,
+          "complete_evidence_set": 0.478927,
+          "role_coverage": 0.826628,
+          "false_complete": 0.777778
+        },
+        "hybrid_topk": {
+          "evidence_recall": 0.771657,
+          "evidence_precision": 0.831737,
+          "evidence_f1": 0.753332,
+          "complete_evidence_set": 0.471264,
+          "role_coverage": 0.833653,
+          "false_complete": 0.796935
+        },
+        "cross_encoder_topk": {
+          "evidence_recall": 0.773883,
+          "evidence_precision": 0.830971,
+          "evidence_f1": 0.754986,
+          "complete_evidence_set": 0.482759,
+          "role_coverage": 0.827267,
+          "false_complete": 0.793103
+        },
+        "coverage_greedy_proxy": {
+          "evidence_recall": 0.77313,
+          "evidence_precision": 0.830971,
+          "evidence_f1": 0.754587,
+          "complete_evidence_set": 0.478927,
+          "role_coverage": 0.844828,
+          "false_complete": 0.816092
+        },
+        "frc_select": {
+          "evidence_recall": 0.77218,
+          "evidence_precision": 0.829438,
+          "evidence_f1": 0.753481,
+          "complete_evidence_set": 0.478927,
+          "role_coverage": 0.844828,
+          "false_complete": 0.816092
+        }
+      },
+      "interpretation": "false_complete is the rate at which role scores still claim full coverage after a required gold passage was removed; lower is safer."
+    },
+    "conflict_and_stale": {
+      "status": "RUN",
+      "cases": 458,
+      "answer_annotated_cases": 237,
+      "conflict_types": {
+        "Complementary information": 115,
+        "Conflicting opinions and research outcomes": 115,
+        "No conflict": 161,
+        "Conflict due to misinformation": 5,
+        "Conflict due to outdated information": 62
+      },
+      "dataset_sha256": "9ed5907314a4907c36219aaab0fd570ce54892bbd6dd8386aa729a1a236a2781",
+      "report_sha256": "8b908a51cd47a8d3ca2998a3ea4d1289e051741971d232c8159aa69b995a6e5a",
+      "strongest_reproducible_baseline": "coverage_greedy_proxy",
+      "baseline_accuracy": 0.344978,
+      "frc_accuracy": 0.334061,
+      "paired_frc_minus_baseline_accuracy": {
+        "cases": 458,
+        "mean_difference": -0.010917,
+        "ci_low": -0.043668,
+        "ci_high": 0.024017,
+        "wins": 30,
+        "ties": 393,
+        "losses": 35
+      },
+      "frc_outdated_recall": 0.564516,
+      "note": "CONFLICTS retrieval and label classification are reproducible, but the paper's expected-behavior adherence evaluation and independent human judging are not reproduced; classification alone cannot authorize CANARY or DEFAULT."
+    },
+    "field_and_jurisdiction_applicability": {
+      "status": "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021",
+      "dataset": "reglab/housing_qa",
+      "cases": 40,
+      "fields": 160,
+      "jurisdictions": 22,
+      "snapshot_year": 2021,
+      "version_or_expiry": "NOT_IDENTIFIABLE_SINGLE_SNAPSHOT"
+    },
+    "version_replacement_applicability": {
+      "status": "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL",
+      "dataset": "triangularPeach/LawShift",
+      "cases": 124,
+      "revision_types": 31,
+      "effective_or_expiry_dates": "NOT_IDENTIFIABLE_NO_EFFECTIVE_DATES"
+    },
+    "effective_expiry_applicability": {
+      "status": "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL",
+      "dataset": "EU Publications Office CELLAR and EUR-Lex",
+      "cases": 60,
+      "pairs": 30,
+      "effective_dates": "IDENTIFIABLE_OFFICIAL_CELLAR_METADATA",
+      "expiry_dates": "IDENTIFIABLE_OFFICIAL_CELLAR_METADATA"
+    }
+  },
+  "decision": {
+    "status": "THEORETICAL_PIPELINE_FEASIBLE_BUT_SUPERIORITY_NOT_PROVEN",
+    "pipeline_feasible": true,
+    "evidence_f1_superiority_on_all_primary_datasets": false,
+    "full_outperforms_w_o_role_and_w_o_field": false,
+    "design_16_2_experiment_coverage_complete": false,
+    "gate_2": "NO-GO",
+    "reason": "real-model FRC runs are reproducible, but paired confidence intervals do not establish consistent superiority; Full does not outperform w/o Role; HousingQA Full does outperform w/o Field but ties the strongest field-decomposition baseline, and LawShift Full improves exact version evidence over w/o Applicability but ties the fair applicability-filtered Cross-Encoder baseline; EUR-Lex/CELLAR now identifies official effective/expiry boundaries, where Full improves over the unfiltered variant but again ties the fair filtered Cross-Encoder baseline; the CONFLICTS Full variant also does not outperform w/o Conflict; CONFLICTS is run but does not reproduce the paper's independent expected-behavior adherence judgment"
+  },
+  "limitations": [
+    "The report imports existing real-model artifacts and recomputes paired evidence metrics; it does not retrain models.",
+    "The SetR paper implementation is not available in this environment; coverage_greedy_proxy is not SetR.",
+    "ConditionalQA generation scores are low, so evidence-selection feasibility must not be presented as answer-generation superiority.",
+    "The deterministic missing-evidence challenge removes one gold passage and reuses saved scores; it is a robustness audit, not an official dataset split.",
+    "The nine named ablation variants now have execution artifacts across compatible public datasets; applicability is separately identifiable through HousingQA jurisdiction, LawShift expert-reviewed hypothetical revisions, and EUR-Lex/CELLAR official effective/expiry dates; and HousingQA now supplies a frozen-score public real-model field/role-weight sweep. This is still not full design coverage because the weight and applicability sources are cross-domain rather than independently judged flood-response records.",
+    "CONFLICTS conflict-type classification is complete, but the paper's expected-behavior adherence metric and independent human judging are not reproduced.",
+    "HousingQA is a public housing-law benchmark, not a flood-response or district-government benchmark.",
+    "The public corpus is explicitly accurate as of 2021; it has no paired historical/current statute versions, so version replacement and expiry remain untested.",
+    "Composite four-field cases and hard-negative pools are deterministic transformations of expert single-question annotations, not separately expert-reviewed composite tasks.",
+    "Public model pretraining contamination cannot be excluded.",
+    "The frozen test configuration was not tuned after observing these results.",
+    "LawShift evaluates Chinese criminal-law judgment adaptation, not flood-response or district-government evidence retrieval.",
+    "The revised statutes are expert-reviewed hypothetical revisions rather than enacted historical versions with authoritative effective dates.",
+    "The benchmark identifies before/after version replacement but cannot test exact effective or expiry dates.",
+    "The frozen candidate pool is a retrieval stress slice built from the labeled article pair plus lexical hard negatives, not the paper's original legal-judgment-prediction protocol.",
+    "Only evidence selection is evaluated; charge and sentence generation are not scored in this retrieval ablation.",
+    "The corpus covers EU legal acts and does not establish performance on district flood-response documents.",
+    "CELLAR may expose multiple partial-application dates; the frozen slice keeps only repeal pairs with one unique adjacent expiry/effective boundary.",
+    "EUR-Lex legal texts and consolidated representations are reused for research and are not legal advice or an official legal edition claim.",
+    "The experiment evaluates evidence selection at the document boundary, not answer generation or article-level expected-behavior adherence.",
+    "FRC and the fair filtered Cross-Encoder baseline intentionally share validity metadata, preventing an unfair metadata advantage."
+  ]
+}

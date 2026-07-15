@@ -1,0 +1,160 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install backend and test runner
+        run: python -m pip install ".[test]"
+      - name: Run backend suite
+        run: python -m pytest -q --basetemp "${RUNNER_TEMP}/flood-pytest"
+      - name: Check Python code quality
+        run: python -m ruff check flood_system scripts tests
+      - name: Reproduce controlled acceptance evaluations
+        run: |
+          python scripts/generate_floodagent_bench.py --output "${RUNNER_TEMP}/acceptance/floodagent_bench.json"
+          python scripts/run_simulation_scenario_acceptance.py --json-output "${RUNNER_TEMP}/acceptance/scenario_acceptance_report.json" --markdown-output "${RUNNER_TEMP}/acceptance/scenario_acceptance_report.md"
+          cmp output/floodagent_bench/scenario_acceptance_report.json "${RUNNER_TEMP}/acceptance/scenario_acceptance_report.json"
+          cmp output/floodagent_bench/scenario_acceptance_report.md "${RUNNER_TEMP}/acceptance/scenario_acceptance_report.md"
+          python scripts/run_candidate_evaluation.py --input "${RUNNER_TEMP}/acceptance/candidate_evaluation_input.json" --output "${RUNNER_TEMP}/acceptance/candidate_report.json"
+          python scripts/run_rag_evaluation.py --output-dir "${RUNNER_TEMP}/acceptance/rag"
+          python scripts/run_controlled_performance.py --db "${RUNNER_TEMP}/controlled-performance.db" --output-dir "${RUNNER_TEMP}/acceptance/performance"
+          python scripts/export_openapi.py --output "${RUNNER_TEMP}/openapi.json"
+          cmp docs/openapi.json "${RUNNER_TEMP}/openapi.json"
+          python scripts/run_design_contract_audit.py --json-output "${RUNNER_TEMP}/acceptance/design_contract_audit.json" --markdown-output "${RUNNER_TEMP}/acceptance/design_contract_audit.md"
+          cmp output/acceptance/design_contract_audit.json "${RUNNER_TEMP}/acceptance/design_contract_audit.json"
+          cmp output/acceptance/design_contract_audit.md "${RUNNER_TEMP}/acceptance/design_contract_audit.md"
+          python scripts/run_progressive_completion_audit.py --json-output "${RUNNER_TEMP}/acceptance/progressive_completion_audit.json" --markdown-output "${RUNNER_TEMP}/acceptance/progressive_completion_audit.md"
+          cmp output/acceptance/progressive_completion_audit.json "${RUNNER_TEMP}/acceptance/progressive_completion_audit.json"
+          cmp output/acceptance/progressive_completion_audit.md "${RUNNER_TEMP}/acceptance/progressive_completion_audit.md"
+
+  frontend:
+    name: Frontend tests and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: |
+            3D_visual/package-lock.json
+            frontend/package-lock.json
+      - name: Install Cesium build dependencies
+        run: npm ci --prefix 3D_visual
+      - name: Install frontend dependencies
+        run: npm ci --prefix frontend
+      - name: Run frontend suite
+        run: npm test --prefix frontend -- --run
+      - name: Build production frontend
+        run: npm run build --prefix frontend
+      - name: Build standalone Cesium frontend
+        run: npm run build --prefix 3D_visual
+
+  security:
+    name: Dependency security audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install audited Python environment
+        run: |
+          python -m pip install --upgrade "pip>=26.1.2"
+          python -m pip install ".[test,postgres]" "pip-audit==2.10.1"
+      - name: Audit Python dependencies
+        run: python -m pip_audit --local
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: |
+            3D_visual/package-lock.json
+            frontend/package-lock.json
+      - name: Audit frontend dependencies
+        run: npm audit --prefix frontend --audit-level=high
+      - name: Audit Cesium dependencies
+        run: npm audit --prefix 3D_visual --audit-level=high
+
+  compose:
+    name: Compose build and smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install browser acceptance dependencies
+        run: |
+          npm ci --prefix frontend
+          cd frontend
+          npx playwright install --with-deps chromium
+      - name: Validate Compose contract
+        run: docker compose config --quiet
+      - name: Build simulation environment images
+        run: docker compose build
+      - name: Start simulation environment
+        run: docker compose up --detach --wait --wait-timeout 180
+      - name: Verify service health
+        run: |
+          curl --fail --show-error http://127.0.0.1:8000/ready
+          curl --fail --show-error http://127.0.0.1:8080/healthz
+          docker compose ps
+      - name: Run Chromium response-workflow acceptance
+        env:
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:8080
+        run: npm run test:e2e --prefix frontend
+      - name: Archive browser acceptance baselines
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: response-browser-acceptance
+          path: tmp/playwright-results
+          if-no-files-found: error
+          retention-days: 30
+      - name: Rehearse SQLite to PostGIS shadow migration
+        run: |
+          docker compose exec -T backend python scripts/seed_response_migration_fixture.py --db /app/data/postgis-source.db
+          docker compose exec -T backend python scripts/migrate_response_to_postgis.py \
+            --source-db /app/data/postgis-source.db \
+            --dsn "postgresql://flood:simulation-only-change-me@postgis:5432/flood" \
+            --report /app/data/postgis-migration-report.json
+          docker compose exec -T backend python scripts/migrate_response_to_postgis.py \
+            --source-db /app/data/postgis-source.db \
+            --dsn "postgresql://flood:simulation-only-change-me@postgis:5432/flood" \
+            --report /app/data/postgis-migration-rerun-report.json
+          docker compose exec -T backend python -c "import json; from pathlib import Path; first=json.loads(Path('/app/data/postgis-migration-report.json').read_text()); second=json.loads(Path('/app/data/postgis-migration-rerun-report.json').read_text()); assert first['batch_id'] == second['batch_id']; assert first['target_counts'] == second['target_counts']; assert sum(first['source_counts'].values()) == sum(second['target_counts'].values()) > 0; assert second['quarantine_count'] == 0; assert all(item['passed'] for item in second['reconciliations'])"
+          docker compose exec -T postgis psql -U flood -d flood -v ON_ERROR_STOP=1 -c \
+            "SELECT PostGIS_Version(), count(*) AS projected_records, count(affected_geometry) AS geometries FROM flood_simulation.shadow_records;"
+      - name: Capture service logs
+        if: failure()
+        run: docker compose logs --no-color
+      - name: Stop simulation environment
+        if: always()
+        run: docker compose down --volumes --remove-orphans

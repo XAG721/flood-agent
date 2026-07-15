@@ -7,6 +7,8 @@ from pathlib import Path
 from .data_pipeline.service import BeilinDatasetService
 from .rag_runtime import RAGService, RuntimeRAGDocumentProvider
 from .repository import SQLiteRepository
+from .identity import TrustedIdentityVerifier
+from .response_workflow import ResponseWorkflowService
 from .sample_data import build_area_profiles, build_rag_documents, build_resource_status
 from .v3.service import AgentTwinService
 from .v2.bootstrap import build_entity_profiles
@@ -21,6 +23,7 @@ class FloodWarningSystem:
     def __init__(self, db_path: str | Path, *, llm_gateway=None) -> None:
         self.db_path = Path(db_path)
         self.repository = SQLiteRepository(self.db_path)
+        self.response_identity = TrustedIdentityVerifier.from_environment(self.repository)
         self.area_profiles = build_area_profiles()
         self.bootstrap_resource_status = build_resource_status()
         self.rag_runtime_path = self.db_path.parent / "rag_documents.runtime.json"
@@ -38,6 +41,7 @@ class FloodWarningSystem:
             platform=self.production_platform,
             repository=self.repository,
         )
+        self.response_workflow = ResponseWorkflowService(self.repository, self.rag_service)
         self.dataset_service = BeilinDatasetService(
             repo_root=self.db_path.parent.parent,
             db_path=self.db_path,
@@ -68,6 +72,24 @@ class FloodWarningSystem:
             for area_profile in self.area_profiles.values():
                 for entity in build_entity_profiles(area_profile).values():
                     self.repository.save_v2_entity_profile(entity)
+        else:
+            # Add newly available coordinates without overwriting operator-maintained profile fields.
+            for area_profile in self.area_profiles.values():
+                defaults = build_entity_profiles(area_profile)
+                for current in self.repository.list_v2_entity_profiles(area_id=area_profile.area_id):
+                    fallback = defaults.get(current.entity_id)
+                    if fallback is None or (current.longitude is not None and current.latitude is not None):
+                        continue
+                    if fallback.longitude is None or fallback.latitude is None:
+                        continue
+                    self.repository.save_v2_entity_profile(
+                        current.model_copy(
+                            update={
+                                "longitude": current.longitude if current.longitude is not None else fallback.longitude,
+                                "latitude": current.latitude if current.latitude is not None else fallback.latitude,
+                            }
+                        )
+                    )
         if not self.repository.has_area_resource_statuses():
             for resource_status in self.bootstrap_resource_status.values():
                 self.repository.save_area_resource_status(resource_status)

@@ -1132,6 +1132,7 @@ describe("App", () => {
     cleanup();
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
   });
 
   function renderApp(route = "/") {
@@ -1146,9 +1147,10 @@ describe("App", () => {
     installFetchMock();
     renderApp("/");
 
-    expect((await screen.findAllByRole("heading", { name: /数字孪生智能体洪水预警系统/ })).length).toBeGreaterThan(0);
+    expect((await screen.findAllByRole("heading", { name: /面向区县防办的洪水预警响应系统/ })).length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: "态势总览" }).length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: "智能问答" }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: "响应闭环" }).length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: "风险预警" }).length).toBeGreaterThan(0);
     expect(screen.getAllByText("碑林区积涝演练事件").length).toBeGreaterThan(0);
     expect(screen.getAllByText("李阿姨").length).toBeGreaterThan(0);
@@ -1160,6 +1162,16 @@ describe("App", () => {
     expect(screen.getByRole("button", { name: /全域态势/ })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /预警扩散/ })).not.toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: /李阿姨|五河里小学|建设里社区网格三组/ }).length).toBeGreaterThan(0);
+  });
+
+  it("响应工作台功能开关关闭时回退到保留的旧风险调度页面", async () => {
+    vi.stubEnv("VITE_RESPONSE_WORKBENCH_ENABLED", "false");
+    installFetchMock();
+    renderApp("/response");
+
+    const riskLinks = await screen.findAllByRole("link", { name: "风险预警" });
+    expect(riskLinks.some((link) => link.getAttribute("aria-current") === "page")).toBe(true);
+    expect(screen.queryByRole("heading", { name: "预警响应事件工作台" })).not.toBeInTheDocument();
   });
 
   it("智能问答页展示上下文输入区，且不会注入新的审批弹框", async () => {

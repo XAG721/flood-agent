@@ -1,0 +1,328 @@
+{
+  "package_id": "RAG-ANNOTATION-bb0bb1b8f9996024",
+  "source_name": "碑林区预警响应证据选择小规模标注集 V1",
+  "source_sha256": "b806c18f760e709f80eb0e0d8f5903e799b59e8489dc26cf592860be1cc9ea15",
+  "seed": 20260712,
+  "role_schema": [
+    "condition",
+    "object",
+    "responsibility",
+    "procedure",
+    "exception",
+    "attribution"
+  ],
+  "instructions": [
+    "独立完成标注，不查看其他标注员结果、检索分数或原始 gold 标签。",
+    "选择回答问题必需且有直接依据的证据文档；不要因主题相关就选择。",
+    "对已选证据标注 condition/object/responsibility/procedure/exception/attribution 角色。",
+    "reference_answer 只写证据直接支持的简短答案；无充分依据时留空并说明。"
+  ],
+  "items": [
+    {
+      "item_id": "underpass_orange_response",
+      "query": "橙色暴雨预警下下穿通道的触发条件、风险对象、责任岗位、处置流程、例外升级和版本条款是什么",
+      "slots": [
+        "橙色暴雨触发条件",
+        "下穿通道风险对象",
+        "住建局责任岗位",
+        "积水处置流程",
+        "设备不足例外升级",
+        "2026版本条款"
+      ],
+      "candidates": [
+        {
+          "doc_id": "plan_underpass_trigger",
+          "title": "橙色暴雨下穿通道响应触发条款",
+          "content": "当橙色暴雨预警覆盖下穿通道且监测水位持续上涨时，应将该下穿通道列为待核验风险对象。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "3.1",
+            "token_cost": 105
+          }
+        },
+        {
+          "doc_id": "plan_school_exception",
+          "title": "学校转移例外和升级条件",
+          "content": "校车不足、家长无法到场或安全路线中断时，学校应上报区防办并请求公交、街道和公安协同。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "7.6",
+            "token_cost": 115
+          }
+        },
+        {
+          "doc_id": "plan_school_trigger",
+          "title": "学校强降雨响应触发条款",
+          "content": "橙色暴雨预警叠加放学高峰和校门积水时，应将学校师生与接送区列为重点核验对象。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "7.1",
+            "token_cost": 105
+          }
+        },
+        {
+          "doc_id": "plan_school_action",
+          "title": "学校停课与接送区处置职责",
+          "content": "区教育局和学校防汛负责人负责师生清点、家长通知和接送区疏导；停课决定须经指挥审批后执行。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "7.3",
+            "token_cost": 125
+          }
+        },
+        {
+          "doc_id": "plan_public_message",
+          "title": "一般公众提示模板",
+          "content": "公众应关注天气变化，减少不必要外出并留意官方发布的信息。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "2.1",
+            "token_cost": 75
+          }
+        },
+        {
+          "doc_id": "plan_underpass_trigger_duplicate_unverified",
+          "title": "网传下穿通道响应条件",
+          "content": "橙色暴雨期间下穿通道无需核验水位，也不需要启动现场处置。",
+          "metadata": {
+            "token_cost": 80
+          }
+        },
+        {
+          "doc_id": "plan_underpass_procedure",
+          "title": "下穿通道积水处置流程",
+          "content": "处置流程为到场核查、设置警戒、测量积水深度、启动排水设备、必要时封控道路并持续反馈。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "5.4",
+            "token_cost": 120
+          }
+        },
+        {
+          "doc_id": "plan_underpass_exception",
+          "title": "下穿通道处置例外与升级",
+          "content": "如排水设备不足、道路封控受阻或任务超时，应立即升级区防办并提出相邻单位支援或改派建议。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "6.3",
+            "token_cost": 115
+          }
+        },
+        {
+          "doc_id": "plan_underpass_responsibility",
+          "title": "下穿通道防汛责任条款",
+          "content": "区住建局承担下穿通道排水处置责任，排水值班负责人负责接收任务，交警联络员协同交通管控。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "4.2",
+            "token_cost": 110
+          }
+        }
+      ]
+    },
+    {
+      "item_id": "school_dismissal_response",
+      "query": "橙色暴雨放学高峰学校师生的触发条件、对象、责任部门、处置流程、异常升级和条款依据",
+      "slots": [
+        "暴雨放学触发条件",
+        "学校师生对象",
+        "教育局责任部门",
+        "通知疏导处置流程",
+        "校车不足异常升级",
+        "条款依据"
+      ],
+      "candidates": [
+        {
+          "doc_id": "plan_underpass_responsibility",
+          "title": "下穿通道防汛责任条款",
+          "content": "区住建局承担下穿通道排水处置责任，排水值班负责人负责接收任务，交警联络员协同交通管控。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "4.2",
+            "token_cost": 110
+          }
+        },
+        {
+          "doc_id": "plan_school_action",
+          "title": "学校停课与接送区处置职责",
+          "content": "区教育局和学校防汛负责人负责师生清点、家长通知和接送区疏导；停课决定须经指挥审批后执行。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "7.3",
+            "token_cost": 125
+          }
+        },
+        {
+          "doc_id": "plan_underpass_exception",
+          "title": "下穿通道处置例外与升级",
+          "content": "如排水设备不足、道路封控受阻或任务超时，应立即升级区防办并提出相邻单位支援或改派建议。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "6.3",
+            "token_cost": 115
+          }
+        },
+        {
+          "doc_id": "plan_public_message",
+          "title": "一般公众提示模板",
+          "content": "公众应关注天气变化，减少不必要外出并留意官方发布的信息。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "2.1",
+            "token_cost": 75
+          }
+        },
+        {
+          "doc_id": "plan_underpass_trigger",
+          "title": "橙色暴雨下穿通道响应触发条款",
+          "content": "当橙色暴雨预警覆盖下穿通道且监测水位持续上涨时，应将该下穿通道列为待核验风险对象。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "3.1",
+            "token_cost": 105
+          }
+        },
+        {
+          "doc_id": "plan_underpass_procedure",
+          "title": "下穿通道积水处置流程",
+          "content": "处置流程为到场核查、设置警戒、测量积水深度、启动排水设备、必要时封控道路并持续反馈。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "5.4",
+            "token_cost": 120
+          }
+        },
+        {
+          "doc_id": "plan_school_exception",
+          "title": "学校转移例外和升级条件",
+          "content": "校车不足、家长无法到场或安全路线中断时，学校应上报区防办并请求公交、街道和公安协同。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "7.6",
+            "token_cost": 115
+          }
+        },
+        {
+          "doc_id": "plan_school_trigger",
+          "title": "学校强降雨响应触发条款",
+          "content": "橙色暴雨预警叠加放学高峰和校门积水时，应将学校师生与接送区列为重点核验对象。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "7.1",
+            "token_cost": 105
+          }
+        },
+        {
+          "doc_id": "plan_underpass_trigger_duplicate_unverified",
+          "title": "网传下穿通道响应条件",
+          "content": "橙色暴雨期间下穿通道无需核验水位，也不需要启动现场处置。",
+          "metadata": {
+            "token_cost": 80
+          }
+        }
+      ]
+    },
+    {
+      "item_id": "cross_department_control",
+      "query": "下穿通道道路封控由谁负责、按什么步骤执行、设备不足如何升级并引用有效版本",
+      "slots": [
+        "下穿通道对象",
+        "道路封控责任",
+        "执行步骤",
+        "设备不足升级",
+        "有效版本条款"
+      ],
+      "candidates": [
+        {
+          "doc_id": "plan_underpass_trigger",
+          "title": "橙色暴雨下穿通道响应触发条款",
+          "content": "当橙色暴雨预警覆盖下穿通道且监测水位持续上涨时，应将该下穿通道列为待核验风险对象。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "3.1",
+            "token_cost": 105
+          }
+        },
+        {
+          "doc_id": "plan_school_action",
+          "title": "学校停课与接送区处置职责",
+          "content": "区教育局和学校防汛负责人负责师生清点、家长通知和接送区疏导；停课决定须经指挥审批后执行。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "7.3",
+            "token_cost": 125
+          }
+        },
+        {
+          "doc_id": "plan_school_trigger",
+          "title": "学校强降雨响应触发条款",
+          "content": "橙色暴雨预警叠加放学高峰和校门积水时，应将学校师生与接送区列为重点核验对象。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "7.1",
+            "token_cost": 105
+          }
+        },
+        {
+          "doc_id": "plan_public_message",
+          "title": "一般公众提示模板",
+          "content": "公众应关注天气变化，减少不必要外出并留意官方发布的信息。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "2.1",
+            "token_cost": 75
+          }
+        },
+        {
+          "doc_id": "plan_underpass_trigger_duplicate_unverified",
+          "title": "网传下穿通道响应条件",
+          "content": "橙色暴雨期间下穿通道无需核验水位，也不需要启动现场处置。",
+          "metadata": {
+            "token_cost": 80
+          }
+        },
+        {
+          "doc_id": "plan_underpass_procedure",
+          "title": "下穿通道积水处置流程",
+          "content": "处置流程为到场核查、设置警戒、测量积水深度、启动排水设备、必要时封控道路并持续反馈。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "5.4",
+            "token_cost": 120
+          }
+        },
+        {
+          "doc_id": "plan_underpass_responsibility",
+          "title": "下穿通道防汛责任条款",
+          "content": "区住建局承担下穿通道排水处置责任，排水值班负责人负责接收任务，交警联络员协同交通管控。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "4.2",
+            "token_cost": 110
+          }
+        },
+        {
+          "doc_id": "plan_underpass_exception",
+          "title": "下穿通道处置例外与升级",
+          "content": "如排水设备不足、道路封控受阻或任务超时，应立即升级区防办并提出相邻单位支援或改派建议。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "6.3",
+            "token_cost": 115
+          }
+        },
+        {
+          "doc_id": "plan_school_exception",
+          "title": "学校转移例外和升级条件",
+          "content": "校车不足、家长无法到场或安全路线中断时，学校应上报区防办并请求公交、街道和公安协同。",
+          "metadata": {
+            "document_version": "2026",
+            "section_number": "7.6",
+            "token_cost": 115
+          }
+        }
+      ]
+    }
+  ],
+  "created_at": "2026-07-11T19:26:07.708860Z"
+}

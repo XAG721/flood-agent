@@ -1,0 +1,324 @@
+{
+  "schema_version": "frc-housing-public-weight-sensitivity-v1",
+  "dataset": "reglab/housing_qa/questions",
+  "status": "RUN_PUBLIC_EXPERT_FIELD_REAL_MODEL_ROLE_DIAGNOSTIC",
+  "metadata": {
+    "data_origin": "PUBLIC",
+    "is_simulated": false,
+    "public_dataset": true,
+    "expert_annotated_supporting_statutes": true,
+    "source_repository": "reglab/housing_qa",
+    "source_revision": "761550cc974fa1d9141ffd39014db89efa2a7230",
+    "source_license": "CC-BY-SA-4.0",
+    "source_json_sha256": "4f6eb35e1b865a6c5cfd0cf73a0b514a86bd1d8306bf6719f2b4fb94793c7e4b",
+    "scored_cases_sha256": "2f7b25941f436e39d58521ff6604376837f093d9d061d413e335e4b321383d52",
+    "scored_metadata_sha256": "bef75f97982836720e1f4108893cf1797d6a19097b0c1a9c3f748ac8c02184a3",
+    "case_signature": "6ccedfe46b819226452dd4b847dabb1f8c728c9c1aaac9cbc2f66f6b7a71f5b4",
+    "case_count": 40,
+    "field_count": 160,
+    "jurisdiction_count": 22,
+    "role_count_per_case": [
+      3
+    ],
+    "candidate_occurrences": 400,
+    "real_model_scores": true,
+    "generator_used": false,
+    "models": {
+      "embedding": "BAAI/bge-large-en-v1.5",
+      "reranker": "BAAI/bge-reranker-large"
+    },
+    "score_calibration": "per_case_minmax",
+    "frozen_parameters": {
+      "top_k": 4,
+      "token_budget": 1200,
+      "field_threshold": 0.55,
+      "role_threshold": 0.55,
+      "field_weight": 2.0,
+      "role_weight": 1.0
+    },
+    "gold_usage": "field_evidence_map and gold_evidence_ids are used only after selection for evaluation; the selector receives only frozen real-model relevance, field, role, applicability, and cost features",
+    "protocol": "one-factor-at-a-time descriptive sweep over the frozen HousingQA real-model candidate pool; observed results do not retune the frozen test configuration"
+  },
+  "dimensions": {
+    "field_weight": [
+      0.0,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0
+    ],
+    "role_weight": [
+      0.0,
+      0.5,
+      1.0,
+      2.0,
+      4.0
+    ]
+  },
+  "identifiability": {
+    "field_weight": {
+      "status": "IDENTIFIABLE",
+      "metric_values": {
+        "field_coverage": [
+          0.65625,
+          0.68125,
+          0.6875,
+          0.70625,
+          0.7125
+        ],
+        "evidence_f1": [
+          0.65625,
+          0.68125,
+          0.6875,
+          0.70625,
+          0.7125
+        ]
+      }
+    },
+    "role_weight": {
+      "status": "IDENTIFIABLE",
+      "metric_values": {
+        "role_coverage": [
+          0.6,
+          0.616667,
+          0.625,
+          0.633333
+        ],
+        "evidence_f1": [
+          0.70625,
+          0.7125
+        ]
+      }
+    }
+  },
+  "results": [
+    {
+      "dimension": "field_weight",
+      "value": 0.0,
+      "is_frozen": false,
+      "selection_changed_cases_from_frozen": 29,
+      "aggregate": {
+        "cases": 40,
+        "evidence_recall": 0.65625,
+        "evidence_precision": 0.65625,
+        "evidence_f1": 0.65625,
+        "field_coverage": 0.65625,
+        "selector_field_coverage": 0.66875,
+        "role_coverage": 0.633333,
+        "unsupported_field_rate": 0.34375,
+        "wrong_jurisdiction_rate": 0.0,
+        "token_cost": 398.875,
+        "selected_count": 4.0
+      }
+    },
+    {
+      "dimension": "field_weight",
+      "value": 0.5,
+      "is_frozen": false,
+      "selection_changed_cases_from_frozen": 23,
+      "aggregate": {
+        "cases": 40,
+        "evidence_recall": 0.68125,
+        "evidence_precision": 0.68125,
+        "evidence_f1": 0.68125,
+        "field_coverage": 0.68125,
+        "selector_field_coverage": 0.70625,
+        "role_coverage": 0.625,
+        "unsupported_field_rate": 0.31875,
+        "wrong_jurisdiction_rate": 0.0,
+        "token_cost": 407.95,
+        "selected_count": 4.0
+      }
+    },
+    {
+      "dimension": "field_weight",
+      "value": 1.0,
+      "is_frozen": false,
+      "selection_changed_cases_from_frozen": 15,
+      "aggregate": {
+        "cases": 40,
+        "evidence_recall": 0.6875,
+        "evidence_precision": 0.6875,
+        "evidence_f1": 0.6875,
+        "field_coverage": 0.6875,
+        "selector_field_coverage": 0.7125,
+        "role_coverage": 0.625,
+        "unsupported_field_rate": 0.3125,
+        "wrong_jurisdiction_rate": 0.0,
+        "token_cost": 405.55,
+        "selected_count": 4.0
+      }
+    },
+    {
+      "dimension": "field_weight",
+      "value": 2.0,
+      "is_frozen": true,
+      "selection_changed_cases_from_frozen": 0,
+      "aggregate": {
+        "cases": 40,
+        "evidence_recall": 0.70625,
+        "evidence_precision": 0.70625,
+        "evidence_f1": 0.70625,
+        "field_coverage": 0.70625,
+        "selector_field_coverage": 0.7375,
+        "role_coverage": 0.625,
+        "unsupported_field_rate": 0.29375,
+        "wrong_jurisdiction_rate": 0.0,
+        "token_cost": 401.0,
+        "selected_count": 4.0
+      }
+    },
+    {
+      "dimension": "field_weight",
+      "value": 4.0,
+      "is_frozen": false,
+      "selection_changed_cases_from_frozen": 10,
+      "aggregate": {
+        "cases": 40,
+        "evidence_recall": 0.7125,
+        "evidence_precision": 0.7125,
+        "evidence_f1": 0.7125,
+        "field_coverage": 0.7125,
+        "selector_field_coverage": 0.74375,
+        "role_coverage": 0.625,
+        "unsupported_field_rate": 0.2875,
+        "wrong_jurisdiction_rate": 0.0,
+        "token_cost": 404.425,
+        "selected_count": 4.0
+      }
+    },
+    {
+      "dimension": "field_weight",
+      "value": 8.0,
+      "is_frozen": false,
+      "selection_changed_cases_from_frozen": 16,
+      "aggregate": {
+        "cases": 40,
+        "evidence_recall": 0.7125,
+        "evidence_precision": 0.7125,
+        "evidence_f1": 0.7125,
+        "field_coverage": 0.7125,
+        "selector_field_coverage": 0.74375,
+        "role_coverage": 0.625,
+        "unsupported_field_rate": 0.2875,
+        "wrong_jurisdiction_rate": 0.0,
+        "token_cost": 406.6,
+        "selected_count": 4.0
+      }
+    },
+    {
+      "dimension": "role_weight",
+      "value": 0.0,
+      "is_frozen": false,
+      "selection_changed_cases_from_frozen": 12,
+      "aggregate": {
+        "cases": 40,
+        "evidence_recall": 0.70625,
+        "evidence_precision": 0.70625,
+        "evidence_f1": 0.70625,
+        "field_coverage": 0.70625,
+        "selector_field_coverage": 0.7375,
+        "role_coverage": 0.6,
+        "unsupported_field_rate": 0.29375,
+        "wrong_jurisdiction_rate": 0.0,
+        "token_cost": 398.85,
+        "selected_count": 4.0
+      }
+    },
+    {
+      "dimension": "role_weight",
+      "value": 0.5,
+      "is_frozen": false,
+      "selection_changed_cases_from_frozen": 4,
+      "aggregate": {
+        "cases": 40,
+        "evidence_recall": 0.7125,
+        "evidence_precision": 0.7125,
+        "evidence_f1": 0.7125,
+        "field_coverage": 0.7125,
+        "selector_field_coverage": 0.7375,
+        "role_coverage": 0.616667,
+        "unsupported_field_rate": 0.2875,
+        "wrong_jurisdiction_rate": 0.0,
+        "token_cost": 400.275,
+        "selected_count": 4.0
+      }
+    },
+    {
+      "dimension": "role_weight",
+      "value": 1.0,
+      "is_frozen": true,
+      "selection_changed_cases_from_frozen": 0,
+      "aggregate": {
+        "cases": 40,
+        "evidence_recall": 0.70625,
+        "evidence_precision": 0.70625,
+        "evidence_f1": 0.70625,
+        "field_coverage": 0.70625,
+        "selector_field_coverage": 0.7375,
+        "role_coverage": 0.625,
+        "unsupported_field_rate": 0.29375,
+        "wrong_jurisdiction_rate": 0.0,
+        "token_cost": 401.0,
+        "selected_count": 4.0
+      }
+    },
+    {
+      "dimension": "role_weight",
+      "value": 2.0,
+      "is_frozen": false,
+      "selection_changed_cases_from_frozen": 9,
+      "aggregate": {
+        "cases": 40,
+        "evidence_recall": 0.7125,
+        "evidence_precision": 0.7125,
+        "evidence_f1": 0.7125,
+        "field_coverage": 0.7125,
+        "selector_field_coverage": 0.73125,
+        "role_coverage": 0.633333,
+        "unsupported_field_rate": 0.2875,
+        "wrong_jurisdiction_rate": 0.0,
+        "token_cost": 398.55,
+        "selected_count": 4.0
+      }
+    },
+    {
+      "dimension": "role_weight",
+      "value": 4.0,
+      "is_frozen": false,
+      "selection_changed_cases_from_frozen": 13,
+      "aggregate": {
+        "cases": 40,
+        "evidence_recall": 0.7125,
+        "evidence_precision": 0.7125,
+        "evidence_f1": 0.7125,
+        "field_coverage": 0.7125,
+        "selector_field_coverage": 0.73125,
+        "role_coverage": 0.633333,
+        "unsupported_field_rate": 0.2875,
+        "wrong_jurisdiction_rate": 0.0,
+        "token_cost": 398.55,
+        "selected_count": 4.0
+      }
+    }
+  ],
+  "decision": {
+    "gate_2": "NO-GO",
+    "public_real_model_weight_sensitivity_complete": true,
+    "frozen_parameters_changed": false,
+    "reason": "Both field and role weights are behaviorally identifiable on frozen public real-model scores, but this post-hoc cross-domain sensitivity does not prove FRC superiority or flood-domain validity."
+  },
+  "limitations": [
+    "HousingQA is a public housing-law benchmark, not a flood-response benchmark.",
+    "Field evidence comes from public expert question/statute mappings; the three FRC functional roles are deterministic evaluation labels rather than HousingQA expert role annotations.",
+    "The sweep reuses frozen real-model scores and evaluates evidence selection only; it does not rerun answer generation for every weight setting.",
+    "The sweep is descriptive and post-hoc; it cannot authorize parameter tuning or Gate 2 promotion."
+  ],
+  "case_results_artifact": {
+    "file": "housing_weight_sensitivity_cases.jsonl.gz",
+    "format": "gzip-jsonl",
+    "rows": 440,
+    "sha256": "ab16b3df7138969b6253465f079fc5b4aa18de8ce92bc3899339be87c52d75cb"
+  }
+}

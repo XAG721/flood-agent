@@ -1,0 +1,209 @@
+{
+  "schema_version": "frc-eurlex-effective-expiry-ablation-v1",
+  "dataset": "EU Publications Office CELLAR and EUR-Lex",
+  "status": "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL",
+  "metadata": {
+    "public_dataset": true,
+    "official_temporal_metadata": true,
+    "real_model_scores": true,
+    "source_snapshot_date": "2026-07-14",
+    "source_manifest_sha256": "9e1f23319ebff661b861107a7a2d3c50104024b93403d99ae0d6f421554bfc1d",
+    "source_query_sha256": "bcfc39e8812178fb36a51ccbdaae9b4a1ed3e8dd2f1db1fda04fb0a2c1b9aaa5",
+    "source_reuse_notice": "https://eur-lex.europa.eu/content/help/data-reuse/reuse-contents-eurlex-details.html?locale=en",
+    "scored_cases_sha256": "2ace39d5ac0a2b715b0bf661364a5cd9ed4c57cf13ead51f709e56cd3b4d09be",
+    "pair_count": 30,
+    "case_count": 60,
+    "candidate_occurrences": 360,
+    "family_counts": {
+      "decision": 12,
+      "directive": 6,
+      "regulation": 12
+    },
+    "methods": [
+      "bm25_top1",
+      "cross_encoder_top1",
+      "applicability_filtered_cross_encoder_top1",
+      "frc_full",
+      "w/o_applicability"
+    ],
+    "models": {
+      "reranker": "BAAI/bge-reranker-large"
+    },
+    "selection_parameters": {
+      "top_k": 1,
+      "token_budget": 512,
+      "distractor_pairs": 2,
+      "seed": 20260714
+    },
+    "frozen_protocol": "thirty CELEX repeal pairs with a unique one-day adjacent expiry/effective boundary; evaluate the last valid day of the old act and first effective day of the new act; add two deterministic unrelated repeal-pair distractors",
+    "gold_usage": "CELEX repeal relation and applicability dates determine labels after retrieval; the scorer sees only the natural-language question and candidate legal text, while frc_full and the fair filtered baseline may use validity metadata",
+    "case_manifest_sha256": "09c5a2f5d0bfd2a17999f32fe0cb8f4c228bfb3494f36ef0608b9df2fca7910b"
+  },
+  "coverage": {
+    "effective_dates": "IDENTIFIABLE_OFFICIAL_CELLAR_METADATA",
+    "expiry_dates": "IDENTIFIABLE_OFFICIAL_CELLAR_METADATA",
+    "adjacent_repeal_boundary": "IDENTIFIABLE",
+    "old_and_new_boundary_snapshots": "RUN"
+  },
+  "aggregates": {
+    "bm25_top1": {
+      "cases": 60,
+      "exact_evidence_accuracy": 0.466667,
+      "validity_accuracy": 0.466667,
+      "invalid_applicability_rate": 0.533333,
+      "wrong_boundary_version_rate": 0.5,
+      "token_cost": 292.316667
+    },
+    "cross_encoder_top1": {
+      "cases": 60,
+      "exact_evidence_accuracy": 0.483333,
+      "validity_accuracy": 0.483333,
+      "invalid_applicability_rate": 0.516667,
+      "wrong_boundary_version_rate": 0.516667,
+      "token_cost": 292.75
+    },
+    "applicability_filtered_cross_encoder_top1": {
+      "cases": 60,
+      "exact_evidence_accuracy": 1.0,
+      "validity_accuracy": 1.0,
+      "invalid_applicability_rate": 0.0,
+      "wrong_boundary_version_rate": 0.0,
+      "token_cost": 291.833333
+    },
+    "frc_full": {
+      "cases": 60,
+      "exact_evidence_accuracy": 1.0,
+      "validity_accuracy": 1.0,
+      "invalid_applicability_rate": 0.0,
+      "wrong_boundary_version_rate": 0.0,
+      "token_cost": 291.833333
+    },
+    "w/o_applicability": {
+      "cases": 60,
+      "exact_evidence_accuracy": 0.483333,
+      "validity_accuracy": 0.483333,
+      "invalid_applicability_rate": 0.516667,
+      "wrong_boundary_version_rate": 0.516667,
+      "token_cost": 292.75
+    }
+  },
+  "by_boundary": [
+    {
+      "boundary": "first_effective_day",
+      "cases": 30,
+      "frc_full_exact_evidence_accuracy": 1.0,
+      "w_o_applicability_exact_evidence_accuracy": 0.766667
+    },
+    {
+      "boundary": "last_valid_day",
+      "cases": 30,
+      "frc_full_exact_evidence_accuracy": 1.0,
+      "w_o_applicability_exact_evidence_accuracy": 0.2
+    }
+  ],
+  "by_family": [
+    {
+      "family": "decision",
+      "cases": 24,
+      "frc_full_exact_evidence_accuracy": 1.0,
+      "w_o_applicability_exact_evidence_accuracy": 0.5
+    },
+    {
+      "family": "directive",
+      "cases": 12,
+      "frc_full_exact_evidence_accuracy": 1.0,
+      "w_o_applicability_exact_evidence_accuracy": 0.583333
+    },
+    {
+      "family": "regulation",
+      "cases": 24,
+      "frc_full_exact_evidence_accuracy": 1.0,
+      "w_o_applicability_exact_evidence_accuracy": 0.416667
+    }
+  ],
+  "strongest_baseline_by_exact_evidence_accuracy": "applicability_filtered_cross_encoder_top1",
+  "paired_comparisons": {
+    "full_minus_w_o_applicability": {
+      "left": "frc_full",
+      "right": "w/o_applicability",
+      "direction": "left_minus_right",
+      "metrics": {
+        "exact_evidence_accuracy": {
+          "cases": 60,
+          "mean_difference": 0.516667,
+          "ci_low": 0.383333,
+          "ci_high": 0.65
+        },
+        "validity_accuracy": {
+          "cases": 60,
+          "mean_difference": 0.516667,
+          "ci_low": 0.383333,
+          "ci_high": 0.65
+        },
+        "invalid_applicability_rate": {
+          "cases": 60,
+          "mean_difference": -0.516667,
+          "ci_low": -0.65,
+          "ci_high": -0.383333
+        },
+        "wrong_boundary_version_rate": {
+          "cases": 60,
+          "mean_difference": -0.516667,
+          "ci_low": -0.65,
+          "ci_high": -0.383333
+        }
+      }
+    },
+    "full_minus_strongest_baseline": {
+      "left": "frc_full",
+      "right": "applicability_filtered_cross_encoder_top1",
+      "direction": "left_minus_right",
+      "metrics": {
+        "exact_evidence_accuracy": {
+          "cases": 60,
+          "mean_difference": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0
+        },
+        "validity_accuracy": {
+          "cases": 60,
+          "mean_difference": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0
+        },
+        "invalid_applicability_rate": {
+          "cases": 60,
+          "mean_difference": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0
+        },
+        "wrong_boundary_version_rate": {
+          "cases": 60,
+          "mean_difference": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0
+        }
+      }
+    }
+  },
+  "selection_changed_cases": 31,
+  "decision": {
+    "full_strictly_better_than_w_o_applicability": true,
+    "full_exact_gain_over_strongest_baseline_at_least_0_05": false,
+    "gate_2": "NO-GO",
+    "reason": "Official effective and expiry dates make temporal applicability identifiable, but the fair applicability-filtered Cross-Encoder baseline receives the same metadata and the corpus is EU law rather than flood-response evidence."
+  },
+  "limitations": [
+    "The corpus covers EU legal acts and does not establish performance on district flood-response documents.",
+    "CELLAR may expose multiple partial-application dates; the frozen slice keeps only repeal pairs with one unique adjacent expiry/effective boundary.",
+    "EUR-Lex legal texts and consolidated representations are reused for research and are not legal advice or an official legal edition claim.",
+    "The experiment evaluates evidence selection at the document boundary, not answer generation or article-level expected-behavior adherence.",
+    "FRC and the fair filtered Cross-Encoder baseline intentionally share validity metadata, preventing an unfair metadata advantage."
+  ],
+  "case_results_artifact": {
+    "file": "eurlex_temporal_ablation_cases.jsonl.gz",
+    "format": "gzip-jsonl",
+    "rows": 300,
+    "sha256": "3d895269322eafea152cb366aaa50714beb6e209ac16b1d7c0df53464c31eda0"
+  }
+}

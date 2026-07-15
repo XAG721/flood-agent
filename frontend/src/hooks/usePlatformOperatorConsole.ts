@@ -24,9 +24,7 @@ import type {
   RegionalAnalysisPackageView,
   RegionalProposalQueueSnapshot,
   RegionalProposalView,
-  ResourceStatus,
   ResourceStatusView,
-  RiskLevel,
   SessionMemoryView,
   SharedMemorySnapshot,
   SupervisorLoopStatus,
@@ -34,7 +32,6 @@ import type {
   TriggerEvent,
   ExperienceContextView,
   V2CopilotSessionView,
-  V2EventRecord,
 } from "../types/api";
 import type { ConsoleBootState, ExecutionStatus } from "../types/ui";
 import {

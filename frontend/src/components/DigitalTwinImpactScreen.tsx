@@ -120,7 +120,6 @@ interface DigitalTwinImpactScreenProps {
   onResolveProposal: (proposalId: string, decision: "approve" | "reject", note: string) => void | Promise<void>;
   onOpenOperations: () => void;
   actionBusy?: boolean;
-  twinBusy?: boolean;
 }
 
 function riskClassName(riskLevel: RiskLevel) {
@@ -258,7 +257,6 @@ export function DigitalTwinImpactScreen({
   onResolveProposal,
   onOpenOperations,
   actionBusy = false,
-  twinBusy = false,
 }: DigitalTwinImpactScreenProps) {
   const screenProfile = SCREEN_PROFILES[variant];
   const [operatorNote, setOperatorNote] = useState("");

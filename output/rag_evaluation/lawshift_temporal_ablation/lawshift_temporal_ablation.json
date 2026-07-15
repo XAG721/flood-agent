@@ -1,0 +1,361 @@
+{
+  "schema_version": "frc-lawshift-temporal-applicability-ablation-v1",
+  "dataset": "triangularPeach/LawShift",
+  "metadata": {
+    "public_dataset": true,
+    "expert_annotated_revisions": true,
+    "real_model_scores": true,
+    "source_repository": "triangularPeach/LawShift",
+    "source_revision": "0fce4f3821140bde29081ae0b20500e79aa065d5",
+    "source_license": "Apache-2.0",
+    "source_file_count": 124,
+    "source_manifest_sha256": "35448c34e3d2a26504d57f1f1e0c741bc8caecf927b2126f567f158b32d08687",
+    "scored_cases_sha256": "d50ed624afc4edbeabef047a7a28c1583070f1af779e321f0cc1b3cb9e1cf0a2",
+    "case_count": 124,
+    "paired_case_count": 62,
+    "revision_type_count": 31,
+    "original_case_count": 62,
+    "revised_case_count": 62,
+    "candidate_occurrences": 992,
+    "methods": [
+      "char_bm25_top1",
+      "cross_encoder_top1",
+      "applicability_filtered_cross_encoder_top1",
+      "frc_full",
+      "w/o_applicability"
+    ],
+    "models": {
+      "reranker": "BAAI/bge-reranker-large"
+    },
+    "selection_parameters": {
+      "top_k": 1,
+      "token_budget": 512,
+      "pairs_per_revision": 2,
+      "distractor_articles": 3,
+      "seed": 20260713
+    },
+    "frozen_protocol": "two deterministic paired case indices per each of 31 expert-reviewed revision types; both original and revised snapshots are evaluated; candidate pools contain both versions of the gold article and three lexical hard-negative article pairs",
+    "gold_usage": "relevant_articles identify the gold evidence only after retrieval; facts and before/after time scope are scorer inputs, while charge and prison_time are not",
+    "case_manifest_sha256": "404a09edbe6ad88e726651e717d03556e2562b69d5f8b48112f531fb748587a3"
+  },
+  "coverage": {
+    "version_replacement": "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL",
+    "original_and_revised_snapshots": "IDENTIFIABLE",
+    "effective_or_expiry_dates": "NOT_IDENTIFIABLE_NO_EFFECTIVE_DATES"
+  },
+  "aggregates": {
+    "char_bm25_top1": {
+      "cases": 124,
+      "article_recall_at_1": 0.282258,
+      "version_accuracy": 0.572581,
+      "exact_evidence_accuracy": 0.185484,
+      "invalid_applicability_rate": 0.427419,
+      "token_cost": 109.991935
+    },
+    "cross_encoder_top1": {
+      "cases": 124,
+      "article_recall_at_1": 0.491935,
+      "version_accuracy": 0.548387,
+      "exact_evidence_accuracy": 0.290323,
+      "invalid_applicability_rate": 0.451613,
+      "token_cost": 79.782258
+    },
+    "applicability_filtered_cross_encoder_top1": {
+      "cases": 124,
+      "article_recall_at_1": 0.427419,
+      "version_accuracy": 1.0,
+      "exact_evidence_accuracy": 0.427419,
+      "invalid_applicability_rate": 0.0,
+      "token_cost": 80.064516
+    },
+    "frc_full": {
+      "cases": 124,
+      "article_recall_at_1": 0.427419,
+      "version_accuracy": 1.0,
+      "exact_evidence_accuracy": 0.427419,
+      "invalid_applicability_rate": 0.0,
+      "token_cost": 80.064516
+    },
+    "w/o_applicability": {
+      "cases": 124,
+      "article_recall_at_1": 0.491935,
+      "version_accuracy": 0.548387,
+      "exact_evidence_accuracy": 0.290323,
+      "invalid_applicability_rate": 0.451613,
+      "token_cost": 79.782258
+    }
+  },
+  "by_revision_type": [
+    {
+      "revision_type": "action_explicit_extend",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.25,
+      "w_o_applicability_exact_evidence_accuracy": 0.25
+    },
+    {
+      "revision_type": "action_explicit_reduce",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.5,
+      "w_o_applicability_exact_evidence_accuracy": 0.25
+    },
+    {
+      "revision_type": "action_implicit_expand",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 1.0,
+      "w_o_applicability_exact_evidence_accuracy": 0.75
+    },
+    {
+      "revision_type": "action_implicit_reduce",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.75,
+      "w_o_applicability_exact_evidence_accuracy": 0.75
+    },
+    {
+      "revision_type": "action_reallocated_expand",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 1.0,
+      "w_o_applicability_exact_evidence_accuracy": 1.0
+    },
+    {
+      "revision_type": "action_reallocated_reduce",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.75,
+      "w_o_applicability_exact_evidence_accuracy": 0.75
+    },
+    {
+      "revision_type": "objCon_addition",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.0,
+      "w_o_applicability_exact_evidence_accuracy": 0.0
+    },
+    {
+      "revision_type": "objCon_explicit_extend",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.5,
+      "w_o_applicability_exact_evidence_accuracy": 0.5
+    },
+    {
+      "revision_type": "objCon_implicit_expand",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.0,
+      "w_o_applicability_exact_evidence_accuracy": 0.0
+    },
+    {
+      "revision_type": "objCon_implicit_reduce",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.5,
+      "w_o_applicability_exact_evidence_accuracy": 0.25
+    },
+    {
+      "revision_type": "objCon_reallocated_expand",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.0,
+      "w_o_applicability_exact_evidence_accuracy": 0.0
+    },
+    {
+      "revision_type": "objCon_reallocated_reduce",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.0,
+      "w_o_applicability_exact_evidence_accuracy": 0.0
+    },
+    {
+      "revision_type": "objCon_removal",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.5,
+      "w_o_applicability_exact_evidence_accuracy": 0.5
+    },
+    {
+      "revision_type": "object_explicit_extend",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.5,
+      "w_o_applicability_exact_evidence_accuracy": 0.25
+    },
+    {
+      "revision_type": "object_explicit_reduce",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.25,
+      "w_o_applicability_exact_evidence_accuracy": 0.0
+    },
+    {
+      "revision_type": "object_implicit_expand",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.5,
+      "w_o_applicability_exact_evidence_accuracy": 0.0
+    },
+    {
+      "revision_type": "object_implicit_reduce",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.5,
+      "w_o_applicability_exact_evidence_accuracy": 0.0
+    },
+    {
+      "revision_type": "object_reallocated_expand",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 1.0,
+      "w_o_applicability_exact_evidence_accuracy": 0.5
+    },
+    {
+      "revision_type": "object_reallocated_reduce",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.75,
+      "w_o_applicability_exact_evidence_accuracy": 0.5
+    },
+    {
+      "revision_type": "sbCon_addition",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.5,
+      "w_o_applicability_exact_evidence_accuracy": 0.5
+    },
+    {
+      "revision_type": "sbCon_removal",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.5,
+      "w_o_applicability_exact_evidence_accuracy": 0.25
+    },
+    {
+      "revision_type": "subject_explicit_extend",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.0,
+      "w_o_applicability_exact_evidence_accuracy": 0.0
+    },
+    {
+      "revision_type": "subject_explicit_reduce",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.0,
+      "w_o_applicability_exact_evidence_accuracy": 0.0
+    },
+    {
+      "revision_type": "subject_implicit_expand",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.5,
+      "w_o_applicability_exact_evidence_accuracy": 0.5
+    },
+    {
+      "revision_type": "subject_implicit_reduce",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.0,
+      "w_o_applicability_exact_evidence_accuracy": 0.0
+    },
+    {
+      "revision_type": "subject_reallocated_expand",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.25,
+      "w_o_applicability_exact_evidence_accuracy": 0.25
+    },
+    {
+      "revision_type": "subject_reallocated_reduce",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.0,
+      "w_o_applicability_exact_evidence_accuracy": 0.0
+    },
+    {
+      "revision_type": "term_down",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.5,
+      "w_o_applicability_exact_evidence_accuracy": 0.25
+    },
+    {
+      "revision_type": "term_extremity_in",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 1.0,
+      "w_o_applicability_exact_evidence_accuracy": 0.5
+    },
+    {
+      "revision_type": "term_extremity_out",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.75,
+      "w_o_applicability_exact_evidence_accuracy": 0.5
+    },
+    {
+      "revision_type": "term_up",
+      "cases": 4,
+      "frc_full_exact_evidence_accuracy": 0.0,
+      "w_o_applicability_exact_evidence_accuracy": 0.0
+    }
+  ],
+  "strongest_baseline_by_exact_evidence_accuracy": "applicability_filtered_cross_encoder_top1",
+  "paired_comparisons": {
+    "full_minus_w_o_applicability": {
+      "left": "frc_full",
+      "right": "w/o_applicability",
+      "direction": "left_minus_right",
+      "metrics": {
+        "article_recall_at_1": {
+          "cases": 124,
+          "mean_difference": -0.064516,
+          "ci_low": -0.112903,
+          "ci_high": -0.024194
+        },
+        "version_accuracy": {
+          "cases": 124,
+          "mean_difference": 0.451613,
+          "ci_low": 0.362903,
+          "ci_high": 0.532258
+        },
+        "exact_evidence_accuracy": {
+          "cases": 124,
+          "mean_difference": 0.137097,
+          "ci_low": 0.080645,
+          "ci_high": 0.201613
+        },
+        "invalid_applicability_rate": {
+          "cases": 124,
+          "mean_difference": -0.451613,
+          "ci_low": -0.532258,
+          "ci_high": -0.362903
+        }
+      }
+    },
+    "full_minus_strongest_baseline": {
+      "left": "frc_full",
+      "right": "applicability_filtered_cross_encoder_top1",
+      "direction": "left_minus_right",
+      "metrics": {
+        "article_recall_at_1": {
+          "cases": 124,
+          "mean_difference": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0
+        },
+        "version_accuracy": {
+          "cases": 124,
+          "mean_difference": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0
+        },
+        "exact_evidence_accuracy": {
+          "cases": 124,
+          "mean_difference": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0
+        },
+        "invalid_applicability_rate": {
+          "cases": 124,
+          "mean_difference": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0
+        }
+      }
+    }
+  },
+  "selection_changed_cases": 56,
+  "decision": {
+    "full_strictly_better_than_w_o_applicability": true,
+    "full_exact_gain_over_strongest_baseline_at_least_0_05": false,
+    "gate_2": "NO-GO",
+    "reason": "LawShift identifies expert-reviewed before/after statutory replacement, but the fair applicability-filtered Cross-Encoder baseline uses the same validity metadata; the dataset has no effective/expiry dates and is not a flood-response benchmark."
+  },
+  "limitations": [
+    "LawShift evaluates Chinese criminal-law judgment adaptation, not flood-response or district-government evidence retrieval.",
+    "The revised statutes are expert-reviewed hypothetical revisions rather than enacted historical versions with authoritative effective dates.",
+    "The benchmark identifies before/after version replacement but cannot test exact effective or expiry dates.",
+    "The frozen candidate pool is a retrieval stress slice built from the labeled article pair plus lexical hard negatives, not the paper's original legal-judgment-prediction protocol.",
+    "Only evidence selection is evaluated; charge and sentence generation are not scored in this retrieval ablation."
+  ],
+  "case_results_artifact": {
+    "file": "lawshift_temporal_ablation_cases.jsonl.gz",
+    "format": "gzip-jsonl",
+    "rows": 620,
+    "sha256": "68dc98188990a8780072dcf444f149b45e8c9abfb253a16bd064fe736997a31d"
+  }
+}

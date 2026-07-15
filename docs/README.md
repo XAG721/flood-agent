@@ -1,40 +1,35 @@
-﻿# 文档索引
+# 文档索引
 
-## 1. 目录说明
+本目录只维护当前系统事实、现行升级合同和可复现验收证据。已完成的阶段性规划、重复导出件和过时接口说明不再保留在当前树中；需要追溯时使用 Git 历史。
 
-当前仓库的文档按“已实现平台能力”“AgentTwin 生产级 demo”和“演示运维说明”三层组织，整体口径统一为一套数字孪生智能体洪水预警平台，不再对外区分版本阶段。
+## 现行合同
 
-- [`docs/current_baseline/`](./current_baseline/)
-  当前代码已经实现并仍然有效的平台能力说明文档。
-- [`docs/agent_twin_upgrade/`](./agent_twin_upgrade/)
-  面向 AgentTwin 能力增强、生产级 demo 测试品和甲方演示交付的设计文档包。
+1. [`洪水预警响应系统_渐进式迭代开发与升级设计.md`](../洪水预警响应系统_渐进式迭代开发与升级设计.md)：当前迭代与门禁合同。
+2. [`面向区县防办的洪水预警响应系统_升级设计说明V3.md`](../面向区县防办的洪水预警响应系统_升级设计说明V3.md)：产品定位和 V3 业务边界。
+3. [`PRODUCT.md`](../PRODUCT.md)：面向区县防办的产品原则。
 
-## 2. 推荐阅读顺序
+## 当前实现与验收
 
-### 2.1 了解当前系统
+- [`releases/v0.3.0.md`](./releases/v0.3.0.md)：当前版本的外部接口仿真、场景目录、浏览器验收、性能和安全更新报告。
+- [`releases/v0.2.0.md`](./releases/v0.2.0.md)：上一版本的全仓清理与结构重构报告。
+- [`progressive_upgrade/`](./progressive_upgrade/)：资产处置、合同、数据字典、运维、安全、评测和阶段验收。
+- [`progressive_upgrade/frc_public_evaluation_protocol.md`](./progressive_upgrade/frc_public_evaluation_protocol.md)：FRC-Select 公开数据真实模型参考审计的公平协议、难例覆盖和 Gate 2 判据。
+- [`../output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.md`](../output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.md)：HousingQA 冻结真实模型字段/角色权重敏感性与限制。
+- [`progressive_upgrade/completion_traceability_audit.md`](./progressive_upgrade/completion_traceability_audit.md)：最新设计合同的阶段、场景、切换清单、门禁和交付物逐项追溯结论。
+- [`../output/acceptance/design_contract_audit.md`](../output/acceptance/design_contract_audit.md)：最新设计 89 条显式条件的逐条证据与外部 No-Go 账本。
+- [`../output/acceptance/legacy_baseline_manifest.md`](../output/acceptance/legacy_baseline_manifest.md)：升级前代码、SQLite 和 RAG 基线的离线可复现冻结报告。
+- [`../output/acceptance/progressive_completion_audit.md`](../output/acceptance/progressive_completion_audit.md)：由 CI 确定性重建的机器可读完成性审计。
+- [`V3_upgrade_acceptance_matrix.md`](./V3_upgrade_acceptance_matrix.md)：V3 功能证据与外部阻塞边界。
+- [`openapi.json`](./openapi.json)：由运行中 FastAPI 应用导出的接口快照。
+- [`../infra/postgis/README.md`](../infra/postgis/README.md)：PostGIS 影子迁移和对账说明。
 
-1. [`docs/current_baseline/洪水预警系统_前后端与总体功能总结.md`](./current_baseline/洪水预警系统_前后端与总体功能总结.md)
-2. [`docs/current_baseline/系统整体框架简要说明.md`](./current_baseline/系统整体框架简要说明.md)
-3. [`docs/current_baseline/洪水预警系统_API接口说明.md`](./current_baseline/洪水预警系统_API接口说明.md)
+## 兼容演示子系统
 
-### 2.2 了解 AgentTwin 能力目标
+[`agent_twin_upgrade/`](./agent_twin_upgrade/) 只保留仍用于演示或真实数据接入的材料：甲方演示脚本、真实数据需求和字段字典。旧 AgentTwin 入口是兼容展示层，不是响应域正式状态源。
 
-1. [`AgentTwin-Flood-Requirements.md`](../AgentTwin-Flood-Requirements.md)
-2. [`docs/agent_twin_upgrade/README.md`](./agent_twin_upgrade/README.md)
-3. [`docs/agent_twin_upgrade/01_PRD_产品需求说明.md`](./agent_twin_upgrade/01_PRD_产品需求说明.md)
-4. [`docs/agent_twin_upgrade/03_系统架构设计.md`](./agent_twin_upgrade/03_系统架构设计.md)
-5. [`docs/agent_twin_upgrade/08_API接口设计.md`](./agent_twin_upgrade/08_API接口设计.md)
+## 维护规则
 
-### 2.3 运行和演示当前生产级 demo
-
-1. [`README.md`](../README.md)
-2. [`docs/agent_twin_upgrade/14_数据库问题清单与修复建议.md`](./agent_twin_upgrade/14_数据库问题清单与修复建议.md)
-3. [`docs/agent_twin_upgrade/15_演示主库重建方案.md`](./agent_twin_upgrade/15_演示主库重建方案.md)
-4. [`docs/agent_twin_upgrade/16_甲方演示脚本.md`](./agent_twin_upgrade/16_甲方演示脚本.md)
-5. [`docs/agent_twin_upgrade/17_可交付重构说明.md`](./agent_twin_upgrade/17_可交付重构说明.md)
-
-## 3. 维护约定
-
-- `current_baseline` 只记录当前代码事实。
-- `agent_twin_upgrade` 记录 AgentTwin 能力增强方案、当前实现说明、演示主库治理和甲方演示脚本。
-- 废弃文档不再保留在仓库中，避免和当前设计混淆。
+- 文档描述必须与当前代码、OpenAPI 或可复现报告一致。
+- 生成型逐样本 JSON、DOCX 导出件、构建产物和临时研究笔记不进入版本库。
+- `/response/*` 是正式响应状态唯一写入口；兼容 `/platform/*`、`/agent-twin/*` 不得绕过状态机。
+- 本地模拟、自动测试和空白人工评测包不得表述为生产验收或专家结论。

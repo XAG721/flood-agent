@@ -295,6 +295,624 @@ CREATE TABLE IF NOT EXISTS v2_evaluation_reports (
     payload TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS response_events (
+    event_id TEXT PRIMARY KEY,
+    status TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    payload TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS response_alert_snapshots (
+    snapshot_id TEXT PRIMARY KEY,
+    event_id TEXT NOT NULL,
+    version INTEGER NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    UNIQUE(event_id, version)
+);
+
+CREATE TABLE IF NOT EXISTS response_event_objects (
+    event_id TEXT NOT NULL,
+    object_id TEXT NOT NULL,
+    verification_status TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    PRIMARY KEY(event_id, object_id)
+);
+
+CREATE TABLE IF NOT EXISTS response_risk_object_versions (
+    snapshot_id TEXT PRIMARY KEY,
+    event_id TEXT NOT NULL,
+    object_id TEXT NOT NULL,
+    version INTEGER NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    UNIQUE(event_id, object_id, version)
+);
+
+CREATE TABLE IF NOT EXISTS response_risk_object_registry (
+    area_id TEXT NOT NULL,
+    object_id TEXT NOT NULL,
+    registry_version INTEGER NOT NULL,
+    registry_status TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    PRIMARY KEY(area_id, object_id)
+);
+
+CREATE TABLE IF NOT EXISTS response_risk_object_registry_versions (
+    snapshot_id TEXT PRIMARY KEY,
+    area_id TEXT NOT NULL,
+    object_id TEXT NOT NULL,
+    registry_version INTEGER NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    UNIQUE(area_id, object_id, registry_version)
+);
+
+CREATE TABLE IF NOT EXISTS response_risk_object_imports (
+    import_id TEXT PRIMARY KEY,
+    area_id TEXT NOT NULL,
+    source_hash TEXT NOT NULL,
+    source_format TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS response_tasks (
+    task_id TEXT PRIMARY KEY,
+    event_id TEXT NOT NULL,
+    object_id TEXT NOT NULL,
+    status TEXT NOT NULL,
+    version INTEGER NOT NULL,
+    updated_at TEXT NOT NULL,
+    payload TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS response_task_versions (
+    snapshot_id TEXT PRIMARY KEY,
+    event_id TEXT NOT NULL,
+    task_id TEXT NOT NULL,
+    version INTEGER NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    UNIQUE(task_id, version)
+);
+
+CREATE TABLE IF NOT EXISTS response_task_assignments (
+    assignment_id TEXT PRIMARY KEY,
+    event_id TEXT NOT NULL,
+    task_id TEXT NOT NULL,
+    assignment_version INTEGER NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    UNIQUE(task_id, assignment_version)
+);
+
+CREATE TABLE IF NOT EXISTS response_approvals (
+    approval_id TEXT PRIMARY KEY,
+    event_id TEXT NOT NULL,
+    task_id TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS response_feedback (
+    feedback_id TEXT PRIMARY KEY,
+    event_id TEXT NOT NULL,
+    task_id TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS response_escalations (
+    escalation_id TEXT PRIMARY KEY,
+    event_id TEXT NOT NULL,
+    task_id TEXT NOT NULL,
+    resolved INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS response_timeline (
+    entry_id TEXT PRIMARY KEY,
+    event_id TEXT NOT NULL,
+    task_id TEXT,
+    object_id TEXT,
+    entry_type TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS response_review_drafts (
+    review_id TEXT PRIMARY KEY,
+    event_id TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS response_scenario_reports (
+    report_id TEXT PRIMARY KEY,
+    event_id TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS response_database_backups (
+    backup_id TEXT PRIMARY KEY,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS response_backup_restores (
+    restore_id TEXT PRIMARY KEY,
+    backup_id TEXT NOT NULL,
+    restored_at TEXT NOT NULL,
+    payload TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS response_backup_imports (
+    backup_id TEXT PRIMARY KEY,
+    imported_at TEXT NOT NULL,
+    payload TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS response_backup_retention_runs (
+    run_id TEXT PRIMARY KEY,
+    executed_at TEXT NOT NULL,
+    payload TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS response_audit_archives (
+    archive_id TEXT PRIMARY KEY,
+    event_id TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS response_identity_nonces (
+    nonce TEXT PRIMARY KEY,
+    expires_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS response_idempotency_records (
+    record_id TEXT PRIMARY KEY,
+    scope TEXT NOT NULL,
+    idempotency_key TEXT NOT NULL,
+    request_hash TEXT NOT NULL,
+    status TEXT NOT NULL,
+    expires_at TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    UNIQUE(scope, idempotency_key)
+);
+
+CREATE TABLE IF NOT EXISTS response_key_rotation_state (
+    rotation_id TEXT PRIMARY KEY,
+    backup_id TEXT NOT NULL,
+    old_key_id TEXT NOT NULL,
+    new_key_id TEXT NOT NULL,
+    status TEXT NOT NULL,
+    started_at TEXT NOT NULL,
+    completed_at TEXT
+);
+
+CREATE TABLE IF NOT EXISTS response_feature_flags (
+    flag_key TEXT NOT NULL,
+    scope_key TEXT NOT NULL,
+    enabled INTEGER NOT NULL,
+    version INTEGER NOT NULL,
+    updated_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    PRIMARY KEY(flag_key, scope_key)
+);
+
+CREATE TABLE IF NOT EXISTS response_outbox (
+    message_id TEXT PRIMARY KEY,
+    event_id TEXT NOT NULL,
+    task_id TEXT NOT NULL,
+    status TEXT NOT NULL,
+    idempotency_key TEXT NOT NULL UNIQUE,
+    attempts INTEGER NOT NULL DEFAULT 0,
+    updated_at TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS response_dispatch_callbacks (
+    callback_id TEXT PRIMARY KEY,
+    message_id TEXT NOT NULL,
+    event_id TEXT NOT NULL,
+    task_id TEXT NOT NULL,
+    external_id TEXT NOT NULL,
+    version INTEGER NOT NULL,
+    status TEXT NOT NULL,
+    sequence_state TEXT NOT NULL,
+    idempotency_key TEXT NOT NULL UNIQUE,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    FOREIGN KEY(message_id) REFERENCES response_outbox(message_id)
+);
+
+CREATE TABLE IF NOT EXISTS response_candidate_runs (
+    run_id TEXT PRIMARY KEY,
+    event_id TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS response_candidate_object_lists (
+    list_id TEXT NOT NULL,
+    event_id TEXT NOT NULL,
+    version INTEGER NOT NULL,
+    content_hash TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    PRIMARY KEY(list_id, version),
+    UNIQUE(event_id, version)
+);
+
+CREATE TABLE IF NOT EXISTS response_evidence_packages (
+    package_id TEXT NOT NULL,
+    event_id TEXT NOT NULL,
+    object_id TEXT NOT NULL,
+    version INTEGER NOT NULL,
+    status TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    PRIMARY KEY(package_id, version)
+);
+
+CREATE TABLE IF NOT EXISTS response_rule_evaluations (
+    evaluation_id TEXT PRIMARY KEY,
+    event_id TEXT NOT NULL,
+    task_id TEXT NOT NULL,
+    task_version INTEGER NOT NULL,
+    outcome TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS response_deadline_extensions (
+    extension_id TEXT PRIMARY KEY,
+    event_id TEXT NOT NULL,
+    task_id TEXT NOT NULL,
+    status TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS response_schema_migrations (
+    version TEXT PRIMARY KEY,
+    checksum TEXT NOT NULL,
+    applied_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS response_migration_batches (
+    batch_id TEXT PRIMARY KEY,
+    mapping_version TEXT NOT NULL,
+    status TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS response_legacy_adapter_calls (
+    call_id TEXT PRIMARY KEY,
+    legacy_endpoint TEXT NOT NULL,
+    mapping_version TEXT NOT NULL,
+    trace_id TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS response_document_versions (
+    version_id TEXT PRIMARY KEY,
+    document_id TEXT NOT NULL,
+    version_number INTEGER NOT NULL,
+    source_hash TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    UNIQUE(document_id, version_number),
+    UNIQUE(document_id, source_hash)
+);
+
+CREATE TABLE IF NOT EXISTS response_document_sources (
+    version_id TEXT PRIMARY KEY,
+    source_hash TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    FOREIGN KEY(version_id) REFERENCES response_document_versions(version_id)
+);
+
+CREATE TABLE IF NOT EXISTS response_document_parses (
+    parse_id TEXT PRIMARY KEY,
+    version_id TEXT NOT NULL,
+    parser_version TEXT NOT NULL,
+    source_hash TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    UNIQUE(version_id, parser_version, source_hash),
+    FOREIGN KEY(version_id) REFERENCES response_document_versions(version_id)
+);
+
+CREATE TABLE IF NOT EXISTS response_document_lifecycle_events (
+    lifecycle_event_id TEXT PRIMARY KEY,
+    version_id TEXT NOT NULL,
+    status TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    FOREIGN KEY(version_id) REFERENCES response_document_versions(version_id)
+);
+
+CREATE TABLE IF NOT EXISTS response_index_builds (
+    build_id TEXT PRIMARY KEY,
+    document_version_id TEXT NOT NULL,
+    status TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    FOREIGN KEY(document_version_id) REFERENCES response_document_versions(version_id)
+);
+
+CREATE TABLE IF NOT EXISTS response_contract_versions (
+    contract_type TEXT NOT NULL,
+    version_id TEXT NOT NULL,
+    content_hash TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    PRIMARY KEY(contract_type, version_id),
+    UNIQUE(contract_type, content_hash)
+);
+
+DROP TRIGGER IF EXISTS protect_response_document_versions_update;
+CREATE TRIGGER protect_response_document_versions_update
+BEFORE UPDATE ON response_document_versions
+WHEN response_key_rotation_authorized() != 1
+BEGIN
+    SELECT RAISE(ABORT, 'document versions are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_document_versions_delete;
+CREATE TRIGGER protect_response_document_versions_delete
+BEFORE DELETE ON response_document_versions BEGIN
+    SELECT RAISE(ABORT, 'document versions cannot be deleted');
+END;
+DROP TRIGGER IF EXISTS protect_response_document_sources_update;
+CREATE TRIGGER protect_response_document_sources_update
+BEFORE UPDATE ON response_document_sources
+WHEN response_key_rotation_authorized() != 1
+BEGIN
+    SELECT RAISE(ABORT, 'document source snapshots are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_document_sources_delete;
+CREATE TRIGGER protect_response_document_sources_delete
+BEFORE DELETE ON response_document_sources BEGIN
+    SELECT RAISE(ABORT, 'document source snapshots cannot be deleted');
+END;
+DROP TRIGGER IF EXISTS protect_response_document_parses_update;
+CREATE TRIGGER protect_response_document_parses_update
+BEFORE UPDATE ON response_document_parses
+WHEN response_key_rotation_authorized() != 1
+BEGIN
+    SELECT RAISE(ABORT, 'document parse records are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_document_parses_delete;
+CREATE TRIGGER protect_response_document_parses_delete
+BEFORE DELETE ON response_document_parses BEGIN
+    SELECT RAISE(ABORT, 'document parse records cannot be deleted');
+END;
+DROP TRIGGER IF EXISTS protect_response_document_lifecycle_update;
+CREATE TRIGGER protect_response_document_lifecycle_update
+BEFORE UPDATE ON response_document_lifecycle_events
+WHEN response_key_rotation_authorized() != 1
+BEGIN
+    SELECT RAISE(ABORT, 'document lifecycle events are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_document_lifecycle_delete;
+CREATE TRIGGER protect_response_document_lifecycle_delete
+BEFORE DELETE ON response_document_lifecycle_events BEGIN
+    SELECT RAISE(ABORT, 'document lifecycle events cannot be deleted');
+END;
+DROP TRIGGER IF EXISTS protect_response_index_builds_update;
+CREATE TRIGGER protect_response_index_builds_update
+BEFORE UPDATE ON response_index_builds
+WHEN response_key_rotation_authorized() != 1
+BEGIN
+    SELECT RAISE(ABORT, 'index build records are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_index_builds_delete;
+CREATE TRIGGER protect_response_index_builds_delete
+BEFORE DELETE ON response_index_builds BEGIN
+    SELECT RAISE(ABORT, 'index build records cannot be deleted');
+END;
+DROP TRIGGER IF EXISTS protect_response_contract_versions_update;
+CREATE TRIGGER protect_response_contract_versions_update
+BEFORE UPDATE ON response_contract_versions
+WHEN response_key_rotation_authorized() != 1
+BEGIN
+    SELECT RAISE(ABORT, 'contract versions are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_contract_versions_delete;
+CREATE TRIGGER protect_response_contract_versions_delete
+BEFORE DELETE ON response_contract_versions BEGIN
+    SELECT RAISE(ABORT, 'contract versions cannot be deleted');
+END;
+
+DROP TRIGGER IF EXISTS protect_response_registry_versions_update;
+CREATE TRIGGER protect_response_registry_versions_update
+BEFORE UPDATE ON response_risk_object_registry_versions
+WHEN NOT (
+    COALESCE(json_extract(OLD.payload, '$.protected'), 0) = 0
+    AND json_extract(NEW.payload, '$.protected') = 1
+    OR response_key_rotation_authorized() = 1
+)
+BEGIN
+    SELECT RAISE(ABORT, 'risk-object registry versions are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_registry_versions_delete;
+CREATE TRIGGER protect_response_registry_versions_delete
+BEFORE DELETE ON response_risk_object_registry_versions BEGIN
+    SELECT RAISE(ABORT, 'risk-object registry versions cannot be deleted');
+END;
+DROP TRIGGER IF EXISTS protect_response_registry_imports_update;
+CREATE TRIGGER protect_response_registry_imports_update
+BEFORE UPDATE ON response_risk_object_imports
+WHEN NOT (
+    COALESCE(json_extract(OLD.payload, '$.protected'), 0) = 0
+    AND json_extract(NEW.payload, '$.protected') = 1
+    OR response_key_rotation_authorized() = 1
+)
+BEGIN
+    SELECT RAISE(ABORT, 'risk-object registry imports are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_registry_imports_delete;
+CREATE TRIGGER protect_response_registry_imports_delete
+BEFORE DELETE ON response_risk_object_imports BEGIN
+    SELECT RAISE(ABORT, 'risk-object registry imports cannot be deleted');
+END;
+DROP TRIGGER IF EXISTS protect_response_candidate_object_lists_update;
+CREATE TRIGGER protect_response_candidate_object_lists_update
+BEFORE UPDATE ON response_candidate_object_lists
+WHEN NOT (
+    COALESCE(json_extract(OLD.payload, '$.protected'), 0) = 0
+    AND json_extract(NEW.payload, '$.protected') = 1
+    OR response_key_rotation_authorized() = 1
+)
+BEGIN
+    SELECT RAISE(ABORT, 'candidate object lists are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_candidate_object_lists_delete;
+CREATE TRIGGER protect_response_candidate_object_lists_delete
+BEFORE DELETE ON response_candidate_object_lists BEGIN
+    SELECT RAISE(ABORT, 'candidate object lists cannot be deleted');
+END;
+DROP TRIGGER IF EXISTS protect_response_alert_snapshots_update;
+CREATE TRIGGER protect_response_alert_snapshots_update
+BEFORE UPDATE ON response_alert_snapshots
+WHEN NOT (
+    COALESCE(json_extract(OLD.payload, '$.protected'), 0) = 0
+    AND json_extract(NEW.payload, '$.protected') = 1
+    OR response_key_rotation_authorized() = 1
+)
+BEGIN
+    SELECT RAISE(ABORT, 'response alert snapshots are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_alert_snapshots_delete;
+CREATE TRIGGER IF NOT EXISTS protect_response_alert_snapshots_delete
+BEFORE DELETE ON response_alert_snapshots BEGIN
+    SELECT RAISE(ABORT, 'response alert snapshots cannot be deleted');
+END;
+DROP TRIGGER IF EXISTS protect_response_approvals_update;
+CREATE TRIGGER protect_response_approvals_update
+BEFORE UPDATE ON response_approvals
+WHEN NOT (
+    COALESCE(json_extract(OLD.payload, '$.protected'), 0) = 0
+    AND json_extract(NEW.payload, '$.protected') = 1
+    OR response_key_rotation_authorized() = 1
+)
+BEGIN
+    SELECT RAISE(ABORT, 'response approvals are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_approvals_delete;
+CREATE TRIGGER IF NOT EXISTS protect_response_approvals_delete
+BEFORE DELETE ON response_approvals BEGIN
+    SELECT RAISE(ABORT, 'response approvals cannot be deleted');
+END;
+DROP TRIGGER IF EXISTS protect_response_feedback_update;
+CREATE TRIGGER protect_response_feedback_update
+BEFORE UPDATE ON response_feedback
+WHEN NOT (
+    COALESCE(json_extract(OLD.payload, '$.protected'), 0) = 0
+    AND json_extract(NEW.payload, '$.protected') = 1
+    OR response_key_rotation_authorized() = 1
+)
+BEGIN
+    SELECT RAISE(ABORT, 'response evidence feedback is immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_feedback_delete;
+CREATE TRIGGER IF NOT EXISTS protect_response_feedback_delete
+BEFORE DELETE ON response_feedback BEGIN
+    SELECT RAISE(ABORT, 'response evidence feedback cannot be deleted');
+END;
+DROP TRIGGER IF EXISTS protect_response_timeline_update;
+CREATE TRIGGER protect_response_timeline_update
+BEFORE UPDATE ON response_timeline
+WHEN NOT (
+    COALESCE(json_extract(OLD.payload, '$.protected'), 0) = 0
+    AND json_extract(NEW.payload, '$.protected') = 1
+    OR response_key_rotation_authorized() = 1
+)
+BEGIN
+    SELECT RAISE(ABORT, 'response timeline is append-only');
+END;
+DROP TRIGGER IF EXISTS protect_response_timeline_delete;
+CREATE TRIGGER IF NOT EXISTS protect_response_timeline_delete
+BEFORE DELETE ON response_timeline BEGIN
+    SELECT RAISE(ABORT, 'response timeline cannot be deleted');
+END;
+DROP TRIGGER IF EXISTS protect_response_task_versions_update;
+CREATE TRIGGER protect_response_task_versions_update
+BEFORE UPDATE ON response_task_versions
+WHEN NOT (
+    COALESCE(json_extract(OLD.payload, '$.protected'), 0) = 0
+    AND json_extract(NEW.payload, '$.protected') = 1
+    OR response_key_rotation_authorized() = 1
+)
+BEGIN
+    SELECT RAISE(ABORT, 'response task versions are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_task_versions_delete;
+CREATE TRIGGER IF NOT EXISTS protect_response_task_versions_delete
+BEFORE DELETE ON response_task_versions BEGIN
+    SELECT RAISE(ABORT, 'response task versions cannot be deleted');
+END;
+DROP TRIGGER IF EXISTS protect_response_task_assignments_update;
+CREATE TRIGGER protect_response_task_assignments_update
+BEFORE UPDATE ON response_task_assignments
+WHEN NOT (
+    COALESCE(json_extract(OLD.payload, '$.protected'), 0) = 0
+    AND json_extract(NEW.payload, '$.protected') = 1
+    OR response_key_rotation_authorized() = 1
+)
+BEGIN
+    SELECT RAISE(ABORT, 'response task assignments are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_task_assignments_delete;
+CREATE TRIGGER IF NOT EXISTS protect_response_task_assignments_delete
+BEFORE DELETE ON response_task_assignments BEGIN
+    SELECT RAISE(ABORT, 'response task assignments cannot be deleted');
+END;
+DROP TRIGGER IF EXISTS protect_response_audit_archives_update;
+CREATE TRIGGER protect_response_audit_archives_update
+BEFORE UPDATE ON response_audit_archives
+WHEN NOT (
+    COALESCE(json_extract(OLD.payload, '$.protected'), 0) = 0
+    AND json_extract(NEW.payload, '$.protected') = 1
+    OR response_key_rotation_authorized() = 1
+)
+BEGIN
+    SELECT RAISE(ABORT, 'response audit archives are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_audit_archives_delete;
+CREATE TRIGGER IF NOT EXISTS protect_response_audit_archives_delete
+BEFORE DELETE ON response_audit_archives BEGIN
+    SELECT RAISE(ABORT, 'response audit archives cannot be deleted');
+END;
+DROP TRIGGER IF EXISTS protect_response_backup_retention_runs_update;
+CREATE TRIGGER protect_response_backup_retention_runs_update
+BEFORE UPDATE ON response_backup_retention_runs
+WHEN NOT (
+    COALESCE(json_extract(OLD.payload, '$.protected'), 0) = 0
+    AND json_extract(NEW.payload, '$.protected') = 1
+    OR response_key_rotation_authorized() = 1
+)
+BEGIN
+    SELECT RAISE(ABORT, 'backup retention runs are immutable');
+END;
+DROP TRIGGER IF EXISTS protect_response_backup_retention_runs_delete;
+CREATE TRIGGER IF NOT EXISTS protect_response_backup_retention_runs_delete
+BEFORE DELETE ON response_backup_retention_runs BEGIN
+    SELECT RAISE(ABORT, 'backup retention runs cannot be deleted');
+END;
+
 CREATE INDEX IF NOT EXISTS idx_v2_observations_event_id ON v2_observations(event_id, observed_at);
 CREATE INDEX IF NOT EXISTS idx_v2_simulation_updates_event_id ON v2_simulation_updates(event_id, generated_at);
 CREATE INDEX IF NOT EXISTS idx_v2_stream_records_event_id ON v2_stream_records(event_id, created_at);
@@ -333,4 +951,44 @@ CREATE INDEX IF NOT EXISTS idx_v2_daily_report_runs_event_date ON v2_daily_repor
 CREATE INDEX IF NOT EXISTS idx_v2_high_risk_episodes_event_id ON v2_high_risk_episodes(event_id, started_at);
 CREATE INDEX IF NOT EXISTS idx_v2_event_episode_summaries_event_id ON v2_event_episode_summaries(event_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_v2_long_term_memories_event_id ON v2_long_term_memories(event_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_alerts_event_id ON response_alert_snapshots(event_id, version);
+CREATE INDEX IF NOT EXISTS idx_response_objects_event_id ON response_event_objects(event_id, verification_status);
+CREATE INDEX IF NOT EXISTS idx_response_object_versions ON response_risk_object_versions(event_id, object_id, version);
+CREATE INDEX IF NOT EXISTS idx_response_registry_area_status ON response_risk_object_registry(area_id, registry_status, updated_at);
+CREATE INDEX IF NOT EXISTS idx_response_registry_versions ON response_risk_object_registry_versions(area_id, object_id, registry_version);
+CREATE INDEX IF NOT EXISTS idx_response_risk_imports ON response_risk_object_imports(area_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_tasks_event_id ON response_tasks(event_id, status, updated_at);
+CREATE INDEX IF NOT EXISTS idx_response_task_versions_task_id ON response_task_versions(task_id, version);
+CREATE INDEX IF NOT EXISTS idx_response_task_assignments_task_id ON response_task_assignments(task_id, assignment_version);
+CREATE INDEX IF NOT EXISTS idx_response_approvals_task_id ON response_approvals(task_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_feedback_task_id ON response_feedback(task_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_escalations_event_id ON response_escalations(event_id, resolved, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_timeline_event_id ON response_timeline(event_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_review_event_id ON response_review_drafts(event_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_scenario_report_event_id ON response_scenario_reports(event_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_backup_created_at ON response_database_backups(created_at);
+CREATE INDEX IF NOT EXISTS idx_response_audit_archives_event ON response_audit_archives(event_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_restore_backup_id ON response_backup_restores(backup_id, restored_at);
+CREATE INDEX IF NOT EXISTS idx_response_backup_imported_at ON response_backup_imports(imported_at);
+CREATE INDEX IF NOT EXISTS idx_response_identity_nonce_expiry ON response_identity_nonces(expires_at);
+CREATE INDEX IF NOT EXISTS idx_response_idempotency_expiry ON response_idempotency_records(expires_at);
+CREATE INDEX IF NOT EXISTS idx_response_idempotency_status ON response_idempotency_records(status, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_feature_flags_scope ON response_feature_flags(scope_key, flag_key);
+CREATE INDEX IF NOT EXISTS idx_response_outbox_status ON response_outbox(status, updated_at);
+CREATE INDEX IF NOT EXISTS idx_response_outbox_event ON response_outbox(event_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_candidate_runs_event ON response_candidate_runs(event_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_candidate_object_lists_event
+    ON response_candidate_object_lists(event_id, version);
+CREATE INDEX IF NOT EXISTS idx_response_evidence_packages_event ON response_evidence_packages(event_id, object_id, version);
+CREATE INDEX IF NOT EXISTS idx_response_rule_evaluations_task ON response_rule_evaluations(task_id, task_version, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_deadline_extensions_task ON response_deadline_extensions(task_id, status, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_migration_batches_version ON response_migration_batches(mapping_version, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_legacy_calls_endpoint ON response_legacy_adapter_calls(legacy_endpoint, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_document_versions ON response_document_versions(document_id, version_number);
+CREATE INDEX IF NOT EXISTS idx_response_document_parses_version ON response_document_parses(version_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_document_lifecycle_version ON response_document_lifecycle_events(version_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_index_builds_version ON response_index_builds(document_version_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_contract_versions_type ON response_contract_versions(contract_type, created_at);
+CREATE INDEX IF NOT EXISTS idx_response_dispatch_callbacks
+    ON response_dispatch_callbacks(message_id, external_id, version, created_at);
 """

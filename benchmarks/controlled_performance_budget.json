@@ -1,0 +1,37 @@
+{
+  "name": "洪水响应受控进程内 API 预算",
+  "version": "controlled-api-budget-v1",
+  "scope": "单进程 FastAPI TestClient，包含加密 SQLite 与可信身份校验；不作为生产容量声明。",
+  "sample_count": 40,
+  "warmup_count": 5,
+  "endpoints": {
+    "event_list": {
+      "method": "GET",
+      "path_template": "/response/events",
+      "max_p95_ms": 150,
+      "max_error_rate": 0
+    },
+    "event_dashboard": {
+      "method": "GET",
+      "path_template": "/response/events/{event_id}",
+      "max_p95_ms": 250,
+      "max_error_rate": 0
+    },
+    "event_timeline": {
+      "method": "GET",
+      "path_template": "/response/events/{event_id}/timeline",
+      "max_p95_ms": 200,
+      "max_error_rate": 0
+    },
+    "event_audit_trail": {
+      "method": "GET",
+      "path_template": "/response/events/{event_id}/audit-trail",
+      "max_p95_ms": 300,
+      "max_error_rate": 0
+    }
+  },
+  "limitations": [
+    "不包含网络、反向代理、TLS、外部 IdP、生产 PostgreSQL、多主机争用或真实区县数据规模。",
+    "阈值只用于受控 CI 夹具的冻结回归预算；生产 SLO 必须经过试点实测和审批。"
+  ]
+}

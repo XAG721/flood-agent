@@ -1,0 +1,186 @@
+{
+  "metadata": {
+    "name": "Controlled FRC parameter-identifiability benchmark V1",
+    "version": "controlled-frc-sensitivity-v1",
+    "data_origin": "SYNTHETIC",
+    "is_simulated": true,
+    "annotation_scope": "Repository-constructed diagnostic cases with explicit relevant evidence, task fields, roles, and conflicting candidates. Not a public or production benchmark.",
+    "diagnostic_design_status": "constructed_and_validated_for_parameter_identifiability; not a held-out tuning set"
+  },
+  "documents": [
+    {
+      "doc_id": "field_trigger",
+      "corpus": "policy",
+      "title": "Water level trigger and underpass object",
+      "content": "The water level trigger applies to the Riverside underpass object.",
+      "metadata": {"evidence_roles": ["condition", "object"], "source_label": "official", "token_cost": 95}
+    },
+    {
+      "doc_id": "field_owner",
+      "corpus": "policy",
+      "title": "Housing bureau responsible owner",
+      "content": "The housing bureau owner accepts responsibility for the closure task.",
+      "metadata": {"evidence_roles": ["responsibility"], "source_label": "official", "token_cost": 90}
+    },
+    {
+      "doc_id": "field_action",
+      "corpus": "policy",
+      "title": "Road closure procedure and source clause",
+      "content": "Follow the road closure procedure and cite the current plan source clause.",
+      "metadata": {"evidence_roles": ["procedure", "attribution"], "source_label": "official", "token_cost": 100}
+    },
+    {
+      "doc_id": "field_exception",
+      "corpus": "policy",
+      "title": "Pump failure exception and deadline",
+      "content": "A pump failure exception requires escalation within the thirty minute deadline.",
+      "metadata": {"evidence_roles": ["exception"], "source_label": "official", "token_cost": 95}
+    },
+    {
+      "doc_id": "field_generic_summary",
+      "corpus": "policy",
+      "title": "Underpass response overview",
+      "content": "Generic orientation for responders without task-specific facts.",
+      "metadata": {"evidence_roles": ["condition", "object", "responsibility"], "source_label": "official", "token_cost": 20}
+    },
+    {
+      "doc_id": "field_generic_checklist",
+      "corpus": "policy",
+      "title": "Underpass response handbook",
+      "content": "Generic handbook for staff without task-specific facts.",
+      "metadata": {"evidence_roles": ["procedure", "exception", "attribution"], "source_label": "official", "token_cost": 20}
+    },
+    {
+      "doc_id": "role_condition",
+      "corpus": "profile",
+      "title": "Metro response evidence condition",
+      "content": "Metro response evidence records the activation condition.",
+      "metadata": {"evidence_roles": ["condition"], "source_label": "official", "token_cost": 80}
+    },
+    {
+      "doc_id": "role_object_owner",
+      "corpus": "profile",
+      "title": "Metro response evidence object owner",
+      "content": "Metro response evidence identifies the station object and responsible owner.",
+      "metadata": {"evidence_roles": ["object", "responsibility"], "source_label": "official", "token_cost": 85}
+    },
+    {
+      "doc_id": "role_procedure",
+      "corpus": "profile",
+      "title": "Metro response evidence procedure",
+      "content": "Metro response evidence defines the operating procedure.",
+      "metadata": {"evidence_roles": ["procedure"], "source_label": "official", "token_cost": 80}
+    },
+    {
+      "doc_id": "role_exception_source",
+      "corpus": "profile",
+      "title": "Metro response evidence exception source",
+      "content": "Metro response evidence states the exception and authoritative source.",
+      "metadata": {"evidence_roles": ["exception", "attribution"], "source_label": "official", "token_cost": 85}
+    },
+    {
+      "doc_id": "role_duplicate_fast",
+      "corpus": "profile",
+      "title": "Metro response evidence complete overview",
+      "content": "Metro response evidence metro response evidence complete overview.",
+      "metadata": {"evidence_roles": ["procedure"], "source_label": "official", "token_cost": 15}
+    },
+    {
+      "doc_id": "role_duplicate_brief",
+      "corpus": "profile",
+      "title": "Metro response evidence brief",
+      "content": "Metro response evidence brief for operators.",
+      "metadata": {"evidence_roles": ["procedure"], "source_label": "official", "token_cost": 15}
+    },
+    {
+      "doc_id": "conflict_trigger",
+      "corpus": "case",
+      "title": "Hospital evacuation trigger",
+      "content": "The hospital evacuation trigger is a red rainfall warning.",
+      "metadata": {"evidence_roles": ["condition"], "source_label": "official", "token_cost": 75}
+    },
+    {
+      "doc_id": "conflict_owner",
+      "corpus": "case",
+      "title": "Hospital evacuation responsible owner",
+      "content": "The health bureau is the responsible owner for hospital evacuation.",
+      "metadata": {"evidence_roles": ["object", "responsibility"], "source_label": "official", "token_cost": 80}
+    },
+    {
+      "doc_id": "conflict_action",
+      "corpus": "case",
+      "title": "Hospital evacuation route procedure",
+      "content": "Use the north route procedure and close the flooded south route.",
+      "metadata": {"evidence_roles": ["procedure"], "source_label": "official", "stance": "close_south", "token_cost": 80}
+    },
+    {
+      "doc_id": "conflict_exception",
+      "corpus": "case",
+      "title": "Hospital evacuation exception source",
+      "content": "If ambulances are unavailable, disclose the exception and cite the source.",
+      "metadata": {"evidence_roles": ["exception", "attribution"], "source_label": "official", "token_cost": 80}
+    },
+    {
+      "doc_id": "conflict_unverified_no_check",
+      "corpus": "case",
+      "title": "Hospital evacuation route procedure without inspection",
+      "content": "No route inspection is needed for the responsible owner, route procedure, evacuation exception or authoritative source.",
+      "metadata": {"evidence_roles": ["procedure", "exception", "attribution"], "source_label": "community", "conflict_risk_score": 0.45, "is_conflicting_candidate": true, "token_cost": 25}
+    },
+    {
+      "doc_id": "conflict_opposite_stance",
+      "corpus": "case",
+      "title": "Hospital evacuation south route procedure",
+      "content": "Keep the flooded south route open during the hospital evacuation procedure.",
+      "metadata": {"evidence_roles": ["procedure", "attribution"], "source_label": "community", "stance": "keep_south_open", "conflict_risk_score": 0.8, "is_conflicting_candidate": true, "token_cost": 25}
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "field_weight_identifiability",
+      "query": "Provide the underpass trigger, object, owner, action, deadline, exception and source.",
+      "slots": ["water level trigger", "underpass object", "housing bureau owner", "road closure procedure", "thirty minute deadline", "pump failure exception", "current plan source clause"],
+      "relevant_doc_ids": ["field_trigger", "field_owner", "field_action", "field_exception"],
+      "field_evidence_map": {
+        "trigger": ["field_trigger"],
+        "object": ["field_trigger"],
+        "owner": ["field_owner"],
+        "procedure": ["field_action"],
+        "deadline": ["field_exception"],
+        "exception": ["field_exception"],
+        "source": ["field_action"]
+      },
+      "required_roles": ["condition", "object", "responsibility", "procedure", "exception", "attribution"],
+      "corpus": "policy"
+    },
+    {
+      "case_id": "role_weight_identifiability",
+      "query": "Collect complementary metro response evidence roles.",
+      "slots": ["metro response evidence"],
+      "relevant_doc_ids": ["role_condition", "role_object_owner", "role_procedure", "role_exception_source"],
+      "field_evidence_map": {
+        "condition": ["role_condition"],
+        "object_and_owner": ["role_object_owner"],
+        "procedure": ["role_procedure"],
+        "exception_and_source": ["role_exception_source"]
+      },
+      "required_roles": ["condition", "object", "responsibility", "procedure", "exception", "attribution"],
+      "corpus": "profile"
+    },
+    {
+      "case_id": "conflict_threshold_identifiability",
+      "query": "Provide hospital evacuation trigger, owner, route procedure, exception and source.",
+      "slots": ["hospital evacuation trigger", "responsible owner", "route procedure", "evacuation exception", "authoritative source"],
+      "relevant_doc_ids": ["conflict_trigger", "conflict_owner", "conflict_action", "conflict_exception"],
+      "field_evidence_map": {
+        "trigger": ["conflict_trigger"],
+        "owner": ["conflict_owner"],
+        "procedure": ["conflict_action"],
+        "exception": ["conflict_exception"],
+        "source": ["conflict_exception"]
+      },
+      "required_roles": ["condition", "object", "responsibility", "procedure", "exception", "attribution"],
+      "corpus": "case"
+    }
+  ]
+}

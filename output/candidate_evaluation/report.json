@@ -1,0 +1,53 @@
+{
+  "metadata": {
+    "name": "FloodAgent-Bench candidate evaluation",
+    "version": "floodagent-bench-v2",
+    "seed": 20260712,
+    "dataset_id": "FloodAgent-Bench",
+    "generator_version": "deterministic-simulator-v2",
+    "data_origin": "SYNTHETIC",
+    "is_simulated": true,
+    "manifest_sha256": "fdce9656bcc607ed2bc5ab106535064c8c0c8303bc32cae4be479fd99b3d3efd"
+  },
+  "baseline": {
+    "case_count": 24,
+    "top_k": 5,
+    "recall_at_k": 1.0,
+    "critical_miss_rate": 0.0,
+    "ece": 0.037792,
+    "calibration_sample_count": 720,
+    "confidence_key": "confidence"
+  },
+  "uncalibrated": {
+    "case_count": 24,
+    "top_k": 5,
+    "recall_at_k": 1.0,
+    "critical_miss_rate": 0.0,
+    "ece": 0.3,
+    "calibration_sample_count": 720,
+    "confidence_key": "raw_confidence"
+  },
+  "calibration_improvement": 0.262208,
+  "missing_feature_stress": {
+    "full": {
+      "case_count": 24,
+      "top_k": 5,
+      "recall_at_k": 1.0,
+      "critical_miss_rate": 0.0,
+      "ece": 0.037792,
+      "calibration_sample_count": 720,
+      "confidence_key": "confidence"
+    },
+    "degraded": {
+      "case_count": 24,
+      "top_k": 5,
+      "recall_at_k": 1.0,
+      "critical_miss_rate": 0.0,
+      "ece": 0.100292,
+      "calibration_sample_count": 720,
+      "confidence_key": "confidence"
+    },
+    "recall_drop_percentage_points": 0.0
+  },
+  "source": "output\\floodagent_bench\\candidate_evaluation_input.json"
+}

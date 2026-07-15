@@ -1,0 +1,2394 @@
+{
+  "schema_version": "legacy-baseline-snapshot-v1",
+  "metadata": {
+    "freeze_date": "2026-07-14",
+    "scope": "controlled pre-upgrade legacy application baseline",
+    "source_commit": "2db016af915ada1912afe91d315defe844dba09d",
+    "source_tree": "11ad151eb65101d4786f1815420fb2304cf55d65",
+    "source_commit_date": "2026-05-12T15:09:20+08:00",
+    "source_subject": "Refine AgentTwin demo map and dialog flow",
+    "git_archive_sha256": "c95f450964eca8a824bb445efbfaf874e6bc69820856b4d3cbf99b2bb170dc1c",
+    "bootstrap_clock_normalization": "runtime-only resource/supervisor timestamps are normalized to the source commit timestamp before VACUUM so repeated offline rebuilds are byte-identical",
+    "local_snapshot_policy": "binary database and runtime index are retained under ignored .cache; the tracked manifest contains only hashes, schema, counts, and Git blob identities"
+  },
+  "tracked_tree": {
+    "file_count": 254,
+    "blob_bytes": 2200943,
+    "categories": {
+      "application": {
+        "prefixes": [
+          "flood_system/",
+          "frontend/",
+          "3D_visual/",
+          "scripts/"
+        ],
+        "file_count": 188,
+        "blob_bytes": 1709557,
+        "listing_sha256": "3cd4ffadd067bba0e8c0f7c9510f2f8daa69e97d7bc58ef7ff5306548662aa98",
+        "entries": [
+          {
+            "path": "3D_visual/.gitignore",
+            "mode": "100644",
+            "object": "4f3a35af72510e9b37c2e5107b8039c449baea15",
+            "bytes": 29
+          },
+          {
+            "path": "3D_visual/index.html",
+            "mode": "100644",
+            "object": "a16539f98db929306d7c39e3125943fa75a48874",
+            "bytes": 309
+          },
+          {
+            "path": "3D_visual/package-lock.json",
+            "mode": "100644",
+            "object": "5b664f93a51fa4880eab1fb0477811f6059d579a",
+            "bytes": 86479
+          },
+          {
+            "path": "3D_visual/package.json",
+            "mode": "100644",
+            "object": "d7b920b6bdcaff4ff1c9cb9c9fd173b9ff398096",
+            "bytes": 520
+          },
+          {
+            "path": "3D_visual/public/models/.gitkeep",
+            "mode": "100644",
+            "object": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+            "bytes": 1
+          },
+          {
+            "path": "3D_visual/public/models/README.md",
+            "mode": "100644",
+            "object": "630baedc8ec27f3da4d571a1406f2588da0079fe",
+            "bytes": 627
+          },
+          {
+            "path": "3D_visual/public/scene-config.json",
+            "mode": "100644",
+            "object": "b4cede877e01e4b3dc85343c767b4479d26f0cf6",
+            "bytes": 950
+          },
+          {
+            "path": "3D_visual/src/App.tsx",
+            "mode": "100644",
+            "object": "a585c884d9579cafdb3a6828c8182b7fd231fc49",
+            "bytes": 44245
+          },
+          {
+            "path": "3D_visual/src/main.tsx",
+            "mode": "100644",
+            "object": "4848485e9cec86b73c6a9fc09c17f265c885639f",
+            "bytes": 1394
+          },
+          {
+            "path": "3D_visual/src/styles.css",
+            "mode": "100644",
+            "object": "83212db7123a5e9694adbab4bc0b3be6497d302b",
+            "bytes": 4852
+          },
+          {
+            "path": "3D_visual/src/vite-env.d.ts",
+            "mode": "100644",
+            "object": "002f36ee557f5f76e670e1bf8aadc4c9695cde66",
+            "bytes": 179
+          },
+          {
+            "path": "3D_visual/tsconfig.app.json",
+            "mode": "100644",
+            "object": "ea272305fac4074aa4d01295cc992e2cec0ec9f0",
+            "bytes": 508
+          },
+          {
+            "path": "3D_visual/tsconfig.json",
+            "mode": "100644",
+            "object": "1d648be62cf620bd09e8260684c6295de48da1db",
+            "bytes": 140
+          },
+          {
+            "path": "3D_visual/tsconfig.node.json",
+            "mode": "100644",
+            "object": "c88b91b41d3bd896eb7bc1b9aca4a2dbb5e84d2c",
+            "bytes": 214
+          },
+          {
+            "path": "3D_visual/vite.config.ts",
+            "mode": "100644",
+            "object": "f7e028bfcf93880621e355b6e3d4b893c55e6c29",
+            "bytes": 1116
+          },
+          {
+            "path": "flood_system/__init__.py",
+            "mode": "100644",
+            "object": "fca3a4910ea5cd2a2d6f299fc5d60a33e101f964",
+            "bytes": 149
+          },
+          {
+            "path": "flood_system/api.py",
+            "mode": "100644",
+            "object": "ca107f4590f4996126d008b09ed3f2bdb47d0f51",
+            "bytes": 30522
+          },
+          {
+            "path": "flood_system/bootstrap_data/area_profiles.csv",
+            "mode": "100644",
+            "object": "9cd28ed183b44d6a7e3ddef2a776493dcfafc741",
+            "bytes": 1039
+          },
+          {
+            "path": "flood_system/bootstrap_data/compensation_inputs/field_verification_records.csv",
+            "mode": "100644",
+            "object": "ba1a4ea51b131e8000fb5d1f8001fc940c7c52df",
+            "bytes": 1087
+          },
+          {
+            "path": "flood_system/bootstrap_data/compensation_inputs/household_damage_claims.csv",
+            "mode": "100644",
+            "object": "5b2b4d239136ca8f194a627a77acf14f3b4a77eb",
+            "bytes": 1463
+          },
+          {
+            "path": "flood_system/bootstrap_data/compensation_inputs/public_asset_damage.csv",
+            "mode": "100644",
+            "object": "890348faa5315362cd9ce8b5f5161537a160e867",
+            "bytes": 1023
+          },
+          {
+            "path": "flood_system/bootstrap_data/entity_profiles.beilin_10km2.json",
+            "mode": "100644",
+            "object": "7b1a151995400aba333024d21aaa2e6432b0e057",
+            "bytes": 8750
+          },
+          {
+            "path": "flood_system/bootstrap_data/observations_beilin_extreme.csv",
+            "mode": "100644",
+            "object": "4d8470328480e72cd663f6bf7e3783b5d92c7aa4",
+            "bytes": 1009
+          },
+          {
+            "path": "flood_system/bootstrap_data/observations_beilin_mild.csv",
+            "mode": "100644",
+            "object": "cc64d53624c29f0462e4befdb94ef0348b337ae0",
+            "bytes": 538
+          },
+          {
+            "path": "flood_system/bootstrap_data/observations_beilin_warning.csv",
+            "mode": "100644",
+            "object": "7f4f3c7be5e8642af931fae60d5665767c66704c",
+            "bytes": 715
+          },
+          {
+            "path": "flood_system/bootstrap_data/resource_status.csv",
+            "mode": "100644",
+            "object": "92af257f7cbf942631813e5f27d1082ae1a0f819",
+            "bytes": 363
+          },
+          {
+            "path": "flood_system/bootstrap_data/roads.csv",
+            "mode": "100644",
+            "object": "2763df7ae85f5f30d4523b13a20c140756e241b7",
+            "bytes": 1781
+          },
+          {
+            "path": "flood_system/bootstrap_data/shelters.csv",
+            "mode": "100644",
+            "object": "bd1a4f2da2edfa1043e3eab41fa6ad0f12830731",
+            "bytes": 1036
+          },
+          {
+            "path": "flood_system/config.py",
+            "mode": "100644",
+            "object": "de3e1892c5dbe8685cbd4ae92dbff26269c8c85d",
+            "bytes": 504
+          },
+          {
+            "path": "flood_system/data_pipeline/__init__.py",
+            "mode": "100644",
+            "object": "3ce55a69ae6367ee3ac93a98ce7455e9f01d9ed2",
+            "bytes": 36
+          },
+          {
+            "path": "flood_system/data_pipeline/beilin_dataset.py",
+            "mode": "100644",
+            "object": "dced116e24215d745a80586220ba8656c47baad3",
+            "bytes": 88589
+          },
+          {
+            "path": "flood_system/data_pipeline/service.py",
+            "mode": "100644",
+            "object": "cfd2929bcebff25f461c4dfcaa8e3559b95e6002",
+            "bytes": 22573
+          },
+          {
+            "path": "flood_system/http/__init__.py",
+            "mode": "100644",
+            "object": "fe465f331a465839fb73610c018d99d10daeb752",
+            "bytes": 57
+          },
+          {
+            "path": "flood_system/http/v3_router.py",
+            "mode": "100644",
+            "object": "be82c6741bd0c4d00c5df5ad1061a69163f5bd1e",
+            "bytes": 3128
+          },
+          {
+            "path": "flood_system/infrastructure/__init__.py",
+            "mode": "100644",
+            "object": "32116710e5f84ff1d831bca673ca0edd54408e16",
+            "bytes": 77
+          },
+          {
+            "path": "flood_system/infrastructure/sse.py",
+            "mode": "100644",
+            "object": "42a512dc2e80df54aa58c5ee56c73340068df57e",
+            "bytes": 1450
+          },
+          {
+            "path": "flood_system/models.py",
+            "mode": "100644",
+            "object": "35dc0834bdf78082a5fc7b074faed5dc5a308b43",
+            "bytes": 2571
+          },
+          {
+            "path": "flood_system/rag.py",
+            "mode": "100644",
+            "object": "52615c82c64c7fe549dab84269af350b09f722e9",
+            "bytes": 9618
+          },
+          {
+            "path": "flood_system/rag_raw/README.md",
+            "mode": "100644",
+            "object": "8438f8c726c084bebb0a31a0f1fb6c1bf23651fa",
+            "bytes": 639
+          },
+          {
+            "path": "flood_system/rag_raw/case/.gitkeep",
+            "mode": "100644",
+            "object": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+            "bytes": 1
+          },
+          {
+            "path": "flood_system/rag_raw/case/beilin_basement_rescue_case.docx",
+            "mode": "100644",
+            "object": "68c9b3b2be51b3d30361f71c70c3be1ec40372cb",
+            "bytes": 1563
+          },
+          {
+            "path": "flood_system/rag_raw/case/beilin_basement_rescue_case.meta.json",
+            "mode": "100644",
+            "object": "448c3f5b69ad1dcaef6e352d6f05ddd1e079748f",
+            "bytes": 232
+          },
+          {
+            "path": "flood_system/rag_raw/case/beilin_school_dismissal_case.docx",
+            "mode": "100644",
+            "object": "1eccb2db94de5368198d228cf0ce75810c1a543b",
+            "bytes": 1599
+          },
+          {
+            "path": "flood_system/rag_raw/case/beilin_school_dismissal_case.meta.json",
+            "mode": "100644",
+            "object": "33831147ef4c8e34d783a9a69dd61d3c8249a446",
+            "bytes": 235
+          },
+          {
+            "path": "flood_system/rag_raw/case/beilin_underpass_case.docx",
+            "mode": "100644",
+            "object": "02e73318582518b2c4b6e04bef053b4937567536",
+            "bytes": 1635
+          },
+          {
+            "path": "flood_system/rag_raw/case/beilin_underpass_case.meta.json",
+            "mode": "100644",
+            "object": "dfaa2b5fe2fbdd1937965a6845021b712175343f",
+            "bytes": 227
+          },
+          {
+            "path": "flood_system/rag_raw/case/beilin_vulnerable_transfer_case.docx",
+            "mode": "100644",
+            "object": "b33a341506688cdc364d9f8426d565e95ede7082",
+            "bytes": 1477
+          },
+          {
+            "path": "flood_system/rag_raw/case/beilin_vulnerable_transfer_case.meta.json",
+            "mode": "100644",
+            "object": "bcd0a53b2baa41601bc28d90d90c4278933183e1",
+            "bytes": 236
+          },
+          {
+            "path": "flood_system/rag_raw/policy/.gitkeep",
+            "mode": "100644",
+            "object": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+            "bytes": 1
+          },
+          {
+            "path": "flood_system/rag_raw/policy/beilin_compensation_review.docx",
+            "mode": "100644",
+            "object": "3490579dba25148757216ca43d636612abeb2f8a",
+            "bytes": 1668
+          },
+          {
+            "path": "flood_system/rag_raw/policy/beilin_compensation_review.meta.json",
+            "mode": "100644",
+            "object": "ca9bd8b202448b302934dcea351e6d5f85ca7572",
+            "bytes": 215
+          },
+          {
+            "path": "flood_system/rag_raw/policy/beilin_metro_hub_response_rule.docx",
+            "mode": "100644",
+            "object": "0fd7315a43956db9941a6b7421d0e1e94d42c906",
+            "bytes": 1605
+          },
+          {
+            "path": "flood_system/rag_raw/policy/beilin_metro_hub_response_rule.meta.json",
+            "mode": "100644",
+            "object": "4932d5ac48d9a78f430eb7312db9a0a895c2ebf2",
+            "bytes": 221
+          },
+          {
+            "path": "flood_system/rag_raw/policy/beilin_public_message_rule.docx",
+            "mode": "100644",
+            "object": "7d775d96ee90d1c5231965e577b323a742dd6216",
+            "bytes": 1590
+          },
+          {
+            "path": "flood_system/rag_raw/policy/beilin_public_message_rule.meta.json",
+            "mode": "100644",
+            "object": "0c26f16c515e57c9d6a21add1ddfcc6d80db92ec",
+            "bytes": 232
+          },
+          {
+            "path": "flood_system/rag_raw/policy/beilin_warning_response_guidance.docx",
+            "mode": "100644",
+            "object": "5bdd22b2c024813f9457927b742f5461c8e296d3",
+            "bytes": 1680
+          },
+          {
+            "path": "flood_system/rag_raw/policy/beilin_warning_response_guidance.meta.json",
+            "mode": "100644",
+            "object": "ca5a3146c85255e6eb6606f5094d9a0d22eed1e4",
+            "bytes": 251
+          },
+          {
+            "path": "flood_system/rag_raw/profile/.gitkeep",
+            "mode": "100644",
+            "object": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+            "bytes": 1
+          },
+          {
+            "path": "flood_system/rag_raw/profile/beilin_medical_support_profile.docx",
+            "mode": "100644",
+            "object": "08d77c18ca7e6f0ef9cf4a029da5e29bb1015760",
+            "bytes": 1617
+          },
+          {
+            "path": "flood_system/rag_raw/profile/beilin_medical_support_profile.meta.json",
+            "mode": "100644",
+            "object": "69c8c25727a1db20fa55767223a0eef8f4b4c238",
+            "bytes": 181
+          },
+          {
+            "path": "flood_system/rag_raw/profile/beilin_monitoring_profile.docx",
+            "mode": "100644",
+            "object": "0e01079c65818131758c1406695d17954e05a273",
+            "bytes": 1605
+          },
+          {
+            "path": "flood_system/rag_raw/profile/beilin_monitoring_profile.meta.json",
+            "mode": "100644",
+            "object": "781091cd9c7c8afc40b3951b14888486211f163c",
+            "bytes": 192
+          },
+          {
+            "path": "flood_system/rag_raw/profile/beilin_shelter_network_profile.docx",
+            "mode": "100644",
+            "object": "29bcd62b6861dd566b0ea039eab6372495f62374",
+            "bytes": 1599
+          },
+          {
+            "path": "flood_system/rag_raw/profile/beilin_shelter_network_profile.meta.json",
+            "mode": "100644",
+            "object": "4930fc3a94b74da0e934e02abd58f481b534ee2d",
+            "bytes": 189
+          },
+          {
+            "path": "flood_system/rag_raw/profile/beilin_urban_profile.docx",
+            "mode": "100644",
+            "object": "717f71de29b21d45990bcebc3ae950240e4b8cdb",
+            "bytes": 1591
+          },
+          {
+            "path": "flood_system/rag_raw/profile/beilin_urban_profile.meta.json",
+            "mode": "100644",
+            "object": "771a3ceea3f4f64f3b6ffc7613d8d57474f8d7dd",
+            "bytes": 185
+          },
+          {
+            "path": "flood_system/rag_runtime.py",
+            "mode": "100644",
+            "object": "f3c15e25d9a8b511cc0c99479e07a935d0fb4891",
+            "bytes": 3923
+          },
+          {
+            "path": "flood_system/repository.py",
+            "mode": "100644",
+            "object": "4b288a40b7d7c7c425a9e89a93c43a604d17a0d0",
+            "bytes": 1837
+          },
+          {
+            "path": "flood_system/sample_data.py",
+            "mode": "100644",
+            "object": "d85b9ba3eb79a4f83684cc12e28c25a8c47dd0a1",
+            "bytes": 15997
+          },
+          {
+            "path": "flood_system/schemas/__init__.py",
+            "mode": "100644",
+            "object": "45880c5f7eed901385637804e6dd0da366b7f5b5",
+            "bytes": 205
+          },
+          {
+            "path": "flood_system/schemas/v3.py",
+            "mode": "100644",
+            "object": "cc9cb32f43a23885a52d27ffe5a96f670a9b2f98",
+            "bytes": 169
+          },
+          {
+            "path": "flood_system/storage/__init__.py",
+            "mode": "100644",
+            "object": "e5ed9accb34142e261894532349581203083f263",
+            "bytes": 60
+          },
+          {
+            "path": "flood_system/storage/agent_repository.py",
+            "mode": "100644",
+            "object": "0d0d3dafd9bfbc9c0f024c1b754c905a95e8013e",
+            "bytes": 6340
+          },
+          {
+            "path": "flood_system/storage/audit_archive_repository.py",
+            "mode": "100644",
+            "object": "8caaa65065c6cd20d9bb2434d45fec9faa1daf23",
+            "bytes": 14116
+          },
+          {
+            "path": "flood_system/storage/copilot_repository.py",
+            "mode": "100644",
+            "object": "b7708389bf84ebe69fd0705da83de3c9215efe3c",
+            "bytes": 9452
+          },
+          {
+            "path": "flood_system/storage/evaluation_repository.py",
+            "mode": "100644",
+            "object": "c5e156e46c604d628b72107c5a5b55887e95cb8d",
+            "bytes": 4728
+          },
+          {
+            "path": "flood_system/storage/event_repository.py",
+            "mode": "100644",
+            "object": "104f9934a5d55bd1d23dad9984ab720ff32bd937",
+            "bytes": 7134
+          },
+          {
+            "path": "flood_system/storage/memory_repository.py",
+            "mode": "100644",
+            "object": "0fce08a271b96d243e59ef9fd261632c38993270",
+            "bytes": 11860
+          },
+          {
+            "path": "flood_system/storage/notification_repository.py",
+            "mode": "100644",
+            "object": "34be45f1668c712c1b2ad29d603281e6d624c972",
+            "bytes": 4122
+          },
+          {
+            "path": "flood_system/storage/proposal_repository.py",
+            "mode": "100644",
+            "object": "c6c3f8f708b2c7fac9b42307923fc0f9827b9ac6",
+            "bytes": 3684
+          },
+          {
+            "path": "flood_system/storage/runtime_repository.py",
+            "mode": "100644",
+            "object": "8cfd82483dc4684d030484b5c759aac9e27bd293",
+            "bytes": 5019
+          },
+          {
+            "path": "flood_system/storage/schema.py",
+            "mode": "100644",
+            "object": "b794a9d09fe5d3d47b87f0566788a4ca4c8a9338",
+            "bytes": 11306
+          },
+          {
+            "path": "flood_system/storage/trigger_repository.py",
+            "mode": "100644",
+            "object": "ce54ed984632bf10856c580bf477b1f2c832b908",
+            "bytes": 7546
+          },
+          {
+            "path": "flood_system/system.py",
+            "mode": "100644",
+            "object": "8604c74afca0eaef72f20ff9ca4951071270b534",
+            "bytes": 4776
+          },
+          {
+            "path": "flood_system/v2/__init__.py",
+            "mode": "100644",
+            "object": "cd4c8f5ef7f7ec17e45164768171e61a4cc47bbe",
+            "bytes": 846
+          },
+          {
+            "path": "flood_system/v2/bootstrap.py",
+            "mode": "100644",
+            "object": "068a59a72bc15d91d802af1ff6e678ae2bd48772",
+            "bytes": 8584
+          },
+          {
+            "path": "flood_system/v2/copilot_orchestrator.py",
+            "mode": "100644",
+            "object": "6b9be30242b95a0b153f7d82aed7b84e4a75d433",
+            "bytes": 35012
+          },
+          {
+            "path": "flood_system/v2/copilot_rules.py",
+            "mode": "100644",
+            "object": "8a97cf62b6257c7a468447800296462e3efcba93",
+            "bytes": 1911
+          },
+          {
+            "path": "flood_system/v2/decision_engine.py",
+            "mode": "100644",
+            "object": "f6409baeaf139f0b4ee312081c4d42437bfb91b1",
+            "bytes": 4999
+          },
+          {
+            "path": "flood_system/v2/execution_engine.py",
+            "mode": "100644",
+            "object": "314ba28615d2c0ce363f7b678644bdbb65333be2",
+            "bytes": 21902
+          },
+          {
+            "path": "flood_system/v2/exposure_engine.py",
+            "mode": "100644",
+            "object": "9e6a6cc72433393e33704c56375a220aa70073ad",
+            "bytes": 7443
+          },
+          {
+            "path": "flood_system/v2/hazard_engine.py",
+            "mode": "100644",
+            "object": "38ad3fcf6c278ee9edcbcaeb4ef9a3fe3ed0f498",
+            "bytes": 6075
+          },
+          {
+            "path": "flood_system/v2/ingestion.py",
+            "mode": "100644",
+            "object": "64f43806bf0bb738f59215ae401b1b7e7104ae90",
+            "bytes": 1782
+          },
+          {
+            "path": "flood_system/v2/llm_gateway.py",
+            "mode": "100644",
+            "object": "cc59698a3cf990bb0948a58cedc7e3ca147cd74f",
+            "bytes": 34512
+          },
+          {
+            "path": "flood_system/v2/llm_planner.py",
+            "mode": "100644",
+            "object": "624b5faa2faae1eb50a6aba79a6add26e383d3e6",
+            "bytes": 6167
+          },
+          {
+            "path": "flood_system/v2/memory_store.py",
+            "mode": "100644",
+            "object": "59733628cafb44f6ac85a05ba9f2b248d638138d",
+            "bytes": 8507
+          },
+          {
+            "path": "flood_system/v2/models.py",
+            "mode": "100644",
+            "object": "9f714c3e879286a5a1d97d698174b810f6b25bef",
+            "bytes": 41598
+          },
+          {
+            "path": "flood_system/v2/multi_agent.py",
+            "mode": "100644",
+            "object": "d5782fc76deff0c5e50e70a490409e662600c878",
+            "bytes": 65202
+          },
+          {
+            "path": "flood_system/v2/notification_gateway.py",
+            "mode": "100644",
+            "object": "20fd543afaf3a49209d679d68b6b58cca93969fe",
+            "bytes": 3780
+          },
+          {
+            "path": "flood_system/v2/planner.py",
+            "mode": "100644",
+            "object": "8ab5a993734154e2e15d4da7f45c2c8290026084",
+            "bytes": 13026
+          },
+          {
+            "path": "flood_system/v2/platform.py",
+            "mode": "100644",
+            "object": "aabee8e153d6a60e6f730638f62eaf828c79d1f8",
+            "bytes": 2987
+          },
+          {
+            "path": "flood_system/v2/platform_agent_ops.py",
+            "mode": "100644",
+            "object": "b696ac4a3c46301b02ef9578548488b91d4617e8",
+            "bytes": 11740
+          },
+          {
+            "path": "flood_system/v2/platform_audit.py",
+            "mode": "100644",
+            "object": "330a4eb231b7b195e88910c89cdadc957dffb901",
+            "bytes": 1623
+          },
+          {
+            "path": "flood_system/v2/platform_evaluation_ops.py",
+            "mode": "100644",
+            "object": "2c79ef9b4d0907bb9662d6b54fe2f0be389d7fe1",
+            "bytes": 11836
+          },
+          {
+            "path": "flood_system/v2/platform_event_ops.py",
+            "mode": "100644",
+            "object": "d4558b6088420d2fb3afb7b7dcf0e2f73ab98ca0",
+            "bytes": 10185
+          },
+          {
+            "path": "flood_system/v2/platform_governance_ops.py",
+            "mode": "100644",
+            "object": "6e82721f7d1f91955faa8adbecb39bb474216869",
+            "bytes": 1956
+          },
+          {
+            "path": "flood_system/v2/platform_impact_ops.py",
+            "mode": "100644",
+            "object": "0e7dc23787b40adf30d67377b38d7c9c5b19184f",
+            "bytes": 13454
+          },
+          {
+            "path": "flood_system/v2/platform_regional_ops.py",
+            "mode": "100644",
+            "object": "d3488155e86b869f487a9f81969b030608b70308",
+            "bytes": 20131
+          },
+          {
+            "path": "flood_system/v2/platform_runtime_admin.py",
+            "mode": "100644",
+            "object": "ce6b59bbdbed7edc96ad92066163726ec2f18a25",
+            "bytes": 5629
+          },
+          {
+            "path": "flood_system/v2/prompt_profiles.json",
+            "mode": "100644",
+            "object": "8e6a99412d305d15787232f998e4ae592ab6cb85",
+            "bytes": 3573
+          },
+          {
+            "path": "flood_system/v2/regional_proposals.py",
+            "mode": "100644",
+            "object": "b8f0e287a1cb67bf8451b76aceb3c9fc7edc1ec6",
+            "bytes": 20673
+          },
+          {
+            "path": "flood_system/v2/reporting.py",
+            "mode": "100644",
+            "object": "b47291528d40de55e345c2371da2c2b1e4a7a06e",
+            "bytes": 30097
+          },
+          {
+            "path": "flood_system/v2/routing.py",
+            "mode": "100644",
+            "object": "205c8638b65346b4ff0497975bc946a5acf8a625",
+            "bytes": 5078
+          },
+          {
+            "path": "flood_system/v2/security.py",
+            "mode": "100644",
+            "object": "921634d973a4ed55e16ceb19390bbae5aa181249",
+            "bytes": 2334
+          },
+          {
+            "path": "flood_system/v2/tools.py",
+            "mode": "100644",
+            "object": "8746ff0fa04da63cd26e2216d1c601b5b9b2e6ed",
+            "bytes": 22843
+          },
+          {
+            "path": "flood_system/v3/__init__.py",
+            "mode": "100644",
+            "object": "387cb229d897c33d460fb5b3c1ab18ddb7a44475",
+            "bytes": 629
+          },
+          {
+            "path": "flood_system/v3/models.py",
+            "mode": "100644",
+            "object": "ccb26717c8c0744e5e54b131cb37ccdcb9545fab",
+            "bytes": 5428
+          },
+          {
+            "path": "flood_system/v3/service.py",
+            "mode": "100644",
+            "object": "ab216887a9a14b4c4892cf50abce7379e5f08857",
+            "bytes": 27890
+          },
+          {
+            "path": "frontend/index.html",
+            "mode": "100644",
+            "object": "285b9564c59ffb45741da4473ce3c5b188320102",
+            "bytes": 499
+          },
+          {
+            "path": "frontend/package-lock.json",
+            "mode": "100644",
+            "object": "7eecb2e4cfb6ddba439813cf004de05d79cfb780",
+            "bytes": 111022
+          },
+          {
+            "path": "frontend/package.json",
+            "mode": "100644",
+            "object": "dfb94fb06f3ca86046fcc4994ad9bfad8f49453d",
+            "bytes": 727
+          },
+          {
+            "path": "frontend/src/App.module.css",
+            "mode": "100644",
+            "object": "8ced3c11f80576b730fa39c85dc0f37c0beed2b3",
+            "bytes": 20074
+          },
+          {
+            "path": "frontend/src/App.test.tsx",
+            "mode": "100644",
+            "object": "0d2d82f9d26df2ee804002d7802f5618ca7bc055",
+            "bytes": 47813
+          },
+          {
+            "path": "frontend/src/App.tsx",
+            "mode": "100644",
+            "object": "d018e208d9615715169b927aaac687a4751a3d1a",
+            "bytes": 14412
+          },
+          {
+            "path": "frontend/src/api/adminApi.ts",
+            "mode": "100644",
+            "object": "404458d19975ecfc69770e0677842a9d0502f8f2",
+            "bytes": 3914
+          },
+          {
+            "path": "frontend/src/api/agentRuntimeApi.ts",
+            "mode": "100644",
+            "object": "82ba0acb0a31ce97fc3d52f569a2180b1a10c745",
+            "bytes": 3322
+          },
+          {
+            "path": "frontend/src/api/agentTwinApi.ts",
+            "mode": "100644",
+            "object": "c4075bd7a8737e9eeb0a997607ab172bc46d8bb3",
+            "bytes": 2152
+          },
+          {
+            "path": "frontend/src/api/datasetApi.ts",
+            "mode": "100644",
+            "object": "73b0d00e21fc6aab3de837f8e320a3f355ca1f29",
+            "bytes": 1903
+          },
+          {
+            "path": "frontend/src/api/platformBridgeApi.ts",
+            "mode": "100644",
+            "object": "8678db75e6a93ad805f96623adc1f8329cd6930f",
+            "bytes": 8788
+          },
+          {
+            "path": "frontend/src/api/reliabilityApi.ts",
+            "mode": "100644",
+            "object": "a5e2a8d1634d19e819cf7f076eeeecd5b0e5a55e",
+            "bytes": 1475
+          },
+          {
+            "path": "frontend/src/components/AppShell.tsx",
+            "mode": "100644",
+            "object": "c7d93e04d1b507abe2efb43a8d1dd238509a5f23",
+            "bytes": 3356
+          },
+          {
+            "path": "frontend/src/components/CopilotMessageBubble.tsx",
+            "mode": "100644",
+            "object": "3ff8d33e4fd6b41c9cf155cbbd58e5b8ac73e21c",
+            "bytes": 2853
+          },
+          {
+            "path": "frontend/src/components/DigitalTwinCesiumCanvas.tsx",
+            "mode": "100644",
+            "object": "ed315d0facfbc7b0690f4c8e08fc8d64d9cd2b6b",
+            "bytes": 48380
+          },
+          {
+            "path": "frontend/src/components/DigitalTwinImpactScreen.tsx",
+            "mode": "100644",
+            "object": "08454082b3cba41ce298ea7d344243fc4d70f455",
+            "bytes": 55506
+          },
+          {
+            "path": "frontend/src/components/ExecutionFlowBoard.tsx",
+            "mode": "100644",
+            "object": "69fb8016afc282cbf149822e95534420f06bb140",
+            "bytes": 2626
+          },
+          {
+            "path": "frontend/src/components/GlobalRegionalProposalDialog.tsx",
+            "mode": "100644",
+            "object": "98635484501d469e739fa1d92e0d4c1e0af2b301",
+            "bytes": 10458
+          },
+          {
+            "path": "frontend/src/components/MetricStrip.tsx",
+            "mode": "100644",
+            "object": "06887c1aa83eac965538cd04aa7799986f83f09c",
+            "bytes": 790
+          },
+          {
+            "path": "frontend/src/components/OperationPanel.tsx",
+            "mode": "100644",
+            "object": "e40afe0e1c98ba27b3790a3b649604739d36d25a",
+            "bytes": 14549
+          },
+          {
+            "path": "frontend/src/components/PriorityObjectPanel.tsx",
+            "mode": "100644",
+            "object": "1188346c232d5d4bab530a7088f269326203cd08",
+            "bytes": 2365
+          },
+          {
+            "path": "frontend/src/components/SecurityDesk.tsx",
+            "mode": "100644",
+            "object": "f87f11a91f1c7ba2608dd620d224f125ae682368",
+            "bytes": 6054
+          },
+          {
+            "path": "frontend/src/components/SignalTimeline.tsx",
+            "mode": "100644",
+            "object": "272e6ac94b1f68a9017beb570e4425eb54852ae7",
+            "bytes": 1752
+          },
+          {
+            "path": "frontend/src/config/consoleConfig.ts",
+            "mode": "100644",
+            "object": "63044cbc47d5b31be8072ffc8432a290a280a981",
+            "bytes": 5592
+          },
+          {
+            "path": "frontend/src/data/platformConsoleSeed.ts",
+            "mode": "100644",
+            "object": "15ff0bf38985e03cc97c1d837f08699b579c8cdd",
+            "bytes": 2537
+          },
+          {
+            "path": "frontend/src/features/copilot/CopilotTwinScreen.tsx",
+            "mode": "100644",
+            "object": "0eac66c137d34603c831cf76029a0d67743d5198",
+            "bytes": 12436
+          },
+          {
+            "path": "frontend/src/features/copilot/copilot-twin-screen.module.css",
+            "mode": "100644",
+            "object": "470f654c525fdd399f232f077b930baaa6450bed",
+            "bytes": 4589
+          },
+          {
+            "path": "frontend/src/features/dataManagement/AdminDesk.tsx",
+            "mode": "100644",
+            "object": "184fcd12bbb732e87e75e59e532856e16c221c06",
+            "bytes": 5327
+          },
+          {
+            "path": "frontend/src/features/dataManagement/DatasetPanels.tsx",
+            "mode": "100644",
+            "object": "4ee7108f1f7d2312927eb1f32c99558acf407ecf",
+            "bytes": 20325
+          },
+          {
+            "path": "frontend/src/features/dataManagement/ProfileEditor.tsx",
+            "mode": "100644",
+            "object": "8acc520a71afc681d61b6f938bc6aa7126393a56",
+            "bytes": 10794
+          },
+          {
+            "path": "frontend/src/features/dataManagement/RagImportPanel.tsx",
+            "mode": "100644",
+            "object": "3b4ccd9db3b6abc083b57f26cb28b770517a3125",
+            "bytes": 3791
+          },
+          {
+            "path": "frontend/src/features/dataManagement/ResourceStatusEditor.tsx",
+            "mode": "100644",
+            "object": "c131124a40bca00b21c06c37c847bc52fe67b602",
+            "bytes": 2912
+          },
+          {
+            "path": "frontend/src/features/dataManagement/dataModels.ts",
+            "mode": "100644",
+            "object": "f6a3e88d6d56a63edd56b33074c922d9c24e0b21",
+            "bytes": 976
+          },
+          {
+            "path": "frontend/src/fixtures/agentTwinDemoMode.ts",
+            "mode": "100644",
+            "object": "019d23c0c1b607a0e2261aee03cd3447464adee2",
+            "bytes": 27531
+          },
+          {
+            "path": "frontend/src/hooks/useAgentTwinConsole.ts",
+            "mode": "100644",
+            "object": "517be40bf6ca1ac48505b7391d5f549845f779eb",
+            "bytes": 21770
+          },
+          {
+            "path": "frontend/src/hooks/usePlatformOperatorConsole.ts",
+            "mode": "100644",
+            "object": "4f47029ea95b2d1d181be33f4ec23c33b01e470a",
+            "bytes": 22214
+          },
+          {
+            "path": "frontend/src/hooks/usePlatformOperatorConsoleSections.ts",
+            "mode": "100644",
+            "object": "c00dc91b74c99433cbcdba1ffb8b38e176383238",
+            "bytes": 32591
+          },
+          {
+            "path": "frontend/src/index.css",
+            "mode": "100644",
+            "object": "a5b82e81d87296817ccbf68ffa094f0997a60eb0",
+            "bytes": 1531
+          },
+          {
+            "path": "frontend/src/lib/agentUiText.ts",
+            "mode": "100644",
+            "object": "2d49e8b1531d0227b49ae8e8ee467bf699ffb43b",
+            "bytes": 1620
+          },
+          {
+            "path": "frontend/src/lib/api.ts",
+            "mode": "100644",
+            "object": "882aab3abac52a533b935e95673f8e591b458863",
+            "bytes": 621
+          },
+          {
+            "path": "frontend/src/lib/appText.ts",
+            "mode": "100644",
+            "object": "859fbaadf3b2f7f955f789b3166e0352cf60db52",
+            "bytes": 5284
+          },
+          {
+            "path": "frontend/src/lib/cityengineCalibration.ts",
+            "mode": "100644",
+            "object": "5947c176989cd170e0a62c8a0355aa83326d9eac",
+            "bytes": 12321
+          },
+          {
+            "path": "frontend/src/lib/consoleFormatting.ts",
+            "mode": "100644",
+            "object": "667fe5644f6c58e560c829eb89a650dadb15ff0e",
+            "bytes": 3456
+          },
+          {
+            "path": "frontend/src/lib/datasetUiText.ts",
+            "mode": "100644",
+            "object": "2b0876ffcad31e31b8a3364a537404c3c1a7d4e1",
+            "bytes": 4887
+          },
+          {
+            "path": "frontend/src/lib/displayText.ts",
+            "mode": "100644",
+            "object": "869ac9ace567ef6f34be4322ad02c718f3677dd9",
+            "bytes": 17677
+          },
+          {
+            "path": "frontend/src/lib/httpClient.ts",
+            "mode": "100644",
+            "object": "48ba98cc762b65db3b3dd61051c308622a67f80d",
+            "bytes": 1458
+          },
+          {
+            "path": "frontend/src/lib/objectMention.ts",
+            "mode": "100644",
+            "object": "8e7bdb41de3d9b430b08b57d71277283347870c3",
+            "bytes": 2367
+          },
+          {
+            "path": "frontend/src/main.tsx",
+            "mode": "100644",
+            "object": "e93dbb5a12400f9fc76ea78cbc2a39054c24323a",
+            "bytes": 268
+          },
+          {
+            "path": "frontend/src/pages/DataPage.tsx",
+            "mode": "100644",
+            "object": "5c87fab53916ceded7a1cb1e2218ea3c8e3795a4",
+            "bytes": 232
+          },
+          {
+            "path": "frontend/src/state/agentTwinSelectors.ts",
+            "mode": "100644",
+            "object": "e3d45ab480dfb97fb3665ddb4ec8783d469d86c5",
+            "bytes": 8539
+          },
+          {
+            "path": "frontend/src/styles/app-shell.module.css",
+            "mode": "100644",
+            "object": "ee944c1f35e6a965b15bb0c53a52d37dacf25e0c",
+            "bytes": 5657
+          },
+          {
+            "path": "frontend/src/styles/command-center.module.css",
+            "mode": "100644",
+            "object": "98c6e6da9fc6dcffb68f4345d77de14d23a7002e",
+            "bytes": 10680
+          },
+          {
+            "path": "frontend/src/styles/digital-twin-map.module.css",
+            "mode": "100644",
+            "object": "28b0a070e2b1d31da6f320010967073bfa3f231e",
+            "bytes": 11120
+          },
+          {
+            "path": "frontend/src/styles/digital-twin-screen.module.css",
+            "mode": "100644",
+            "object": "9cecbb41bf009876bdfe30f1ba186871f7713862",
+            "bytes": 68288
+          },
+          {
+            "path": "frontend/src/styles/mission-shell.module.css",
+            "mode": "100644",
+            "object": "493f172b5629489fd2ca5c76743e276bff945afe",
+            "bytes": 2927
+          },
+          {
+            "path": "frontend/src/styles/page-layout.module.css",
+            "mode": "100644",
+            "object": "ca9395a1ef1887ea9fdf8c7195bb37e54cf9b4fa",
+            "bytes": 604
+          },
+          {
+            "path": "frontend/src/styles/shared-panels.module.css",
+            "mode": "100644",
+            "object": "3e49ce96402ba107d846f0653d7873ca6231de3a",
+            "bytes": 5410
+          },
+          {
+            "path": "frontend/src/styles/story-panels.module.css",
+            "mode": "100644",
+            "object": "9a0831eb7fa465ea6fc778e51b5688efb03691a8",
+            "bytes": 9023
+          },
+          {
+            "path": "frontend/src/test/setup.ts",
+            "mode": "100644",
+            "object": "f872c8e547e999fb44f3290c77d639a675c1c937",
+            "bytes": 646
+          },
+          {
+            "path": "frontend/src/types/api.ts",
+            "mode": "100644",
+            "object": "099f00ebf313d7a605c482206c7a2a4ab088d66a",
+            "bytes": 28977
+          },
+          {
+            "path": "frontend/src/types/ui.ts",
+            "mode": "100644",
+            "object": "2cd6ea3ef86fb8607f33a59087e0c7c087ebfc7f",
+            "bytes": 201
+          },
+          {
+            "path": "frontend/src/vite-env.d.ts",
+            "mode": "100644",
+            "object": "eca050053710ddff9ad1c46e1e701bee52818de2",
+            "bytes": 83
+          },
+          {
+            "path": "frontend/tsconfig.app.json",
+            "mode": "100644",
+            "object": "698921f61e3a7cb8f264f5085aad432d78a2c28b",
+            "bytes": 772
+          },
+          {
+            "path": "frontend/tsconfig.json",
+            "mode": "100644",
+            "object": "ea9d0cd8255683d84f125948115daf1de0f06b1f",
+            "bytes": 139
+          },
+          {
+            "path": "frontend/tsconfig.node.json",
+            "mode": "100644",
+            "object": "3adda81a1ce0bda41fc82b9e6d70aa2f68069060",
+            "bytes": 213
+          },
+          {
+            "path": "frontend/vite.config.ts",
+            "mode": "100644",
+            "object": "dd49cfda95b34322b6ed0d14d11d65a2f2da5a67",
+            "bytes": 4133
+          },
+          {
+            "path": "scripts/inspect_demo_db.py",
+            "mode": "100644",
+            "object": "44de63846477be07621495a9ae570f7d6b0a1c61",
+            "bytes": 6954
+          },
+          {
+            "path": "scripts/rebuild_demo_db.py",
+            "mode": "100644",
+            "object": "76a644d0b6372653b6da6c89b7b2a05cd8e1c89d",
+            "bytes": 26443
+          },
+          {
+            "path": "scripts/run_llm_e2e_smoke.py",
+            "mode": "100644",
+            "object": "765bf1c7dd8152d85891083b7e8de7b3d113af06",
+            "bytes": 12694
+          },
+          {
+            "path": "scripts/start-demo.ps1",
+            "mode": "100644",
+            "object": "35334de53af036edb0c315490e5a3b8e4df86937",
+            "bytes": 2343
+          }
+        ]
+      },
+      "database_rebuild_inputs": {
+        "prefixes": [
+          "flood_system/bootstrap_data/",
+          "flood_system/sample_data.py",
+          "flood_system/v2/bootstrap.py",
+          "data_sources/beilin/normalized/"
+        ],
+        "file_count": 27,
+        "blob_bytes": 91216,
+        "listing_sha256": "8b312b21cce129b18bcf8db3640cfbdd98db4938176c4f41631ecde0e82c5416",
+        "entries": [
+          {
+            "path": "data_sources/beilin/normalized/area_profile.beilin.json",
+            "mode": "100644",
+            "object": "30a102350b518992cade771e43e8555ee56747c9",
+            "bytes": 1528
+          },
+          {
+            "path": "data_sources/beilin/normalized/build_summary.json",
+            "mode": "100644",
+            "object": "079d7e19c6eeb7806999642602bb6ba6f0309730",
+            "bytes": 11666
+          },
+          {
+            "path": "data_sources/beilin/normalized/dataset_job_history.json",
+            "mode": "100644",
+            "object": "92c7a09700feebad903f56edd9751baca42b1ac0",
+            "bytes": 819
+          },
+          {
+            "path": "data_sources/beilin/normalized/entity_profiles.beilin.json",
+            "mode": "100644",
+            "object": "ff3d8c37b503e2963043ec85117ea7b802c9dad7",
+            "bytes": 9806
+          },
+          {
+            "path": "data_sources/beilin/normalized/observations_beilin_extreme.json",
+            "mode": "100644",
+            "object": "e87a7de13aabb9eba5b0f96261b448868f9aaad9",
+            "bytes": 2186
+          },
+          {
+            "path": "data_sources/beilin/normalized/observations_beilin_mild.json",
+            "mode": "100644",
+            "object": "a18c08db3f9c2a7ac7fafb7105ecf88c0a392f2e",
+            "bytes": 1067
+          },
+          {
+            "path": "data_sources/beilin/normalized/observations_beilin_warning.json",
+            "mode": "100644",
+            "object": "5cea38b2871b6fda6ad5ed78f72123b5fd9d8cbf",
+            "bytes": 1460
+          },
+          {
+            "path": "data_sources/beilin/normalized/osm_extract.beilin.json",
+            "mode": "100644",
+            "object": "06521f16f7e14848cca54e82567a2de4ff81f6f6",
+            "bytes": 127
+          },
+          {
+            "path": "data_sources/beilin/normalized/rag_documents.beilin.json",
+            "mode": "100644",
+            "object": "15f86072e3725346d5f794526ce32173f740e22b",
+            "bytes": 4807
+          },
+          {
+            "path": "data_sources/beilin/normalized/resource_status.beilin.json",
+            "mode": "100644",
+            "object": "4b4b5f76fb1f65e84450925abeaba228b3bcf6b1",
+            "bytes": 609
+          },
+          {
+            "path": "data_sources/beilin/normalized/roads.beilin.json",
+            "mode": "100644",
+            "object": "6a19469a0effca53a19a89269bb30bace7c11351",
+            "bytes": 4193
+          },
+          {
+            "path": "data_sources/beilin/normalized/shelters.beilin.json",
+            "mode": "100644",
+            "object": "cf66caca910fbc9ed8b194a7dc06e31d51dfb7d4",
+            "bytes": 3183
+          },
+          {
+            "path": "data_sources/beilin/normalized/source_cache_summary.json",
+            "mode": "100644",
+            "object": "4d5800e9e4aef8bfc02643b7fc207b2e2dfdd237",
+            "bytes": 5827
+          },
+          {
+            "path": "data_sources/beilin/normalized/validation_summary.json",
+            "mode": "100644",
+            "object": "631cb0a7d6b0cfb60905268f3ebfe5bceca11d03",
+            "bytes": 553
+          },
+          {
+            "path": "flood_system/bootstrap_data/area_profiles.csv",
+            "mode": "100644",
+            "object": "9cd28ed183b44d6a7e3ddef2a776493dcfafc741",
+            "bytes": 1039
+          },
+          {
+            "path": "flood_system/bootstrap_data/compensation_inputs/field_verification_records.csv",
+            "mode": "100644",
+            "object": "ba1a4ea51b131e8000fb5d1f8001fc940c7c52df",
+            "bytes": 1087
+          },
+          {
+            "path": "flood_system/bootstrap_data/compensation_inputs/household_damage_claims.csv",
+            "mode": "100644",
+            "object": "5b2b4d239136ca8f194a627a77acf14f3b4a77eb",
+            "bytes": 1463
+          },
+          {
+            "path": "flood_system/bootstrap_data/compensation_inputs/public_asset_damage.csv",
+            "mode": "100644",
+            "object": "890348faa5315362cd9ce8b5f5161537a160e867",
+            "bytes": 1023
+          },
+          {
+            "path": "flood_system/bootstrap_data/entity_profiles.beilin_10km2.json",
+            "mode": "100644",
+            "object": "7b1a151995400aba333024d21aaa2e6432b0e057",
+            "bytes": 8750
+          },
+          {
+            "path": "flood_system/bootstrap_data/observations_beilin_extreme.csv",
+            "mode": "100644",
+            "object": "4d8470328480e72cd663f6bf7e3783b5d92c7aa4",
+            "bytes": 1009
+          },
+          {
+            "path": "flood_system/bootstrap_data/observations_beilin_mild.csv",
+            "mode": "100644",
+            "object": "cc64d53624c29f0462e4befdb94ef0348b337ae0",
+            "bytes": 538
+          },
+          {
+            "path": "flood_system/bootstrap_data/observations_beilin_warning.csv",
+            "mode": "100644",
+            "object": "7f4f3c7be5e8642af931fae60d5665767c66704c",
+            "bytes": 715
+          },
+          {
+            "path": "flood_system/bootstrap_data/resource_status.csv",
+            "mode": "100644",
+            "object": "92af257f7cbf942631813e5f27d1082ae1a0f819",
+            "bytes": 363
+          },
+          {
+            "path": "flood_system/bootstrap_data/roads.csv",
+            "mode": "100644",
+            "object": "2763df7ae85f5f30d4523b13a20c140756e241b7",
+            "bytes": 1781
+          },
+          {
+            "path": "flood_system/bootstrap_data/shelters.csv",
+            "mode": "100644",
+            "object": "bd1a4f2da2edfa1043e3eab41fa6ad0f12830731",
+            "bytes": 1036
+          },
+          {
+            "path": "flood_system/sample_data.py",
+            "mode": "100644",
+            "object": "d85b9ba3eb79a4f83684cc12e28c25a8c47dd0a1",
+            "bytes": 15997
+          },
+          {
+            "path": "flood_system/v2/bootstrap.py",
+            "mode": "100644",
+            "object": "068a59a72bc15d91d802af1ff6e678ae2bd48772",
+            "bytes": 8584
+          }
+        ]
+      },
+      "rag_index_rebuild_inputs": {
+        "prefixes": [
+          "flood_system/rag_raw/",
+          "flood_system/rag.py",
+          "flood_system/rag_runtime.py",
+          "data_sources/beilin/normalized/rag_documents.beilin.json"
+        ],
+        "file_count": 31,
+        "blob_bytes": 40815,
+        "listing_sha256": "f8eada98ee8a20d052f887f76b94323b46bbd457aad5a59333b424a54a6012e5",
+        "entries": [
+          {
+            "path": "data_sources/beilin/normalized/rag_documents.beilin.json",
+            "mode": "100644",
+            "object": "15f86072e3725346d5f794526ce32173f740e22b",
+            "bytes": 4807
+          },
+          {
+            "path": "flood_system/rag.py",
+            "mode": "100644",
+            "object": "52615c82c64c7fe549dab84269af350b09f722e9",
+            "bytes": 9618
+          },
+          {
+            "path": "flood_system/rag_raw/README.md",
+            "mode": "100644",
+            "object": "8438f8c726c084bebb0a31a0f1fb6c1bf23651fa",
+            "bytes": 639
+          },
+          {
+            "path": "flood_system/rag_raw/case/.gitkeep",
+            "mode": "100644",
+            "object": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+            "bytes": 1
+          },
+          {
+            "path": "flood_system/rag_raw/case/beilin_basement_rescue_case.docx",
+            "mode": "100644",
+            "object": "68c9b3b2be51b3d30361f71c70c3be1ec40372cb",
+            "bytes": 1563
+          },
+          {
+            "path": "flood_system/rag_raw/case/beilin_basement_rescue_case.meta.json",
+            "mode": "100644",
+            "object": "448c3f5b69ad1dcaef6e352d6f05ddd1e079748f",
+            "bytes": 232
+          },
+          {
+            "path": "flood_system/rag_raw/case/beilin_school_dismissal_case.docx",
+            "mode": "100644",
+            "object": "1eccb2db94de5368198d228cf0ce75810c1a543b",
+            "bytes": 1599
+          },
+          {
+            "path": "flood_system/rag_raw/case/beilin_school_dismissal_case.meta.json",
+            "mode": "100644",
+            "object": "33831147ef4c8e34d783a9a69dd61d3c8249a446",
+            "bytes": 235
+          },
+          {
+            "path": "flood_system/rag_raw/case/beilin_underpass_case.docx",
+            "mode": "100644",
+            "object": "02e73318582518b2c4b6e04bef053b4937567536",
+            "bytes": 1635
+          },
+          {
+            "path": "flood_system/rag_raw/case/beilin_underpass_case.meta.json",
+            "mode": "100644",
+            "object": "dfaa2b5fe2fbdd1937965a6845021b712175343f",
+            "bytes": 227
+          },
+          {
+            "path": "flood_system/rag_raw/case/beilin_vulnerable_transfer_case.docx",
+            "mode": "100644",
+            "object": "b33a341506688cdc364d9f8426d565e95ede7082",
+            "bytes": 1477
+          },
+          {
+            "path": "flood_system/rag_raw/case/beilin_vulnerable_transfer_case.meta.json",
+            "mode": "100644",
+            "object": "bcd0a53b2baa41601bc28d90d90c4278933183e1",
+            "bytes": 236
+          },
+          {
+            "path": "flood_system/rag_raw/policy/.gitkeep",
+            "mode": "100644",
+            "object": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+            "bytes": 1
+          },
+          {
+            "path": "flood_system/rag_raw/policy/beilin_compensation_review.docx",
+            "mode": "100644",
+            "object": "3490579dba25148757216ca43d636612abeb2f8a",
+            "bytes": 1668
+          },
+          {
+            "path": "flood_system/rag_raw/policy/beilin_compensation_review.meta.json",
+            "mode": "100644",
+            "object": "ca9bd8b202448b302934dcea351e6d5f85ca7572",
+            "bytes": 215
+          },
+          {
+            "path": "flood_system/rag_raw/policy/beilin_metro_hub_response_rule.docx",
+            "mode": "100644",
+            "object": "0fd7315a43956db9941a6b7421d0e1e94d42c906",
+            "bytes": 1605
+          },
+          {
+            "path": "flood_system/rag_raw/policy/beilin_metro_hub_response_rule.meta.json",
+            "mode": "100644",
+            "object": "4932d5ac48d9a78f430eb7312db9a0a895c2ebf2",
+            "bytes": 221
+          },
+          {
+            "path": "flood_system/rag_raw/policy/beilin_public_message_rule.docx",
+            "mode": "100644",
+            "object": "7d775d96ee90d1c5231965e577b323a742dd6216",
+            "bytes": 1590
+          },
+          {
+            "path": "flood_system/rag_raw/policy/beilin_public_message_rule.meta.json",
+            "mode": "100644",
+            "object": "0c26f16c515e57c9d6a21add1ddfcc6d80db92ec",
+            "bytes": 232
+          },
+          {
+            "path": "flood_system/rag_raw/policy/beilin_warning_response_guidance.docx",
+            "mode": "100644",
+            "object": "5bdd22b2c024813f9457927b742f5461c8e296d3",
+            "bytes": 1680
+          },
+          {
+            "path": "flood_system/rag_raw/policy/beilin_warning_response_guidance.meta.json",
+            "mode": "100644",
+            "object": "ca5a3146c85255e6eb6606f5094d9a0d22eed1e4",
+            "bytes": 251
+          },
+          {
+            "path": "flood_system/rag_raw/profile/.gitkeep",
+            "mode": "100644",
+            "object": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+            "bytes": 1
+          },
+          {
+            "path": "flood_system/rag_raw/profile/beilin_medical_support_profile.docx",
+            "mode": "100644",
+            "object": "08d77c18ca7e6f0ef9cf4a029da5e29bb1015760",
+            "bytes": 1617
+          },
+          {
+            "path": "flood_system/rag_raw/profile/beilin_medical_support_profile.meta.json",
+            "mode": "100644",
+            "object": "69c8c25727a1db20fa55767223a0eef8f4b4c238",
+            "bytes": 181
+          },
+          {
+            "path": "flood_system/rag_raw/profile/beilin_monitoring_profile.docx",
+            "mode": "100644",
+            "object": "0e01079c65818131758c1406695d17954e05a273",
+            "bytes": 1605
+          },
+          {
+            "path": "flood_system/rag_raw/profile/beilin_monitoring_profile.meta.json",
+            "mode": "100644",
+            "object": "781091cd9c7c8afc40b3951b14888486211f163c",
+            "bytes": 192
+          },
+          {
+            "path": "flood_system/rag_raw/profile/beilin_shelter_network_profile.docx",
+            "mode": "100644",
+            "object": "29bcd62b6861dd566b0ea039eab6372495f62374",
+            "bytes": 1599
+          },
+          {
+            "path": "flood_system/rag_raw/profile/beilin_shelter_network_profile.meta.json",
+            "mode": "100644",
+            "object": "4930fc3a94b74da0e934e02abd58f481b534ee2d",
+            "bytes": 189
+          },
+          {
+            "path": "flood_system/rag_raw/profile/beilin_urban_profile.docx",
+            "mode": "100644",
+            "object": "717f71de29b21d45990bcebc3ae950240e4b8cdb",
+            "bytes": 1591
+          },
+          {
+            "path": "flood_system/rag_raw/profile/beilin_urban_profile.meta.json",
+            "mode": "100644",
+            "object": "771a3ceea3f4f64f3b6ffc7613d8d57474f8d7dd",
+            "bytes": 185
+          },
+          {
+            "path": "flood_system/rag_runtime.py",
+            "mode": "100644",
+            "object": "f3c15e25d9a8b511cc0c99479e07a935d0fb4891",
+            "bytes": 3923
+          }
+        ]
+      },
+      "models_prompts_and_contracts": {
+        "prefixes": [
+          "flood_system/v2/prompt_profiles.json",
+          "docs/current_baseline/",
+          "AgentTwin-Flood-Requirements.md"
+        ],
+        "file_count": 7,
+        "blob_bytes": 85433,
+        "listing_sha256": "da97461f711259e096b1e07723bffc81a936edab024e6776e0e0d21a3dd7cbec",
+        "entries": [
+          {
+            "path": "AgentTwin-Flood-Requirements.md",
+            "mode": "100644",
+            "object": "8dd1aac19c463b5e7bccceca2ddb50e52b44fa5e",
+            "bytes": 44034
+          },
+          {
+            "path": "docs/current_baseline/README.md",
+            "mode": "100644",
+            "object": "c545f2d86ca83917b5b22dad7843ca055a544f4e",
+            "bytes": 586
+          },
+          {
+            "path": "docs/current_baseline/洪水预警系统_API接口说明.md",
+            "mode": "100644",
+            "object": "95dacb4e6b9801ddef1fa4d03b7370bf92b700ef",
+            "bytes": 8147
+          },
+          {
+            "path": "docs/current_baseline/洪水预警系统_主动预警主动请示需求文档.md",
+            "mode": "100644",
+            "object": "a50c7028ad703534f4db0eab5a29b6df51053a9d",
+            "bytes": 9110
+          },
+          {
+            "path": "docs/current_baseline/洪水预警系统_前后端与总体功能总结.md",
+            "mode": "100644",
+            "object": "b9ca8e224b0fd132fa3f0df65c65c5734fa02bfe",
+            "bytes": 11379
+          },
+          {
+            "path": "docs/current_baseline/系统整体框架简要说明.md",
+            "mode": "100644",
+            "object": "02df4fc3f231d6027572cb4c839783f4f2cd6246",
+            "bytes": 8604
+          },
+          {
+            "path": "flood_system/v2/prompt_profiles.json",
+            "mode": "100644",
+            "object": "8e6a99412d305d15787232f998e4ae592ab6cb85",
+            "bytes": 3573
+          }
+        ]
+      }
+    }
+  },
+  "database_snapshot": {
+    "logical_path": "data/flood_warning_system_v2.db",
+    "local_cache_path": ".cache/legacy_baseline/2db016af915ada1912afe91d315defe844dba09d/flood_warning_system_v2.db",
+    "bootstrap_entrypoint": "flood_system.system.FloodWarningSystem",
+    "bytes": 487424,
+    "sha256": "40198e9fe2bd9b5e55dcb9db8cc897639695bfc8668f9a58dd440dfe490b8908",
+    "table_count": 37,
+    "index_count": 38,
+    "tables": [
+      {
+        "name": "v2_action_proposals",
+        "columns": [
+          "proposal_id",
+          "event_id",
+          "entity_id",
+          "created_at",
+          "resolved_at",
+          "status",
+          "payload"
+        ],
+        "primary_key": [
+          "proposal_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "531f37ced72f8767dd60471b25d6cfb4b01207fe4372b6229e00900fff2e071c",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_advisories",
+        "columns": [
+          "advisory_id",
+          "event_id",
+          "generated_at",
+          "payload"
+        ],
+        "primary_key": [
+          "advisory_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "8892bedb85aad20d4dcf2e0ba5f79be2658fc76584dd8b01c15da987b335b965",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_agent_results",
+        "columns": [
+          "result_id",
+          "event_id",
+          "agent_name",
+          "created_at",
+          "payload"
+        ],
+        "primary_key": [
+          "result_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "a6f553015c858ebab54da7ad3754bdb261ee23cf17af729c7dc3b1c4afde0073",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_agent_task_events",
+        "columns": [
+          "id",
+          "task_event_id",
+          "event_id",
+          "task_id",
+          "agent_name",
+          "event_type",
+          "created_at",
+          "payload"
+        ],
+        "primary_key": [
+          "id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "3057cdf3b209cb134bb406065381b004d2c9549d486c4e9569e8871511aba1ae",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_agent_tasks",
+        "columns": [
+          "task_id",
+          "event_id",
+          "agent_name",
+          "status",
+          "created_at",
+          "payload"
+        ],
+        "primary_key": [
+          "task_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "b2ec491048f6db28021d3c30a19c1c93d83c7008f54e8f5e645f909918bd9319",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_archive_runs",
+        "columns": [
+          "archive_run_id",
+          "started_at",
+          "completed_at",
+          "status",
+          "payload"
+        ],
+        "primary_key": [
+          "archive_run_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "e8332073cab60e3340ac46c203919966df720f464347acd8978b0e9f0642aead",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_archived_records",
+        "columns": [
+          "archive_id",
+          "source_table",
+          "source_id",
+          "event_id",
+          "session_id",
+          "record_kind",
+          "created_at",
+          "archived_at",
+          "payload"
+        ],
+        "primary_key": [
+          "archive_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "8170cca4bbf0db495e3a3e55ee20ceae5e412c635bc1f693fb80778a0c6919bc",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_area_resource_status",
+        "columns": [
+          "area_id",
+          "updated_at",
+          "payload"
+        ],
+        "primary_key": [
+          "area_id"
+        ],
+        "row_count": 1,
+        "schema_sha256": "fd5760682bd22b586c1466fbd0f3e1ee587c3dd81b7a18be5d5c37fe0366ecbb",
+        "rows_sha256": "dd38a4d08211d0842375f1112d195062cbc18e3f4331b220bd8b973c72ac969b"
+      },
+      {
+        "name": "v2_audit_records",
+        "columns": [
+          "audit_id",
+          "source_type",
+          "severity",
+          "event_id",
+          "session_id",
+          "created_at",
+          "payload"
+        ],
+        "primary_key": [
+          "audit_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "cc6cdc0368b8acd96d46b23571d8d44635f42ba752ed062def414702890e43fb",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_copilot_memory_events",
+        "columns": [
+          "id",
+          "memory_event_id",
+          "session_id",
+          "created_at",
+          "payload"
+        ],
+        "primary_key": [
+          "id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "d7d9d20980d0b32c8866e31b16e2ff4a2db5f22dd407804548e3a47df09cbacf",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_copilot_memory_state",
+        "columns": [
+          "session_id",
+          "updated_at",
+          "payload"
+        ],
+        "primary_key": [
+          "session_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "307a7f9f71d7fe2dcea95f6a7ebac6f77c528f1b26d9ee6bfcd6fa48860af4e7",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_copilot_messages",
+        "columns": [
+          "message_id",
+          "session_id",
+          "created_at",
+          "payload"
+        ],
+        "primary_key": [
+          "message_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "c1386758bd6ba8d9b6943c15151ebd70c43c2590ddb35847155cb2556b79b101",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_copilot_plan_runs",
+        "columns": [
+          "plan_run_id",
+          "session_id",
+          "message_id",
+          "created_at",
+          "payload"
+        ],
+        "primary_key": [
+          "plan_run_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "f05c187c8802ccf6b23d2305484ba0a31ea1bb45db9a6818d2f9b23ecd87807b",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_copilot_sessions",
+        "columns": [
+          "session_id",
+          "event_id",
+          "payload"
+        ],
+        "primary_key": [
+          "session_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "fc9323c3297c324622a61bbfa8654710dbda79a9a3f5a4f5e28933ea09883c3c",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_copilot_tool_executions",
+        "columns": [
+          "execution_id",
+          "session_id",
+          "message_id",
+          "created_at",
+          "payload"
+        ],
+        "primary_key": [
+          "execution_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "50ea457f2885d8cb048732cf92fdb3227ad0050bd7314b4747456f19c3a03f87",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_daily_report_runs",
+        "columns": [
+          "run_id",
+          "event_id",
+          "report_date",
+          "created_at",
+          "payload"
+        ],
+        "primary_key": [
+          "run_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "3f48491d9eaf143512fd2e9e2466edbba2203b14526a16062d7988b61a6a91db",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_daily_reports",
+        "columns": [
+          "report_id",
+          "event_id",
+          "report_date",
+          "created_at",
+          "payload"
+        ],
+        "primary_key": [
+          "report_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "2ea3933c6293faa84db4a2bff81842e728f5cac922d1a3b84d59cace6eb26d2e",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_entity_profiles",
+        "columns": [
+          "entity_id",
+          "area_id",
+          "payload"
+        ],
+        "primary_key": [
+          "entity_id"
+        ],
+        "row_count": 8,
+        "schema_sha256": "ed86d4b8410e221eec1e790a9f7ea194c2d9572762a927572e72372751b39da0",
+        "rows_sha256": "083326daa20a0e3e32322ccd7ab65b9eaeddd963cc6732e269d5959095956b15"
+      },
+      {
+        "name": "v2_evaluation_reports",
+        "columns": [
+          "report_id",
+          "created_at",
+          "payload"
+        ],
+        "primary_key": [
+          "report_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "0cbdddfa9b61614f250fda060f70c74d0355ff3b63168a5079ec83d3828952e5",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_event_episode_summaries",
+        "columns": [
+          "summary_id",
+          "episode_id",
+          "event_id",
+          "created_at",
+          "payload"
+        ],
+        "primary_key": [
+          "summary_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "a4d3d7bdafcc5e9bd98fddc728b2aa36bde8e7073d969ef8a4d4e2d160cceb33",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_event_resource_status",
+        "columns": [
+          "event_id",
+          "area_id",
+          "updated_at",
+          "payload"
+        ],
+        "primary_key": [
+          "event_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "83563bab1c4a556db980793a4541f5ccc4352757120f244b3341ff68a6068d41",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_event_shared_memory",
+        "columns": [
+          "event_id",
+          "updated_at",
+          "payload"
+        ],
+        "primary_key": [
+          "event_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "8e4b68ccd28ca180f8333d36f2d02e68f9433dfb7a34eb89c56abccb5838ca34",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_events",
+        "columns": [
+          "event_id",
+          "area_id",
+          "updated_at",
+          "payload"
+        ],
+        "primary_key": [
+          "event_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "29ff9819535b1a57e16379f6ab294cf7a14f1f2a4eed960982a41f6a58f36c7f",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_execution_logs",
+        "columns": [
+          "log_id",
+          "event_id",
+          "proposal_id",
+          "created_at",
+          "payload"
+        ],
+        "primary_key": [
+          "log_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "9eaf49d2eface8b4f39fb7f4e1136a06bcc6fc4e768d8b4b577445a5e762e42e",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_experience_records",
+        "columns": [
+          "experience_id",
+          "event_id",
+          "entity_id",
+          "entity_type",
+          "risk_level",
+          "action_type",
+          "created_at",
+          "payload"
+        ],
+        "primary_key": [
+          "experience_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "4fdf80076079518ed71e8f5a0c7dfdf870a86c30daa8e9b9b51626d46bef0d19",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_hazard_states",
+        "columns": [
+          "event_id",
+          "generated_at",
+          "payload"
+        ],
+        "primary_key": [
+          "event_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "b313d6666f0f7dd59a0bd1de87b1c00f3c6605f58124eff58a82d4247347c6e6",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_high_risk_episodes",
+        "columns": [
+          "episode_id",
+          "event_id",
+          "started_at",
+          "status",
+          "payload"
+        ],
+        "primary_key": [
+          "episode_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "ccab682d891633a6833dc6c2dbe8be555f09690fde6692d450bf373567714e17",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_long_term_memories",
+        "columns": [
+          "memory_id",
+          "event_id",
+          "created_at",
+          "payload"
+        ],
+        "primary_key": [
+          "memory_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "d158d245d16fdd536563001966fa24e630792d72926796f68406355532724162",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_notification_drafts",
+        "columns": [
+          "draft_id",
+          "event_id",
+          "proposal_id",
+          "created_at",
+          "payload"
+        ],
+        "primary_key": [
+          "draft_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "7f17b36bcd592fb5d8ce91a24035fe2f670bdb41653156e652a5e39fe0d7b5f4",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_observations",
+        "columns": [
+          "id",
+          "event_id",
+          "observed_at",
+          "payload"
+        ],
+        "primary_key": [
+          "id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "f3e76d19ec5f7ecd7a2cd1821fa93a5f87e6df320b3f3ff0a2705e0ccb109292",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_operational_alerts",
+        "columns": [
+          "alert_id",
+          "source_type",
+          "severity",
+          "status",
+          "event_id",
+          "first_seen_at",
+          "last_seen_at",
+          "resolved_at",
+          "payload"
+        ],
+        "primary_key": [
+          "alert_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "7ec62dd9ab1c6d5f8edd39e3c8237b8e97fb29dd24745cfd4dd5f4caedb1a7a8",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_simulation_updates",
+        "columns": [
+          "simulation_update_id",
+          "event_id",
+          "generated_at",
+          "payload"
+        ],
+        "primary_key": [
+          "simulation_update_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "08099df02b66c7df27b21d5a5069b8bfc1b3365772bc11abec377ec4923ef57b",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_stream_records",
+        "columns": [
+          "id",
+          "event_id",
+          "created_at",
+          "payload"
+        ],
+        "primary_key": [
+          "id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "4c507d584d687881d52286737767b099bb5044be63935b5e359e16bcbb9237f7",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_supervisor_health_state",
+        "columns": [
+          "component_key",
+          "updated_at",
+          "payload"
+        ],
+        "primary_key": [
+          "component_key"
+        ],
+        "row_count": 1,
+        "schema_sha256": "5b2d71ed02224609b136cd531d83a4bc40ce3bfdb16c544120da13c59d343ec8",
+        "rows_sha256": "ee82f064fd40f455c8a2b4d814aa37c2420b18c0ec14ce03a074d78b693521af"
+      },
+      {
+        "name": "v2_supervisor_runs",
+        "columns": [
+          "supervisor_run_id",
+          "event_id",
+          "created_at",
+          "payload"
+        ],
+        "primary_key": [
+          "supervisor_run_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "35b1891cc6edea7d69cc03977055dc3f1bc13caf351e6a08b2a79aea89401089",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v2_trigger_events",
+        "columns": [
+          "trigger_id",
+          "event_id",
+          "trigger_type",
+          "status",
+          "dedupe_key",
+          "created_at",
+          "leased_at",
+          "processed_at",
+          "payload"
+        ],
+        "primary_key": [
+          "trigger_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "acbb3e503e4a382d3027a9596257ff13831d6b3985a8351d3c5d05a68fd59091",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "v3_audience_warnings",
+        "columns": [
+          "warning_id",
+          "event_id",
+          "proposal_id",
+          "created_at",
+          "payload"
+        ],
+        "primary_key": [
+          "warning_id"
+        ],
+        "row_count": 0,
+        "schema_sha256": "10fef50f1aee7291d8b5ae2070edfa6f374309bf52a13a8c365a34d4050225a1",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "indexes": [
+      {
+        "name": "idx_v2_agent_results_event_id",
+        "table": "v2_agent_results",
+        "schema_sha256": "d243d99f8191c4dddd7da30b1f8b6552feb4b78c8bd1048f2eea97bb20070c8f"
+      },
+      {
+        "name": "idx_v2_agent_task_events_event_id",
+        "table": "v2_agent_task_events",
+        "schema_sha256": "82aa16c98915a65a45a38fc0bd9dea99f3a8e3263754d873673e2c49a2ee6f58"
+      },
+      {
+        "name": "idx_v2_agent_task_events_task_id",
+        "table": "v2_agent_task_events",
+        "schema_sha256": "41bdb63c560060e6b64000b907822f43ee7bf19f3ff94214576598ecd4a5dd96"
+      },
+      {
+        "name": "idx_v2_agent_tasks_agent_name",
+        "table": "v2_agent_tasks",
+        "schema_sha256": "efffcdff7d0e66d1ad8c582ecf80324ec004e7effa956ec909fbe601bcdffcce"
+      },
+      {
+        "name": "idx_v2_agent_tasks_event_id",
+        "table": "v2_agent_tasks",
+        "schema_sha256": "3159617316436ee27a673ac02b34a89d4278ac5b9c6c5407ac2474b2cdd0b421"
+      },
+      {
+        "name": "idx_v2_alerts_event_id",
+        "table": "v2_operational_alerts",
+        "schema_sha256": "d843455c3aa85d89000fb257118addddc77aec87d38ddfafdb2515b6c921d43b"
+      },
+      {
+        "name": "idx_v2_alerts_status",
+        "table": "v2_operational_alerts",
+        "schema_sha256": "22ca4430c9560bc575f8e2ab1b91ba3c4bc573924c3df41b3236df358248e49a"
+      },
+      {
+        "name": "idx_v2_archived_records_created_at",
+        "table": "v2_archived_records",
+        "schema_sha256": "9ef11635e2d1ed22e9ff03d51a0441c8abb97a9f85c5e9209e3bc442ca811d74"
+      },
+      {
+        "name": "idx_v2_archived_records_source",
+        "table": "v2_archived_records",
+        "schema_sha256": "f1b310c9ead0e300355b182e852b5dd591c439442066d37e9d557723841fba94"
+      },
+      {
+        "name": "idx_v2_audit_created_at",
+        "table": "v2_audit_records",
+        "schema_sha256": "07ed757df195ba343230d50428c10b10c0ca352d2d58ae4bdc67e8cc3789db51"
+      },
+      {
+        "name": "idx_v2_audit_source_type",
+        "table": "v2_audit_records",
+        "schema_sha256": "cfbe51bb8b74792c7f54988df8129e83092f51d08d4e04c2e9100df74bf54bd8"
+      },
+      {
+        "name": "idx_v2_daily_report_runs_event_date",
+        "table": "v2_daily_report_runs",
+        "schema_sha256": "6f1e8ca896604ca764450a8699a50f3bd265488dbe5837a81158a1992f7fd90f"
+      },
+      {
+        "name": "idx_v2_daily_reports_event_date",
+        "table": "v2_daily_reports",
+        "schema_sha256": "3030e8170111a05161ab935378491c43a54ebfa9d0800a1cf0f3cd54eed0f57b"
+      },
+      {
+        "name": "idx_v2_entity_profiles_area_id",
+        "table": "v2_entity_profiles",
+        "schema_sha256": "9db27c5e2ba3e07b37e3e7b3aa48c73bb270d7aa0a3731a060162be831e119fb"
+      },
+      {
+        "name": "idx_v2_event_episode_summaries_event_id",
+        "table": "v2_event_episode_summaries",
+        "schema_sha256": "d70093ed03710df55da4d98363c63bace95e7e63c6d3be25fa09889deec8059a"
+      },
+      {
+        "name": "idx_v2_event_resource_area_id",
+        "table": "v2_event_resource_status",
+        "schema_sha256": "511217c8f199997d74c15e129ccb3734bb9619bd812894e8c562fb4102615967"
+      },
+      {
+        "name": "idx_v2_execution_event_id",
+        "table": "v2_execution_logs",
+        "schema_sha256": "31bf2ab0dcf437c745f6b2e36c759013a4f49b9c8ad69ce3b4c6290f291847d2"
+      },
+      {
+        "name": "idx_v2_experience_entity_id",
+        "table": "v2_experience_records",
+        "schema_sha256": "414affe09c20845b1f9e38ae86695fc68654f9340cc6bb513fbd72352fd5f4d6"
+      },
+      {
+        "name": "idx_v2_experience_entity_type",
+        "table": "v2_experience_records",
+        "schema_sha256": "7c06414bad2579d4b4580fd3942d749beb36e042e2b345b55cc81c937931721d"
+      },
+      {
+        "name": "idx_v2_experience_event_id",
+        "table": "v2_experience_records",
+        "schema_sha256": "b3b36abe9509cb2c1d6a833890511ddde27bbcfa774947b107ce71e4170aaaf6"
+      },
+      {
+        "name": "idx_v2_high_risk_episodes_event_id",
+        "table": "v2_high_risk_episodes",
+        "schema_sha256": "e3aaa601b8aab77f4685763e178cfd10ab64af3add71e739439ee1310258adbf"
+      },
+      {
+        "name": "idx_v2_long_term_memories_event_id",
+        "table": "v2_long_term_memories",
+        "schema_sha256": "64666613e717e3e7754e0caa79cbf88497a732d711e3d693be2d19d8f7ebb8e2"
+      },
+      {
+        "name": "idx_v2_memory_events_session_id",
+        "table": "v2_copilot_memory_events",
+        "schema_sha256": "1a063171e16a9a94c3007c55042c8e98acc430390b9baa0664baa2321de9bb76"
+      },
+      {
+        "name": "idx_v2_messages_session_id",
+        "table": "v2_copilot_messages",
+        "schema_sha256": "23a5d3f07d2790677629c504eba57d0109c15f88aad29c4eaf30acafe1052200"
+      },
+      {
+        "name": "idx_v2_notification_event_id",
+        "table": "v2_notification_drafts",
+        "schema_sha256": "78fedf125e458a789dc097dcdad724bc431cb477cb6ca0293dd358cc04bce574"
+      },
+      {
+        "name": "idx_v2_observations_event_id",
+        "table": "v2_observations",
+        "schema_sha256": "b3524b62e45d4740079717dcae16aab7b165c471780347badb6063a7215e8f6e"
+      },
+      {
+        "name": "idx_v2_plan_runs_session_id",
+        "table": "v2_copilot_plan_runs",
+        "schema_sha256": "83de5b70508f0690a3759d6e928f035c9adad2971d10fe765bafb84d29c1bba3"
+      },
+      {
+        "name": "idx_v2_proposals_event_id",
+        "table": "v2_action_proposals",
+        "schema_sha256": "b32efb6651aa73605141eb99d97db78adb56d92dead56af4da5feadd24802445"
+      },
+      {
+        "name": "idx_v2_proposals_status",
+        "table": "v2_action_proposals",
+        "schema_sha256": "c2114c68c98d68f51d9a446486ebedd2dc9e6cf700b3b3f0fa363fe1556b9373"
+      },
+      {
+        "name": "idx_v2_simulation_updates_event_id",
+        "table": "v2_simulation_updates",
+        "schema_sha256": "d33c35e638b9b099c8329336d466e4c39ffbddc50a85419f804fb262c2971007"
+      },
+      {
+        "name": "idx_v2_stream_records_event_id",
+        "table": "v2_stream_records",
+        "schema_sha256": "3be801ba93a42f61a7a29588dd192e393aaff86608a131879965262cfda2bdcf"
+      },
+      {
+        "name": "idx_v2_supervisor_runs_event_id",
+        "table": "v2_supervisor_runs",
+        "schema_sha256": "df46a5a19cd20677529635332463830e68250ab08668dc66654bae5728ae4c06"
+      },
+      {
+        "name": "idx_v2_tool_executions_session_id",
+        "table": "v2_copilot_tool_executions",
+        "schema_sha256": "dca39eb152b2afc041de91181c044bfcf9daeb504595f0ef147e9a5420aad767"
+      },
+      {
+        "name": "idx_v2_trigger_events_dedupe",
+        "table": "v2_trigger_events",
+        "schema_sha256": "6e457a30904e74ada7edcf32ec358fe2853d8fff256208a6be77f26e51a862a8"
+      },
+      {
+        "name": "idx_v2_trigger_events_event_id",
+        "table": "v2_trigger_events",
+        "schema_sha256": "0ddf97c119095115ea170369115ce3bc5f5d0bf1ec276ad46340798cd688f989"
+      },
+      {
+        "name": "idx_v2_trigger_events_status",
+        "table": "v2_trigger_events",
+        "schema_sha256": "728d8d97954b8a9f03b4482b876e152333bd074feb447b0de81825f68122c6b6"
+      },
+      {
+        "name": "idx_v3_audience_warnings_event_id",
+        "table": "v3_audience_warnings",
+        "schema_sha256": "f8dcf5bf40aab576afcc880b812f8edd32b5682a0494f0d6349b6a5807b00ae3"
+      },
+      {
+        "name": "idx_v3_audience_warnings_proposal_id",
+        "table": "v3_audience_warnings",
+        "schema_sha256": "348d3c3befebd38c049a87307c34a8362fed727f6d16bff485b53b938fc077ef"
+      }
+    ]
+  },
+  "rag_index_snapshot": {
+    "logical_path": "data/rag_documents.baseline.json",
+    "local_cache_path": ".cache/legacy_baseline/2db016af915ada1912afe91d315defe844dba09d/rag_documents.baseline.json",
+    "bytes": 11527,
+    "sha256": "d557eee3a09f32ae4d059bc6e88693946d606073d7603a2aeeee82b6ba43a539",
+    "document_count": 22
+  },
+  "reproduction": {
+    "command": "python scripts/freeze_legacy_baseline.py --commit 2db016a --freeze-date 2026-07-14",
+    "network_required": false,
+    "writes_formal_response_state": false
+  }
+}

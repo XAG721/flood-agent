@@ -1,0 +1,559 @@
+{
+  "metadata": {
+    "name": "碑林区预警响应证据选择小规模标注集 V1",
+    "annotation_scope": "仓库内人工构造并逐条标注的工程验收集；非真实政府文件或公开基准",
+    "created_for": "V3 RAG 方法对比与消融验收"
+  },
+  "comparison": {
+    "methods": [
+      "bm25",
+      "dense_top_k",
+      "hybrid",
+      "mmr",
+      "rerank",
+      "coverage_greedy_proxy",
+      "frc_select"
+    ],
+    "case_count": 3,
+    "top_k": 4,
+    "token_budget": 520,
+    "aggregates": {
+      "bm25": {
+        "evidence_recall": 0.5278,
+        "role_coverage": 0.7111,
+        "answer_f1": 0.5119,
+        "task_element_completeness": 0.7111,
+        "citation_precision": 0.5,
+        "unsupported_evidence_ratio": 0.5,
+        "latency_ms": 0.8057
+      },
+      "dense_top_k": {
+        "evidence_recall": 0.6111,
+        "role_coverage": 0.7778,
+        "answer_f1": 0.5952,
+        "task_element_completeness": 0.7778,
+        "citation_precision": 0.5833,
+        "unsupported_evidence_ratio": 0.4167,
+        "latency_ms": 1.2815
+      },
+      "hybrid": {
+        "evidence_recall": 0.6111,
+        "role_coverage": 0.7778,
+        "answer_f1": 0.5952,
+        "task_element_completeness": 0.7778,
+        "citation_precision": 0.5833,
+        "unsupported_evidence_ratio": 0.4167,
+        "latency_ms": 2.01
+      },
+      "mmr": {
+        "evidence_recall": 0.6111,
+        "role_coverage": 0.7778,
+        "answer_f1": 0.5952,
+        "task_element_completeness": 0.7778,
+        "citation_precision": 0.5833,
+        "unsupported_evidence_ratio": 0.4167,
+        "latency_ms": 4.4221
+      },
+      "rerank": {
+        "evidence_recall": 0.7222,
+        "role_coverage": 0.8333,
+        "answer_f1": 0.6905,
+        "task_element_completeness": 0.8333,
+        "citation_precision": 0.6667,
+        "unsupported_evidence_ratio": 0.3333,
+        "latency_ms": 2.4628
+      },
+      "coverage_greedy_proxy": {
+        "evidence_recall": 0.6389,
+        "role_coverage": 1.0,
+        "answer_f1": 0.6071,
+        "task_element_completeness": 1.0,
+        "citation_precision": 0.5833,
+        "unsupported_evidence_ratio": 0.4167,
+        "latency_ms": 2.1792
+      },
+      "frc_select": {
+        "evidence_recall": 1.0,
+        "role_coverage": 1.0,
+        "answer_f1": 1.0,
+        "task_element_completeness": 1.0,
+        "citation_precision": 1.0,
+        "unsupported_evidence_ratio": 0.0,
+        "latency_ms": 2.0934
+      }
+    },
+    "cases": [
+      {
+        "case_id": "underpass_orange_response",
+        "method": "bm25",
+        "selected_doc_ids": [
+          "plan_underpass_trigger",
+          "plan_school_trigger",
+          "plan_underpass_trigger_duplicate_unverified",
+          "plan_underpass_procedure"
+        ],
+        "evidence_recall": 0.5,
+        "role_coverage": 0.6667,
+        "answer_f1": 0.5,
+        "task_element_completeness": 0.6667,
+        "citation_precision": 0.5,
+        "unsupported_evidence_ratio": 0.5,
+        "latency_ms": 0.9296
+      },
+      {
+        "case_id": "underpass_orange_response",
+        "method": "dense_top_k",
+        "selected_doc_ids": [
+          "plan_underpass_trigger",
+          "plan_school_trigger",
+          "plan_underpass_trigger_duplicate_unverified",
+          "plan_underpass_responsibility"
+        ],
+        "evidence_recall": 0.5,
+        "role_coverage": 0.6667,
+        "answer_f1": 0.5,
+        "task_element_completeness": 0.6667,
+        "citation_precision": 0.5,
+        "unsupported_evidence_ratio": 0.5,
+        "latency_ms": 1.297
+      },
+      {
+        "case_id": "underpass_orange_response",
+        "method": "hybrid",
+        "selected_doc_ids": [
+          "plan_underpass_trigger",
+          "plan_school_trigger",
+          "plan_underpass_trigger_duplicate_unverified",
+          "plan_underpass_procedure"
+        ],
+        "evidence_recall": 0.5,
+        "role_coverage": 0.6667,
+        "answer_f1": 0.5,
+        "task_element_completeness": 0.6667,
+        "citation_precision": 0.5,
+        "unsupported_evidence_ratio": 0.5,
+        "latency_ms": 2.1012
+      },
+      {
+        "case_id": "underpass_orange_response",
+        "method": "mmr",
+        "selected_doc_ids": [
+          "plan_underpass_trigger",
+          "plan_school_trigger",
+          "plan_underpass_trigger_duplicate_unverified",
+          "plan_underpass_procedure"
+        ],
+        "evidence_recall": 0.5,
+        "role_coverage": 0.6667,
+        "answer_f1": 0.5,
+        "task_element_completeness": 0.6667,
+        "citation_precision": 0.5,
+        "unsupported_evidence_ratio": 0.5,
+        "latency_ms": 4.581
+      },
+      {
+        "case_id": "underpass_orange_response",
+        "method": "rerank",
+        "selected_doc_ids": [
+          "plan_underpass_trigger",
+          "plan_school_trigger",
+          "plan_underpass_responsibility",
+          "plan_underpass_trigger_duplicate_unverified"
+        ],
+        "evidence_recall": 0.5,
+        "role_coverage": 0.6667,
+        "answer_f1": 0.5,
+        "task_element_completeness": 0.6667,
+        "citation_precision": 0.5,
+        "unsupported_evidence_ratio": 0.5,
+        "latency_ms": 2.5799
+      },
+      {
+        "case_id": "underpass_orange_response",
+        "method": "coverage_greedy_proxy",
+        "selected_doc_ids": [
+          "plan_school_trigger",
+          "plan_school_exception",
+          "plan_underpass_procedure",
+          "plan_underpass_trigger"
+        ],
+        "evidence_recall": 0.5,
+        "role_coverage": 1.0,
+        "answer_f1": 0.5,
+        "task_element_completeness": 1.0,
+        "citation_precision": 0.5,
+        "unsupported_evidence_ratio": 0.5,
+        "latency_ms": 2.2511
+      },
+      {
+        "case_id": "underpass_orange_response",
+        "method": "frc_select",
+        "selected_doc_ids": [
+          "plan_underpass_trigger",
+          "plan_underpass_procedure",
+          "plan_underpass_responsibility",
+          "plan_underpass_exception"
+        ],
+        "evidence_recall": 1.0,
+        "role_coverage": 1.0,
+        "answer_f1": 1.0,
+        "task_element_completeness": 1.0,
+        "citation_precision": 1.0,
+        "unsupported_evidence_ratio": 0.0,
+        "latency_ms": 2.285
+      },
+      {
+        "case_id": "school_dismissal_response",
+        "method": "bm25",
+        "selected_doc_ids": [
+          "plan_school_trigger",
+          "plan_underpass_trigger",
+          "plan_underpass_procedure",
+          "plan_underpass_trigger_duplicate_unverified"
+        ],
+        "evidence_recall": 0.3333,
+        "role_coverage": 0.6667,
+        "answer_f1": 0.2857,
+        "task_element_completeness": 0.6667,
+        "citation_precision": 0.25,
+        "unsupported_evidence_ratio": 0.75,
+        "latency_ms": 0.7389
+      },
+      {
+        "case_id": "school_dismissal_response",
+        "method": "dense_top_k",
+        "selected_doc_ids": [
+          "plan_school_trigger",
+          "plan_underpass_trigger",
+          "plan_underpass_trigger_duplicate_unverified",
+          "plan_underpass_procedure"
+        ],
+        "evidence_recall": 0.3333,
+        "role_coverage": 0.6667,
+        "answer_f1": 0.2857,
+        "task_element_completeness": 0.6667,
+        "citation_precision": 0.25,
+        "unsupported_evidence_ratio": 0.75,
+        "latency_ms": 1.2641
+      },
+      {
+        "case_id": "school_dismissal_response",
+        "method": "hybrid",
+        "selected_doc_ids": [
+          "plan_school_trigger",
+          "plan_underpass_trigger",
+          "plan_underpass_procedure",
+          "plan_underpass_trigger_duplicate_unverified"
+        ],
+        "evidence_recall": 0.3333,
+        "role_coverage": 0.6667,
+        "answer_f1": 0.2857,
+        "task_element_completeness": 0.6667,
+        "citation_precision": 0.25,
+        "unsupported_evidence_ratio": 0.75,
+        "latency_ms": 1.9556
+      },
+      {
+        "case_id": "school_dismissal_response",
+        "method": "mmr",
+        "selected_doc_ids": [
+          "plan_school_trigger",
+          "plan_underpass_procedure",
+          "plan_underpass_trigger",
+          "plan_underpass_trigger_duplicate_unverified"
+        ],
+        "evidence_recall": 0.3333,
+        "role_coverage": 0.6667,
+        "answer_f1": 0.2857,
+        "task_element_completeness": 0.6667,
+        "citation_precision": 0.25,
+        "unsupported_evidence_ratio": 0.75,
+        "latency_ms": 4.7949
+      },
+      {
+        "case_id": "school_dismissal_response",
+        "method": "rerank",
+        "selected_doc_ids": [
+          "plan_school_trigger",
+          "plan_underpass_trigger",
+          "plan_school_exception",
+          "plan_underpass_responsibility"
+        ],
+        "evidence_recall": 0.6667,
+        "role_coverage": 0.8333,
+        "answer_f1": 0.5714,
+        "task_element_completeness": 0.8333,
+        "citation_precision": 0.5,
+        "unsupported_evidence_ratio": 0.5,
+        "latency_ms": 2.3862
+      },
+      {
+        "case_id": "school_dismissal_response",
+        "method": "coverage_greedy_proxy",
+        "selected_doc_ids": [
+          "plan_school_trigger",
+          "plan_school_exception",
+          "plan_underpass_procedure",
+          "plan_underpass_trigger"
+        ],
+        "evidence_recall": 0.6667,
+        "role_coverage": 1.0,
+        "answer_f1": 0.5714,
+        "task_element_completeness": 1.0,
+        "citation_precision": 0.5,
+        "unsupported_evidence_ratio": 0.5,
+        "latency_ms": 2.1075
+      },
+      {
+        "case_id": "school_dismissal_response",
+        "method": "frc_select",
+        "selected_doc_ids": [
+          "plan_school_trigger",
+          "plan_school_exception",
+          "plan_school_action"
+        ],
+        "evidence_recall": 1.0,
+        "role_coverage": 1.0,
+        "answer_f1": 1.0,
+        "task_element_completeness": 1.0,
+        "citation_precision": 1.0,
+        "unsupported_evidence_ratio": 0.0,
+        "latency_ms": 1.8159
+      },
+      {
+        "case_id": "cross_department_control",
+        "method": "bm25",
+        "selected_doc_ids": [
+          "plan_underpass_exception",
+          "plan_underpass_procedure",
+          "plan_underpass_responsibility",
+          "plan_underpass_trigger_duplicate_unverified"
+        ],
+        "evidence_recall": 0.75,
+        "role_coverage": 0.8,
+        "answer_f1": 0.75,
+        "task_element_completeness": 0.8,
+        "citation_precision": 0.75,
+        "unsupported_evidence_ratio": 0.25,
+        "latency_ms": 0.7487
+      },
+      {
+        "case_id": "cross_department_control",
+        "method": "dense_top_k",
+        "selected_doc_ids": [
+          "plan_underpass_exception",
+          "plan_underpass_procedure",
+          "plan_underpass_responsibility",
+          "plan_underpass_trigger"
+        ],
+        "evidence_recall": 1.0,
+        "role_coverage": 1.0,
+        "answer_f1": 1.0,
+        "task_element_completeness": 1.0,
+        "citation_precision": 1.0,
+        "unsupported_evidence_ratio": 0.0,
+        "latency_ms": 1.2835
+      },
+      {
+        "case_id": "cross_department_control",
+        "method": "hybrid",
+        "selected_doc_ids": [
+          "plan_underpass_exception",
+          "plan_underpass_procedure",
+          "plan_underpass_responsibility",
+          "plan_underpass_trigger"
+        ],
+        "evidence_recall": 1.0,
+        "role_coverage": 1.0,
+        "answer_f1": 1.0,
+        "task_element_completeness": 1.0,
+        "citation_precision": 1.0,
+        "unsupported_evidence_ratio": 0.0,
+        "latency_ms": 1.9733
+      },
+      {
+        "case_id": "cross_department_control",
+        "method": "mmr",
+        "selected_doc_ids": [
+          "plan_underpass_exception",
+          "plan_underpass_procedure",
+          "plan_underpass_responsibility",
+          "plan_underpass_trigger"
+        ],
+        "evidence_recall": 1.0,
+        "role_coverage": 1.0,
+        "answer_f1": 1.0,
+        "task_element_completeness": 1.0,
+        "citation_precision": 1.0,
+        "unsupported_evidence_ratio": 0.0,
+        "latency_ms": 3.8905
+      },
+      {
+        "case_id": "cross_department_control",
+        "method": "rerank",
+        "selected_doc_ids": [
+          "plan_underpass_exception",
+          "plan_underpass_procedure",
+          "plan_underpass_responsibility",
+          "plan_underpass_trigger"
+        ],
+        "evidence_recall": 1.0,
+        "role_coverage": 1.0,
+        "answer_f1": 1.0,
+        "task_element_completeness": 1.0,
+        "citation_precision": 1.0,
+        "unsupported_evidence_ratio": 0.0,
+        "latency_ms": 2.4222
+      },
+      {
+        "case_id": "cross_department_control",
+        "method": "coverage_greedy_proxy",
+        "selected_doc_ids": [
+          "plan_school_action",
+          "plan_underpass_exception",
+          "plan_underpass_trigger",
+          "plan_underpass_procedure"
+        ],
+        "evidence_recall": 0.75,
+        "role_coverage": 1.0,
+        "answer_f1": 0.75,
+        "task_element_completeness": 1.0,
+        "citation_precision": 0.75,
+        "unsupported_evidence_ratio": 0.25,
+        "latency_ms": 2.1789
+      },
+      {
+        "case_id": "cross_department_control",
+        "method": "frc_select",
+        "selected_doc_ids": [
+          "plan_underpass_responsibility",
+          "plan_underpass_exception",
+          "plan_underpass_trigger",
+          "plan_underpass_procedure"
+        ],
+        "evidence_recall": 1.0,
+        "role_coverage": 1.0,
+        "answer_f1": 1.0,
+        "task_element_completeness": 1.0,
+        "citation_precision": 1.0,
+        "unsupported_evidence_ratio": 0.0,
+        "latency_ms": 2.1792
+      }
+    ],
+    "limitations": [
+      "Dense Top-K 使用本地确定性哈希 n-gram 向量，仅作为无外部模型依赖的工程基线。",
+      "coverage_greedy_proxy 只是覆盖优先贪心代理；未使用 SetR 官方代码、训练流程或权重，不是 SetR 复现。",
+      "区县标注集为小规模演示集，不能替代 ConditionalQA、MultiHop-RAG 或 HotpotQA 的正式复现实验。",
+      "Answer F1 以相关证据集合 F1 作为可重复代理指标，未调用生成模型裁判。"
+    ]
+  },
+  "ablations": {
+    "variants": {
+      "full_frc_select": {
+        "evidence_recall": 1.0,
+        "role_coverage": 1.0,
+        "citation_precision": 1.0,
+        "unsupported_evidence_ratio": 0.0,
+        "latency_ms": 1.9895
+      },
+      "without_role": {
+        "evidence_recall": 1.0,
+        "role_coverage": 1.0,
+        "citation_precision": 0.9167,
+        "unsupported_evidence_ratio": 0.0833,
+        "latency_ms": 2.3694
+      },
+      "without_field": {
+        "evidence_recall": 1.0,
+        "role_coverage": 1.0,
+        "citation_precision": 0.9167,
+        "unsupported_evidence_ratio": 0.0833,
+        "latency_ms": 2.2323
+      },
+      "without_budget": {
+        "evidence_recall": 1.0,
+        "role_coverage": 1.0,
+        "citation_precision": 1.0,
+        "unsupported_evidence_ratio": 0.0,
+        "latency_ms": 2.0196
+      },
+      "without_trust_conflict": {
+        "evidence_recall": 0.6389,
+        "role_coverage": 1.0,
+        "citation_precision": 0.5833,
+        "unsupported_evidence_ratio": 0.4167,
+        "latency_ms": 2.1691
+      },
+      "without_set_objective": {
+        "evidence_recall": 0.6111,
+        "role_coverage": 0.7778,
+        "citation_precision": 0.5833,
+        "unsupported_evidence_ratio": 0.4167,
+        "latency_ms": 2.0891
+      }
+    },
+    "interpretation": {
+      "without_role": "移除功能角色约束，检验角色互补性对证据选择的贡献。",
+      "without_field": "移除任务字段查询约束，检验字段完整性目标的贡献。",
+      "without_budget": "移除证据预算约束，观察覆盖收益与证据成本控制的权衡。",
+      "without_trust_conflict": "退化为仅按功能角色覆盖的贪心代理，移除 FRC 的字段支持、可信度、适用性与冲突惩罚；该代理不是 SetR 复现。",
+      "without_set_objective": "退化为混合 Top-K，移除集合互补性目标。"
+    }
+  },
+  "conflict_detection": {
+    "case_count": 4,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "rows": [
+      {
+        "case_id": "action-conflict",
+        "expected": [
+          "action"
+        ],
+        "predicted": [
+          "action"
+        ]
+      },
+      {
+        "case_id": "deadline-conflict",
+        "expected": [
+          "deadline"
+        ],
+        "predicted": [
+          "deadline"
+        ]
+      },
+      {
+        "case_id": "duplicate-support",
+        "expected": [],
+        "predicted": []
+      },
+      {
+        "case_id": "different-fields",
+        "expected": [],
+        "predicted": []
+      }
+    ],
+    "is_simulated": true
+  },
+  "gate_2": {
+    "status": "NO-GO",
+    "criteria": {
+      "核心任务字段覆盖率不低于0.90": true,
+      "引用支持精度不低于0.95": true,
+      "无依据关键字段率为0": true,
+      "冲突检测F1不低于0.85": true,
+      "未披露关键冲突数为0": true,
+      "相同预算下字段覆盖率相对最强基线提高至少5个百分点": false,
+      "Full引用正确率严格优于w/o Role和w/o Field": true
+    },
+    "strongest_reproducible_baseline_method": "coverage_greedy_proxy",
+    "strongest_baseline_task_element_completeness": 1.0,
+    "frc_task_element_completeness": 1.0,
+    "coverage_gain_percentage_points": 0.0,
+    "undisclosed_critical_conflicts": 0,
+    "full_vs_without_role_citation_gain": 0.0833,
+    "full_vs_without_field_citation_gain": 0.0833
+  }
+}

@@ -258,23 +258,32 @@ class PlatformImpactOpsMixin:
         evidence: list[EvidenceItem] = []
         resolved_area_id = entity.area_id if entity is not None else (area_id or "beilin_10km2")
         filters = {"region": self.area_profiles[resolved_area_id].region}
-        policy_docs = self.rag_service.query(
+        policy_docs = self.rag_service.query_evidence_set(
             CorpusType.POLICY,
             f"{risk_level.value} response evacuation",
             filters=filters,
             top_k=2,
+            candidate_k=8,
+            token_budget=700,
+            slots=[f"{risk_level.value} response", "evacuation", "notification", "route"],
         )
-        case_docs = self.rag_service.query(
+        case_docs = self.rag_service.query_evidence_set(
             CorpusType.CASE,
             "vulnerable school factory flood",
             filters=filters,
             top_k=2,
+            candidate_k=8,
+            token_budget=700,
+            slots=["vulnerable", "school", "factory", "flood"],
         )
-        profile_docs = self.rag_service.query(
+        profile_docs = self.rag_service.query_evidence_set(
             CorpusType.PROFILE,
             "shelter vulnerable medical",
             filters=filters,
             top_k=2,
+            candidate_k=8,
+            token_budget=700,
+            slots=["shelter", "vulnerable", "medical"],
         )
         memory_records = self.long_term_memory_store.query_memories(
             area_id=resolved_area_id,

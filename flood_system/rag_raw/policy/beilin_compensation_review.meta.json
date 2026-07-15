@@ -4,5 +4,7 @@
   "region": "西安市碑林区",
   "stage": "Compensation",
   "audience": "government",
-  "section_number": "7.2"
+  "section_number": "7.2",
+  "document_version": "2026 演示有效版",
+  "evidence_roles": ["object", "procedure", "exception", "attribution"]
 }

@@ -11,5 +11,5 @@
 
 如果你的模型文件名或位置不同，请同步修改：
 
-- [`3D_visual/public/scene-config.json`](/d:/graduation_project/3D_visual/public/scene-config.json)
-- [`3D_visual/src/App.tsx`](/d:/graduation_project/3D_visual/src/App.tsx)
+- [`3D_visual/public/scene-config.json`](../scene-config.json)
+- [`3D_visual/src/App.tsx`](../../src/App.tsx)

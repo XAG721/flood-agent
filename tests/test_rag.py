@@ -4,6 +4,7 @@ from datetime import UTC, datetime, timedelta
 
 from flood_system.models import CorpusType, RAGDocument
 from flood_system.rag import SimpleRAGStore
+from flood_system.response_workflow.evidence_governance import task_field_slots
 
 
 def build_store(documents: list[RAGDocument]) -> SimpleRAGStore:
@@ -116,3 +117,179 @@ def test_cite_exposes_retrieval_explain() -> None:
     assert citation.doc_id == "policy_factory"
     assert citation.retrieval_explain["final_score"] > 0
     assert citation.retrieval_explain["matched_terms"]["title"]
+
+
+def test_query_evidence_set_selects_complementary_slots_under_budget() -> None:
+    store = build_store(
+        [
+            RAGDocument(
+                doc_id="a_elder_primary",
+                corpus=CorpusType.POLICY,
+                title="Elder evacuation plan",
+                content="Elder evacuation uses staffed buses and assisted transfer.",
+                metadata={"region": "beilin", "source_tier": "official", "token_cost": 80},
+            ),
+            RAGDocument(
+                doc_id="b_elder_duplicate",
+                corpus=CorpusType.POLICY,
+                title="Elder evacuation route",
+                content="Elder evacuation uses the same staffed bus transfer route.",
+                metadata={"region": "beilin", "source_tier": "official", "token_cost": 80},
+            ),
+            RAGDocument(
+                doc_id="c_school_closure",
+                corpus=CorpusType.POLICY,
+                title="School closure pickup plan",
+                content="School closure starts when pickup routes become congested.",
+                metadata={"region": "beilin", "source_tier": "official", "token_cost": 80},
+            ),
+        ]
+    )
+
+    results = store.query_evidence_set(
+        CorpusType.POLICY,
+        "elder evacuation school closure",
+        filters={"region": "beilin"},
+        top_k=2,
+        candidate_k=3,
+        token_budget=180,
+        slots=["elder evacuation", "school closure"],
+    )
+
+    assert [item.doc_id for item in results] == ["a_elder_primary", "c_school_closure"]
+    first_selection = store.explain(results[0])["evidence_selection"]
+    second_selection = store.explain(results[1])["evidence_selection"]
+    assert first_selection["covered_slots"][0]["text"] == "elder evacuation"
+    assert second_selection["covered_slots"][0]["text"] == "school closure"
+    assert second_selection["selected_token_cost"] == 160
+
+
+def test_query_evidence_set_preserves_all_nine_task_field_slots() -> None:
+    slots = task_field_slots()
+    store = build_store(
+        [
+            RAGDocument(
+                doc_id="district_response_contract",
+                corpus=CorpusType.POLICY,
+                title="洪水响应九字段规程",
+                content=" ".join(slots),
+                metadata={"source_tier": "official", "token_cost": 120},
+            )
+        ]
+    )
+
+    results = store.query_evidence_set(
+        CorpusType.POLICY,
+        "洪水响应九字段规程",
+        top_k=1,
+        slots=slots,
+    )
+
+    assert len(slots) == 9
+    selection = store.explain(results[0])["evidence_selection"]
+    assert len(selection["all_slots"]) == 9
+    assert [item["text"].split("｜", 1)[0] for item in selection["all_slots"]] == [
+        "trigger_condition",
+        "risk_object",
+        "responsible_party",
+        "action",
+        "deadline",
+        "resource_dependency",
+        "feedback_requirement",
+        "escalation_condition",
+        "exception_condition",
+    ]
+
+
+def test_query_evidence_set_respects_token_budget_and_records_ledger() -> None:
+    store = build_store(
+        [
+            RAGDocument(
+                doc_id="oversized_all_in_one",
+                corpus=CorpusType.POLICY,
+                title="Shelter route water pump plan",
+                content="Shelter route water pump plan covers every operational slot.",
+                metadata={"region": "beilin", "source_tier": "official", "token_cost": 180},
+            ),
+            RAGDocument(
+                doc_id="shelter_short",
+                corpus=CorpusType.POLICY,
+                title="Shelter opening plan",
+                content="Shelter opening covers safe indoor capacity.",
+                metadata={"region": "beilin", "source_tier": "official", "token_cost": 70},
+            ),
+            RAGDocument(
+                doc_id="route_short",
+                corpus=CorpusType.POLICY,
+                title="Route control plan",
+                content="Route control keeps evacuation lanes accessible.",
+                metadata={"region": "beilin", "source_tier": "official", "token_cost": 80},
+            ),
+        ]
+    )
+
+    results = store.query_evidence_set(
+        CorpusType.POLICY,
+        "shelter route",
+        filters={"region": "beilin"},
+        top_k=2,
+        candidate_k=3,
+        token_budget=150,
+        slots=["shelter", "route"],
+    )
+
+    assert [item.doc_id for item in results] == ["shelter_short", "route_short"]
+    explain = store.explain(results[0])
+    selection = explain["evidence_selection"]
+    assert selection["mode"] == "budget_aware_trustworthy_set_selection"
+    assert selection["token_budget"] == 150
+    assert selection["selected_token_cost"] == 150
+    assert all(item.doc_id != "oversized_all_in_one" for item in results)
+    assert store.cite(results[0]).retrieval_explain["evidence_selection"]["selection_rank"] == 1
+
+
+def test_query_evidence_set_penalizes_low_reliability_and_conflict() -> None:
+    store = build_store(
+        [
+            RAGDocument(
+                doc_id="school_closure_misinfo",
+                corpus=CorpusType.POLICY,
+                title="School closure status",
+                content="School closure is cancelled and no assisted pickup is required.",
+                metadata={
+                    "region": "beilin",
+                    "source_label": "misinfo",
+                    "stance": "cancel",
+                    "token_cost": 60,
+                },
+            ),
+            RAGDocument(
+                doc_id="school_closure_official",
+                corpus=CorpusType.POLICY,
+                title="School closure official notice",
+                content="School closure is active and assisted pickup starts on the north route.",
+                metadata={
+                    "region": "beilin",
+                    "source_label": "correct",
+                    "stance": "activate",
+                    "conflicts_with": ["school_closure_misinfo"],
+                    "token_cost": 70,
+                },
+            ),
+        ]
+    )
+
+    results = store.query_evidence_set(
+        CorpusType.POLICY,
+        "school closure assisted pickup",
+        filters={"region": "beilin"},
+        top_k=1,
+        candidate_k=2,
+        token_budget=100,
+        slots=["school closure", "assisted pickup"],
+    )
+
+    assert [item.doc_id for item in results] == ["school_closure_official"]
+    selection = store.explain(results[0])["evidence_selection"]
+    assert selection["trust_score"] > 0.85
+    assert selection["source"]["source_label"] == "correct"

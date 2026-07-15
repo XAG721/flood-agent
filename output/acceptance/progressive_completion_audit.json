@@ -1,0 +1,398 @@
+{
+  "metadata": {
+    "audit_version": "progressive-completion-audit-v10",
+    "scope": "single-district controlled simulation",
+    "contract": "洪水预警响应系统_渐进式迭代开发与升级设计.md sections 18-23",
+    "evidence_hash_canonicalization": "UTF-8 text without BOM with CRLF/CR normalized to LF; binary archives use raw bytes"
+  },
+  "summary": {
+    "controlled_first_iteration": "PASS",
+    "passed_local_requirements": 12,
+    "local_requirement_count": 12,
+    "frc_gate_2": "NO-GO",
+    "production_readiness": "NO-GO_EXTERNAL",
+    "overall": "CONTROLLED_SCOPE_COMPLETE_PRODUCTION_NO_GO"
+  },
+  "requirements": [
+    {
+      "requirement_id": "software_deliverables",
+      "title": "第 20.1 节软件交付物齐备",
+      "status": "PASS",
+      "evidence": [
+        "frontend/src/pages/ResponseWorkflowPage.tsx",
+        "3D_visual/src/App.tsx",
+        "flood_system/api.py",
+        "flood_system/http/idempotency.py",
+        "flood_system/http/response_router.py",
+        "scripts/run_response_worker.py",
+        "flood_system/response_workflow/candidate_discovery.py",
+        "flood_system/response_workflow/document_governance.py",
+        "tests/test_document_governance.py",
+        "flood_system/rag.py",
+        "flood_system/response_workflow/service.py",
+        "flood_system/response_workflow/evidence_governance.py",
+        "tests/test_response_workflow.py",
+        "flood_system/response_workflow/state_machine.py",
+        "flood_system/simulation_dataset.py",
+        "scripts/run_simulation_scenario_acceptance.py",
+        "scripts/migrate_response_schema.py",
+        "scripts/migrate_response_to_postgis.py",
+        "infra/postgis/001_shadow_projection.sql",
+        "Dockerfile",
+        "frontend/Dockerfile",
+        "docker-compose.yml",
+        "flood_system/design_contract_audit.py",
+        "scripts/run_design_contract_audit.py",
+        "scripts/freeze_legacy_baseline.py"
+      ],
+      "details": {
+        "group_count": 12,
+        "missing": {}
+      }
+    },
+    {
+      "requirement_id": "document_deliverables",
+      "title": "第 20.3 节文档交付物齐备",
+      "status": "PASS",
+      "evidence": [
+        "docs/progressive_upgrade/asset_inventory.md",
+        "docs/progressive_upgrade/implementation_acceptance_matrix.md",
+        "docs/progressive_upgrade/api_compatibility_mapping.md",
+        "docs/progressive_upgrade/contracts_and_data_dictionary.md",
+        "infra/migrations/README.md",
+        "洪水预警响应系统_渐进式迭代开发与升级设计.md",
+        "面向区县防办的洪水预警响应系统_升级设计说明V3.md",
+        "docs/openapi.json",
+        "docs/V3_upgrade_acceptance_matrix.md",
+        "docs/progressive_upgrade/completion_traceability_audit.md",
+        "docs/progressive_upgrade/operations_and_rollback.md",
+        "docs/progressive_upgrade/user_manual.md",
+        "docs/progressive_upgrade/security_and_incident_manual.md",
+        "docs/progressive_upgrade/dependency_security_audit.md",
+        "docs/progressive_upgrade/evaluation_and_gate_report.md",
+        "docs/progressive_upgrade/frc_public_evaluation_protocol.md",
+        "docs/progressive_upgrade/design_contract_evidence_policy.json",
+        "output/acceptance/legacy_baseline_manifest.md",
+        "output/acceptance/design_contract_audit.md"
+      ],
+      "details": {
+        "group_count": 8,
+        "missing": {}
+      }
+    },
+    {
+      "requirement_id": "data_experiment_deliverables",
+      "title": "第 20.2 节数据与实验交付物齐备",
+      "status": "PASS",
+      "evidence": [
+        "output/floodagent_bench/floodagent_bench.json",
+        "output/floodagent_bench/scenario_acceptance_report.json",
+        "output/candidate_evaluation/report.json",
+        "output/performance/controlled_performance_report.json",
+        "benchmarks/controlled_performance_budget.json",
+        "output/rag_evaluation/rag_evaluation_report.json",
+        "output/rag_evaluation/full_public/public_benchmark_report.md",
+        "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json",
+        "output/rag_evaluation/conflicts_frc/conflicts_frc_report.json",
+        "output/rag_evaluation/controlled_domain_sensitivity/controlled_domain_sensitivity.json",
+        "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation.json",
+        "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation_cases.jsonl.gz",
+        "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation.json",
+        "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation_cases.jsonl.gz",
+        "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
+        "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.md",
+        "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity_cases.jsonl.gz",
+        "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation.json",
+        "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation_cases.jsonl.gz",
+        "benchmarks/eurlex_temporal_selection.json",
+        "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.json",
+        "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.md",
+        "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation_cases.jsonl.gz",
+        "scripts/run_candidate_evaluation.py",
+        "scripts/run_rag_evaluation.py",
+        "scripts/run_public_rag_benchmarks.py",
+        "scripts/run_conflicts_frc_evaluation.py",
+        "scripts/run_frc_controlled_sensitivity.py",
+        "scripts/run_conflicts_frc_ablation.py",
+        "scripts/run_housing_frc_ablation.py",
+        "scripts/run_housing_weight_sensitivity.py",
+        "scripts/run_lawshift_temporal_ablation.py",
+        "scripts/prepare_eurlex_temporal_source.py",
+        "scripts/run_eurlex_temporal_ablation.py",
+        "flood_system/frc_eurlex_temporal_ablation.py",
+        "flood_system/frc_housing_weight_sensitivity.py",
+        "output/acceptance/legacy_baseline_manifest.json",
+        "output/acceptance/design_contract_audit.json",
+        "tests/test_design_contract_audit.py"
+      ],
+      "details": {
+        "group_count": 5,
+        "missing": {}
+      }
+    },
+    {
+      "requirement_id": "openapi_contract",
+      "title": "受控响应工作流通过版本化 Core API 暴露",
+      "status": "PASS",
+      "evidence": [
+        "docs/openapi.json"
+      ],
+      "details": {
+        "required_path_count": 34,
+        "missing_paths": []
+      }
+    },
+    {
+      "requirement_id": "compose_environment",
+      "title": "完整受控环境声明 Web、API、Worker 和 PostGIS 服务",
+      "status": "PASS",
+      "evidence": [
+        "docker-compose.yml"
+      ],
+      "details": {
+        "services": [
+          "backend",
+          "frontend",
+          "postgis",
+          "worker"
+        ],
+        "missing_services": []
+      }
+    },
+    {
+      "requirement_id": "simulation_provenance",
+      "title": "Gate 0 模拟数据具有来源、版本、种子和清单溯源",
+      "status": "PASS",
+      "evidence": [
+        "output/candidate_evaluation/report.json"
+      ],
+      "details": {
+        "data_origin": "SYNTHETIC",
+        "is_simulated": true,
+        "seed": 20260712,
+        "manifest_sha256": "fdce9656bcc607ed2bc5ab106535064c8c0c8303bc32cae4be479fd99b3d3efd"
+      }
+    },
+    {
+      "requirement_id": "scenario_acceptance",
+      "title": "24 个受控正常与故障场景均具有可执行测试证据",
+      "status": "PASS",
+      "evidence": [
+        "output/floodagent_bench/scenario_acceptance_report.json"
+      ],
+      "details": {
+        "scenario_count": 24,
+        "covered_count": 24,
+        "missing_evidence_count": 0,
+        "status": "PASS"
+      }
+    },
+    {
+      "requirement_id": "gate_1_candidate_quality",
+      "title": "Gate 1 候选质量达到冻结的受控阈值",
+      "status": "PASS",
+      "evidence": [
+        "output/candidate_evaluation/report.json"
+      ],
+      "details": {
+        "recall_at_5": 1.0,
+        "critical_miss_rate": 0.0,
+        "ece": 0.037792,
+        "calibration_improvement": 0.262208,
+        "missing_feature_recall_drop_percentage_points": 0.0
+      }
+    },
+    {
+      "requirement_id": "gate_2_safe_fallback",
+      "title": "Gate 2 使用真实证据且未获支持的 FRC 正式切流保持阻断",
+      "status": "PASS",
+      "evidence": [
+        "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json",
+        "output/rag_evaluation/controlled_domain_sensitivity/controlled_domain_sensitivity.json",
+        "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation.json",
+        "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation.json",
+        "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation_cases.jsonl.gz",
+        "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
+        "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity_cases.jsonl.gz",
+        "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation.json",
+        "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation_cases.jsonl.gz",
+        "benchmarks/eurlex_temporal_selection.json",
+        "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.json",
+        "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation_cases.jsonl.gz",
+        "flood_system/response_workflow/service.py"
+      ],
+      "details": {
+        "gate_2": "NO-GO",
+        "pipeline_feasible": true,
+        "conflicts_cases": 458,
+        "strongest_reproducible_baseline": "coverage_greedy_proxy",
+        "baseline_accuracy": 0.344978,
+        "frc_accuracy": 0.334061,
+        "ablation_variants_planned": 9,
+        "experiment_coverage_complete": false,
+        "token_budget_sensitivity": "RUN",
+        "missing_ratio_sensitivity": "RUN",
+        "controlled_domain_sensitivity": "RUN_CONTROLLED_DOMAIN",
+        "role_field_weight_sensitivity": "RUN_PUBLIC_EXPERT_FIELD_REAL_MODEL_ROLE_DIAGNOSTIC",
+        "conflict_threshold_sensitivity": "RUN_REAL_MODEL_CONFLICTS",
+        "conflicts_real_model_ablation": "RUN_REAL_MODEL_CONFLICTS",
+        "housing_real_model_ablation": "RUN_PUBLIC_EXPERT_REAL_MODEL_JURISDICTION_2021",
+        "housing_full_field_coverage": 0.70625,
+        "housing_strongest_baseline": "field_decomposition_topk",
+        "housing_weight_sensitivity": "RUN_PUBLIC_EXPERT_FIELD_REAL_MODEL_ROLE_DIAGNOSTIC",
+        "housing_weight_field_values": [
+          0.0,
+          0.5,
+          1.0,
+          2.0,
+          4.0,
+          8.0
+        ],
+        "housing_weight_role_values": [
+          0.0,
+          0.5,
+          1.0,
+          2.0,
+          4.0
+        ],
+        "technical_sensitivity_matrix_complete": true,
+        "flood_domain_expert_validation_complete": false,
+        "lawshift_temporal_ablation": "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL",
+        "lawshift_full_exact_evidence_accuracy": 0.427419,
+        "lawshift_strongest_baseline": "applicability_filtered_cross_encoder_top1",
+        "eurlex_temporal_ablation": "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL",
+        "eurlex_full_exact_evidence_accuracy": 1.0,
+        "eurlex_strongest_baseline": "applicability_filtered_cross_encoder_top1",
+        "version_replacement_applicability": "RUN_PUBLIC_EXPERT_REVIEWED_REVISION_REAL_MODEL",
+        "effective_or_expiry_dates": "RUN_PUBLIC_OFFICIAL_EFFECTIVE_EXPIRY_REAL_MODEL",
+        "ablation_variants_run": 9
+      }
+    },
+    {
+      "requirement_id": "controlled_performance",
+      "title": "全部冻结的受控 API 性能预算通过",
+      "status": "PASS",
+      "evidence": [
+        "output/performance/controlled_performance_report.json"
+      ],
+      "details": {
+        "status": "PASS",
+        "check_count": 4
+      }
+    },
+    {
+      "requirement_id": "external_boundaries",
+      "title": "生产、真实数据与独立人员条件明确保持外部 No-Go",
+      "status": "PASS",
+      "evidence": [
+        "docs/progressive_upgrade/completion_traceability_audit.md"
+      ],
+      "details": {
+        "missing_boundary_markers": []
+      }
+    },
+    {
+      "requirement_id": "design_contract_traceability",
+      "title": "第 18.3—18.6、22 和 23 节的 89 条显式合同逐条归属且外部条件不冒充完成",
+      "status": "PASS",
+      "evidence": [
+        "docs/progressive_upgrade/design_contract_evidence_policy.json",
+        "output/acceptance/legacy_baseline_manifest.json",
+        "output/acceptance/design_contract_audit.json",
+        "output/acceptance/design_contract_audit.md",
+        "tests/test_design_contract_audit.py"
+      ],
+      "details": {
+        "committed_report_matches_rebuild": true,
+        "item_count": 89,
+        "controlled_or_local_pass_count": 87,
+        "external_no_go_ids": [
+          "18.4-10",
+          "22.4-10"
+        ],
+        "legacy_baseline_source_commit": "2db016af915ada1912afe91d315defe844dba09d",
+        "legacy_database_sha256": "40198e9fe2bd9b5e55dcb9db8cc897639695bfc8668f9a58dd440dfe490b8908",
+        "legacy_rag_index_sha256": "d557eee3a09f32ae4d059bc6e88693946d606073d7603a2aeeee82b6ba43a539"
+      }
+    }
+  ],
+  "evidence_sha256": {
+    "output/floodagent_bench/scenario_acceptance_report.json": "4ffee56ef50bfca5de88d27ea20f5dbb510f0a2c585371e3de9d5e95eebb87d6",
+    "output/candidate_evaluation/report.json": "4f25d27e8411bae5906cc4bf8c33eeeba664201fc82e18cb4adfe36085f7c9eb",
+    "output/performance/controlled_performance_report.json": "1395a8157033f4229c4c6dc896558b93fea41f10742f068d772b9cc91f8d7fc0",
+    "output/rag_evaluation/public_frc_reference/public_frc_reference_report.json": "f414a12fad2024988a091c86b450331ff467c15645ecf6c75183bd89d9a9637a",
+    "docs/openapi.json": "9bf7fe76a2709065d6a89abc598ad1e347d5730377a443ff854a280622f62d57",
+    "docker-compose.yml": "8204abc75a6e82041d16e52d09e94e4f84de19f00f5a9cc9338dcd91ed76a33e",
+    "洪水预警响应系统_渐进式迭代开发与升级设计.md": "046816397ec55656ae3fedc354e5714118c5b291c28c61e26eeba57c73082a8d",
+    "面向区县防办的洪水预警响应系统_升级设计说明V3.md": "b059960b880d7bc2be0891e5e676d353548aca79a692438c8538721426f9e88d",
+    "docs/progressive_upgrade/completion_traceability_audit.md": "f9a239ca8865da78e5e4c1efa61d5df80ea3297d796bccc39f18367a997a9f5f",
+    "docs/V3_upgrade_acceptance_matrix.md": "61da2b20c6ffcdde37f32cf8170a9e7b4f10daa887260406e894cd2ba6350888",
+    "output/rag_evaluation/controlled_domain_sensitivity/controlled_domain_sensitivity.json": "55e100bca5db241c4bce411060f555e683ccfef48ed2a9ad36f2c660c8135256",
+    "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation.json": "f3d73309005e7ba6d1baf7d3a0f5365954fd3463c1a4037f6cecc075552aca31",
+    "output/rag_evaluation/conflicts_frc_ablation/conflicts_frc_ablation_cases.jsonl.gz": "d4a60ed544c0c6701715f0036e673881d0a1fd4523c8e9f789fad2ac39501e55",
+    "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation.json": "439b7e4438658dad4c9e44783bf946bfca07d60bd7b1ed83a81b79e8a53e6597",
+    "output/rag_evaluation/housing_frc_ablation/housing_frc_ablation_cases.jsonl.gz": "4fef11fbaf1673980f6bdcfd3c5d23066b6aeb03514806bf867362cf62fbc687",
+    "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json": "a3829ca843fca740443e8b97c431daf3a791a5fc699bd20b66351a303d762975",
+    "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.md": "058e800a9c49dd093337954ca4c1e6f39eb72c780da0c0d88a6248d628e95573",
+    "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity_cases.jsonl.gz": "ab16b3df7138969b6253465f079fc5b4aa18de8ce92bc3899339be87c52d75cb",
+    "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation.json": "4145413531b35a47413e7138e2107bca1bcf8bd5c0f5bf462444cd9a099bc444",
+    "output/rag_evaluation/lawshift_temporal_ablation/lawshift_temporal_ablation_cases.jsonl.gz": "68dc98188990a8780072dcf444f149b45e8c9abfb253a16bd064fe736997a31d",
+    "benchmarks/eurlex_temporal_selection.json": "9e1f23319ebff661b861107a7a2d3c50104024b93403d99ae0d6f421554bfc1d",
+    "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.json": "0c707d3ea3ee5138ee041b5b10b7a3b1fbbb70f91acfee7d0727e7fcc4faae1f",
+    "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.md": "42f9b0e8815c531abd3dee4326cdfa2fa6af7a00bfa7fb9389be9b58f05a6f79",
+    "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation_cases.jsonl.gz": "3d895269322eafea152cb366aaa50714beb6e209ac16b1d7c0df53464c31eda0",
+    "docs/progressive_upgrade/design_contract_evidence_policy.json": "b91aeaf972912b47d396f0e86bfdc64e636bda83cd31dde799abb6b627afa088",
+    "output/acceptance/legacy_baseline_manifest.json": "f950ac1274207a32650813d288beb91302392e60d96f762346f579d7f4c46230",
+    "output/acceptance/legacy_baseline_manifest.md": "dae91658b9192b8e1a0cd71378e444bc1a38c76a7aa8901656b0cd6cd35b5180",
+    "output/acceptance/design_contract_audit.json": "6e925bad22470033cda176db1e1657f79454d9107429a735a01404cf71558a10",
+    "output/acceptance/design_contract_audit.md": "1da99969dd41e66de93d57bc4c24a802c30d8939e5de93effddb45f48022f87c"
+  },
+  "external_no_go": [
+    {
+      "item": "authoritative_warning_gis_and_object_data",
+      "status": "NO-GO_EXTERNAL",
+      "reason": "requires authoritative organization, production environment, or independent human evidence"
+    },
+    {
+      "item": "production_postgresql_authority_switch",
+      "status": "NO-GO_EXTERNAL",
+      "reason": "requires authoritative organization, production environment, or independent human evidence"
+    },
+    {
+      "item": "production_idp_mfa_tls_kms",
+      "status": "NO-GO_EXTERNAL",
+      "reason": "requires authoritative organization, production environment, or independent human evidence"
+    },
+    {
+      "item": "real_cross_department_dispatch",
+      "status": "NO-GO_EXTERNAL",
+      "reason": "requires authoritative organization, production environment, or independent human evidence"
+    },
+    {
+      "item": "independent_expert_annotation_and_adjudication",
+      "status": "NO-GO_EXTERNAL",
+      "reason": "requires authoritative organization, production environment, or independent human evidence"
+    },
+    {
+      "item": "third_party_penetration_test",
+      "status": "NO-GO_EXTERNAL",
+      "reason": "requires authoritative organization, production environment, or independent human evidence"
+    },
+    {
+      "item": "remote_host_disaster_recovery",
+      "status": "NO-GO_EXTERNAL",
+      "reason": "requires authoritative organization, production environment, or independent human evidence"
+    },
+    {
+      "item": "real_role_uat",
+      "status": "NO-GO_EXTERNAL",
+      "reason": "requires authoritative organization, production environment, or independent human evidence"
+    },
+    {
+      "item": "legacy_production_traffic_retirement",
+      "status": "NO-GO_EXTERNAL",
+      "reason": "requires authoritative organization, production environment, or independent human evidence"
+    }
+  ],
+  "interpretation": "PASS proves the repository's controlled first-iteration contract only. It does not convert Gate 2 or any external production/UAT item into GO."
+}
