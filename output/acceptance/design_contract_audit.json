@@ -241,7 +241,7 @@
         {
           "path": "README.md",
           "contains": "FRC-RAG",
-          "sha256": "f9eb917aa3a96841e7f2550a9fc1f7d914a51ded2d440f84e02c8da6c990f210"
+          "sha256": "73a74730d44e9e11e47ff006d1657ee53b6669e071f291068dd21b85b8a9cb8b"
         },
         {
           "path": "docs/V3_upgrade_acceptance_matrix.md",

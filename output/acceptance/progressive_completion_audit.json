@@ -344,7 +344,7 @@
     "docs/progressive_upgrade/design_contract_evidence_policy.json": "b91aeaf972912b47d396f0e86bfdc64e636bda83cd31dde799abb6b627afa088",
     "output/acceptance/legacy_baseline_manifest.json": "f950ac1274207a32650813d288beb91302392e60d96f762346f579d7f4c46230",
     "output/acceptance/legacy_baseline_manifest.md": "dae91658b9192b8e1a0cd71378e444bc1a38c76a7aa8901656b0cd6cd35b5180",
-    "output/acceptance/design_contract_audit.json": "7ce66e214c234243d41eb303ab93ca7a317ca860f6211506f36007f8a6a0c3af",
+    "output/acceptance/design_contract_audit.json": "6e925bad22470033cda176db1e1657f79454d9107429a735a01404cf71558a10",
     "output/acceptance/design_contract_audit.md": "1da99969dd41e66de93d57bc4c24a802c30d8939e5de93effddb45f48022f87c"
   },
   "external_no_go": [
