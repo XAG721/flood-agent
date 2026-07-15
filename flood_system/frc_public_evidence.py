@@ -2893,7 +2893,7 @@ def build_public_reference_report(
         limitations.extend(eurlex_ablation.get("limitations", []))
     return {
         "metadata": {
-            "name": "FRC-Select public-dataset real-model reference audit",
+            "name": "FRC-RAG public-dataset real-model reference audit",
             "reference_root": str(reference_root.resolve()),
             "scoring_backend": "real",
             "embedding_model": "BAAI/bge-large-en-v1.5",
@@ -2992,7 +2992,7 @@ def build_public_reference_report(
 def render_public_reference_markdown(report: dict[str, Any]) -> str:
     metadata = report["metadata"]
     lines = [
-        "# FRC-Select 公开数据真实模型参考审计",
+        "# FRC-RAG 公开数据真实模型参考审计",
         "",
         f"- Embedding：`{metadata['embedding_model']}`",
         f"- Reranker：`{metadata['reranker_model']}`",

@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "name": "FRC-Select public-dataset real-model reference audit",
+    "name": "FRC-RAG public-dataset real-model reference audit",
     "reference_root": "D:\\RAG_test\\frc-select",
     "scoring_backend": "real",
     "embedding_model": "BAAI/bge-large-en-v1.5",

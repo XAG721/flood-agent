@@ -1,6 +1,6 @@
 # 渐进式升级完成度与全目标追溯审计
 
-审计日期：2026-07-15
+审计日期：2026-07-16
 
 审计合同：仓库根目录《洪水预警响应系统_渐进式迭代开发与升级设计.md》。本文逐项区分仓库内实现、受控模拟证据和必须由真实机构或生产环境提供的外部证据，不用自动测试替代真实上线验收。
 
@@ -61,7 +61,7 @@
 | M0—M3 | GO / 本地模拟 GO | 冻结提交 `2db016a` 已离线重建 SQLite 和 22 篇 RAG 索引并保存逐表/逐输入哈希；资产、架构边界和迁移机制完成 |
 | M4 | 机制 GO / 算法 NO-GO | 影子比较完成，FRC 正式切换被 Gate 2 阻断 |
 | M5 | GO | 工作流安全不变量通过 |
-| M6 | CONDITIONAL（受控环境已验证） | 页面/API 回退与模拟路由由 PR #1 的 Compose/Chromium 持续门禁复验；真实生产路由稳定性仍待 UAT |
+| M6 | CONDITIONAL（受控环境已验证） | 页面/API 回退与模拟路由由 `main` 的 Compose/Chromium 持续门禁复验；真实生产路由稳定性仍待 UAT |
 | M7 | NO-GO | 需要真实旧流量归零、在途事件清空、归档恢复和账号撤权 |
 
 ## 6. 第 20 节交付物核对
@@ -82,7 +82,7 @@
 | Node 依赖安全 | 两套工程 `npm audit --audit-level=high` 均为 0 个漏洞 |
 | 受控性能 | 4/4 端点预算通过，160 次请求错误率均为 0 |
 | 场景追溯 | 24/24，`PASS` |
-| GitHub Actions | PR #1 最新提交执行后端、前端、安全、Compose/Chromium/PostGIS 4/4；89 条合同账本与机器完成性审计均由 CI 确定性重建并逐字节比较 |
+| GitHub Actions | `main` 合并提交执行后端、前端、安全、Compose/Chromium/PostGIS 4/4；89 条合同账本与机器完成性审计均由 CI 确定性重建并逐字节比较 |
 
 旧系统基线清单位于 `output/acceptance/legacy_baseline_manifest.json` 和 `.md`：冻结完整 Git commit/tree/archive、四类重建输入的 blob 身份与清单哈希、SQLite 逐表行数/内容哈希和 RAG 索引哈希。实际数据库和运行索引仅保存在忽略的 `.cache/legacy_baseline/`，不提交运行数据或密钥；该清单不替代生产数据库归档。
 

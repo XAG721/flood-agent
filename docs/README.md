@@ -11,9 +11,8 @@
 ## 当前实现与验收
 
 - [`releases/v0.3.0.md`](./releases/v0.3.0.md)：当前版本的外部接口仿真、场景目录、浏览器验收、性能和安全更新报告。
-- [`releases/v0.2.0.md`](./releases/v0.2.0.md)：上一版本的全仓清理与结构重构报告。
 - [`progressive_upgrade/`](./progressive_upgrade/)：资产处置、合同、数据字典、运维、安全、评测和阶段验收。
-- [`progressive_upgrade/frc_public_evaluation_protocol.md`](./progressive_upgrade/frc_public_evaluation_protocol.md)：FRC-Select 公开数据真实模型参考审计的公平协议、难例覆盖和 Gate 2 判据。
+- [`progressive_upgrade/frc_public_evaluation_protocol.md`](./progressive_upgrade/frc_public_evaluation_protocol.md)：FRC-RAG 公开数据真实模型参考审计的公平协议、难例覆盖和 Gate 2 判据。
 - [`../output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.md`](../output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.md)：HousingQA 冻结真实模型字段/角色权重敏感性与限制。
 - [`progressive_upgrade/completion_traceability_audit.md`](./progressive_upgrade/completion_traceability_audit.md)：最新设计合同的阶段、场景、切换清单、门禁和交付物逐项追溯结论。
 - [`../output/acceptance/design_contract_audit.md`](../output/acceptance/design_contract_audit.md)：最新设计 89 条显式条件的逐条证据与外部 No-Go 账本。
@@ -22,10 +21,6 @@
 - [`V3_upgrade_acceptance_matrix.md`](./V3_upgrade_acceptance_matrix.md)：V3 功能证据与外部阻塞边界。
 - [`openapi.json`](./openapi.json)：由运行中 FastAPI 应用导出的接口快照。
 - [`../infra/postgis/README.md`](../infra/postgis/README.md)：PostGIS 影子迁移和对账说明。
-
-## 兼容演示子系统
-
-[`agent_twin_upgrade/`](./agent_twin_upgrade/) 只保留仍用于演示或真实数据接入的材料：甲方演示脚本、真实数据需求和字段字典。旧 AgentTwin 入口是兼容展示层，不是响应域正式状态源。
 
 ## 维护规则
 
