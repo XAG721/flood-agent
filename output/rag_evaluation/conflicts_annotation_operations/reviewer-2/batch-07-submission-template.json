@@ -1,0 +1,1228 @@
+{
+  "schema_version": "frc-conflicts-annotation-batch-submission-v1",
+  "operations_id": "CONFLICTS-ANNOTATION-OPS-5A6EE0F6420F2251",
+  "package_id": "CONFLICTS-BEHAVIOR-5ABAB8ED31F83E6C",
+  "reviewer_slot": "reviewer_2",
+  "batch_id": "REVIEWER_2-B07",
+  "annotator_id": "REPLACE_WITH_PRIVATE_REVIEWER_2_ID",
+  "decisions": [
+    {
+      "review_task_id": "TASK-6DC768A8620DEE3B",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-7D66A379E9F94625",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-2875F99BCE3F1DE2",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-24D8608409ECA813",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-7712BA63F5F9A542",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-70F819CA1704B056",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-A48CFC18E1B5F501",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-ECC294D445C7484A",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-E2C7E0D74ADB3184",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-719607B5617593F7",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-EEF7F35FDF72FBE8",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-3CAD5116C45C7EA6",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-4437D240AB361EA5",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-60286BB033BAEB4F",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-4B29128DB849B37D",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-F8EF01E46837FDA2",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-D8F680C0A54D06AA",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-227643A138164776",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-43074849F913B266",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-1D8E2ACF4855A53C",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-3C42BE96BB8630F7",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-2EC782E9A49E1CB1",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-F44B8A8476AA55DF",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-90F583EB9F124045",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-C3B5A5DBE649C4F9",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-D39D39B315E143BD",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-B73623A30450A7E5",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-BFF84AE0DE2274D9",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-45825672C8AB1F1D",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-FB01F071C2A844DC",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-FB0A043E07CB6E87",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-23AA128DF6F2C3D6",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-8D5AFB9A593D883D",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-4589AE48929FA977",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-B265F63AA8FCBF70",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-941639B308F4AF4D",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-9733CFA25CBB307F",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-3A9D11901792FBD0",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-203355D051CD9538",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-E58A1B422C766A06",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-55E31069B2978707",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-6ADDDD8C232D8695",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-DE50317324707B84",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-A44D59DFF2FA4F3A",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-C22FA823AE551E45",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-4832331E15C2B8DF",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-BE6935F442579ED7",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-8F559A8B906C482F",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-CAFFC23296B7CE71",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-4A9EA06A624CC9B5",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-B6ADABE1993E7393",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-4E2394615CBABD21",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-0F3DCF993EAF6B49",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-946AD1BDEAADF4A1",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-B59E68BB39581870",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-B8392F09CDEE2B3B",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-C86AC728D47BC66E",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "NOT_APPLICABLE",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    },
+    {
+      "review_task_id": "TASK-40F7D861E46210BA",
+      "ratings": {
+        "A": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        },
+        "B": {
+          "expected_behavior_adherence": "REQUIRED",
+          "factual_grounding": "REQUIRED",
+          "citation_correctness": "REQUIRED",
+          "answer_correctness": "REQUIRED",
+          "rationale": "REQUIRED: explain all four ratings"
+        }
+      },
+      "preference": "REQUIRED",
+      "notes": ""
+    }
+  ]
+}

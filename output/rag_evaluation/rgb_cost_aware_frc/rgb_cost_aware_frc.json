@@ -1,0 +1,1303 @@
+{
+  "aggregates": {
+    "dataset_budget": {
+      "rgb_en_fact": {
+        "budgets": {
+          "1024": {
+            "cost_aware_minus_strongest": 0.000382,
+            "methods": {
+              "bm25_topk": {
+                "budget_shortfall": 834.989796,
+                "budget_utilization": 0.18458,
+                "complete_gold_unit_coverage": 0.071429,
+                "evidence_f1": 0.273928,
+                "gold_unit_recall": 0.358013,
+                "negative_selection_rate": 0.491837,
+                "positive_precision": 0.257143,
+                "positive_wrong_selection_rate": 0.25102,
+                "selected_count": 5.0,
+                "selected_token_cost": 189.010204
+              },
+              "coverage_greedy_proxy": {
+                "budget_shortfall": 832.683673,
+                "budget_utilization": 0.186832,
+                "complete_gold_unit_coverage": 0.234694,
+                "evidence_f1": 0.418908,
+                "gold_unit_recall": 0.58371,
+                "negative_selection_rate": 0.265306,
+                "positive_precision": 0.37551,
+                "positive_wrong_selection_rate": 0.359184,
+                "selected_count": 5.0,
+                "selected_token_cost": 191.316327
+              },
+              "cross_encoder_density": {
+                "budget_shortfall": 841.163265,
+                "budget_utilization": 0.178551,
+                "complete_gold_unit_coverage": 0.244898,
+                "evidence_f1": 0.417547,
+                "gold_unit_recall": 0.581329,
+                "negative_selection_rate": 0.273469,
+                "positive_precision": 0.377551,
+                "positive_wrong_selection_rate": 0.34898,
+                "selected_count": 5.0,
+                "selected_token_cost": 182.836735
+              },
+              "cross_encoder_knapsack": {
+                "budget_shortfall": 831.755102,
+                "budget_utilization": 0.187739,
+                "complete_gold_unit_coverage": 0.244898,
+                "evidence_f1": 0.41957,
+                "gold_unit_recall": 0.590699,
+                "negative_selection_rate": 0.257143,
+                "positive_precision": 0.373469,
+                "positive_wrong_selection_rate": 0.369388,
+                "selected_count": 5.0,
+                "selected_token_cost": 192.244898
+              },
+              "cross_encoder_topk": {
+                "budget_shortfall": 831.755102,
+                "budget_utilization": 0.187739,
+                "complete_gold_unit_coverage": 0.244898,
+                "evidence_f1": 0.41957,
+                "gold_unit_recall": 0.590699,
+                "negative_selection_rate": 0.257143,
+                "positive_precision": 0.373469,
+                "positive_wrong_selection_rate": 0.369388,
+                "selected_count": 5.0,
+                "selected_token_cost": 192.244898
+              },
+              "dense_topk": {
+                "budget_shortfall": 833.72449,
+                "budget_utilization": 0.185816,
+                "complete_gold_unit_coverage": 0.142857,
+                "evidence_f1": 0.362981,
+                "gold_unit_recall": 0.487828,
+                "negative_selection_rate": 0.346939,
+                "positive_precision": 0.334694,
+                "positive_wrong_selection_rate": 0.318367,
+                "selected_count": 5.0,
+                "selected_token_cost": 190.27551
+              },
+              "frc_cost_aware_v35": {
+                "budget_shortfall": 840.734694,
+                "budget_utilization": 0.17897,
+                "complete_gold_unit_coverage": 0.255102,
+                "evidence_f1": 0.419952,
+                "gold_unit_recall": 0.58507,
+                "negative_selection_rate": 0.273469,
+                "positive_precision": 0.379592,
+                "positive_wrong_selection_rate": 0.346939,
+                "selected_count": 5.0,
+                "selected_token_cost": 183.265306
+              },
+              "frc_select_v34": {
+                "budget_shortfall": 831.744898,
+                "budget_utilization": 0.187749,
+                "complete_gold_unit_coverage": 0.244898,
+                "evidence_f1": 0.41957,
+                "gold_unit_recall": 0.590699,
+                "negative_selection_rate": 0.257143,
+                "positive_precision": 0.373469,
+                "positive_wrong_selection_rate": 0.369388,
+                "selected_count": 5.0,
+                "selected_token_cost": 192.255102
+              },
+              "hybrid_topk": {
+                "budget_shortfall": 834.642857,
+                "budget_utilization": 0.184919,
+                "complete_gold_unit_coverage": 0.163265,
+                "evidence_f1": 0.345312,
+                "gold_unit_recall": 0.467942,
+                "negative_selection_rate": 0.402041,
+                "positive_precision": 0.318367,
+                "positive_wrong_selection_rate": 0.279592,
+                "selected_count": 5.0,
+                "selected_token_cost": 189.357143
+              }
+            },
+            "strongest_baseline": "cross_encoder_topk"
+          },
+          "1500": {
+            "cost_aware_minus_strongest": 0.000382,
+            "methods": {
+              "bm25_topk": {
+                "budget_shortfall": 1310.989796,
+                "budget_utilization": 0.126007,
+                "complete_gold_unit_coverage": 0.071429,
+                "evidence_f1": 0.273928,
+                "gold_unit_recall": 0.358013,
+                "negative_selection_rate": 0.491837,
+                "positive_precision": 0.257143,
+                "positive_wrong_selection_rate": 0.25102,
+                "selected_count": 5.0,
+                "selected_token_cost": 189.010204
+              },
+              "coverage_greedy_proxy": {
+                "budget_shortfall": 1308.683673,
+                "budget_utilization": 0.127544,
+                "complete_gold_unit_coverage": 0.234694,
+                "evidence_f1": 0.418908,
+                "gold_unit_recall": 0.58371,
+                "negative_selection_rate": 0.265306,
+                "positive_precision": 0.37551,
+                "positive_wrong_selection_rate": 0.359184,
+                "selected_count": 5.0,
+                "selected_token_cost": 191.316327
+              },
+              "cross_encoder_density": {
+                "budget_shortfall": 1317.163265,
+                "budget_utilization": 0.121891,
+                "complete_gold_unit_coverage": 0.244898,
+                "evidence_f1": 0.417547,
+                "gold_unit_recall": 0.581329,
+                "negative_selection_rate": 0.273469,
+                "positive_precision": 0.377551,
+                "positive_wrong_selection_rate": 0.34898,
+                "selected_count": 5.0,
+                "selected_token_cost": 182.836735
+              },
+              "cross_encoder_knapsack": {
+                "budget_shortfall": 1307.755102,
+                "budget_utilization": 0.128163,
+                "complete_gold_unit_coverage": 0.244898,
+                "evidence_f1": 0.41957,
+                "gold_unit_recall": 0.590699,
+                "negative_selection_rate": 0.257143,
+                "positive_precision": 0.373469,
+                "positive_wrong_selection_rate": 0.369388,
+                "selected_count": 5.0,
+                "selected_token_cost": 192.244898
+              },
+              "cross_encoder_topk": {
+                "budget_shortfall": 1307.755102,
+                "budget_utilization": 0.128163,
+                "complete_gold_unit_coverage": 0.244898,
+                "evidence_f1": 0.41957,
+                "gold_unit_recall": 0.590699,
+                "negative_selection_rate": 0.257143,
+                "positive_precision": 0.373469,
+                "positive_wrong_selection_rate": 0.369388,
+                "selected_count": 5.0,
+                "selected_token_cost": 192.244898
+              },
+              "dense_topk": {
+                "budget_shortfall": 1309.72449,
+                "budget_utilization": 0.12685,
+                "complete_gold_unit_coverage": 0.142857,
+                "evidence_f1": 0.362981,
+                "gold_unit_recall": 0.487828,
+                "negative_selection_rate": 0.346939,
+                "positive_precision": 0.334694,
+                "positive_wrong_selection_rate": 0.318367,
+                "selected_count": 5.0,
+                "selected_token_cost": 190.27551
+              },
+              "frc_cost_aware_v35": {
+                "budget_shortfall": 1316.734694,
+                "budget_utilization": 0.122177,
+                "complete_gold_unit_coverage": 0.255102,
+                "evidence_f1": 0.419952,
+                "gold_unit_recall": 0.58507,
+                "negative_selection_rate": 0.273469,
+                "positive_precision": 0.379592,
+                "positive_wrong_selection_rate": 0.346939,
+                "selected_count": 5.0,
+                "selected_token_cost": 183.265306
+              },
+              "frc_select_v34": {
+                "budget_shortfall": 1307.744898,
+                "budget_utilization": 0.12817,
+                "complete_gold_unit_coverage": 0.244898,
+                "evidence_f1": 0.41957,
+                "gold_unit_recall": 0.590699,
+                "negative_selection_rate": 0.257143,
+                "positive_precision": 0.373469,
+                "positive_wrong_selection_rate": 0.369388,
+                "selected_count": 5.0,
+                "selected_token_cost": 192.255102
+              },
+              "hybrid_topk": {
+                "budget_shortfall": 1310.642857,
+                "budget_utilization": 0.126238,
+                "complete_gold_unit_coverage": 0.163265,
+                "evidence_f1": 0.345312,
+                "gold_unit_recall": 0.467942,
+                "negative_selection_rate": 0.402041,
+                "positive_precision": 0.318367,
+                "positive_wrong_selection_rate": 0.279592,
+                "selected_count": 5.0,
+                "selected_token_cost": 189.357143
+              }
+            },
+            "strongest_baseline": "cross_encoder_topk"
+          },
+          "512": {
+            "cost_aware_minus_strongest": 0.000382,
+            "methods": {
+              "bm25_topk": {
+                "budget_shortfall": 322.989796,
+                "budget_utilization": 0.369161,
+                "complete_gold_unit_coverage": 0.071429,
+                "evidence_f1": 0.273928,
+                "gold_unit_recall": 0.358013,
+                "negative_selection_rate": 0.491837,
+                "positive_precision": 0.257143,
+                "positive_wrong_selection_rate": 0.25102,
+                "selected_count": 5.0,
+                "selected_token_cost": 189.010204
+              },
+              "coverage_greedy_proxy": {
+                "budget_shortfall": 320.683673,
+                "budget_utilization": 0.373665,
+                "complete_gold_unit_coverage": 0.234694,
+                "evidence_f1": 0.418908,
+                "gold_unit_recall": 0.58371,
+                "negative_selection_rate": 0.265306,
+                "positive_precision": 0.37551,
+                "positive_wrong_selection_rate": 0.359184,
+                "selected_count": 5.0,
+                "selected_token_cost": 191.316327
+              },
+              "cross_encoder_density": {
+                "budget_shortfall": 329.163265,
+                "budget_utilization": 0.357103,
+                "complete_gold_unit_coverage": 0.244898,
+                "evidence_f1": 0.417547,
+                "gold_unit_recall": 0.581329,
+                "negative_selection_rate": 0.273469,
+                "positive_precision": 0.377551,
+                "positive_wrong_selection_rate": 0.34898,
+                "selected_count": 5.0,
+                "selected_token_cost": 182.836735
+              },
+              "cross_encoder_knapsack": {
+                "budget_shortfall": 319.755102,
+                "budget_utilization": 0.375478,
+                "complete_gold_unit_coverage": 0.244898,
+                "evidence_f1": 0.41957,
+                "gold_unit_recall": 0.590699,
+                "negative_selection_rate": 0.257143,
+                "positive_precision": 0.373469,
+                "positive_wrong_selection_rate": 0.369388,
+                "selected_count": 5.0,
+                "selected_token_cost": 192.244898
+              },
+              "cross_encoder_topk": {
+                "budget_shortfall": 319.755102,
+                "budget_utilization": 0.375478,
+                "complete_gold_unit_coverage": 0.244898,
+                "evidence_f1": 0.41957,
+                "gold_unit_recall": 0.590699,
+                "negative_selection_rate": 0.257143,
+                "positive_precision": 0.373469,
+                "positive_wrong_selection_rate": 0.369388,
+                "selected_count": 5.0,
+                "selected_token_cost": 192.244898
+              },
+              "dense_topk": {
+                "budget_shortfall": 321.72449,
+                "budget_utilization": 0.371632,
+                "complete_gold_unit_coverage": 0.142857,
+                "evidence_f1": 0.362981,
+                "gold_unit_recall": 0.487828,
+                "negative_selection_rate": 0.346939,
+                "positive_precision": 0.334694,
+                "positive_wrong_selection_rate": 0.318367,
+                "selected_count": 5.0,
+                "selected_token_cost": 190.27551
+              },
+              "frc_cost_aware_v35": {
+                "budget_shortfall": 328.734694,
+                "budget_utilization": 0.35794,
+                "complete_gold_unit_coverage": 0.255102,
+                "evidence_f1": 0.419952,
+                "gold_unit_recall": 0.58507,
+                "negative_selection_rate": 0.273469,
+                "positive_precision": 0.379592,
+                "positive_wrong_selection_rate": 0.346939,
+                "selected_count": 5.0,
+                "selected_token_cost": 183.265306
+              },
+              "frc_select_v34": {
+                "budget_shortfall": 319.744898,
+                "budget_utilization": 0.375498,
+                "complete_gold_unit_coverage": 0.244898,
+                "evidence_f1": 0.41957,
+                "gold_unit_recall": 0.590699,
+                "negative_selection_rate": 0.257143,
+                "positive_precision": 0.373469,
+                "positive_wrong_selection_rate": 0.369388,
+                "selected_count": 5.0,
+                "selected_token_cost": 192.255102
+              },
+              "hybrid_topk": {
+                "budget_shortfall": 322.642857,
+                "budget_utilization": 0.369838,
+                "complete_gold_unit_coverage": 0.163265,
+                "evidence_f1": 0.345312,
+                "gold_unit_recall": 0.467942,
+                "negative_selection_rate": 0.402041,
+                "positive_precision": 0.318367,
+                "positive_wrong_selection_rate": 0.279592,
+                "selected_count": 5.0,
+                "selected_token_cost": 189.357143
+              }
+            },
+            "strongest_baseline": "cross_encoder_topk"
+          }
+        },
+        "capability": "counterfactual_robustness",
+        "cases": 98
+      },
+      "rgb_en_int": {
+        "budgets": {
+          "1024": {
+            "cost_aware_minus_strongest": -0.060013,
+            "methods": {
+              "bm25_topk": {
+                "budget_shortfall": 217.28,
+                "budget_utilization": 0.787813,
+                "complete_gold_unit_coverage": 0.4,
+                "evidence_f1": 0.493169,
+                "gold_unit_recall": 0.636667,
+                "negative_selection_rate": 0.573667,
+                "positive_precision": 0.426333,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.82,
+                "selected_token_cost": 806.72
+              },
+              "coverage_greedy_proxy": {
+                "budget_shortfall": 221.79,
+                "budget_utilization": 0.783408,
+                "complete_gold_unit_coverage": 0.59,
+                "evidence_f1": 0.655844,
+                "gold_unit_recall": 0.773333,
+                "negative_selection_rate": 0.377833,
+                "positive_precision": 0.622167,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.87,
+                "selected_token_cost": 802.21
+              },
+              "cross_encoder_density": {
+                "budget_shortfall": 714.11,
+                "budget_utilization": 0.302627,
+                "complete_gold_unit_coverage": 0.49,
+                "evidence_f1": 0.597971,
+                "gold_unit_recall": 0.716667,
+                "negative_selection_rate": 0.448167,
+                "positive_precision": 0.551833,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.94,
+                "selected_token_cost": 309.89
+              },
+              "cross_encoder_knapsack": {
+                "budget_shortfall": 218.88,
+                "budget_utilization": 0.78625,
+                "complete_gold_unit_coverage": 0.58,
+                "evidence_f1": 0.662005,
+                "gold_unit_recall": 0.773333,
+                "negative_selection_rate": 0.374,
+                "positive_precision": 0.626,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.93,
+                "selected_token_cost": 805.12
+              },
+              "cross_encoder_topk": {
+                "budget_shortfall": 206.35,
+                "budget_utilization": 0.798486,
+                "complete_gold_unit_coverage": 0.58,
+                "evidence_f1": 0.667936,
+                "gold_unit_recall": 0.783333,
+                "negative_selection_rate": 0.373167,
+                "positive_precision": 0.626833,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.81,
+                "selected_token_cost": 817.65
+              },
+              "dense_topk": {
+                "budget_shortfall": 406.74,
+                "budget_utilization": 0.602793,
+                "complete_gold_unit_coverage": 0.4,
+                "evidence_f1": 0.589699,
+                "gold_unit_recall": 0.67,
+                "negative_selection_rate": 0.417,
+                "positive_precision": 0.583,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.91,
+                "selected_token_cost": 617.26
+              },
+              "frc_cost_aware_v35": {
+                "budget_shortfall": 710.24,
+                "budget_utilization": 0.306406,
+                "complete_gold_unit_coverage": 0.49,
+                "evidence_f1": 0.607923,
+                "gold_unit_recall": 0.726667,
+                "negative_selection_rate": 0.436833,
+                "positive_precision": 0.563167,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.94,
+                "selected_token_cost": 313.76
+              },
+              "frc_select_v34": {
+                "budget_shortfall": 207.52,
+                "budget_utilization": 0.797344,
+                "complete_gold_unit_coverage": 0.58,
+                "evidence_f1": 0.668091,
+                "gold_unit_recall": 0.778333,
+                "negative_selection_rate": 0.369,
+                "positive_precision": 0.631,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.82,
+                "selected_token_cost": 816.48
+              },
+              "hybrid_topk": {
+                "budget_shortfall": 255.61,
+                "budget_utilization": 0.750381,
+                "complete_gold_unit_coverage": 0.46,
+                "evidence_f1": 0.567274,
+                "gold_unit_recall": 0.69,
+                "negative_selection_rate": 0.482667,
+                "positive_precision": 0.517333,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.87,
+                "selected_token_cost": 768.39
+              }
+            },
+            "strongest_baseline": "cross_encoder_topk"
+          },
+          "1500": {
+            "cost_aware_minus_strongest": -0.044418,
+            "methods": {
+              "bm25_topk": {
+                "budget_shortfall": 506.95,
+                "budget_utilization": 0.662033,
+                "complete_gold_unit_coverage": 0.45,
+                "evidence_f1": 0.509797,
+                "gold_unit_recall": 0.666667,
+                "negative_selection_rate": 0.5615,
+                "positive_precision": 0.4385,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.99,
+                "selected_token_cost": 993.05
+              },
+              "coverage_greedy_proxy": {
+                "budget_shortfall": 541.66,
+                "budget_utilization": 0.638893,
+                "complete_gold_unit_coverage": 0.62,
+                "evidence_f1": 0.663468,
+                "gold_unit_recall": 0.788333,
+                "negative_selection_rate": 0.379,
+                "positive_precision": 0.621,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.98,
+                "selected_token_cost": 958.34
+              },
+              "cross_encoder_density": {
+                "budget_shortfall": 1150.29,
+                "budget_utilization": 0.23314,
+                "complete_gold_unit_coverage": 0.54,
+                "evidence_f1": 0.615955,
+                "gold_unit_recall": 0.746667,
+                "negative_selection_rate": 0.438,
+                "positive_precision": 0.562,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 5.0,
+                "selected_token_cost": 349.71
+              },
+              "cross_encoder_knapsack": {
+                "budget_shortfall": 496.48,
+                "budget_utilization": 0.669013,
+                "complete_gold_unit_coverage": 0.57,
+                "evidence_f1": 0.659738,
+                "gold_unit_recall": 0.768333,
+                "negative_selection_rate": 0.374,
+                "positive_precision": 0.626,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 5.0,
+                "selected_token_cost": 1003.52
+              },
+              "cross_encoder_topk": {
+                "budget_shortfall": 500.08,
+                "budget_utilization": 0.666613,
+                "complete_gold_unit_coverage": 0.58,
+                "evidence_f1": 0.662494,
+                "gold_unit_recall": 0.778333,
+                "negative_selection_rate": 0.3765,
+                "positive_precision": 0.6235,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.98,
+                "selected_token_cost": 999.92
+              },
+              "dense_topk": {
+                "budget_shortfall": 819.41,
+                "budget_utilization": 0.453727,
+                "complete_gold_unit_coverage": 0.42,
+                "evidence_f1": 0.596278,
+                "gold_unit_recall": 0.68,
+                "negative_selection_rate": 0.414,
+                "positive_precision": 0.586,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.99,
+                "selected_token_cost": 680.59
+              },
+              "frc_cost_aware_v35": {
+                "budget_shortfall": 1146.8,
+                "budget_utilization": 0.235467,
+                "complete_gold_unit_coverage": 0.52,
+                "evidence_f1": 0.61905,
+                "gold_unit_recall": 0.746667,
+                "negative_selection_rate": 0.432,
+                "positive_precision": 0.568,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 5.0,
+                "selected_token_cost": 353.2
+              },
+              "frc_select_v34": {
+                "budget_shortfall": 503.03,
+                "budget_utilization": 0.664647,
+                "complete_gold_unit_coverage": 0.59,
+                "evidence_f1": 0.672845,
+                "gold_unit_recall": 0.783333,
+                "negative_selection_rate": 0.3645,
+                "positive_precision": 0.6355,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.98,
+                "selected_token_cost": 996.97
+              },
+              "hybrid_topk": {
+                "budget_shortfall": 613.49,
+                "budget_utilization": 0.591007,
+                "complete_gold_unit_coverage": 0.53,
+                "evidence_f1": 0.592147,
+                "gold_unit_recall": 0.725,
+                "negative_selection_rate": 0.464,
+                "positive_precision": 0.536,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.99,
+                "selected_token_cost": 886.51
+              }
+            },
+            "strongest_baseline": "coverage_greedy_proxy"
+          },
+          "512": {
+            "cost_aware_minus_strongest": -0.052037,
+            "methods": {
+              "bm25_topk": {
+                "budget_shortfall": 82.92,
+                "budget_utilization": 0.838047,
+                "complete_gold_unit_coverage": 0.33,
+                "evidence_f1": 0.454277,
+                "gold_unit_recall": 0.56,
+                "negative_selection_rate": 0.593,
+                "positive_precision": 0.407,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.38,
+                "selected_token_cost": 429.08
+              },
+              "coverage_greedy_proxy": {
+                "budget_shortfall": 82.45,
+                "budget_utilization": 0.838965,
+                "complete_gold_unit_coverage": 0.58,
+                "evidence_f1": 0.649564,
+                "gold_unit_recall": 0.753333,
+                "negative_selection_rate": 0.3835,
+                "positive_precision": 0.6165,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.61,
+                "selected_token_cost": 429.55
+              },
+              "cross_encoder_density": {
+                "budget_shortfall": 271.87,
+                "budget_utilization": 0.469004,
+                "complete_gold_unit_coverage": 0.49,
+                "evidence_f1": 0.580035,
+                "gold_unit_recall": 0.691667,
+                "negative_selection_rate": 0.462667,
+                "positive_precision": 0.537333,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.79,
+                "selected_token_cost": 240.13
+              },
+              "cross_encoder_knapsack": {
+                "budget_shortfall": 88.22,
+                "budget_utilization": 0.827695,
+                "complete_gold_unit_coverage": 0.54,
+                "evidence_f1": 0.63901,
+                "gold_unit_recall": 0.733333,
+                "negative_selection_rate": 0.391,
+                "positive_precision": 0.609,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.7,
+                "selected_token_cost": 423.78
+              },
+              "cross_encoder_topk": {
+                "budget_shortfall": 76.7,
+                "budget_utilization": 0.850195,
+                "complete_gold_unit_coverage": 0.48,
+                "evidence_f1": 0.608457,
+                "gold_unit_recall": 0.703333,
+                "negative_selection_rate": 0.419833,
+                "positive_precision": 0.580167,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.51,
+                "selected_token_cost": 435.3
+              },
+              "dense_topk": {
+                "budget_shortfall": 113.57,
+                "budget_utilization": 0.778184,
+                "complete_gold_unit_coverage": 0.41,
+                "evidence_f1": 0.582723,
+                "gold_unit_recall": 0.67,
+                "negative_selection_rate": 0.438833,
+                "positive_precision": 0.561167,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.74,
+                "selected_token_cost": 398.43
+              },
+              "frc_cost_aware_v35": {
+                "budget_shortfall": 267.29,
+                "budget_utilization": 0.477949,
+                "complete_gold_unit_coverage": 0.48,
+                "evidence_f1": 0.597527,
+                "gold_unit_recall": 0.701667,
+                "negative_selection_rate": 0.438333,
+                "positive_precision": 0.561667,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.77,
+                "selected_token_cost": 244.71
+              },
+              "frc_select_v34": {
+                "budget_shortfall": 81.0,
+                "budget_utilization": 0.841797,
+                "complete_gold_unit_coverage": 0.51,
+                "evidence_f1": 0.634947,
+                "gold_unit_recall": 0.728333,
+                "negative_selection_rate": 0.389333,
+                "positive_precision": 0.610667,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.57,
+                "selected_token_cost": 431.0
+              },
+              "hybrid_topk": {
+                "budget_shortfall": 85.34,
+                "budget_utilization": 0.83332,
+                "complete_gold_unit_coverage": 0.46,
+                "evidence_f1": 0.548519,
+                "gold_unit_recall": 0.685,
+                "negative_selection_rate": 0.507667,
+                "positive_precision": 0.492333,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.62,
+                "selected_token_cost": 426.66
+              }
+            },
+            "strongest_baseline": "coverage_greedy_proxy"
+          }
+        },
+        "capability": "information_integration",
+        "cases": 100
+      },
+      "rgb_en_refine": {
+        "budgets": {
+          "1024": {
+            "cost_aware_minus_strongest": -0.113992,
+            "methods": {
+              "bm25_topk": {
+                "budget_shortfall": 155.516667,
+                "budget_utilization": 0.848128,
+                "complete_gold_unit_coverage": 0.013333,
+                "evidence_f1": 0.4503,
+                "gold_unit_recall": 0.394726,
+                "negative_selection_rate": 0.410778,
+                "positive_precision": 0.589222,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.873333,
+                "selected_token_cost": 868.483333
+              },
+              "coverage_greedy_proxy": {
+                "budget_shortfall": 169.096667,
+                "budget_utilization": 0.834867,
+                "complete_gold_unit_coverage": 0.073333,
+                "evidence_f1": 0.625468,
+                "gold_unit_recall": 0.551067,
+                "negative_selection_rate": 0.196833,
+                "positive_precision": 0.803167,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.916667,
+                "selected_token_cost": 854.903333
+              },
+              "cross_encoder_density": {
+                "budget_shortfall": 608.993333,
+                "budget_utilization": 0.40528,
+                "complete_gold_unit_coverage": 0.056667,
+                "evidence_f1": 0.506257,
+                "gold_unit_recall": 0.446002,
+                "negative_selection_rate": 0.348,
+                "positive_precision": 0.652,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.996667,
+                "selected_token_cost": 415.006667
+              },
+              "cross_encoder_knapsack": {
+                "budget_shortfall": 175.67,
+                "budget_utilization": 0.828447,
+                "complete_gold_unit_coverage": 0.073333,
+                "evidence_f1": 0.606416,
+                "gold_unit_recall": 0.537027,
+                "negative_selection_rate": 0.227333,
+                "positive_precision": 0.772667,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.996667,
+                "selected_token_cost": 848.33
+              },
+              "cross_encoder_topk": {
+                "budget_shortfall": 168.086667,
+                "budget_utilization": 0.835853,
+                "complete_gold_unit_coverage": 0.073333,
+                "evidence_f1": 0.602516,
+                "gold_unit_recall": 0.531665,
+                "negative_selection_rate": 0.228,
+                "positive_precision": 0.772,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.926667,
+                "selected_token_cost": 855.913333
+              },
+              "dense_topk": {
+                "budget_shortfall": 310.616667,
+                "budget_utilization": 0.696663,
+                "complete_gold_unit_coverage": 0.046667,
+                "evidence_f1": 0.569029,
+                "gold_unit_recall": 0.49957,
+                "negative_selection_rate": 0.262444,
+                "positive_precision": 0.737556,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.95,
+                "selected_token_cost": 713.383333
+              },
+              "frc_cost_aware_v35": {
+                "budget_shortfall": 604.32,
+                "budget_utilization": 0.409844,
+                "complete_gold_unit_coverage": 0.056667,
+                "evidence_f1": 0.511476,
+                "gold_unit_recall": 0.450926,
+                "negative_selection_rate": 0.342,
+                "positive_precision": 0.658,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.996667,
+                "selected_token_cost": 419.68
+              },
+              "frc_select_v34": {
+                "budget_shortfall": 168.076667,
+                "budget_utilization": 0.835863,
+                "complete_gold_unit_coverage": 0.073333,
+                "evidence_f1": 0.6054,
+                "gold_unit_recall": 0.534917,
+                "negative_selection_rate": 0.226,
+                "positive_precision": 0.774,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.933333,
+                "selected_token_cost": 855.923333
+              },
+              "hybrid_topk": {
+                "budget_shortfall": 203.946667,
+                "budget_utilization": 0.800833,
+                "complete_gold_unit_coverage": 0.043333,
+                "evidence_f1": 0.551266,
+                "gold_unit_recall": 0.484141,
+                "negative_selection_rate": 0.285833,
+                "positive_precision": 0.714167,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.946667,
+                "selected_token_cost": 820.053333
+              }
+            },
+            "strongest_baseline": "coverage_greedy_proxy"
+          },
+          "1500": {
+            "cost_aware_minus_strongest": -0.127688,
+            "methods": {
+              "bm25_topk": {
+                "budget_shortfall": 492.82,
+                "budget_utilization": 0.671453,
+                "complete_gold_unit_coverage": 0.026667,
+                "evidence_f1": 0.461549,
+                "gold_unit_recall": 0.406997,
+                "negative_selection_rate": 0.406667,
+                "positive_precision": 0.593333,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 5.0,
+                "selected_token_cost": 1007.18
+              },
+              "coverage_greedy_proxy": {
+                "budget_shortfall": 525.563333,
+                "budget_utilization": 0.649624,
+                "complete_gold_unit_coverage": 0.103333,
+                "evidence_f1": 0.645891,
+                "gold_unit_recall": 0.574509,
+                "negative_selection_rate": 0.183333,
+                "positive_precision": 0.816667,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 5.0,
+                "selected_token_cost": 974.436667
+              },
+              "cross_encoder_density": {
+                "budget_shortfall": 1069.953333,
+                "budget_utilization": 0.286698,
+                "complete_gold_unit_coverage": 0.063333,
+                "evidence_f1": 0.512985,
+                "gold_unit_recall": 0.453002,
+                "negative_selection_rate": 0.341333,
+                "positive_precision": 0.658667,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 5.0,
+                "selected_token_cost": 430.046667
+              },
+              "cross_encoder_knapsack": {
+                "budget_shortfall": 516.236667,
+                "budget_utilization": 0.655842,
+                "complete_gold_unit_coverage": 0.106667,
+                "evidence_f1": 0.6272,
+                "gold_unit_recall": 0.558807,
+                "negative_selection_rate": 0.208,
+                "positive_precision": 0.792,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 5.0,
+                "selected_token_cost": 983.763333
+              },
+              "cross_encoder_topk": {
+                "budget_shortfall": 506.52,
+                "budget_utilization": 0.66232,
+                "complete_gold_unit_coverage": 0.11,
+                "evidence_f1": 0.625639,
+                "gold_unit_recall": 0.557677,
+                "negative_selection_rate": 0.210667,
+                "positive_precision": 0.789333,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 5.0,
+                "selected_token_cost": 993.48
+              },
+              "dense_topk": {
+                "budget_shortfall": 733.63,
+                "budget_utilization": 0.510913,
+                "complete_gold_unit_coverage": 0.06,
+                "evidence_f1": 0.584857,
+                "gold_unit_recall": 0.515769,
+                "negative_selection_rate": 0.249333,
+                "positive_precision": 0.750667,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 5.0,
+                "selected_token_cost": 766.37
+              },
+              "frc_cost_aware_v35": {
+                "budget_shortfall": 1065.246667,
+                "budget_utilization": 0.289836,
+                "complete_gold_unit_coverage": 0.063333,
+                "evidence_f1": 0.518203,
+                "gold_unit_recall": 0.457926,
+                "negative_selection_rate": 0.335333,
+                "positive_precision": 0.664667,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 5.0,
+                "selected_token_cost": 434.753333
+              },
+              "frc_select_v34": {
+                "budget_shortfall": 508.08,
+                "budget_utilization": 0.66128,
+                "complete_gold_unit_coverage": 0.11,
+                "evidence_f1": 0.626445,
+                "gold_unit_recall": 0.558517,
+                "negative_selection_rate": 0.21,
+                "positive_precision": 0.79,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 5.0,
+                "selected_token_cost": 991.92
+              },
+              "hybrid_topk": {
+                "budget_shortfall": 587.99,
+                "budget_utilization": 0.608007,
+                "complete_gold_unit_coverage": 0.053333,
+                "evidence_f1": 0.570409,
+                "gold_unit_recall": 0.502848,
+                "negative_selection_rate": 0.267333,
+                "positive_precision": 0.732667,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 5.0,
+                "selected_token_cost": 912.01
+              }
+            },
+            "strongest_baseline": "coverage_greedy_proxy"
+          },
+          "512": {
+            "cost_aware_minus_strongest": -0.055548,
+            "methods": {
+              "bm25_topk": {
+                "budget_shortfall": 49.506667,
+                "budget_utilization": 0.903307,
+                "complete_gold_unit_coverage": 0.003333,
+                "evidence_f1": 0.38447,
+                "gold_unit_recall": 0.330583,
+                "negative_selection_rate": 0.484611,
+                "positive_precision": 0.515389,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.79,
+                "selected_token_cost": 462.493333
+              },
+              "coverage_greedy_proxy": {
+                "budget_shortfall": 50.873333,
+                "budget_utilization": 0.900638,
+                "complete_gold_unit_coverage": 0.016667,
+                "evidence_f1": 0.508304,
+                "gold_unit_recall": 0.438359,
+                "negative_selection_rate": 0.322778,
+                "positive_precision": 0.677222,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.85,
+                "selected_token_cost": 461.126667
+              },
+              "cross_encoder_density": {
+                "budget_shortfall": 202.91,
+                "budget_utilization": 0.603691,
+                "complete_gold_unit_coverage": 0.02,
+                "evidence_f1": 0.449828,
+                "gold_unit_recall": 0.389667,
+                "negative_selection_rate": 0.406,
+                "positive_precision": 0.594,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.953333,
+                "selected_token_cost": 309.09
+              },
+              "cross_encoder_knapsack": {
+                "budget_shortfall": 60.496667,
+                "budget_utilization": 0.881842,
+                "complete_gold_unit_coverage": 0.016667,
+                "evidence_f1": 0.494458,
+                "gold_unit_recall": 0.428623,
+                "negative_selection_rate": 0.347833,
+                "positive_precision": 0.652167,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.926667,
+                "selected_token_cost": 451.503333
+              },
+              "cross_encoder_topk": {
+                "budget_shortfall": 49.663333,
+                "budget_utilization": 0.903001,
+                "complete_gold_unit_coverage": 0.016667,
+                "evidence_f1": 0.485558,
+                "gold_unit_recall": 0.418086,
+                "negative_selection_rate": 0.347611,
+                "positive_precision": 0.652389,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.8,
+                "selected_token_cost": 462.336667
+              },
+              "dense_topk": {
+                "budget_shortfall": 79.766667,
+                "budget_utilization": 0.844206,
+                "complete_gold_unit_coverage": 0.013333,
+                "evidence_f1": 0.478184,
+                "gold_unit_recall": 0.413882,
+                "negative_selection_rate": 0.367333,
+                "positive_precision": 0.632667,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.916667,
+                "selected_token_cost": 432.233333
+              },
+              "frc_cost_aware_v35": {
+                "budget_shortfall": 199.326667,
+                "budget_utilization": 0.61069,
+                "complete_gold_unit_coverage": 0.02,
+                "evidence_f1": 0.452756,
+                "gold_unit_recall": 0.391617,
+                "negative_selection_rate": 0.399833,
+                "positive_precision": 0.600167,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.936667,
+                "selected_token_cost": 312.673333
+              },
+              "frc_select_v34": {
+                "budget_shortfall": 50.116667,
+                "budget_utilization": 0.902116,
+                "complete_gold_unit_coverage": 0.016667,
+                "evidence_f1": 0.494358,
+                "gold_unit_recall": 0.425101,
+                "negative_selection_rate": 0.335056,
+                "positive_precision": 0.664944,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.806667,
+                "selected_token_cost": 461.883333
+              },
+              "hybrid_topk": {
+                "budget_shortfall": 58.88,
+                "budget_utilization": 0.885,
+                "complete_gold_unit_coverage": 0.01,
+                "evidence_f1": 0.454576,
+                "gold_unit_recall": 0.392507,
+                "negative_selection_rate": 0.395111,
+                "positive_precision": 0.604889,
+                "positive_wrong_selection_rate": 0.0,
+                "selected_count": 4.886667,
+                "selected_token_cost": 453.12
+              }
+            },
+            "strongest_baseline": "coverage_greedy_proxy"
+          }
+        },
+        "capability": "noise_robustness",
+        "cases": 300
+      }
+    },
+    "family_equal_dataset_budget_weight": {
+      "bm25_topk": {
+        "budget_shortfall": 441.551413,
+        "budget_utilization": 0.598948,
+        "complete_gold_unit_coverage": 0.159735,
+        "evidence_f1": 0.397261,
+        "gold_unit_recall": 0.452187,
+        "negative_selection_rate": 0.500637,
+        "positive_precision": 0.41569,
+        "positive_wrong_selection_rate": 0.083673,
+        "selected_count": 4.872593,
+        "selected_token_cost": 570.448587
+      },
+      "coverage_greedy_proxy": {
+        "budget_shortfall": 450.38715,
+        "budget_utilization": 0.592715,
+        "complete_gold_unit_coverage": 0.298602,
+        "evidence_f1": 0.556141,
+        "gold_unit_recall": 0.625563,
+        "negative_selection_rate": 0.293244,
+        "positive_precision": 0.587028,
+        "positive_wrong_selection_rate": 0.119728,
+        "selected_count": 4.914074,
+        "selected_token_cost": 561.61285
+      },
+      "cross_encoder_density": {
+        "budget_shortfall": 722.846274,
+        "budget_utilization": 0.328665,
+        "complete_gold_unit_coverage": 0.266077,
+        "evidence_f1": 0.501741,
+        "gold_unit_recall": 0.576407,
+        "negative_selection_rate": 0.362731,
+        "positive_precision": 0.520943,
+        "positive_wrong_selection_rate": 0.116327,
+        "selected_count": 4.964444,
+        "selected_token_cost": 289.153726
+      },
+      "cross_encoder_knapsack": {
+        "budget_shortfall": 446.138738,
+        "budget_utilization": 0.593386,
+        "complete_gold_unit_coverage": 0.291262,
+        "evidence_f1": 0.549726,
+        "gold_unit_recall": 0.619061,
+        "negative_selection_rate": 0.299288,
+        "positive_precision": 0.577582,
+        "positive_wrong_selection_rate": 0.123129,
+        "selected_count": 4.95037,
+        "selected_token_cost": 565.861262
+      },
+      "cross_encoder_topk": {
+        "budget_shortfall": 440.74059,
+        "budget_utilization": 0.600872,
+        "complete_gold_unit_coverage": 0.286077,
+        "evidence_f1": 0.545701,
+        "gold_unit_recall": 0.616058,
+        "negative_selection_rate": 0.303023,
+        "positive_precision": 0.573848,
+        "positive_wrong_selection_rate": 0.123129,
+        "selected_count": 4.891852,
+        "selected_token_cost": 571.25941
+      },
+      "dense_topk": {
+        "budget_shortfall": 547.656311,
+        "budget_utilization": 0.507865,
+        "complete_gold_unit_coverage": 0.197619,
+        "evidence_f1": 0.498857,
+        "gold_unit_recall": 0.545856,
+        "negative_selection_rate": 0.354418,
+        "positive_precision": 0.53946,
+        "positive_wrong_selection_rate": 0.106122,
+        "selected_count": 4.945185,
+        "selected_token_cost": 464.343689
+      },
+      "frc_cost_aware_v35": {
+        "budget_shortfall": 719.936379,
+        "budget_utilization": 0.332142,
+        "complete_gold_unit_coverage": 0.266145,
+        "evidence_f1": 0.507421,
+        "gold_unit_recall": 0.581187,
+        "negative_selection_rate": 0.356082,
+        "positive_precision": 0.528271,
+        "positive_wrong_selection_rate": 0.115646,
+        "selected_count": 4.96037,
+        "selected_token_cost": 292.063621
+      },
+      "frc_select_v34": {
+        "budget_shortfall": 441.895336,
+        "budget_utilization": 0.599385,
+        "complete_gold_unit_coverage": 0.290522,
+        "evidence_f1": 0.551199,
+        "gold_unit_recall": 0.62007,
+        "negative_selection_rate": 0.296146,
+        "positive_precision": 0.580724,
+        "positive_wrong_selection_rate": 0.123129,
+        "selected_count": 4.901111,
+        "selected_token_cost": 570.104664
+      },
+      "hybrid_topk": {
+        "budget_shortfall": 474.79836,
+        "budget_utilization": 0.572171,
+        "complete_gold_unit_coverage": 0.227385,
+        "evidence_f1": 0.480014,
+        "gold_unit_recall": 0.542591,
+        "negative_selection_rate": 0.40097,
+        "positive_precision": 0.505832,
+        "positive_wrong_selection_rate": 0.093197,
+        "selected_count": 4.923704,
+        "selected_token_cost": 537.20164
+      }
+    }
+  },
+  "analysis": {
+    "dataset_budget_deltas": {
+      "rgb_en_fact::1024": 0.000382,
+      "rgb_en_fact::1500": 0.000382,
+      "rgb_en_fact::512": 0.000382,
+      "rgb_en_int::1024": -0.060013,
+      "rgb_en_int::1500": -0.044418,
+      "rgb_en_int::512": -0.052037,
+      "rgb_en_refine::1024": -0.113992,
+      "rgb_en_refine::1500": -0.127688,
+      "rgb_en_refine::512": -0.055548
+    },
+    "family_comparison": {
+      "cost_aware_minus_bootstrap_strongest_simultaneous": {
+        "ci_high": -0.032655,
+        "ci_low": -0.066307,
+        "resamples": 10000,
+        "seed": 20260801
+      },
+      "cost_aware_minus_observed_strongest": {
+        "baseline": "coverage_greedy_proxy",
+        "point": -0.048719
+      },
+      "cost_aware_minus_old_frc": {
+        "ci_high": -0.026205,
+        "ci_low": -0.061536,
+        "point": -0.043778,
+        "resamples": 10000,
+        "seed": 20260801
+      },
+      "method_primary_means": {
+        "bm25_topk": 0.397261,
+        "coverage_greedy_proxy": 0.556141,
+        "cross_encoder_density": 0.501741,
+        "cross_encoder_knapsack": 0.549726,
+        "cross_encoder_topk": 0.545701,
+        "dense_topk": 0.498857,
+        "frc_cost_aware_v35": 0.507421,
+        "frc_select_v34": 0.551199,
+        "hybrid_topk": 0.480014
+      },
+      "observed_strongest_baseline": "coverage_greedy_proxy"
+    },
+    "outcome": {
+      "canary_or_default_authorized": false,
+      "flood_domain_effectiveness_established": false,
+      "gate_2": "NO-GO/SHADOW",
+      "selector_changed": false,
+      "setr_reproduced": false,
+      "status": "RGB_COST_AWARE_FRC_SAFETY_REGRESSION"
+    },
+    "positive_wrong_rate_increase_over_old_frc": -0.022449,
+    "positive_wrong_rate_population": "rgb_en_fact valid rows, equal weight across three budgets",
+    "primary_metric": "evidence_f1",
+    "support_checks": {
+      "every_dataset_budget_delta_at_least_minus_0_02": false,
+      "old_frc_ci_low_above_0": false,
+      "old_frc_point_at_least_0_01": false,
+      "positive_wrong_rate_increase_at_most_0_02": true,
+      "strongest_point_at_least_0_01": false,
+      "strongest_simultaneous_ci_low_above_0": false
+    },
+    "worst_dataset_budget_delta": -0.127688
+  },
+  "development_boundary": {
+    "cross_domain_selection_evidence_only": true,
+    "gate_evidence": false,
+    "independent_confirmation": true,
+    "raw_question_answer_or_candidate_text_exported": false
+  },
+  "metadata": {
+    "budgets": [
+      512,
+      1024,
+      1500
+    ],
+    "candidate_chunks": 14580,
+    "cases": 498,
+    "deterministic_output_rerun": "2/2 byte-identical",
+    "evidence_artifact": {
+      "path": "rgb_cost_aware_frc_cases.jsonl.gz",
+      "raw_question_answer_or_candidate_text_exported": false,
+      "rows": 498,
+      "sha256": "2f7f5944f00b42805bda75aafe61e314ebeb02999c195b78a5427dcd3cf3d04f"
+    },
+    "execution_sha256": "f22441b13950b033e0f2d029887f77df5be9e3cabd5a1506ef8ee8e9eee50e71",
+    "gold_visible_to_scorer": false,
+    "methods": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "cross_encoder_density",
+      "cross_encoder_knapsack",
+      "coverage_greedy_proxy",
+      "frc_select_v34",
+      "frc_cost_aware_v35"
+    ],
+    "post_result_correction_sha256": "10b85a8077dd4613dab091998116520aa5bdf5b2dfcc5229e182486280216772",
+    "protocol_sha256": "c370f83ada7df1c16b8249e05aad929d0a0dc439efa48594ca03ec04e7e420a4",
+    "raw_text_committed": false,
+    "selection_runs": 13446,
+    "source_artifacts": {
+      "execution": {
+        "path_label": "rgb_cost_aware_frc_execution.json",
+        "sha256": "f22441b13950b033e0f2d029887f77df5be9e3cabd5a1506ef8ee8e9eee50e71"
+      },
+      "implementation": {
+        "path_label": "rgb_cost_aware_frc.py",
+        "sha256": "d106e2a201b7dfecbeea21cb702603840ff2c0d79df5bc31dfc4ff96d0d2f46e"
+      },
+      "post_result_correction": {
+        "path_label": "rgb_cost_aware_frc_post_result_correction.json",
+        "sha256": "10b85a8077dd4613dab091998116520aa5bdf5b2dfcc5229e182486280216772"
+      },
+      "prepared_blind": {
+        "path_label": "prepared_blind.jsonl",
+        "sha256": "b006801f0d6737f67d8a9070db679b9469d220db052021302ad1ed625a2da81e"
+      },
+      "protocol": {
+        "path_label": "rgb_cost_aware_frc_protocol.json",
+        "sha256": "c370f83ada7df1c16b8249e05aad929d0a0dc439efa48594ca03ec04e7e420a4"
+      },
+      "rgb_en_fact": {
+        "path_label": "en_fact.json",
+        "sha256": "27b5a3ae2d3cd0c5c12282b3bbab659708dbd46c58e5890fd787f86f5530c28e"
+      },
+      "rgb_en_int": {
+        "path_label": "en_int.json",
+        "sha256": "797a6fc39a75d0cfb88d9c1b57f27277a959870eba3d56f26cf2dad482cd7725"
+      },
+      "rgb_en_refine": {
+        "path_label": "en_refine.json",
+        "sha256": "ad6468eb2d14496a6a2d9961d35b60924739e21a0c6e7811552f1ac31e3423f3"
+      },
+      "scored_blind": {
+        "path_label": "scored_blind.jsonl",
+        "sha256": "32f5f1efa4b6df8c21b973b39742067856d12faf9e1300554f067d4227901a2d"
+      }
+    },
+    "source_revision": "65ec39e40e7dc9abb50e9bf1b4f32be3f6f16615"
+  },
+  "schema_version": "frc-rgb-cost-aware-v1"
+}

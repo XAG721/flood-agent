@@ -1,0 +1,72 @@
+{
+  "interpretation": {
+    "causal_claim": false,
+    "diagnosis": "The static role prompts produce nearly collinear candidate rankings and usually select the same evidence as direct cross-encoder top-k.",
+    "gate_2": "NO-GO/SHADOW",
+    "next_test": "Prospectively test claim-conditioned atomic queries and threshold-free rank coverage on IDs not used in this diagnostic.",
+    "status": "STATIC_ROLE_SIGNAL_COLLAPSE_OBSERVED"
+  },
+  "metadata": {
+    "cases": 4000,
+    "experiment_id": "FRC-HOVER-VERIFICATION-ROLES-V39",
+    "gold_used_for_role_or_selection_diagnostic": false,
+    "post_result_diagnostic": true,
+    "raw_text_exported": false,
+    "source_sha256": {
+      "evidence": "73f5c62c0d120fef2e5c6cc328d7e3e2f9e2103b8a91013aa15edb0484d8bb6e",
+      "scored": "ecf761b27d91165b46eda4992ac151d6e5f018a5ca559e9c1417cd4d1721217a"
+    }
+  },
+  "role_signal": {
+    "generic": {
+      "all_roles_share_argmax_rate": 0.858,
+      "mean_distinct_role_argmax": 1.14875,
+      "mean_roles_above_0_55_per_candidate": 0.412469,
+      "mean_within_candidate_role_std": 0.01202
+    },
+    "rank_correlations": {
+      "generic": {
+        "mean": 0.947723,
+        "median": 0.962406,
+        "p05": 0.849802,
+        "p95": 0.993985
+      },
+      "matched_cross_family": {
+        "mean": 0.951934,
+        "median": 0.966917,
+        "p05": 0.858647,
+        "p95": 0.993985
+      },
+      "verification": {
+        "mean": 0.946191,
+        "median": 0.961039,
+        "p05": 0.84812,
+        "p95": 0.992481
+      }
+    },
+    "verification": {
+      "all_roles_share_argmax_rate": 0.8425,
+      "mean_distinct_role_argmax": 1.1645,
+      "mean_roles_above_0_55_per_candidate": 0.438002,
+      "mean_within_candidate_role_std": 0.014517
+    }
+  },
+  "schema_version": "frc-hover-role-mechanism-diagnostic-v1",
+  "selection_collapse": {
+    "1024": {
+      "generic_verification_ordered_identity": 0.9615,
+      "verification_cross_ordered_identity": 0.921,
+      "verification_cross_set_jaccard": 0.998179
+    },
+    "1500": {
+      "generic_verification_ordered_identity": 0.96125,
+      "verification_cross_ordered_identity": 0.921,
+      "verification_cross_set_jaccard": 0.99825
+    },
+    "512": {
+      "generic_verification_ordered_identity": 0.96325,
+      "verification_cross_ordered_identity": 0.92225,
+      "verification_cross_set_jaccard": 0.995303
+    }
+  }
+}

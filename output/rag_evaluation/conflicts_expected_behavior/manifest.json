@@ -1,0 +1,36 @@
+{
+  "schema_version": "frc-conflicts-expected-behavior-manifest-v1",
+  "status": "GENERATED_AWAITING_INDEPENDENT_HUMAN_ANNOTATION",
+  "package_id": "CONFLICTS-BEHAVIOR-5ABAB8ED31F83E6C",
+  "case_count": 458,
+  "response_count": 916,
+  "methods_hidden_from_reviewers": true,
+  "methods": [
+    "coverage_greedy_proxy",
+    "frc_select"
+  ],
+  "conflict_type_counts": {
+    "Complementary information": 115,
+    "Conflicting opinions and research outcomes": 115,
+    "No conflict": 161,
+    "Conflict due to misinformation": 5,
+    "Conflict due to outdated information": 62
+  },
+  "protocol_path_label": "conflicts_expected_behavior_protocol.json",
+  "protocol_sha256": "7060ca11bb52afdb95925fe47b6a119bced5b0ecf83e3525a85fc31b38452dfc",
+  "dataset_sha256": "9ed5907314a4907c36219aaab0fd570ce54892bbd6dd8386aa729a1a236a2781",
+  "selected_evidence_sha256": "8241ee7d1592e4b4b8fa58baebfa43b59ebe78a6b09627ceac6cf36a9d21d728",
+  "generation_cache_sha256": "36837ac337ab8eaadd3bab7aea5e0f4214012884842589bb8094c75e03bb5559",
+  "package_file_sha256": "484c27ad8c5dc25c659ac244a5317926fd892ee9c0fb82885370423a1bc54813",
+  "package_items_sha256": "5abab8ed31f83e6cc810f591f316196e842b0c8fd00e66d2f17cb798fc39e757",
+  "blind_mapping_sha256": "28417c34d37a6afc30cc3a1eefecb9e81d01567babbdedd6fc00310c142d95a9",
+  "blind_mapping_path_label": "blind_mapping.json",
+  "human_evidence_complete": false,
+  "gate_2": "NO-GO/SHADOW",
+  "limitations": [
+    "No adherence, grounding, citation, correctness, or preference result exists until two independent submissions and independent adjudication are completed.",
+    "The local Qwen generator is shared across methods and is not an evaluator or expert judge.",
+    "CONFLICTS is cross-domain and cannot replace a flood-domain expert benchmark.",
+    "coverage_greedy_proxy is not a SetR reproduction."
+  ]
+}

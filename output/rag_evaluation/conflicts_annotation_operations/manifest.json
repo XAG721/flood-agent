@@ -1,0 +1,541 @@
+{
+  "schema_version": "frc-conflicts-annotation-operations-manifest-v1",
+  "status": "PREPARED_AWAITING_INDEPENDENT_HUMAN_REVIEW",
+  "operations_id": "CONFLICTS-ANNOTATION-OPS-5A6EE0F6420F2251",
+  "package_id": "CONFLICTS-BEHAVIOR-5ABAB8ED31F83E6C",
+  "protocol_path_label": "conflicts_annotation_operations_protocol.json",
+  "protocol_sha256": "2f1661b57f01ce590f004ab1b9795e7638ebbb3cd754ed8a9b78c95b1354c541",
+  "source_manifest_file_sha256": "7bd91abd97d865167c5d4db7394c4e8761c9e184468f967b4caa8708d1a55b0b",
+  "package_file_sha256": "484c27ad8c5dc25c659ac244a5317926fd892ee9c0fb82885370423a1bc54813",
+  "package_items_sha256": "5abab8ed31f83e6cc810f591f316196e842b0c8fd00e66d2f17cb798fc39e757",
+  "seed": "conflicts-annotation-operations-2026-08-01-v1",
+  "reviewer_slots": [
+    "reviewer_1",
+    "reviewer_2",
+    "adjudicator"
+  ],
+  "batch_count": 8,
+  "primary_task_count_per_slot": 458,
+  "repeat_task_count_per_slot": 23,
+  "total_task_count_per_slot": 481,
+  "total_public_batch_count": 24,
+  "total_submission_template_count": 24,
+  "repeat_counts_by_conflict_type": {
+    "Complementary information": 5,
+    "Conflict due to misinformation": 1,
+    "Conflict due to outdated information": 3,
+    "Conflicting opinions and research outcomes": 6,
+    "No conflict": 8
+  },
+  "batch_task_counts": {
+    "reviewer_1": [
+      62,
+      64,
+      58,
+      61,
+      58,
+      61,
+      58,
+      59
+    ],
+    "reviewer_2": [
+      58,
+      59,
+      62,
+      64,
+      58,
+      61,
+      58,
+      61
+    ],
+    "adjudicator": [
+      58,
+      61,
+      58,
+      59,
+      62,
+      64,
+      58,
+      61
+    ]
+  },
+  "primary_stratum_balance": {
+    "reviewer_1": {
+      "Complementary information|answer_available": {
+        "minimum": 0,
+        "maximum": 1,
+        "range": 1
+      },
+      "Complementary information|no_answer": {
+        "minimum": 13,
+        "maximum": 14,
+        "range": 1
+      },
+      "Conflict due to misinformation|answer_available": {
+        "minimum": 0,
+        "maximum": 1,
+        "range": 1
+      },
+      "Conflict due to outdated information|answer_available": {
+        "minimum": 7,
+        "maximum": 8,
+        "range": 1
+      },
+      "Conflicting opinions and research outcomes|answer_available": {
+        "minimum": 0,
+        "maximum": 1,
+        "range": 1
+      },
+      "Conflicting opinions and research outcomes|no_answer": {
+        "minimum": 14,
+        "maximum": 15,
+        "range": 1
+      },
+      "No conflict|answer_available": {
+        "minimum": 20,
+        "maximum": 21,
+        "range": 1
+      }
+    },
+    "reviewer_2": {
+      "Complementary information|answer_available": {
+        "minimum": 0,
+        "maximum": 1,
+        "range": 1
+      },
+      "Complementary information|no_answer": {
+        "minimum": 13,
+        "maximum": 14,
+        "range": 1
+      },
+      "Conflict due to misinformation|answer_available": {
+        "minimum": 0,
+        "maximum": 1,
+        "range": 1
+      },
+      "Conflict due to outdated information|answer_available": {
+        "minimum": 7,
+        "maximum": 8,
+        "range": 1
+      },
+      "Conflicting opinions and research outcomes|answer_available": {
+        "minimum": 0,
+        "maximum": 1,
+        "range": 1
+      },
+      "Conflicting opinions and research outcomes|no_answer": {
+        "minimum": 14,
+        "maximum": 15,
+        "range": 1
+      },
+      "No conflict|answer_available": {
+        "minimum": 20,
+        "maximum": 21,
+        "range": 1
+      }
+    },
+    "adjudicator": {
+      "Complementary information|answer_available": {
+        "minimum": 0,
+        "maximum": 1,
+        "range": 1
+      },
+      "Complementary information|no_answer": {
+        "minimum": 13,
+        "maximum": 14,
+        "range": 1
+      },
+      "Conflict due to misinformation|answer_available": {
+        "minimum": 0,
+        "maximum": 1,
+        "range": 1
+      },
+      "Conflict due to outdated information|answer_available": {
+        "minimum": 7,
+        "maximum": 8,
+        "range": 1
+      },
+      "Conflicting opinions and research outcomes|answer_available": {
+        "minimum": 0,
+        "maximum": 1,
+        "range": 1
+      },
+      "Conflicting opinions and research outcomes|no_answer": {
+        "minimum": 14,
+        "maximum": 15,
+        "range": 1
+      },
+      "No conflict|answer_available": {
+        "minimum": 20,
+        "maximum": 21,
+        "range": 1
+      }
+    }
+  },
+  "public_files": [
+    {
+      "kind": "batch",
+      "reviewer_slot": "reviewer_1",
+      "batch_id": "REVIEWER_1-B01",
+      "path": "reviewer-1/batch-01.json",
+      "sha256": "e9ef33693b69822ff65c84bca126a422932b64278616e871901684d62ad1a107"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "reviewer_1",
+      "batch_id": "REVIEWER_1-B01",
+      "path": "reviewer-1/batch-01-submission-template.json",
+      "sha256": "97744726042f31f71403056d52186433fa188b1a5f75e1b39a7b9c214eea699b"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "reviewer_1",
+      "batch_id": "REVIEWER_1-B02",
+      "path": "reviewer-1/batch-02.json",
+      "sha256": "860bf9f6d5844074f50a55e4fdbaa3c5c2ea88065c9d7af287aa201b1ecf8265"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "reviewer_1",
+      "batch_id": "REVIEWER_1-B02",
+      "path": "reviewer-1/batch-02-submission-template.json",
+      "sha256": "322997ba21576ab929933ec45598fe126144ca9a06cc920b7bbe07192c7eea68"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "reviewer_1",
+      "batch_id": "REVIEWER_1-B03",
+      "path": "reviewer-1/batch-03.json",
+      "sha256": "98fc6118972da5ef89b7582cab5c8e6d947820c1c835d8ded4d753d1b145676c"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "reviewer_1",
+      "batch_id": "REVIEWER_1-B03",
+      "path": "reviewer-1/batch-03-submission-template.json",
+      "sha256": "c4fa1b56f62564ceae69d10e366fcbb3d50b9d8618ba21d56e8b3ea25392a0ff"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "reviewer_1",
+      "batch_id": "REVIEWER_1-B04",
+      "path": "reviewer-1/batch-04.json",
+      "sha256": "f7ce4782fd46d1bc472b59d856cea41ec26f99a621ded17d7261e9d401d8ac5c"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "reviewer_1",
+      "batch_id": "REVIEWER_1-B04",
+      "path": "reviewer-1/batch-04-submission-template.json",
+      "sha256": "82cf61258df6df345d50bb52702d21f2635b35055428dae0ab4f3e32773aa1a3"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "reviewer_1",
+      "batch_id": "REVIEWER_1-B05",
+      "path": "reviewer-1/batch-05.json",
+      "sha256": "4aa6669dbbfb955eadf3c900d9e24bc245616de199bbb320087cf3770f1c9f92"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "reviewer_1",
+      "batch_id": "REVIEWER_1-B05",
+      "path": "reviewer-1/batch-05-submission-template.json",
+      "sha256": "a6541efb09a990adcc0e2bf3f9c06733d4363108a1f1d4bb2e28360922454479"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "reviewer_1",
+      "batch_id": "REVIEWER_1-B06",
+      "path": "reviewer-1/batch-06.json",
+      "sha256": "b35f0ae79002c3298b5cb0b991c0bcebff8f210c8719dca5681e3bbecb646729"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "reviewer_1",
+      "batch_id": "REVIEWER_1-B06",
+      "path": "reviewer-1/batch-06-submission-template.json",
+      "sha256": "5ebf9656042a96965a5babce0fcd5aaa2ce2c4f5d11d8ab4beeb28ddd7e35b86"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "reviewer_1",
+      "batch_id": "REVIEWER_1-B07",
+      "path": "reviewer-1/batch-07.json",
+      "sha256": "6096a512e79d59fe1ef292f0f6c463e19d06dc2c7da3d00a4bb7583973c7f524"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "reviewer_1",
+      "batch_id": "REVIEWER_1-B07",
+      "path": "reviewer-1/batch-07-submission-template.json",
+      "sha256": "fa97f453da8b9efc16134e52425c485406bfb2a1e2e69f2e70f238c7b5252396"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "reviewer_1",
+      "batch_id": "REVIEWER_1-B08",
+      "path": "reviewer-1/batch-08.json",
+      "sha256": "ce515bf0f7e01e45abcf1917f0814f3d4e45fd08c1e642fe91a591464bb2f18a"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "reviewer_1",
+      "batch_id": "REVIEWER_1-B08",
+      "path": "reviewer-1/batch-08-submission-template.json",
+      "sha256": "8f5a1e4561255ef87e16c24dd3393a2e8a1ee3627f878ac9dd1bb9ecf5a67cd0"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "reviewer_2",
+      "batch_id": "REVIEWER_2-B01",
+      "path": "reviewer-2/batch-01.json",
+      "sha256": "dae3d3297140513b65e22b50965ed766a89a680e5dac4db384822ac84b45c5d8"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "reviewer_2",
+      "batch_id": "REVIEWER_2-B01",
+      "path": "reviewer-2/batch-01-submission-template.json",
+      "sha256": "fd7a362be7a1ff8dd5593888884eb383e8d47cc8038642acb419412b93e99ba6"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "reviewer_2",
+      "batch_id": "REVIEWER_2-B02",
+      "path": "reviewer-2/batch-02.json",
+      "sha256": "c70b4086e9375a9ea3f910a6b7ea4e17a53c7f0d8ee87e789082d86fdec74e51"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "reviewer_2",
+      "batch_id": "REVIEWER_2-B02",
+      "path": "reviewer-2/batch-02-submission-template.json",
+      "sha256": "02605e0203baad2ebc8fad45fe078dc8c2810603dedc4144bf5965478848b263"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "reviewer_2",
+      "batch_id": "REVIEWER_2-B03",
+      "path": "reviewer-2/batch-03.json",
+      "sha256": "4d67f2dd977173097b44ce5f18bc06d092ca3497175a3434a97c486cf92f6d55"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "reviewer_2",
+      "batch_id": "REVIEWER_2-B03",
+      "path": "reviewer-2/batch-03-submission-template.json",
+      "sha256": "bc8877e647cd03bc4425f99d027d153a47ae5bec7341c9a29bc554d260e8709d"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "reviewer_2",
+      "batch_id": "REVIEWER_2-B04",
+      "path": "reviewer-2/batch-04.json",
+      "sha256": "a4b13f859986b86eca167a540fffc925cfd950914b8c524f579289be34171228"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "reviewer_2",
+      "batch_id": "REVIEWER_2-B04",
+      "path": "reviewer-2/batch-04-submission-template.json",
+      "sha256": "458531b2624ea7d219cc1ee23c0bb341b77b5a571b565b44a8cd421e00de0005"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "reviewer_2",
+      "batch_id": "REVIEWER_2-B05",
+      "path": "reviewer-2/batch-05.json",
+      "sha256": "3bda1a7c247934475f1c05041197484c90cbdd0faabfd2272089bea5b4d237ca"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "reviewer_2",
+      "batch_id": "REVIEWER_2-B05",
+      "path": "reviewer-2/batch-05-submission-template.json",
+      "sha256": "d7fb14e56a9586e7061c95c3fde21d3464e5a24b8dc75d30cdd0d50c5e5c7f91"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "reviewer_2",
+      "batch_id": "REVIEWER_2-B06",
+      "path": "reviewer-2/batch-06.json",
+      "sha256": "7d73099c051a1c16eedfe26c3bcbe303077a84434770def53d9fb338aab02c21"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "reviewer_2",
+      "batch_id": "REVIEWER_2-B06",
+      "path": "reviewer-2/batch-06-submission-template.json",
+      "sha256": "f1d69b49c4b1253a7824e9439577cab5b40a90b6457e8f1db32ed4b8b4fa25d1"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "reviewer_2",
+      "batch_id": "REVIEWER_2-B07",
+      "path": "reviewer-2/batch-07.json",
+      "sha256": "b15c60d6db0641e05728d88bf14e4eb72390195399e499ba751a11754a94e96a"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "reviewer_2",
+      "batch_id": "REVIEWER_2-B07",
+      "path": "reviewer-2/batch-07-submission-template.json",
+      "sha256": "eeb6cc185a20323e28bbe5eafe26d912214f67450e27cd1e9c3b51d24ac0e49e"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "reviewer_2",
+      "batch_id": "REVIEWER_2-B08",
+      "path": "reviewer-2/batch-08.json",
+      "sha256": "773000f8483e9b94afc5d6af6333c6d11ffaa51a8dff4f38c7a3c3154e333023"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "reviewer_2",
+      "batch_id": "REVIEWER_2-B08",
+      "path": "reviewer-2/batch-08-submission-template.json",
+      "sha256": "25f5f85b565e31da8f0a6df2bdd35549566063f7378b69cdc8c99b24d26241f7"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "adjudicator",
+      "batch_id": "ADJUDICATOR-B01",
+      "path": "adjudicator/batch-01.json",
+      "sha256": "762a44e966489a30ca0d119e831355ac9824b2d48276dcc1a664983398f60fc2"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "adjudicator",
+      "batch_id": "ADJUDICATOR-B01",
+      "path": "adjudicator/batch-01-submission-template.json",
+      "sha256": "48a3fc14f84673fd15dd5e7327a2eb54b6cc025cbe2f9969d99e5bad3cb28f9d"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "adjudicator",
+      "batch_id": "ADJUDICATOR-B02",
+      "path": "adjudicator/batch-02.json",
+      "sha256": "4b078d04c1442754183a5794c071b5a069aaddfbf65b4dba8573d9be008fede9"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "adjudicator",
+      "batch_id": "ADJUDICATOR-B02",
+      "path": "adjudicator/batch-02-submission-template.json",
+      "sha256": "5031b1928c96539eef6629806f1305f266a85587a011cfb73499df326ca042c7"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "adjudicator",
+      "batch_id": "ADJUDICATOR-B03",
+      "path": "adjudicator/batch-03.json",
+      "sha256": "661ae0e302cf977e8015dec2bf0d60619310fe4e3ff2fa95510c90ea166f586f"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "adjudicator",
+      "batch_id": "ADJUDICATOR-B03",
+      "path": "adjudicator/batch-03-submission-template.json",
+      "sha256": "10bc88413d6ad3d2b088d748608e3b2f07d1bdda9e3b88b5772a4b8fe2d3d3de"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "adjudicator",
+      "batch_id": "ADJUDICATOR-B04",
+      "path": "adjudicator/batch-04.json",
+      "sha256": "92fa81798333609711e20a51a34712ddd7ec80287513d88d29bab514855a40ec"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "adjudicator",
+      "batch_id": "ADJUDICATOR-B04",
+      "path": "adjudicator/batch-04-submission-template.json",
+      "sha256": "8a9cd964cb65e05c7ccb111ae8270a30394c3d6ac88c40006f8f77eb9f0a052e"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "adjudicator",
+      "batch_id": "ADJUDICATOR-B05",
+      "path": "adjudicator/batch-05.json",
+      "sha256": "0d6ef16420a8ca745bae83a0e3e1cee08bbd1d0206781a9ef21032cbbf00e7bd"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "adjudicator",
+      "batch_id": "ADJUDICATOR-B05",
+      "path": "adjudicator/batch-05-submission-template.json",
+      "sha256": "ea84c3d43b2f6e1c4b194fe36b1def0579e7b396f6d64c907b90aa0bbec445f8"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "adjudicator",
+      "batch_id": "ADJUDICATOR-B06",
+      "path": "adjudicator/batch-06.json",
+      "sha256": "83ba6c38fab27911fd5bb26c9204d184577ff9f038af67d439f79f305a5dc878"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "adjudicator",
+      "batch_id": "ADJUDICATOR-B06",
+      "path": "adjudicator/batch-06-submission-template.json",
+      "sha256": "0c03644318121440ffa691f721c96d25b1f6026a8d10d52e48852f3a099c3ef8"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "adjudicator",
+      "batch_id": "ADJUDICATOR-B07",
+      "path": "adjudicator/batch-07.json",
+      "sha256": "1364ba0285312d7cf47d61d8ae3260c0de864ba90a1b9b418991213732747b78"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "adjudicator",
+      "batch_id": "ADJUDICATOR-B07",
+      "path": "adjudicator/batch-07-submission-template.json",
+      "sha256": "2eabe8e0196edbdfa3abdadd0d73619a3f55ec49a732d1626d3ecf8e0c9e355f"
+    },
+    {
+      "kind": "batch",
+      "reviewer_slot": "adjudicator",
+      "batch_id": "ADJUDICATOR-B08",
+      "path": "adjudicator/batch-08.json",
+      "sha256": "fed8a8c1561ea69eed9fb9a7caa53cb1b043a861342c6fdcef02a9309764f25a"
+    },
+    {
+      "kind": "submission_template",
+      "reviewer_slot": "adjudicator",
+      "batch_id": "ADJUDICATOR-B08",
+      "path": "adjudicator/batch-08-submission-template.json",
+      "sha256": "d812e047fe0358362bca706c13492d4cf9ac79214d0af1f65ba5e695a7be35b5"
+    }
+  ],
+  "routing_sha256": "b4818883beb4ed3e256895a2161f2641656707639ded4ee858633e5e4bb25ef3",
+  "routing_path_label": "annotation_operations_routing.json",
+  "routing_published": false,
+  "method_identity_present_in_public_files": false,
+  "original_item_id_present_in_public_files": false,
+  "human_evidence_complete": false,
+  "gate_2": "NO-GO/SHADOW",
+  "quality_control": {
+    "repeat_fraction_per_slot": 0.050218,
+    "dimensions": [
+      "expected_behavior_adherence",
+      "factual_grounding",
+      "citation_correctness",
+      "answer_correctness",
+      "pair_preference"
+    ],
+    "minimum_exact_agreement_each_dimension": 0.8,
+    "cohen_kappa_role": "Descriptive only; null with UNDEFINED_NO_VARIANCE when marginal variance is absent.",
+    "failure_status": "REVIEW_REQUIRED",
+    "failure_policy": "Any dimension below the exact-agreement threshold makes the role ineligible for inter-annotator comparison until independently reviewed and recollected under a new registered operation.",
+    "repeat_interpretation": "Hidden repeats measure within-reviewer consistency and do not create gold labels or adjudicated results."
+  },
+  "limitations": [
+    "Prepared batches and empty templates are not human evaluation results.",
+    "The routing map is required for merge but remains in ignored local cache.",
+    "Within-reviewer repeats measure consistency and do not create gold labels.",
+    "This operational preparation cannot replace independent people or change Gate 2."
+  ]
+}

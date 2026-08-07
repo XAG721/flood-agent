@@ -1,0 +1,314 @@
+{
+  "analysis": {
+    "aggregates": {
+      "adaptive_argmax_cardinality_frc_v43": {
+        "answer_evidence_macro_f1": 0.169364,
+        "answer_evidence_recall": 0.291667,
+        "macro_precision": 0.119329,
+        "mean_selected_token_cost": 315.005556,
+        "mean_selected_unit_count": 2.676389
+      },
+      "bm25_topk": {
+        "answer_evidence_macro_f1": 0.122723,
+        "answer_evidence_recall": 0.325,
+        "macro_precision": 0.075718,
+        "mean_selected_token_cost": 554.713889,
+        "mean_selected_unit_count": 4.816667
+      },
+      "cross_encoder_knapsack": {
+        "answer_evidence_macro_f1": 0.186738,
+        "answer_evidence_recall": 0.502778,
+        "macro_precision": 0.114676,
+        "mean_selected_token_cost": 508.329167,
+        "mean_selected_unit_count": 4.911111
+      },
+      "cross_encoder_topk": {
+        "answer_evidence_macro_f1": 0.186456,
+        "answer_evidence_recall": 0.498611,
+        "macro_precision": 0.114699,
+        "mean_selected_token_cost": 508.715278,
+        "mean_selected_unit_count": 4.877778
+      },
+      "dense_topk": {
+        "answer_evidence_macro_f1": 0.120235,
+        "answer_evidence_recall": 0.327778,
+        "macro_precision": 0.073634,
+        "mean_selected_token_cost": 427.568056,
+        "mean_selected_unit_count": 4.933333
+      },
+      "dynamic_rank_coverage_frc_v41": {
+        "answer_evidence_macro_f1": 0.173866,
+        "answer_evidence_recall": 0.475,
+        "macro_precision": 0.106435,
+        "mean_selected_token_cost": 534.695833,
+        "mean_selected_unit_count": 4.848611
+      },
+      "guarded_adaptive_cardinality_frc_v44": {
+        "answer_evidence_macro_f1": 0.18996,
+        "answer_evidence_recall": 0.408333,
+        "macro_precision": 0.123773,
+        "mean_selected_token_cost": 424.659722,
+        "mean_selected_unit_count": 3.723611
+      },
+      "hybrid_topk": {
+        "answer_evidence_macro_f1": 0.146133,
+        "answer_evidence_recall": 0.393056,
+        "macro_precision": 0.089769,
+        "mean_selected_token_cost": 481.602778,
+        "mean_selected_unit_count": 4.891667
+      },
+      "official_anchor_topk": {
+        "answer_evidence_macro_f1": 0.205021,
+        "answer_evidence_recall": 0.454167,
+        "macro_precision": 0.132454,
+        "mean_selected_token_cost": 449.219444,
+        "mean_selected_unit_count": 4.231944
+      },
+      "static_rank_coverage_frc_v41": {
+        "answer_evidence_macro_f1": 0.182413,
+        "answer_evidence_recall": 0.498611,
+        "macro_precision": 0.111644,
+        "mean_selected_token_cost": 509.986111,
+        "mean_selected_unit_count": 4.884722
+      },
+      "static_threshold_frc_v39_replay": {
+        "answer_evidence_macro_f1": 0.184594,
+        "answer_evidence_recall": 0.495833,
+        "macro_precision": 0.113426,
+        "mean_selected_token_cost": 512.705556,
+        "mean_selected_unit_count": 4.883333
+      }
+    },
+    "answer_evidence_recall_drop_vs_dynamic": 0.066667,
+    "answer_evidence_recall_gain_vs_v43": 0.116666,
+    "budget_deltas": {
+      "1024": -0.007315,
+      "1500": -0.007315,
+      "512": -0.030552
+    },
+    "candidate_ceiling_complete_rate": 0.995833,
+    "family_comparison": {
+      "guarded_minus_bootstrap_strongest_non_frc": {
+        "ci_high": 0.01418,
+        "ci_low": -0.058018,
+        "point": -0.015061
+      },
+      "guarded_minus_dynamic": {
+        "ci_high": 0.029713,
+        "ci_low": 0.001488,
+        "point": 0.016093
+      },
+      "guarded_minus_v43": {
+        "ci_high": 0.042439,
+        "ci_low": -0.00011,
+        "point": 0.020596
+      },
+      "resamples": 10000,
+      "seed": 20260804
+    },
+    "mean_selected_unit_reduction_vs_dynamic": 1.125,
+    "outcome": {
+      "canary_or_default_authorized": false,
+      "gate_2": "NO-GO/SHADOW",
+      "selector_adoption_authorized": false,
+      "status": "OTTQA_GUARDED_ADAPTIVE_SUPPORT_NOT_ESTABLISHED"
+    },
+    "query_cache": {
+      "fallback_count": 7,
+      "fallback_rate": 0.029167,
+      "fallback_reasons": {
+        "Expecting value: line 5 column 23 (char 467)": 1,
+        "Unterminated string starting at: line 4 column 30 (char 354)": 1,
+        "Unterminated string starting at: line 4 column 30 (char 376)": 1,
+        "Unterminated string starting at: line 5 column 24 (char 353)": 1,
+        "Unterminated string starting at: line 5 column 24 (char 489)": 1,
+        "Unterminated string starting at: line 5 column 24 (char 509)": 1,
+        "Unterminated string starting at: line 5 column 5 (char 656)": 1
+      },
+      "gold_fields_visible_to_generator": false,
+      "query_length_codepoints": {
+        "maximum": 217,
+        "mean": 56.138542,
+        "minimum": 10
+      },
+      "rows": 240
+    },
+    "strongest_non_frc": "official_anchor_topk",
+    "support_checks": {
+      "answer_evidence_recall_drop_at_most_0_02": false,
+      "candidate_ceiling_complete_rate_at_least_0_60": true,
+      "every_budget_and_supported_source_mode_delta_at_least_minus_0_02": false,
+      "guarded_minus_dynamic_ci_low_above_0": true,
+      "guarded_minus_dynamic_point_at_least_0_005": true,
+      "guarded_minus_strongest_ci_low_above_0": false,
+      "guarded_minus_strongest_point_at_least_0_01": false,
+      "guarded_minus_v43_f1_at_least_minus_0_005": true,
+      "guarded_minus_v43_recall_at_least_0_02": true,
+      "mean_selected_unit_reduction_at_least_0_50": true,
+      "minimum_cases_per_source_mode_met": true,
+      "minimum_total_cases_met": true,
+      "query_parser_fallback_rate_at_most_0_05": true
+    },
+    "supported_source_mode_deltas": {
+      "passage": {
+        "cases": 120,
+        "delta": 0.029029,
+        "strongest_non_frc": "cross_encoder_knapsack"
+      },
+      "table": {
+        "cases": 120,
+        "delta": -0.158409,
+        "strongest_non_frc": "official_anchor_topk"
+      }
+    },
+    "target_cardinality_distribution": {
+      "3": 103,
+      "4": 90,
+      "5": 47
+    }
+  },
+  "experiment_id": "FRC-OTTQA-GUARDED-ADAPTIVE-ATOMIC-ROLES-V44",
+  "limitations": [
+    "The official table_id is an oracle boundary; this experiment does not evaluate open-domain table retrieval.",
+    "Answer-node traces cover answer-bearing cells or passages, not every intermediate multi-hop fact.",
+    "The unavailable official full-corpus S3 artifacts prevent an official OTT-QA leaderboard reproduction.",
+    "The result cannot establish real SetR reproduction, flood-domain validity, or production readiness."
+  ],
+  "metadata": {
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 20260804,
+    "budgets": [
+      512,
+      1024,
+      1500
+    ],
+    "capability": "oracle_table_linked_answer_evidence_selection",
+    "cases": 240,
+    "dataset_id": "ottqa_dev_oracle_table_linked_evidence_v44",
+    "gold_joined_after_complete_score_cache": true,
+    "methods": [
+      "official_anchor_topk",
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "cross_encoder_knapsack",
+      "static_threshold_frc_v39_replay",
+      "static_rank_coverage_frc_v41",
+      "dynamic_rank_coverage_frc_v41",
+      "adaptive_argmax_cardinality_frc_v43",
+      "guarded_adaptive_cardinality_frc_v44"
+    ],
+    "official_leaderboard_result": false,
+    "official_repository_revision": "b289bcca691db21a5259c3420e6b9819a9be9ba3",
+    "oracle_table_bounded_pool": true,
+    "protocol_sha256": "95116d2af455d1f8792e81cc1ed1f0f48db5fd7ef1274d257f73cec8e5c1e072",
+    "source_artifacts": {
+      "candidate_coverage_sha256": "08be25ddcdaee8224cbdc5200a6312cb06aa70d36b29616117a059505cbd1c16",
+      "candidate_map_sha256": "491913b3d152ca07de649ed5242969eef019b49c4311f7be2f370da96258e05f",
+      "execution_registration": {
+        "candidate_coverage_registration": {
+          "candidate_ceiling_complete_rate": 0.995833,
+          "candidate_method_or_threshold_changed": false,
+          "cases": 240,
+          "metrics_computed": false,
+          "minimum_cases_and_ceiling_checks_passed": true,
+          "neural_scoring_started": false,
+          "passage_candidate_ceiling_complete_rate": 1.0,
+          "query_generation_started": false,
+          "source_modes": {
+            "passage": 120,
+            "table": 120
+          },
+          "table_candidate_ceiling_complete_rate": 0.991667
+        },
+        "experiment_id": "FRC-OTTQA-GUARDED-ADAPTIVE-ATOMIC-ROLES-V44",
+        "gold_access_before_execution_registration": "Only sealed sampling and candidate-ceiling registration; no method, threshold, candidate, query, or score was changed.",
+        "hashes": {
+          "blind_census_sha256": "fce5812f39b3d67e14518448edeb7b0a30f9b9c51b617e02c3d6da0879014a33",
+          "candidate_coverage_sha256": "08be25ddcdaee8224cbdc5200a6312cb06aa70d36b29616117a059505cbd1c16",
+          "candidate_map_sha256": "491913b3d152ca07de649ed5242969eef019b49c4311f7be2f370da96258e05f",
+          "implementation_erratum2_sha256": "8287e4895e28286ddb26ef27222ed7e5432d11f0a3177a92fad614bc9782f76c",
+          "implementation_erratum_sha256": "282622aece3610da4e98868c954c7203fbf42a4df5ce75593fe6589e83b38aa4",
+          "implementation_registration_sha256": "797aeb50d6fabaf931ba41325c9f9723d44bc6b5b3e66aca04cb5b73aba3df87",
+          "prepared_blind_sha256": "f7f13e6268f5816f9498f72fe4d50ebb3b1c9aafe0af6b6bc2c99e88afba3d23",
+          "protocol_erratum2_sha256": "1bcbb7ee99e974b80624bdc24392d1c6eb403e2dfdd86b4681afbab55a9b6fbc",
+          "protocol_erratum3_sha256": "aa237afc9062211cc090247285fb8cc3f2f4fb92e6a8f8c190e1c4a77923ee38",
+          "protocol_erratum_sha256": "e7341f3ce645f27ea1fbf3f8bc79691b14a8c4b5655035f83bdb8112ff906019",
+          "protocol_sha256": "95116d2af455d1f8792e81cc1ed1f0f48db5fd7ef1274d257f73cec8e5c1e072",
+          "source_archive_sha256": "0746c60de6bcd5a5628db743235fb2664efdb3c6aead0858941827801d3db10b"
+        },
+        "metrics_computed": false,
+        "negative_null_or_inconclusive_result_must_be_published": true,
+        "neural_scoring_started": false,
+        "query_generation_started": false,
+        "registered_at": "2026-08-02T05:00:41+08:00",
+        "runtime_environment": {
+          "cuda_available": true,
+          "cuda_runtime": "12.4",
+          "gpu": "NVIDIA GeForce RTX 4060 Ti",
+          "gpu_memory_mib": 16380,
+          "numpy": "2.2.6",
+          "python": "3.10.20",
+          "python_executable": "D:\\anaconda3\\envs\\rag_exp\\python.exe",
+          "torch": "2.4.1+cu124",
+          "transformers": "4.46.3"
+        },
+        "runtime_parameters": {
+          "bootstrap_resamples": 10000,
+          "bootstrap_seed": 20260804,
+          "case_batch_size": 4,
+          "chunk_stride_tokens": 160,
+          "chunk_window_tokens": 192,
+          "device": "cuda",
+          "embedding_batch_size": 64,
+          "fp16": true,
+          "generator_batch_size": 8,
+          "generator_max_input_tokens": 512,
+          "generator_max_new_tokens": 160,
+          "lexical_pool_size": 96,
+          "maximum_pool_size": 128,
+          "offline_model_loading": true,
+          "reranker_batch_size": 256
+        },
+        "schema_version": "frc-ottqa-guarded-adaptive-atomic-roles-execution-v44",
+        "source_acquisition": {
+          "codeload_etag": "5f4e48933a5eaa35998b9fedb458ff546d35a1d6b8f0f727250ffc24402bb113",
+          "codeload_tar_gz_bytes": 263803288,
+          "codeload_tar_gz_sha256": "c4df4f1a0a9686c55dbb8a5f8b7e56d57911675acf10eb94b3f7f140173dc3f3",
+          "codeload_url": "https://codeload.github.com/wenhuchen/OTT-QA/tar.gz/b289bcca691db21a5259c3420e6b9819a9be9ba3",
+          "json_content_parsed_during_acquisition": false,
+          "selected_member_content_manifest_sha256": "9acedd3e535c1726b3f476ebb0b17a3dbe217c5bc2645ac7b7ceaa4c4ce037ef",
+          "source_archive_builder_registration_sha256": "18d0333f344bc06aee48b6420d781ee1c3045768269c77a1176c033971f8162b",
+          "source_archive_builder_sha256": "aee60eb0ff5c5f58fb7fa0e1e0603da2d13a0945e7361492614588f43ba6e6c8",
+          "source_archive_builder_test_sha256": "95e336054fa11f0598b7536a3b45ba680e92fc93000694a956c6560277204981"
+        },
+        "source_representation": {
+          "archive_bytes": 342927360,
+          "archive_format": "uncompressed tar with original Git member paths",
+          "archive_path": "D:\\graduation_project\\.cache\\benchmarks\\ottqa\\ottqa_b289bcca_registered_sources.tar",
+          "members_extracted_to_windows_filesystem": false,
+          "official_revision": "b289bcca691db21a5259c3420e6b9819a9be9ba3"
+        },
+        "source_verification": {
+          "all_registered_source_checks_passed": true,
+          "dev_linked_git_blob": "3454a0dea9fd3a284ec9cd376fc21bcb63ec9ca1",
+          "license_git_blob": "6cce7fb48f73fe3e9cf469ebefa2d29293c6f056",
+          "linked_passage_bytes": 255477273,
+          "linked_passage_files": 8891,
+          "linked_passage_manifest_sha256": "8f13044a1fe5ec93f0daf60c6bab13d5e8edfba3d5c9ca29530b4ad88eeafe96",
+          "table_bytes": 65523616,
+          "table_files": 8891,
+          "table_manifest_sha256": "bb8bfda9233ad197cf2c21c8a2657e1428065d268d79a939e15602f46bd42e69"
+        }
+      },
+      "execution_registration_sha256": "e9bc5d20eb00786f054fd318714ee2448338f140f0f64c16031c62a7351b25f4",
+      "inherited_v41_module_sha256": "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621",
+      "module_sha256": "ce195a5bc68031f4cc38cb819b086bef891df7bad6ecf459746ce33356bf73f8",
+      "prepared_blind_sha256": "f7f13e6268f5816f9498f72fe4d50ebb3b1c9aafe0af6b6bc2c99e88afba3d23",
+      "queries_sha256": "38e54e580ac8e788a293fe72c43f73de56f28860182d3d34e53e4b130f89525e",
+      "scored_sha256": "eb196119ff6803cbf699ce0a17cd683a0210135863d8c82e4e9c5d69a8ecb01b"
+    }
+  },
+  "schema_version": "frc-ottqa-guarded-adaptive-report-v1"
+}

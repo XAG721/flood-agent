@@ -1,0 +1,737 @@
+{
+  "metadata": {
+    "schema_version": "frc-whoqa-budget-stress-v1",
+    "experiment_id": "FRC-WHOQA-BUDGET-STRESS-V34",
+    "dataset": "WhoQA",
+    "cases": 5152,
+    "template_count": 26957,
+    "selection_runs": 970452,
+    "methods": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "coverage_greedy_proxy",
+      "frc_select"
+    ],
+    "configurations": [
+      {
+        "config_id": "k2_b1500",
+        "top_k": 2,
+        "token_budget": 1500
+      },
+      {
+        "config_id": "k3_b1500",
+        "top_k": 3,
+        "token_budget": 1500
+      },
+      {
+        "config_id": "k4_b256",
+        "top_k": 4,
+        "token_budget": 256
+      },
+      {
+        "config_id": "k4_b512",
+        "top_k": 4,
+        "token_budget": 512
+      },
+      {
+        "config_id": "k4_b1024",
+        "top_k": 4,
+        "token_budget": 1024
+      },
+      {
+        "config_id": "k4_b1500",
+        "top_k": 4,
+        "token_budget": 1500
+      }
+    ],
+    "primary_metric": "fixed_capacity_distinct_viewpoint_coverage",
+    "statistical_unit": "q_id",
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 20260801,
+    "deterministic_output_rerun": "2/2 byte-identical",
+    "source_artifacts": {
+      "protocol": {
+        "path_label": "whoqa_budget_stress_protocol.json",
+        "sha256": "2c120be37eac8c5955c8170d828dfbf0638325b37fee51ae42494c4b08a6fbec"
+      },
+      "raw_source": {
+        "path_label": "WhoQA.json",
+        "sha256": "030dfa5781d15795846f3d1f89fdc76253debb7c67d93a4b516cb9a53d11c211"
+      },
+      "scored_blind": {
+        "path_label": "scored_blind.jsonl",
+        "sha256": "d9dacf56fa011726728811123af113b852c079e40d3a136301d1d024f8873a4b"
+      },
+      "parent_protocol": {
+        "path_label": "whoqa_conflict_coverage_protocol.json",
+        "sha256": "7a92b637521a8b0ee5d9620b2972c1dfb95a5f0b6c246974171749f7b53c6bb9"
+      },
+      "post_result_alias_correction": {
+        "path_label": "whoqa_conflict_coverage_post_result_correction.json",
+        "sha256": "5106dea12cad7b26a4f16d973eac770a85d81b6bf02b5a79c4a53d1b4b372927"
+      },
+      "frozen_selector_implementation": {
+        "path_label": "whoqa_conflict_coverage.py",
+        "sha256": "6efef7888c968e265ab3992fe6468413b74bbb09ac87ee635002eb738a712ee5"
+      }
+    },
+    "evidence_artifact": {
+      "path_label": "whoqa_budget_stress_cases.jsonl.gz",
+      "sha256": "7f0779eb664911662136d74dd108abfae820e10ae79991fad688f16cbd8e89c0",
+      "record_count": 5152,
+      "raw_question_or_answer_exported": false
+    }
+  },
+  "development_boundary": {
+    "v33_outcome_known": true,
+    "v34_stress_results_known_at_registration": false,
+    "post_result_method_development": true,
+    "new_model_scoring": false,
+    "selector_parameters_changed": false,
+    "independent_confirmation": false,
+    "gate_evidence": false,
+    "production_authorization": false
+  },
+  "analysis": {
+    "aggregates_by_configuration": {
+      "k2_b1500": {
+        "bm25_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.994417,
+            "raw_distinct_viewpoint_recall": 0.730035,
+            "at_least_two_viewpoint_coverage": 0.988834,
+            "selected_candidate_count": 2.0,
+            "selected_token_cost": 353.593546,
+            "budget_shortfall": 0.0
+          }
+        },
+        "dense_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.992952,
+            "raw_distinct_viewpoint_recall": 0.729151,
+            "at_least_two_viewpoint_coverage": 0.985904,
+            "selected_candidate_count": 2.0,
+            "selected_token_cost": 333.245293,
+            "budget_shortfall": 0.0
+          }
+        },
+        "hybrid_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.994279,
+            "raw_distinct_viewpoint_recall": 0.729874,
+            "at_least_two_viewpoint_coverage": 0.988558,
+            "selected_candidate_count": 2.0,
+            "selected_token_cost": 344.199791,
+            "budget_shortfall": 0.0
+          }
+        },
+        "cross_encoder_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.994684,
+            "raw_distinct_viewpoint_recall": 0.7303,
+            "at_least_two_viewpoint_coverage": 0.989368,
+            "selected_candidate_count": 2.0,
+            "selected_token_cost": 357.463572,
+            "budget_shortfall": 0.0
+          }
+        },
+        "coverage_greedy_proxy": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.99548,
+            "raw_distinct_viewpoint_recall": 0.730844,
+            "at_least_two_viewpoint_coverage": 0.99096,
+            "selected_candidate_count": 2.0,
+            "selected_token_cost": 360.698777,
+            "budget_shortfall": 0.0
+          }
+        },
+        "frc_select": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.994847,
+            "raw_distinct_viewpoint_recall": 0.730389,
+            "at_least_two_viewpoint_coverage": 0.989693,
+            "selected_candidate_count": 2.0,
+            "selected_token_cost": 358.035496,
+            "budget_shortfall": 0.0
+          }
+        }
+      },
+      "k3_b1500": {
+        "bm25_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.99457,
+            "raw_distinct_viewpoint_recall": 0.859229,
+            "at_least_two_viewpoint_coverage": 0.998913,
+            "selected_candidate_count": 2.539014,
+            "selected_token_cost": 437.830561,
+            "budget_shortfall": 0.0
+          }
+        },
+        "dense_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.992948,
+            "raw_distinct_viewpoint_recall": 0.857971,
+            "at_least_two_viewpoint_coverage": 0.998306,
+            "selected_candidate_count": 2.539014,
+            "selected_token_cost": 420.452184,
+            "budget_shortfall": 0.0
+          }
+        },
+        "hybrid_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.994403,
+            "raw_distinct_viewpoint_recall": 0.859055,
+            "at_least_two_viewpoint_coverage": 0.999117,
+            "selected_candidate_count": 2.539014,
+            "selected_token_cost": 429.570128,
+            "budget_shortfall": 0.0
+          }
+        },
+        "cross_encoder_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.994611,
+            "raw_distinct_viewpoint_recall": 0.859436,
+            "at_least_two_viewpoint_coverage": 0.999301,
+            "selected_candidate_count": 2.539014,
+            "selected_token_cost": 442.483953,
+            "budget_shortfall": 0.0
+          }
+        },
+        "coverage_greedy_proxy": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.994771,
+            "raw_distinct_viewpoint_recall": 0.859562,
+            "at_least_two_viewpoint_coverage": 0.999068,
+            "selected_candidate_count": 2.539014,
+            "selected_token_cost": 442.346069,
+            "budget_shortfall": 0.0
+          }
+        },
+        "frc_select": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.994611,
+            "raw_distinct_viewpoint_recall": 0.859454,
+            "at_least_two_viewpoint_coverage": 0.999262,
+            "selected_candidate_count": 2.539014,
+            "selected_token_cost": 442.608972,
+            "budget_shortfall": 0.0
+          }
+        }
+      },
+      "k4_b256": {
+        "bm25_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.49112,
+            "raw_distinct_viewpoint_recall": 0.463327,
+            "at_least_two_viewpoint_coverage": 0.29538,
+            "selected_candidate_count": 1.360836,
+            "selected_token_cost": 197.252155,
+            "budget_shortfall": 0.906599
+          }
+        },
+        "dense_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.505252,
+            "raw_distinct_viewpoint_recall": 0.47436,
+            "at_least_two_viewpoint_coverage": 0.324495,
+            "selected_candidate_count": 1.41826,
+            "selected_token_cost": 191.278023,
+            "budget_shortfall": 0.899457
+          }
+        },
+        "hybrid_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.497208,
+            "raw_distinct_viewpoint_recall": 0.468204,
+            "at_least_two_viewpoint_coverage": 0.308463,
+            "selected_candidate_count": 1.384618,
+            "selected_token_cost": 194.944653,
+            "budget_shortfall": 0.903222
+          }
+        },
+        "cross_encoder_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.488984,
+            "raw_distinct_viewpoint_recall": 0.461878,
+            "at_least_two_viewpoint_coverage": 0.29474,
+            "selected_candidate_count": 1.34949,
+            "selected_token_cost": 197.944124,
+            "budget_shortfall": 0.910016
+          }
+        },
+        "coverage_greedy_proxy": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.489534,
+            "raw_distinct_viewpoint_recall": 0.462394,
+            "at_least_two_viewpoint_coverage": 0.296278,
+            "selected_candidate_count": 1.350961,
+            "selected_token_cost": 198.0783,
+            "budget_shortfall": 0.910248
+          }
+        },
+        "frc_select": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.488595,
+            "raw_distinct_viewpoint_recall": 0.461609,
+            "at_least_two_viewpoint_coverage": 0.293658,
+            "selected_candidate_count": 1.347389,
+            "selected_token_cost": 198.264989,
+            "budget_shortfall": 0.910287
+          }
+        }
+      },
+      "k4_b512": {
+        "bm25_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.859464,
+            "raw_distinct_viewpoint_recall": 0.808072,
+            "at_least_two_viewpoint_coverage": 0.953285,
+            "selected_candidate_count": 2.415926,
+            "selected_token_cost": 384.557172,
+            "budget_shortfall": 0.382415
+          }
+        },
+        "dense_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.864076,
+            "raw_distinct_viewpoint_recall": 0.811466,
+            "at_least_two_viewpoint_coverage": 0.956201,
+            "selected_candidate_count": 2.436801,
+            "selected_token_cost": 378.192571,
+            "budget_shortfall": 0.372593
+          }
+        },
+        "hybrid_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.86287,
+            "raw_distinct_viewpoint_recall": 0.810747,
+            "at_least_two_viewpoint_coverage": 0.956255,
+            "selected_candidate_count": 2.427878,
+            "selected_token_cost": 382.044386,
+            "budget_shortfall": 0.376941
+          }
+        },
+        "cross_encoder_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.859676,
+            "raw_distinct_viewpoint_recall": 0.808575,
+            "at_least_two_viewpoint_coverage": 0.956051,
+            "selected_candidate_count": 2.41446,
+            "selected_token_cost": 384.840785,
+            "budget_shortfall": 0.386064
+          }
+        },
+        "coverage_greedy_proxy": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.859502,
+            "raw_distinct_viewpoint_recall": 0.808519,
+            "at_least_two_viewpoint_coverage": 0.955585,
+            "selected_candidate_count": 2.411583,
+            "selected_token_cost": 385.1314,
+            "budget_shortfall": 0.386025
+          }
+        },
+        "frc_select": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.859419,
+            "raw_distinct_viewpoint_recall": 0.80837,
+            "at_least_two_viewpoint_coverage": 0.955522,
+            "selected_candidate_count": 2.413048,
+            "selected_token_cost": 384.960481,
+            "budget_shortfall": 0.386258
+          }
+        }
+      },
+      "k4_b1024": {
+        "bm25_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.994708,
+            "raw_distinct_viewpoint_recall": 0.928899,
+            "at_least_two_viewpoint_coverage": 0.999884,
+            "selected_candidate_count": 2.898602,
+            "selected_token_cost": 490.402747,
+            "budget_shortfall": 0.002019
+          }
+        },
+        "dense_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.99431,
+            "raw_distinct_viewpoint_recall": 0.928517,
+            "at_least_two_viewpoint_coverage": 0.999845,
+            "selected_candidate_count": 2.898758,
+            "selected_token_cost": 477.56564,
+            "budget_shortfall": 0.001863
+          }
+        },
+        "hybrid_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.994669,
+            "raw_distinct_viewpoint_recall": 0.928862,
+            "at_least_two_viewpoint_coverage": 0.999961,
+            "selected_candidate_count": 2.898719,
+            "selected_token_cost": 483.819745,
+            "budget_shortfall": 0.001902
+          }
+        },
+        "cross_encoder_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.994308,
+            "raw_distinct_viewpoint_recall": 0.928557,
+            "at_least_two_viewpoint_coverage": 0.999767,
+            "selected_candidate_count": 2.89837,
+            "selected_token_cost": 493.83323,
+            "budget_shortfall": 0.002252
+          }
+        },
+        "coverage_greedy_proxy": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.994418,
+            "raw_distinct_viewpoint_recall": 0.928663,
+            "at_least_two_viewpoint_coverage": 0.999806,
+            "selected_candidate_count": 2.898175,
+            "selected_token_cost": 493.791455,
+            "budget_shortfall": 0.002446
+          }
+        },
+        "frc_select": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.994366,
+            "raw_distinct_viewpoint_recall": 0.928615,
+            "at_least_two_viewpoint_coverage": 0.999767,
+            "selected_candidate_count": 2.898408,
+            "selected_token_cost": 493.873602,
+            "budget_shortfall": 0.002213
+          }
+        }
+      },
+      "k4_b1500": {
+        "bm25_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.995203,
+            "raw_distinct_viewpoint_recall": 0.929376,
+            "at_least_two_viewpoint_coverage": 0.999884,
+            "selected_candidate_count": 2.900621,
+            "selected_token_cost": 491.052319,
+            "budget_shortfall": 0.0
+          }
+        },
+        "dense_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.994775,
+            "raw_distinct_viewpoint_recall": 0.928974,
+            "at_least_two_viewpoint_coverage": 0.999845,
+            "selected_candidate_count": 2.900621,
+            "selected_token_cost": 478.193046,
+            "budget_shortfall": 0.0
+          }
+        },
+        "hybrid_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.995144,
+            "raw_distinct_viewpoint_recall": 0.929324,
+            "at_least_two_viewpoint_coverage": 0.999961,
+            "selected_candidate_count": 2.900621,
+            "selected_token_cost": 484.417066,
+            "budget_shortfall": 0.0
+          }
+        },
+        "cross_encoder_topk": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.994871,
+            "raw_distinct_viewpoint_recall": 0.929078,
+            "at_least_two_viewpoint_coverage": 0.999767,
+            "selected_candidate_count": 2.900621,
+            "selected_token_cost": 494.508191,
+            "budget_shortfall": 0.0
+          }
+        },
+        "coverage_greedy_proxy": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.995029,
+            "raw_distinct_viewpoint_recall": 0.929222,
+            "at_least_two_viewpoint_coverage": 0.999806,
+            "selected_candidate_count": 2.900621,
+            "selected_token_cost": 494.482914,
+            "budget_shortfall": 0.0
+          }
+        },
+        "frc_select": {
+          "metrics": {
+            "fixed_capacity_distinct_viewpoint_coverage": 0.994919,
+            "raw_distinct_viewpoint_recall": 0.92913,
+            "at_least_two_viewpoint_coverage": 0.999767,
+            "selected_candidate_count": 2.900621,
+            "selected_token_cost": 494.543983,
+            "budget_shortfall": 0.0
+          }
+        }
+      }
+    },
+    "family_comparison": {
+      "method_primary_means": {
+        "bm25_topk": 0.888247,
+        "dense_topk": 0.890719,
+        "hybrid_topk": 0.889762,
+        "cross_encoder_topk": 0.887856,
+        "coverage_greedy_proxy": 0.888122,
+        "frc_select": 0.887793
+      },
+      "observed_strongest_baseline": "dense_topk",
+      "frc_minus_observed_strongest_point": -0.002926,
+      "frc_minus_bootstrap_strongest_simultaneous": {
+        "ci_low": -0.003858,
+        "ci_high": -0.002025,
+        "resamples": 10000,
+        "seed": 20260801
+      },
+      "frc_minus_reference": {
+        "baseline": "coverage_greedy_proxy",
+        "point": -0.000329,
+        "ci_low": -0.000685,
+        "ci_high": 2.3e-05,
+        "resamples": 10000,
+        "seed": 20260801
+      }
+    },
+    "configuration_comparisons": {
+      "k2_b1500": {
+        "method_primary_means": {
+          "bm25_topk": 0.994417,
+          "dense_topk": 0.992952,
+          "hybrid_topk": 0.994279,
+          "cross_encoder_topk": 0.994684,
+          "coverage_greedy_proxy": 0.99548,
+          "frc_select": 0.994847
+        },
+        "observed_strongest_baseline": "coverage_greedy_proxy",
+        "frc_minus_observed_strongest_point": -0.000633,
+        "frc_minus_bootstrap_strongest_simultaneous": {
+          "ci_low": -0.001276,
+          "ci_high": -2.4e-05,
+          "resamples": 10000,
+          "seed": 20260801
+        },
+        "frc_minus_reference": {
+          "baseline": "coverage_greedy_proxy",
+          "point": -0.000633,
+          "ci_low": -0.001257,
+          "ci_high": -2e-06,
+          "resamples": 10000,
+          "seed": 20260801
+        }
+      },
+      "k3_b1500": {
+        "method_primary_means": {
+          "bm25_topk": 0.99457,
+          "dense_topk": 0.992948,
+          "hybrid_topk": 0.994403,
+          "cross_encoder_topk": 0.994611,
+          "coverage_greedy_proxy": 0.994771,
+          "frc_select": 0.994611
+        },
+        "observed_strongest_baseline": "coverage_greedy_proxy",
+        "frc_minus_observed_strongest_point": -0.00016,
+        "frc_minus_bootstrap_strongest_simultaneous": {
+          "ci_low": -0.00095,
+          "ci_high": 5.2e-05,
+          "resamples": 10000,
+          "seed": 20260801
+        },
+        "frc_minus_reference": {
+          "baseline": "coverage_greedy_proxy",
+          "point": -0.00016,
+          "ci_low": -0.000686,
+          "ci_high": 0.000345,
+          "resamples": 10000,
+          "seed": 20260801
+        }
+      },
+      "k4_b256": {
+        "method_primary_means": {
+          "bm25_topk": 0.49112,
+          "dense_topk": 0.505252,
+          "hybrid_topk": 0.497208,
+          "cross_encoder_topk": 0.488984,
+          "coverage_greedy_proxy": 0.489534,
+          "frc_select": 0.488595
+        },
+        "observed_strongest_baseline": "dense_topk",
+        "frc_minus_observed_strongest_point": -0.016657,
+        "frc_minus_bootstrap_strongest_simultaneous": {
+          "ci_low": -0.018765,
+          "ci_high": -0.014633,
+          "resamples": 10000,
+          "seed": 20260801
+        },
+        "frc_minus_reference": {
+          "baseline": "coverage_greedy_proxy",
+          "point": -0.000938,
+          "ci_low": -0.001751,
+          "ci_high": -0.000141,
+          "resamples": 10000,
+          "seed": 20260801
+        }
+      },
+      "k4_b512": {
+        "method_primary_means": {
+          "bm25_topk": 0.859464,
+          "dense_topk": 0.864076,
+          "hybrid_topk": 0.86287,
+          "cross_encoder_topk": 0.859676,
+          "coverage_greedy_proxy": 0.859502,
+          "frc_select": 0.859419
+        },
+        "observed_strongest_baseline": "dense_topk",
+        "frc_minus_observed_strongest_point": -0.004657,
+        "frc_minus_bootstrap_strongest_simultaneous": {
+          "ci_low": -0.006232,
+          "ci_high": -0.003119,
+          "resamples": 10000,
+          "seed": 20260801
+        },
+        "frc_minus_reference": {
+          "baseline": "coverage_greedy_proxy",
+          "point": -8.3e-05,
+          "ci_low": -0.000816,
+          "ci_high": 0.000662,
+          "resamples": 10000,
+          "seed": 20260801
+        }
+      },
+      "k4_b1024": {
+        "method_primary_means": {
+          "bm25_topk": 0.994708,
+          "dense_topk": 0.99431,
+          "hybrid_topk": 0.994669,
+          "cross_encoder_topk": 0.994308,
+          "coverage_greedy_proxy": 0.994418,
+          "frc_select": 0.994366
+        },
+        "observed_strongest_baseline": "bm25_topk",
+        "frc_minus_observed_strongest_point": -0.000341,
+        "frc_minus_bootstrap_strongest_simultaneous": {
+          "ci_low": -0.001178,
+          "ci_high": 4.9e-05,
+          "resamples": 10000,
+          "seed": 20260801
+        },
+        "frc_minus_reference": {
+          "baseline": "coverage_greedy_proxy",
+          "point": -5.2e-05,
+          "ci_low": -0.000469,
+          "ci_high": 0.000362,
+          "resamples": 10000,
+          "seed": 20260801
+        }
+      },
+      "k4_b1500": {
+        "method_primary_means": {
+          "bm25_topk": 0.995203,
+          "dense_topk": 0.994775,
+          "hybrid_topk": 0.995144,
+          "cross_encoder_topk": 0.994871,
+          "coverage_greedy_proxy": 0.995029,
+          "frc_select": 0.994919
+        },
+        "observed_strongest_baseline": "bm25_topk",
+        "frc_minus_observed_strongest_point": -0.000283,
+        "frc_minus_bootstrap_strongest_simultaneous": {
+          "ci_low": -0.0011,
+          "ci_high": 3.9e-05,
+          "resamples": 10000,
+          "seed": 20260801
+        },
+        "frc_minus_reference": {
+          "baseline": "coverage_greedy_proxy",
+          "point": -0.00011,
+          "ci_low": -0.000524,
+          "ci_high": 0.000298,
+          "resamples": 10000,
+          "seed": 20260801
+        }
+      }
+    },
+    "predeclared_strata": [
+      {
+        "stratum": "2 viewpoints",
+        "cases": 2450,
+        "frc_family_primary": 0.92017,
+        "baseline": "dense_topk",
+        "baseline_family_primary": 0.919953,
+        "frc_minus_baseline": 0.000217
+      },
+      {
+        "stratum": "3 viewpoints",
+        "cases": 919,
+        "frc_family_primary": 0.872832,
+        "baseline": "dense_topk",
+        "baseline_family_primary": 0.870719,
+        "frc_minus_baseline": 0.002113
+      },
+      {
+        "stratum": "4 viewpoints",
+        "cases": 664,
+        "frc_family_primary": 0.838983,
+        "baseline": "dense_topk",
+        "baseline_family_primary": 0.845308,
+        "frc_minus_baseline": -0.006325
+      },
+      {
+        "stratum": "5-8 viewpoints",
+        "cases": 1086,
+        "frc_family_primary": 0.858149,
+        "baseline": "dense_topk",
+        "baseline_family_primary": 0.870207,
+        "frc_minus_baseline": -0.012057
+      },
+      {
+        "stratum": "9+ viewpoints",
+        "cases": 33,
+        "frc_family_primary": 0.858333,
+        "baseline": "dense_topk",
+        "baseline_family_primary": 0.865993,
+        "frc_minus_baseline": -0.00766
+      },
+      {
+        "stratum": "slot_constrained",
+        "cases": 1119,
+        "frc_family_primary": 0.858155,
+        "baseline": "dense_topk",
+        "baseline_family_primary": 0.870082,
+        "frc_minus_baseline": -0.011928
+      },
+      {
+        "stratum": "token_constrained",
+        "cases": 4604,
+        "frc_family_primary": 0.877512,
+        "baseline": "dense_topk",
+        "baseline_family_primary": 0.880137,
+        "frc_minus_baseline": -0.002625
+      }
+    ],
+    "safety": {
+      "worst_configuration_delta": -0.016657,
+      "worst_stratum_delta": -0.012057
+    },
+    "outcome": {
+      "status": "WHOQA_STRESS_SUPPORT_NOT_ESTABLISHED",
+      "checks": {
+        "family_point_gain_at_least_0_01": false,
+        "family_simultaneous_ci_low_above_zero": false,
+        "family_reference_ci_low_above_zero": false,
+        "every_config_delta_at_least_minus_0_02": true
+      },
+      "selector_changed": false,
+      "gate_2": "NO-GO/SHADOW",
+      "canary_or_default_authorized": false,
+      "independent_confirmation": false
+    }
+  },
+  "interpretation_boundary": [
+    "This is a post-v33 diagnostic on reused scores, not an untouched-dataset confirmation.",
+    "The experiment may explain budget sensitivity but cannot authorize Gate 2, CANARY, DEFAULT, SetR equivalence, or flood-domain effectiveness.",
+    "WhoQA still does not cover temporal invalidation, misinformation, missing files, or flood-policy exceptions."
+  ]
+}

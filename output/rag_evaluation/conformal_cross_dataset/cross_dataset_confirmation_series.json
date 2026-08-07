@@ -1,0 +1,97 @@
+{
+  "metadata": {
+    "schema_version": "frc-conformal-cross-dataset-series-v1",
+    "status": "AGGREGATE_PUBLIC_REAL_MODEL_CROSS_DATASET_CONFIRMATIONS",
+    "reference_dataset": "ConditionalQA",
+    "confirmation_dataset_count": 3,
+    "primary_alpha": 0.1,
+    "repeat_count_per_dataset": 10,
+    "aggregation_policy": "FULL only when every registered confirmation is FULL; PARTIAL when every result is FULL or PARTIAL but at least one is not FULL; otherwise NOT_CONFIRMED."
+  },
+  "per_dataset_decision_rule": {
+    "declared_before_confirmation_run": true,
+    "required_safety_reduction_repeats": 10,
+    "required_alpha_control_repeats": 7,
+    "max_mean_case_family_false_complete_rate": 0.1,
+    "no_confirmation_feature_or_model_selection": true
+  },
+  "confirmations": [
+    {
+      "dataset": "2WikiMultiHopQA",
+      "report_path_label": "2wikimultihopqa_confirmation.json",
+      "report_sha256": "de5163c16023b5f03198f81149a0608330d8f44d8f20e5ab2772489e94f5d7a1",
+      "source_sha256": "7add5a5ec5206a33848de0eecc76a8697dc321e03946fcfefee20df0525a6104",
+      "confirmation_status": "FULL_CONFIRMATION",
+      "full_confirmation": true,
+      "mean_safety_signal_generalized": true,
+      "conformal_case_family_false_complete_mean": 0.090575,
+      "conformal_abstention_mean": 0.927512,
+      "conformal_complete_recall_mean": 0.162305,
+      "safety_reduction_repeats": 10,
+      "case_family_rate_at_or_below_alpha_repeats": 7,
+      "checks": {
+        "safety_reduction_repeats_meet_pre_registered_minimum": true,
+        "alpha_control_repeats_meet_pre_registered_minimum": true,
+        "mean_case_family_false_complete_rate_at_or_below_alpha": true,
+        "confirmation_dataset_differs_from_reference": true,
+        "split_versions_frozen_from_reference": true
+      }
+    },
+    {
+      "dataset": "HotpotQA",
+      "report_path_label": "hotpotqa_confirmation.json",
+      "report_sha256": "fed46418df2a071befda86120f71bda4f4d30073eeb7af76c4a5c23981d5825b",
+      "source_sha256": "ac5189e4f64e799ca7915a0eff9a304e6d09e0bbc6c4ef233335b17c6d56e6af",
+      "confirmation_status": "PARTIAL_CONFIRMATION",
+      "full_confirmation": false,
+      "mean_safety_signal_generalized": true,
+      "conformal_case_family_false_complete_mean": 0.096653,
+      "conformal_abstention_mean": 0.884924,
+      "conformal_complete_recall_mean": 0.218803,
+      "safety_reduction_repeats": 10,
+      "case_family_rate_at_or_below_alpha_repeats": 6,
+      "checks": {
+        "safety_reduction_repeats_meet_pre_registered_minimum": true,
+        "alpha_control_repeats_meet_pre_registered_minimum": false,
+        "mean_case_family_false_complete_rate_at_or_below_alpha": true,
+        "confirmation_dataset_differs_from_reference": true,
+        "split_versions_frozen_from_reference": true
+      }
+    },
+    {
+      "dataset": "MultiHop-RAG",
+      "report_path_label": "multihoprag_confirmation.json",
+      "report_sha256": "d71bf632dc8461cec0e70715782c1f3f2cad48d73fe92307071f8e684b0ef8b1",
+      "source_sha256": "de5333ecea96ed274afd5d28b4d69af5a63e975fc75c9fa991ade9ce52f296e7",
+      "confirmation_status": "FULL_CONFIRMATION",
+      "full_confirmation": true,
+      "mean_safety_signal_generalized": true,
+      "conformal_case_family_false_complete_mean": 0.08789,
+      "conformal_abstention_mean": 0.884396,
+      "conformal_complete_recall_mean": 0.415231,
+      "safety_reduction_repeats": 10,
+      "case_family_rate_at_or_below_alpha_repeats": 8,
+      "checks": {
+        "safety_reduction_repeats_meet_pre_registered_minimum": true,
+        "alpha_control_repeats_meet_pre_registered_minimum": true,
+        "mean_case_family_false_complete_rate_at_or_below_alpha": true,
+        "confirmation_dataset_differs_from_reference": true,
+        "split_versions_frozen_from_reference": true
+      }
+    }
+  ],
+  "outcome": {
+    "confirmation_status": "PARTIAL_CONFIRMATION",
+    "full_confirmation_count": 2,
+    "partial_confirmation_count": 1,
+    "not_confirmed_count": 0,
+    "all_confirmation_datasets_full": false,
+    "all_mean_safety_signals_generalized": true,
+    "cross_dataset_series_confirmed": false
+  },
+  "decision": {
+    "finding": "The series summarizes frozen public-dataset safety protocol transfer. It does not establish retrieval superiority, flood-domain validity or production readiness.",
+    "gate_2": "NO-GO/SHADOW",
+    "production_policy": "SHADOW_OR_HUMAN_REVIEW_ONLY"
+  }
+}

@@ -1,0 +1,369 @@
+{
+  "metadata": {
+    "schema_version": "frc-whoqa-conflict-coverage-v1",
+    "dataset": "WhoQA",
+    "cases": 5152,
+    "template_count_distribution": {
+      "5": 4753,
+      "8": 399
+    },
+    "selection_runs": 161742,
+    "methods": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "coverage_greedy_proxy",
+      "frc_select"
+    ],
+    "top_k": 4,
+    "token_budget": 1500,
+    "role_threshold": 0.55,
+    "primary_metric": "oracle_normalized_distinct_viewpoint_coverage",
+    "deterministic_output_rerun": "2/2 byte-identical",
+    "source_artifacts": {
+      "execution": {
+        "path_label": "whoqa_conflict_coverage_execution.json",
+        "sha256": "ba9df61c8a146901df35a1af6216f694bd1a3b7bcbe9477ecb37c55ee02b57aa"
+      },
+      "execution_erratum": {
+        "path_label": "whoqa_conflict_coverage_execution_erratum.json",
+        "sha256": "1e7ac8fe9bf6008fba27c63ed4895d9ff976f6efec407bd682307984bf7212a2"
+      },
+      "execution_erratum2": {
+        "path_label": "whoqa_conflict_coverage_execution_erratum2.json",
+        "sha256": "8e39f2cddb2e73add09b8c1785ae539403f87c16aac5cbc65c62d783f2e4d86f"
+      },
+      "execution_erratum3": {
+        "path_label": "whoqa_conflict_coverage_execution_erratum3.json",
+        "sha256": "2027903c6a71e9b06d1bc8e9c592e37730fdb2cdc15fd652f060a4e92ccfa7f7"
+      },
+      "execution_erratum4": {
+        "path_label": "whoqa_conflict_coverage_execution_erratum4.json",
+        "sha256": "d4638618477cc0956e33d77d6ef299bee4a15bc7649bf4b18664721dabf2856a"
+      },
+      "execution_erratum5": {
+        "path_label": "whoqa_conflict_coverage_execution_erratum5.json",
+        "sha256": "25364bb774cced00c2507d87daa31e74ab7e5cc9c4df2a1a266ba9c88a060209"
+      },
+      "post_result_correction": {
+        "path_label": "whoqa_conflict_coverage_post_result_correction.json",
+        "sha256": "5106dea12cad7b26a4f16d973eac770a85d81b6bf02b5a79c4a53d1b4b372927"
+      },
+      "prepared_blind": {
+        "path_label": "prepared_blind.jsonl",
+        "sha256": "73db96be7ace983387e5139994ee9f489a4a2f3f9014f0703cd5daa44c602f78"
+      },
+      "protocol": {
+        "path_label": "whoqa_conflict_coverage_protocol.json",
+        "sha256": "7a92b637521a8b0ee5d9620b2972c1dfb95a5f0b6c246974171749f7b53c6bb9"
+      },
+      "raw_source": {
+        "path_label": "WhoQA.json",
+        "sha256": "030dfa5781d15795846f3d1f89fdc76253debb7c67d93a4b516cb9a53d11c211"
+      },
+      "scored_blind": {
+        "path_label": "scored_blind.jsonl",
+        "sha256": "d9dacf56fa011726728811123af113b852c079e40d3a136301d1d024f8873a4b"
+      }
+    },
+    "evidence_artifact": {
+      "path_label": "whoqa_conflict_coverage_cases.jsonl.gz",
+      "sha256": "9356748c7ddf816dfcb8c81c6aae3ec2296964142330433217967981a5d95030",
+      "record_count": 5152
+    }
+  },
+  "development_boundary": {
+    "independent_public_dataset": true,
+    "no_fitting": true,
+    "all_templates_aggregated_by_q_id": true,
+    "gold_used_only_after_selection": true,
+    "gate_evidence": false
+  },
+  "data_audit": {
+    "public_num_distinct_answer_mismatches_against_canonical_viewpoints": 0,
+    "raw_questions_or_answers_in_evidence": false
+  },
+  "analysis": {
+    "aggregates": {
+      "bm25_topk": {
+        "cases": 5152,
+        "metrics": {
+          "oracle_normalized_distinct_viewpoint_coverage": 0.995203,
+          "raw_distinct_viewpoint_recall": 0.929376,
+          "complete_viewpoint_disclosure": 0.986548,
+          "at_least_two_viewpoint_coverage": 0.999884,
+          "selected_candidate_count": 2.900621,
+          "selected_token_cost": 491.052319,
+          "budget_shortfall": 0.0
+        },
+        "mean_unique_template_selection_signatures": 2.718556
+      },
+      "dense_topk": {
+        "cases": 5152,
+        "metrics": {
+          "oracle_normalized_distinct_viewpoint_coverage": 0.994775,
+          "raw_distinct_viewpoint_recall": 0.928974,
+          "complete_viewpoint_disclosure": 0.985234,
+          "at_least_two_viewpoint_coverage": 0.999845,
+          "selected_candidate_count": 2.900621,
+          "selected_token_cost": 478.193046,
+          "budget_shortfall": 0.0
+        },
+        "mean_unique_template_selection_signatures": 2.138199
+      },
+      "hybrid_topk": {
+        "cases": 5152,
+        "metrics": {
+          "oracle_normalized_distinct_viewpoint_coverage": 0.995144,
+          "raw_distinct_viewpoint_recall": 0.929324,
+          "complete_viewpoint_disclosure": 0.986573,
+          "at_least_two_viewpoint_coverage": 0.999961,
+          "selected_candidate_count": 2.900621,
+          "selected_token_cost": 484.417066,
+          "budget_shortfall": 0.0
+        },
+        "mean_unique_template_selection_signatures": 2.611801
+      },
+      "cross_encoder_topk": {
+        "cases": 5152,
+        "metrics": {
+          "oracle_normalized_distinct_viewpoint_coverage": 0.994871,
+          "raw_distinct_viewpoint_recall": 0.929078,
+          "complete_viewpoint_disclosure": 0.985786,
+          "at_least_two_viewpoint_coverage": 0.999767,
+          "selected_candidate_count": 2.900621,
+          "selected_token_cost": 494.508191,
+          "budget_shortfall": 0.0
+        },
+        "mean_unique_template_selection_signatures": 2.177019
+      },
+      "coverage_greedy_proxy": {
+        "cases": 5152,
+        "metrics": {
+          "oracle_normalized_distinct_viewpoint_coverage": 0.995029,
+          "raw_distinct_viewpoint_recall": 0.929222,
+          "complete_viewpoint_disclosure": 0.986071,
+          "at_least_two_viewpoint_coverage": 0.999806,
+          "selected_candidate_count": 2.900621,
+          "selected_token_cost": 494.482914,
+          "budget_shortfall": 0.0
+        },
+        "mean_unique_template_selection_signatures": 2.053183
+      },
+      "frc_select": {
+        "cases": 5152,
+        "metrics": {
+          "oracle_normalized_distinct_viewpoint_coverage": 0.994919,
+          "raw_distinct_viewpoint_recall": 0.92913,
+          "complete_viewpoint_disclosure": 0.985984,
+          "at_least_two_viewpoint_coverage": 0.999767,
+          "selected_candidate_count": 2.900621,
+          "selected_token_cost": 494.543983,
+          "budget_shortfall": 0.0
+        },
+        "mean_unique_template_selection_signatures": 2.138005
+      }
+    },
+    "comparisons": {
+      "observed_strongest_baseline": "bm25_topk",
+      "method_primary_means": {
+        "bm25_topk": 0.995203,
+        "dense_topk": 0.994775,
+        "hybrid_topk": 0.995144,
+        "cross_encoder_topk": 0.994871,
+        "coverage_greedy_proxy": 0.995029,
+        "frc_select": 0.994919
+      },
+      "frc_minus_observed_strongest_point": -0.000283,
+      "frc_minus_bootstrap_strongest_simultaneous": {
+        "ci_low": -0.0011,
+        "ci_high": 3.9e-05,
+        "resamples": 10000,
+        "seed": 20260801
+      },
+      "frc_minus_reference": {
+        "baseline": "coverage_greedy_proxy",
+        "point": -0.00011,
+        "ci_low": -0.000524,
+        "ci_high": 0.000298,
+        "resamples": 10000,
+        "seed": 20260801
+      }
+    },
+    "viewpoint_count_strata": [
+      {
+        "stratum": "2 viewpoints",
+        "cases": 2450,
+        "frc_primary": 0.999918,
+        "baseline": "bm25_topk",
+        "baseline_primary": 0.999959,
+        "frc_minus_baseline": -4.1e-05
+      },
+      {
+        "stratum": "3 viewpoints",
+        "cases": 919,
+        "frc_primary": 0.998286,
+        "baseline": "bm25_topk",
+        "baseline_primary": 0.997153,
+        "frc_minus_baseline": 0.001133
+      },
+      {
+        "stratum": "4 viewpoints",
+        "cases": 664,
+        "frc_primary": 0.978464,
+        "baseline": "bm25_topk",
+        "baseline_primary": 0.980949,
+        "frc_minus_baseline": -0.002485
+      },
+      {
+        "stratum": "5-8 viewpoints",
+        "cases": 1086,
+        "frc_primary": 0.9907,
+        "baseline": "bm25_topk",
+        "baseline_primary": 0.991575,
+        "frc_minus_baseline": -0.000875
+      },
+      {
+        "stratum": "9+ viewpoints",
+        "cases": 33,
+        "frc_primary": 1.0,
+        "baseline": "bm25_topk",
+        "baseline_primary": 0.993939,
+        "frc_minus_baseline": 0.006061
+      }
+    ],
+    "property_strata_minimum_50_cases": [
+      {
+        "stratum": "P106",
+        "cases": 402,
+        "frc_primary": 0.981468,
+        "baseline": "bm25_topk",
+        "baseline_primary": 0.983624,
+        "frc_minus_baseline": -0.002156
+      },
+      {
+        "stratum": "P123",
+        "cases": 158,
+        "frc_primary": 0.999578,
+        "baseline": "bm25_topk",
+        "baseline_primary": 1.0,
+        "frc_minus_baseline": -0.000422
+      },
+      {
+        "stratum": "P136",
+        "cases": 399,
+        "frc_primary": 0.999896,
+        "baseline": "bm25_topk",
+        "baseline_primary": 0.999791,
+        "frc_minus_baseline": 0.000104
+      },
+      {
+        "stratum": "P17",
+        "cases": 483,
+        "frc_primary": 0.977536,
+        "baseline": "bm25_topk",
+        "baseline_primary": 0.977605,
+        "frc_minus_baseline": -6.9e-05
+      },
+      {
+        "stratum": "P170",
+        "cases": 405,
+        "frc_primary": 0.994938,
+        "baseline": "bm25_topk",
+        "baseline_primary": 0.993374,
+        "frc_minus_baseline": 0.001564
+      },
+      {
+        "stratum": "P175",
+        "cases": 449,
+        "frc_primary": 0.991091,
+        "baseline": "bm25_topk",
+        "baseline_primary": 0.993096,
+        "frc_minus_baseline": -0.002004
+      },
+      {
+        "stratum": "P22",
+        "cases": 464,
+        "frc_primary": 0.998132,
+        "baseline": "bm25_topk",
+        "baseline_primary": 0.998599,
+        "frc_minus_baseline": -0.000467
+      },
+      {
+        "stratum": "P25",
+        "cases": 154,
+        "frc_primary": 1.0,
+        "baseline": "bm25_topk",
+        "baseline_primary": 1.0,
+        "frc_minus_baseline": 0.0
+      },
+      {
+        "stratum": "P26",
+        "cases": 299,
+        "frc_primary": 1.0,
+        "baseline": "bm25_topk",
+        "baseline_primary": 0.999666,
+        "frc_minus_baseline": 0.000334
+      },
+      {
+        "stratum": "P50",
+        "cases": 493,
+        "frc_primary": 0.999493,
+        "baseline": "bm25_topk",
+        "baseline_primary": 0.999493,
+        "frc_minus_baseline": 0.0
+      },
+      {
+        "stratum": "P569",
+        "cases": 499,
+        "frc_primary": 1.0,
+        "baseline": "bm25_topk",
+        "baseline_primary": 1.0,
+        "frc_minus_baseline": 0.0
+      },
+      {
+        "stratum": "P570",
+        "cases": 485,
+        "frc_primary": 0.999485,
+        "baseline": "bm25_topk",
+        "baseline_primary": 0.999588,
+        "frc_minus_baseline": -0.000103
+      },
+      {
+        "stratum": "P86",
+        "cases": 462,
+        "frc_primary": 0.999242,
+        "baseline": "bm25_topk",
+        "baseline_primary": 0.999459,
+        "frc_minus_baseline": -0.000216
+      }
+    ],
+    "safety": {
+      "worst_viewpoint_count_delta": -0.002485,
+      "worst_property_delta": -0.002156
+    },
+    "outcome": {
+      "status": "WHOQA_SELECTION_SUPPORT_NOT_ESTABLISHED",
+      "checks": {
+        "frc_minus_strongest_point_gain_at_least_0_05": false,
+        "frc_minus_strongest_simultaneous_ci_low_above_zero": false,
+        "frc_minus_reference_ci_low_above_zero": false,
+        "no_viewpoint_count_stratum_delta_below_minus_0_05": true,
+        "no_property_stratum_delta_below_minus_0_05": true,
+        "frc_budget_shortfall_not_above_strongest_baseline": true,
+        "all_cases_scored": true,
+        "gold_leakage_checks_pass": true,
+        "official_viewpoint_count_alignment_pass": true
+      },
+      "gate_2": "NO-GO/SHADOW",
+      "canary_or_default_authorized": false
+    }
+  },
+  "interpretation": {
+    "scope": "same-name multi-viewpoint evidence selection only",
+    "router": "does not confirm or adopt the v32 classifier router",
+    "setr": "does not reproduce SetR",
+    "production": "does not authorize Gate 2, CANARY, or DEFAULT"
+  }
+}

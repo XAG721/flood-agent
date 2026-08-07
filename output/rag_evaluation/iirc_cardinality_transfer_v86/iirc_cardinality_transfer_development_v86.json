@@ -1,0 +1,203 @@
+{
+  "aggregates": {
+    "bm25_fixed2": {
+      "complete_evidence_recall": 0.3075,
+      "evidence_macro_f1": 0.490351,
+      "evidence_macro_precision": 0.48,
+      "evidence_macro_recall": 0.541292,
+      "mean_selected_sources": 2.0
+    },
+    "cross_dataset_question_cardinality_frc_v86": {
+      "complete_evidence_recall": 0.4425,
+      "evidence_macro_f1": 0.616381,
+      "evidence_macro_precision": 0.601042,
+      "evidence_macro_recall": 0.686708,
+      "mean_selected_sources": 2.0075
+    },
+    "cross_encoder_fixed1": {
+      "complete_evidence_recall": 0.2025,
+      "evidence_macro_f1": 0.596464,
+      "evidence_macro_precision": 0.8325,
+      "evidence_macro_recall": 0.492125,
+      "mean_selected_sources": 1.0
+    },
+    "cross_encoder_fixed2": {
+      "complete_evidence_recall": 0.45,
+      "evidence_macro_f1": 0.619226,
+      "evidence_macro_precision": 0.6,
+      "evidence_macro_recall": 0.690875,
+      "mean_selected_sources": 2.0
+    },
+    "cross_encoder_fixed3": {
+      "complete_evidence_recall": 0.565,
+      "evidence_macro_f1": 0.550042,
+      "evidence_macro_precision": 0.4525,
+      "evidence_macro_recall": 0.76775,
+      "mean_selected_sources": 3.0
+    },
+    "cross_encoder_fixed4": {
+      "complete_evidence_recall": 0.6525,
+      "evidence_macro_f1": 0.492601,
+      "evidence_macro_precision": 0.368125,
+      "evidence_macro_recall": 0.820875,
+      "mean_selected_sources": 4.0
+    },
+    "dense_fixed2": {
+      "complete_evidence_recall": 0.375,
+      "evidence_macro_f1": 0.568101,
+      "evidence_macro_precision": 0.55625,
+      "evidence_macro_recall": 0.625875,
+      "mean_selected_sources": 2.0
+    },
+    "frc_fixed1": {
+      "complete_evidence_recall": 0.2075,
+      "evidence_macro_f1": 0.604798,
+      "evidence_macro_precision": 0.8425,
+      "evidence_macro_recall": 0.499625,
+      "mean_selected_sources": 1.0
+    },
+    "frc_fixed2": {
+      "complete_evidence_recall": 0.4525,
+      "evidence_macro_f1": 0.620893,
+      "evidence_macro_precision": 0.60125,
+      "evidence_macro_recall": 0.693375,
+      "mean_selected_sources": 2.0
+    },
+    "frc_fixed3": {
+      "complete_evidence_recall": 0.5675,
+      "evidence_macro_f1": 0.551292,
+      "evidence_macro_precision": 0.453333,
+      "evidence_macro_recall": 0.77025,
+      "mean_selected_sources": 3.0
+    },
+    "frc_fixed4": {
+      "complete_evidence_recall": 0.6525,
+      "evidence_macro_f1": 0.492601,
+      "evidence_macro_precision": 0.368125,
+      "evidence_macro_recall": 0.820875,
+      "mean_selected_sources": 4.0
+    },
+    "hybrid_fixed2": {
+      "complete_evidence_recall": 0.35,
+      "evidence_macro_f1": 0.541226,
+      "evidence_macro_precision": 0.53125,
+      "evidence_macro_recall": 0.595667,
+      "mean_selected_sources": 2.0
+    }
+  },
+  "all_strict_gates_pass": false,
+  "candidate_action_counts": {
+    "1": 13,
+    "2": 374,
+    "3": 10,
+    "4": 3
+  },
+  "candidate_action_fractions": {
+    "1": 0.0325,
+    "2": 0.935,
+    "3": 0.025,
+    "4": 0.0075
+  },
+  "candidate_minus_frc_fixed2": {
+    "ci_high": 0.001715,
+    "ci_low": -0.011191,
+    "point": -0.004512,
+    "point_strongest_control": "frc_fixed2",
+    "strongest_selected_inside_each_resample": false
+  },
+  "candidate_minus_strongest_fixed": {
+    "ci_high": 0.001346,
+    "ci_low": -0.018155,
+    "point": -0.004512,
+    "point_strongest_control": "frc_fixed2",
+    "strongest_selected_inside_each_resample": true
+  },
+  "cases": 400,
+  "checks": {
+    "candidate_complete_evidence_recall_at_least_0_30": true,
+    "candidate_complete_recall_delta_vs_strongest_at_least_minus_0_02": true,
+    "candidate_evidence_macro_f1_at_least_0_35": true,
+    "candidate_evidence_recall_delta_vs_strongest_at_least_minus_0_02": true,
+    "candidate_mean_selected_sources_above_strongest_at_most_0_5": true,
+    "candidate_minus_frc_fixed2_ci_low_above_0": false,
+    "candidate_minus_frc_fixed2_f1_at_least_0_005": false,
+    "candidate_minus_strongest_fixed_ci_low_above_0": false,
+    "candidate_minus_strongest_fixed_f1_at_least_0_005": false,
+    "development_confirmation_overlap_0": true,
+    "distinct_candidate_actions_at_least_2": true,
+    "exact_cases": true,
+    "invalid_selector_output_rate_at_most_0": true,
+    "second_largest_action_fraction_at_least_0_05": false,
+    "supported_stratum_delta_vs_strongest_at_least_minus_0_03": true
+  },
+  "claim_limits": {
+    "answer_generation_evaluated": false,
+    "canary_or_default_authorized": false,
+    "flood_domain_effectiveness_established": false,
+    "independent_iirc_train_partition": true,
+    "selector_adoption_authorized": false,
+    "setr_reproduced": false
+  },
+  "experiment_id": "FRC-IIRC-CARDINALITY-TRANSFER-PROSPECTIVE-V86",
+  "gate_2": "NO-GO/SHADOW",
+  "schema_version": "frc-iirc-cardinality-transfer-result-v86",
+  "stage": "development",
+  "status": "IIRC_V86_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED",
+  "strata": {
+    "answer_type=binary": {
+      "candidate_f1": 0.573333,
+      "cases": 35,
+      "delta": -0.005714,
+      "strongest_fixed_f1": 0.579048
+    },
+    "answer_type=none": {
+      "candidate_f1": 0.611295,
+      "cases": 121,
+      "delta": 0.001102,
+      "strongest_fixed_f1": 0.610193
+    },
+    "answer_type=span": {
+      "candidate_f1": 0.60978,
+      "cases": 186,
+      "delta": -0.00594,
+      "strongest_fixed_f1": 0.615719
+    },
+    "answer_type=value": {
+      "candidate_f1": 0.674138,
+      "cases": 58,
+      "delta": -0.01092,
+      "strongest_fixed_f1": 0.685057
+    },
+    "candidate_ceiling=complete": {
+      "candidate_f1": 0.616381,
+      "cases": 400,
+      "delta": -0.004512,
+      "strongest_fixed_f1": 0.620893
+    },
+    "gold_cardinality=1": {
+      "candidate_f1": 0.608772,
+      "cases": 114,
+      "delta": 0.000585,
+      "strongest_fixed_f1": 0.608187
+    },
+    "gold_cardinality=2": {
+      "candidate_f1": 0.64823,
+      "cases": 226,
+      "delta": -0.006637,
+      "strongest_fixed_f1": 0.654867
+    },
+    "gold_cardinality=3": {
+      "candidate_f1": 0.547315,
+      "cases": 47,
+      "delta": -0.005876,
+      "strongest_fixed_f1": 0.553191
+    },
+    "gold_cardinality=4_plus": {
+      "candidate_f1": 0.379121,
+      "cases": 13,
+      "delta": -0.007326,
+      "strongest_fixed_f1": 0.386447
+    }
+  },
+  "strongest_fixed_control": "frc_fixed2"
+}

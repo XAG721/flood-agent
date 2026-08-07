@@ -1,0 +1,187 @@
+{
+  "analysis": {
+    "methods": {
+      "alternating_anchor_link_control": {
+        "cases": 800,
+        "complete_evidence_recall": 0.55625,
+        "evidence_macro_f1": 0.542004,
+        "evidence_macro_recall": 0.806146,
+        "mean_selected_tokens": 539.7475
+      },
+      "cross_encoder_topk": {
+        "cases": 800,
+        "complete_evidence_recall": 0.52375,
+        "evidence_macro_f1": 0.528353,
+        "evidence_macro_recall": 0.788333,
+        "mean_selected_tokens": 544.29375
+      },
+      "frc_select": {
+        "cases": 800,
+        "complete_evidence_recall": 0.52375,
+        "evidence_macro_f1": 0.528666,
+        "evidence_macro_recall": 0.78875,
+        "mean_selected_tokens": 544.3825
+      },
+      "graph_gbr_soft_override_router_v76": {
+        "cases": 800,
+        "complete_evidence_recall": 0.5425,
+        "evidence_macro_f1": 0.535779,
+        "evidence_macro_recall": 0.798333,
+        "mean_selected_tokens": 542.12125
+      },
+      "lexical_question_router_control": {
+        "cases": 800,
+        "complete_evidence_recall": 0.51375,
+        "evidence_macro_f1": 0.524519,
+        "evidence_macro_recall": 0.778542,
+        "mean_selected_tokens": 534.18625
+      },
+      "soft_title_link_support_path_closure_v74": {
+        "cases": 800,
+        "complete_evidence_recall": 0.5,
+        "evidence_macro_f1": 0.518919,
+        "evidence_macro_recall": 0.771563,
+        "mean_selected_tokens": 532.3125
+      },
+      "zero_shot_v75_question_router_control": {
+        "cases": 800,
+        "complete_evidence_recall": 0.5175,
+        "evidence_macro_f1": 0.526617,
+        "evidence_macro_recall": 0.782083,
+        "mean_selected_tokens": 534.985
+      }
+    },
+    "noninferiority_checks": {
+      "candidate_minus_strongest_control_ci_low_at_least_minus_0_01": false,
+      "candidate_minus_strongest_control_point_at_least_minus_0_005": false,
+      "every_hop_delta_vs_best_control_at_least_minus_0_02": true,
+      "invalid_selector_output_rate_equals_0": true
+    },
+    "outcome": {
+      "canary_or_default_authorized": false,
+      "confirmation_open_authorized": false,
+      "gate_2": "NO-GO/SHADOW",
+      "noninferiority_envelope_supported": false,
+      "reuse_target_stage_for_feature_model_threshold_gate_or_selection": false,
+      "selector_adoption_authorized": false,
+      "stage_gate_passed": false,
+      "status": "MUSIQUE_V77_FROZEN_V76_ROUTER_TRANSFER_ADVANTAGE_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+    },
+    "paired_f1_delta": {
+      "alternating_anchor_link_control": {
+        "ci_high": 0.000164,
+        "ci_low": -0.012733,
+        "point": -0.006225,
+        "resamples": 10000,
+        "seed": 20261104
+      },
+      "cross_encoder_topk": {
+        "ci_high": 0.012416,
+        "ci_low": 0.002535,
+        "point": 0.007426,
+        "resamples": 10000,
+        "seed": 20261101
+      },
+      "frc_select": {
+        "ci_high": 0.012193,
+        "ci_low": 0.002252,
+        "point": 0.007113,
+        "resamples": 10000,
+        "seed": 20261102
+      },
+      "lexical_question_router_control": {
+        "ci_high": 0.019678,
+        "ci_low": 0.002723,
+        "point": 0.01126,
+        "resamples": 10000,
+        "seed": 20261105
+      },
+      "soft_title_link_support_path_closure_v74": {
+        "ci_high": 0.025496,
+        "ci_low": 0.007892,
+        "point": 0.01686,
+        "resamples": 10000,
+        "seed": 20261103
+      },
+      "zero_shot_v75_question_router_control": {
+        "ci_high": 0.017465,
+        "ci_low": 0.000937,
+        "point": 0.009162,
+        "resamples": 10000,
+        "seed": 20261106
+      }
+    },
+    "per_hop_delta_vs_best_control": {
+      "2": {
+        "best_control": "alternating_anchor_link_control",
+        "best_control_evidence_macro_f1": 0.514286,
+        "candidate_evidence_macro_f1": 0.513571,
+        "cases": 400,
+        "delta": -0.000714
+      },
+      "3": {
+        "best_control": "alternating_anchor_link_control",
+        "best_control_evidence_macro_f1": 0.548,
+        "candidate_evidence_macro_f1": 0.539,
+        "cases": 250,
+        "delta": -0.009
+      },
+      "4": {
+        "best_control": "alternating_anchor_link_control",
+        "best_control_evidence_macro_f1": 0.605926,
+        "candidate_evidence_macro_f1": 0.58963,
+        "cases": 150,
+        "delta": -0.016296
+      }
+    },
+    "router": {
+      "soft_override_rate": 0.4375,
+      "v76_history_crossfit_override_rate": 0.346
+    },
+    "strongest_registered_control": {
+      "cases": 800,
+      "complete_evidence_recall": 0.55625,
+      "evidence_macro_f1": 0.542004,
+      "evidence_macro_recall": 0.806146,
+      "mean_selected_tokens": 539.7475,
+      "name": "alternating_anchor_link_control"
+    },
+    "support_checks": {
+      "candidate_complete_evidence_recall_at_least_0_55": false,
+      "candidate_evidence_macro_f1_at_least_0_55": false,
+      "candidate_minus_cross_encoder_ci_low_above_0": true,
+      "candidate_minus_cross_encoder_f1_at_least_0_005": true,
+      "candidate_minus_strongest_control_ci_low_above_0": false,
+      "candidate_minus_strongest_control_f1_at_least_0_005": false,
+      "every_hop_delta_vs_best_control_at_least_minus_0_005": false,
+      "exact_cases_equals_800": true,
+      "exact_hop_quota": true,
+      "invalid_selector_output_rate_equals_0": true,
+      "mean_selected_tokens_within_1_05_of_strongest_control": true,
+      "prior_or_stage_overlap_equals_0": true,
+      "soft_override_rate_between_0_15_and_0_55": true
+    }
+  },
+  "metadata": {
+    "answer_decomposition_support_flags_or_gold_used_by_runtime_router": false,
+    "broader_method_development_independent_of_musique": false,
+    "cases": 800,
+    "experiment_id": "FRC-MUSIQUE-FROZEN-HOTPOT-GRAPH-ROUTER-TRANSFER-V77",
+    "hop_count_distribution": {
+      "2": 400,
+      "3": 250,
+      "4": 150
+    },
+    "invalid_selector_output_count": 0,
+    "official_musique_leaderboard_result": false,
+    "prior_source_overlap": 0,
+    "router_artifact_sha256": "5bdcf7a229d4208d472b33478c073f29dba082bc012b48c0d2aadad47ad4ecfb",
+    "schema_version": "frc-musique-frozen-hotpot-graph-router-transfer-v77",
+    "selection_output_sha256": "d8a185101b1a38051fdda96333b94c83d88051664a17db1d7bc4e393e13e332c",
+    "selection_written_before_gold_join": true,
+    "stage": "development",
+    "stage_overlap": 0,
+    "target_cases_disjoint_from_all_prior_project_musique_exposure": true,
+    "v76_router_trained_only_on_hotpotqa_history": true
+  }
+}
