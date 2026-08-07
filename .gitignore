@@ -3,6 +3,12 @@ api_key.txt
 **/backups/
 /data/
 .pytest_cache/
+/.pytest_tmp/
+/.pytest-tmp-*/
+/.pytest_tmp*/
+/.test-tmp-*/
+/.test-release-*/
+/.tmp/
 __pycache__/
 *.egg-info/
 /build/
@@ -30,6 +36,8 @@ agent-twin-bigscreen-*.png
 data_sources/beilin/raw/geofabrik_shaanxi_osm/download.pbf
 3D_visual/public/models/*.glb
 /output/doc/
+/output/test_artifacts/
+/output/pytest*/
 /output/floodagent_bench/candidate_evaluation_input.json
 /output/rag_evaluation/**/public_benchmark_report.json
 /output/rag_evaluation/public_benchmark_report.md
