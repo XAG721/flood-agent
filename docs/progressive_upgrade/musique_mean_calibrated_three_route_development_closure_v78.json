@@ -1,0 +1,11 @@
+{
+  "candidate_feature_model_offset_threshold_or_gate_changed": false,
+  "confirmation_open_authorized": false,
+  "development_result_sha256": "cc80f4159bf5bc3e7175772ad77d77b97865d43e8ef0099397de653366cd1a7d",
+  "experiment_id": "FRC-MUSIQUE-MEAN-CALIBRATED-THREE-ROUTE-TRANSFER-V78",
+  "gate_2": "NO-GO/SHADOW",
+  "noninferiority_supported": true,
+  "schema_version": "frc-musique-mean-calibrated-three-route-development-closure-v78",
+  "status": "MUSIQUE_V78_MEAN_CALIBRATED_THREE_ROUTE_ADVANTAGE_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+  "strict_gate_passed": false
+}

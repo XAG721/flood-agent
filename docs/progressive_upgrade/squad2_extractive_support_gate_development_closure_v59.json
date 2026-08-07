@@ -1,0 +1,12 @@
+{
+  "canary_or_default_authorized": false,
+  "confirmation_dev_parsed_or_opened": false,
+  "confirmation_execution_started": false,
+  "development_result_sha256": "d3d251a529974cec04d89a6b4b5bd3d498eb9a13e1f194f8faf13d2043170cb0",
+  "experiment_id": "FRC-SQUAD2-EXTRACTIVE-SUPPORT-GATE-V59",
+  "gate_2": "NO-GO/SHADOW",
+  "reason": "At least one prospectively registered development gate failed; dev remains sealed.",
+  "schema_version": "frc-squad2-v59-development-closure-v1",
+  "selector_adoption_authorized": false,
+  "status": "SQUAD2_V59_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+}

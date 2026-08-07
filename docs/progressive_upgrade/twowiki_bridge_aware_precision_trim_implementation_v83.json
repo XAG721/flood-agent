@@ -1,0 +1,65 @@
+{
+  "schema_version": "frc-twowiki-bridge-aware-precision-trim-implementation-lock-v83",
+  "experiment_id": "FRC-2WIKI-BRIDGE-AWARE-PRECISION-TRIM-PROSPECTIVE-V83",
+  "frozen_on": "2026-08-04",
+  "lock_boundary": "Created after v83 model development, protocol and source registration, implementation, and focused tests; before selecting any v83 target-stage id or reading any selected target row.",
+  "files": {
+    "router": {
+      "path": "research/frc_rag/twowiki_bridge_aware_precision_trim_router.py",
+      "bytes": 24907,
+      "sha256": "42235d0738b140bf86f971049e205aba07109245e6dbd62e855d8991bdc79f94"
+    },
+    "transfer": {
+      "path": "research/frc_rag/twowiki_bridge_aware_precision_trim_transfer.py",
+      "bytes": 31232,
+      "sha256": "fa761fb3d5e78f4903429f72afe77f83e4babd2de76817a29321b3a6fa44d72c"
+    },
+    "model_runner": {
+      "path": "scripts/run_twowiki_bridge_aware_precision_trim_model.py",
+      "bytes": 2284,
+      "sha256": "9d15a7c7c628898c96676814bf77e54c9dbc7c3ad5c1a0b0344b9fa65417c3af"
+    },
+    "transfer_runner": {
+      "path": "scripts/run_twowiki_bridge_aware_precision_trim_transfer.py",
+      "bytes": 15882,
+      "sha256": "03586415c79f3530ce276ca8dff6721f5a39b15d9b237936615691411d3b757f"
+    },
+    "router_tests": {
+      "path": "tests/test_frc_twowiki_bridge_aware_precision_trim_router.py",
+      "bytes": 3677,
+      "sha256": "5dea4070750ba25e00c260ce37a8a24580a08fc7a5e7cde4c406647652a0cae9"
+    },
+    "transfer_tests": {
+      "path": "tests/test_frc_twowiki_bridge_aware_precision_trim_transfer.py",
+      "bytes": 6894,
+      "sha256": "ff8db3b1d7c04d38b3c68cb5c3bc5609e0c494a118674fd16131e9928dc08c1d"
+    },
+    "protocol": {
+      "path": "docs/progressive_upgrade/twowiki_bridge_aware_precision_trim_protocol_v83.json",
+      "bytes": 6892,
+      "sha256": "4d4cc6d2f95adf50d3630de1bef28515433da011a277081196436651e51a53ac"
+    },
+    "source_registration": {
+      "path": "docs/progressive_upgrade/twowiki_bridge_aware_precision_trim_source_registration_v83.json",
+      "bytes": 7377,
+      "sha256": "3f2919e1883f43ff076fc6f343d81780d5ec972ec851d3da6faf4bc4487b2c5a"
+    },
+    "model_artifact": {
+      "path": "docs/progressive_upgrade/twowiki_bridge_aware_precision_trim_router_model_development_v83.json",
+      "bytes": 70672,
+      "sha256": "c083dd34ffbfe9757d897a0e3bd42875b66e395e00110c11cda3a3bd2fa96c91"
+    }
+  },
+  "invariants": {
+    "target_ids_selected_before_lock": 0,
+    "target_rows_read_before_lock": 0,
+    "target_scores_or_gold_metrics_seen_before_lock": false,
+    "all_5000_prior_2wiki_ids_excluded": true,
+    "v82_development_reclassified_as_training_evidence": true,
+    "development_confirmation_disjoint_by_deterministic_selection": true,
+    "confirmation_requires_every_development_strict_gate": true,
+    "selector_features_threshold_controls_gates_stage_sizes_salts_and_metric_seeds_locked": true,
+    "locked_files_must_not_change_after_target_selection": true,
+    "gate_2": "NO-GO/SHADOW"
+  }
+}

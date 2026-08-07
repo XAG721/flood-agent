@@ -1,0 +1,41 @@
+{
+  "schema_version": "frc-musique-full-roberta-transfer-implementation-erratum-v65",
+  "experiment_id": "FRC-MUSIQUE-FULL-ROBERTA-TRANSFER-V65",
+  "registered_after_invalid_run_before_corrected_target_parse": true,
+  "gold_join_or_metric_computation_before_correction": false,
+  "issue": {
+    "protocol_invariant": "maximum one selected row per source id",
+    "observed": "600 prepared rows collapsed to 300 unique opaque case ids because answerable and unanswerable paired variants share a source id",
+    "detected_from_integrity_counts_not_prediction_values": true
+  },
+  "correction": {
+    "pair_assignment": "SHA-256('FRC-MUSIQUE-FULL-V65-PAIR-ASSIGNMENT|' + source id) parity assigns every source id to exactly one answer state before group selection",
+    "corrected_ordering": "SHA-256('FRC-MUSIQUE-FULL-V65-CORRECTED|' + source id), then source id",
+    "invalid_run_exclusion": "Exclude all 300 source-id commitments that received paragraph QA outputs in the invalid run",
+    "corrected_cache_is_separate": true,
+    "corrected_execution_registration_is_separate": true,
+    "model_weights_architecture_threshold_support_formula_or_registered_gate_changed": false,
+    "target_prediction_margin_span_gold_or_metric_used_to_choose_correction": false,
+    "post_access_discretionary_resampling": false
+  },
+  "hashes": {
+    "protocol": "578bd51f20cdec041da034c87e5f3890721c9f317de511574474e07692514a38",
+    "source_registration": "c29637ad608af431bed6bb0992cb0b77fc9da8aa96a20b684fb33176837a36f7",
+    "model_registration": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "module": "4908c9337433e43f4eef1fda06e5f763f686a321d5bcdbef221775c8b0fa2d99",
+    "runner": "29142ac793bf2c30f8a29adfe0811a9b0193b1ad3cf05889e4812545b98210e2",
+    "tests": "6fd61ac5e7ad179abb12e4910e5d7cf57861f875530a8d9beedad32e0e168609",
+    "original_implementation": "51e8f847029ec8e032d398373efd65a190c01e7b79340b5344828ac4092b755d",
+    "invalid_run_record": "fbd3ec04b7285497d6f42e3e14a2038b49c33401a8e495c7a6dd650da89fb441",
+    "invalid_candidate_map": "bd26514fc68009b4f39ca94991d03c8cd980b84df363024d4b9a1f9c434dcbba"
+  },
+  "synthetic_tests": {
+    "passed": 10,
+    "failed": 0,
+    "new_regression": "paired source ids are assigned once and invalid-run commitments are excluded"
+  },
+  "strict_independent_model_training_confirmation_claimed": false,
+  "selector_adoption_authorized": false,
+  "canary_or_default_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

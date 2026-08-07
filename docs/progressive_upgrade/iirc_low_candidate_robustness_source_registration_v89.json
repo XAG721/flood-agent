@@ -1,0 +1,58 @@
+{
+  "schema_version": "frc-iirc-low-candidate-robustness-source-registration-v89",
+  "experiment_id": "FRC-IIRC-LOW-CANDIDATE-ROBUSTNESS-PROSPECTIVE-V89",
+  "registered_on": "2026-08-05",
+  "purpose": "Register a no-retraining robustness replication of v88 that supports IIRC articles with fewer than four usable source candidates.",
+  "pre_partition_boundary": {
+    "v88_development_result_known": true,
+    "v88_development_cases": 800,
+    "v88_development_candidate_f1": 0.634559,
+    "v88_confirmation_metrics_known": false,
+    "v88_confirmation_preparation_failure_known": true,
+    "failure_diagnosis_used_only_qid_pid_link_counts_and_adapter_error": true,
+    "failure_answer_or_gold_inspected": false,
+    "entire_v88_confirmation_partition_permanently_excluded": true,
+    "eligible_v88_remaining_cases": 6439,
+    "eligible_v88_remaining_commitment": "88df288fb0d01f0779dbe20783b04ff4ea41702854e71d8263b9bb35d98eb04d",
+    "eligible_case_content_or_metrics_inspected": false,
+    "v89_partition_ids_selected": false
+  },
+  "frozen_model_plan": {
+    "reuse_exact_v88_model_artifact": true,
+    "v88_model_sha256": "b663364f02443f3c7f485a39734ea8f5ef59b25aa5e57a76b0fe1acd9fa23439",
+    "retraining_or_threshold_change": false
+  },
+  "adapter_change_plan": {
+    "candidate_construction_for_four_or_more_sources": "Identical to v88.",
+    "candidate_construction_for_one_to_three_sources": "Keep every usable source; do not fail, drop, replace, or add synthetic evidence.",
+    "candidate_router_for_one_to_three_sources": "Select all available sources without invoking a four-source feature model.",
+    "control_cardinality": "Cap each requested prefix length to the number of available unique sources and report actual selected cardinality.",
+    "gold_or_answer_used": false
+  },
+  "planned_target_partition": {
+    "eligible_pool": "v88 remaining 6439 IDs only",
+    "partition_salt": "FRC-IIRC-V89-REMAINING-PARTITION|",
+    "development_cases": 800,
+    "confirmation_cases": 1200,
+    "remaining_after_both_stages": 4439,
+    "confirmation_requires_all_development_gates": true
+  },
+  "primary_comparison": {
+    "control": "frc_fixed2",
+    "reason": "Frozen v88 primary control retained unchanged for a direct robustness replication.",
+    "all_prior_controls_disclosed": true
+  },
+  "freeze_rule": "Freeze the low-candidate adapter, exact v88 model, controls, metrics, gates, partitions, and implementation hashes before preparing any v89 target case.",
+  "mutation_rule": "Any post-freeze change requires v90 and new untouched IDs.",
+  "claim_limits": {
+    "case_disjoint_same_dataset_prospective_test": true,
+    "v88_model_robustness_replication": true,
+    "independent_cross_dataset_transfer": false,
+    "answer_generation_evaluated": false,
+    "setr_reproduced": false,
+    "flood_domain_effectiveness_established": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  }
+}

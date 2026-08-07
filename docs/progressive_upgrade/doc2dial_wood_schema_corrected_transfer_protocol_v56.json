@@ -1,0 +1,161 @@
+{
+  "schema_version": "frc-doc2dial-wood-schema-corrected-transfer-protocol-v56",
+  "experiment_id": "FRC-DOC2DIAL-WOOD-SCHEMA-CORRECTED-TRANSFER-V56",
+  "registered_at": "2026-08-03T00:30:00+08:00",
+  "purpose": "Prospectively execute the unchanged v54 document-contrastive and role-closure mechanism on Doc2Dial v0.9 wOOD after correcting only the old-version turn-container adapter and aligning empty-reference labels with the official README.",
+  "pre_registration_source_access_disclosure": {
+    "archive_downloaded_and_hashed": true,
+    "archive_member_names_and_sizes_listed": true,
+    "shared_document_and_wood_train_members_parsed_during_failed_v55_adapter_check": true,
+    "wood_dev_confirmation_member_opened": false,
+    "woood_sibling_members_opened": false,
+    "schema_information_observed": "Top-level keys, container types, turn field names, document dictionary keys and aggregate counts only.",
+    "aggregate_counts_observed": {
+      "dialogues": 3471,
+      "documents": 415,
+      "turn_containers_list": 3459,
+      "turn_containers_dict": 12,
+      "candidate_user_to_agent_turns": 23149,
+      "nonempty_reference": 19946,
+      "empty_reference_with_ood_act": 2772,
+      "empty_reference_without_ood_act": 431
+    },
+    "utterance_span_text_reference_value_selected_case_query_candidate_neural_score_or_metric_inspected": false,
+    "method_formula_gate_budget_support_threshold_or_model_selected_from_wood_outcome": false
+  },
+  "prior_experiment_boundary": {
+    "v54_closed_before_scoring_because_fixed_v1_0_1_train_had_no_empty_references": true,
+    "v55_closed_before_blind_cache_because_adapter_rejected_12_keyed_turn_containers": true,
+    "v54_or_v55_case_level_artifact_query_candidate_score_or_metric_reused": false,
+    "v56_schema_corrections": [
+      "Accept turns as either a list or a keyed object; keyed objects are ordered by integer turn_id key with lexical fallback forbidden.",
+      "Use the official README rule that any empty target reference means the prior query is not answerable or irrelevant; adjacent OOD dialogue acts define a descriptive no-answer subtype, not eligibility."
+    ],
+    "retrieval_gate_selector_queries_models_budgets_and_support_thresholds_changed": false,
+    "v56_does_not_retroactively_change_v41_through_v55": true
+  },
+  "source": {
+    "project_data_page": "https://doc2dial.github.io/data.html",
+    "paper": "https://aclanthology.org/2020.emnlp-main.652/",
+    "archive_url": "https://doc2dial.github.io/file/doc2dial_v0.9.zip",
+    "archive_sha256": "9143efd9d12ca30b1c772f65102b1c3e77d625fca03e69d316773acea5406786",
+    "documents_member": "doc2dial/v0.9/data/doc2dial_doc.json",
+    "development_member": "doc2dial/v0.9/data/wOOD/doc2dial_dial_train.json",
+    "confirmation_member": "doc2dial/v0.9/data/wOOD/doc2dial_dial_dev.json",
+    "license_status": "No explicit v0.9 license statement was found on the official page or archive link. Keep source ignored, publish no source text, retain attribution; related IBM HF v1.0.1 card says cc-by-3.0."
+  },
+  "remaining_access_order": [
+    "Freeze this v56 protocol and schema-corrected implementation before constructing any development case, query, candidate, decoy, neural score or metric.",
+    "Synthetically verify list and keyed turn containers, integer ordering, empty-reference semantics, OOD subtype, blind isolation, transferred mechanism and reports.",
+    "Register protocol, source, implementation, runner and test hashes before reopening wOOD train for outcome-bearing development preparation.",
+    "Build the development blind cache from the shared document and wOOD train members only; do not open wOOD dev.",
+    "Register sample commitments, census and runtime before deterministic queries or neural scoring.",
+    "Lock every own-document and decoy-document score before joining reference ids, answer state or OOD subtype.",
+    "Run all registered development gates once. Open wOOD dev exactly once only if every gate passes; otherwise publish the negative or null result and stop.",
+    "Never reuse revealed development cases for method, threshold, prompt, budget, decoy or support-check selection."
+  ],
+  "task_construction": {
+    "target_turn": "Each agent turn with an immediately preceding user turn.",
+    "query": "Immediate preceding user utterance only.",
+    "answer_bearing": "Target agent references contains at least one mapped official span id.",
+    "no_answer": "Target agent references is empty, matching the official README's not-answerable-or-irrelevant semantics.",
+    "no_answer_subtypes": {
+      "ood_act": "Empty reference with adjacent user or agent dialogue act ending /ood.",
+      "other_empty": "Empty reference without adjacent /ood; retained as no-answer under the official README and audited separately."
+    },
+    "schema_exclusion": "Malformed ids, utterances, references, unmapped nonempty references or non-integer keyed turn containers are excluded and counted; rate above 0.01 fails development.",
+    "forbidden_to_query_or_scorer": "Dialogue acts, reference ids or labels, answer state or subtype, future turns, titles and raw source ids."
+  },
+  "scope": {
+    "development_cases": 400,
+    "confirmation_cases": 400,
+    "answer_bearing_per_stage": 200,
+    "no_answer_per_stage": 200,
+    "maximum_cases_per_dialogue": 2,
+    "maximum_cases_per_document_per_answer_state": 4,
+    "minimum_dialogues": 160,
+    "minimum_documents": 80,
+    "development_salt": "FRC-DOC2DIAL-WOOD-V56-DEVELOPMENT|",
+    "confirmation_salt": "FRC-DOC2DIAL-WOOD-V56-CONFIRMATION|",
+    "document_cluster_bootstrap": true,
+    "balanced_mechanism_sample_not_natural_prevalence": true
+  },
+  "candidate_and_models": {
+    "candidates": "Every non-empty official document span, exact text and offsets, duplicate aliases collapsed without exposing labels.",
+    "own_retrieval_pool": "BM25 Top-48 union BGE dense Top-48, at most 96.",
+    "probe_pool": "BM25 Top-8 union BGE dense Top-8 per document, at most 16.",
+    "embedding": "BAAI/bge-large-en-v1.5@refs/pr/5 offline",
+    "reranker": "BAAI/bge-reranker-large@refs/pr/4 offline",
+    "query_generator": "none",
+    "gold_before_complete_scoring": false
+  },
+  "unchanged_queries": {
+    "anchor": "{query}",
+    "condition": "Find prerequisites, eligibility requirements, conditions, or definitions needed to answer: {query}",
+    "solution": "Find steps, benefits, outcomes, or direct answers that resolve: {query}",
+    "exception": "Find exceptions, exclusions, deadlines, limitations, or cases where this does not apply: {query}"
+  },
+  "unchanged_decoys_gate_and_selector": {
+    "decoys": "Seven other documents: same-domain same-length-quartile first, then same-domain remainder, hash ordered with FRC-DOC2DIAL-WOOD-V56-DECOY; any other-domain fallback fails development.",
+    "gate": "Associated document must rank first among eight documents by maximum raw anchor reranker logit, giving p=1/8 under exchangeability.",
+    "candidate": "After gate pass, anchor Top-1 plus condition, solution and exception Top-1 only when each lies in anchor Top-3, deduplicated under budget.",
+    "same_gate_frc_ablation": "Unchanged low_core_divergence_guarded_frc_v49.",
+    "shared_gate_non_frc": "BM25, dense, hybrid, cross-encoder Top-k and cross-encoder knapsack.",
+    "ungated_controls": "Frozen v43 adaptive argmax, v49 low-core and the five non-FRC controls.",
+    "learned_parameter": null
+  },
+  "evaluation": {
+    "primary": "answer_or_abstention_macro_f1",
+    "answer_metric": "Exact canonical-span set F1",
+    "no_answer_metric": "Exact empty selection",
+    "budgets": [
+      128,
+      256,
+      512
+    ],
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 20260816,
+    "minimum_supported_stratum_cases": 40,
+    "mandatory_strata": [
+      "answer state",
+      "no-answer subtype",
+      "domain",
+      "candidate-count quartile",
+      "document-length quartile",
+      "turn-position quartile",
+      "reference-count group",
+      "gate outcome"
+    ]
+  },
+  "development_gates_all_required": {
+    "exact_cases_balance_caps_and_minimum_clusters": true,
+    "schema_exclusion_rate_at_most": 0.01,
+    "candidate_ceiling_complete_rate_at_least": 0.99,
+    "candidate_minus_strongest_shared_gate_non_frc_point_at_least": 0.01,
+    "candidate_minus_strongest_shared_gate_non_frc_ci_low_above": 0.0,
+    "candidate_minus_same_gate_frc_ablation_point_at_least": 0.005,
+    "candidate_minus_same_gate_frc_ablation_ci_low_above": 0.0,
+    "candidate_minus_ungated_v49_point_at_least": 0.01,
+    "candidate_minus_ungated_v49_ci_low_above": 0.0,
+    "answer_recall_drop_vs_ungated_v49_at_most": 0.03,
+    "no_answer_abstention_accuracy_at_least": 0.5,
+    "answer_gate_pass_rate_at_least": 0.5,
+    "candidate_abstention_rate_between": [
+      0.1,
+      0.8
+    ],
+    "every_budget_and_supported_stratum_delta_at_least": -0.03,
+    "decoy_query_and_score_fallback_rates": 0.0
+  },
+  "outcomes": {
+    "development_failure": "DOC2DIAL_WOOD_V56_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+    "confirmation_support": "DOC2DIAL_WOOD_V56_SCHEMA_CORRECTED_TRANSFER_SUPPORT_ESTABLISHED",
+    "confirmation_failure": "DOC2DIAL_WOOD_V56_SCHEMA_CORRECTED_TRANSFER_SUPPORT_NOT_ESTABLISHED",
+    "schema_inconclusive": "DOC2DIAL_WOOD_V56_SCHEMA_INCONCLUSIVE_STOP",
+    "confirmation_open_only_after_all_development_gates": true,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "scope_limits": "English customer-service wOOD span selection only; not response generation, natural prevalence, official shared-task submission, SetR reproduction, flood-domain validation or rollout authorization."
+}

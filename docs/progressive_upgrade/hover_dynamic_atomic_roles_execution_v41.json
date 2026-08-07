@@ -1,0 +1,151 @@
+{
+  "schema_version": "frc-hover-dynamic-atomic-execution-v1",
+  "registered_at": "2026-08-01T16:06:30.2310700+08:00",
+  "experiment_id": "FRC-HOVER-DYNAMIC-ATOMIC-ROLES-V41",
+  "protocol_sha256": "42486a98c01fd0b9663d3eb9bd0de63634d91605eed06060ac1236ad26997e86",
+  "confirmation_open_sha256": "1002b70cb3d827c705894ee9ff4b6128dbd3f5d69a15e2896f37b9c22fadc57e",
+  "registration_boundary": {
+    "pilot_mechanism_gate_passed": true,
+    "confirmation_blind_preparation_completed": true,
+    "confirmation_dynamic_queries_generated_before_registration": false,
+    "confirmation_neural_scores_generated_before_registration": false,
+    "confirmation_selections_or_performance_metrics_known_before_registration": false,
+    "confirmation_labels_hops_supporting_facts_or_candidate_ceiling_accessed_before_registration": false,
+    "purpose": "Freeze confirmation sources, ID commitments, blind candidate census, model/runtime, code, and every pilot/preparation artifact before starting claim-only dynamic query generation or either neural model."
+  },
+  "artifact_sha256": {
+    "pilot_report": "9229f6c0e643655fd97b830b13e0195f48ea997d8204021209ff6e2917feb668",
+    "pilot_prepared": "3efe81bb06653757c86554c779e2ef213d2a2d445615c3ed886654cb1b068dd0",
+    "pilot_queries": "53273aa56f7fe05bc36b3d326c8fe661e604f327391bb42fa73799f880aaebea",
+    "pilot_scored": "d8554ae139106c96714050330509670bf4bec052d8ab95f2490aa0b2750938fd",
+    "confirmation_census": "6f06903d260c379c89e8d657b071e8f39722b6919f508d861d0a392a13387ba6",
+    "confirmation_prepared": "3ebde69f7b60fb8c5fde4ac9b8069d703b154360ef31ea63747529349d871d43",
+    "implementation": "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621",
+    "runner": "ad6da5b42e864ad2bd528b2293674523390f7a72f5f1a61dc67d3202a64f51e3"
+  },
+  "source_sha256": {
+    "hover_train_release_v1.1.json": "1f1cd57abd616fa00c70bdc575ce77c16fc6cf1a6cffd5ff87c208030a336bb6",
+    "train_tfidf_doc_retrieval_results.json": "45e03a5e47ce8076981eefc86f28d764f4c2eddf1b94b69d9263675260108462",
+    "wiki_wo_links.db": "c37ee397916ec0bffacfe8902db454a5cda88a7a188409217b2e15231fe5ee2f"
+  },
+  "partition_commitments": {
+    "v40_excluded": {
+      "count": 2512,
+      "sha256": "e4463bad2be6032bb3975e21d31a7410b2e8585ce73abc64be9aa4a6ba2301a9"
+    },
+    "eligible": {
+      "count": 15659,
+      "sha256": "57b177af86ebfd69e6b021661190804da42705ec11f7b0c54edd21fdf6a3491e"
+    },
+    "pilot": {
+      "count": 512,
+      "sha256": "6e656a0d552e1112c084be45cbf32477bfd1257d3b8ae9272c0e6f1a5cb7bf42"
+    },
+    "confirmation": {
+      "count": 2000,
+      "sha256": "c82067a82bc0482fb20d715e915d52780748e4699ba5b462a49c8f598dcde3cc"
+    }
+  },
+  "confirmation_blind_census": {
+    "valid_rows": 2000,
+    "exclusions": {},
+    "requested_documents": 40000,
+    "resolved_documents": 40000,
+    "requested_unique_titles": 33623,
+    "resolved_unique_titles": 33623,
+    "case_ids_sha256": "c123e24e5f38989283780852eefacd5894249b19603dbe41479b28fc14d9bbe7",
+    "candidate_chunks": {
+      "total": 40616,
+      "minimum": 20,
+      "mean": 20.308,
+      "maximum": 29
+    },
+    "candidate_documents": {
+      "total": 40000,
+      "minimum": 20,
+      "mean": 20.0,
+      "maximum": 20
+    },
+    "chunk_token_cost": {
+      "total": 5647473,
+      "minimum": 13,
+      "mean": 139.045524,
+      "maximum": 384
+    },
+    "database_quick_check": "ok",
+    "database_schema_sql_sha256": "793a205b912e69c71f5010a14bf4515c44bcc82f17101866226657c28da25d89",
+    "gold_fields_visible_to_scorer": false
+  },
+  "frozen_generator": {
+    "model": "Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4",
+    "revision": "e9c932ac1893a49ae0fc497ad6e1e86e2e39af20",
+    "model_file_hashes_record": "docs/progressive_upgrade/hover_dynamic_atomic_roles_pilot_start_v41.json",
+    "input": "normalized public claim only",
+    "output_keys": [
+      "anchor",
+      "first_fact",
+      "second_fact_or_bridge",
+      "counterevidence"
+    ],
+    "do_sample": false,
+    "max_input_tokens": 512,
+    "max_new_tokens": 160,
+    "batch_size": 8,
+    "fallback": "frozen label-neutral templates plus original claim"
+  },
+  "frozen_scoring": {
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "score_columns": 12,
+    "cross_encoder_prompts_per_case": 9,
+    "score_calibration": "per-case independent min-max",
+    "embedding_batch_size": 64,
+    "reranker_batch_size": 256,
+    "case_batch_size": 8,
+    "device": "cuda",
+    "fp16": true,
+    "offline_model_loading": true
+  },
+  "frozen_selector_and_evaluation": {
+    "methods": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "cross_encoder_knapsack",
+      "static_threshold_frc_v39_replay",
+      "static_rank_coverage_frc_v41",
+      "dynamic_rank_coverage_frc_v41"
+    ],
+    "top_k": 5,
+    "token_budgets": [512, 1024, 1500],
+    "rank_coverage_weight": 0.5,
+    "rank_utility": "1/log2(2 + zero-based rank)",
+    "v41_unique_source_constraint": true,
+    "primary_metric": "document_evidence_f1",
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 20260801,
+    "post_registration_tuning": false
+  },
+  "runtime": {
+    "python": "3.10.20",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "gpu": "NVIDIA GeForce RTX 4060 Ti",
+    "gpu_memory_mib": 16380,
+    "cuda_runtime": "12.4",
+    "torch": "2.4.1+cu124",
+    "transformers": "4.46.3",
+    "numpy": "2.2.6"
+  },
+  "authorization": {
+    "confirmation_dynamic_query_generation": true,
+    "confirmation_neural_scoring": true,
+    "gold_join_only_after_all_methods_select": true,
+    "performance_evaluation_after_complete_score_cache": true,
+    "selector_adoption": false,
+    "gate_2_change": false,
+    "canary_or_default": false
+  }
+}

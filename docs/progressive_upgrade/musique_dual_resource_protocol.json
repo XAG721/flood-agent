@@ -1,0 +1,162 @@
+{
+  "schema_version": "frc-musique-dual-resource-protocol-v1",
+  "registered_at": "2026-08-01T09:31:49.9591400+08:00",
+  "experiment_id": "FRC-MUSIQUE-DUAL-RESOURCE-V36",
+  "purpose": "Independently test whether accounting for both token and Top-K slot consumption removes the short-fragment bias of v35 without tuning on revealed RGB outcomes.",
+  "hypothesis_origin": {
+    "v35_result_known": true,
+    "observed_v35_failure": "Marginal-utility-per-token selection usually exhausted five slots while leaving much of the token budget unused, reducing support precision and recall.",
+    "musique_repository_or_data_used_in_prior_method_development": false,
+    "musique_dataset_content_accessed_before_registration": false,
+    "method_parameters_tuned_on_musique": false
+  },
+  "source": {
+    "name": "MuSiQue: Multihop Questions via Single-hop Question Composition",
+    "repository": "https://github.com/StonyBrookNLP/musique",
+    "paper": "https://arxiv.org/abs/2108.00573",
+    "repository_revision": "922ac98f19a201998dbdae6d7f2887a5258dbdeb",
+    "license": "CC-BY-4.0",
+    "official_archive_google_drive_id": "1tGdADlNjWFaHLeZZGShh2IRcpO6Lv24h",
+    "dataset_file": "data/musique_ans_v1.0_dev.jsonl",
+    "split": "MuSiQue-Answerable dev",
+    "all_rows_policy": "Use every structurally valid dev row; do not sample or replace rows after outcomes are known.",
+    "post_download_registration": "Before neural scoring, record the archive/file hashes, exact row count, exclusions, hop distribution, duplicate-label conflicts, paragraph and chunk distributions."
+  },
+  "frozen_adapter": {
+    "required_fields": [
+      "id",
+      "question",
+      "answerable",
+      "paragraphs",
+      "question_decomposition"
+    ],
+    "answerable_policy": "Require answerable=true because the frozen file is MuSiQue-Answerable; any false row is a structural exclusion.",
+    "candidate_text": "Normalized title + newline + normalized paragraph_text, omitting an empty title without a leading newline.",
+    "candidate_order": "Deduplicate normalized candidate text, union paragraph indices/support labels, sort by text SHA-256, then assign label-neutral source and chunk IDs.",
+    "cross_label_duplicate_policy": "Exclude a case if identical normalized candidate text is both supporting and non-supporting.",
+    "gold_unit": "Each unique supporting paragraph idx is one required support unit; every chunk of that source paragraph inherits the unit.",
+    "structural_exclusion_policy": "Exclude only invalid field types, empty question, non-answerable rows, no supporting paragraph, fewer than two unique candidates, cross-label duplicate conflicts, or duplicate public IDs; report all reasons without replacement.",
+    "chunking": {
+      "tokenizer": "BAAI/bge-reranker-large frozen tokenizer revision",
+      "content_tokens": 384,
+      "overlap_tokens": 64,
+      "special_tokens_excluded_from_cost": true
+    },
+    "blind_prepared_fields": [
+      "case_id",
+      "dataset_id",
+      "capability",
+      "query",
+      "candidate_id",
+      "source_id",
+      "candidate_text",
+      "token_count"
+    ],
+    "fields_forbidden_before_selection": [
+      "answer",
+      "answer_aliases",
+      "answerable",
+      "question_decomposition",
+      "is_supporting",
+      "paragraph_idx",
+      "gold_unit_ids"
+    ]
+  },
+  "frozen_scoring": {
+    "reuse_v35_model_and_scoring_semantics_without_change": true,
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "score_calibration": "per_case_minmax",
+    "role_relevance_mix": 0.15,
+    "role_queries": {
+      "direct_answer_support": "Find evidence that directly supports a correct answer to the question.",
+      "entity_and_scope": "Find evidence that identifies the relevant entity, scope, time, or conditions for the answer.",
+      "corroborating_evidence": "Find independent evidence that corroborates or completes the answer.",
+      "contradiction_detection": "Find evidence useful for detecting conflicting, false, or misleading claims about the answer."
+    },
+    "gold_visible_to_scorer": false
+  },
+  "frozen_methods": [
+    "bm25_topk",
+    "dense_topk",
+    "hybrid_topk",
+    "cross_encoder_topk",
+    "cross_encoder_density",
+    "cross_encoder_knapsack",
+    "coverage_greedy_proxy",
+    "frc_select_v34",
+    "frc_cost_aware_v35",
+    "frc_dual_resource_v36"
+  ],
+  "frozen_dual_resource_selector": {
+    "top_k": 5,
+    "budgets": [512, 1024, 1500],
+    "set_objective": "F(S) = 2 * mean_over_roles(max role_score in S) + sum_over_selected(cross_encoder_score)",
+    "normalized_resource_cost": "token_count / token_budget + 1 / top_k",
+    "greedy_rule": "Repeatedly select the feasible candidate with maximum marginal_F / normalized_resource_cost; break ties by larger marginal_F, larger cross-encoder score, lower token_count, then ascending candidate_id.",
+    "singleton_guard": "Compare the greedy set with every feasible singleton under F(S); return the alternative with larger F, then lower token cost, then lexicographically smaller selected-ID tuple.",
+    "derivation": "The two addends are the candidate's fractions of the two independent packing resources. Equal normalized pressure introduces no dataset-fitted coefficient and prevents a tiny token cost from making a scarce slot effectively free.",
+    "score_threshold_prompt_or_weight_tuning": false,
+    "hard_constraints": "sum token_count <= budget and selected count <= top_k"
+  },
+  "frozen_metrics": {
+    "statistical_unit": "source dev row",
+    "primary": "support_evidence_f1",
+    "support_precision": "selected chunks from supporting source paragraphs / selected chunks",
+    "support_recall": "unique supporting paragraph units with any selected chunk / all supporting paragraph units",
+    "support_evidence_f1": "harmonic mean of support_precision and support_recall, with zero when both are zero",
+    "secondary": [
+      "support_precision",
+      "support_recall",
+      "complete_support_coverage",
+      "non_support_selection_rate",
+      "selected_token_cost",
+      "budget_utilization",
+      "selected_count"
+    ],
+    "family_aggregation": "Mean within budget first, then equal weight across 512/1024/1500 budgets.",
+    "predeclared_hop_strata": ["2-hop", "3-hop", "4-hop"],
+    "paired_bootstrap": {
+      "resamples": 10000,
+      "seed": 20260801,
+      "confidence_level": 0.95,
+      "resample_source_rows": true,
+      "strongest_baseline_selected_inside_each_resample": true
+    }
+  },
+  "frozen_outcome_rules": {
+    "support_established": {
+      "dual_minus_v35_point_at_least": 0.01,
+      "dual_minus_v35_ci_low_above": 0.0,
+      "dual_minus_old_frc_point_at_least": 0.01,
+      "dual_minus_old_frc_ci_low_above": 0.0,
+      "dual_minus_strongest_baseline_point_at_least": 0.01,
+      "dual_minus_strongest_simultaneous_ci_low_above": 0.0,
+      "every_budget_delta_at_least": -0.02,
+      "every_supported_hop_stratum_delta_at_least": -0.02,
+      "status": "MUSIQUE_DUAL_RESOURCE_FRC_SUPPORT_ESTABLISHED"
+    },
+    "safety_regression": {
+      "any_budget_delta_below": -0.02,
+      "or_any_supported_hop_stratum_delta_below": -0.02,
+      "status": "MUSIQUE_DUAL_RESOURCE_FRC_SAFETY_REGRESSION"
+    },
+    "otherwise": "MUSIQUE_DUAL_RESOURCE_FRC_SUPPORT_NOT_ESTABLISHED"
+  },
+  "stopping_rule": {
+    "publish_all_valid_rows_and_negative_results": true,
+    "no_musique_formula_threshold_prompt_or_weight_tuning_after_scores_or_labels_are_joined": true,
+    "no_replacement_of_excluded_rows": true,
+    "method_adoption_requires_all_support_checks": true,
+    "gate_policy": "This cross-domain selector experiment cannot by itself change Gate 2, authorize CANARY/DEFAULT, reproduce SetR, or establish flood-domain effectiveness."
+  },
+  "deliverables": {
+    "execution_registration": "docs/progressive_upgrade/musique_dual_resource_execution.json",
+    "implementation": "research/frc_rag/musique_dual_resource.py",
+    "runner": "scripts/run_musique_dual_resource.py",
+    "tests": "tests/test_frc_musique_dual_resource.py",
+    "output_directory": "output/rag_evaluation/musique_dual_resource"
+  }
+}

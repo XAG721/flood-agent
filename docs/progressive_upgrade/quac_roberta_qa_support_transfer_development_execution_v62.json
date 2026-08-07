@@ -1,0 +1,74 @@
+{
+  "experiment_id": "FRC-QUAC-ROBERTA-QA-SUPPORT-TRANSFER-V62",
+  "gold_joined_for_coverage_or_metrics": false,
+  "hashes": {
+    "blind_census_sha256": "2459bbde9bd45c59c3c9575981ea8fbfbe92fc20a986e9f56bf2609b5ae55871",
+    "blind_document_store_sha256": "7f7e4f96cca77e348a2c116c01b224c394c13e601bf8b82a5a1aea10fef699bb",
+    "candidate_map_sha256": "7233c71a42a308f995d0050adce4e4c29f05c0d44b883cd6452052c65e4b39c5",
+    "implementation_registration_sha256": "4a2f9521b2b155ffe11f19f8ce52fc7228c5d7c7aab270a49678948734210d8e",
+    "model_registration_sha256": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "prepared_blind_sha256": "eba66afb099d24190a00e5fbdbea56f1d9b5ad671d82876d2baeadc14a9ddf89",
+    "qa_input_sha256": "bd0982b3308067fd989ec95c26d4dd09a118a78926c0ca752c901cc3bfff76d6",
+    "stage_source_sha256": "ff5cca5a2e4b4d1cb5b5ced68b9fce88394ef6d93117426d6d4baafbcc05c56a",
+    "v57_exclusion_map_sha256": "6466cb0f318b2c8525b296fb482fb50bef8c5575fad9c5a0dfb2ebb6db9a9c23"
+  },
+  "other_stage_source_content_read": false,
+  "query_scoring_or_qa_started": false,
+  "registered_at": "2026-08-03T19:45:00+08:00",
+  "runtime": {
+    "cuda_available": true,
+    "cuda_runtime": "12.4",
+    "gpu": "NVIDIA GeForce RTX 4060 Ti",
+    "gpu_memory_mib": 16379,
+    "numpy": "2.2.6",
+    "parameters": {
+      "case_batch_size": 2,
+      "device": "cuda",
+      "embedding_batch_size": 64,
+      "fp16": true,
+      "learned_parameter": null,
+      "offline_model_loading": true,
+      "qa_batch_size": 16,
+      "qa_doc_stride": 128,
+      "qa_max_length": 384,
+      "qa_maximum_answer_tokens": 30,
+      "query_generator": "deterministic_templates",
+      "reranker_batch_size": 256,
+      "token_budgets": [
+        128,
+        256,
+        512
+      ]
+    },
+    "platform": "Windows-10-10.0.19045-SP0",
+    "python": "3.10.20",
+    "torch": "2.4.1+cu124",
+    "transformers": "4.46.3"
+  },
+  "sampling": {
+    "candidate_turns": 83568,
+    "eligible_answer_state_counts_after_exclusion": {
+      "answer_bearing": 68809,
+      "no_answer": 14159
+    },
+    "eligible_cases": 83568,
+    "maximum_cases_per_dialogue": 2,
+    "maximum_cases_per_document_per_answer_state": 2,
+    "schema_excluded_cases": 0,
+    "schema_exclusion_rate": 0.0,
+    "schema_exclusion_reasons": {},
+    "selected_answer_state_counts": {
+      "answer_bearing": 300,
+      "no_answer": 300
+    },
+    "selected_cases": 600,
+    "selected_dialogues": 587,
+    "selected_documents": 566,
+    "selected_v57_commitment_overlap": 0,
+    "stage": "development",
+    "target_cases": 600,
+    "v57_excluded_commitment_count": 600
+  },
+  "schema_version": "frc-quac-v62-execution-registration-v1",
+  "stage": "development"
+}

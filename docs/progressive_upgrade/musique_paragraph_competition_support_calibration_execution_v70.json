@@ -1,0 +1,106 @@
+{
+  "candidate_maps": 1600,
+  "direct_qa_input_rows": 31998,
+  "experiment_id": "FRC-MUSIQUE-PARAGRAPH-COMPETITION-SUPPORT-V70",
+  "feature_model_threshold_rule_or_gate_adjusted": false,
+  "gold_joined_for_metrics": false,
+  "hashes": {
+    "blind_census_sha256": "e366c9193b730222ad2b077d096590486a5a5767ae5690b6ef35392d0a92b2d9",
+    "calibration_result_sha256": null,
+    "candidate_map_sha256": "7ac70e9be2038289230d9f09ec870c537ca0ed361e73d6bc47f5da93d1e539f3",
+    "confirmation_open_sha256": null,
+    "direct_qa_input_sha256": "0047962f6342770f5552f91d716b087c56524db7f746116479d18e3658ee9231",
+    "implementation_registration_sha256": "2910ee6c25297f21c46ca500e336b217b44fc55b939055b5cfbd68cd7435a3eb",
+    "prepared_blind_sha256": "0cb645b47bfe9e3214dbeb2b88af52626eab6fce00baa5c21fcb3af69a8cb448",
+    "prior_map_sha256": [
+      "bd26514fc68009b4f39ca94991d03c8cd980b84df363024d4b9a1f9c434dcbba",
+      "d5095960ffcf38f4491830e19d5af0ac3c877edb5cd4ca5d5fd73d0f7179a965",
+      "51149c2f3d16bb1b666881b3d22c1f36e7d6d41d4f56013afc3be6889c4348fe",
+      "374e9402a9ff030494756ed52913ea491f7e1bfb6279ae3b12dcbfcda363748f",
+      "49fb860203848374d9fbbc6decb3690efd7acfd0e1fe9ef0d912cfcf95af31dd",
+      "524146e4d4a260126511b521b424476c2cb76747b18244b87f2ecfa34c8aa057",
+      "cf6f8075d903ce2c8141ea84f278933de181f6a1f4ead71279976fbc0960bd6c",
+      "0ee5e37efd3661679a3ed4fe8b0a3f78e4ba58856161fd3c0130ee019a38e9e2",
+      "32c8ae4a7d75b07d1d6c829109b49f42e7470ab37bf412e7fd1f4062eba99de2"
+    ],
+    "squad2_guard_source_sha256": "68dcfbb971bd3e96d5b46c7177b16c1a4e7d4bdef19fb204502738552dede002",
+    "target_source_sha256": "b1cd998f7e0e2838d6fda024e4ad1eb0e7fc3edefdadb0bd9b5b10b0907f2034"
+  },
+  "prepared_cases": 1600,
+  "qa_started": false,
+  "registered_at": "2026-08-04T08:10:00+08:00",
+  "runtime": {
+    "cuda_available": true,
+    "cuda_runtime": "12.4",
+    "gpu": "NVIDIA GeForce RTX 4060 Ti",
+    "gpu_memory_mib": 16379,
+    "numpy": "2.2.6",
+    "parameters": {
+      "additive_feature_count": 27,
+      "base_feature_count": 9,
+      "candidate_feature_count": 15,
+      "competition_feature_count": 6,
+      "device": "cuda",
+      "fp16": true,
+      "gap_clip_maximum": 10.0,
+      "interaction_feature_count": 32,
+      "intermediate_margin_threshold": null,
+      "offline_model_loading": true,
+      "optimizer_iterations": 5000,
+      "optimizer_l2_weight": 0.01,
+      "optimizer_learning_rate": 0.1,
+      "qa_batch_size": 16,
+      "qa_chunk_rows": 64,
+      "qa_doc_stride": 128,
+      "qa_max_length": 384,
+      "qa_maximum_answer_tokens": 30,
+      "softmax_temperature": 1.0
+    },
+    "platform": "Windows-10-10.0.19045-SP0",
+    "python": "3.10.20",
+    "torch": "2.4.1+cu124",
+    "transformers": "4.46.3"
+  },
+  "sampling": {
+    "duplicate_assigned_source_rows_excluded": 0,
+    "eligible_answer_state_counts_after_exclusion": {
+      "answerable": 4936,
+      "unanswerable": 5008
+    },
+    "excluded_source_commitment_rows": 14600,
+    "pair_assignment_excluded_rows": 9943,
+    "schema_excluded_cases": 1,
+    "schema_exclusion_rate": 2.507774099709098e-05,
+    "schema_exclusion_reasons": {
+      "insufficient_paragraphs": 1
+    },
+    "selected_answer_state_counts": {
+      "answerable": 800,
+      "unanswerable": 800
+    },
+    "selected_cases": 1600,
+    "selected_excluded_source_commitment_overlap": 0,
+    "selected_source_id_commitment": "2f269a542c21daca6e06ac243a87941a264570e9bb7435e0cf0579a060e319a3",
+    "selected_squad2_exact_question_overlap": 0,
+    "source_rows": 39876,
+    "source_split": "train",
+    "squad2_exact_question_overlap_excluded": 5388,
+    "stage": "calibration",
+    "target_cases": 1600
+  },
+  "schema_version": "frc-musique-v70-execution-registration-v1",
+  "stage": "calibration",
+  "structural_census": {
+    "direct_qa_input_rows": 31998,
+    "gold_fields_exported_to_blind_caches": false,
+    "hop_count_distribution": {
+      "2": 1186,
+      "3": 336,
+      "4": 78
+    },
+    "maximum_paragraphs": 20,
+    "mean_paragraphs": 19.99875,
+    "minimum_paragraphs": 18,
+    "prepared_cases": 1600
+  }
+}

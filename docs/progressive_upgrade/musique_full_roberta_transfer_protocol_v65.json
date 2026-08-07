@@ -1,0 +1,148 @@
+{
+  "schema_version": "frc-musique-full-roberta-transfer-protocol-v65",
+  "experiment_id": "FRC-MUSIQUE-FULL-ROBERTA-TRANSFER-V65",
+  "registered_at": "2026-08-03T23:42:31+08:00",
+  "purpose": "Test whether the single null-vs-span threshold learned only on SQuAD 2.0 train in v64 transfers unchanged to a disjoint multi-hop answerability domain where locally plausible spans may remain despite a broken reasoning chain.",
+  "prior_boundary": {
+    "v64_status": "SQUAD2_V64_CALIBRATED_QA_FRC_COMPONENT_FEASIBILITY_ESTABLISHED",
+    "v64_locked_threshold_exact": 0.974609375,
+    "v64_confirmation_reuse_for_tuning_or_selection_authorized": false,
+    "v36_dataset_file": "musique_ans_v1.0_dev.jsonl",
+    "v36_dataset_sha256": "15fa63794d18a94ce12411aca6e2327e65b6e83b0b1490efab3f1962e48abf3b",
+    "v36_prepared_blind_sha256": "b9a987875dbc7aeaef4720c6df02265d0368b49f344b8a24b933a10ca0cfc28b",
+    "v36_case_level_ids_queries_scores_and_results_may_be_used_for_v65": false,
+    "v65_target_file_previously_referenced_by_repository_experiment_code_or_protocol": false,
+    "v65_target_content_opened_or_parsed_before_this_protocol": false,
+    "known_aggregate_results_used_to_weaken_v65_gates": false
+  },
+  "official_source": {
+    "repository": "https://github.com/stonybrooknlp/musique",
+    "repository_revision": "922ac98f19a201998dbdae6d7f2887a5258dbdeb",
+    "official_readme_sha256": "be0c6ebbd2f192c647633bdec79429b3d027bebfd37182f7d8f1d49fb53b3829",
+    "license_file_sha256": "8a5e40e360ca75413c65917144f6055537bee03e95f727c1bb55a7aff9d8d4e2",
+    "license": "CC BY 4.0",
+    "target_file": ".cache/benchmarks/musique/data/musique_full_v1.0_train.jsonl",
+    "target_file_bytes": 476696984,
+    "target_file_sha256": "b1cd998f7e0e2838d6fda024e4ad1eb0e7fc3edefdadb0bd9b5b10b0907f2034",
+    "evaluation_role": "one-time cross-domain mechanism confirmation despite the upstream file being named train",
+    "official_schema_source": "raw_data_to_official_format.py at the registered repository revision"
+  },
+  "model_overlap_disclosure": {
+    "support_model_repository": "deepset/roberta-base-squad2",
+    "support_model_revision": "adc3b06f79f797d1c575d5479d6f5efe54a9e3b4",
+    "support_model_was_finetuned_on_squad2": true,
+    "official_musique_readme_warns_that_musique_composes_seed_questions_from_squad_natural_questions_trex_mlqa_and_zero_shot_re": true,
+    "guard": "Exclude a MuSiQue case if its composed question or any decomposition question exactly matches a normalized SQuAD 2.0 train question.",
+    "squad2_train_sha256": "68dcfbb971bd3e96d5b46c7177b16c1a4e7d4bdef19fb204502738552dede002",
+    "guard_cannot_prove_absence_of_context_pretraining_or_paraphrase_overlap": true,
+    "strict_independent_model_training_confirmation_claimed": false
+  },
+  "source_access_order": [
+    "Hash the already-downloaded target bytes without parsing JSONL and register official repository metadata.",
+    "Freeze this protocol, then implement and test the adapter, leakage guard, sample selection, blind QA rows, paragraph aggregation, support gates and stopping logic using synthetic fixtures only.",
+    "Register protocol, source, model, module, runner and test hashes before parsing any target JSONL row.",
+    "Parse the target once, apply schema and leakage exclusions, and freeze one balanced sample without inspecting aggregate support outcomes.",
+    "Write all paragraph-level QA inputs without answerability, answers, aliases, decomposition answers, support labels or supporting-paragraph flags.",
+    "Run the fixed offline model and aggregate paragraph decisions before joining answerability or other gold fields.",
+    "Stop before query generation and BGE/reranker scoring unless every pre-retrieval support check passes.",
+    "Publish favorable, null, negative or inconclusive results and never reuse v65 cases for tuning, threshold selection or selector selection."
+  ],
+  "sampling": {
+    "target_cases": 600,
+    "target_per_answer_state": 300,
+    "answer_states": [
+      "answerable",
+      "unanswerable"
+    ],
+    "minimum_paragraphs_per_case": 3,
+    "ordering": "SHA-256('FRC-MUSIQUE-FULL-V65|' + source id), then source id",
+    "no_replacement": true,
+    "maximum_cases_per_source_id": 1,
+    "exclude_exact_normalized_squad2_train_question_overlap": true,
+    "exclude_any_v36_source_id_overlap": true,
+    "no_post_access_resampling": true,
+    "no_balancing_by_hop_count_answer_surface_paragraph_count_or_model_score": true,
+    "insufficient_eligible_cases": "MUSIQUE_FULL_V65_SCOPE_INCONCLUSIVE_STOP_BEFORE_QA"
+  },
+  "blind_qa": {
+    "one_input_per_case_paragraph": true,
+    "question": "original composed MuSiQue question",
+    "context": "paragraph title plus paragraph text",
+    "paragraph_order": "ascending official paragraph idx",
+    "forbidden_fields": [
+      "answerable",
+      "answer",
+      "answer_aliases",
+      "question_decomposition",
+      "decomposition answer",
+      "paragraph is_supporting",
+      "supporting paragraph ids",
+      "gold hop count",
+      "answer surface occurrence label"
+    ],
+    "gold_fields_visible_to_verifier": false
+  },
+  "support_transfer": {
+    "threshold_source": "v64 confirmation-open authorization record",
+    "locked_threshold_exact": 0.974609375,
+    "learned_or_adjusted_parameter_count_on_musique": 0,
+    "paragraph_margin": "best legal span logit sum minus CLS null logit sum using the fixed v64 QA implementation",
+    "case_margin": "maximum finite paragraph margin across every official paragraph",
+    "decision": "support iff case_margin is strictly greater than 0.974609375",
+    "multiple_paragraph_comparison_adjustment": "none; this deliberately stress-tests direct transfer under multiple local-span opportunities",
+    "invalid_paragraph": "fail that paragraph closed",
+    "all_paragraphs_invalid": "fail the case closed and count an invalid case",
+    "model_weights_architecture_or_threshold_change": false
+  },
+  "pre_retrieval_gates": {
+    "exact_cases": 600,
+    "exact_answer_state_balance": true,
+    "schema_exclusion_rate_at_most": 0.01,
+    "squad2_exact_question_overlap": 0,
+    "v36_source_id_overlap": 0,
+    "qa_invalid_case_rate": 0.0,
+    "balanced_accuracy_at_least": 0.8,
+    "answerable_support_pass_rate_at_least": 0.8,
+    "unanswerable_rejection_rate_at_least": 0.7,
+    "local_span_trap_unanswerable_cases_at_least": 100,
+    "local_span_trap_unanswerable_rejection_rate_at_least": 0.65,
+    "every_observed_unanswerable_hop_stratum_rejection_rate_at_least": 0.6,
+    "all_must_pass_before_query_generation_or_neural_retrieval_scoring": true
+  },
+  "conditional_retrieval": {
+    "authorized_only_if_pre_retrieval_gates_pass": true,
+    "shared_cases_queries_candidate_pool_scores_support_gate_and_token_budgets": true,
+    "candidate": "v36 dual-resource FRC transferred without target tuning",
+    "non_frc_baselines": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "cross_encoder_knapsack"
+    ],
+    "frc_controls": [
+      "v35 cost-aware FRC",
+      "v36 dual-resource FRC"
+    ],
+    "candidate_minus_strongest_shared_gate_non_frc_point_at_least": 0.01,
+    "candidate_minus_strongest_shared_gate_non_frc_ci_low_above": 0.0,
+    "candidate_minus_strongest_same_gate_frc_point_at_least": 0.0,
+    "answerable_complete_support_recall_drop_at_most": 0.03
+  },
+  "outcomes": {
+    "scope_or_integrity_failure": "MUSIQUE_FULL_V65_SCOPE_INCONCLUSIVE",
+    "support_gate_failure": "MUSIQUE_FULL_V65_ROBERTA_TRANSFER_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_RETRIEVAL",
+    "support_pass_retrieval_fail": "MUSIQUE_FULL_V65_SELECTOR_SUPPORT_NOT_ESTABLISHED",
+    "all_registered_checks_pass": "MUSIQUE_FULL_V65_CROSS_DOMAIN_COMPONENT_FEASIBILITY_ESTABLISHED",
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "interpretation_limits": [
+    "Not an official MuSiQue leaderboard result.",
+    "Not strict independent model-training confirmation because exact-match exclusion cannot rule out paraphrase, context or pretraining overlap.",
+    "Not proof that a max local span establishes a complete multi-hop reasoning chain.",
+    "Not an open-corpus retrieval, SetR reproduction, flood-domain or production result.",
+    "A positive result remains SHADOW research evidence; a negative result cannot be repaired on v65 cases."
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "schema_version": "frc-contractnli-v51-implementation-registration-v1",
+  "experiment_id": "FRC-CONTRACTNLI-DEV-CALIBRATED-ROBUST-CONSENSUS-V51",
+  "registered_at": "2026-08-02T19:10:00+08:00",
+  "purpose": "Freeze the v51 development calibration implementation before any official ContractNLI dev or train member content is opened.",
+  "hashes": {
+    "protocol_sha256": "0904a59ace997919a06fe32a4e839bf1fce5158cb7f4c663567506660421a18b",
+    "module_sha256": "6ec0a073b7a358ad1502a2f0f1e925cef19f393750847e7dc874c746727d9ec9",
+    "runner_sha256": "e517627a51543a383e2fe7aa34c01f25c2e3e2cfaf6d21146f22dc0b0d52f475",
+    "test_sha256": "2c4a2f92a2098d19d5b298942a3cff543e6fb41aa9e8eda3a3cb86c6bc9dcb3c"
+  },
+  "dev_or_train_content_opened_before_registration": false,
+  "official_test_permanently_excluded_from_v51": true,
+  "synthetic_test_command": "python -m pytest tests/test_frc_contractnli_dev_calibrated_robust_consensus.py -q --basetemp D:\\graduation_project\\output\\pytest-tmp-contractnli-v51-synthetic",
+  "synthetic_test_result": {
+    "passed": 9,
+    "failed": 0,
+    "duration_seconds": 0.15
+  },
+  "synthetic_invariants_verified": {
+    "protocol_hash_and_split_boundary_frozen": true,
+    "archive_reader_opens_only_requested_dev_or_train_member": true,
+    "balanced_dev_sampling_is_order_invariant_and_document_capped": true,
+    "blind_cache_and_deterministic_queries_are_gold_free": true,
+    "robust_consensus_is_same_span_permutation_and_positive_affine_invariant": true,
+    "threshold_grid_fit_and_tie_order_are_deterministic": true,
+    "document_group_fold_assignment_is_stable": true,
+    "candidate_coverage_requires_exact_registered_structure": true,
+    "five_fold_oof_calibration_and_report_are_deterministic": true,
+    "published_case_evidence_contains_no_text_or_gold_candidate_ids": true
+  },
+  "frozen_implementation_contract": {
+    "development_split": "official dev",
+    "development_cases": 240,
+    "development_folds": 5,
+    "confirmation_split_if_authorized": "official train",
+    "official_test_reuse": false,
+    "query_generator": "none",
+    "selector_after_gate": "low_core_divergence_guarded_frc_v49",
+    "threshold_change_after_registration_forbidden": true,
+    "negative_or_inconclusive_result_must_be_published": true
+  }
+}

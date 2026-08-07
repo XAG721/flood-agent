@@ -1,0 +1,128 @@
+{
+  "schema_version": "frc-quac-roberta-qa-support-transfer-protocol-v62",
+  "experiment_id": "FRC-QUAC-ROBERTA-QA-SUPPORT-TRANSFER-V62",
+  "registered_at": "2026-08-03T19:20:00+08:00",
+  "research_question": "Can a public SQuAD2-trained extractive QA model provide a parameter-free support gate on disjoint QuAC cases, and does the frozen adaptive FRC selector add utility over fair methods under that shared gate?",
+  "prior_boundary": {
+    "v57_quac_train_schema_and_results_known": true,
+    "v57_case_commitments_known_for_exclusion_only": true,
+    "v57_quac_validation_content_opened_or_parsed": false,
+    "v58_to_v61_squad2_results_known": true,
+    "squad2_train_must_not_be_used_for_model_generalization_claim": true,
+    "v62_quac_sample_constructed_before_protocol_registration": false,
+    "v62_quac_outcomes_or_model_predictions_known": false,
+    "model_files_downloaded_before_protocol_registration": false
+  },
+  "source_and_split": {
+    "dataset": "QuAC v0.2",
+    "official_homepage": "https://quac.ai/",
+    "license": "CC BY-SA 4.0 as stated on the official QuAC homepage",
+    "source_registration": "docs/progressive_upgrade/quac_source_registration_v57.json",
+    "source_registration_sha256": "8ccd3f1bffb8292c114d17e0d734f2651122906f33b2a101f801d0b0bde702c9",
+    "development_file": "train_v0.2.json",
+    "development_sha256": "ff5cca5a2e4b4d1cb5b5ced68b9fce88394ef6d93117426d6d4baafbcc05c56a",
+    "conditional_confirmation_file": "val_v0.2.json",
+    "conditional_confirmation_sha256": "09e622916280ba04c9352acb1bc5bbe80f11a2598f6f34e934c51d9e6570f378",
+    "confirmation_open_authorized_only_if_every_development_gate_passes": true
+  },
+  "public_support_model": {
+    "repository": "deepset/roberta-base-squad2",
+    "repository_url": "https://huggingface.co/deepset/roberta-base-squad2",
+    "revision": "adc3b06f79f797d1c575d5479d6f5efe54a9e3b4",
+    "license": "CC-BY-4.0",
+    "architecture": "AutoModelForQuestionAnswering",
+    "training_domain_disclosure": "The model is trained on SQuAD2. QuAC is used as an out-of-domain transfer test; this is not zero-shot in the broad pretrained-language-model sense.",
+    "offline_loading_required_after_registration": true,
+    "no_finetuning_calibration_or_threshold_fitting": true
+  },
+  "scope": {
+    "development_cases": 600,
+    "development_answer_bearing": 300,
+    "development_no_answer": 300,
+    "expected_v57_exclusion_commitments": 600,
+    "selected_v57_commitment_overlap": 0,
+    "maximum_cases_per_dialogue": 2,
+    "maximum_cases_per_document_per_answer_state": 4,
+    "minimum_dialogues": 250,
+    "minimum_documents": 200,
+    "sample_salt": "FRC-QUAC-V62-DISJOINT-DEVELOPMENT|",
+    "balanced_mechanism_sample_not_natural_prevalence": true,
+    "token_budgets": [128, 256, 512]
+  },
+  "blind_execution": {
+    "qa_input_fields": ["id", "question", "context"],
+    "qa_input_forbidden_fields": ["answer_state", "answer_text", "answer_start", "answer_end", "gold_candidate_ids"],
+    "retrieval_query_uses_current_question_and_up_to_two_prior_turns": true,
+    "qa_question_uses_current_question_only": true,
+    "gold_joined_only_after_complete_retrieval_and_qa_caches": true,
+    "case_level_scores_or_predictions_from_v57_reused": false,
+    "fallback_predictions_fail_closed": true
+  },
+  "qa_inference": {
+    "tokenizer_truncation": "only_second",
+    "max_length": 384,
+    "doc_stride": 128,
+    "maximum_answer_tokens": 30,
+    "batch_size": 16,
+    "do_sample": false,
+    "support_rule": "SUPPORTED iff the maximum valid context span start_logit+end_logit is strictly greater than the minimum CLS null start_logit+end_logit across overflow features",
+    "tie_rule": "ties are UNSUPPORTED",
+    "invalid_or_nonfinite_rule": "UNSUPPORTED",
+    "learned_threshold": null
+  },
+  "methods": {
+    "candidate": "roberta_supported_adaptive_argmax_cardinality_frc_v43_v62",
+    "candidate_base": "adaptive_argmax_cardinality_frc_v43",
+    "ungated_controls": "all frozen v49 methods",
+    "shared_gate_non_frc": "all frozen non-FRC baselines under the identical model-native QA decision",
+    "shared_gate_frc_controls": "frozen FRC controls except the candidate, plus low-core-divergence v49, under the identical decision",
+    "exact_anchor_gated": "roberta_supported_cross_encoder_topk_v62",
+    "exact_anchor_ungated": "cross_encoder_topk",
+    "selector_parameter_change": false
+  },
+  "statistics": {
+    "primary_metric": "answer_or_abstention_macro_f1 averaged equally across 128/256/512 budgets",
+    "paired_cluster_bootstrap": "10000 resamples clustered by QuAC document",
+    "bootstrap_seed": 20260820,
+    "minimum_reportable_stratum_cases": 50,
+    "all_failures_and_regressions_retained": true
+  },
+  "development_gates": {
+    "exact_cases_equals_600": true,
+    "exact_answer_state_balance": true,
+    "selected_v57_commitment_overlap_equals_0": true,
+    "schema_exclusion_rate_at_most": 0.01,
+    "candidate_ceiling_complete_rate_at_least": 0.99,
+    "qa_invalid_rate_equals": 0.0,
+    "support_verifier_balanced_accuracy_at_least": 0.75,
+    "answer_bearing_support_pass_rate_at_least": 0.75,
+    "no_answer_rejection_rate_at_least": 0.65,
+    "candidate_answer_recall_at_least": 0.70,
+    "candidate_no_answer_abstention_accuracy_at_least": 0.65,
+    "candidate_abstention_rate_range": [0.15, 0.70],
+    "candidate_minus_gated_exact_anchor_point_at_least": 0.005,
+    "candidate_minus_gated_exact_anchor_ci_low_above": 0.0,
+    "candidate_minus_strongest_shared_gate_non_frc_point_at_least": 0.005,
+    "candidate_minus_strongest_shared_gate_non_frc_ci_low_above": 0.0,
+    "candidate_minus_strongest_same_gate_frc_point_at_least": -0.005,
+    "gated_exact_anchor_minus_ungated_exact_anchor_point_at_least": 0.10,
+    "gated_exact_anchor_minus_ungated_exact_anchor_ci_low_above": 0.0,
+    "minimum_budget_or_supported_stratum_delta_at_least": -0.02,
+    "deterministic_query_and_score_fallback_rate_equals": 0.0
+  },
+  "failure_closure": {
+    "any_development_gate_failure": "STOP_BEFORE_QUAC_VALIDATION",
+    "development_reuse_for_tuning_selection_or_threshold_fitting": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "claim_boundary": {
+    "official_quac_answer_extraction_result": false,
+    "official_squad2_model_evaluation": false,
+    "setr_reproduction": false,
+    "open_domain_retrieval_result": false,
+    "flood_domain_validation": false,
+    "purpose": "out-of-domain component feasibility and fair shared-gate evidence-selection comparison"
+  }
+}

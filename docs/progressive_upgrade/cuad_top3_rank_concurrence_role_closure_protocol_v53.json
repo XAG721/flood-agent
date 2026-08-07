@@ -1,0 +1,197 @@
+{
+  "schema_version": "frc-cuad-top3-rank-concurrence-role-closure-protocol-v53",
+  "experiment_id": "FRC-CUAD-TOP3-RANK-CONCURRENCE-ROLE-CLOSURE-V53",
+  "registered_at": "2026-08-02T21:39:00+08:00",
+  "purpose": "Prospectively test whether a parameter-free Top-3 role-concurrence closure can preserve answer-bearing contract evidence while retaining useful no-evidence abstention on a new expert-annotated legal dataset.",
+  "prior_experiment_boundary": {
+    "contractnli_v50_test_v51_dev_and_v52_train_are_permanently_excluded": true,
+    "no_contractnli_case_id_text_gold_score_selected_set_or_case_level_feature_is_used": true,
+    "known_aggregate_failure_used_only_for_theory": "v52 exact Top-1 concurrence produced useful abstention but failed against the strongest shared-gate non-FRC control and lost too much evidence F1.",
+    "v53_does_not_retroactively_change_v41_through_v52": true
+  },
+  "source_access_boundary_at_registration": {
+    "cuad_repository_content_read": "Only public README, train/evaluate code, run command and category-description structure were read; no data.zip member content or example was opened.",
+    "cuad_data_archive_downloaded_locally": false,
+    "cuad_train_content_opened": false,
+    "cuad_test_content_opened": false,
+    "cuad_gold_or_case_distribution_inspected": false,
+    "method_formula_or_gate_selected_from_cuad_outcome": false
+  },
+  "official_sources": {
+    "project_page": "https://www.atticusprojectai.org/research/",
+    "repository": "https://github.com/TheAtticusProject/cuad",
+    "repository_revision": "67faa0e6023b04fcaae6cc09497ab00e5d63a2a2",
+    "data_archive_path": "data.zip",
+    "paper": "https://datasets-benchmarks-proceedings.neurips.cc/paper/2021/hash/6ea9ab1baa0efb9e19094440c317e21b-Abstract-round1.html",
+    "license_identifier": "CC-BY-4.0",
+    "official_evaluation": "evaluate.py uses answer-string Jaccard at least 0.5, with a documented Parties-category substring exception, and reports AUPR plus precision at 80 and 90 percent recall.",
+    "official_training_command": "run.sh trains on data/train_separate_questions.json and evaluates on data/test.json with SQuAD-v2 negative examples.",
+    "official_model_reference": "The official repository links trained RoBERTa-base, RoBERTa-large and DeBERTa-xlarge checkpoints. RoBERTa-base is the only preregistered executable external reference for v53 if its immutable artifact remains available and runtime-compatible."
+  },
+  "source_access_order": [
+    "Freeze this protocol before downloading or opening data.zip.",
+    "Download the fixed official repository revision into the ignored CUAD cache, hash every regular source file and data.zip, and list ZIP member names without opening JSON member content.",
+    "Implement and synthetically test the reader, candidate construction, blind sampling, Top-3 gate, role closure, shared-gate controls, metrics and deterministic reports before opening train content.",
+    "Register protocol, source, implementation, runner and test hashes before opening train content.",
+    "Open only train_separate_questions.json to create the development blind cache; do not open test.json.",
+    "Register the development sample commitments and CUDA runtime before query generation or neural scoring.",
+    "Generate deterministic queries, build the gold-free retrieval pool and score every retained candidate for all development cases before joining train gold.",
+    "Join train gold only after the complete development score cache is locked and run the preregistered development gates once.",
+    "If and only if every development gate passes, freeze the developed method hash and repeat the same blind sequence once on untouched test.json. Otherwise stop before test content is opened.",
+    "Publish positive, negative, null or schema-inconclusive outcomes and forbid reuse of any revealed split for tuning or selection."
+  ],
+  "development_and_confirmation_scope": {
+    "development_split": "data/train_separate_questions.json",
+    "confirmation_split": "data/test.json",
+    "development_target_cases": 400,
+    "confirmation_target_cases": 400,
+    "target_answer_bearing_cases_per_stage": 200,
+    "target_no_answer_cases_per_stage": 200,
+    "maximum_cases_per_contract_per_stage": 4,
+    "minimum_contracts_per_stage": 90,
+    "development_sample_salt": "FRC-CUAD-V53-DEVELOPMENT|",
+    "confirmation_sample_salt": "FRC-CUAD-V53-CONFIRMATION|",
+    "sampling": "Within answer-bearing and no-answer groups, sort by SHA-256 over the fixed salt, opaque contract commitment and official question id; advance groups in lockstep under the shared per-contract cap.",
+    "balanced_mechanism_sample_not_natural_prevalence": true,
+    "contract_cluster_bootstrap": true,
+    "case_level_iid_bootstrap_forbidden": true
+  },
+  "gold_free_candidate_construction": {
+    "input": "The full given contract context and official question text only.",
+    "exact_text_preservation": true,
+    "source_candidates": [
+      "Every non-empty line after CRLF/CR boundary normalization, split further only when it exceeds 128 whitespace tokens.",
+      "Every non-empty punctuation-bounded clause ending in period, semicolon, colon, question mark or exclamation mark, split further only when it exceeds 128 whitespace tokens.",
+      "Exact whitespace-token windows of widths 24, 48 and 96 with strides 12, 24 and 48, including the final suffix window."
+    ],
+    "deduplication": "Deduplicate exact start/end offsets, then normalized-whitespace text; choose the earliest start, shortest span and source-kind order line, clause, window_24, window_48, window_96.",
+    "retrieval_pool": "Union BM25 Top-48 and BGE dense Top-48 over the source candidates; at most 96 unique candidates, ordered by best rank, sum of ranks with missing rank set to candidate count plus one, then canonical candidate id.",
+    "candidate_ids": "span_<zero-padded exact start>_<zero-padded exact end>",
+    "gold_use_before_complete_scoring": false,
+    "post_score_candidate_ceiling": "Using the official CUAD string-match rule, every answer-bearing case is complete only if each distinct official answer has at least one candidate match."
+  },
+  "frozen_models": {
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "refs/pr/5",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "refs/pr/4",
+    "offline_model_loading": true,
+    "query_generator": "none"
+  },
+  "deterministic_role_queries": {
+    "anchor": "{question}",
+    "first_fact": "Find contract language that directly states the following reviewed clause or term: {question}",
+    "second_fact_or_bridge": "Find exceptions, limitations, conditions, scope, dates, parties, amounts, or triggers relevant to the following reviewed clause or term: {question}",
+    "counterevidence": "Find contract language that narrows, contradicts, excludes, or makes inapplicable the following reviewed clause or term: {question}",
+    "fallback_rate_required": 0.0,
+    "gold_fields_visible_to_query_construction": false
+  },
+  "top3_rank_concurrence_gate": {
+    "per_role_ranking": "Sort candidates by descending raw reranker logit for the role, then ascending canonical candidate id.",
+    "anchor_frontier": "The first three anchor-ranked candidates, or all candidates when fewer than three exist.",
+    "polarity_frontier": "The union of the first three first_fact-ranked and first three second_fact_or_bridge-ranked candidates.",
+    "concurrence_nucleus": "Intersection of anchor_frontier and polarity_frontier.",
+    "pass_rule": "Pass if and only if the concurrence nucleus is non-empty; otherwise return an empty evidence set.",
+    "nucleus_order": "Ascending max(anchor rank, best polarity rank), then ascending sum(anchor rank, best polarity rank), then canonical candidate id.",
+    "learned_threshold_temperature_margin_prior_or_candidate_count_feature": false,
+    "top_k_equals_number_of_semantic_roles_and_is_not_dataset_fitted": true
+  },
+  "role_closure_selector": {
+    "candidate": "top3_rank_concurrence_role_closure_low_core_frc_v53",
+    "base_selector": "unchanged low_core_divergence_guarded_frc_v49",
+    "closure": "When the gate passes, take the ordered union of the concurrence nucleus followed by the unchanged v49 selection, remove normalized-text duplicates, then admit in that order while the registered token budget is not exceeded.",
+    "minimum_nonempty_output_after_gate_pass": "If the first nucleus candidate alone exceeds the token budget, emit that single candidate and report the budget overrun; otherwise no overrun is allowed.",
+    "why_this_tests_frc_specific_value": "The shared gate is identical for all gated controls; only the candidate preserves the role-concurrence nucleus and combines it with the FRC low-core selector."
+  },
+  "methods": {
+    "candidate": "top3_rank_concurrence_role_closure_low_core_frc_v53",
+    "same_gate_frc_ablation": "top3_rank_concurrence_low_core_only_frc_v53",
+    "shared_gate_non_frc_controls": [
+      "top3_rank_concurrence_bm25_topk_v53",
+      "top3_rank_concurrence_dense_topk_v53",
+      "top3_rank_concurrence_hybrid_topk_v53",
+      "top3_rank_concurrence_cross_encoder_topk_v53",
+      "top3_rank_concurrence_cross_encoder_knapsack_v53"
+    ],
+    "ungated_frc_controls": [
+      "adaptive_argmax_cardinality_frc_v43",
+      "low_core_divergence_guarded_frc_v49"
+    ],
+    "ungated_non_frc_controls": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "cross_encoder_knapsack"
+    ],
+    "official_cuad_roberta_base": "A separately reported executable end-to-end extractive QA reference on official test only. It is trained on CUAD train and is not included in shared-pool FRC support gates or called SetR."
+  },
+  "evaluation": {
+    "primary_metric": "answer_or_abstention_macro_f1",
+    "answer_bearing_per_case_metric": "Set F1 where a selected candidate matches an official answer under CUAD evaluate.py Jaccard at least 0.5; preserve the official Parties-category substring exception.",
+    "no_answer_per_case_metric": "Exact empty-selection accuracy.",
+    "secondary_metrics": [
+      "answer-bearing macro precision, recall and F1",
+      "complete-answer recall",
+      "no-answer abstention accuracy",
+      "abstention rate",
+      "mean selected unit and token cost",
+      "official CUAD AUPR and precision-at-recall for the official executable reference only"
+    ],
+    "token_budgets": [
+      256,
+      512,
+      1024
+    ],
+    "bootstrap": {
+      "resamples": 10000,
+      "seed": 20260813,
+      "confidence": 0.95,
+      "unit": "opaque contract commitment cluster"
+    },
+    "minimum_supported_stratum_cases": 40,
+    "mandatory_strata": [
+      "answer-bearing versus no-answer",
+      "candidate-pool quartile",
+      "contract-length quartile",
+      "clause category",
+      "gate outcome",
+      "answer-count group"
+    ]
+  },
+  "development_gates_all_required": {
+    "exact_cases_answer_balance_contract_cap_and_minimum_contracts": true,
+    "candidate_ceiling_complete_rate_on_answer_bearing_cases_at_least": 0.9,
+    "candidate_minus_strongest_shared_gate_non_frc_point_at_least": 0.01,
+    "candidate_minus_strongest_shared_gate_non_frc_ci_low_above": 0.0,
+    "candidate_minus_same_gate_frc_ablation_point_at_least": 0.005,
+    "candidate_minus_same_gate_frc_ablation_ci_low_above": 0.0,
+    "candidate_minus_ungated_v49_point_at_least": 0.01,
+    "candidate_minus_ungated_v49_ci_low_above": 0.0,
+    "answer_bearing_macro_recall_drop_vs_ungated_v49_at_most": 0.03,
+    "no_answer_abstention_accuracy_at_least": 0.2,
+    "candidate_abstention_rate_minimum": 0.05,
+    "candidate_abstention_rate_maximum": 0.8,
+    "every_budget_and_supported_stratum_delta_vs_strongest_shared_gate_non_frc_at_least": -0.03,
+    "deterministic_query_fallback_rate": 0.0,
+    "score_or_prediction_fallback_rate": 0.0
+  },
+  "confirmation_rule": {
+    "test_content_open_authorized_only_if_every_development_gate_passes": true,
+    "development_failure_status": "CUAD_V53_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_TEST",
+    "confirmation_support_status": "CUAD_V53_TOP3_ROLE_CLOSURE_SUPPORT_ESTABLISHED",
+    "confirmation_failure_status": "CUAD_V53_TOP3_ROLE_CLOSURE_SUPPORT_NOT_ESTABLISHED",
+    "confirmation_uses_identical_checks_except_candidate_ceiling_is_descriptive_not_an_opening_gate": true,
+    "development_threshold_or_parameter_transferred_to_test": null,
+    "selector_adoption_authorized_by_protocol": false,
+    "canary_or_default_authorized_by_protocol": false,
+    "gate_2_before_and_after_experiment": "NO-GO/SHADOW",
+    "negative_null_schema_inconclusive_or_runtime_incompatible_result_must_be_published": true
+  },
+  "known_scope_limits": [
+    "CUAD is full-given-contract clause highlighting, not open-corpus retrieval, answer generation or legal advice.",
+    "The balanced mechanism sample is not CUAD natural prevalence and is not an official leaderboard submission.",
+    "The official RoBERTa-base checkpoint is a real executable reference but uses supervised CUAD training and a different end-to-end extractive QA architecture; it is not a fair same-information FRC selector control.",
+    "A positive result would support only the frozen selector under this protocol; it would not reproduce SetR or establish flood-domain expert validity."
+  ]
+}

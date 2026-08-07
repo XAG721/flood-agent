@@ -1,0 +1,60 @@
+{
+  "schema_version": "frc-evidence-inference-low-core-divergence-atomic-roles-implementation-v49",
+  "experiment_id": "FRC-EVIDENCE-INFERENCE-LOW-CORE-DIVERGENCE-GUARDED-ATOMIC-ROLES-V49",
+  "registered_at": "2026-08-02T14:00:00+08:00",
+  "implementation_boundary": "The protocol, original-v2.0 validation-only archive adapter, deterministic offset-preserving sentence splitter, annotator-grouped alternative-reference mapper, low-core-divergence selector, evaluator, runner and synthetic tests were implemented and hashed before the official archive was downloaded, listed or opened. Earlier availability probes fetched one compressed byte without saving or decompressing the archive, as disclosed in the protocol.",
+  "validation_archive_downloaded_before_registration": false,
+  "validation_archive_listed_or_opened_before_registration": false,
+  "validation_article_id_prompt_annotation_evidence_label_or_article_text_seen_before_registration": false,
+  "train_or_test_content_used": false,
+  "qasper_v48_case_level_artifact_used_for_v49_design": false,
+  "hashes": {
+    "protocol_sha256": "e937f230bbb4a359cc2787edd6f33e90e5e6b084c5b7f14a8ca9f4f58c3d5d0c",
+    "module_sha256": "148644a6df7b691b0afef88b44d776445b85f9e85a307a39fbf099e71d1e7fce",
+    "runner_sha256": "94923139f461822a1c2472d5b7bb47898ae4571ca59174aaf6466e4384284383",
+    "test_sha256": "4f700226bf98f9c37f4747b7392b0230d9775e4b391e681ce04604d58996591c"
+  },
+  "synthetic_test_result": {
+    "command": "python -m pytest tests/test_frc_evidence_inference_low_core_divergence_atomic_roles.py -q",
+    "passed": 8,
+    "failed": 0
+  },
+  "synthetic_invariants_verified": {
+    "protocol_hash_formula_and_train_test_exclusions_validate": true,
+    "sentence_split_retains_registered_offsets_and_boundary_punctuation": true,
+    "inclusive_evidence_end_maps_to_exact_sentence_reference": true,
+    "archive_reader_retains_only_validation_rows_and_validation_article_text": true,
+    "sealed_sampling_is_input_order_invariant": true,
+    "blind_cache_contains_no_prompt_document_user_label_offset_or_gold_fields": true,
+    "multiple_spans_union_only_within_one_annotator": true,
+    "distinct_annotators_remain_alternative_references": true,
+    "one_shared_argmax_and_one_shared_runner_up_does_not_trigger": true,
+    "one_shared_argmax_and_three_distinct_runner_ups_triggers_target_two": true,
+    "two_argmax_core_and_three_noncore_top2_proposals_triggers_target_three": true,
+    "three_argmax_ids_never_trigger": true,
+    "candidate_adds_at_most_one_unit_over_v43_target": true,
+    "candidate_permutation_invariant": true,
+    "strictly_monotone_per_role_transform_invariant": true,
+    "canonical_id_tie_breaking": true,
+    "no_duplicate_selection": true,
+    "budget_respected_and_can_only_reduce_feasible_count": true,
+    "sentence_text_position_and_source_kind_never_change_formula": true,
+    "report_is_byte_deterministic": true
+  },
+  "frozen_runtime_defaults": {
+    "generator_batch_size": 8,
+    "embedding_batch_size": 64,
+    "reranker_batch_size": 256,
+    "case_batch_size": 4,
+    "score_calibration": "per-case independent min-max",
+    "rank_coverage_weight": 0.5,
+    "token_budgets": [256, 512, 1024],
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 20260809,
+    "offline_model_loading": true
+  },
+  "method_or_threshold_change_after_registration_forbidden": true,
+  "negative_null_or_inconclusive_result_must_be_published": true,
+  "selector_adoption_authorized_by_registration": false,
+  "gate_2": "NO-GO/SHADOW"
+}

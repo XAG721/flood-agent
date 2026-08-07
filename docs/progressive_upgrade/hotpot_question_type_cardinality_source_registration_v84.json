@@ -1,0 +1,138 @@
+{
+  "schema_version": "frc-hotpot-question-type-cardinality-source-registration-v84",
+  "experiment_id": "FRC-HOTPOT-QUESTION-TYPE-CARDINALITY-PROSPECTIVE-V84",
+  "registered_on": "2026-08-04",
+  "target_source": {
+    "dataset": "HotpotQA",
+    "configuration": "distractor",
+    "split": "validation",
+    "path": ".cache/benchmarks/hotpot_hf/distractor/validation-00000-of-00001.parquet",
+    "bytes": 27452575,
+    "sha256": "c20b638ca82b21d04fe12e14ff417ad05153d4d215a65de54497fca4e972f7c6",
+    "expected_rows": 7405,
+    "question_type_counts": {
+      "bridge": 5918,
+      "comparison": 1487
+    }
+  },
+  "prior_exclusions": {
+    "history": {
+      "path": ".cache/benchmarks/frc_public_reference/role_scores_hotpotqa.jsonl",
+      "bytes": 29609025,
+      "sha256": "ac5189e4f64e799ca7915a0eff9a304e6d09e0bbc6c4ef233335b17c6d56e6af",
+      "cases": 1000,
+      "question_type_counts": {
+        "bridge": 803,
+        "comparison": 197
+      }
+    },
+    "v76_development": {
+      "path": ".cache/benchmarks/hotpot_graph_router_v76/development/sealed_gold.jsonl",
+      "bytes": 129778,
+      "sha256": "06fc70a29e79546f4596aa2aee1875ffd91718c83b258234637d4f9fc77b6fae",
+      "cases": 800,
+      "question_type_counts": {
+        "bridge": 400,
+        "comparison": 400
+      }
+    },
+    "v76_confirmation": {
+      "path": ".cache/benchmarks/hotpot_graph_router_v76/confirmation/sealed_gold.jsonl",
+      "bytes": 131820,
+      "sha256": "eeef5b45b8811d0167ffd0ed134c9235e8530b1fa720b8f20e85d236c49a2754",
+      "cases": 800,
+      "question_type_counts": {
+        "bridge": 400,
+        "comparison": 400
+      }
+    }
+  },
+  "prior_exclusion_union": {
+    "cases": 2600,
+    "groups_pairwise_disjoint": true,
+    "question_type_counts": {
+      "bridge": 1603,
+      "comparison": 997
+    },
+    "all_ids_permanently_excluded_from_v84_target_stages": true
+  },
+  "remaining_capacity_before_target_selection": {
+    "cases": 4805,
+    "bridge": 4315,
+    "comparison": 490,
+    "registered_development_quota": {
+      "bridge": 400,
+      "comparison": 200
+    },
+    "registered_confirmation_quota": {
+      "bridge": 400,
+      "comparison": 200
+    },
+    "remaining_after_both_registered_stages": {
+      "bridge": 3515,
+      "comparison": 90
+    }
+  },
+  "frozen_model_development_sources": {
+    "history": {
+      "path": ".cache/benchmarks/frc_public_reference/role_scores_hotpotqa.jsonl",
+      "bytes": 29609025,
+      "sha256": "ac5189e4f64e799ca7915a0eff9a304e6d09e0bbc6c4ef233335b17c6d56e6af"
+    },
+    "v76_development_scored": {
+      "path": ".cache/benchmarks/hotpot_graph_router_v76/development/scored_blind.jsonl",
+      "bytes": 21007637,
+      "sha256": "18e79e83be3413a0be3ecb45adc9e74106f4e69355b6e4ade547574d67b529b4"
+    },
+    "v76_development_gold": {
+      "path": ".cache/benchmarks/hotpot_graph_router_v76/development/sealed_gold.jsonl",
+      "bytes": 129778,
+      "sha256": "06fc70a29e79546f4596aa2aee1875ffd91718c83b258234637d4f9fc77b6fae"
+    },
+    "v76_confirmation_scored": {
+      "path": ".cache/benchmarks/hotpot_graph_router_v76/confirmation/scored_blind.jsonl",
+      "bytes": 21245696,
+      "sha256": "2d5994ef61a08fd87792298467941563aefbb5c50ce57b985bfb4a23264373ab"
+    },
+    "v76_confirmation_gold": {
+      "path": ".cache/benchmarks/hotpot_graph_router_v76/confirmation/sealed_gold.jsonl",
+      "bytes": 131820,
+      "sha256": "eeef5b45b8811d0167ffd0ed134c9235e8530b1fa720b8f20e85d236c49a2754"
+    }
+  },
+  "frozen_dependencies": {
+    "v75_model": {
+      "path": "docs/progressive_upgrade/twowiki_question_router_model_development_v75.json",
+      "bytes": 44494,
+      "sha256": "b12c128f06c4ab14851d2f24538a15e76f5f9ff7336a7968c7b01d7c5062cbc0"
+    },
+    "v76_router": {
+      "path": "docs/progressive_upgrade/hotpot_graph_router_model_development_v76.json",
+      "bytes": 30275,
+      "sha256": "5bdcf7a229d4208d472b33478c073f29dba082bc012b48c0d2aadad47ad4ecfb"
+    },
+    "v84_router": {
+      "path": "docs/progressive_upgrade/hotpot_question_type_cardinality_router_model_development_v84.json",
+      "bytes": 327765,
+      "sha256": "5b32dc2138469b0a64f14852ed233810c56f7f3572a059c3c987f28670ae3db3"
+    }
+  },
+  "pre_registration_access_boundary": {
+    "source_file_hash_size_schema_row_count_and_id_type_capacity_read": true,
+    "all_2600_prior_rows_scores_gold_and_metrics_used_for_model_selection": true,
+    "v84_target_rows_read": 0,
+    "v84_development_ids_selected": 0,
+    "v84_confirmation_ids_selected": 0,
+    "v84_target_model_scores_seen": false,
+    "v84_target_gold_metrics_seen": false,
+    "model_features_threshold_controls_safety_floor_gates_and_stage_sizes_frozen_before_target_selection": true
+  },
+  "claim_limits": {
+    "same_dataset_case_disjoint_target": true,
+    "independent_dataset_from_model_development": false,
+    "strict_independent_model_training_confirmation": false,
+    "official_hotpotqa_leaderboard_result": false,
+    "answer_generation_or_flood_domain_validation": false,
+    "gate_2": "NO-GO/SHADOW"
+  }
+}

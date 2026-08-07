@@ -1,0 +1,87 @@
+{
+  "schema_version": "frc-quac-v57-development-closure-v1",
+  "experiment_id": "FRC-QUAC-ANCHOR-SAFE-CONSENSUS-SLOT-V57",
+  "closed_at": "2026-08-03T02:49:00+08:00",
+  "stage": "development",
+  "status": "QUAC_V57_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_VALIDATION",
+  "registered_evidence": {
+    "protocol_sha256": "bd5dab2f9166cfc2ac9e256ee772ec13d87a29ed00093adcec91f491ab44f810",
+    "source_registration_sha256": "8ccd3f1bffb8292c114d17e0d734f2651122906f33b2a101f801d0b0bde702c9",
+    "implementation_registration_sha256": "1a7b55f24861c2d26877a6bd7abc0f25b94f51b5bddf43eb30e37739c0883574",
+    "execution_registration_sha256": "63dff48119ee2ad89473f2cfc58eac7045b812763147df9ce57d668595e49408",
+    "development_result_sha256": "f9c14f8fee6402d09f9d7fd04e5255a0fb56fb95e533927b9090cae27588995a",
+    "development_report_sha256": "227983098c4e08b1a3a14f597dae9f4e4a2f24b6ee7c5cfeb325a2ae60845b80",
+    "development_evidence_sha256": "99255c4ec7b4529105b8792449a7d3edc9f337f7e98604e8766ca134f7172e07",
+    "scored_cache_sha256": "031e669a1abd633afb2a48c0d0b7c04a77e56d72509efc4e24690ca597abeedf"
+  },
+  "development_summary": {
+    "cases": 600,
+    "documents": 554,
+    "dialogues": 578,
+    "answer_state_counts": {
+      "answer_bearing": 300,
+      "no_answer": 300
+    },
+    "schema_exclusion_rate": 0.0,
+    "query_fallback_rate": 0.0,
+    "score_fallback_rate": 0.0,
+    "decoy_fallback_rate": 0.0,
+    "candidate_ceiling_complete_rate": 1.0,
+    "candidate_utility_f1": 0.114109,
+    "candidate_answer_f1": 0.161552,
+    "candidate_answer_recall": 0.424537,
+    "candidate_abstention_rate": 0.075,
+    "no_answer_abstention_accuracy": 0.066667,
+    "answer_bearing_gate_pass_rate": 0.916667,
+    "single_slot_trigger_rate": 0.085,
+    "strongest_shared_gate_non_frc": "document_contrastive_cross_encoder_knapsack_v57",
+    "strongest_same_gate_frc": "document_contrastive_low_core_divergence_frc_v49_transferred_v57",
+    "candidate_minus_exact_anchor_ablation": {
+      "point": 0.000317,
+      "ci_low": -0.001667,
+      "ci_high": 0.002381
+    },
+    "candidate_minus_strongest_shared_gate_non_frc": {
+      "point": 0.000159,
+      "ci_low": -0.002336,
+      "ci_high": 0.002682
+    },
+    "candidate_minus_strongest_same_gate_frc": {
+      "point": 0.014943,
+      "ci_low": -0.000381,
+      "ci_high": 0.029848
+    },
+    "answer_recall_drop_vs_exact_anchor_ablation": -0.001111,
+    "minimum_budget_or_supported_stratum_delta": -0.012086
+  },
+  "failed_support_checks": [
+    "single_slot_trigger_rate_at_least_0_1",
+    "candidate_minus_exact_anchor_ablation_point_at_least_0_005",
+    "candidate_minus_exact_anchor_ablation_ci_low_above_0",
+    "candidate_minus_strongest_shared_gate_non_frc_point_at_least_0_005",
+    "candidate_minus_strongest_shared_gate_non_frc_ci_low_above_0",
+    "candidate_minus_strongest_same_gate_frc_ci_low_above_0",
+    "no_answer_abstention_accuracy_at_least_0_5",
+    "candidate_abstention_rate_at_least_0_1"
+  ],
+  "integrity_boundary": {
+    "protocol_and_selector_frozen_before_any_quac_json_parse": true,
+    "source_bytes_and_hashes_registered_before_json_parse": true,
+    "gold_joined_only_after_complete_score_cache": true,
+    "validation_file_downloaded_as_registered_bytes_only": true,
+    "validation_member_opened_or_parsed": false,
+    "validation_open_authorized": false,
+    "development_reuse_for_tuning_selection_or_reevaluation": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "interpretation": {
+    "official_quac_answer_result": false,
+    "setr_reproduction": false,
+    "open_corpus_retrieval_result": false,
+    "flood_domain_validation": false,
+    "production_rollout_authorization": false,
+    "conclusion": "The registered single-slot intervention preserves candidate ceiling and answer recall, but it triggers too rarely, does not significantly improve the exact anchor or strongest shared-gate baseline, and the document gate fails to reject QuAC no-answer cases. Stop before validation."
+  }
+}

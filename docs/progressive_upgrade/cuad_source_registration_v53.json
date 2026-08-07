@@ -1,0 +1,101 @@
+{
+  "schema_version": "frc-cuad-source-registration-v53",
+  "experiment_id": "FRC-CUAD-TOP3-RANK-CONCURRENCE-ROLE-CLOSURE-V53",
+  "registered_at": "2026-08-02T21:42:00+08:00",
+  "protocol_sha256_before_download": "9390f8f5642fa7be0de265b59e9aef03d76e303e2fa615bd498a93c5a3e6544c",
+  "source": {
+    "repository": "https://github.com/TheAtticusProject/cuad",
+    "revision": "67faa0e6023b04fcaae6cc09497ab00e5d63a2a2",
+    "license_identifier": "CC-BY-4.0",
+    "cache_path": ".cache/benchmarks/cuad/official_repo",
+    "cache_is_git_ignored": true
+  },
+  "regular_files": [
+    {
+      "path": "category_descriptions.csv",
+      "bytes": 8987,
+      "sha256": "7499950ee04d2ed2841c0f8ec2ef96b91be039bc2ea3c4edcc36334a465b1f36"
+    },
+    {
+      "path": "contract_review.png",
+      "bytes": 324025,
+      "sha256": "ff02893bde405e4980a78a768b87a04ba01235b09dd6c91452563a8066825cf6"
+    },
+    {
+      "path": "data.zip",
+      "bytes": 18309308,
+      "sha256": "f8161d18bea4e9c05e78fa6dda61c19c846fb8087ea969c172753bc2f45b999a"
+    },
+    {
+      "path": "evaluate.py",
+      "bytes": 7348,
+      "sha256": "cf6cb887db8e72a888f0b935f7e892ab881ee73925f849d9bfaebfcc5da37bea"
+    },
+    {
+      "path": "readme.md",
+      "bytes": 2172,
+      "sha256": "b698ed73b29c338e430fcbc4e4894b543d2d823bdda0ab01a46d3f88a3559111"
+    },
+    {
+      "path": "run.sh",
+      "bytes": 687,
+      "sha256": "3d713057e4fcd4b8aa3ba69f1716c02eeb5bb0f571c57c0e6e41fddf66bf1e6c"
+    },
+    {
+      "path": "scrape.py",
+      "bytes": 5606,
+      "sha256": "d101bca021eab2438bcb774cd95007c827ce8ce0ec3281d32af84b4904e24dc3"
+    },
+    {
+      "path": "train.py",
+      "bytes": 37544,
+      "sha256": "ed6646ea196cf6298a8d48c13d5914ed035153753efe1e709b8ab4c0bac53501"
+    },
+    {
+      "path": "utils.py",
+      "bytes": 25151,
+      "sha256": "839f3fcae05a197524ed9268cbc32107fd45b958b83396d2da77ae82e237955c"
+    }
+  ],
+  "data_archive": {
+    "bytes": 18309308,
+    "sha256": "f8161d18bea4e9c05e78fa6dda61c19c846fb8087ea969c172753bc2f45b999a",
+    "members": [
+      {
+        "path": "CUADv1.json",
+        "uncompressed_bytes": 40128638
+      },
+      {
+        "path": "test.json",
+        "uncompressed_bytes": 7378232
+      },
+      {
+        "path": "train_separate_questions.json",
+        "uncompressed_bytes": 35065844
+      }
+    ],
+    "member_names_listed_without_member_content_read": true,
+    "cuadv1_content_opened": false,
+    "train_content_opened": false,
+    "test_content_opened": false
+  },
+  "official_code_contract": {
+    "training_member": "train_separate_questions.json",
+    "evaluation_member": "test.json",
+    "negative_examples": "SQuAD-v2 version_2_with_negative",
+    "official_match_threshold": 0.5,
+    "official_metrics": [
+      "AUPR",
+      "precision_at_80_percent_recall",
+      "precision_at_90_percent_recall"
+    ],
+    "official_checkpoint_families": [
+      "RoBERTa-base",
+      "RoBERTa-large",
+      "DeBERTa-xlarge"
+    ]
+  },
+  "sample_distribution_or_gold_read_before_registration": false,
+  "neural_scoring_started": false,
+  "metrics_computed": false
+}

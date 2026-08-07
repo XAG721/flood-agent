@@ -1,0 +1,43 @@
+{
+  "schema_version": "frc-squad2-v64-result-label-erratum-v1",
+  "experiment_id": "FRC-SQUAD2-CALIBRATED-ROBERTA-SUPPORT-V64",
+  "registered_after_final_metric_computation": true,
+  "issue": {
+    "cause": "The v64 wrapper renamed aggregate and per-case method identifiers inherited from v59 but did not replace the inherited Qwen mechanism sentence or the strongest-baseline identifiers nested inside supported-stratum metadata.",
+    "affected_fields": 22,
+    "affected_field_types": [
+      "analysis.mechanism",
+      "analysis.supported_stratum_deltas.*.strongest_shared_gate_non_frc"
+    ],
+    "numeric_metric_ranking_gate_or_outcome_affected": false
+  },
+  "correction": {
+    "mechanism_label": "calibrated RoBERTa null-vs-span support decision",
+    "nested_method_labels_use_v64_calibrated_roberta_names": true,
+    "source_wrapper_now_applies_the_same_nested_label_mapping": true,
+    "sample_score_threshold_metric_or_gate_changed": false,
+    "prepared_query_raw_qa_thresholded_support_or_score_cache_rewritten": false,
+    "all_numeric_values_unchanged": true,
+    "selector_adoption_or_rollout_authorized": false
+  },
+  "hashes": {
+    "prior_implementation_erratum": "d1f1a85c446bf5a02e93f5f022fb87cec6fd0616be5ed77d74742344166facfb",
+    "prior_evaluation_erratum": "fdfcc377e6b23b6dab5058b31266f4c1badb9b56660db2f9a95410e5b49de061",
+    "retrieval_open": "3d91bc031168214c3f1bce986ba14ae7033d7c7f952cdc59c5156ec03e52ec3e",
+    "score_cache": "659d913a6893e7caf339ba887d561b4ce0b6eb7ce50e1a375625d378aafe87ea",
+    "pre_correction_result": "8fccb87aa3e684b328106476e46c1811935301d74819fe02559ceca1ec1bbf21",
+    "corrected_result": "240f9ba217bc56dfdc5b6266f1a5ffb4120675cd6ad2694c4e31325a6bc12532",
+    "pre_correction_closure": "a94a6d0af660bbd93e2417276771ee64b75db3eb902663112b1b2facfa7b155b",
+    "corrected_closure": "627b9cdbb163130eae929be052e7b3b932351906e069fe7d724060100be50ece",
+    "corrected_module": "330c01972b579485783607a0454be8c40ac83b79e0d6dbcae9ccb9202daac6f5",
+    "corrected_runner": "d2b8f321c8548741532408bb66253045e90fe0e06d79efc9d5afdc775643a559",
+    "regression_tests": "dfc6cb059ecfdaae9c5f7283d9b42527a516fd0293c0c9d1217ef7da3b94d427"
+  },
+  "synthetic_tests": {
+    "passed": 13,
+    "failed": 0,
+    "new_regression": "method renaming removes inherited Qwen/v59 labels from mechanism and nested stratum metadata"
+  },
+  "status": "SQUAD2_V64_CALIBRATED_QA_FRC_COMPONENT_FEASIBILITY_ESTABLISHED",
+  "gate_2": "NO-GO/SHADOW"
+}

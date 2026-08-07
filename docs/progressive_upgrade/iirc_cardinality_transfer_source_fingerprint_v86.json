@@ -1,0 +1,99 @@
+{
+  "schema_version": "frc-iirc-cardinality-transfer-source-fingerprint-v86",
+  "experiment_id": "FRC-IIRC-CARDINALITY-TRANSFER-PROSPECTIVE-V86",
+  "fingerprinted_on": "2026-08-05",
+  "source_registration": {
+    "path": "docs/progressive_upgrade/iirc_cardinality_transfer_source_registration_v86.json",
+    "sha256": "7729fab320b62b510cbe3a6ebe71e138595db007749d6b6b9c2423cc75dd1509",
+    "created_before_source_download_or_row_inspection": true,
+    "registration_experiment_id_is_the_source_screen_record": "FRC-IIRC-CARDINALITY-TRANSFER-V86"
+  },
+  "official_sources": {
+    "train_dev_archive": {
+      "url": "https://iirc-dataset.s3.us-west-2.amazonaws.com/iirc_train_dev.tgz",
+      "path": ".cache/benchmarks/iirc/iirc_train_dev.tgz",
+      "bytes": 5713428,
+      "sha256": "adfc34c8180337467105b2f534410c34e4fe43a82e6da03922440387802ca441"
+    },
+    "train": {
+      "path": ".cache/benchmarks/iirc/iirc_train_dev/train.json",
+      "bytes": 25735742,
+      "sha256": "00a88b97dbbda56c32c620254eb7f0ac0a41507152c2de21f21164052ffcdaa5",
+      "articles": 4754,
+      "questions": 10839
+    },
+    "dev": {
+      "path": ".cache/benchmarks/iirc/iirc_train_dev/dev.json",
+      "bytes": 2679112,
+      "sha256": "49a109c43c902e52f9a8b150f6b9d383261c308384f614ccd2b9990735cb12b1",
+      "articles": 430,
+      "questions": 1301,
+      "permanently_excluded_from_v86_targets": true
+    },
+    "context_archive": {
+      "url": "https://iirc-dataset.s3.us-west-2.amazonaws.com/context_articles.tar.gz",
+      "path": ".cache/benchmarks/iirc/context_articles.tar.gz",
+      "bytes": 385263479,
+      "sha256": "d239390a27ed3f4aa868afe126187e6d108990a7bcc2a3efb6cae5de917264c7",
+      "archive_validated": true
+    },
+    "context_json": {
+      "path": ".cache/benchmarks/iirc/context_articles.json",
+      "bytes": 1151197025,
+      "sha256": "d1b848328f4cef1dbb46f7fbf02eb980f3ad97df67199464f6f55f883bb08bae",
+      "unique_normalized_titles": 56550
+    }
+  },
+  "adapter_admission_screen": {
+    "screened_split": "dev",
+    "screened_split_is_never_a_v86_target": true,
+    "answer_type_counts": {
+      "binary": 128,
+      "none": 347,
+      "span": 593,
+      "value": 233
+    },
+    "question_context_count_range": [
+      1,
+      13
+    ],
+    "article_link_count_range": [
+      8,
+      38
+    ],
+    "article_link_count_mean": 14.548837,
+    "linked_targets_total": 6256,
+    "linked_targets_resolved_in_context_corpus": 6246,
+    "non_main_gold_passage_occurrences": 1327,
+    "non_main_gold_passages_in_original_links": 1327,
+    "non_main_gold_passages_resolved_in_context_corpus": 1327,
+    "main_gold_passage_occurrences": 1620,
+    "admission_decision": "ADMITTED_FOR_SOURCE_LEVEL_EVIDENCE_SELECTION_WITH_DEV_PERMANENTLY_EXCLUDED"
+  },
+  "train_boundary_before_protocol_freeze": {
+    "inspected": [
+      "article count",
+      "question count",
+      "question IDs only"
+    ],
+    "not_inspected_or_computed": [
+      "train questions",
+      "train answers",
+      "train answer types",
+      "train gold contexts",
+      "train gold cardinality aggregates",
+      "train target metrics"
+    ],
+    "all_question_ids_sorted_commitment": "87e23bb192797d8dfe6a7e51d8c921efb1775ceeb4e46ef72df59ee1c7d49fc5",
+    "partition_salt": "FRC-IIRC-V86-TRAIN-PARTITION|",
+    "development_first_400_commitment": "e5cf8c245933581c2386c4aefbcff439c4429a66bf679509f2310346fd2224a0",
+    "confirmation_next_800_commitment": "ca5f157b14ba0dd035fb5efbfa9c6c44d25d0878ce41cf498648d69b434e5c70",
+    "remaining_9639_commitment": "d9e86cd22b2ffe43a48357ac4b1a226e026fb4ab742719b9f1743da6ee15d7f4"
+  },
+  "license_and_distribution_boundary": {
+    "official_project_license_page_retrieval_status": "HTTP_403_UNVERIFIED",
+    "raw_archives_and_extracted_text_are_cache_only": true,
+    "raw_or_derived_source_text_must_not_be_committed": true,
+    "published_case_outputs_must_contain_ids_and metrics_but_no_source_text": true
+  }
+}

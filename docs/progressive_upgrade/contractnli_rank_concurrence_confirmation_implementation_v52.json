@@ -1,0 +1,48 @@
+{
+  "schema_version": "frc-contractnli-rank-concurrence-implementation-v52",
+  "experiment_id": "FRC-CONTRACTNLI-RANK-CONCURRENCE-CONFIRMATION-V52",
+  "registered_at": "2026-08-02T20:21:00+08:00",
+  "purpose": "Freeze the parameter-free rank-concurrence gate, one-split blind confirmation runner and synthetic invariants before official ContractNLI train content is opened.",
+  "hashes": {
+    "protocol_sha256": "048fe13d87a58e8b6630387c9c0cc8e7c1e72119a54ed8719498d32ef6bc9251",
+    "module_sha256": "2d18cb0ea7a319b6e4ca0c56b84765e66e79deeeaa12b8213ac8833b39564345",
+    "runner_sha256": "386304650a00f7e42477d4b419e03b94088e16f980ef9add328a916a999c0407",
+    "test_sha256": "d290ca46728119aae6b7d5fd4c8d482b51ab35c6e2ae446a146abc47d124cd81"
+  },
+  "train_content_opened_before_registration": false,
+  "v50_test_or_v51_dev_case_level_artifact_used": false,
+  "learned_or_dataset_fitted_parameter": false,
+  "synthetic_test_command": "python -m pytest tests/test_frc_contractnli_rank_concurrence_confirmation.py -q --basetemp D:\\graduation_project\\output\\pytest-tmp-contractnli-v52-synthetic-2",
+  "synthetic_test_result": {
+    "passed": 8,
+    "failed": 0,
+    "duration_seconds": 0.22
+  },
+  "synthetic_invariants_verified": {
+    "protocol_hash_untouched_train_and_parameter_free_boundary_frozen": true,
+    "archive_reader_opens_only_requested_train_member": true,
+    "balanced_sampling_is_order_invariant_and_document_capped": true,
+    "blind_cache_and_deterministic_queries_are_gold_free": true,
+    "same_top_span_rank_concurrence_is_required": true,
+    "gate_is_candidate_permutation_invariant": true,
+    "gate_is_independently_strictly_monotone_role_score_invariant": true,
+    "exact_ties_use_canonical_candidate_id": true,
+    "candidate_and_non_frc_controls_share_the_identical_gate": true,
+    "candidate_coverage_requires_exact_registered_confirmation_structure": true,
+    "evaluation_bootstrap_and_outputs_are_deterministic": true,
+    "published_case_evidence_contains_no_text_or_gold_candidate_ids": true
+  },
+  "frozen_implementation_contract": {
+    "confirmation_split": "official train",
+    "confirmation_cases": 600,
+    "minimum_documents": 80,
+    "query_generator": "none",
+    "rank_gate": "anchor argmax id equals support argmax id or contradiction argmax id",
+    "selector_after_pass": "low_core_divergence_guarded_frc_v49",
+    "threshold": null,
+    "gold_join_only_after_complete_score_cache": true,
+    "formula_or_method_change_after_registration_forbidden": true,
+    "confirmation_reuse_forbidden": true,
+    "negative_null_or_inconclusive_result_must_be_published": true
+  }
+}

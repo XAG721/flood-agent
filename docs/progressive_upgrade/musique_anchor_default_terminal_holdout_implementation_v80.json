@@ -1,0 +1,129 @@
+{
+  "schema_version": "frc-musique-anchor-default-terminal-holdout-implementation-lock-v80",
+  "experiment_id": "FRC-MUSIQUE-ANCHOR-DEFAULT-TERMINAL-HOLDOUT-V80",
+  "locked_on": "2026-08-04",
+  "files": {
+    "anchor_router_implementation": {
+      "path": "research/frc_rag/musique_anchor_default_router.py",
+      "bytes": 22185,
+      "sha256": "73809c4fee4bdcabd729b5e08e7e8b6266a54cb3ee96bc803ae9bc949f8b9604"
+    },
+    "anchor_transfer_implementation": {
+      "path": "research/frc_rag/musique_anchor_default_transfer.py",
+      "bytes": 26426,
+      "sha256": "43e985360ad69a0e7bcc07ad1c628cf3b57bfbe503f14d59183de1a1349e693f"
+    },
+    "anchor_router_model_runner": {
+      "path": "scripts/run_musique_anchor_default_router_model.py",
+      "bytes": 2103,
+      "sha256": "bc6675ea0866197c9c98b200c32a21ea843e1d94305616050151770c5add951a"
+    },
+    "anchor_terminal_transfer_runner": {
+      "path": "scripts/run_musique_anchor_default_transfer.py",
+      "bytes": 14015,
+      "sha256": "76bc49c2fa9275312c340c6688f138f36915b6227d8adc5f97f9a4c21a9f1b03"
+    },
+    "tests": {
+      "path": "tests/test_frc_musique_anchor_default_transfer.py",
+      "bytes": 12386,
+      "sha256": "802a23c6c09d8cbedeac9f2338903ea8f36fdc6f2ececddd2c8d4b1d06d1026d"
+    },
+    "protocol": {
+      "path": "docs/progressive_upgrade/musique_anchor_default_terminal_holdout_protocol_v80.json",
+      "bytes": 5347,
+      "sha256": "d5e4e625252b06106a3cd5f3453dec14396450fde58216dd2379046686556cda"
+    },
+    "source_registration": {
+      "path": "docs/progressive_upgrade/musique_anchor_default_terminal_holdout_source_registration_v80.json",
+      "bytes": 6317,
+      "sha256": "a3b38db2ae238caf83b561a40c766183ab7b81be55cfc0ae0015d9514bce41f6"
+    },
+    "anchor_router_model": {
+      "path": "docs/progressive_upgrade/musique_anchor_default_router_model_development_v80.json",
+      "bytes": 770805,
+      "sha256": "c303c68c2f83271bbb3f9f81f75d94defe9135676d7cea02ada1ff28a75df506"
+    }
+  },
+  "target_model_development": {
+    "training_dataset": "MuSiQue",
+    "frozen_v78_training_cases": 600,
+    "frozen_v79_training_cases": 470,
+    "combined_training_cases": 1070,
+    "gold_free_runtime_features": 71,
+    "learned_gain_heads": 2,
+    "default_route": "alternating_anchor_link_control",
+    "model_configurations": 216,
+    "thresholds_per_model": 7,
+    "finite_route_policy_configurations": 1512,
+    "deterministic_folds": 5,
+    "selected_model_configuration_index": 131,
+    "selected_configuration": {
+      "estimators": 50,
+      "max_depth": 2,
+      "min_samples_leaf": 50,
+      "learning_rate": 0.1,
+      "loss": "squared_error",
+      "weight_mode": "magnitude_x20",
+      "threshold": 0.0025
+    },
+    "selected_oof_evidence_macro_f1": 0.554843,
+    "selected_oof_evidence_macro_recall": 0.828972,
+    "selected_oof_complete_evidence_recall": 0.585047,
+    "selected_oof_mean_selected_tokens": 538.84486,
+    "selected_oof_minus_anchor_point": 0.005544,
+    "selected_oof_minus_anchor_ci": [
+      0.002129,
+      0.009068
+    ],
+    "selected_routes": {
+      "alternating_anchor_link_control": 525,
+      "cross_encoder_topk": 288,
+      "soft_title_link_support_path_closure_v74": 257
+    },
+    "per_training_cohort_minus_anchor": {
+      "v78": 0.004755,
+      "v79": 0.006552
+    },
+    "interpretation": "The selected OOF result is finite-grid model-selection evidence on permanently excluded v78+v79 cases, not unbiased confirmation; only the untouched v80 terminal holdout can provide prospective same-dataset evidence."
+  },
+  "registered_target_capacity": {
+    "prior_commitment_union": 16900,
+    "v77_calibration_ids": 800,
+    "v78_training_ids": 600,
+    "v79_training_ids": 470,
+    "total_excluded_ids": 18770,
+    "remaining_untouched_cases": 1168,
+    "remaining_by_hop": {
+      "2": 778,
+      "3": 317,
+      "4": 73
+    },
+    "terminal_holdout_cases": 600,
+    "terminal_holdout_hop_quota": {
+      "2": 400,
+      "3": 150,
+      "4": 50
+    },
+    "remaining_after_terminal_holdout": 568,
+    "remaining_four_hop_after_terminal_holdout": 23,
+    "second_comparable_same_source_stage_supported": false
+  },
+  "pre_target_verification": {
+    "ruff": "PASS",
+    "targeted_tests": "11 passed",
+    "synthetic_selection_and_reaggregation": "PASS",
+    "portable_model_payload_hash_validation": "PASS",
+    "three_target_domain_exclusion_sets_validated": true,
+    "v80_target_ids_selected": 0,
+    "v80_target_questions_paragraphs_scores_gold_or_metrics_seen": false
+  },
+  "frozen_boundaries": {
+    "v78_v79_training_rows_features_gold_targets_folds_grid_and_selection_metric": true,
+    "v80_model_features_heads_hyperparameters_weights_and_threshold": true,
+    "v80_terminal_size_hop_quotas_salt_controls_metrics_gates_and_noninferiority": true,
+    "implementation_protocol_source_registration_model_and_tests": true,
+    "further_same_source_confirmation_authorized_under_any_outcome": false,
+    "v80_holdout_reuse_for_model_threshold_feature_gate_or_selector_development": false,
+    "gate_2_canary_default_or_selector_adoption_authorized": false
+  }
+}

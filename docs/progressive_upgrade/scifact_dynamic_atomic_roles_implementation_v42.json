@@ -1,0 +1,50 @@
+{
+  "schema_version": "frc-scifact-v42-implementation-registration-v1",
+  "registered_at": "2026-08-01T22:03:02.6461315+08:00",
+  "experiment_id": "FRC-SCIFACT-DYNAMIC-ATOMIC-ROLES-V42",
+  "protocol_sha256": "62987d6430cef9ef91c0de1f15f8f192749f5ab6b5341117da99933d3b7892ab",
+  "artifact_sha256": {
+    "protocol": "62987d6430cef9ef91c0de1f15f8f192749f5ab6b5341117da99933d3b7892ab",
+    "module": "62d40bf673a84471b3628070ebf5e29ba68e780432417251a14fae3df34c7404",
+    "runner": "893df359cc3f95027d7a3fd2bed7375f4267b464baa7a28a08e80280fd16751c",
+    "test": "62c29b7caaf44b22192574726d83fec4abaf5570a106b2fc5c489f6d5603c5f5",
+    "inherited_v41_module": "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621"
+  },
+  "artifact_bytes": {
+    "protocol": 9682,
+    "module": 34136,
+    "runner": 13165,
+    "test": 8519,
+    "inherited_v41_module": 57997
+  },
+  "registration_boundary": {
+    "scifact_cache_path_existed": false,
+    "scifact_data_downloaded": false,
+    "scifact_release_file_opened": false,
+    "scifact_content_accessed": false,
+    "scifact_claim_ids_enumerated": false,
+    "scifact_labels_or_evidence_aggregated": false,
+    "query_generation_started": false,
+    "neural_scoring_started": false,
+    "selection_metrics_computed": false
+  },
+  "implementation_contract": {
+    "candidate_retrieval": "Corpus-wide deterministic BM25 top-20 over normalized title plus abstract, with no gold injection.",
+    "blind_cache": "Neutral case and source IDs, public claim, candidate text chunks, and Token cost only; no SciFact document ID, evidence, sentence, or label fields.",
+    "dynamic_generator_and_scorer": "Byte-frozen v41 prompt, parser, fallback, Qwen generation, BGE scoring, calibration, and selector implementation.",
+    "gold_join": "Re-read claims_dev and reconstruct document-level gold only after the complete ordered blind score cache exists.",
+    "evaluation": "SciFact-specific document Evidence F1, preregistered labels, gold-count and ceiling strata, 10,000 claim bootstrap resamples with seed 20260802."
+  },
+  "verification_before_registration": {
+    "synthetic_tests": "7 passed",
+    "ruff": "all checks passed",
+    "py_compile": "passed",
+    "real_scifact_content_used": false
+  },
+  "download_authorized": true,
+  "blind_preparation_authorized": true,
+  "query_generation_authorized": false,
+  "neural_scoring_authorized": false,
+  "metric_evaluation_authorized": false,
+  "next_required_boundary": "Download the pinned official release, validate and blindly prepare all eligible dev claims, then register source, prepared-cache, implementation, runtime, and structural census hashes before any query generation or neural scoring."
+}

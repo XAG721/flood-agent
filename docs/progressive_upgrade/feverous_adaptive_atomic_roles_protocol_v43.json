@@ -1,0 +1,189 @@
+{
+  "schema_version": "frc-feverous-adaptive-atomic-roles-protocol-v43",
+  "experiment_id": "FRC-FEVEROUS-ADAPTIVE-ATOMIC-ROLES-V43",
+  "registered_at": "2026-08-01T00:00:00+08:00",
+  "purpose": "Prospectively test whether a gold-free role-argmax cardinality stop rule corrects the evidence-precision dilution observed after the frozen v42 SciFact result, using an untouched structured/unstructured multi-hop dataset.",
+  "development_boundary": {
+    "v42_result_status": "SCIFACT_DYNAMIC_ATOMIC_ROLE_SUPPORT_NOT_ESTABLISHED",
+    "v42_result_is_development_evidence_only": true,
+    "scifact_must_not_be_rerun_or_used_for_v43_parameter_selection": true,
+    "feverous_sample_content_inspected_before_registration": false,
+    "feverous_development_or_baseline_prediction_blob_inspected_before_registration": false,
+    "feverous_wikipedia_database_downloaded_before_registration": false,
+    "allowed_pre_registration_information": [
+      "official dataset and paper descriptions",
+      "official schema and scorer source code",
+      "official repository tree filenames and pinned revision",
+      "HTTP status, content length, content type, and last-modified headers"
+    ],
+    "permanently_excluded_documentation_example_ids": [33670, 35206]
+  },
+  "official_sources": {
+    "dataset_page": "https://fever.ai/dataset/feverous.html",
+    "paper": "https://openreview.net/forum?id=h-flVCIlstW",
+    "code_repository": "https://github.com/Raldir/FEVEROUS",
+    "code_revision": "32b68ce4e33c53f34ae2e6d88b51cd073ab85ab6",
+    "development_url": "https://fever.ai/download/feverous/feverous_dev_challenges.jsonl",
+    "development_content_length_header": 18058238,
+    "wikipedia_database_url": "https://fever.ai/download/feverous/feverous-wiki-pages-db.zip",
+    "wikipedia_database_content_length_header": 10353775701,
+    "license_url": "https://fever.ai/download/feverous/license.html",
+    "baseline_prediction_repository_path": "baseline_output/dev.combined.not_precomputed.p5.s5.t3.cells.verdict.jsonl"
+  },
+  "source_access_order": [
+    "write and hash this protocol",
+    "freeze implementation and synthetic tests",
+    "write implementation registration with all code hashes",
+    "download development annotations and official baseline predictions",
+    "deterministically select IDs without exporting gold into blind caches",
+    "download and verify the official Wikipedia database archive",
+    "prepare the complete blind candidate cache",
+    "write execution registration with source hashes and runtime",
+    "generate atomic queries and score every prepared case",
+    "validate complete ordered caches and only then join gold evidence",
+    "evaluate once and publish the result regardless of sign"
+  ],
+  "dataset_scope": {
+    "split": "official development",
+    "eligible_before_sampling": [
+      "row has an integer id and nonempty claim",
+      "row has at least one nonempty official evidence set",
+      "matching official baseline row has at least one predicted evidence page",
+      "id is not a permanently excluded documentation example"
+    ],
+    "challenge_strata_in_order": [
+      "Numerical Reasoning",
+      "Multi-hop Reasoning",
+      "Entity Disambiguation",
+      "Combining Tables and Text",
+      "Search terms not in claim",
+      "Other"
+    ],
+    "sampling_rule": "Within each challenge stratum, sort eligible rows by SHA-256 of 'FRC-FEVEROUS-V43|' plus the decimal id, then by id, and take the first 40.",
+    "target_cases": 240,
+    "minimum_total_cases": 180,
+    "minimum_cases_per_present_challenge": 20,
+    "no_replacement": true,
+    "no_post_download_resampling": true
+  },
+  "blind_candidate_construction": {
+    "candidate_pages": "Unique page names in official baseline predicted_evidence, preserving first occurrence; no gold page fallback is permitted.",
+    "candidate_units": [
+      "sentence",
+      "cell",
+      "header_cell",
+      "table_caption",
+      "item"
+    ],
+    "unit_text": "Page title, active section path, local table/list context, and element value are deterministically linearized from the pinned Wikipedia database.",
+    "lexical_pool_size": 80,
+    "pool_rule": "Union the first 80 BM25-ranked units with every valid official baseline predicted evidence unit; deduplicate by canonical evidence id and sort by BM25 rank then canonical id.",
+    "maximum_pool_size": 110,
+    "gold_page_or_element_fallback_forbidden": true,
+    "fields_exported_to_generator": ["case id", "claim"],
+    "fields_exported_to_scorer": [
+      "case id",
+      "claim",
+      "canonical opaque candidate id",
+      "candidate text",
+      "token cost",
+      "official prediction rank when present"
+    ],
+    "forbidden_blind_cache_fields": [
+      "challenge",
+      "evidence",
+      "gold",
+      "gold_element_ids",
+      "gold_pages",
+      "label",
+      "supporting_facts"
+    ]
+  },
+  "frozen_models": {
+    "atomic_query_generator": "Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4 local snapshot",
+    "embedding_model": "BAAI/bge-base-en-v1.5",
+    "reranker_model": "BAAI/bge-reranker-base",
+    "revisions": "Inherited byte-for-byte from the registered v41 scorer and resolved local snapshots; offline loading is mandatory."
+  },
+  "methods": {
+    "shared_candidate_pool": true,
+    "top_k": 5,
+    "token_budgets": [512, 1024, 1500],
+    "non_frc_baselines": [
+      "official_baseline_topk",
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "cross_encoder_knapsack"
+    ],
+    "frc_controls": [
+      "static_threshold_frc_v39_replay",
+      "static_rank_coverage_frc_v41",
+      "dynamic_rank_coverage_frc_v41"
+    ],
+    "candidate_method": "adaptive_argmax_cardinality_frc_v43",
+    "candidate_method_formula": [
+      "For each of the four frozen dynamic atomic roles, find the candidate with maximum role score, breaking ties by canonical id.",
+      "Let target_cardinality be the number of distinct argmax candidate ids, clamped to [1, 5].",
+      "Run the unchanged v41 dynamic rank-coverage greedy objective and deterministic tie-breaking, but stop after target_cardinality selected units or when the token budget has no eligible unit.",
+      "No score threshold, label, challenge, gold count, candidate ceiling, or development-set statistic may alter target_cardinality."
+    ]
+  },
+  "evaluation": {
+    "primary_metric": "mean across budgets of FEVEROUS-style evidence macro F1",
+    "macro_precision": "Mean per-case fraction of selected evidence ids present in the union of gold evidence sets; empty prediction precision is 1.",
+    "macro_recall": "Mean per-case indicator that at least one complete gold evidence set is contained in the selected ids.",
+    "macro_f1": "Harmonic mean of macro precision and macro recall.",
+    "paired_bootstrap": {
+      "resamples": 10000,
+      "seed": 20260803,
+      "unit": "case",
+      "interval": "percentile 95%",
+      "strongest_non_frc_selected_inside_each_resample": true
+    },
+    "secondary_metrics": [
+      "macro precision",
+      "complete evidence-set recall",
+      "selected unit count",
+      "selected token cost",
+      "target cardinality",
+      "candidate ceiling complete rate",
+      "candidate page count",
+      "candidate unit count"
+    ],
+    "mandatory_strata": [
+      "challenge",
+      "label",
+      "gold evidence unit count",
+      "gold evidence page count",
+      "candidate ceiling complete versus incomplete"
+    ]
+  },
+  "support_checks": {
+    "minimum_total_cases_met": ">= 180",
+    "candidate_ceiling_complete_rate": ">= 0.60",
+    "query_parser_fallback_rate": "<= 0.05",
+    "adaptive_minus_dynamic_point": ">= 0.01",
+    "adaptive_minus_dynamic_ci_low": "> 0",
+    "adaptive_minus_strongest_non_frc_point": ">= 0.01",
+    "adaptive_minus_strongest_non_frc_ci_low": "> 0",
+    "every_budget_and_supported_challenge_delta_vs_strongest_non_frc": ">= -0.02",
+    "mean_selected_unit_reduction_vs_dynamic": ">= 0.50",
+    "complete_evidence_recall_drop_vs_dynamic": "<= 0.02"
+  },
+  "decision_rules": {
+    "all_support_checks_pass": "FEVEROUS_ADAPTIVE_ATOMIC_ROLE_SUPPORT_ESTABLISHED_ON_BOUNDED_POOL",
+    "informative_but_any_support_check_fails": "FEVEROUS_ADAPTIVE_ATOMIC_ROLE_SUPPORT_NOT_ESTABLISHED",
+    "minimum_cases_or_ceiling_fails": "FEVEROUS_BOUNDED_POOL_INCONCLUSIVE",
+    "gate_2": "Always remains NO-GO/SHADOW in v43; this bounded-pool selector test alone cannot authorize CANARY or DEFAULT.",
+    "publication": "Publish favorable, null, negative, or inconclusive results with hashes and exclusions.",
+    "claims_forbidden": [
+      "official FEVEROUS leaderboard result",
+      "full-corpus retrieval superiority",
+      "real SetR reproduction",
+      "flood-domain validity",
+      "production readiness"
+    ]
+  }
+}

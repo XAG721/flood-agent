@@ -1,0 +1,158 @@
+{
+  "schema_version": "frc-iirc-low-candidate-robustness-protocol-v89",
+  "experiment_id": "FRC-IIRC-LOW-CANDIDATE-ROBUSTNESS-PROSPECTIVE-V89",
+  "registered_on": "2026-08-05",
+  "objective": "Replicate the frozen v88 score-gap result on new case-disjoint IIRC targets while eliminating the pre-registered four-candidate coverage assumption that blocked v88 confirmation preparation.",
+  "research_design": {
+    "claim_type": "case-disjoint same-dataset frozen-model robustness replication",
+    "v88_model_retrained_or_tuned": false,
+    "v88_development_used_as_v89_training": false,
+    "v88_confirmation_metrics_known": false,
+    "v88_confirmation_partition_permanently_excluded": true,
+    "v89_targets_drawn_only_from_v88_remaining_pool": true,
+    "v89_target_questions_answers_contexts_or_metrics_known_before_freeze": false
+  },
+  "partitions": {
+    "v88_remaining_ordered_commitment": "88df288fb0d01f0779dbe20783b04ff4ea41702854e71d8263b9bb35d98eb04d",
+    "eligible_cases": 6439,
+    "eligible_sorted_commitment": "594ee74f7656577a28640dd6d517aff8374188dd8c54df3fc33d4a78c836de29",
+    "partition_salt": "FRC-IIRC-V89-REMAINING-PARTITION|",
+    "development": {
+      "cases": 800,
+      "commitment": "16d059c8d9cfdb561f2e2aa291df1a5319737d94761bd209b8fe2443d8e45438",
+      "paired_bootstrap_seed": 20260814,
+      "single_evaluation_only": true,
+      "opens_confirmation_only_if_every_strict_gate_passes": true
+    },
+    "confirmation": {
+      "cases": 1200,
+      "commitment": "ffda02d3ecd0da07ecb72dd0790d9fd2360be034cc472a464cecaf750b88f21c",
+      "paired_bootstrap_seed": 20260815,
+      "single_evaluation_only": true,
+      "requires_development_confirmation_open_artifact": true
+    },
+    "remaining_after_both_stages": {
+      "cases": 4439,
+      "commitment": "d2487d7be5b83238830bac0a50b325bb52865c11efebc7b5b13e3f14387b89c7"
+    },
+    "overlap_with_any_prior_development_or_confirmation": 0
+  },
+  "frozen_model": {
+    "artifact": "docs/progressive_upgrade/iirc_pooled_score_gap_router_model_development_v88.json",
+    "artifact_sha256": "b663364f02443f3c7f485a39734ea8f5ef59b25aa5e57a76b0fe1acd9fa23439",
+    "model_payload_sha256": "5b0974a26e601c00ad9de9462cdec967392ff5d3c9c4d2f59d6b6c2bfde3c8c5",
+    "training_cases": 800,
+    "training_cohorts": {
+      "v86_development": 400,
+      "v87_development": 400
+    },
+    "feature_schema": "Frozen 154-dimensional v87 blind question and retrieval-score schema for cases with at least four candidates.",
+    "selected_model": "ExtraTrees, 150 estimators, unlimited depth, min_samples_leaf 5, max_features 0.8.",
+    "selected_action_biases": [
+      -0.03,
+      0.0,
+      0.04,
+      0.0
+    ]
+  },
+  "adapter": {
+    "candidate_construction": "Main source plus every unique usable original linked source; one gold-free question-BM25 representative chunk per source.",
+    "minimum_candidate_sources": 1,
+    "maximum_model_cardinality": 4,
+    "four_or_more_candidates": "Run the exact frozen v88 feature model and FRC prefix policy.",
+    "one_to_three_candidates": "Select every available real source without calling the four-source model.",
+    "control_prefixes": "Cap each requested control prefix to available unique sources and report actual cardinality.",
+    "case_drop_substitution_or_synthetic_padding": false,
+    "content_tokens": 384,
+    "overlap_tokens": 64,
+    "blind_cache_forbidden_fields": [
+      "answer",
+      "answer_type",
+      "context",
+      "question_links",
+      "gold_evidence_sources"
+    ]
+  },
+  "scoring": {
+    "embedding_model": "BAAI/bge-large-en-v1.5@d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "score_calibration": "per-case min-max",
+    "role_relevance_mix": 0.15,
+    "rrf_k": 60,
+    "identical_to_v88": true
+  },
+  "candidate": {
+    "name": "iirc_low_candidate_robust_frc_v89",
+    "model_for_four_or_more_sources": "Exact frozen v88 model.",
+    "fallback_for_fewer_than_four_sources": "All available sources.",
+    "runtime_gold_or_answer_inputs": false
+  },
+  "primary_control": {
+    "name": "frc_fixed2",
+    "same_as_v88_primary_control": true,
+    "paired_bootstrap_resamples": 10000,
+    "confidence_interval": 0.95
+  },
+  "all_controls": [
+    "bm25_fixed2",
+    "dense_fixed2",
+    "hybrid_fixed2",
+    "cross_encoder_fixed1",
+    "cross_encoder_fixed2",
+    "cross_encoder_fixed3",
+    "cross_encoder_fixed4",
+    "frc_fixed1",
+    "frc_fixed2",
+    "frc_fixed3",
+    "frc_fixed4",
+    "cross_dataset_question_cardinality_frc_v86",
+    "iirc_score_gap_frc_v87"
+  ],
+  "metrics": {
+    "primary": "source-level evidence macro F1 difference versus frc_fixed2",
+    "secondary": [
+      "adapter coverage and low-candidate case count",
+      "point differences versus every registered control",
+      "evidence precision, recall, and complete-evidence recall",
+      "mean selected sources and action distribution",
+      "answer-type, gold-cardinality, candidate-ceiling, and low-candidate strata"
+    ]
+  },
+  "strict_gates": {
+    "exact_stage_cases": true,
+    "adapter_coverage_rate": 1.0,
+    "prior_or_stage_overlap": 0,
+    "invalid_selector_output_rate_at_most": 0.0,
+    "candidate_evidence_macro_f1_at_least": 0.60,
+    "candidate_complete_evidence_recall_at_least": 0.42,
+    "candidate_minus_primary_control_f1_at_least": 0.005,
+    "candidate_minus_primary_control_f1_ci_low_above": 0.0,
+    "candidate_min_point_delta_vs_every_control_at_least": 0.0,
+    "candidate_complete_evidence_recall_delta_vs_primary_at_least": -0.02,
+    "candidate_evidence_macro_recall_delta_vs_primary_at_least": -0.02,
+    "candidate_mean_selected_sources_above_primary_at_most": 0.25,
+    "distinct_candidate_actions_at_least": 2,
+    "second_largest_candidate_action_fraction_at_least": 0.05,
+    "each_supported_stratum_min_cases": 60,
+    "each_supported_stratum_f1_delta_vs_primary_at_least": -0.03
+  },
+  "decision_rules": {
+    "development_all_strict_gates_pass": "Create the confirmation-open artifact, then prepare, score, select, and evaluate confirmation exactly once.",
+    "development_any_strict_gate_fails": "Stop v89 without preparing or accessing confirmation content.",
+    "confirmation_all_strict_gates_pass": "Record frozen-model robust case-disjoint IIRC source-selection support only; do not authorize adoption or deployment.",
+    "confirmation_any_strict_gate_fails": "Close v89 without adoption and do not repackage confirmation.",
+    "any_model_adapter_control_metric_gate_or_partition_change": "Requires v90 and new untouched IDs from the v89 remaining commitment."
+  },
+  "claim_limits": {
+    "case_disjoint_same_dataset_prospective_test": true,
+    "frozen_v88_model_robustness_replication": true,
+    "independent_cross_dataset_transfer": false,
+    "answer_generation_evaluated": false,
+    "setr_reproduced": false,
+    "flood_domain_effectiveness_established": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "production_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  }
+}

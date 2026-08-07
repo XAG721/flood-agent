@@ -1,0 +1,37 @@
+{
+  "experiment_id": "FRC-QUAC-ROBERTA-QA-SUPPORT-TRANSFER-V62",
+  "files": {
+    ".gitattributes": "98c91dabef4df27b2fc7c8454d220aba47476f73593cbd034d961fe4927304c1",
+    "README.md": "04834cd9007b2cdd1b1bdd501b571579577331e467be6e24e47d40f060558a29",
+    "config.json": "64fa58495a722d57609c22f199824bfe98c19be068136a70c268214a08cb8060",
+    "flax_model.msgpack": "6a8d759d881d9c1b39dbf4ee451fb8a8c2d43ccbd180218863a54ffd9b4d2447",
+    "merges.txt": "1ce1664773c50f3e0cc8842619a93edc4624525b728b188a9e0be33b7726adc5",
+    "model.safetensors": "5da10c5315517d9c8750f2e0ff4fd319476b4d93ae0e7f346f120d4c855bfa8c",
+    "pytorch_model.bin": "e0b64ccefc1bcb569b604baea27eb873e5482fdf6eb3ceff1fb5368397db5aed",
+    "rust_model.ot": "5a16ed126bbc8c4cf794406bac0c7946f62d0f175c02dc54d77a00a6255597ed",
+    "special_tokens_map.json": "75cbec71553267dadc77a583ef15122c2aa7422eb6635acc72a184a413f17c1c",
+    "tf_model.h5": "9b672dd16f09f6f805d407800278e60217b9d7c040df1dde5098765a40cdc88a",
+    "tokenizer.json": "2bb1a22cfbe25b8e5a232b7fc4d7fc5073923b45724a5f813b00811bb6620f66",
+    "tokenizer_config.json": "5414fd4aa3d08491787a79c51f9f1cc50641c018abeaad30f7f9c8ee752bc86c",
+    "vocab.json": "ed19656ea1707df69134c4af35c8ceda2cc9860bf2c3495026153a133670ab5e"
+  },
+  "license": "CC-BY-4.0",
+  "local_offline_loading_required": true,
+  "local_path": "D:\\graduation_project\\.cache\\benchmarks\\models\\deepset_roberta_base_squad2_adc3b06",
+  "local_serialization_derivation": {
+    "reason": "The fixed revision provided the official PyTorch state dictionary and tokenizer vocab/merges locally, while the later Xet safetensors transfer did not complete within two bounded retries.",
+    "source_pytorch_model_sha256": "e0b64ccefc1bcb569b604baea27eb873e5482fdf6eb3ceff1fb5368397db5aed",
+    "source_state_dict_tensor_count": 200,
+    "torch_load_weights_only": true,
+    "derived_model_safetensors_sha256": "5da10c5315517d9c8750f2e0ff4fd319476b4d93ae0e7f346f120d4c855bfa8c",
+    "derived_fast_tokenizer_sha256": "2bb1a22cfbe25b8e5a232b7fc4d7fc5073923b45724a5f813b00811bb6620f66",
+    "weight_values_or_architecture_changed": false,
+    "quac_content_used": false
+  },
+  "protocol_sha256": "130b703c7b69aa5556f7ed85d759d8865ed2fa40206ce91dabfbd6d12d80b007",
+  "quac_content_used_for_model_training_or_finetuning": false,
+  "registered_at": "2026-08-03T19:45:00+08:00",
+  "repository": "deepset/roberta-base-squad2",
+  "revision": "adc3b06f79f797d1c575d5479d6f5efe54a9e3b4",
+  "schema_version": "frc-quac-v62-model-registration-v1"
+}

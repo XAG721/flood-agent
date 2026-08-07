@@ -1,0 +1,43 @@
+{
+  "schema_version": "frc-twowiki-support-path-closure-implementation-v74",
+  "experiment_id": "FRC-2WIKI-SUPPORT-PATH-CLOSURE-V74",
+  "locked_on": "2026-08-04",
+  "hashes": {
+    "mechanism_development": "6918a76a054151075555c9a4df8b4274914bdcf078e70649db79d036e81c19c1",
+    "source_registration": "a6919e551a0abda7b2d5c5e3038aa67d1822b6ec48d63282ad99e7cdc2411fde",
+    "protocol": "3c5747be9e54442388586219caf39e1ab9688b522dce8e9ce66048218a075698",
+    "module": "c4ad3ee5b828300d8b9065c4d1a6e93cd02c286a12306fccf9dbbf1822a4f4ea",
+    "runner": "dff3ee4d65a13b05b62e202c2876982528131c75918634aa189fac97668757cb",
+    "tests": "f0e4debeb24e3a9e78a081d9bea9c366a7f8ef852e82a51dae04580c6ac9ca5c"
+  },
+  "synthetic_tests": {
+    "passed": 18,
+    "failed": 0,
+    "target_rows_used": 0,
+    "command": "D:\\anaconda3\\python.exe -m pytest -p no:cacheprovider tests\\test_frc_twowiki_support_path_closure.py"
+  },
+  "pre_target_lock_boundary": {
+    "raw_parquet_schema_or_metadata_seen": true,
+    "history_mechanism_development_rows_seen": 1000,
+    "history_rows_permanently_excluded": true,
+    "v74_target_rows_read": 0,
+    "v74_development_ids_selected": 0,
+    "v74_confirmation_ids_selected": 0,
+    "v74_target_model_outputs_seen": false,
+    "v74_target_gold_metrics_seen": false
+  },
+  "frozen_contract": {
+    "candidate": "soft_title_link_support_path_closure_v74",
+    "link_bonus": 1.0,
+    "new_source_bonus": 0.1,
+    "controls": 10,
+    "top_k": 5,
+    "token_budget": 1500,
+    "development_cases": 800,
+    "confirmation_cases": 800,
+    "development_or_confirmation_tuning_allowed": false,
+    "confirmation_requires_every_development_gate": true,
+    "selector_adoption_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  }
+}

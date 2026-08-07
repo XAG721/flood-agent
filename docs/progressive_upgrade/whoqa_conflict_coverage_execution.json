@@ -1,0 +1,45 @@
+{
+  "schema_version": "frc-whoqa-conflict-coverage-execution-v1",
+  "registered_on": "2026-08-01",
+  "parent_protocol": {
+    "path": "docs/progressive_upgrade/whoqa_conflict_coverage_protocol.json",
+    "sha256": "7a92b637521a8b0ee5d9620b2972c1dfb95a5f0b6c246974171749f7b53c6bb9"
+  },
+  "registered_before_model_scoring": true,
+  "reason": "The fixed source schema contains five equivalent public question templates per q_id while the parent protocol fixes 5,152 evaluation units. The official evaluator counts records, not templates, and does not define a single-template selection rule.",
+  "frozen_template_handling": {
+    "score_all_public_templates": true,
+    "expected_templates_per_q_id": 5,
+    "selection_runs_per_q_id": 5,
+    "statistical_unit": "q_id",
+    "case_metric": "arithmetic mean of the five template-level metrics",
+    "bootstrap_unit": "q_id",
+    "template_cherry_picking": false,
+    "template_text_exported_to_public_evidence": false
+  },
+  "frozen_source_observation": {
+    "path": ".cache/benchmarks/whoqa/WhoQA.json",
+    "bytes": 28004947,
+    "sha256": "030dfa5781d15795846f3d1f89fdc76253debb7c67d93a4b516cb9a53d11c211",
+    "record_count": 5152,
+    "top_level_fields": [
+      "answer_by_context",
+      "context_ids",
+      "contexts",
+      "main_ent",
+      "num_distinct_answers",
+      "q_id",
+      "question_type_id",
+      "question_type_metadata",
+      "questions"
+    ]
+  },
+  "frozen_runtime": {
+    "device": "cuda",
+    "embedding_batch_size": 32,
+    "reranker_batch_size": 16,
+    "resumable_case_granularity": "q_id",
+    "offline_model_loading": true
+  },
+  "interpretation_boundary": "This file resolves a source-schema ambiguity before any BGE or reranker scoring. It does not change the dataset, methods, budget, role prompts, metrics, thresholds, decision policy, or Gate 2 boundary in the parent protocol."
+}

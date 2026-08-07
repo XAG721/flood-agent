@@ -1,0 +1,123 @@
+{
+  "schema_version": "frc-whoqa-budget-stress-protocol-v1",
+  "registered_at": "2026-08-01T08:13:28+08:00",
+  "experiment_id": "FRC-WHOQA-BUDGET-STRESS-V34",
+  "purpose": "Diagnose whether the near-saturated v33 WhoQA result hides a reproducible FRC-RAG viewpoint-diversity signal under tighter, pre-frozen selection-slot and token budgets.",
+  "development_boundary": {
+    "v33_outcome_known": true,
+    "v34_stress_results_known_at_registration": false,
+    "post_result_method_development": true,
+    "new_model_scoring": false,
+    "selector_parameters_changed": false,
+    "independent_confirmation": false,
+    "gate_evidence": false,
+    "production_authorization": false
+  },
+  "frozen_inputs": {
+    "dataset": "WhoQA",
+    "expected_case_count": 5152,
+    "raw_source": {
+      "path": ".cache/benchmarks/whoqa/WhoQA.json",
+      "sha256": "030dfa5781d15795846f3d1f89fdc76253debb7c67d93a4b516cb9a53d11c211"
+    },
+    "blind_score_cache": {
+      "path": ".cache/benchmarks/whoqa/scored_blind.jsonl",
+      "sha256": "d9dacf56fa011726728811123af113b852c079e40d3a136301d1d024f8873a4b",
+      "gold_fields_visible_to_scorer": false
+    },
+    "parent_protocol": {
+      "path": "docs/progressive_upgrade/whoqa_conflict_coverage_protocol.json",
+      "sha256": "7a92b637521a8b0ee5d9620b2972c1dfb95a5f0b6c246974171749f7b53c6bb9"
+    },
+    "post_result_alias_correction": {
+      "path": "docs/progressive_upgrade/whoqa_conflict_coverage_post_result_correction.json",
+      "sha256": "5106dea12cad7b26a4f16d973eac770a85d81b6bf02b5a79c4a53d1b4b372927"
+    },
+    "frozen_selector_implementation": {
+      "path": "research/frc_rag/whoqa_conflict_coverage.py",
+      "sha256": "6efef7888c968e265ab3992fe6468413b74bbb09ac87ee635002eb738a712ee5"
+    }
+  },
+  "frozen_methods": [
+    "bm25_topk",
+    "dense_topk",
+    "hybrid_topk",
+    "cross_encoder_topk",
+    "coverage_greedy_proxy",
+    "frc_select"
+  ],
+  "frozen_grid": [
+    {"config_id": "k2_b1500", "top_k": 2, "token_budget": 1500},
+    {"config_id": "k3_b1500", "top_k": 3, "token_budget": 1500},
+    {"config_id": "k4_b256", "top_k": 4, "token_budget": 256},
+    {"config_id": "k4_b512", "top_k": 4, "token_budget": 512},
+    {"config_id": "k4_b1024", "top_k": 4, "token_budget": 1024},
+    {"config_id": "k4_b1500", "top_k": 4, "token_budget": 1500}
+  ],
+  "frozen_evaluation": {
+    "statistical_unit": "q_id",
+    "template_aggregation": "mean within q_id before any cross-case statistic",
+    "gold_join_timing": "after all six selectors have frozen context IDs for a template and configuration",
+    "primary_metric": {
+      "name": "fixed_capacity_distinct_viewpoint_coverage",
+      "formula": "number of distinct selected canonical viewpoints / min(number of canonical viewpoints, top_k)",
+      "no_selectable_candidate_value": 0.0,
+      "reason": "Unlike v33 normalization, this denominator does not forgive token-budget shortfall and therefore exposes both duplicate-view selection and inability to fill the frozen capacity."
+    },
+    "family_statistic": "For each q_id, average the primary metric equally across the six frozen configurations; compare FRC against the strongest baseline on that per-case family mean.",
+    "reference_baseline": "coverage_greedy_proxy",
+    "secondary_metrics": [
+      "raw_distinct_viewpoint_recall",
+      "at_least_two_viewpoint_coverage",
+      "selected_candidate_count",
+      "selected_token_cost",
+      "budget_shortfall"
+    ],
+    "predeclared_strata": {
+      "2 viewpoints": "canonical viewpoint count equals 2",
+      "3 viewpoints": "canonical viewpoint count equals 3",
+      "4 viewpoints": "canonical viewpoint count equals 4",
+      "5-8 viewpoints": "canonical viewpoint count is between 5 and 8 inclusive",
+      "9+ viewpoints": "canonical viewpoint count is at least 9",
+      "slot_constrained": "canonical viewpoint count is greater than the v33 nominal top_k of 4",
+      "token_constrained": "at least one frozen k4 token configuration can select fewer than min(candidate_count, 4) candidates"
+    },
+    "paired_bootstrap": {
+      "resamples": 10000,
+      "seed": 20260801,
+      "confidence_level": 0.95,
+      "simultaneous_strongest_baseline_selection_inside_each_resample": true
+    }
+  },
+  "frozen_outcome_rules": {
+    "support_established": {
+      "family_point_gain_at_least": 0.01,
+      "family_simultaneous_ci_low_above": 0.0,
+      "family_reference_ci_low_above": 0.0,
+      "every_config_frc_minus_observed_strongest_at_least": -0.02,
+      "status": "WHOQA_STRESS_SUPPORT_ESTABLISHED"
+    },
+    "safety_regression": {
+      "any_config_frc_minus_observed_strongest_below": -0.02,
+      "status": "WHOQA_STRESS_SAFETY_REGRESSION"
+    },
+    "otherwise": "WHOQA_STRESS_SUPPORT_NOT_ESTABLISHED"
+  },
+  "stopping_rule": {
+    "no_grid_change_after_registration": true,
+    "no_selector_or_weight_tuning_on_v34_outputs": true,
+    "negative_or_mixed_results_are_published_unchanged": true,
+    "next_method_change_requires_a_new_version_and_non_overlapping_evaluation_evidence": true
+  },
+  "deliverables": {
+    "implementation": "research/frc_rag/whoqa_budget_stress.py",
+    "runner": "scripts/run_whoqa_budget_stress.py",
+    "tests": "tests/test_frc_whoqa_budget_stress.py",
+    "output_directory": "output/rag_evaluation/whoqa_budget_stress"
+  },
+  "interpretation_boundary": [
+    "This is a post-v33 diagnostic on reused scores, not an untouched-dataset confirmation.",
+    "The experiment may explain budget sensitivity but cannot authorize Gate 2, CANARY, DEFAULT, SetR equivalence, or flood-domain effectiveness.",
+    "WhoQA still does not cover temporal invalidation, misinformation, missing files, or flood-policy exceptions."
+  ]
+}

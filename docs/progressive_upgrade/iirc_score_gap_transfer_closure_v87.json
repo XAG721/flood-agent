@@ -1,0 +1,60 @@
+{
+  "schema_version": "frc-iirc-score-gap-transfer-closure-v87",
+  "experiment_id": "FRC-IIRC-SCORE-GAP-ROUTER-PROSPECTIVE-V87",
+  "closed_on": "2026-08-05",
+  "status": "DEVELOPMENT_NO_GO_CONFIRMATION_REMAINS_SEALED",
+  "development": {
+    "cases": 400,
+    "execution_path": "docs/progressive_upgrade/iirc_score_gap_transfer_development_execution_v87.json",
+    "execution_sha256": "347e569874da060bfad0e4f644538d67fea5ff9209c8af0ff64c2dfaa6ba444b",
+    "result_path": "docs/progressive_upgrade/iirc_score_gap_transfer_development_result_v87.json",
+    "result_sha256": "2a6c8d92cd417c67c1ebb34b15b3bc819136ba1e2e51e97ea7ef53a6d9bc7239",
+    "candidate_f1": 0.616637,
+    "candidate_complete_evidence_recall": 0.4325,
+    "candidate_evidence_recall": 0.670774,
+    "candidate_mean_selected_sources": 1.965,
+    "strongest_control": "frc_fixed2",
+    "strongest_control_f1": 0.608806,
+    "candidate_minus_strongest_f1": 0.007831,
+    "candidate_minus_strongest_simultaneous_95_percent_ci": [
+      -0.018668,
+      0.015429
+    ],
+    "candidate_minus_frc_fixed2_95_percent_ci": [
+      -0.002405,
+      0.01801
+    ],
+    "candidate_action_counts": {
+      "1": 42,
+      "2": 330,
+      "3": 28
+    },
+    "strict_gates_passed": 12,
+    "strict_gates_failed": 3,
+    "failed_gates": [
+      "candidate_evidence_macro_f1_at_least_0_62",
+      "candidate_minus_strongest_control_ci_low_above_0",
+      "candidate_minus_frc_fixed2_ci_low_above_0"
+    ]
+  },
+  "interpretation": {
+    "point_improvement_over_every_registered_control": true,
+    "safety_and_action_coverage_gates_passed": true,
+    "statistically_confirmed_superiority": false,
+    "dominant_failure_mode": "The 400-case cohort produced a positive point gain but insufficient precision for a positive lower confidence bound.",
+    "confirmation_is_not_needed_to_reject_the_v87_strict_hypothesis": true
+  },
+  "confirmation_boundary": {
+    "confirmation_open_artifact_exists": false,
+    "confirmation_cache_exists": false,
+    "confirmation_ids_prepared_scored_selected_or_evaluated": false,
+    "v87_confirmation_commitment_remains_untouched": "08ff51fe0917291bcc2a1dbf1b6ebdb1d724bc968d00ca4a3accd03f05abcc86"
+  },
+  "next_iteration_boundary": {
+    "v86_and_v87_development_cases_are_exposed_for_v88_training": 800,
+    "v88_targets_must_use_new_ids_from_v87_remaining": true,
+    "v86_and_v87_confirmation_ids_remain_excluded": true,
+    "v88_must_freeze_before_new_target_content_access": true
+  },
+  "gate_2": "NO-GO/SHADOW"
+}

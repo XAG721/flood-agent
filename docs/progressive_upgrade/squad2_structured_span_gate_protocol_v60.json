@@ -1,0 +1,118 @@
+{
+  "schema_version": "frc-squad2-structured-span-gate-protocol-v60",
+  "experiment_id": "FRC-SQUAD2-STRUCTURED-SPAN-GATE-V60",
+  "registered_at": "2026-08-03T17:48:00+08:00",
+  "purpose": "Prospectively test whether an explicit tagged span protocol plus source-independent wrapper normalization removes v59 format failures while leaving its FRC family, budgets, metrics and development gates unchanged on a third disjoint train sample.",
+  "prior_boundary": {
+    "v58_status": "development failed; confirmation unopened",
+    "v59_status": "development failed; confirmation unopened",
+    "allowed_v59_aggregate_motivation": {
+      "invalid_output_rate": 0.503333,
+      "answer_bearing_span_pass_rate": 0.426667,
+      "no_answer_rejection_rate": 0.9,
+      "candidate_minus_strongest_shared_gate_non_frc": 0.08023,
+      "candidate_minus_strongest_same_gate_frc": 0.001389
+    },
+    "v58_or_v59_case_query_candidate_score_prediction_gold_or_raw_output_inspected_or_reused": false,
+    "v58_and_v59_source_case_commitments_used_for_exclusion_only": true,
+    "required_development_overlap_with_prior_samples": 0,
+    "dev_content_opened": false
+  },
+  "mechanism": {
+    "prompt_output": "Exactly one line: SPAN: <shortest exact copied answer span>, or UNSUPPORTED.",
+    "parser_order": [
+      "Trim Unicode whitespace and inspect the first non-empty line.",
+      "If that line begins with the standalone token UNSUPPORTED, reject.",
+      "Otherwise remove one leading SPAN: or ANSWER: tag, trim paired surrounding quotes or backticks, and accept when the remainder is a non-empty case-insensitive contiguous paragraph substring.",
+      "If tagged parsing fails, accept the first paired quoted or backticked segment in the output that is a non-empty paragraph substring.",
+      "Otherwise fail closed as invalid and reject."
+    ],
+    "parser_design_boundary": "Rules are generic format normalization fixed without reading any v59 raw output.",
+    "shared_gate": "One parsed decision per case reused for every budget and downstream method.",
+    "downstream_freeze": "Reuse v59 method identifiers, v43 candidate, selectors, budgets, metrics, bootstrap and all numerical gates exactly; v60 changes only the new disjoint sample and support-output protocol.",
+    "learned_parameter": null
+  },
+  "source_and_split": {
+    "official_homepage": "https://rajpurkar.github.io/SQuAD-explorer/",
+    "source_registration": "docs/progressive_upgrade/squad2_source_registration_v58.json",
+    "source_registration_sha256": "85f1e206ab0ef1d566f398974ad665045d98789bc2130b81adb9cf1eac6a331c",
+    "development": "train-v2.0.json excluding the union of all v58 and v59 development source-case commitments",
+    "conditional_confirmation": "dev-v2.0.json, still unopened",
+    "license": "CC BY-SA 4.0"
+  },
+  "scope": {
+    "development_cases": 600,
+    "confirmation_cases": 600,
+    "answer_bearing_per_stage": 300,
+    "no_answer_per_stage": 300,
+    "maximum_cases_per_paragraph": 2,
+    "maximum_cases_per_article_per_answer_state": 12,
+    "minimum_paragraphs": 250,
+    "minimum_articles_development": 100,
+    "minimum_articles_confirmation": 25,
+    "development_salt": "FRC-SQUAD2-V60-DISJOINT-DEVELOPMENT|",
+    "confirmation_salt": "FRC-SQUAD2-V60-CONFIRMATION|",
+    "expected_prior_exclusion_commitments": 1200,
+    "article_cluster_bootstrap": true,
+    "balanced_mechanism_sample_not_natural_prevalence": true
+  },
+  "access_order": [
+    "Freeze protocol, parser, implementation and synthetic invariants before constructing the v60 sample.",
+    "Read only source-case commitment hashes from the v58 and v59 candidate maps and verify the union contains 1,200 unique commitments.",
+    "Construct a zero-overlap train blind sample and register every cache, runtime and model hash before scoring or generation.",
+    "Complete BGE and structured-span generation before gold join.",
+    "Run the unchanged v59 numerical gates once. Open dev only if every gate passes."
+  ],
+  "models": {
+    "bge_stack": "Identical frozen v58/v59 offline embedding and reranker stack",
+    "support_verifier": "Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4@e9c932ac1893a49ae0fc497ad6e1e86e2e39af20",
+    "model_hash_manifest": "Identical frozen nine-file v58/v59 manifest",
+    "generation": {
+      "do_sample": false,
+      "max_new_tokens": 40,
+      "maximum_input_tokens": 3072,
+      "batch_size": 16
+    }
+  },
+  "frozen_structured_prompt": "Determine whether the paragraph contains a contiguous span that directly answers the requested fact. Return exactly one line in one of these forms:\nSPAN: <copy the shortest exact answer span from the paragraph>\nUNSUPPORTED\nDo not add explanation, markdown, quotation commentary, or outside knowledge. Use UNSUPPORTED for a related topic, a plausible guess, or an unstated assumption.\n\nQuestion: {question}\n\nParagraph:\n{context}\n\nOutput:",
+  "downstream_methods_and_evaluation": {
+    "frozen_from": "FRC-SQUAD2-EXTRACTIVE-SUPPORT-GATE-V59",
+    "candidate": "qwen_span_supported_adaptive_argmax_cardinality_frc_v43_transferred_v59",
+    "budgets": [128, 256, 512],
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 20260819,
+    "method_identifiers_preserved_for_exact_comparability": true,
+    "answer_metric": "evidence-unit set F1, not answer-string EM/F1"
+  },
+  "development_gates_all_required_unchanged_from_v59": {
+    "exact_cases_balance_caps_minimum_clusters_and_zero_prior_overlap": true,
+    "schema_exclusion_rate_at_most": 0.01,
+    "candidate_ceiling_complete_rate_at_least": 0.99,
+    "support_verifier_balanced_accuracy_at_least": 0.75,
+    "answer_bearing_span_pass_rate_at_least": 0.75,
+    "no_answer_rejection_rate_at_least": 0.65,
+    "invalid_output_rate_at_most": 0.02,
+    "gated_exact_anchor_minus_ungated_exact_anchor_point_at_least": 0.1,
+    "gated_exact_anchor_minus_ungated_exact_anchor_ci_low_above": 0.0,
+    "candidate_minus_gated_exact_anchor_point_at_least": 0.05,
+    "candidate_minus_gated_exact_anchor_ci_low_above": 0.0,
+    "candidate_minus_strongest_shared_gate_non_frc_point_at_least": 0.05,
+    "candidate_minus_strongest_shared_gate_non_frc_ci_low_above": 0.0,
+    "candidate_minus_strongest_same_gate_frc_point_at_least": -0.005,
+    "answer_recall_drop_vs_ungated_exact_anchor_at_most": 0.1,
+    "candidate_no_answer_abstention_accuracy_at_least": 0.65,
+    "candidate_abstention_rate_between": [0.2, 0.7],
+    "every_budget_and_supported_stratum_delta_vs_non_frc_at_least": -0.02,
+    "query_and_score_fallback_rates": 0.0
+  },
+  "outcomes": {
+    "development_support": "SQUAD2_V60_DEVELOPMENT_SUPPORT_ESTABLISHED_OPEN_CONFIRMATION",
+    "development_failure": "SQUAD2_V60_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+    "confirmation_support": "SQUAD2_V60_STRUCTURED_SPAN_FRC_FEASIBILITY_ESTABLISHED",
+    "confirmation_failure": "SQUAD2_V60_STRUCTURED_SPAN_FRC_FEASIBILITY_NOT_ESTABLISHED",
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "scope_limits": "Balanced public closed-paragraph mechanism evidence; not official answer-string scoring, hidden-test submission, SetR reproduction, flood-domain validation or rollout authorization."
+}

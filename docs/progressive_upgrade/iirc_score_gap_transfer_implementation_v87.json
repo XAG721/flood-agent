@@ -1,0 +1,93 @@
+{
+  "schema_version": "frc-iirc-score-gap-transfer-implementation-lock-v87",
+  "experiment_id": "FRC-IIRC-SCORE-GAP-ROUTER-PROSPECTIVE-V87",
+  "frozen_on": "2026-08-05",
+  "frozen_before_v87_target_question_answer_context_or_metric_access": true,
+  "files": {
+    "router": {
+      "path": "research/frc_rag/iirc_score_gap_router.py",
+      "bytes": 22839,
+      "sha256": "e09df11916620123543974f4987e4f0bcd3610f083a0e2e0862cf0d14d4830fc"
+    },
+    "transfer": {
+      "path": "research/frc_rag/iirc_score_gap_transfer.py",
+      "bytes": 18669,
+      "sha256": "99c4b6bba235d5490976e2366fbb6bdcdf00d98b891eccc85baa35d500b0e7e4"
+    },
+    "model_runner": {
+      "path": "scripts/run_iirc_score_gap_router_model.py",
+      "bytes": 1464,
+      "sha256": "c562c74e647ce5c16e7b935e4c742f73ae2cc2d3823316d237957836e69fd6cb"
+    },
+    "transfer_runner": {
+      "path": "scripts/run_iirc_score_gap_transfer.py",
+      "bytes": 9709,
+      "sha256": "49a5a40dfe3e557a33586443aa5ed8895fb9b7cf5103fd8a3150d92e2f4d602f"
+    },
+    "router_tests": {
+      "path": "tests/test_frc_iirc_score_gap_router.py",
+      "bytes": 3218,
+      "sha256": "9374ac69436c94df031952de6e4b37ee68685f5e45f26fc61db9a01dfa2d88ff"
+    },
+    "transfer_tests": {
+      "path": "tests/test_frc_iirc_score_gap_transfer.py",
+      "bytes": 3081,
+      "sha256": "9448d7234ceb03aa13e84ec8d4beb37039aa5123be7ba42f11bf3c76edebb28e"
+    },
+    "protocol": {
+      "path": "docs/progressive_upgrade/iirc_score_gap_transfer_protocol_v87.json",
+      "bytes": 8839,
+      "sha256": "316b5f589e2c412f9d853264fd899dcb8f86291372282f507cf564e548e15be1"
+    },
+    "source_registration": {
+      "path": "docs/progressive_upgrade/iirc_score_gap_router_source_registration_v87.json",
+      "bytes": 2625,
+      "sha256": "28e9898cbfe98e8b1ef3aaabdc5ea2cb07fc36e5f650654b4881d3164c0df483"
+    },
+    "model_artifact": {
+      "path": "docs/progressive_upgrade/iirc_score_gap_router_model_development_v87.json",
+      "bytes": 2570250,
+      "sha256": "e4a32857ca60ff7fa92c0f14a129b5101c4817fd95856f78e66012457792de70"
+    },
+    "v86_adapter": {
+      "path": "research/frc_rag/iirc_cardinality_transfer.py",
+      "bytes": 34367,
+      "sha256": "43d9f7a1b5619a7f46c0626ac3ba5874a0258e70ffca2d73ce58b1d68319df7a"
+    },
+    "v86_router": {
+      "path": "research/frc_rag/iirc_cardinality_transfer_router.py",
+      "bytes": 23675,
+      "sha256": "2f663c3ba43ac69037102e54b53eed18209735c234cdc9a2ed0150f6a1ed3991"
+    },
+    "shared_scorer": {
+      "path": "research/frc_rag/twowiki_confirmation.py",
+      "bytes": 16026,
+      "sha256": "6b16fc5aeff31be0ad63e25c08918c6f6fe8ab2cc1b946b4ecf0ee5ad1288cbd"
+    },
+    "shared_tokenizer_loader": {
+      "path": "research/frc_rag/rgb_cost_aware_frc.py",
+      "bytes": 55083,
+      "sha256": "d106e2a201b7dfecbeea21cb702603840ff2c0d79df5bc31dfc4ff96d0d2f46e"
+    },
+    "v86_model_control": {
+      "path": "docs/progressive_upgrade/iirc_cardinality_transfer_router_model_development_v86.json",
+      "bytes": 140133,
+      "sha256": "3b125e02779d385e63f3cbd47000e2c2fe2882456935150f1e47ec4354a9475c"
+    },
+    "source_fingerprint": {
+      "path": "docs/progressive_upgrade/iirc_cardinality_transfer_source_fingerprint_v86.json",
+      "bytes": 3938,
+      "sha256": "41cd12fd3851ac49d387a6f801c127ddec6f83b082ecbd004b21580f4e4d090c"
+    }
+  },
+  "model_payload_sha256": "ed9e8ee4804c8a05e36c6c7725cdb6dac2e90bbd3be00b0cd59558121cc29ebc",
+  "partition_commitments": {
+    "eligible": "adf053155b954245052da5854d3ba239f6f01ae8de6cdad4ba98423a7438ca2e",
+    "development": "b72274afdc26ff3c817a2a8456503567f767b80f828afc7f4a3926ad2e971167",
+    "confirmation": "08ff51fe0917291bcc2a1dbf1b6ebdb1d724bc968d00ca4a3accd03f05abcc86",
+    "remaining": "0681233dd79b5a21d717fd9e541b404b166673b6d08b24154825b321249a2d64"
+  },
+  "mutation_rule": "Any algorithm, model, feature, policy, adapter, control, metric, gate, source, partition, or locked-file change requires v88 and new untouched IDs.",
+  "confirmation_rule": "Confirmation remains inaccessible unless every frozen v87 development gate passes and a confirmation-open artifact is created.",
+  "gate_2": "NO-GO/SHADOW"
+}

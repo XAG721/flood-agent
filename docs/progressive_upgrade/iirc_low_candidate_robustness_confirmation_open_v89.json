@@ -1,0 +1,10 @@
+{
+  "algorithm_model_adapter_baselines_metrics_or_gates_changed": false,
+  "confirmation_content_accessed_before_open": false,
+  "confirmation_open_authorized": true,
+  "development_result_sha256": "72951ab53fcfc0577184b4b2e280b15151bf8724742ee8d8137b169c55688f52",
+  "development_status": "IIRC_V89_DEVELOPMENT_SUPPORT_ESTABLISHED_OPEN_CONFIRMATION",
+  "experiment_id": "FRC-IIRC-LOW-CANDIDATE-ROBUSTNESS-PROSPECTIVE-V89",
+  "gate_2": "NO-GO/SHADOW",
+  "schema_version": "frc-iirc-low-candidate-robustness-confirmation-open-v89"
+}

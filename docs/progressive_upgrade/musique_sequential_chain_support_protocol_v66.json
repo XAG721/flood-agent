@@ -1,0 +1,149 @@
+{
+  "schema_version": "frc-musique-sequential-chain-support-protocol-v66",
+  "experiment_id": "FRC-MUSIQUE-SEQUENTIAL-CHAIN-SUPPORT-V66",
+  "registered_at": "2026-08-04T01:00:00+08:00",
+  "purpose": "Test whether an oracle decomposition plan executed sequentially without gold answers can distinguish complete multi-hop support from locally plausible spans more reliably than the v65 composed-question maximum-margin gate.",
+  "prior_boundary": {
+    "v65_status": "MUSIQUE_FULL_V65_ROBERTA_TRANSFER_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_RETRIEVAL",
+    "v65_locked_threshold_exact": 0.974609375,
+    "v65_balanced_accuracy": 0.563333,
+    "v65_local_span_trap_rejection_rate": 0.449275,
+    "v65_cases_may_be_reused_for_v66_training_threshold_selection_sampling_or_reporting": false,
+    "target_file_was_previously_parsed_for_v65": true,
+    "remaining_target_case_predictions_or_gold_joined_metrics_inspected": false,
+    "v66_case_ids_selected_before_this_protocol": false,
+    "v66_model_outputs_seen_before_this_protocol": false
+  },
+  "source": {
+    "repository": "https://github.com/stonybrooknlp/musique",
+    "repository_revision": "922ac98f19a201998dbdae6d7f2887a5258dbdeb",
+    "license": "CC BY 4.0",
+    "target_file": ".cache/benchmarks/musique/data/musique_full_v1.0_train.jsonl",
+    "target_file_bytes": 476696984,
+    "target_file_sha256": "b1cd998f7e0e2838d6fda024e4ad1eb0e7fc3edefdadb0bd9b5b10b0907f2034",
+    "evaluation_role": "case-disjoint successor development followed by an optional precommitted held-out confirmation",
+    "official_schema_source": "raw_data_to_official_format.py at the registered repository revision"
+  },
+  "model_overlap_disclosure": {
+    "support_model_repository": "deepset/roberta-base-squad2",
+    "support_model_revision": "adc3b06f79f797d1c575d5479d6f5efe54a9e3b4",
+    "support_model_was_finetuned_on_squad2": true,
+    "exclude_if_composed_or_any_decomposition_question_exactly_matches_a_normalized_squad2_train_question": true,
+    "exact_match_guard_cannot_rule_out_paraphrase_context_or_pretraining_overlap": true,
+    "strict_independent_model_training_confirmation_claimed": false
+  },
+  "frozen_stages": {
+    "development": {
+      "target_cases": 600,
+      "target_per_answer_state": 300,
+      "ordering": "SHA-256('FRC-MUSIQUE-FULL-V66-DEVELOPMENT|' + source id), then source id",
+      "bootstrap_seed": 20260820
+    },
+    "confirmation": {
+      "authorized_only_if_every_development_gate_passes": true,
+      "target_cases": 600,
+      "target_per_answer_state": 300,
+      "ordering": "SHA-256('FRC-MUSIQUE-FULL-V66-CONFIRMATION|' + source id), then source id",
+      "exclude_all_development_source_commitments": true,
+      "bootstrap_seed": 20260821,
+      "no_rule_threshold_or_gate_change_after_development": true
+    }
+  },
+  "sampling": {
+    "answer_states": [
+      "answerable",
+      "unanswerable"
+    ],
+    "pair_assignment": "SHA-256('FRC-MUSIQUE-FULL-V66-PAIR-ASSIGNMENT|' + source id) parity assigns each source id to exactly one answer state before stage selection",
+    "maximum_cases_per_source_id_across_v66": 1,
+    "minimum_paragraphs_per_case": 3,
+    "minimum_decomposition_hops": 2,
+    "maximum_decomposition_hops": 4,
+    "exclude_v65_invalid_and_corrected_source_commitment_union": true,
+    "expected_v65_source_commitment_union_count": 900,
+    "exclude_exact_normalized_squad2_train_question_overlap": true,
+    "no_replacement": true,
+    "no_balancing_by_hop_count_answer_surface_paragraph_count_or_model_score": true,
+    "no_post_metric_resampling": true,
+    "insufficient_eligible_cases": "MUSIQUE_V66_SCOPE_INCONCLUSIVE_STOP_BEFORE_QA"
+  },
+  "oracle_plan_boundary": {
+    "allowed_decomposition_fields": [
+      "id",
+      "question",
+      "list order"
+    ],
+    "forbidden_decomposition_fields": [
+      "answer",
+      "paragraph_support_idx"
+    ],
+    "official_decomposition_is_available_at_runtime_for_arbitrary_flood_questions": false,
+    "interpretation": "This is an oracle-plan component upper bound, not a deployable automatic decomposer result."
+  },
+  "blind_execution": {
+    "direct_baseline": "Run the original composed question over every paragraph and pass iff the maximum finite paragraph margin is strictly greater than 0.974609375.",
+    "sequential_chain": [
+      "Process official decomposition questions in list order.",
+      "Resolve every #k placeholder only with the fixed model's selected span from prior hop k; never use a gold or alias answer.",
+      "If a required predecessor is unavailable, fail the current and remaining chain closed.",
+      "Run each resolved hop question over every official paragraph.",
+      "Select the paragraph/span with the maximum finite null-vs-span margin using deterministic paragraph order tie-breaking.",
+      "A hop passes iff its maximum margin is strictly greater than 0.974609375.",
+      "The case passes iff every hop passes and every placeholder was resolved."
+    ],
+    "locked_threshold_exact": 0.974609375,
+    "learned_or_adjusted_parameter_count_on_musique_v66": 0,
+    "model_weights_architecture_or_tokenizer_change": false,
+    "gold_fields_visible_to_qa_or_chain_executor": false,
+    "forbidden_before_complete_stage_execution": [
+      "answerable",
+      "answer",
+      "answer_aliases",
+      "decomposition answer",
+      "paragraph_support_idx",
+      "paragraph is_supporting",
+      "supporting paragraph ids",
+      "aggregate or per-stratum metrics"
+    ]
+  },
+  "primary_metric": {
+    "name": "answerability balanced accuracy",
+    "paired_delta": "sequential-chain correctness minus direct-baseline correctness",
+    "interval": "10000-resample case bootstrap percentile interval using the stage seed"
+  },
+  "stage_gates": {
+    "exact_cases": 600,
+    "exact_answer_state_balance": true,
+    "schema_exclusion_rate_at_most": 0.01,
+    "selected_v65_source_overlap": 0,
+    "selected_squad2_exact_question_overlap": 0,
+    "invalid_chain_output_rate": 0.0,
+    "sequential_chain_balanced_accuracy_at_least": 0.72,
+    "sequential_chain_answerable_pass_rate_at_least": 0.60,
+    "sequential_chain_unanswerable_rejection_rate_at_least": 0.80,
+    "sequential_minus_direct_balanced_accuracy_at_least": 0.10,
+    "sequential_minus_direct_correctness_ci_low_above": 0.05,
+    "direct_passed_unanswerable_trap_cases_at_least": 100,
+    "sequential_chain_trap_rejection_rate_at_least": 0.65,
+    "every_observed_unanswerable_hop_stratum_rejection_rate_at_least": 0.75,
+    "all_must_pass": true
+  },
+  "stopping_and_outcomes": {
+    "development_failure": "MUSIQUE_V66_SEQUENTIAL_CHAIN_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+    "development_pass": "MUSIQUE_V66_SEQUENTIAL_CHAIN_DEVELOPMENT_FEASIBILITY_ESTABLISHED_OPEN_CONFIRMATION",
+    "confirmation_failure": "MUSIQUE_V66_SEQUENTIAL_CHAIN_CONFIRMATION_NOT_ESTABLISHED",
+    "confirmation_pass": "MUSIQUE_V66_ORACLE_PLAN_SEQUENTIAL_CHAIN_COMPONENT_FEASIBILITY_ESTABLISHED",
+    "selector_or_retrieval_scoring_part_of_v66": false,
+    "reuse_failed_stage_for_tuning_threshold_rule_gate_or_selection": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "interpretation_limits": [
+    "Not an official MuSiQue leaderboard result.",
+    "Not an automatic decomposition result because the official decomposition question plan is supplied.",
+    "Not strict independent model-training confirmation.",
+    "Not an FRC retrieval comparison, SetR reproduction, flood-domain evaluation or production result.",
+    "A positive result establishes only oracle-plan sequential support-gate component feasibility; a failed stage may not be repaired on its cases."
+  ]
+}

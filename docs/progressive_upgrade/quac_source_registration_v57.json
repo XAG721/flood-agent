@@ -1,0 +1,44 @@
+{
+  "schema_version": "frc-quac-source-registration-v57",
+  "experiment_id": "FRC-QUAC-ANCHOR-SAFE-CONSENSUS-SLOT-V57",
+  "registered_at": "2026-08-03T02:28:00+08:00",
+  "official_homepage": "https://quac.ai/",
+  "official_downloads": {
+    "train_v0.2.json": "https://s3.amazonaws.com/my89public/quac/train_v0.2.json",
+    "val_v0.2.json": "https://s3.amazonaws.com/my89public/quac/val_v0.2.json"
+  },
+  "dataset_version": "QuAC v0.2",
+  "license": "CC BY-SA 4.0 as stated on the official QuAC homepage",
+  "protocol_sha256_before_download": "bd5dab2f9166cfc2ac9e256ee772ec13d87a29ed00093adcec91f491ab44f810",
+  "files": [
+    {
+      "path": "train_v0.2.json",
+      "stage": "development",
+      "bytes": 68114819,
+      "official_content_length": 68114819,
+      "sha256": "ff5cca5a2e4b4d1cb5b5ced68b9fce88394ef6d93117426d6d4baafbcc05c56a",
+      "content_length_matched": true
+    },
+    {
+      "path": "val_v0.2.json",
+      "stage": "confirmation",
+      "bytes": 8929167,
+      "official_content_length": 8929167,
+      "sha256": "09e622916280ba04c9352acb1bc5bbe80f11a2598f6f34e934c51d9e6570f378",
+      "content_length_matched": true
+    }
+  ],
+  "transport_audit": {
+    "first_train_download_incomplete": true,
+    "incomplete_train_bytes": 54339900,
+    "incomplete_train_sha256": "4e7a5a9d542ad489d0c19d6ad74c086a9d2dbb7ca9618f24130f56dfb4031afb",
+    "incomplete_file_removed_before_retry": true,
+    "replacement_download_matched_official_content_length": true,
+    "validation_download_matched_official_content_length": true
+  },
+  "json_content_parsed_before_registration": false,
+  "train_content_read_before_registration": false,
+  "validation_content_read": false,
+  "validation_open_authorized": false,
+  "byte_hash_and_http_metadata_only_before_registration": true
+}

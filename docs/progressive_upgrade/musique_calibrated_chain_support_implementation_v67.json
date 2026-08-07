@@ -1,0 +1,54 @@
+{
+  "schema_version": "frc-musique-calibrated-chain-support-implementation-registration-v67",
+  "experiment_id": "FRC-MUSIQUE-CALIBRATED-CHAIN-SUPPORT-V67",
+  "registered_at": "2026-08-04T05:08:00+08:00",
+  "hashes": {
+    "protocol": "e1e89f88daa6f5c213f86d32e3394bd12c5fa62516cf4cf4e107a677219cfa45",
+    "source_registration": "5582a96af68c9aeb65e53ee2b44e9c84b12779d9a56f70b3eb9cac03244c7b77",
+    "model_registration": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "module": "84c09f029ecdd8c8d9511fc1f8c18a1dfdddabc858ff3850aeb196bd6239882d",
+    "runner": "5f6045ce0b1dc75eb82786ae29c774d82d9e7acde214c23d1cef0c3d6db97a6b",
+    "tests": "6dbdb6c8ef4997daf824ea6f08d00ae0db76fc532ce25aba182a7a12bab72ba8"
+  },
+  "target_files_were_previously_parsed": true,
+  "target_rows_read_for_v67_before_registration": 0,
+  "v67_source_commitments_selected_before_registration": 0,
+  "v67_model_outputs_or_joined_metrics_seen_before_registration": false,
+  "source_independent_synthetic_fixtures_only": true,
+  "synthetic_tests": {
+    "passed": 12,
+    "failed": 0,
+    "target_source_used": false,
+    "model_files_used": false
+  },
+  "pre_registration_synthetic_fixture_correction": {
+    "initial_result": "11 passed, 1 failed",
+    "cause": "The positive gate fixture accidentally made the fixed-v66 comparator perfect, so the implementation correctly failed the pre-registered five-point improvement gate.",
+    "correction": "Only the synthetic comparator scores were changed so the positive fixture represented a real candidate improvement; protocol, score formula, threshold selection, gates and source boundaries were unchanged.",
+    "corrected_result": "12 passed, 0 failed"
+  },
+  "frozen_behaviors": [
+    "v65 invalid, v65 corrected and v66 development source-commitment union exclusion",
+    "SQuAD2 normalized exact-question exclusion",
+    "split-aware paired source-id answer-state assignment",
+    "calibration, development and confirmation deterministic balanced sampling",
+    "gold-free direct composed-question score extraction",
+    "oracle decomposition question plan with gold answers and supporting indices removed",
+    "prior predicted-span-only placeholder substitution without intermediate thresholding",
+    "complete-chain bottleneck score or invalid fail-closed score",
+    "identical deterministic threshold-selection rule for candidate and direct comparator",
+    "five-fold calibration-only crossfit diagnostic",
+    "single strongest aggregate comparator selection before paired bootstrap",
+    "development failure closure or immutable confirmation authorization"
+  ],
+  "model_weights_architecture_or_tokenizer_changed": false,
+  "learned_parameter_count_on_calibration": 2,
+  "development_or_confirmation_used_for_threshold_selection": false,
+  "official_decomposition_is_oracle_plan": true,
+  "automatic_decomposer_result_claimed": false,
+  "strict_independent_model_training_confirmation_claimed": false,
+  "selector_or_retrieval_scoring_part_of_v67": false,
+  "selector_adoption_authorized": false,
+  "canary_or_default_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

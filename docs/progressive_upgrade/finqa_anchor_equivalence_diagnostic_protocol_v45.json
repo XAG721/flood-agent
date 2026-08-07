@@ -1,0 +1,55 @@
+{
+  "schema_version": "frc-finqa-anchor-equivalence-diagnostic-protocol-v45",
+  "experiment_id": "FRC-FINQA-ANCHOR-EQUIVALENCE-DIAGNOSTIC-V45",
+  "registered_at": "2026-08-02T16:10:00+08:00",
+  "timing_and_scope": {
+    "registered_after_locked_v45_result": true,
+    "diagnostic_only": true,
+    "confirmatory_or_causal_claim_authorized": false,
+    "method_selection_or_threshold_tuning_authorized": false,
+    "v45_outcome_may_change": false
+  },
+  "frozen_inputs": {
+    "locked_result_sha256": "53f2e6ca555184bb0d5e473f7c4d4df19e102a9bceed42f930ae85ee20a6ed84",
+    "scored_blind_cache_sha256": "7ecba0f941c26f332caf042a692f4370012b77d60a0fa623aae8895b7b5136dc",
+    "frozen_selector_module_sha256": "7f3c60e7aec7d93951fd3b12b52d12c2258f00daec324d448abe7e5de2ec2c7d",
+    "cases": 360,
+    "budgets": [512, 1024, 1500],
+    "expected_case_budget_configurations": 1080
+  },
+  "allowed_fields": [
+    "case id",
+    "candidate id and source id",
+    "candidate token count",
+    "cross-encoder and dynamic-role scores"
+  ],
+  "forbidden_inputs": [
+    "qa.gold_inds or mapped gold candidate ids",
+    "answer, program or execution answer",
+    "source mode or gold count",
+    "question or candidate text content",
+    "supporting-fact metric or method outcome"
+  ],
+  "frozen_metrics": [
+    "v44 and v45 target-cardinality equality rate",
+    "ordered-selection equality rate",
+    "unordered-selection equality rate",
+    "v44 final-set retention rate of the highest feasible cross-encoder anchor",
+    "v44 first-selected-candidate equality rate with that anchor",
+    "configuration counts by budget and target cardinality",
+    "all preceding rates repeated by budget and target cardinality"
+  ],
+  "interpretation_rules": {
+    "all_ordered_selections_equal": "The explicit v45 anchor operation is behaviorally redundant with v44 on the frozen FinQA score cache; this explains zero metric delta but does not prove general redundancy.",
+    "sets_equal_but_orders_differ": "The two selectors choose the same evidence sets but traverse them differently; set-valued metrics cannot detect the ordering difference.",
+    "some_sets_differ": "The zero aggregate metric delta is coincidental at the locked endpoint and cannot be attributed to selector equivalence.",
+    "any_alignment_or_blindness_failure": "Stop without a diagnostic result."
+  },
+  "publication_boundary": {
+    "publish_null_or_non_equivalent_result": true,
+    "no_new_support_check": true,
+    "no_selector_adoption": true,
+    "no_reuse_of_v45_for_tuning": true,
+    "gate_2": "NO-GO/SHADOW"
+  }
+}

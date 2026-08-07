@@ -1,0 +1,145 @@
+{
+  "schema_version": "frc-hotpot-graph-router-protocol-v76",
+  "experiment_id": "FRC-HOTPOT-GRAPH-SOFT-OVERRIDE-ROUTER-V76",
+  "frozen_on": "2026-08-04",
+  "research_question": "Can a graph- and score-feature router trained only on 1000 permanently excluded HotpotQA cases safely override cross-encoder top-k with the frozen v74 soft title-link closure and outperform every same-resource registered control on two balanced, case-disjoint HotpotQA stages?",
+  "history_boundary": {
+    "model_artifact": "docs/progressive_upgrade/hotpot_graph_router_model_development_v76.json",
+    "model_development_history_cases": 1000,
+    "all_history_ids_excluded_from_both_target_stages": true,
+    "all_1089_historical_configurations_used_only_permanently_excluded_history": true,
+    "no_v76_target_case_id_row_score_or_metric_used_to_choose_features_model_hyperparameters_threshold_controls_gates_or_stage_size": true
+  },
+  "stages": {
+    "development": {
+      "source_split": "distractor/validation",
+      "cases": 800,
+      "question_type_quota": {
+        "bridge": 400,
+        "comparison": 400
+      },
+      "ordering": "SHA-256('FRC-HOTPOT-V76-DEVELOPMENT|' + case id), then case id",
+      "exclude_all_1000_history_ids": true
+    },
+    "confirmation": {
+      "source_split": "distractor/validation",
+      "cases": 800,
+      "question_type_quota": {
+        "bridge": 400,
+        "comparison": 400
+      },
+      "ordering": "SHA-256('FRC-HOTPOT-V76-CONFIRMATION|' + case id), then case id",
+      "exclude_all_history_and_v76_development_ids": true,
+      "open_only_if_every_development_gate_passes": true
+    }
+  },
+  "common_resources": {
+    "top_k": 5,
+    "token_budget": 1500,
+    "embedding_model": "BAAI/bge-large-en-v1.5@d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "score_calibration": "per-case min-max",
+    "role_relevance_mix": 0.15,
+    "rrf_k": 60
+  },
+  "candidate": {
+    "name": "graph_gbr_soft_override_router_v76",
+    "model_artifact_sha256": "5bdcf7a229d4208d472b33478c073f29dba082bc012b48c0d2aadad47ad4ecfb",
+    "model_payload_sha256": "8923f0315e24f38e0552e8140377fe18f8647e76c0cac33f534b451f850eddf0",
+    "model_type": "gradient_boosting_regressor_export",
+    "runtime_target": "soft_title_link_evidence_f1_minus_cross_encoder_evidence_f1",
+    "feature_count": 71,
+    "feature_names_sha256": "51e029bb0b26995989365a7420275d27c78253fb0151c8a0183bd0811dc55548",
+    "features": "gold-free graph topology, candidate scores, selector overlaps and frozen v75 question probability",
+    "estimators": 25,
+    "max_depth": 2,
+    "min_samples_leaf": 40,
+    "learning_rate": 0.1,
+    "loss": "huber",
+    "random_state": 7,
+    "override_threshold": 0.0,
+    "default_route": "cross_encoder_topk",
+    "positive_route": "soft_title_link_support_path_closure_v74",
+    "official_type_answer_or_gold_used_at_runtime": false
+  },
+  "controls": [
+    "cross_encoder_topk",
+    "frc_select",
+    "soft_title_link_support_path_closure_v74",
+    "alternating_anchor_link_control",
+    "lexical_question_router_control",
+    "zero_shot_v75_question_router_control"
+  ],
+  "metrics": {
+    "primary": "evidence_macro_f1",
+    "secondary": [
+      "complete_evidence_recall",
+      "evidence_macro_recall",
+      "soft_override_rate",
+      "mean_selected_tokens",
+      "per_question_type_evidence_macro_f1"
+    ],
+    "paired_uncertainty": "10000 case bootstrap resamples",
+    "development_seed": 20261031,
+    "confirmation_seed": 20261032
+  },
+  "development_gates": {
+    "exact_cases": 800,
+    "exact_question_type_balance": true,
+    "history_or_stage_overlap": 0,
+    "invalid_selector_output_rate": 0.0,
+    "candidate_evidence_macro_f1_at_least": 0.55,
+    "candidate_complete_evidence_recall_at_least": 0.55,
+    "candidate_minus_strongest_registered_control_f1_at_least": 0.005,
+    "candidate_minus_strongest_registered_control_ci_low_above": 0.0,
+    "candidate_minus_cross_encoder_f1_at_least": 0.005,
+    "candidate_minus_cross_encoder_ci_low_above": 0.0,
+    "every_question_type_delta_vs_best_control_at_least": -0.005,
+    "soft_override_rate_between_inclusive": [
+      0.15,
+      0.55
+    ],
+    "mean_selected_tokens_not_above_strongest_control_by_more_than_fraction": 0.05
+  },
+  "gate_rationale": {
+    "source": "permanently excluded 1000-case HotpotQA history only",
+    "historical_oof_candidate_f1": 0.562448,
+    "historical_oof_complete_evidence_recall": 0.722,
+    "historical_oof_delta_vs_cross_encoder": 0.011694,
+    "historical_oof_delta_ci": [
+      0.006596,
+      0.01691
+    ],
+    "historical_oof_comparison_delta_vs_cross_encoder": -0.00145,
+    "historical_oof_soft_override_rate": 0.346,
+    "target_stage_data_used": false
+  },
+  "confirmation_policy": {
+    "all_development_gates_required": true,
+    "no_target_stage_tuning": true,
+    "confirmation_uses_identical_router_selectors_controls_metrics_and_thresholds": true,
+    "confirmation_success_does_not_authorize_production_or_gate_2_promotion": true
+  },
+  "leakage_controls": {
+    "stage_selection_uses_only_case_id_and_official_question_type_for_balanced_sampling": true,
+    "official_question_type_not_used_by_runtime_router": true,
+    "model_side_blind_rows_exclude_answer_gold_evidence_ids_gold_flags_and_gold_roles": true,
+    "selection_outputs_written_before_gold_join": true,
+    "audited_case_evidence_excludes_question_context_answer_and_candidate_text": true
+  },
+  "stopping_and_outcomes": {
+    "development_failure": "HOTPOT_V76_GRAPH_ROUTER_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+    "development_success": "HOTPOT_V76_GRAPH_ROUTER_DEVELOPMENT_SUPPORT_ESTABLISHED_OPEN_CONFIRMATION",
+    "confirmation_failure": "HOTPOT_V76_GRAPH_ROUTER_CONFIRMATION_SUPPORT_NOT_ESTABLISHED",
+    "confirmation_success": "HOTPOT_V76_GRAPH_ROUTER_CASE_DISJOINT_SUPPORT_ESTABLISHED",
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "claim_limits": [
+    "Not an official HotpotQA leaderboard result.",
+    "Independent public dataset from the v75 2Wiki experiment, but not independent training data from the v76 HotpotQA history.",
+    "Not strict independent model-training confirmation.",
+    "Not answer generation, automatic decomposition, real SetR comparison, flood-domain expert validation, production, CANARY, or DEFAULT evidence."
+  ]
+}

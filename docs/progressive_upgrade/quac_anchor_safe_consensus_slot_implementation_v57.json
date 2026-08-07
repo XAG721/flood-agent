@@ -1,0 +1,46 @@
+{
+  "schema_version": "frc-quac-anchor-safe-consensus-slot-implementation-v57",
+  "experiment_id": "FRC-QUAC-ANCHOR-SAFE-CONSENSUS-SLOT-V57",
+  "registered_at": "2026-08-03T02:31:00+08:00",
+  "hashes": {
+    "protocol_sha256": "bd5dab2f9166cfc2ac9e256ee772ec13d87a29ed00093adcec91f491ab44f810",
+    "source_registration_sha256": "8ccd3f1bffb8292c114d17e0d734f2651122906f33b2a101f801d0b0bde702c9",
+    "module_sha256": "ff0641a91f8eb78ef6f1c84fae7cde7912a6152f2ec0edc596a9ca4982cc619a",
+    "runner_sha256": "58a9dda3f794fc624623365096a46d993f724aa413ace8a5f21953cc3adb4e73",
+    "test_sha256": "6cf46c8dc8e74db2307cb3154353aa10405a8a01879ed86952883cc1c0382a1e"
+  },
+  "implementation": {
+    "candidate": "anchor_safe_single_slot_consensus_frc_v57",
+    "baseline_floor": "shared-gate cross_encoder_topk exact selection",
+    "maximum_replacement_count": 1,
+    "preserved_baseline_prefix_when_five_selected": 4,
+    "eligible_anchor_ranks": [6, 12],
+    "supporting_role_top_k": 3,
+    "minimum_supporting_roles": 2,
+    "learned_parameter": null,
+    "query_generator": null,
+    "fallback_behavior": "exact shared-gate cross-encoder Top-5",
+    "validation_open_condition": "all registered development gates pass"
+  },
+  "synthetic_invariants_verified": {
+    "protocol_hash_and_formula_frozen": true,
+    "current_answer_hidden_and_prior_history_bounded": true,
+    "candidate_offsets_preserved_and_trailing_sentinel_excluded": true,
+    "balanced_sampling_order_invariant_and_caps_respected": true,
+    "same_context_length_quartile_decoys_without_fallback": true,
+    "single_slot_replacement_preserves_first_four": true,
+    "no_consensus_and_budget_overflow_reproduce_baseline": true,
+    "gold_interval_join_deferred_until_complete_score_cache": true,
+    "confirmation_rejected_without_passing_development_result": true,
+    "ruff_static_checks_passed": true,
+    "python_compile_checks_passed": true
+  },
+  "synthetic_test_command": "python -m pytest tests/test_frc_quac_anchor_safe_consensus_slot.py -q",
+  "synthetic_test_result": "9 passed",
+  "quac_json_opened_before_implementation_registration": false,
+  "train_json_opened_before_implementation_registration": false,
+  "validation_json_opened_before_implementation_registration": false,
+  "v56_case_level_artifact_query_candidate_score_or_prediction_reused": false,
+  "method_formula_change_after_registration_forbidden": true,
+  "development_reuse_for_tuning_or_selection_forbidden": true
+}

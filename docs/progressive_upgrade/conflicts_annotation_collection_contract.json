@@ -1,0 +1,119 @@
+{
+  "schema_version": "frc-conflicts-annotation-collection-contract-v1",
+  "contract_id": "CONFLICTS-ANNOTATION-COLLECTION-V31",
+  "registered_on": "2026-08-01",
+  "status": "PRIVATE_COLLECTION_ORCHESTRATION_READY_AWAITING_HUMANS",
+  "purpose": "Audit all finalized private review batches, verify receipts and independent identities, run frozen within-reviewer quality control, and prepare a private comparison without opening the A/B method mapping.",
+  "frozen_inputs": {
+    "operations_manifest_path": "output/rag_evaluation/conflicts_annotation_operations/manifest.json",
+    "operations_manifest_file_sha256": "8af745c52f02c34207559806873d67ec5649104194a590ab82f906dfc0081ae3",
+    "operations_id": "CONFLICTS-ANNOTATION-OPS-5A6EE0F6420F2251",
+    "package_path": "output/rag_evaluation/conflicts_expected_behavior/package.jsonl.gz",
+    "package_file_sha256": "484c27ad8c5dc25c659ac244a5317926fd892ee9c0fb82885370423a1bc54813",
+    "routing_sha256": "b4818883beb4ed3e256895a2161f2641656707639ded4ee858633e5e4bb25ef3",
+    "reviewer_slots": [
+      "reviewer_1",
+      "reviewer_2",
+      "adjudicator"
+    ],
+    "batch_count_per_slot": 8,
+    "expected_finalized_batch_count": 24,
+    "minimum_exact_agreement_each_dimension": 0.8,
+    "protocol_or_public_inputs_rewritten": false
+  },
+  "collection_audit": {
+    "batch_states": [
+      "MISSING",
+      "IN_PROGRESS",
+      "COMPLETE_NOT_FINALIZED",
+      "FINALIZED",
+      "INVALID"
+    ],
+    "receipt_checks": [
+      "receipt schema and exact fields",
+      "operation, package, role and batch identity",
+      "canonical submission SHA-256",
+      "timezone-aware finalization timestamp",
+      "complete batch progress",
+      "human evidence remains incomplete before final adjudication",
+      "Gate 2 remains NO-GO/SHADOW"
+    ],
+    "same_private_identity_required_across_slot_batches": true,
+    "different_private_identity_required_across_roles": true,
+    "raw_private_identity_emitted_in_status": false,
+    "ready_status": "READY_FOR_PRIVATE_MERGE",
+    "invalid_status": "INVALID_REVIEW_COLLECTION"
+  },
+  "private_merge": {
+    "entrypoint": "scripts/run_conflicts_annotation_collection.py merge",
+    "package_hash_verified": true,
+    "routing_commitment_verified": true,
+    "all_three_roles_validated_before_writes": true,
+    "old_manifest_invalidated_before_private_file_writes": true,
+    "new_manifest_published_last_atomically": true,
+    "stale_comparison_removed_when_qc_fails": true,
+    "merged_submission_count": 3,
+    "intrarater_qc_report_count": 3,
+    "reviewer_comparison_created_only_after_all_qc_passes": true,
+    "qc_failure_status": "REVIEW_REQUIRED",
+    "ready_status": "READY_FOR_BLIND_MAPPING_VERIFICATION_AND_FINALIZATION"
+  },
+  "privacy_and_security": {
+    "draft_root_git_ignored": true,
+    "routing_root_git_ignored": true,
+    "merge_output_root_git_ignored": true,
+    "resolved_paths_must_remain_inside_repository_cache": true,
+    "blind_mapping_loaded": false,
+    "method_identity_loaded": false,
+    "status_exposes_only_truncated_identity_hashes": true,
+    "private_merge_manifest_exposes_raw_identity": false,
+    "ci_requires_private_cache": false
+  },
+  "verification": {
+    "automated_test_path": "tests/test_frc_conflicts_annotation_collection.py",
+    "automated_test_count": 5,
+    "automated_test_status": "PASS",
+    "synthetic_fixture_statuses": [
+      "READY_FOR_PRIVATE_MERGE",
+      "INVALID_REVIEW_COLLECTION",
+      "READY_FOR_BLIND_MAPPING_VERIFICATION_AND_FINALIZATION",
+      "REVIEW_REQUIRED"
+    ],
+    "synthetic_test_data_is_human_evidence": false,
+    "real_private_status_command": "python scripts/run_conflicts_annotation_collection.py status",
+    "real_private_status_observed": "AWAITING_INDEPENDENT_HUMAN_BATCHES",
+    "real_present_batch_count_observed": 0,
+    "real_finalized_batch_count_observed": 0,
+    "real_expected_batch_count": 24,
+    "real_status_written_to_public_output": false
+  },
+  "implementation": {
+    "files": [
+      {
+        "path": "research/frc_rag/conflicts_annotation_collection.py",
+        "sha256": "15e8958aa252a6a9313f573c9cd5564c15effab13fa829fdf79c74db77aa7e4b"
+      },
+      {
+        "path": "scripts/run_conflicts_annotation_collection.py",
+        "sha256": "c0bf5a1c909811f788470cd7dc542c88924a2c0343fbee099de0caa1860c8a1f"
+      },
+      {
+        "path": "tests/test_frc_conflicts_annotation_collection.py",
+        "sha256": "a44afdfc5215c515f605de9bf70bb97826a59e5b32af5ecdda9d7c297ed96e65"
+      }
+    ]
+  },
+  "decision_boundary": {
+    "collection_tool_ready": true,
+    "real_human_batches_started": false,
+    "independent_batch_collection_complete": false,
+    "intrarater_qc_complete": false,
+    "inter_annotator_comparison_complete": false,
+    "final_adjudication_complete": false,
+    "human_evidence_complete": false,
+    "may_open_blind_mapping": false,
+    "may_change_gate_2": false,
+    "gate_2": "NO-GO/SHADOW",
+    "production_readiness": "NO-GO_EXTERNAL"
+  }
+}

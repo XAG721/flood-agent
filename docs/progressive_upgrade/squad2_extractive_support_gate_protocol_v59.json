@@ -1,0 +1,149 @@
+{
+  "schema_version": "frc-squad2-extractive-support-gate-protocol-v59",
+  "experiment_id": "FRC-SQUAD2-EXTRACTIVE-SUPPORT-GATE-V59",
+  "registered_at": "2026-08-03T17:02:00+08:00",
+  "purpose": "Prospectively test whether a frozen local extract-or-abstain verifier restores answer-bearing recall while retaining adversarial no-answer rejection, and whether the strongest previously frozen FRC selector establishes utility beyond non-FRC methods under the identical shared verifier decision.",
+  "v58_boundary": {
+    "development_status": "SQUAD2_V58_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+    "allowed_aggregate_motivation": {
+      "support_verifier_balanced_accuracy": 0.71,
+      "answer_bearing_pass_rate": 0.56,
+      "no_answer_rejection_rate": 0.86,
+      "gated_exact_anchor_minus_ungated_exact_anchor": 0.331706,
+      "v49_candidate_minus_strongest_shared_gate_non_frc": 0.107759,
+      "v49_candidate_minus_strongest_same_gate_frc": -0.004444,
+      "strongest_same_gate_frc": "qwen_supported_adaptive_argmax_cardinality_frc_v43_v58"
+    },
+    "case_level_query_candidate_score_prediction_gold_or_raw_support_output_inspected_or_reused": false,
+    "only_v58_case_commitment_hashes_used_to_force_zero_overlap": true,
+    "v58_development_sample_overlap_allowed": false,
+    "v58_confirmation_dev_opened": false,
+    "squad2_train_source_previously_parsed_by_frozen_v58_code": true,
+    "individual_unsampled_train_case_outcomes_used_for_v59_design": false
+  },
+  "theoretical_mechanism": {
+    "name": "shared_extractive_support_gate_plus_transferred_adaptive_argmax_frc_v59",
+    "extract_or_abstain": "The frozen local model must copy the shortest contiguous paragraph span that directly answers the question, or return exactly UNSUPPORTED when no such span exists.",
+    "support_parse": "UNSUPPORTED maps to rejection. A non-empty output that occurs as a contiguous case-insensitive substring of the paragraph maps to support. Any other output is invalid, fails closed to rejection, and counts against the invalid-output gate.",
+    "shared_gate": "The one case-level decision is reused unchanged for every token budget and gated selector.",
+    "candidate_selector": "Reuse adaptive_argmax_cardinality_frc_v43 exactly, selected prospectively because it was the strongest same-gate FRC family member in the allowed v58 aggregate report.",
+    "family_claim": "The primary selector claim is FRC-family feasibility against non-FRC methods, not novelty over all earlier FRC variants; therefore other frozen FRC methods are a non-inferiority safety comparison.",
+    "learned_parameter": null
+  },
+  "source_and_split": {
+    "official_homepage": "https://rajpurkar.github.io/SQuAD-explorer/",
+    "paper": "https://arxiv.org/abs/1806.03822",
+    "license": "CC BY-SA 4.0",
+    "source_registration": "docs/progressive_upgrade/squad2_source_registration_v58.json",
+    "source_registration_sha256": "85f1e206ab0ef1d566f398974ad665045d98789bc2130b81adb9cf1eac6a331c",
+    "development_source": "train-v2.0.json after excluding every v58 development source-case commitment",
+    "conditional_confirmation_source": "dev-v2.0.json, still unopened",
+    "hidden_test_available_locally": false
+  },
+  "access_order": [
+    "Freeze this protocol, implementation, prompt, parser, disjoint-sampling rule and synthetic invariants before constructing the new train sample.",
+    "Hash and validate the existing v58 source registration and source bytes without opening dev.",
+    "Read only v58 source-case commitment hashes to construct the exclusion set; do not read v58 case queries, candidates, scores, predictions, gold rows or evidence.",
+    "Parse train through the frozen source reader and construct a new 600-case blind sample with zero commitment overlap.",
+    "Register blind caches, runtime and model hashes before BGE scoring or Qwen generation.",
+    "Complete every score and extractive-support row before joining answer state or gold intervals.",
+    "Open dev exactly once only when every development gate passes; otherwise publish closure and keep dev unopened."
+  ],
+  "scope": {
+    "development_cases": 600,
+    "confirmation_cases": 600,
+    "answer_bearing_per_stage": 300,
+    "no_answer_per_stage": 300,
+    "maximum_cases_per_paragraph": 2,
+    "maximum_cases_per_article_per_answer_state": 12,
+    "minimum_paragraphs": 250,
+    "minimum_articles_development": 100,
+    "minimum_articles_confirmation": 25,
+    "development_salt": "FRC-SQUAD2-V59-DISJOINT-DEVELOPMENT|",
+    "confirmation_salt": "FRC-SQUAD2-V59-CONFIRMATION|",
+    "v58_development_overlap": 0,
+    "article_cluster_bootstrap": true,
+    "balanced_mechanism_sample_not_natural_prevalence": true
+  },
+  "blind_task": {
+    "case_answer_state_and_gold": "Identical SQuAD 2.0 schema and deterministic evidence-unit construction to frozen v58.",
+    "model_visible_verifier_input": "Current question and full provided paragraph only.",
+    "model_visible_retrieval_input": "Current question and deterministic paragraph units only.",
+    "forbidden": "Raw ids, title, is_impossible, answers, plausible_answers, v58 case artifacts and gold intervals.",
+    "candidate_units": "Frozen v58 sentence/overlong-window construction.",
+    "budgets": [128, 256, 512]
+  },
+  "models": {
+    "embedding": "BAAI/bge-large-en-v1.5@refs/pr/5 offline",
+    "reranker": "BAAI/bge-reranker-large@refs/pr/4 offline",
+    "score_calibration": "per_case_minmax",
+    "support_verifier": "Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4",
+    "support_verifier_revision": "e9c932ac1893a49ae0fc497ad6e1e86e2e39af20",
+    "support_verifier_hash_contract": "Identical nine-file SHA-256 manifest to frozen v58 protocol and execution registration.",
+    "generation": {
+      "do_sample": false,
+      "max_new_tokens": 48,
+      "maximum_input_tokens": 3072,
+      "batch_size": 16,
+      "padding_side": "left"
+    }
+  },
+  "frozen_extractive_prompt": "Copy the shortest contiguous span from the paragraph that directly answers the question. Return only that exact span and no explanation. If the paragraph does not contain a span that answers the requested fact, return exactly UNSUPPORTED. A related topic, a plausible guess, or an unstated assumption is not an answer. Do not use outside knowledge.\n\nQuestion: {question}\n\nParagraph:\n{context}\n\nAnswer span or UNSUPPORTED:",
+  "frozen_atomic_queries": "Identical four deterministic v58 BGE queries; no query generation model.",
+  "methods": {
+    "candidate": "qwen_span_supported_adaptive_argmax_cardinality_frc_v43_transferred_v59",
+    "gated_exact_anchor_ablation": "qwen_span_supported_cross_encoder_topk_v59",
+    "shared_gate_non_frc": "All five frozen v49 non-FRC selectors under the identical extractive support decision.",
+    "same_gate_frc_safety_controls": "All frozen v49 FRC methods other than adaptive_argmax_cardinality_frc_v43, including low_core_divergence_guarded_frc_v49.",
+    "ungated_controls": "All frozen v49 methods."
+  },
+  "evaluation": {
+    "primary": "answer_or_abstention_macro_f1",
+    "answer_metric": "Exact evidence-unit set F1 against official answer-overlap units; not answer-string EM/F1.",
+    "no_answer_metric": "Exact empty selection.",
+    "verifier_metric": "Balanced accuracy, answer-bearing span pass rate, no-answer rejection rate and invalid-output rate.",
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 20260819,
+    "minimum_supported_stratum_cases": 50,
+    "mandatory_strata": [
+      "answer state",
+      "paragraph-length quartile",
+      "candidate-count quartile",
+      "answer-length quartile",
+      "article case-count quartile",
+      "support-verifier outcome"
+    ]
+  },
+  "development_gates_all_required": {
+    "exact_cases_balance_caps_minimum_clusters_and_zero_v58_overlap": true,
+    "schema_exclusion_rate_at_most": 0.01,
+    "candidate_ceiling_complete_rate_at_least": 0.99,
+    "support_verifier_balanced_accuracy_at_least": 0.75,
+    "answer_bearing_span_pass_rate_at_least": 0.75,
+    "no_answer_rejection_rate_at_least": 0.65,
+    "invalid_output_rate_at_most": 0.02,
+    "gated_exact_anchor_minus_ungated_exact_anchor_point_at_least": 0.1,
+    "gated_exact_anchor_minus_ungated_exact_anchor_ci_low_above": 0.0,
+    "candidate_minus_gated_exact_anchor_point_at_least": 0.05,
+    "candidate_minus_gated_exact_anchor_ci_low_above": 0.0,
+    "candidate_minus_strongest_shared_gate_non_frc_point_at_least": 0.05,
+    "candidate_minus_strongest_shared_gate_non_frc_ci_low_above": 0.0,
+    "candidate_minus_strongest_same_gate_frc_point_at_least": -0.005,
+    "answer_recall_drop_vs_ungated_exact_anchor_at_most": 0.1,
+    "candidate_no_answer_abstention_accuracy_at_least": 0.65,
+    "candidate_abstention_rate_between": [0.2, 0.7],
+    "every_budget_and_supported_stratum_delta_vs_non_frc_at_least": -0.02,
+    "query_and_score_fallback_rates": 0.0
+  },
+  "outcomes": {
+    "development_support": "SQUAD2_V59_DEVELOPMENT_SUPPORT_ESTABLISHED_OPEN_CONFIRMATION",
+    "development_failure": "SQUAD2_V59_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+    "confirmation_support": "SQUAD2_V59_EXTRACTIVE_SUPPORT_FRC_FEASIBILITY_ESTABLISHED",
+    "confirmation_failure": "SQUAD2_V59_EXTRACTIVE_SUPPORT_FRC_FEASIBILITY_NOT_ESTABLISHED",
+    "confirmation_open_only_after_all_development_gates": true,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "scope_limits": "Balanced public closed-paragraph mechanism evidence; not official answer-string scoring, hidden-test submission, open-corpus retrieval, SetR reproduction, flood-domain validation or rollout authorization."
+}

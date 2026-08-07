@@ -1,0 +1,64 @@
+{
+  "schema_version": "frc-doc2dial-wood-v55-pre-scoring-schema-result-v1",
+  "experiment_id": "FRC-DOC2DIAL-WOOD-DOCUMENT-CONTRASTIVE-TRANSFER-V55",
+  "closed_at": "2026-08-03T00:27:00+08:00",
+  "stage": "development",
+  "phase_reached": "pre_scoring_schema_adaptation",
+  "registered_artifacts": {
+    "protocol_sha256": "6765c57d535968272fc5b06d75295f876d9eb7e9d202fa884d0e22452e2d9fc5",
+    "source_registration_sha256": "cceb996cf715c8dd611f817280141e6764148a2ebaef9450feabf8fd67ea4a04",
+    "implementation_registration": "docs/progressive_upgrade/doc2dial_wood_document_contrastive_transfer_implementation_v55.json",
+    "source_archive_sha256": "9143efd9d12ca30b1c772f65102b1c3e77d625fca03e69d316773acea5406786"
+  },
+  "frozen_prepare_command": "python scripts/run_doc2dial_wood_document_contrastive_transfer.py prepare --stage development",
+  "observed_error": "ValueError: Doc2Dial wOOD v55 turns are absent",
+  "schema_only_census_after_failure": {
+    "dialogues": 3471,
+    "documents": 415,
+    "turn_container_shapes": {
+      "list": 3459,
+      "dict": 12
+    },
+    "candidate_user_to_agent_turns": 23149,
+    "answer_bearing_nonempty_reference": 19946,
+    "empty_reference_with_adjacent_ood_act": 2772,
+    "empty_reference_without_adjacent_ood_act": 431,
+    "strict_v55_schema_exclusion_rate_if_dict_containers_were_supported": 0.018618,
+    "eligible_dialogues_under_reference_or_ood_rule": 3459
+  },
+  "interpretation": {
+    "container_issue": "Twelve old-version dialogues encode turns as a keyed object rather than a list; the registered adapter accepted only lists.",
+    "label_issue": "The v55 protocol required an adjacent OOD dialogue act for an empty-reference no-answer case, but the official README states more broadly that an empty reference indicates the previous query is not answerable or is irrelevant.",
+    "closure": "The registered v55 implementation and label rule are not modified after source access. A separate schema-correction protocol may support both deterministic turn containers and use the official empty-reference semantics, but must disclose the v55 schema-only access."
+  },
+  "access_and_execution_boundary": {
+    "document_member_opened": true,
+    "wood_development_member_opened_for_schema_adapter": true,
+    "wood_confirmation_member_opened_or_parsed": false,
+    "woood_sibling_member_opened_or_parsed": false,
+    "schema_inspection_exposed_top_level_keys_container_types_and_document_dictionary_keys": true,
+    "utterance_span_text_reference_value_or_model_score_printed_or_persisted": false,
+    "blind_cache_written": false,
+    "query_generation_started": false,
+    "neural_scoring_started": false,
+    "gold_join_started": false,
+    "metrics_computed": false,
+    "v55_implementation_changed_after_member_access": false
+  },
+  "analysis": {
+    "support_checks": {
+      "registered_schema_adapter_accepts_all_turn_containers": false,
+      "registered_schema_exclusion_rate_at_most_0_01": false,
+      "confirmation_open_authorized": false
+    },
+    "outcome": {
+      "status": "DOC2DIAL_WOOD_V55_SCHEMA_INCONCLUSIVE_STOP",
+      "support_established": false,
+      "confirmation_open_authorized": false,
+      "selector_adoption_authorized": false,
+      "canary_or_default_authorized": false,
+      "reuse_development_outcomes_for_tuning_or_selection": false,
+      "gate_2": "NO-GO/SHADOW"
+    }
+  }
+}

@@ -1,0 +1,233 @@
+{
+  "schema_version": "frc-finqa-anchor-guarded-atomic-roles-protocol-v45",
+  "experiment_id": "FRC-FINQA-ANCHOR-GUARDED-ATOMIC-ROLES-V45",
+  "registered_at": "2026-08-02T14:30:00+08:00",
+  "purpose": "Prospectively test whether preserving the strongest relevance anchor before role-coverage filling improves the frozen v44 guarded selector on an untouched hybrid table-text evidence dataset without sacrificing its evidence-count reduction.",
+  "development_boundary": {
+    "v44_result_status": "OTTQA_GUARDED_ADAPTIVE_SUPPORT_NOT_ESTABLISHED",
+    "v44_cases_must_not_be_rescored_or_used_for_v45_parameter_selection": true,
+    "source_heterogeneity_observed_in_v44_is_motivation_only": true,
+    "no_v44_metric_threshold_formula_or_case_is_used_to_fit_v45": true,
+    "v45_formula_is_frozen_by_synthetic_invariants_only": true
+  },
+  "official_sources": {
+    "repository": "https://github.com/czyssrs/FinQA",
+    "revision": "0f16e2867befa6840783e58be38c9efb9229d742",
+    "paper": "https://aclanthology.org/2021.emnlp-main.300/",
+    "project_site": "https://finqasite.github.io/",
+    "code_license": "MIT as identified by the official repository",
+    "dataset_license": "CC BY 4.0 as stated by the official project site",
+    "registered_split": "dataset/dev.json",
+    "registered_source_code": [
+      "retriever/finqa_utils.py",
+      "dataset/dev.json",
+      "LICENSE"
+    ]
+  },
+  "pre_registration_access_disclosure": {
+    "allowed_metadata_seen": [
+      "official repository README",
+      "official project-site dataset summary",
+      "repository branch commit id from git ls-remote",
+      "README schema names pre_text, post_text, table, id, qa.question, qa.program, qa.gold_inds, qa.exe_ans and qa.program_re",
+      "README statement that the corrected table_row_to_text implementation fixes label leakage"
+    ],
+    "sample_content_seen": false,
+    "readme_example_ids_seen_and_permanently_excluded": [
+      "ETR/2016/page_23.pdf-2",
+      "INTC/2015/page_41.pdf-4"
+    ],
+    "dev_json_downloaded_or_opened_before_protocol_hash": false,
+    "question_answer_program_gold_inds_table_or_report_text_seen_before_protocol_hash": false
+  },
+  "source_access_order": [
+    "Write and hash this protocol.",
+    "Implement and test the selector, candidate conversion, sealed sampling, blind-cache and evaluation logic using synthetic fixtures only.",
+    "Register implementation and test hashes before acquiring the pinned source archive.",
+    "Acquire the pinned official source archive without printing or browsing registered JSON content.",
+    "Verify archive, Git revision, license and selected source hashes; register a structural census and sealed candidate ceiling before query generation.",
+    "Generate all queries and neural scores without gold fields, validate complete ordered caches, then join qa.gold_inds for one locked evaluation.",
+    "Publish favorable, null, negative or inconclusive results and do not tune on v45 cases."
+  ],
+  "dataset_scope": {
+    "evaluation_name": "FinQA full-context supporting-fact selection confirmation",
+    "split": "official dataset/dev.json at the pinned revision",
+    "eligible_before_sampling": [
+      "record has nonempty id, pre_text, post_text, table and qa.question",
+      "qa.gold_inds is a nonempty object",
+      "every gold_inds key maps exactly to a candidate emitted by the pinned corrected official conversion",
+      "at least three candidate units are available",
+      "record id is not permanently excluded"
+    ],
+    "gold_source_mode": "table_only when every mapped gold key is a table unit, text_only when no mapped gold key is a table unit, and hybrid otherwise; this field is allowed only for sealed sampling and post-score stratification",
+    "sampling_rule": "Within table_only, text_only and hybrid source modes, sort eligible records by SHA-256 of 'FRC-FINQA-V45|' plus record id and then record id; take the first 120 per mode. If a mode has 60 to 119 eligible records, take all of that mode and fill toward 360 from the remaining modes by the same hash ordering. If any mode has fewer than 60 or total selected cases are fewer than 240, stop as inconclusive before query generation.",
+    "target_cases": 360,
+    "minimum_total_cases": 240,
+    "minimum_cases_per_source_mode": 60,
+    "no_replacement": true,
+    "no_post_download_resampling": true
+  },
+  "blind_candidate_construction": {
+    "text_units": "one candidate per official pre_text or post_text item, with canonical ids preserving the official index",
+    "table_units": "reuse the corrected table_row_to_text implementation from the pinned official revision byte-for-byte; preserve its official row identity as the canonical candidate id",
+    "pool": "all text and table units from the same report record; no gold-driven pruning, oracle answer matching or learned first-stage truncation",
+    "stored_fields": [
+      "case_id",
+      "obfuscated record id commitment",
+      "candidate canonical id",
+      "candidate source type",
+      "candidate text",
+      "candidate token cost"
+    ],
+    "forbidden_blind_fields": [
+      "answer",
+      "program",
+      "program_re",
+      "gold_inds",
+      "exe_ans",
+      "gold source mode",
+      "gold count",
+      "answer-derived strings",
+      "official retrieval labels or scores"
+    ],
+    "candidate_ceiling_registration": "After sealed sampling and candidate construction, qa.gold_inds may be used only to verify exact mapping coverage and source-mode counts. No method, formula, threshold, query or candidate member may change afterward.",
+    "protective_behavior": "Any unmapped gold key, duplicate canonical id, forbidden blind field, alignment mismatch or nondeterministic rerun stops before query generation and writes no score cache."
+  },
+  "frozen_models": {
+    "atomic_query_generator": "Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4",
+    "atomic_query_generator_revision": "e9c932ac1893a49ae0fc497ad6e1e86e2e39af20",
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "offline_loading": true,
+    "score_calibration": "per-case independent min-max inherited from v41",
+    "rank_coverage_weight": 0.5
+  },
+  "methods": {
+    "shared_candidate_pool": true,
+    "top_k": 5,
+    "token_budgets": [512, 1024, 1500],
+    "non_frc_baselines": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "cross_encoder_knapsack"
+    ],
+    "frc_controls": [
+      "static_threshold_frc_v39_replay",
+      "static_rank_coverage_frc_v41",
+      "dynamic_rank_coverage_frc_v41",
+      "adaptive_argmax_cardinality_frc_v43",
+      "guarded_adaptive_cardinality_frc_v44"
+    ],
+    "candidate_method": "anchor_guarded_adaptive_cardinality_frc_v45",
+    "candidate_method_formula": [
+      "Compute the unchanged four v41 dynamic atomic-role score columns and the unchanged cross-encoder relevance score for every candidate.",
+      "Let distinct_role_argmax be the number of distinct canonical candidate ids that are role-score argmaxes, with ties broken by canonical id.",
+      "Let target_cardinality = min(5, max(3, distinct_role_argmax + 1)), identical to v44.",
+      "Among candidates feasible under the token budget, select the maximum cross-encoder relevance candidate first, breaking ties by canonical id; this is the relevance anchor.",
+      "Fill the remaining target_cardinality minus one slots with the unchanged v41 dynamic rank-coverage greedy objective and deterministic tie-breaking, never selecting a duplicate and never exceeding the token budget.",
+      "If no candidate is individually feasible, return an empty set. The anchor is mandatory whenever at least one candidate is feasible.",
+      "No source type, answer, program, gold key, gold count, source mode, dataset statistic, score threshold or post-result rule may alter target_cardinality or anchor selection."
+    ],
+    "synthetic_invariants": {
+      "distinct_argmax_1": 3,
+      "distinct_argmax_2": 3,
+      "distinct_argmax_3": 4,
+      "distinct_argmax_4": 5,
+      "empty_pool": 0,
+      "anchor_is_highest_cross_encoder_feasible_candidate": true,
+      "anchor_tie_break_by_canonical_id": true,
+      "anchor_remains_selected_after_role_filling": true,
+      "no_duplicate_selection": true,
+      "budget_can_only_reduce_feasible_selected_count": true,
+      "source_type_never_changes_the_formula": true
+    }
+  },
+  "query_generation": {
+    "input": "qa.question only",
+    "output_keys": [
+      "anchor",
+      "first_fact",
+      "second_fact_or_bridge",
+      "counterevidence"
+    ],
+    "do_sample": false,
+    "max_input_tokens": 512,
+    "max_new_tokens": 160,
+    "batch_size": 8,
+    "fallback": "frozen label-neutral templates plus the original question",
+    "gold_fields_visible_to_generator": false
+  },
+  "evaluation": {
+    "gold_mapping": "After complete ordered query and score caches are validated, map official qa.gold_inds keys to the corresponding full-context candidate canonical ids.",
+    "primary_metric": "mean across budgets of supporting-fact macro F1",
+    "macro_precision": "Mean per-case fraction of selected candidate ids in mapped official gold supporting-fact ids; empty prediction precision is 1.",
+    "macro_recall": "Mean per-case fraction of mapped official gold supporting-fact ids selected.",
+    "macro_f1": "Mean per-case harmonic mean of supporting-fact precision and recall.",
+    "candidate_ceiling_complete": "Every official gold_inds key maps to a candidate unit.",
+    "paired_bootstrap": {
+      "resamples": 10000,
+      "seed": 20260805,
+      "unit": "case",
+      "interval": "percentile 95%",
+      "strongest_non_frc_selected_inside_each_resample": true
+    },
+    "mandatory_strata": [
+      "table_only versus text_only versus hybrid gold source mode",
+      "single versus multiple gold supporting facts",
+      "token budget"
+    ],
+    "secondary_metrics": [
+      "macro precision",
+      "macro recall",
+      "complete supporting-fact recall",
+      "selected unit count",
+      "selected token cost",
+      "anchor retention rate",
+      "target cardinality",
+      "candidate pool size",
+      "v45 versus v44 and v41 dynamic comparisons"
+    ]
+  },
+  "support_checks": {
+    "minimum_total_cases_met": ">= 240",
+    "minimum_cases_per_source_mode": ">= 60",
+    "candidate_ceiling_complete_rate": ">= 0.95",
+    "query_parser_fallback_rate": "<= 0.05",
+    "anchor_retention_rate_when_feasible": "= 1.00",
+    "v45_minus_v44_point": ">= 0.005",
+    "v45_minus_v44_ci_low": "> 0",
+    "v45_minus_dynamic_point": ">= 0.005",
+    "v45_minus_dynamic_ci_low": "> 0",
+    "v45_minus_strongest_non_frc_point": ">= 0.01",
+    "v45_minus_strongest_non_frc_ci_low": "> 0",
+    "every_budget_and_supported_source_mode_delta_vs_strongest_non_frc": ">= -0.02",
+    "mean_selected_unit_reduction_vs_dynamic": ">= 0.50",
+    "supporting_fact_recall_drop_vs_dynamic": "<= 0.02"
+  },
+  "decision_rules": {
+    "all_support_checks_pass": "FINQA_ANCHOR_GUARDED_SUPPORT_ESTABLISHED_ON_FULL_CONTEXT_POOL",
+    "informative_but_any_support_check_fails": "FINQA_ANCHOR_GUARDED_SUPPORT_NOT_ESTABLISHED",
+    "minimum_cases_source_balance_or_ceiling_fails": "FINQA_FULL_CONTEXT_POOL_INCONCLUSIVE",
+    "gate_2": "Always remains NO-GO/SHADOW in v45; this public-domain selector experiment alone cannot authorize CANARY or DEFAULT.",
+    "publication": "Publish favorable, null, negative or inconclusive results with source, protocol, implementation, cache and result hashes.",
+    "claims_forbidden": [
+      "official FinQA end-to-end leaderboard result",
+      "answer or program generation superiority",
+      "open-corpus financial report retrieval superiority",
+      "source-aware routing tuned on OTT-QA v44",
+      "real SetR reproduction",
+      "flood-domain validity",
+      "production readiness"
+    ]
+  },
+  "known_scope_limits": [
+    "The candidate pool is the complete context attached to each official dev record, not an open-corpus retriever.",
+    "The primary endpoint is official supporting-fact selection, not answer execution or reasoning-program accuracy.",
+    "Financial table-text evidence is an external mechanism test and does not replace district flood-domain expert evaluation.",
+    "The result is one public-dataset confirmation and cannot by itself change Gate 2."
+  ]
+}

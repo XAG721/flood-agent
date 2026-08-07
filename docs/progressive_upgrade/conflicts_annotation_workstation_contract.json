@@ -1,0 +1,135 @@
+{
+  "schema_version": "frc-conflicts-annotation-workstation-contract-v1",
+  "contract_id": "CONFLICTS-ANNOTATION-WORKSTATION-V30",
+  "registered_on": "2026-08-01",
+  "status": "LOCAL_REVIEW_UI_READY_AWAITING_HUMANS",
+  "purpose": "Provide a local-only, resumable and method-blind interface for real people to complete the frozen CONFLICTS review batches without changing the registered experiment or publishing private decisions.",
+  "frozen_inputs": {
+    "operations_manifest_path": "output/rag_evaluation/conflicts_annotation_operations/manifest.json",
+    "operations_manifest_file_sha256": "8af745c52f02c34207559806873d67ec5649104194a590ab82f906dfc0081ae3",
+    "operations_id": "CONFLICTS-ANNOTATION-OPS-5A6EE0F6420F2251",
+    "package_id": "CONFLICTS-BEHAVIOR-5ABAB8ED31F83E6C",
+    "routing_sha256": "b4818883beb4ed3e256895a2161f2641656707639ded4ee858633e5e4bb25ef3",
+    "reviewer_slots": [
+      "reviewer_1",
+      "reviewer_2",
+      "adjudicator"
+    ],
+    "batch_count_per_slot": 8,
+    "task_count_per_slot": 481,
+    "public_file_count": 48,
+    "protocol_or_public_batch_rewritten": false
+  },
+  "launch": {
+    "runner": "scripts/run_conflicts_annotation_workstation.py",
+    "default_bind": "127.0.0.1:8765",
+    "reviewer_1_example": "python scripts/run_conflicts_annotation_workstation.py --reviewer-slot reviewer_1 --batch-index 1 --open-browser",
+    "reviewer_2_example": "python scripts/run_conflicts_annotation_workstation.py --reviewer-slot reviewer_2 --batch-index 1 --open-browser",
+    "adjudicator_example": "python scripts/run_conflicts_annotation_workstation.py --reviewer-slot adjudicator --batch-index 1 --open-browser",
+    "batch_index_range": [
+      1,
+      8
+    ],
+    "default_private_draft_root": ".cache/benchmarks/rag_conflicts/expected_behavior_workflow/annotation_submissions"
+  },
+  "review_workflow": {
+    "features": [
+      "side-by-side blinded A/B response and source review",
+      "four rating dimensions with no-answer handling",
+      "pair preference and optional notes",
+      "debounced atomic autosave",
+      "batch progress and task navigation",
+      "authenticated draft export",
+      "complete-batch validation and private receipt",
+      "explicit reopen after finalization",
+      "service restart and browser refresh recovery"
+    ],
+    "one_slot_one_person": true,
+    "same_private_annotator_id_across_slot_batches": true,
+    "different_people_and_ids_across_slots": true,
+    "automatic_or_model_filling_allowed": false
+  },
+  "privacy_and_security": {
+    "loopback_only": true,
+    "non_loopback_bind_rejected": true,
+    "launch_token_entropy_source": "secrets.token_urlsafe(32)",
+    "api_token_header_required": "X-Review-Token",
+    "page_session_cookie": "HttpOnly; SameSite=Strict; Path=/; Max-Age=28800",
+    "token_removed_from_address_bar": true,
+    "token_retained_only_for_current_tab": true,
+    "host_and_origin_validation": true,
+    "content_security_policy": true,
+    "cache_control": "no-store",
+    "referrer_policy": "no-referrer",
+    "frame_embedding": "DENY",
+    "draft_storage_git_ignored": true,
+    "private_routing_loaded": false,
+    "method_identity_loaded": false,
+    "operations_manifest_hash_pinned_in_runtime": true,
+    "public_file_hashes_verified_before_session": true,
+    "atomic_private_writes": true
+  },
+  "accessibility_and_responsiveness": {
+    "language": "zh-CN",
+    "semantic_landmarks_and_fieldsets": true,
+    "keyboard_focus_visible": true,
+    "status_announced_with_aria_live": true,
+    "reduced_motion_respected": true,
+    "mobile_viewport_checked_px": 390,
+    "mobile_horizontal_overflow_observed": false
+  },
+  "verification": {
+    "automated_test_path": "tests/test_frc_conflicts_annotation_workstation.py",
+    "automated_test_count": 5,
+    "automated_test_status": "PASS",
+    "browser_probe_status": "PASS_PRIVATE_NON_HUMAN_PROBE_REMOVED",
+    "browser_probe_checks": [
+      "real 62-task public batch loaded without method or routing data",
+      "one clearly labelled non-human probe task autosaved",
+      "service restart restored the private draft",
+      "refresh without a query token restored the same state",
+      "identity, seven selected ratings and two rationales were preserved",
+      "390 px viewport had no horizontal overflow",
+      "no new browser console error was observed"
+    ],
+    "browser_probe_published_as_human_evidence": false
+  },
+  "implementation": {
+    "files": [
+      {
+        "path": "research/frc_rag/conflicts_annotation_workstation.py",
+        "sha256": "780adc1ecf1eb908878edfb4d0e0f28f630f69d99c3dda31ad4cecc834f08e4b"
+      },
+      {
+        "path": "scripts/run_conflicts_annotation_workstation.py",
+        "sha256": "b13f60140aab77bf4691061e0979e4f7ec20d5dd58a6955911c59f5c314f9f62"
+      },
+      {
+        "path": "research/frc_rag/annotation_workstation/index.html",
+        "sha256": "cefeedc82187261e74240baaea5e28f4d2e731cacd8310c9e44b69b1f95d1e6b"
+      },
+      {
+        "path": "research/frc_rag/annotation_workstation/styles.css",
+        "sha256": "d0cfb04484869f8c902ff06c28359ee2a225b64d3ce9031458fa7a52d39d3253"
+      },
+      {
+        "path": "research/frc_rag/annotation_workstation/app.js",
+        "sha256": "a8b61f67a1ba3609fb285a801fa4800cd7895b11b5b7fd832cd7d6852b1cc45e"
+      },
+      {
+        "path": "tests/test_frc_conflicts_annotation_workstation.py",
+        "sha256": "cbf32e2ffea30127cad645993c74867a9d83f7975aae1aa87e53bd53af0b66dd"
+      }
+    ]
+  },
+  "decision_boundary": {
+    "tool_readiness_is_human_evidence": false,
+    "human_decisions_complete": false,
+    "human_evidence_complete": false,
+    "may_open_blind_mapping": false,
+    "may_change_gate_2": false,
+    "gate_2": "NO-GO/SHADOW",
+    "may_claim_setr_reproduction": false,
+    "production_readiness": "NO-GO_EXTERNAL"
+  }
+}

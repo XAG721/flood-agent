@@ -1,0 +1,58 @@
+{
+  "schema_version": "frc-musique-three-route-mean-calibration-v78",
+  "experiment_id": "FRC-MUSIQUE-MEAN-CALIBRATED-THREE-ROUTE-TRANSFER-V78",
+  "registered_on": "2026-08-04",
+  "calibration_source": {
+    "path": "docs/progressive_upgrade/musique_graph_router_transfer_development_result_v77.json",
+    "bytes": 6681,
+    "sha256": "28f35bf13b42bcd50a378a39bd9643b3a21bd69009b04516176f9146763a0af8",
+    "cases": 800,
+    "eligible_for_v78_target_stages": false,
+    "method_evidence_macro_f1": {
+      "cross_encoder_topk": 0.528353,
+      "soft_title_link_support_path_closure_v74": 0.518919,
+      "alternating_anchor_link_control": 0.542004
+    },
+    "registered_mean_gain_relative_to_cross_encoder": {
+      "soft_title_link_support_path_closure_v74": -0.009434,
+      "alternating_anchor_link_control": 0.013651
+    }
+  },
+  "history_router": {
+    "path": "docs/progressive_upgrade/hotpot_three_route_router_model_development_v78.json",
+    "bytes": 113020,
+    "sha256": "8eeef297eacf32e6e2b44fffb4d03428dc9046ea4ea5b367a73d59b98cbf7608",
+    "oof_prediction_mean_by_learned_route": {
+      "soft_title_link_support_path_closure_v74": -0.031033214877,
+      "alternating_anchor_link_control": 0.0
+    }
+  },
+  "frozen_formula": {
+    "per_route_adjusted_gain": "history_model_prediction - history_oof_prediction_mean + v77_registered_mean_gain_relative_to_cross_encoder",
+    "decision": "select the learned route with the highest adjusted gain when it is strictly greater than 0; otherwise select cross_encoder_topk",
+    "tie_break_order": [
+      "soft_title_link_support_path_closure_v74",
+      "alternating_anchor_link_control"
+    ],
+    "threshold": 0.0,
+    "calibration_configuration_count": 1,
+    "per_case_v77_features_or_gold_used_for_calibration": false,
+    "v77_hop_specific_offsets": false,
+    "v77_case_specific_or_feature_conditioned_fit": false
+  },
+  "prospective_boundary": {
+    "v77_is_an_explicit_target_domain_calibration_set_not_an_independent_confirmation": true,
+    "all_v77_source_ids_permanently_excluded_from_v78": true,
+    "v78_target_ids_selected_before_calibration_lock": 0,
+    "v78_target_questions_paragraphs_scores_gold_or_metrics_seen": false,
+    "v78_can_test_prospective_sample_generalization_but_not_independent_dataset_training": true
+  },
+  "claim_limits": {
+    "official_musique_leaderboard_result": false,
+    "strict_zero_target_tuning": false,
+    "independent_training_dataset_confirmation": false,
+    "real_setr_comparison": false,
+    "flood_domain_expert_or_production_evidence": false,
+    "gate_2_canary_or_default_authorized_by_this_calibration": false
+  }
+}

@@ -1,0 +1,298 @@
+{
+  "analysis": {
+    "incremental_delta_vs_counterfactual_only_control": {
+      "ci_high": 0.12625,
+      "ci_low": 0.05625,
+      "point": 0.09125,
+      "resamples": 10000,
+      "seed": 20262903
+    },
+    "incremental_delta_vs_strongest_prior_feature_control": {
+      "ci_high": 0.0025,
+      "ci_low": -0.035,
+      "point": -0.01625,
+      "resamples": 10000,
+      "seed": 20261903
+    },
+    "invalid_feature_output_count": 0,
+    "methods": {
+      "bridge_counterfactual_candidate": {
+        "answerable_pass_rate": 0.6225,
+        "answerable_rows": 400,
+        "balanced_accuracy": 0.70625,
+        "rows": 800,
+        "threshold_exact": 0.546911023516025,
+        "unanswerable_rejection_rate": 0.79,
+        "unanswerable_rows": 400
+      },
+      "bridge_counterfactual_only_control": {
+        "answerable_pass_rate": 0.5625,
+        "answerable_rows": 400,
+        "balanced_accuracy": 0.615,
+        "rows": 800,
+        "threshold_exact": 0.5082911634849987,
+        "unanswerable_rejection_rate": 0.6675,
+        "unanswerable_rows": 400
+      },
+      "calibrated_chain_bottleneck": {
+        "answerable_pass_rate": 0.5975,
+        "answerable_rows": 400,
+        "balanced_accuracy": 0.68875,
+        "rows": 800,
+        "threshold_exact": -0.7611083984375,
+        "unanswerable_rejection_rate": 0.78,
+        "unanswerable_rows": 400
+      },
+      "calibrated_direct_composed_question": {
+        "answerable_pass_rate": 0.585,
+        "answerable_rows": 400,
+        "balanced_accuracy": 0.57875,
+        "rows": 800,
+        "threshold_exact": 1.658203125,
+        "unanswerable_rejection_rate": 0.5725,
+        "unanswerable_rows": 400
+      },
+      "fixed_v66_full_chain": {
+        "answerable_pass_rate": 0.42,
+        "answerable_rows": 400,
+        "balanced_accuracy": 0.64375,
+        "rows": 800,
+        "threshold_exact": 0.974609375,
+        "unanswerable_rejection_rate": 0.8675,
+        "unanswerable_rows": 400
+      },
+      "linear_nine_signal_control": {
+        "answerable_pass_rate": 0.6225,
+        "answerable_rows": 400,
+        "balanced_accuracy": 0.70875,
+        "rows": 800,
+        "threshold_exact": 0.5455859584416168,
+        "unanswerable_rejection_rate": 0.795,
+        "unanswerable_rows": 400
+      },
+      "monotone_additive_spline_control": {
+        "answerable_pass_rate": 0.62,
+        "answerable_rows": 400,
+        "balanced_accuracy": 0.7225,
+        "rows": 800,
+        "threshold_exact": 0.5402024510482232,
+        "unanswerable_rejection_rate": 0.825,
+        "unanswerable_rows": 400
+      },
+      "monotone_interaction_control": {
+        "answerable_pass_rate": 0.6175,
+        "answerable_rows": 400,
+        "balanced_accuracy": 0.7175,
+        "rows": 800,
+        "threshold_exact": 0.5312451305408575,
+        "unanswerable_rejection_rate": 0.8175,
+        "unanswerable_rows": 400
+      },
+      "paragraph_competition_control": {
+        "answerable_pass_rate": 0.62,
+        "answerable_rows": 400,
+        "balanced_accuracy": 0.705,
+        "rows": 800,
+        "threshold_exact": 0.5422772641590541,
+        "unanswerable_rejection_rate": 0.79,
+        "unanswerable_rows": 400
+      }
+    },
+    "outcome": {
+      "canary_or_default_authorized": false,
+      "confirmation_open_authorized": false,
+      "gate_2": "NO-GO/SHADOW",
+      "reuse_failed_stage_for_feature_model_threshold_rule_gate_or_selection": false,
+      "selector_adoption_authorized": false,
+      "selector_or_retrieval_scoring_part_of_v71": false,
+      "stage_gate_passed": false,
+      "status": "MUSIQUE_V71_BRIDGE_COUNTERFACTUAL_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+    },
+    "paired_correctness_delta": {
+      "ci_high": 0.0025,
+      "ci_low": -0.03375,
+      "point": -0.01625,
+      "resamples": 10000,
+      "seed": 20260903
+    },
+    "strongest_fair_baseline": {
+      "answerable_pass_rate": 0.62,
+      "answerable_rows": 400,
+      "balanced_accuracy": 0.7225,
+      "name": "monotone_additive_spline_control",
+      "rows": 800,
+      "threshold_exact": 0.5402024510482232,
+      "unanswerable_rejection_rate": 0.825,
+      "unanswerable_rows": 400
+    },
+    "strongest_prior_feature_control": {
+      "answerable_pass_rate": 0.62,
+      "answerable_rows": 400,
+      "balanced_accuracy": 0.7225,
+      "name": "monotone_additive_spline_control",
+      "rows": 800,
+      "threshold_exact": 0.5402024510482232,
+      "unanswerable_rejection_rate": 0.825,
+      "unanswerable_rows": 400
+    },
+    "support_checks": {
+      "candidate_answerable_pass_rate_at_least_0_60": true,
+      "candidate_balanced_accuracy_at_least_0_72": false,
+      "candidate_minus_counterfactual_only_control_at_least_0_02": true,
+      "candidate_minus_strongest_fair_baseline_at_least_0_05": false,
+      "candidate_minus_strongest_prior_feature_control_at_least_0_02": false,
+      "candidate_unanswerable_rejection_rate_at_least_0_80": false,
+      "counterfactual_only_control_paired_correctness_ci_low_above_0": true,
+      "every_observed_unanswerable_hop_stratum_rejection_rate_at_least_0_75": true,
+      "exact_answer_state_balance": true,
+      "exact_cases_equals_800": true,
+      "invalid_feature_output_rate_equals_0": true,
+      "prior_feature_control_paired_correctness_ci_low_above_0": false,
+      "schema_exclusion_rate_at_most_0_01": true,
+      "selected_prior_or_calibration_source_overlap_equals_0": true,
+      "selected_squad2_exact_question_overlap_equals_0": true,
+      "strongest_baseline_paired_correctness_ci_low_above_0": false
+    },
+    "unanswerable_hop_strata": {
+      "2": {
+        "cases": 304,
+        "rejection_rate": 0.769737
+      },
+      "3": {
+        "cases": 76,
+        "rejection_rate": 0.828947
+      },
+      "4": {
+        "cases": 20,
+        "rejection_rate": 0.95
+      }
+    }
+  },
+  "experiment_id": "FRC-MUSIQUE-BRIDGE-COUNTERFACTUAL-DEPENDENCE-V71",
+  "metadata": {
+    "answer_state_counts": {
+      "answerable": 400,
+      "unanswerable": 400
+    },
+    "automatic_decomposer_result": false,
+    "cases": 800,
+    "official_musique_leaderboard_result": false,
+    "sampling": {
+      "duplicate_assigned_source_rows_excluded": 0,
+      "eligible_answer_state_counts_after_exclusion": {
+        "answerable": 2945,
+        "unanswerable": 2998
+      },
+      "excluded_source_commitment_rows": 22600,
+      "pair_assignment_excluded_rows": 5944,
+      "schema_excluded_cases": 1,
+      "schema_exclusion_rate": 2.507774099709098e-05,
+      "schema_exclusion_reasons": {
+        "insufficient_paragraphs": 1
+      },
+      "selected_answer_state_counts": {
+        "answerable": 400,
+        "unanswerable": 400
+      },
+      "selected_cases": 800,
+      "selected_excluded_source_commitment_overlap": 0,
+      "selected_source_id_commitment": "fe2acdcd596a5a0709c4b4c1c79989747cfc91d852361041ab38f3f0f594c9fe",
+      "selected_squad2_exact_question_overlap": 0,
+      "source_rows": 39876,
+      "source_split": "train",
+      "squad2_exact_question_overlap_excluded": 5388,
+      "stage": "development",
+      "target_cases": 800
+    },
+    "source_artifacts": {
+      "calibration_result_sha256": "06f1374ad162b150696f493af47734ecf887d21e832085bc5e4a0f9bccf9b4d7",
+      "candidate_map_sha256": "6abca0ab889a5b6afe54bb01e5f2cf724ea6fb50ecec9322e69ff7d887bbd5b2",
+      "counterfactual_decisions_sha256": "d34f190b3cdeaa6bd28147d23c9c9d06c969ca8d218823c54b6d6925d7f5c631",
+      "counterfactual_qa_input_sha256": "25a2307d162d6e113e771ad1278a5ab79f06cf4b68183cccbc838632295f2adf",
+      "counterfactual_raw_qa_sha256": "2d9a7274730b911a0421399873f84db088647d270d69fc814c328db210bfebdd",
+      "direct_decisions_sha256": "7287d389d902b7429b639331d799cf9a66bdbbfb4b8e07a0bce221ddcb467315",
+      "direct_qa_input_sha256": "9d3d0a215a9589afda7c6da9908b421c350deb26e9977b12a9767e41cb90f805",
+      "direct_raw_qa_sha256": "78371cfa6a6d3c935df9c42c8cfc382cf70feaa178e125f8c608be1188350b7d",
+      "execution_registration_sha256": "71a6ac9ed0ef568f98bd726aa958ac2e855780c7fa1c7a1a68b586c4390cbf7a",
+      "feature_decisions_sha256": "7425365c517084673d1ab47c451784d67da10df6b0536f81b60cf6d59142c112",
+      "gold_joined_after_complete_qa_and_feature_extraction": true,
+      "hop_artifacts": {
+        "1": {
+          "decisions": "20ccc96f1607d8c11fc7b897c4f95f6534db6b3445672c04e05b8b9a58cdb5b9",
+          "input": "532857266c13afa7a5a7d82edd8c7b0afecc81174d430817d9bd261c5c2d1bff",
+          "raw": "10ce2025eb83cbeeab17be73bd78efc49bd43a196d27ed60c4e8b55559a68002"
+        },
+        "2": {
+          "decisions": "32f99c4056298773bd3e4e4bce0b09fabdbf922cf3fcf7bca640beb9de07afb4",
+          "input": "aeb17b912acad1f803b925d670c59854987f7159d720373521391fae1e623ccb",
+          "raw": "fbac13c90d826088aa3ca74a7823b86bac8d88ebc13485e3814d69e6f4d9ea09"
+        },
+        "3": {
+          "decisions": "3cb43b4e89a81d8344b8ee84996c7f07b260bd81978f8dcddf26018eee5bbe52",
+          "input": "e22693e7571d1212a50b130ada377b28b8b6569bd62022bb0007759ec2d95528",
+          "raw": "2fe25f2b344f666fe7499ecc580c6a64f9bf655379dd30f32a030ec968cf6a9a"
+        },
+        "4": {
+          "decisions": "be0e00ce95e2ce2c375c140f01906ee1684d68f2a4cfbf7acfce341b05693368",
+          "input": "8c719a03048f2d47ceb5249f8ad5f54561d044b9d3e69a4c44a89b046f488b1c",
+          "raw": "bb60a3ae9c2402623fdad91139c2782efde40c5abf361e0bbdba332dc3b1e89d"
+        }
+      },
+      "implementation_registration_sha256": "f6caaa344750cbc6ff2e918f01e40b3fd64e297817da0d5bccb79af71f7517e6",
+      "model_registration_sha256": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+      "prepared_blind_sha256": "e8c493e02a758a208c63a907278dda51ba419be679ef5b8f7ee1e5705d142cd5",
+      "protocol_sha256": "2422a11e9eb8247b6e66bc928a5920575f9d752fb04707f0e116598c9c50ef15",
+      "retrieval_scoring_started": false,
+      "runtime": {
+        "cuda_available": true,
+        "cuda_runtime": "12.4",
+        "gpu": "NVIDIA GeForce RTX 4060 Ti",
+        "gpu_memory_mib": 16379,
+        "numpy": "2.2.6",
+        "parameters": {
+          "additive_feature_count": 27,
+          "base_feature_count": 9,
+          "candidate_feature_count": 15,
+          "competition_feature_count": 6,
+          "counterfactual_feature_count": 6,
+          "device": "cuda",
+          "fp16": true,
+          "interaction_feature_count": 32,
+          "intermediate_margin_threshold": null,
+          "offline_model_loading": true,
+          "optimizer_iterations": 5000,
+          "optimizer_l2_weight": 0.01,
+          "optimizer_learning_rate": 0.1,
+          "positive_margin_drop_clip_maximum": 10.0,
+          "qa_batch_size": 16,
+          "qa_chunk_rows": 64,
+          "qa_doc_stride": 128,
+          "qa_max_length": 384,
+          "qa_maximum_answer_tokens": 30,
+          "unknown_bridge_sentinel": "unknown bridge entity"
+        },
+        "platform": "Windows-10-10.0.19045-SP0",
+        "python": "3.10.20",
+        "torch": "2.4.1+cu124",
+        "transformers": "4.46.3"
+      },
+      "source_registration_sha256": "fcafc7a1448e7150afb3090010faba188ee5141bf536966f80dd1608fc54af8f"
+    },
+    "stage": "development",
+    "strict_independent_model_training_confirmation": false,
+    "structural_census": {
+      "direct_qa_input_rows": 16000,
+      "gold_fields_exported_to_blind_caches": false,
+      "hop_count_distribution": {
+        "2": 590,
+        "3": 166,
+        "4": 44
+      },
+      "maximum_paragraphs": 20,
+      "mean_paragraphs": 20.0,
+      "minimum_paragraphs": 20,
+      "prepared_cases": 800
+    }
+  },
+  "schema_version": "frc-musique-v71-stage-result-v1"
+}

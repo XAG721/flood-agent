@@ -1,0 +1,4707 @@
+{
+  "crossfit": {
+    "candidate": {
+      "complete_evidence_recall": 0.725,
+      "evidence_macro_f1": 0.563008,
+      "evidence_macro_recall": 0.884438,
+      "mean_selected_tokens": 133.176
+    },
+    "candidate_minus_cross_encoder": {
+      "ci_high": 0.017748,
+      "ci_low": 0.007105,
+      "point": 0.012254,
+      "resamples": 10000,
+      "seed": 20261112
+    },
+    "candidate_minus_v76": {
+      "ci_high": 0.003877,
+      "ci_low": -0.002818,
+      "point": 0.00056,
+      "resamples": 10000,
+      "seed": 20261111
+    },
+    "controls": {
+      "alternating_anchor_link_control": {
+        "complete_evidence_recall": 0.69,
+        "evidence_macro_f1": 0.550418,
+        "evidence_macro_recall": 0.866688,
+        "mean_selected_tokens": 135.269
+      },
+      "cross_encoder_topk": {
+        "complete_evidence_recall": 0.689,
+        "evidence_macro_f1": 0.550754,
+        "evidence_macro_recall": 0.865712,
+        "mean_selected_tokens": 133.964
+      },
+      "learned_question_routed_support_path_v75": {
+        "complete_evidence_recall": 0.658,
+        "evidence_macro_f1": 0.538971,
+        "evidence_macro_recall": 0.848971,
+        "mean_selected_tokens": 134.536
+      },
+      "lexical_question_router_control": {
+        "complete_evidence_recall": 0.648,
+        "evidence_macro_f1": 0.535524,
+        "evidence_macro_recall": 0.844071,
+        "mean_selected_tokens": 134.564
+      },
+      "soft_title_link_support_path_closure_v74": {
+        "complete_evidence_recall": 0.601,
+        "evidence_macro_f1": 0.51978,
+        "evidence_macro_recall": 0.818221,
+        "mean_selected_tokens": 134.881
+      }
+    },
+    "fold_models": [
+      {
+        "fold": 0,
+        "held_out_cases": 193,
+        "models": {
+          "alternating_anchor_link_control": "9b2844d51874fb71a5810d62d4d232492c1dcd9e73cc3f266f189f31481792f6",
+          "soft_title_link_support_path_closure_v74": "e7405135f998ceca6888d96aee9f98ce55bc82b9f9b08dcb866eddf1873cea50"
+        },
+        "training_cases": 807
+      },
+      {
+        "fold": 1,
+        "held_out_cases": 213,
+        "models": {
+          "alternating_anchor_link_control": "9b2844d51874fb71a5810d62d4d232492c1dcd9e73cc3f266f189f31481792f6",
+          "soft_title_link_support_path_closure_v74": "72091ea152f13638ce88f001dd08b1646e0e6d3a3ae0ee9ab16f3bd7b7a50265"
+        },
+        "training_cases": 787
+      },
+      {
+        "fold": 2,
+        "held_out_cases": 210,
+        "models": {
+          "alternating_anchor_link_control": "9b2844d51874fb71a5810d62d4d232492c1dcd9e73cc3f266f189f31481792f6",
+          "soft_title_link_support_path_closure_v74": "ac3e68a9aa79571d799fd54f68b1a867a76534e5849e55a343a723817bb45f28"
+        },
+        "training_cases": 790
+      },
+      {
+        "fold": 3,
+        "held_out_cases": 195,
+        "models": {
+          "alternating_anchor_link_control": "9b2844d51874fb71a5810d62d4d232492c1dcd9e73cc3f266f189f31481792f6",
+          "soft_title_link_support_path_closure_v74": "b6dcff310d2dc14b3e607457591e8d425491f92424c6c9657c2180986eaa1d15"
+        },
+        "training_cases": 805
+      },
+      {
+        "fold": 4,
+        "held_out_cases": 189,
+        "models": {
+          "alternating_anchor_link_control": "9b2844d51874fb71a5810d62d4d232492c1dcd9e73cc3f266f189f31481792f6",
+          "soft_title_link_support_path_closure_v74": "6ba2b0e2f8d39d91ea4efc3828972a0c1d68a3460193e937879da232a8ec593e"
+        },
+        "training_cases": 811
+      }
+    ],
+    "folds": 5,
+    "history_target_mean_by_learned_route": {
+      "alternating_anchor_link_control": -0.000335858586,
+      "soft_title_link_support_path_closure_v74": -0.030973881674
+    },
+    "mean_winning_predicted_gain": 0.011861,
+    "oof_prediction_mean_by_learned_route": {
+      "alternating_anchor_link_control": 0.0,
+      "soft_title_link_support_path_closure_v74": -0.031033214877
+    },
+    "per_question_type": {
+      "bridge": {
+        "candidate_evidence_macro_f1": 0.555313,
+        "candidate_minus_v76": 0.001117,
+        "cases": 803,
+        "oracle_headroom": 0.022203,
+        "route_counts": {
+          "cross_encoder_topk": 427,
+          "soft_title_link_support_path_closure_v74": 376
+        },
+        "v76_candidate_evidence_macro_f1": 0.554196
+      },
+      "comparison": {
+        "candidate_evidence_macro_f1": 0.594374,
+        "candidate_minus_v76": -0.001708,
+        "cases": 197,
+        "oracle_headroom": 0.004609,
+        "route_counts": {
+          "cross_encoder_topk": 175,
+          "soft_title_link_support_path_closure_v74": 22
+        },
+        "v76_candidate_evidence_macro_f1": 0.596082
+      }
+    },
+    "route_counts": {
+      "cross_encoder_topk": 602,
+      "soft_title_link_support_path_closure_v74": 398
+    },
+    "v76_candidate": {
+      "complete_evidence_recall": 0.722,
+      "evidence_macro_f1": 0.562448,
+      "evidence_macro_recall": 0.883505,
+      "mean_selected_tokens": 133.418
+    }
+  },
+  "experiment_id": "FRC-HOTPOT-HISTORY-THREE-ROUTE-GRAPH-ROUTER-V78",
+  "history": {
+    "case_ids_sha256": "6884ab2a03c8fb63a7b9319e1ed867d44529c120a6594ab54507b236cb1949cb",
+    "cases": 1000,
+    "eligible_for_v78_target_stages": false,
+    "question_type_counts": {
+      "bridge": 803,
+      "comparison": 197
+    },
+    "source_sha256": "ac5189e4f64e799ca7915a0eff9a304e6d09e0bbc6c4ef233335b17c6d56e6af",
+    "unique_ids": 1000
+  },
+  "history_artifacts": {
+    "bytes": 29609025,
+    "path": ".cache/benchmarks/frc_public_reference/role_scores_hotpotqa.jsonl",
+    "sha256": "ac5189e4f64e799ca7915a0eff9a304e6d09e0bbc6c4ef233335b17c6d56e6af",
+    "v75_model_path": "docs/progressive_upgrade/twowiki_question_router_model_development_v75.json",
+    "v76_model_path": "docs/progressive_upgrade/hotpot_graph_router_model_development_v76.json"
+  },
+  "models": {
+    "alternating_anchor_link_control": {
+      "payload": {
+        "estimators": 50,
+        "feature_count": 71,
+        "init_prediction": 0.0,
+        "learning_rate": 0.1,
+        "loss": "huber",
+        "max_depth": 3,
+        "min_samples_leaf": 40,
+        "model_type": "gradient_boosting_regressor_export",
+        "random_state": 19,
+        "sklearn_version": "1.7.2",
+        "trees": [
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "children_left": [
+              -1
+            ],
+            "children_right": [
+              -1
+            ],
+            "features": [
+              -2
+            ],
+            "thresholds": [
+              -2.0
+            ],
+            "values": [
+              0.0
+            ]
+          }
+        ]
+      },
+      "sha256": "9b2844d51874fb71a5810d62d4d232492c1dcd9e73cc3f266f189f31481792f6"
+    },
+    "soft_title_link_support_path_closure_v74": {
+      "payload": {
+        "estimators": 50,
+        "feature_count": 71,
+        "init_prediction": 0.0,
+        "learning_rate": 0.1,
+        "loss": "huber",
+        "max_depth": 3,
+        "min_samples_leaf": 40,
+        "model_type": "gradient_boosting_regressor_export",
+        "random_state": 19,
+        "sklearn_version": "1.7.2",
+        "trees": [
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              -1,
+              7,
+              8,
+              -1,
+              -1,
+              11,
+              -1,
+              -1
+            ],
+            "children_right": [
+              6,
+              5,
+              4,
+              -1,
+              -1,
+              -1,
+              10,
+              9,
+              -1,
+              -1,
+              12,
+              -1,
+              -1
+            ],
+            "features": [
+              4,
+              11,
+              52,
+              -2,
+              -2,
+              -2,
+              51,
+              18,
+              -2,
+              -2,
+              47,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.16472868621349335,
+              0.954521119594574,
+              0.5841759145259857,
+              -2.0,
+              -2.0,
+              -2.0,
+              0.10274454951286316,
+              0.714150607585907,
+              -2.0,
+              -2.0,
+              0.9000000059604645,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.028896103896103868,
+              0.004494032045052454,
+              0.013509070294784577,
+              0.006314835645544312,
+              0.08379120879120878,
+              -0.061069882498453916,
+              -0.08748981352287127,
+              0.006533101045296166,
+              0.0,
+              0.01339285714285714,
+              -0.11492710531856426,
+              -0.017333333333333343,
+              -0.16032807980859928
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              9,
+              10,
+              -1,
+              -1,
+              13,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              12,
+              11,
+              -1,
+              -1,
+              14,
+              -1,
+              -1
+            ],
+            "features": [
+              3,
+              58,
+              54,
+              -2,
+              -2,
+              10,
+              -2,
+              -2,
+              69,
+              58,
+              -2,
+              -2,
+              52,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.022775812074542046,
+              0.2500000074505806,
+              0.10000000149011612,
+              -2.0,
+              -2.0,
+              0.011826277244836092,
+              -2.0,
+              -2.0,
+              0.7000000178813934,
+              0.2500000074505806,
+              -2.0,
+              -2.0,
+              0.16869919002056122,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.025907771708583705,
+              0.002996680567816527,
+              0.014531948683756934,
+              0.0013574920071943615,
+              0.08210818544016499,
+              -0.03670975253875359,
+              -0.08007931107851442,
+              0.010825359173175588,
+              -0.08030145279356793,
+              -0.14741701245948868,
+              -0.07831813288158893,
+              -0.23135171539150545,
+              -0.046160059398295455,
+              -0.008295127929321841,
+              -0.09234303315130182
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              9,
+              10,
+              -1,
+              -1,
+              13,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              12,
+              11,
+              -1,
+              -1,
+              14,
+              -1,
+              -1
+            ],
+            "features": [
+              8,
+              10,
+              43,
+              -2,
+              -2,
+              18,
+              -2,
+              -2,
+              42,
+              51,
+              -2,
+              -2,
+              58,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.10762548446655273,
+              0.011815409641712904,
+              0.40371614694595337,
+              -2.0,
+              -2.0,
+              0.8014397621154785,
+              -2.0,
+              -2.0,
+              0.30000000447034836,
+              0.10527482256293297,
+              -2.0,
+              -2.0,
+              0.2500000074505806,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.02335741092321481,
+              0.0008032875565339786,
+              -0.02493982240151977,
+              -0.11941958802650589,
+              -0.009030085300892715,
+              0.018236121727157897,
+              0.00824799504978763,
+              0.0774770428405299,
+              -0.0773866751611,
+              -0.03563724649324568,
+              0.005463442468683355,
+              -0.06332543574767543,
+              -0.1341149064807797,
+              -0.0667920745401051,
+              -0.20600261425286295
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              9,
+              10,
+              -1,
+              -1,
+              13,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              12,
+              11,
+              -1,
+              -1,
+              14,
+              -1,
+              -1
+            ],
+            "features": [
+              3,
+              58,
+              63,
+              -2,
+              -2,
+              10,
+              -2,
+              -2,
+              69,
+              58,
+              -2,
+              -2,
+              46,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.022775812074542046,
+              0.2500000074505806,
+              0.0416666679084301,
+              -2.0,
+              -2.0,
+              0.011826277244836092,
+              -2.0,
+              -2.0,
+              0.7000000178813934,
+              0.2500000074505806,
+              -2.0,
+              -2.0,
+              0.550000011920929,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.021206323639324502,
+              0.0032955940989486767,
+              0.013685685698394841,
+              0.0013936686275247715,
+              0.07541485328199672,
+              -0.03246893888962132,
+              -0.06912729358183806,
+              0.00898846120634456,
+              -0.06731511984420169,
+              -0.12519856615927727,
+              -0.06700289646175156,
+              -0.1928096617515126,
+              -0.03787006237088068,
+              -0.013784111701166894,
+              -0.0927191592658336
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              -1,
+              7,
+              8,
+              -1,
+              -1,
+              11,
+              -1,
+              -1
+            ],
+            "children_right": [
+              6,
+              5,
+              4,
+              -1,
+              -1,
+              -1,
+              10,
+              9,
+              -1,
+              -1,
+              12,
+              -1,
+              -1
+            ],
+            "features": [
+              8,
+              52,
+              46,
+              -2,
+              -2,
+              -2,
+              65,
+              58,
+              -2,
+              -2,
+              64,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.08135686442255974,
+              0.6233108043670654,
+              0.3500000089406967,
+              -2.0,
+              -2.0,
+              -2.0,
+              0.7000000178813934,
+              0.15000000223517418,
+              -2.0,
+              -2.0,
+              0.12122448906302452,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.019179405289176287,
+              0.006638567699423716,
+              0.0014209436710974977,
+              0.013699109304766983,
+              -0.016471548147193805,
+              0.07452487911307037,
+              -0.05602641528261524,
+              -0.10262370452851778,
+              -0.011197651295368875,
+              -0.1661154723445626,
+              -0.024264181388469568,
+              0.0003934907632240003,
+              -0.05839401673820037
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              9,
+              -1,
+              11,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              10,
+              -1,
+              12,
+              -1,
+              -1
+            ],
+            "features": [
+              4,
+              31,
+              52,
+              -2,
+              -2,
+              46,
+              -2,
+              -2,
+              43,
+              -2,
+              62,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.16869919002056122,
+              0.954521119594574,
+              0.5841759145259857,
+              -2.0,
+              -2.0,
+              0.2500000074505806,
+              -2.0,
+              -2.0,
+              0.37212416529655457,
+              -2.0,
+              0.30000000447034836,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.0173244657764073,
+              0.0034634563072174656,
+              0.010521731482307912,
+              0.004496948639501137,
+              0.06789845893396984,
+              -0.04673852587561354,
+              -0.0059367396719803515,
+              -0.0887339021343637,
+              -0.05576139293387872,
+              -0.1665496128313918,
+              -0.04054225122221263,
+              -0.02194621309717291,
+              -0.13290562644299092
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              -1,
+              7,
+              8,
+              -1,
+              -1,
+              11,
+              -1,
+              -1
+            ],
+            "children_right": [
+              6,
+              5,
+              4,
+              -1,
+              -1,
+              -1,
+              10,
+              9,
+              -1,
+              -1,
+              12,
+              -1,
+              -1
+            ],
+            "features": [
+              8,
+              52,
+              56,
+              -2,
+              -2,
+              -2,
+              46,
+              70,
+              -2,
+              -2,
+              56,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.08135686442255974,
+              0.6233108043670654,
+              0.005668199621140957,
+              -2.0,
+              -2.0,
+              -2.0,
+              0.550000011920929,
+              0.30000000447034836,
+              -2.0,
+              -2.0,
+              0.13673344999551773,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.01567970678485635,
+              0.006186485180521582,
+              0.0016551925039933013,
+              -0.027224324488009627,
+              0.008558650488754696,
+              0.06456633224565854,
+              -0.04688679628884238,
+              -0.02883513166256647,
+              -0.004962060506036208,
+              -0.1111532552947157,
+              -0.1143211756398732,
+              -0.18613201901179705,
+              -0.04267777234021354
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              9,
+              10,
+              -1,
+              -1,
+              13,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              12,
+              11,
+              -1,
+              -1,
+              14,
+              -1,
+              -1
+            ],
+            "features": [
+              46,
+              50,
+              48,
+              -2,
+              -2,
+              61,
+              -2,
+              -2,
+              10,
+              34,
+              -2,
+              -2,
+              2,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.3500000089406967,
+              0.30000000447034836,
+              0.9000000059604645,
+              -2.0,
+              -2.0,
+              0.08366666734218597,
+              -2.0,
+              -2.0,
+              0.014142800122499466,
+              0.3500000089406967,
+              -2.0,
+              -2.0,
+              0.25245098769664764,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.014041893384192832,
+              0.01093870585745675,
+              -0.0022277894551864645,
+              0.0046601011153584535,
+              -0.03356193980769915,
+              0.07187202137410792,
+              0.045411252465401855,
+              0.10698512634431111,
+              -0.03747330817674779,
+              -0.06931016225328207,
+              -0.11026450545489747,
+              0.0007128602421885774,
+              0.0014993925031476006,
+              0.03698423737434033,
+              -0.031517010465479306
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              9,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              10,
+              -1,
+              -1
+            ],
+            "features": [
+              62,
+              10,
+              69,
+              -2,
+              -2,
+              48,
+              -2,
+              -2,
+              23,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.30000000447034836,
+              0.0021806758595630527,
+              0.7000000178813934,
+              -2.0,
+              -2.0,
+              0.9000000059604645,
+              -2.0,
+              -2.0,
+              0.6399517953395844,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.01248457893329971,
+              -0.005370795264476078,
+              -0.03434592546521647,
+              -0.0913210853209606,
+              -0.013176947929186793,
+              0.006059760686274703,
+              0.013381560620794077,
+              -0.03419561004413842,
+              -0.08620924604656273,
+              -0.06142943160638689,
+              -0.13948513476269989
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              9,
+              10,
+              -1,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              12,
+              11,
+              -1,
+              -1,
+              -1
+            ],
+            "features": [
+              8,
+              63,
+              23,
+              -2,
+              -2,
+              59,
+              -2,
+              -2,
+              42,
+              46,
+              -2,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.06857366859912872,
+              0.10475444421172142,
+              0.6865065097808838,
+              -2.0,
+              -2.0,
+              0.5000000149011612,
+              -2.0,
+              -2.0,
+              0.5000000149011612,
+              0.3500000089406967,
+              -2.0,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.011203373281130776,
+              0.009999142264798555,
+              0.0004605379356479291,
+              -0.008729362843251865,
+              0.028207581733283003,
+              0.040743404152143524,
+              0.14695652580486002,
+              0.005295777925712856,
+              -0.033359785231989535,
+              -0.02167778369155028,
+              0.009056758108417832,
+              -0.039990398489718935,
+              -0.13054162596330482
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              -1,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              9,
+              -1,
+              -1
+            ],
+            "children_right": [
+              6,
+              3,
+              -1,
+              5,
+              -1,
+              -1,
+              8,
+              -1,
+              10,
+              -1,
+              -1
+            ],
+            "features": [
+              46,
+              43,
+              -2,
+              8,
+              -2,
+              -2,
+              64,
+              -2,
+              18,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.550000011920929,
+              0.234599731862545,
+              -2.0,
+              0.15524256974458694,
+              -2.0,
+              -2.0,
+              0.07334494963288307,
+              -2.0,
+              0.7539710402488708,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.010169863004295988,
+              -0.0016716515684793358,
+              -0.10154341123099286,
+              0.0022114158229566217,
+              0.009943547990697833,
+              -0.03630803897365417,
+              -0.055800386828458094,
+              -0.002180411976715549,
+              -0.10253430576693873,
+              -0.14697620063330522,
+              -0.08720172978701773
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              9,
+              10,
+              -1,
+              -1,
+              13,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              12,
+              11,
+              -1,
+              -1,
+              14,
+              -1,
+              -1
+            ],
+            "features": [
+              8,
+              63,
+              23,
+              -2,
+              -2,
+              59,
+              -2,
+              -2,
+              69,
+              47,
+              -2,
+              -2,
+              35,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.06857366859912872,
+              0.10475444421172142,
+              0.6865065097808838,
+              -2.0,
+              -2.0,
+              0.5000000149011612,
+              -2.0,
+              -2.0,
+              0.9000000059604645,
+              0.9000000059604645,
+              -2.0,
+              -2.0,
+              0.9000000059604645,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.009168837833589063,
+              0.009046423715839805,
+              5.741248565950811e-05,
+              -0.008244444915957848,
+              0.02426376407942507,
+              0.038019269829643994,
+              0.134089004633951,
+              0.006508060450978438,
+              -0.028203599902624093,
+              -0.04479154097960841,
+              0.012340097544277845,
+              -0.08085925210877112,
+              0.0115383422609841,
+              -0.002768969598535256,
+              0.028565477329072497
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              -1,
+              -1,
+              5,
+              6,
+              -1,
+              -1,
+              9,
+              -1,
+              -1
+            ],
+            "children_right": [
+              4,
+              3,
+              -1,
+              -1,
+              8,
+              7,
+              -1,
+              -1,
+              10,
+              -1,
+              -1
+            ],
+            "features": [
+              67,
+              37,
+              -2,
+              -2,
+              10,
+              70,
+              -2,
+              -2,
+              48,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.7000000178813934,
+              0.07966666668653488,
+              -2.0,
+              -2.0,
+              0.0021806758595630527,
+              0.30000000447034836,
+              -2.0,
+              -2.0,
+              0.9000000059604645,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.00824837263545189,
+              -0.06404639690202828,
+              -0.11625217473333838,
+              -0.04631602069083179,
+              -0.0028643527500805043,
+              -0.02721474919126688,
+              -0.009619565663761511,
+              -0.07407813587697143,
+              0.006741766946901289,
+              0.012847802111823962,
+              -0.026875625230135793
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              -1,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              9,
+              -1,
+              -1
+            ],
+            "children_right": [
+              6,
+              3,
+              -1,
+              5,
+              -1,
+              -1,
+              8,
+              -1,
+              10,
+              -1,
+              -1
+            ],
+            "features": [
+              46,
+              43,
+              -2,
+              50,
+              -2,
+              -2,
+              63,
+              -2,
+              18,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.550000011920929,
+              0.234599731862545,
+              -2.0,
+              0.30000000447034836,
+              -2.0,
+              -2.0,
+              0.07334494963288307,
+              -2.0,
+              0.7539710402488708,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.007372040843134005,
+              -0.0003485488908137523,
+              -0.08718178196813485,
+              0.003058587297811554,
+              -0.006557611189536719,
+              0.03322714911824981,
+              -0.04508416642151601,
+              0.0006605748180446326,
+              -0.08483760674028044,
+              -0.12303461156668652,
+              -0.07028264453281904
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              9,
+              10,
+              -1,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              12,
+              11,
+              -1,
+              -1,
+              -1
+            ],
+            "features": [
+              8,
+              63,
+              60,
+              -2,
+              -2,
+              63,
+              -2,
+              -2,
+              50,
+              59,
+              -2,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.06857366859912872,
+              0.10475444421172142,
+              0.9000000059604645,
+              -2.0,
+              -2.0,
+              0.24415584653615952,
+              -2.0,
+              -2.0,
+              0.5000000149011612,
+              0.5000000149011612,
+              -2.0,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.006604872129795521,
+              0.00857648274488605,
+              0.0001531052173745942,
+              -0.0071979677003533825,
+              0.031108859041772574,
+              0.03572621196579078,
+              0.07823588888468783,
+              -0.016396496010084673,
+              -0.02246923274526033,
+              -0.015128077773017886,
+              0.017459679331424373,
+              -0.025192084721973717,
+              -0.10433265917052416
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              9,
+              10,
+              -1,
+              -1,
+              13,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              12,
+              11,
+              -1,
+              -1,
+              14,
+              -1,
+              -1
+            ],
+            "features": [
+              10,
+              46,
+              20,
+              -2,
+              -2,
+              36,
+              -2,
+              -2,
+              18,
+              5,
+              -2,
+              -2,
+              55,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.006276473170146346,
+              0.3500000089406967,
+              0.11686993017792702,
+              -2.0,
+              -2.0,
+              0.5000000149011612,
+              -2.0,
+              -2.0,
+              0.8014397621154785,
+              0.5435606241226196,
+              -2.0,
+              -2.0,
+              0.5745685398578644,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.0059815985972764005,
+              -0.023583081047298938,
+              0.0061223992790811685,
+              -0.02994274838954334,
+              0.02671428960226956,
+              -0.0471159940331325,
+              -0.10321112216340757,
+              -0.0170207193052948,
+              0.006453578423729265,
+              -0.0009254186250247229,
+              -0.04140761068414423,
+              0.0032443848315890653,
+              0.04275228107770088,
+              0.0051628462958786675,
+              0.07206492472840201
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              9,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              10,
+              -1,
+              -1
+            ],
+            "features": [
+              36,
+              4,
+              31,
+              -2,
+              -2,
+              43,
+              -2,
+              -2,
+              48,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.9000000059604645,
+              0.17192118614912033,
+              0.954521119594574,
+              -2.0,
+              -2.0,
+              0.37212416529655457,
+              -2.0,
+              -2.0,
+              0.9000000059604645,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.005425176156531562,
+              -0.010510863622733386,
+              0.0007806896470150584,
+              0.006135677305496997,
+              -0.03546247555533591,
+              -0.031617950126969045,
+              -0.10956641717194547,
+              -0.01841753844560466,
+              0.031175099214986395,
+              0.059661304340828,
+              0.005063120231070075
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              -1,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              9,
+              -1,
+              -1
+            ],
+            "children_right": [
+              6,
+              3,
+              -1,
+              5,
+              -1,
+              -1,
+              8,
+              -1,
+              10,
+              -1,
+              -1
+            ],
+            "features": [
+              46,
+              43,
+              -2,
+              50,
+              -2,
+              -2,
+              63,
+              -2,
+              64,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.550000011920929,
+              0.234599731862545,
+              -2.0,
+              0.30000000447034836,
+              -2.0,
+              -2.0,
+              0.07334494963288307,
+              -2.0,
+              0.18783068656921387,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.004899204743887518,
+              0.0007090695894121199,
+              -0.07187271785876088,
+              0.0036438572415787712,
+              -0.0049264549963167455,
+              0.030446422382161047,
+              -0.03501242297937535,
+              0.004672239507626786,
+              -0.0690623317402675,
+              -0.11509507909688822,
+              -0.043006866250381214
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              9,
+              10,
+              -1,
+              -1,
+              13,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              12,
+              11,
+              -1,
+              -1,
+              14,
+              -1,
+              -1
+            ],
+            "features": [
+              10,
+              69,
+              22,
+              -2,
+              -2,
+              8,
+              -2,
+              -2,
+              56,
+              4,
+              -2,
+              -2,
+              46,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.0018487116903997958,
+              0.7000000178813934,
+              0.14904796332120895,
+              -2.0,
+              -2.0,
+              0.08248299360275269,
+              -2.0,
+              -2.0,
+              0.006319636944681406,
+              0.18301435559988022,
+              -2.0,
+              -2.0,
+              0.550000011920929,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.00436302692185331,
+              -0.024266003850247284,
+              -0.059202192985264517,
+              -0.10836355849661598,
+              -0.029924650981566617,
+              -0.006340629320238443,
+              0.01821127789467094,
+              -0.022337870505433864,
+              0.0037269313514320035,
+              -0.021911054645140687,
+              -0.0057703810554828455,
+              -0.06516416230756016,
+              0.0106982620696414,
+              0.01511683055407419,
+              -0.017744201343424082
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              9,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              10,
+              -1,
+              -1
+            ],
+            "features": [
+              36,
+              11,
+              56,
+              -2,
+              -2,
+              43,
+              -2,
+              -2,
+              49,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.9000000059604645,
+              0.9813622534275055,
+              0.04554356634616852,
+              -2.0,
+              -2.0,
+              0.9567215144634247,
+              -2.0,
+              -2.0,
+              0.09033333137631416,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.00391109794524455,
+              -0.008352628789039052,
+              -0.003708092754776252,
+              -0.019258127828951192,
+              0.00951117864571063,
+              -0.04709003571310334,
+              -0.10640842458576344,
+              0.01159378543318333,
+              0.028053361733866758,
+              0.051604978967087003,
+              0.0007610982781769298
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              9,
+              10,
+              -1,
+              -1,
+              13,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              12,
+              11,
+              -1,
+              -1,
+              14,
+              -1,
+              -1
+            ],
+            "features": [
+              10,
+              46,
+              20,
+              -2,
+              -2,
+              69,
+              -2,
+              -2,
+              18,
+              56,
+              -2,
+              -2,
+              20,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.006276473170146346,
+              0.3500000089406967,
+              0.13602913916110992,
+              -2.0,
+              -2.0,
+              0.9000000059604645,
+              -2.0,
+              -2.0,
+              0.7659336030483246,
+              0.08476138114929199,
+              -2.0,
+              -2.0,
+              0.10326645895838737,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.003499937736614311,
+              -0.01669665088854831,
+              0.006959933847381601,
+              -0.022295993190038343,
+              0.02642428572447128,
+              -0.03543758165337588,
+              -0.05679868420140047,
+              0.02537269537400464,
+              0.005823337425332232,
+              -0.003042436672649447,
+              -0.013827117545715483,
+              0.011764440920417105,
+              0.03113745557351677,
+              0.07048593583120755,
+              0.008895348885325508
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              9,
+              -1,
+              11,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              10,
+              -1,
+              12,
+              -1,
+              -1
+            ],
+            "features": [
+              8,
+              50,
+              70,
+              -2,
+              -2,
+              49,
+              -2,
+              -2,
+              43,
+              -2,
+              46,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.02223320212215185,
+              0.10000000149011612,
+              0.10000000149011612,
+              -2.0,
+              -2.0,
+              0.09099999815225601,
+              -2.0,
+              -2.0,
+              0.2807697504758835,
+              -2.0,
+              0.550000011920929,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.0030768707591785544,
+              0.012195644637155539,
+              -0.018173406294982063,
+              -0.004303849551645046,
+              -0.046093793922109536,
+              0.029910924347569142,
+              0.054116164134824576,
+              -0.0037836481791983976,
+              -0.01036346229982244,
+              -0.07220005348638489,
+              -0.00628309320098166,
+              0.0009681451720807447,
+              -0.03869359384620822
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              -1,
+              7,
+              8,
+              -1,
+              -1,
+              11,
+              -1,
+              -1
+            ],
+            "children_right": [
+              6,
+              5,
+              4,
+              -1,
+              -1,
+              -1,
+              10,
+              9,
+              -1,
+              -1,
+              12,
+              -1,
+              -1
+            ],
+            "features": [
+              37,
+              49,
+              58,
+              -2,
+              -2,
+              -2,
+              35,
+              47,
+              -2,
+              -2,
+              70,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.07899999991059303,
+              0.08833333477377892,
+              0.2500000074505806,
+              -2.0,
+              -2.0,
+              -2.0,
+              0.30000000447034836,
+              0.10000000149011612,
+              -2.0,
+              -2.0,
+              0.5000000149011612,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.002750259524116855,
+              -0.017488340798166416,
+              -0.008546286514185226,
+              0.010603683436041882,
+              -0.036776568989443745,
+              -0.08916593748067089,
+              0.004378248629206823,
+              0.032674882680591044,
+              -0.0028797225951824774,
+              0.14070350736263237,
+              -0.0023194867701116515,
+              0.004124737399531972,
+              -0.04501784811553559
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              9,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              10,
+              -1,
+              -1
+            ],
+            "features": [
+              36,
+              62,
+              48,
+              -2,
+              -2,
+              35,
+              -2,
+              -2,
+              18,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.9000000059604645,
+              0.30000000447034836,
+              0.7000000178813934,
+              -2.0,
+              -2.0,
+              0.9000000059604645,
+              -2.0,
+              -2.0,
+              0.7352598607540131,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.002530234813690408,
+              -0.0062120490243640315,
+              -0.002529610457469788,
+              0.004983173558373537,
+              -0.01624094189176064,
+              -0.04148359915304973,
+              -0.0811497986073651,
+              -0.016095492686622536,
+              0.023966755981157373,
+              0.00746953396573416,
+              0.055463637656255345
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              -1,
+              7,
+              -1,
+              9,
+              -1,
+              -1
+            ],
+            "children_right": [
+              6,
+              5,
+              4,
+              -1,
+              -1,
+              -1,
+              8,
+              -1,
+              10,
+              -1,
+              -1
+            ],
+            "features": [
+              10,
+              69,
+              51,
+              -2,
+              -2,
+              -2,
+              17,
+              -2,
+              53,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.0011486017610877752,
+              0.9000000059604645,
+              0.14509569108486176,
+              -2.0,
+              -2.0,
+              -2.0,
+              0.04567479528486729,
+              -2.0,
+              0.7000000178813934,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.002253681236996012,
+              -0.019491222082948192,
+              -0.03309278012274226,
+              -0.07730287074759773,
+              -0.0179648959446845,
+              0.012480006178825664,
+              0.0029827555519308007,
+              0.05301260533368836,
+              0.0006758453806803093,
+              -0.060955361133707225,
+              0.004062188682475856
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              -1,
+              3,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1
+            ],
+            "children_right": [
+              2,
+              -1,
+              6,
+              5,
+              -1,
+              -1,
+              8,
+              -1,
+              -1
+            ],
+            "features": [
+              43,
+              -2,
+              10,
+              46,
+              -2,
+              -2,
+              18,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.23001091182231903,
+              -2.0,
+              0.006276473170146346,
+              0.3500000089406967,
+              -2.0,
+              -2.0,
+              0.8014397621154785,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.0020215666415283103,
+              -0.05801379666566499,
+              -2.5511930464679697e-05,
+              -0.010911611795090849,
+              0.007042280182776878,
+              -0.024287910280160273,
+              0.00801558179894158,
+              0.0013253123837539639,
+              0.036777810268183525
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              -1,
+              7,
+              8,
+              -1,
+              -1,
+              -1
+            ],
+            "children_right": [
+              6,
+              5,
+              4,
+              -1,
+              -1,
+              -1,
+              10,
+              9,
+              -1,
+              -1,
+              -1
+            ],
+            "features": [
+              37,
+              49,
+              8,
+              -2,
+              -2,
+              -2,
+              22,
+              52,
+              -2,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.07899999991059303,
+              0.08833333477377892,
+              0.10391363129019737,
+              -2.0,
+              -2.0,
+              -2.0,
+              0.2615712583065033,
+              0.36181819438934326,
+              -2.0,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.0017854892779485174,
+              -0.014631395580527931,
+              -0.00669649076193675,
+              0.009151829658781389,
+              -0.03381824434490205,
+              -0.07716521871465737,
+              0.0044278125835364775,
+              0.007591936177050471,
+              0.0017385468153090608,
+              0.03609116918510062,
+              -0.038141162213782276
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              -1
+            ],
+            "features": [
+              25,
+              43,
+              4,
+              -2,
+              -2,
+              52,
+              -2,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.13710477203130722,
+              0.3843917101621628,
+              0.18983269482851028,
+              -2.0,
+              -2.0,
+              0.36181819438934326,
+              -2.0,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.0016326239633621341,
+              -0.004138991894248675,
+              -0.02505090702378323,
+              -0.009117287150953798,
+              -0.08584281009758671,
+              0.0007814587244653364,
+              -0.004742533454786763,
+              0.0340275023378745,
+              0.02981480115854309
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              9,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              10,
+              -1,
+              -1
+            ],
+            "features": [
+              34,
+              58,
+              67,
+              -2,
+              -2,
+              48,
+              -2,
+              -2,
+              20,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.3500000089406967,
+              0.2500000074505806,
+              0.9000000059604645,
+              -2.0,
+              -2.0,
+              0.5000000149011612,
+              -2.0,
+              -2.0,
+              0.15211531519889832,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.0014772008314555608,
+              -0.005041090056048134,
+              0.00426445833528058,
+              0.037979734489782514,
+              -0.0037153756928733983,
+              -0.025492463199677306,
+              -0.07017354064442034,
+              -0.01082562279859807,
+              0.019881212213830032,
+              0.04327970444051385,
+              0.0025778009714713147
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              -1,
+              3,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1
+            ],
+            "children_right": [
+              2,
+              -1,
+              6,
+              5,
+              -1,
+              -1,
+              8,
+              -1,
+              -1
+            ],
+            "features": [
+              7,
+              -2,
+              37,
+              43,
+              -2,
+              -2,
+              35,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.020252304151654243,
+              -2.0,
+              0.07899999991059303,
+              0.3851092606782913,
+              -2.0,
+              -2.0,
+              0.30000000447034836,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.0013410901755861705,
+              0.03524033731890141,
+              -0.003137924033404414,
+              -0.01773807721425251,
+              -0.07010782467440453,
+              -0.007826880519327017,
+              0.0035370695462187984,
+              0.027905313652458186,
+              -0.0019555543302890773
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              -1,
+              3,
+              -1,
+              5,
+              -1,
+              -1
+            ],
+            "children_right": [
+              2,
+              -1,
+              4,
+              -1,
+              6,
+              -1,
+              -1
+            ],
+            "features": [
+              1,
+              -2,
+              22,
+              -2,
+              43,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.16807910054922104,
+              -2.0,
+              0.07289059087634087,
+              -2.0,
+              0.23001091182231903,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.0012083521122900403,
+              0.026849638244321572,
+              -0.0034174760471184216,
+              -0.04440602500111701,
+              -0.0009816020864904349,
+              -0.054587511546263325,
+              0.0012522290871597262
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              -1,
+              3,
+              4,
+              -1,
+              -1,
+              -1
+            ],
+            "children_right": [
+              2,
+              -1,
+              6,
+              5,
+              -1,
+              -1,
+              -1
+            ],
+            "features": [
+              17,
+              -2,
+              18,
+              25,
+              -2,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.045431118458509445,
+              -2.0,
+              0.8435188829898834,
+              0.13980260491371155,
+              -2.0,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.0010883188365330078,
+              0.036404703082103085,
+              -0.0028530861765176272,
+              -6.975433367527031e-05,
+              -0.002549096021631943,
+              0.029528254262455356,
+              -0.06370685905383573
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              9,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              10,
+              -1,
+              -1
+            ],
+            "features": [
+              34,
+              58,
+              49,
+              -2,
+              -2,
+              70,
+              -2,
+              -2,
+              20,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.3500000089406967,
+              0.2500000074505806,
+              0.09099999815225601,
+              -2.0,
+              -2.0,
+              0.10000000149011612,
+              -2.0,
+              -2.0,
+              0.15211531519889832,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.0009880096216340407,
+              -0.004187518228819581,
+              0.003895109410851326,
+              0.01574986172621122,
+              -0.014848587901490715,
+              -0.021951203601081375,
+              0.020175848755077688,
+              -0.03814845887468639,
+              0.018186667835414966,
+              0.039406354410164386,
+              0.0026680309597928754
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              9,
+              10,
+              -1,
+              -1,
+              13,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              12,
+              11,
+              -1,
+              -1,
+              14,
+              -1,
+              -1
+            ],
+            "features": [
+              10,
+              10,
+              52,
+              -2,
+              -2,
+              61,
+              -2,
+              -2,
+              4,
+              51,
+              -2,
+              -2,
+              35,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.0011486017610877752,
+              0.00038669537752866745,
+              0.23606811463832855,
+              -2.0,
+              -2.0,
+              0.08700000122189522,
+              -2.0,
+              -2.0,
+              0.0330601092427969,
+              0.11167800426483154,
+              -2.0,
+              -2.0,
+              0.30000000447034836,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.0008647461692114919,
+              -0.014519317638706591,
+              0.00019825545213295222,
+              -0.014279014466379306,
+              0.03929092999079535,
+              -0.03790390599415165,
+              -0.06083343819243624,
+              -0.0183169876361126,
+              0.0032832527256938006,
+              -0.01662541677096989,
+              -0.00519214665662748,
+              -0.04297436070461838,
+              0.0075358957352659435,
+              0.04802643928492603,
+              0.003023006026684604
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              -1,
+              -1
+            ],
+            "children_right": [
+              6,
+              5,
+              4,
+              -1,
+              -1,
+              -1,
+              -1
+            ],
+            "features": [
+              43,
+              11,
+              56,
+              -2,
+              -2,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.9750576615333557,
+              0.9813622534275055,
+              0.005668199621140957,
+              -2.0,
+              -2.0,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.0007827909857834878,
+              -0.0024019299525643253,
+              0.001669446774247056,
+              -0.016964530530348014,
+              0.006416113673272276,
+              -0.06801933751997458,
+              0.036361877271112994
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              -1,
+              3,
+              4,
+              -1,
+              -1,
+              -1
+            ],
+            "children_right": [
+              2,
+              -1,
+              6,
+              5,
+              -1,
+              -1,
+              -1
+            ],
+            "features": [
+              17,
+              -2,
+              18,
+              22,
+              -2,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.045431118458509445,
+              -2.0,
+              0.8456602394580841,
+              0.2615712583065033,
+              -2.0,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.0006842505802589548,
+              0.0338437387770963,
+              -0.0023088921108733724,
+              9.990869674388917e-05,
+              0.002337654510573551,
+              -0.027227841082079488,
+              -0.0595204184811372
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              -1,
+              7,
+              8,
+              -1,
+              -1,
+              -1
+            ],
+            "children_right": [
+              6,
+              5,
+              4,
+              -1,
+              -1,
+              -1,
+              10,
+              9,
+              -1,
+              -1,
+              -1
+            ],
+            "features": [
+              37,
+              49,
+              3,
+              -2,
+              -2,
+              -2,
+              25,
+              7,
+              -2,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.07233333215117455,
+              0.07566666603088379,
+              0.028406118042767048,
+              -2.0,
+              -2.0,
+              -2.0,
+              0.12830276787281036,
+              0.8891211450099945,
+              -2.0,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.0006053742029729543,
+              -0.015220553342462714,
+              -0.0016303557537516394,
+              0.010886883698475389,
+              -0.027504339984060787,
+              -0.06123021413007082,
+              0.002889953645752603,
+              4.031671472125647e-05,
+              0.004569110549721907,
+              -0.019491773950631643,
+              0.030360162781726655
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              -1,
+              3,
+              -1,
+              5,
+              -1,
+              -1
+            ],
+            "children_right": [
+              2,
+              -1,
+              4,
+              -1,
+              6,
+              -1,
+              -1
+            ],
+            "features": [
+              1,
+              -2,
+              7,
+              -2,
+              22,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.16807910054922104,
+              -2.0,
+              0.020252304151654243,
+              -2.0,
+              0.07289059087634087,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.0005292293692739262,
+              0.024665488455953004,
+              -0.002512335019040731,
+              0.036799395676573934,
+              -0.004404046554027632,
+              -0.04498886880267443,
+              -0.0018572825389760904
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              -1,
+              -1
+            ],
+            "children_right": [
+              6,
+              5,
+              4,
+              -1,
+              -1,
+              -1,
+              -1
+            ],
+            "features": [
+              43,
+              11,
+              56,
+              -2,
+              -2,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.9750576615333557,
+              0.9813622534275055,
+              0.005668199621140957,
+              -2.0,
+              -2.0,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.000488326910288102,
+              -0.0019652002816531035,
+              0.0016421559466167275,
+              -0.014844542482873542,
+              0.00580247401764419,
+              -0.05975710827316853,
+              0.033247647036090164
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              9,
+              10,
+              -1,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              12,
+              11,
+              -1,
+              -1,
+              -1
+            ],
+            "features": [
+              5,
+              35,
+              52,
+              -2,
+              -2,
+              44,
+              -2,
+              -2,
+              52,
+              7,
+              -2,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.9694638848304749,
+              0.30000000447034836,
+              0.2204861119389534,
+              -2.0,
+              -2.0,
+              0.0004186958394711837,
+              -2.0,
+              -2.0,
+              0.11495772004127502,
+              0.6801159679889679,
+              -2.0,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.00041868515815933824,
+              0.002616138252442006,
+              0.039484539784090986,
+              -0.00047640140664887386,
+              0.1050593369930794,
+              -0.001637908078132873,
+              -0.03609282951019504,
+              0.003284186460635016,
+              -0.016470801436874627,
+              -0.004928321201922042,
+              -0.011274643898625763,
+              0.006176352070423445,
+              -0.04385856361800022
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              -1,
+              3,
+              -1,
+              5,
+              -1,
+              -1
+            ],
+            "children_right": [
+              2,
+              -1,
+              4,
+              -1,
+              6,
+              -1,
+              -1
+            ],
+            "features": [
+              43,
+              -2,
+              17,
+              -2,
+              18,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.23001091182231903,
+              -2.0,
+              0.045431118458509445,
+              -2.0,
+              0.8434441983699799,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.00046010466237538037,
+              -0.038793246529472074,
+              0.0009754653232138753,
+              0.037636036240868406,
+              -0.0007199450626394891,
+              0.0016705899921303953,
+              -0.05047562313680204
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              -1,
+              4,
+              -1,
+              -1,
+              7,
+              8,
+              -1,
+              -1,
+              -1
+            ],
+            "children_right": [
+              6,
+              3,
+              -1,
+              5,
+              -1,
+              -1,
+              10,
+              9,
+              -1,
+              -1,
+              -1
+            ],
+            "features": [
+              46,
+              37,
+              -2,
+              25,
+              -2,
+              -2,
+              18,
+              11,
+              -2,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.550000011920929,
+              0.06433333456516266,
+              -2.0,
+              0.03795682080090046,
+              -2.0,
+              -2.0,
+              0.7836546003818512,
+              0.7941581308841705,
+              -2.0,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.00040469176240039026,
+              0.002531460852492797,
+              -0.027230752167372668,
+              0.0052524365822112,
+              0.02018467265352051,
+              -0.002239345766808315,
+              -0.016170148159565727,
+              -0.032617643357462825,
+              -0.0006356686860226023,
+              -0.08770987485660245,
+              0.01847920423792681
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              -1,
+              4,
+              -1,
+              -1,
+              -1
+            ],
+            "children_right": [
+              6,
+              3,
+              -1,
+              5,
+              -1,
+              -1,
+              -1
+            ],
+            "features": [
+              52,
+              43,
+              -2,
+              23,
+              -2,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.5865817070007324,
+              0.24123802036046982,
+              -2.0,
+              0.4475133568048477,
+              -2.0,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.0003702438776416425,
+              -0.0022378370113744816,
+              -0.04741154980310569,
+              8.200522653535586e-05,
+              0.01292696115947757,
+              -0.004756574916939389,
+              0.023365574466599058
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              9,
+              -1,
+              11,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              10,
+              -1,
+              12,
+              -1,
+              -1
+            ],
+            "features": [
+              34,
+              58,
+              49,
+              -2,
+              -2,
+              48,
+              -2,
+              -2,
+              28,
+              -2,
+              16,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.3500000089406967,
+              0.2500000074505806,
+              0.09099999815225601,
+              -2.0,
+              -2.0,
+              0.5000000149011612,
+              -2.0,
+              -2.0,
+              0.7680026888847351,
+              -2.0,
+              0.8497633934020996,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.000329338753791207,
+              -0.0030077899452440457,
+              0.0031456552217485586,
+              0.013457634942460748,
+              -0.01375208916799488,
+              -0.01653159294285094,
+              -0.05281373542496918,
+              -0.003841944593643205,
+              0.01572263796701357,
+              -0.0056022046713140134,
+              0.028874097012602382,
+              0.007003506304154488,
+              0.04990162750417841
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              -1,
+              7,
+              8,
+              -1,
+              -1,
+              11,
+              -1,
+              -1
+            ],
+            "children_right": [
+              6,
+              5,
+              4,
+              -1,
+              -1,
+              -1,
+              10,
+              9,
+              -1,
+              -1,
+              12,
+              -1,
+              -1
+            ],
+            "features": [
+              4,
+              51,
+              44,
+              -2,
+              -2,
+              -2,
+              35,
+              52,
+              -2,
+              -2,
+              44,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.0330601092427969,
+              0.11167800426483154,
+              0.14297787845134735,
+              -2.0,
+              -2.0,
+              -2.0,
+              0.30000000447034836,
+              0.2204861119389534,
+              -2.0,
+              -2.0,
+              0.00041875387250911444,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.0002864230641369127,
+              -0.014705737904481063,
+              -0.004923325925071766,
+              0.0049204592969640994,
+              -0.010673440669229107,
+              -0.036057809343790694,
+              0.0025629026228772014,
+              0.03475596197960552,
+              -0.0009317951487280689,
+              0.09396592904919522,
+              -0.0011814772755658004,
+              -0.033303382573744135,
+              0.0033834581192395954
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              -1,
+              -1
+            ],
+            "children_right": [
+              6,
+              5,
+              4,
+              -1,
+              -1,
+              -1,
+              -1
+            ],
+            "features": [
+              22,
+              52,
+              23,
+              -2,
+              -2,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.2611776143312454,
+              0.6233108043670654,
+              0.4475133568048477,
+              -2.0,
+              -2.0,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.00031234325491140446,
+              0.001485548319388605,
+              -0.000843613867264167,
+              0.01624686249872496,
+              -0.005874895994466991,
+              0.041283918346616315,
+              -0.02254112967927915
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              -1,
+              -1
+            ],
+            "children_right": [
+              6,
+              5,
+              4,
+              -1,
+              -1,
+              -1,
+              -1
+            ],
+            "features": [
+              43,
+              31,
+              21,
+              -2,
+              -2,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.9750576615333557,
+              0.9813622534275055,
+              0.7841534614562988,
+              -2.0,
+              -2.0,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.0002724042656791865,
+              -0.0016053189340983099,
+              0.0015587112803524554,
+              -0.004463373591643892,
+              0.012782806397207726,
+              -0.052067851079519306,
+              0.02996542343230587
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              -1,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              9,
+              -1,
+              -1
+            ],
+            "children_right": [
+              6,
+              3,
+              -1,
+              5,
+              -1,
+              -1,
+              8,
+              -1,
+              10,
+              -1,
+              -1
+            ],
+            "features": [
+              46,
+              37,
+              -2,
+              25,
+              -2,
+              -2,
+              0,
+              -2,
+              64,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.550000011920929,
+              0.06300000101327896,
+              -2.0,
+              0.03795682080090046,
+              -2.0,
+              -2.0,
+              0.6083333492279053,
+              -2.0,
+              0.07334494963288307,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.0002133567540704242,
+              0.002474919997608127,
+              -0.027681037597592734,
+              0.004695680148088891,
+              0.01752465159332863,
+              -0.00170664631172911,
+              -0.014647861860217036,
+              -0.0400915964674008,
+              0.002979823637638608,
+              0.024208408658217093,
+              -0.0210584210855206
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              2,
+              3,
+              -1,
+              -1,
+              6,
+              -1,
+              -1,
+              9,
+              -1,
+              -1
+            ],
+            "children_right": [
+              8,
+              5,
+              4,
+              -1,
+              -1,
+              7,
+              -1,
+              -1,
+              10,
+              -1,
+              -1
+            ],
+            "features": [
+              25,
+              43,
+              2,
+              -2,
+              -2,
+              52,
+              -2,
+              -2,
+              7,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.1276654377579689,
+              0.3843917101621628,
+              0.24621212482452393,
+              -2.0,
+              -2.0,
+              0.36181819438934326,
+              -2.0,
+              -2.0,
+              0.46614037454128265,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.00015972148994658654,
+              -0.0023065884478710667,
+              -0.01917008609802847,
+              -0.002942575027246156,
+              -0.05962886730789954,
+              0.0015690170312348812,
+              -0.0030704341894391917,
+              0.029541430965175537,
+              0.018949520046430687,
+              -0.0035024060767712833,
+              0.03617106466952289
+            ]
+          },
+          {
+            "children_left": [
+              1,
+              -1,
+              3,
+              4,
+              -1,
+              -1,
+              -1
+            ],
+            "children_right": [
+              2,
+              -1,
+              6,
+              5,
+              -1,
+              -1,
+              -1
+            ],
+            "features": [
+              7,
+              -2,
+              0,
+              22,
+              -2,
+              -2,
+              -2
+            ],
+            "thresholds": [
+              0.020252304151654243,
+              -2.0,
+              0.9916666746139526,
+              0.07289059087634087,
+              -2.0,
+              -2.0,
+              -2.0
+            ],
+            "values": [
+              -0.00013487606848254068,
+              0.026482021747190568,
+              -0.0014844920460926104,
+              -0.003498551417950549,
+              -0.03709856846076514,
+              -0.001512583018596725,
+              0.02447157280501833
+            ]
+          }
+        ]
+      },
+      "sha256": "e18fb5d0b442daa011612758cf797d45b28823f4a84fcabb4f7897a04e2afcd9"
+    }
+  },
+  "models_sha256": "cd4ba662120d47306c7a9e82b79d16bb84cd2b68800a900f446105c665d44b1a",
+  "prospective_boundary": {
+    "all_1000_history_ids_excluded_from_v78_target_stages": true,
+    "v77_per_case_features_scores_gold_or_metrics_used_for_training": false,
+    "v77_used_only_to_identify_missing_route_family_and_oracle_headroom": true,
+    "v78_target_ids_rows_features_scores_or_metrics_seen": false
+  },
+  "schema_version": "frc-hotpot-history-three-route-graph-router-v78",
+  "search": {
+    "all_configuration_results_sha256": "9be37ee33f65d28640954155154aee9e6bd16226b51cdf42a8428ecfbe9352f7",
+    "all_exploration_used_only_permanently_excluded_history": true,
+    "configuration_space": {
+      "estimators": [
+        10,
+        25,
+        50
+      ],
+      "learning_rate": [
+        0.05,
+        0.1
+      ],
+      "loss": [
+        "huber",
+        "squared_error"
+      ],
+      "max_depth": [
+        1,
+        2,
+        3
+      ],
+      "min_samples_leaf": [
+        20,
+        40,
+        80
+      ],
+      "random_state": 19,
+      "threshold": [
+        0.0,
+        0.0025,
+        0.005,
+        0.01
+      ]
+    },
+    "model_configurations": 108,
+    "route_policy_configurations": 432,
+    "thresholds_per_model": 4,
+    "top_10": [
+      {
+        "complete_evidence_recall": 0.725,
+        "evidence_macro_f1": 0.563008,
+        "evidence_macro_recall": 0.884438,
+        "mean_selected_tokens": 133.176,
+        "model_configuration_index": 102,
+        "route_counts": {
+          "cross_encoder_topk": 602,
+          "soft_title_link_support_path_closure_v74": 398
+        },
+        "threshold": 0.0
+      },
+      {
+        "complete_evidence_recall": 0.724,
+        "evidence_macro_f1": 0.562722,
+        "evidence_macro_recall": 0.883938,
+        "mean_selected_tokens": 133.14,
+        "model_configuration_index": 102,
+        "route_counts": {
+          "cross_encoder_topk": 629,
+          "soft_title_link_support_path_closure_v74": 371
+        },
+        "threshold": 0.0025
+      },
+      {
+        "complete_evidence_recall": 0.727,
+        "evidence_macro_f1": 0.562585,
+        "evidence_macro_recall": 0.883305,
+        "mean_selected_tokens": 133.496,
+        "model_configuration_index": 106,
+        "route_counts": {
+          "cross_encoder_topk": 678,
+          "soft_title_link_support_path_closure_v74": 322
+        },
+        "threshold": 0.005
+      },
+      {
+        "complete_evidence_recall": 0.722,
+        "evidence_macro_f1": 0.562448,
+        "evidence_macro_recall": 0.883505,
+        "mean_selected_tokens": 133.418,
+        "model_configuration_index": 54,
+        "route_counts": {
+          "cross_encoder_topk": 654,
+          "soft_title_link_support_path_closure_v74": 346
+        },
+        "threshold": 0.0
+      },
+      {
+        "complete_evidence_recall": 0.727,
+        "evidence_macro_f1": 0.562406,
+        "evidence_macro_recall": 0.883305,
+        "mean_selected_tokens": 133.468,
+        "model_configuration_index": 106,
+        "route_counts": {
+          "cross_encoder_topk": 649,
+          "soft_title_link_support_path_closure_v74": 351
+        },
+        "threshold": 0.0025
+      },
+      {
+        "complete_evidence_recall": 0.723,
+        "evidence_macro_f1": 0.562379,
+        "evidence_macro_recall": 0.883221,
+        "mean_selected_tokens": 133.788,
+        "model_configuration_index": 92,
+        "route_counts": {
+          "cross_encoder_topk": 639,
+          "soft_title_link_support_path_closure_v74": 361
+        },
+        "threshold": 0.0
+      },
+      {
+        "complete_evidence_recall": 0.725,
+        "evidence_macro_f1": 0.562298,
+        "evidence_macro_recall": 0.883438,
+        "mean_selected_tokens": 133.388,
+        "model_configuration_index": 100,
+        "route_counts": {
+          "cross_encoder_topk": 689,
+          "soft_title_link_support_path_closure_v74": 311
+        },
+        "threshold": 0.005
+      },
+      {
+        "complete_evidence_recall": 0.724,
+        "evidence_macro_f1": 0.562192,
+        "evidence_macro_recall": 0.883138,
+        "mean_selected_tokens": 133.644,
+        "model_configuration_index": 94,
+        "route_counts": {
+          "cross_encoder_topk": 628,
+          "soft_title_link_support_path_closure_v74": 372
+        },
+        "threshold": 0.0
+      },
+      {
+        "complete_evidence_recall": 0.726,
+        "evidence_macro_f1": 0.562184,
+        "evidence_macro_recall": 0.883055,
+        "mean_selected_tokens": 133.526,
+        "model_configuration_index": 106,
+        "route_counts": {
+          "cross_encoder_topk": 631,
+          "soft_title_link_support_path_closure_v74": 369
+        },
+        "threshold": 0.0
+      },
+      {
+        "complete_evidence_recall": 0.723,
+        "evidence_macro_f1": 0.562164,
+        "evidence_macro_recall": 0.883055,
+        "mean_selected_tokens": 133.66,
+        "model_configuration_index": 58,
+        "route_counts": {
+          "cross_encoder_topk": 650,
+          "soft_title_link_support_path_closure_v74": 350
+        },
+        "threshold": 0.0
+      }
+    ],
+    "v77_target_rows_features_scores_gold_or_metrics_used_for_fit_or_selection": false
+  },
+  "selected_configuration": {
+    "default_route": "cross_encoder_topk",
+    "estimators": 50,
+    "feature_names": [
+      "candidate_count_scaled",
+      "unique_source_fraction",
+      "linked_node_fraction",
+      "mean_degree_fraction",
+      "max_degree_fraction",
+      "component_fraction",
+      "largest_component_fraction",
+      "v75_comparison_probability",
+      "question_title_mention_fraction",
+      "cross_encoder_top1",
+      "cross_encoder_top1_top2_gap",
+      "cross_encoder_top5_mean",
+      "cross_encoder_top5_std",
+      "cross_encoder_top5_floor",
+      "dense_top1",
+      "dense_top1_top2_gap",
+      "dense_top5_mean",
+      "dense_top5_std",
+      "dense_top5_floor",
+      "bm25_top1",
+      "bm25_top1_top2_gap",
+      "bm25_top5_mean",
+      "bm25_top5_std",
+      "bm25_top5_floor",
+      "hybrid_top1",
+      "hybrid_top1_top2_gap",
+      "hybrid_top5_mean",
+      "hybrid_top5_std",
+      "hybrid_top5_floor",
+      "cross_cross_overlap_fraction",
+      "cross_cross_added_fraction",
+      "cross_cross_score_mean",
+      "cross_cross_score_min",
+      "cross_cross_score_max",
+      "cross_internal_edge_fraction",
+      "cross_linked_node_fraction",
+      "cross_unique_source_fraction",
+      "cross_token_budget_fraction",
+      "cross_added_link_to_cross_fraction",
+      "cross_added_mean_cross_rank_fraction",
+      "cross_added_max_cross_rank_fraction",
+      "soft_cross_overlap_fraction",
+      "soft_cross_added_fraction",
+      "soft_cross_score_mean",
+      "soft_cross_score_min",
+      "soft_cross_score_max",
+      "soft_internal_edge_fraction",
+      "soft_linked_node_fraction",
+      "soft_unique_source_fraction",
+      "soft_token_budget_fraction",
+      "soft_added_link_to_cross_fraction",
+      "soft_added_mean_cross_rank_fraction",
+      "soft_added_max_cross_rank_fraction",
+      "anchor_cross_overlap_fraction",
+      "anchor_cross_added_fraction",
+      "anchor_cross_score_mean",
+      "anchor_cross_score_min",
+      "anchor_cross_score_max",
+      "anchor_internal_edge_fraction",
+      "anchor_linked_node_fraction",
+      "anchor_unique_source_fraction",
+      "anchor_token_budget_fraction",
+      "anchor_added_link_to_cross_fraction",
+      "anchor_added_mean_cross_rank_fraction",
+      "anchor_added_max_cross_rank_fraction",
+      "pair_soft_cross_overlap_fraction",
+      "pair_soft_minus_cross_fraction",
+      "pair_anchor_cross_overlap_fraction",
+      "pair_anchor_minus_cross_fraction",
+      "pair_soft_anchor_overlap_fraction",
+      "pair_soft_minus_anchor_fraction"
+    ],
+    "features": "the unchanged 71 gold-free v76 graph/score/overlap features",
+    "learned_routes": [
+      "soft_title_link_support_path_closure_v74",
+      "alternating_anchor_link_control"
+    ],
+    "learning_rate": 0.1,
+    "loss": "huber",
+    "max_depth": 3,
+    "min_samples_leaf": 40,
+    "model_configuration_index": 102,
+    "official_type_answer_or_gold_used_at_runtime": false,
+    "random_state": 19,
+    "targets": {
+      "alternating_anchor_link_control": "anchor_f1_minus_cross_encoder_f1",
+      "soft_title_link_support_path_closure_v74": "soft_f1_minus_cross_encoder_f1"
+    },
+    "threshold": 0.0
+  },
+  "v75_router_model_payload_sha256": "31562661eacb70f3881dad0a6b17a70d272d7012d938187ef59a29336af5aa7b"
+}

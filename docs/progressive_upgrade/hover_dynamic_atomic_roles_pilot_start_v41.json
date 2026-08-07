@@ -1,0 +1,46 @@
+{
+  "schema_version": "frc-hover-dynamic-atomic-pilot-start-v1",
+  "recorded_at": "2026-08-01T15:03:01.8328102+08:00",
+  "experiment_id": "FRC-HOVER-DYNAMIC-ATOMIC-ROLES-V41",
+  "protocol_sha256": "42486a98c01fd0b9663d3eb9bd0de63634d91605eed06060ac1236ad26997e86",
+  "query_cache_created_at": "2026-08-01T14:45:32+08:00",
+  "runtime_observation_before_generation": {
+    "python": "3.10.20",
+    "torch": "2.4.1+cu124",
+    "transformers": "4.46.3",
+    "cuda_runtime": "12.4",
+    "gpu": "NVIDIA GeForce RTX 4060 Ti",
+    "gpu_memory_mib": 16380,
+    "implementation_sha256": "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621",
+    "runner_sha256": "325a750b98227b774c8d218dba5499f2c88a610a0060a86b1b14083546b9e4a6"
+  },
+  "post_start_runner_change": {
+    "current_runner_sha256": "f7ef3d8892de364ab726f183d4f7fca2e248bf850a62687de3e746e82edd617f",
+    "generator_implementation_changed": false,
+    "module_sha256_unchanged": "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621",
+    "scope": "Only add a mandatory two-stage confirmation-open registration check to the runner. Pilot preparation, prompt construction, parsing, fallback, generation parameters, model loading, scoring, selector, and mechanism thresholds were not changed.",
+    "reason": "Resolve the protocol ordering cycle without weakening the requirement that confirmation content stays closed until a tracked execution record exists."
+  },
+  "generator_model": {
+    "repository_id": "Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4",
+    "repository_revision": "e9c932ac1893a49ae0fc497ad6e1e86e2e39af20",
+    "file_sha256": {
+      "config.json": "b369e58aa34e19e76ea67455c6386c60f220e5cf57068ebd0b6a6449b41853d5",
+      "generation_config.json": "fd01df57931815767cb12a9f0fe479a1ed9a5b2a4e7a203e751e54e5b01669dc",
+      "merges.txt": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+      "model-00001-of-00002.safetensors": "278698de6ca93314e68edf14f57fe14af9fb4255034f06d4eb8272671b4973d2",
+      "model-00002-of-00002.safetensors": "77b6cb5d6c191b97a8afa9a19092db693db41068241cf27c7c67cedb096e9664",
+      "model.safetensors.index.json": "a6ac80547c7291a7e64f14e299f75263d30383e0737a881517eb0083255aca7d",
+      "tokenizer.json": "22bfef58b74d2fa40f402ac0c8d638d9e54d12137da2e2c7e9f32a1e7534e42f",
+      "tokenizer_config.json": "5b5d4f65d0acd3b2d56a35b56d374a36cbc1c8fa5cf3b3febbbfabf22f359583",
+      "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+    },
+    "hash_validation_result": "MATCH"
+  },
+  "boundary": {
+    "pilot_gold_fields_accessed_by_generation": false,
+    "confirmation_content_accessed": false,
+    "pilot_or_confirmation_performance_metrics_known": false,
+    "record_is_not_a_result": true
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "schema_version": "frc-contractnli-v51-implementation-order-erratum-v1",
+  "experiment_id": "FRC-CONTRACTNLI-DEV-CALIBRATED-ROBUST-CONSENSUS-V51",
+  "registered_at": "2026-08-02T19:14:00+08:00",
+  "reason": "The frozen runner incorrectly required gold-dependent candidate coverage before query generation and neural scoring, while the frozen protocol requires the blind score cache to be complete before gold is joined. The conflict was detected immediately after registered dev sampling and blind-cache preparation and before coverage, query generation, neural scoring, threshold fitting, or metrics.",
+  "original_implementation_registration_sha256": "eb55837d9d2c66fe43b64b45d2c19f58f2f9010f307cb37255b66b324f2fcac8",
+  "superseded_hashes": {
+    "protocol_sha256": "0904a59ace997919a06fe32a4e839bf1fce5158cb7f4c663567506660421a18b",
+    "module_sha256": "6ec0a073b7a358ad1502a2f0f1e925cef19f393750847e7dc874c746727d9ec9",
+    "runner_sha256": "e517627a51543a383e2fe7aa34c01f25c2e3e2cfaf6d21146f22dc0b0d52f475",
+    "test_sha256": "2c4a2f92a2098d19d5b298942a3cff543e6fb41aa9e8eda3a3cb86c6bc9dcb3c"
+  },
+  "corrected_hashes": {
+    "protocol_sha256": "0904a59ace997919a06fe32a4e839bf1fce5158cb7f4c663567506660421a18b",
+    "module_sha256": "6ec0a073b7a358ad1502a2f0f1e925cef19f393750847e7dc874c746727d9ec9",
+    "runner_sha256": "e20e7713da29f3fdbac14d29defa5a3ea4f9bbbc68fc77dca0c28696ad0ad936",
+    "test_sha256": "2c4a2f92a2098d19d5b298942a3cff543e6fb41aa9e8eda3a3cb86c6bc9dcb3c"
+  },
+  "boundary_at_erratum_registration": {
+    "dev_opened_only_for_registered_sampling_and_blind_preparation": true,
+    "dev_gold_joined_for_coverage_or_metrics": false,
+    "dev_queries_generated": false,
+    "dev_neural_scoring_started": false,
+    "train_member_opened": false,
+    "test_member_opened_by_v51": false
+  },
+  "already_frozen_blind_artifacts": {
+    "prepared_blind_sha256": "1d96b643be248ec11589ab59a71759216fad9ccff7ff6f12ca39ef81cbb0e362",
+    "candidate_map_sha256": "ed15007cba055dc31e5f4417ba28a102975ced25c0e340ffddc9df6da7e66d57",
+    "blind_census_sha256": "728a22cc8613b5db3af8077a7072b5ac26b965bab39692da71a1f3d0ad07807c"
+  },
+  "correction": {
+    "development_execution_registration": "Register source, blind artifacts, runtime and the pending late-gold boundary before queries; do not hash a coverage artifact that must not exist yet.",
+    "candidate_coverage": "Generate only after the deterministic query cache and all 240 neural score rows are complete, then join dev gold once and freeze coverage plus score hashes.",
+    "calibration": "Require the post-score coverage gate before any threshold fitting or metric computation."
+  },
+  "unchanged": {
+    "protocol": true,
+    "sample_and_blind_artifacts": true,
+    "models_queries_and_score_formula": true,
+    "threshold_candidates_constraints_tie_order_and_oof_gates": true,
+    "confirmation_open_rule": true,
+    "official_test_exclusion": true,
+    "selector_adoption_authority": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "scientific_boundary": "This is an execution-order correction registered before any outcome-bearing operation. It does not make the development split untouched again and must remain visible in the final report."
+}

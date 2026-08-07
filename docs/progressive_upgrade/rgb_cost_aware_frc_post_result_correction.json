@@ -1,0 +1,50 @@
+{
+  "schema_version": "frc-rgb-cost-aware-post-result-correction-v1",
+  "registered_at": "2026-08-01T09:12:50.0117298+08:00",
+  "experiment_id": "FRC-RGB-COST-AWARE-V35",
+  "initial_result_disclosed": {
+    "status": "RGB_COST_AWARE_FRC_SAFETY_REGRESSION",
+    "cases": 498,
+    "candidate_chunks": 14580,
+    "strongest_baseline": "coverage_greedy_proxy",
+    "cost_aware_minus_strongest": -0.048719,
+    "simultaneous_ci": {
+      "ci_low": -0.066307,
+      "ci_high": -0.032655
+    },
+    "cost_aware_minus_old_frc": -0.043778,
+    "worst_dataset_budget_delta": -0.127688,
+    "initial_positive_wrong_rate_delta": -0.007483,
+    "initial_output_sha256": {
+      "json": "b0bf3c80a4d833b434cc1389c5050280205a895a12025be5a435cda0bd365dc2",
+      "markdown": "51c0d8e780376c28b2eb605fbf195b066beaf37a094c1c424d0a4397f7d879ee",
+      "evidence": "2f7f5944f00b42805bda75aafe61e314ebeb02999c195b78a5427dcd3cf3d04f"
+    }
+  },
+  "issue": {
+    "type": "secondary_metric_scope_interpretation",
+    "description": "positive_wrong exists only in rgb_en_fact, but the first report reused the all-dataset family aggregation and therefore averaged the meaningful en_fact delta with structural zeros from en_refine and en_int.",
+    "cause": "The pre-registered safety rule named the positive_wrong rate but did not explicitly restate that its population is the counterfactual dataset only.",
+    "primary_metric_affected": false,
+    "selector_outputs_affected": false,
+    "bootstrap_affected": false,
+    "status_or_safety_regression_affected": false
+  },
+  "frozen_correction_before_recalculation": {
+    "positive_wrong_population": "rgb_en_fact valid rows only",
+    "budget_aggregation": "equal mean across 512, 1024, and 1500 token budgets",
+    "comparison": "frc_cost_aware_v35 minus frc_select_v34",
+    "threshold_unchanged": 0.02,
+    "all_other_metrics_methods_weights_prompts_scores_and_outcome_rules_unchanged": true,
+    "no_neural_rescoring": true,
+    "expected_corrected_direction_known": "negative",
+    "expected_status_unchanged": "RGB_COST_AWARE_FRC_SAFETY_REGRESSION"
+  },
+  "development_boundary": {
+    "rgb_formula_or_weight_tuning": false,
+    "rgb_selector_rerun": false,
+    "negative_primary_result_preserved": true,
+    "gate_2": "NO-GO/SHADOW",
+    "canary_or_default_authorized": false
+  }
+}

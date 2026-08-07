@@ -1,0 +1,37 @@
+{
+  "schema_version": "frc-doc2dial-wood-source-registration-v56",
+  "experiment_id": "FRC-DOC2DIAL-WOOD-SCHEMA-CORRECTED-TRANSFER-V56",
+  "registered_at": "2026-08-03T00:32:00+08:00",
+  "protocol_sha256": "f3a5282189b5a8bc4e730d880dd17fb9f296bde21ddfa8e0fea0c85e7fa27c90",
+  "source": {
+    "url": "https://doc2dial.github.io/file/doc2dial_v0.9.zip",
+    "cache_path": ".cache/benchmarks/doc2dial/v55_source/doc2dial_v0.9.zip",
+    "bytes": 8228534,
+    "sha256": "9143efd9d12ca30b1c772f65102b1c3e77d625fca03e69d316773acea5406786",
+    "documents_member": "doc2dial/v0.9/data/doc2dial_doc.json",
+    "development_member": "doc2dial/v0.9/data/wOOD/doc2dial_dial_train.json",
+    "confirmation_member": "doc2dial/v0.9/data/wOOD/doc2dial_dial_dev.json"
+  },
+  "pre_registration_access": {
+    "archive_downloaded_and_member_directory_read": true,
+    "documents_and_development_members_parsed_during_v55_schema_failure": true,
+    "confirmation_member_parsed": false,
+    "woood_sibling_members_parsed": false,
+    "observed_only_schema_keys_container_shapes_document_dictionary_keys_and_aggregate_counts": true,
+    "utterance_span_text_reference_value_selected_case_query_candidate_score_or_metric_printed_or_persisted": false,
+    "outcome_bearing_development_preparation_started": false,
+    "query_generation_started": false,
+    "neural_scoring_started": false,
+    "metrics_computed": false
+  },
+  "schema_correction_basis": {
+    "turns_list_dialogues": 3459,
+    "turns_keyed_object_dialogues": 12,
+    "keyed_object_policy": "Require every key to parse as an integer and sort numerically; reject rather than lexical-fallback when any key is non-integer.",
+    "empty_reference_policy": "Use the official README statement that empty reference denotes not answerable or irrelevant; retain adjacent OOD act only as a descriptive subtype."
+  },
+  "license_and_redistribution": "No explicit v0.9 license found; related IBM HF v1.0.1 card says cc-by-3.0. Keep source ignored and publish no source text.",
+  "confirmation_access_authorized": false,
+  "selector_adoption_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

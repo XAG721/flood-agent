@@ -1,0 +1,85 @@
+{
+  "analysis": {
+    "outcome": {
+      "canary_or_default_authorized": false,
+      "gate_2": "NO-GO/SHADOW",
+      "retrieval_scoring_open_authorized": false,
+      "selector_adoption_authorized": false,
+      "status": "QUAC_V63_VALIDATION_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_RETRIEVAL_SCORING",
+      "strict_independent_confirmation_claimed": false,
+      "support_gate_passed": false,
+      "validation_reuse_for_tuning_or_selection": false
+    },
+    "support_checks": {
+      "answer_bearing_support_pass_rate_at_least_0_75": false,
+      "exact_answer_state_balance": true,
+      "exact_cases_equals_600": true,
+      "minimum_dialogues_at_least_250": true,
+      "minimum_documents_at_least_200": true,
+      "no_answer_rejection_rate_at_least_0_65": false,
+      "qa_invalid_rate_equals_0": true,
+      "schema_exclusion_rate_at_most_0_01": true,
+      "support_verifier_balanced_accuracy_at_least_0_75": false
+    },
+    "support_verifier": {
+      "answer_bearing_support_pass_rate": 0.486667,
+      "balanced_accuracy": 0.493333,
+      "gold_fields_visible_to_verifier": false,
+      "invalid_output_count": 0,
+      "invalid_output_rate": 0.0,
+      "no_answer_rejection_rate": 0.5,
+      "rows": 600
+    }
+  },
+  "experiment_id": "FRC-QUAC-TARGET-TRAINED-QA-SUPPORT-V63",
+  "metadata": {
+    "answer_state_counts": {
+      "answer_bearing": 300,
+      "no_answer": 300
+    },
+    "balanced_mechanism_sample_not_natural_prevalence": true,
+    "cases": 600,
+    "dataset_id": "quac_v0_2_target_trained_qa_support_validation_v63",
+    "dialogues": 477,
+    "documents": 477,
+    "source_artifacts": {
+      "candidate_map_sha256": "680c58dcc9c94c003532a14738f32df88602cfdf8f2b547c9ed38a4d92766156",
+      "execution_registration_sha256": "89f459fa63ae067cbcf0d16ffbf99447cb3326d3efe84091d75395418d9f4330",
+      "gold_joined_after_complete_qa_cache": true,
+      "implementation_registration_sha256": "d81c66a98ebbee16b5af7f525520dc79082b100c062deb3bf25f6a8cfb6f9bc4",
+      "model_registration_sha256": "d1c9c062d41aa8f7d3da54f00d87accb2520ec5bf9231107fce347bd3391b26a",
+      "prepared_blind_sha256": "81224216a57cf0da5c39ca7ec5e2b188037d8677478b1e3419054b25f179980f",
+      "protocol_sha256": "40549911361d112aeac4bd6d1d432fb4068e96106afe53c7727bbb41481f3294",
+      "qa_input_sha256": "d6185d5f8dd31af8effc9b26137e9f2eb5203797c8b16a6db152b43a053b62e2",
+      "qa_support_cache_sha256": "77c1cbc30c282eac734de66854f46ac26d064c994426d8e7212c9976174a1e9e",
+      "query_or_retrieval_scoring_started": false,
+      "sampling": {
+        "candidate_turns": 7354,
+        "eligible_answer_state_counts": {
+          "answer_bearing": 5868,
+          "no_answer": 1486
+        },
+        "eligible_cases": 7354,
+        "maximum_cases_per_dialogue": 2,
+        "maximum_cases_per_document_per_answer_state": 2,
+        "schema_excluded_cases": 0,
+        "schema_exclusion_rate": 0.0,
+        "schema_exclusion_reasons": {},
+        "selected_answer_state_counts": {
+          "answer_bearing": 300,
+          "no_answer": 300
+        },
+        "selected_cases": 600,
+        "selected_dialogues": 477,
+        "selected_documents": 477,
+        "selected_v57_commitment_overlap": 0,
+        "stage": "validation",
+        "target_cases": 600,
+        "v57_excluded_commitment_count": 0
+      },
+      "source_registration_sha256": "8ccd3f1bffb8292c114d17e0d734f2651122906f33b2a101f801d0b0bde702c9"
+    },
+    "stage": "validation_support_gate"
+  },
+  "schema_version": "frc-quac-v63-support-open-gate-result-v1"
+}

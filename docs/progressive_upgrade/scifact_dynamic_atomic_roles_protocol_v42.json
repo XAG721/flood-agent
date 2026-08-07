@@ -1,0 +1,205 @@
+{
+  "schema_version": "frc-scifact-dynamic-atomic-roles-protocol-v1",
+  "registered_at": "2026-08-01T21:48:54.8033435+08:00",
+  "experiment_id": "FRC-SCIFACT-DYNAMIC-ATOMIC-ROLES-V42",
+  "purpose": "Independently test the frozen v41 claim-conditioned dynamic atomic-role selector on a previously untouched scientific fact-verification dataset without tuning on revealed HoVer or SciFact results.",
+  "research_boundary": {
+    "scifact_data_downloaded_before_registration": false,
+    "scifact_claim_corpus_or_gold_content_accessed_before_registration": false,
+    "local_repository_or_cache_contained_scifact_before_registration": false,
+    "official_schema_license_and_documentation_examples_viewed": true,
+    "documentation_example_claim_ids_permanently_excluded": [
+      3,
+      123,
+      263
+    ],
+    "scifact_result_used_to_choose_method_prompt_weight_threshold_budget_or_metric": false,
+    "hover_v41_tuning_allowed": false,
+    "interpretation": "Only official repository metadata, schema, license text, aggregate 1.4K description, and documentation examples were viewed. Every exposed example ID is excluded before download. No SciFact release file has been downloaded or inspected."
+  },
+  "frozen_lineage": {
+    "hover_v41_protocol_sha256": "42486a98c01fd0b9663d3eb9bd0de63634d91605eed06060ac1236ad26997e86",
+    "hover_v41_execution_sha256": "bbad5dab2f06e663ba2d5227e161f290d3c6d4929f9d75e1bf10ca35e186b29f",
+    "hover_v41_result_record_sha256": "b2afd0aee04a063d1889a393da9cf34a18f3344836efa444643e9bae52151975",
+    "hover_v41_status": "DYNAMIC_ATOMIC_ROLE_SUPPORT_NOT_ESTABLISHED",
+    "hover_v41_algorithm_inherited_without_change": true,
+    "permitted_adapter_changes": [
+      "Parse the official SciFact corpus and claims_dev schemas.",
+      "Build the frozen corpus-wide BM25 top-20 candidate pool.",
+      "Map abstract documents and tokenizer chunks to neutral source IDs.",
+      "Join document-level gold only after the complete blind score cache exists."
+    ],
+    "forbidden_changes": [
+      "dynamic query prompt, keys, parser, fallback, model, revision, or generation parameters",
+      "embedding or reranker model and revision",
+      "static role prompts or dynamic role interpretation",
+      "per-case score calibration",
+      "rank utility, role weight, unique-source constraint, Top-K, or Token budgets",
+      "baseline definitions, primary metric, bootstrap, support thresholds, or stopping rule"
+    ]
+  },
+  "frozen_source": {
+    "official_repository": "https://github.com/allenai/scifact",
+    "official_repository_revision": "68b98a56d93e0f9da0d2aab4e6c3294699a0f72e",
+    "official_release_url": "https://scifact.s3-us-west-2.amazonaws.com/release/latest/data.tar.gz",
+    "required_files": [
+      "corpus.jsonl",
+      "claims_dev.jsonl"
+    ],
+    "claims_and_evidence_license": "CC BY 4.0",
+    "corpus_abstract_license": "ODC-By 1.0",
+    "repository_code_license": "Apache-2.0",
+    "download_target": ".cache/benchmarks/scifact/data.tar.gz",
+    "extraction_target": ".cache/benchmarks/scifact/data",
+    "raw_source_committed": false,
+    "post_download_requirement": "Record archive and required-file SHA-256, sizes, line counts, unique IDs, schema census, implementation hashes, and runtime before query generation or neural scoring."
+  },
+  "frozen_partition": {
+    "split": "claims_dev.jsonl",
+    "ordering": "Ascending integer claim id after schema validation.",
+    "exclude_claim_ids": [
+      3,
+      123,
+      263
+    ],
+    "primary_eligibility": "All remaining unique dev claims with a non-empty evidence object and at least one referenced gold document present in corpus.jsonl.",
+    "empty_evidence_policy": "Report the count as a structurally non-evaluable evidence-retrieval slice; do not include it in the primary selection metric and do not substitute another claim.",
+    "missing_gold_document_policy": "Fail execution registration; do not silently exclude or substitute the claim.",
+    "minimum_primary_cases": 100,
+    "content_balancing_subsampling_or_case_replacement": false,
+    "train_or_cross_validation_content_allowed": false,
+    "test_content_allowed": false
+  },
+  "frozen_candidate_retrieval": {
+    "corpus_membership": "Every unique corpus.jsonl document with a non-empty integer doc_id; no gold-aware filtering.",
+    "document_text": "Unicode-whitespace-normalized title, one space, then abstract sentences in release order joined by one space.",
+    "tokenizer_regex": "[A-Za-z0-9]+(?:'[A-Za-z0-9]+)? lowercased",
+    "bm25": {
+      "k1": 1.5,
+      "b": 0.75,
+      "idf": "log(1 + (N - df + 0.5) / (df + 0.5))",
+      "query_term_multiplicity_preserved": true,
+      "score_calibration_for_retrieval_only": "none",
+      "stable_order": "descending raw BM25, then ascending integer doc_id"
+    },
+    "candidate_depth_documents": 20,
+    "gold_document_injection": false,
+    "candidate_ceiling": "Gold-document recall within the frozen top-20 pool; missing gold remains in the denominator.",
+    "chunking": {
+      "content_tokens": 384,
+      "overlap_tokens": 64,
+      "stride_tokens": 320,
+      "tokenizer_model_revision": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312",
+      "source_constraint": "At most one selected chunk per SciFact doc_id for both rank-coverage methods."
+    }
+  },
+  "frozen_dynamic_query_generator": {
+    "model": "Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4",
+    "revision": "e9c932ac1893a49ae0fc497ad6e1e86e2e39af20",
+    "input": "Unicode-whitespace-normalized public claim only.",
+    "keys": [
+      "anchor",
+      "first_fact",
+      "second_fact_or_bridge",
+      "counterevidence"
+    ],
+    "prompt_parser_fallback": "Byte-for-byte v41 implementation and four fixed label-neutral fallback templates.",
+    "generation": {
+      "do_sample": false,
+      "max_input_tokens": 512,
+      "max_new_tokens": 160,
+      "batch_size": 8
+    },
+    "maximum_fallback_rate": 0.05,
+    "forbidden_inputs": [
+      "corpus title or abstract",
+      "candidate identity",
+      "retrieval or role score",
+      "evidence label, rationale sentence, or gold document",
+      "cited_doc_ids"
+    ]
+  },
+  "frozen_scoring": {
+    "embedding_model_revision": "BAAI/bge-large-en-v1.5@d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model_revision": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "scores": "BM25, dense cosine, hybrid RRF, direct cross-encoder, four v39 static verification roles, and four v41 dynamic atomic queries.",
+    "calibration": "Independent per-case min-max for every score column; stable candidate-id ties.",
+    "runtime": {
+      "device": "cuda",
+      "fp16": true,
+      "embedding_batch_size": 64,
+      "reranker_batch_size": 256,
+      "case_batch_size": 8,
+      "offline_model_loading": true
+    },
+    "gold_visible_to_generator_or_scorer": false
+  },
+  "frozen_methods": [
+    "bm25_topk",
+    "dense_topk",
+    "hybrid_topk",
+    "cross_encoder_topk",
+    "cross_encoder_knapsack",
+    "static_threshold_frc_v39_replay",
+    "static_rank_coverage_frc_v41",
+    "dynamic_rank_coverage_frc_v41"
+  ],
+  "frozen_selector": {
+    "top_k": 5,
+    "token_budgets": [
+      512,
+      1024,
+      1500
+    ],
+    "v39_replay": "Threshold 0.55, role coverage weight 2, direct relevance weight 1, original feasibility scan and candidate-id tie break.",
+    "rank_utility": "1/log2(2 + zero-based descending role-score rank), candidate-id tie break.",
+    "rank_coverage_gain": "direct_cross_encoder_score + 0.5 * sum(max(0, candidate_rank_utility - current_best_for_role)).",
+    "unique_source_constraint": true,
+    "post_registration_tuning": false
+  },
+  "frozen_evaluation": {
+    "gold_unit": "SciFact document doc_id with any annotated evidence rationale for the claim.",
+    "primary": "document_evidence_f1 equally weighted over eligible claims and 512/1024/1500 Token budgets",
+    "selected_document_deduplication": true,
+    "bootstrap": {
+      "resamples": 10000,
+      "seed": 20260802,
+      "unit": "claim",
+      "strongest_non_frc_selected_inside_each_resample": true
+    },
+    "pre_registered_strata": [
+      "label=SUPPORT",
+      "label=CONTRADICT",
+      "label=MIXED",
+      "gold_documents=1",
+      "gold_documents>=2",
+      "candidate_ceiling_complete",
+      "candidate_ceiling_incomplete"
+    ],
+    "minimum_cases_for_safety_stratum": 30,
+    "support_requirements": {
+      "dynamic_minus_static_rank_coverage_point_at_least": 0.005,
+      "dynamic_minus_static_rank_coverage_ci_low_above": 0.0,
+      "dynamic_minus_bootstrap_strongest_non_frc_point_at_least": 0.01,
+      "dynamic_minus_bootstrap_strongest_non_frc_ci_low_above": 0.0,
+      "every_budget_and_supported_stratum_delta_vs_strongest_non_frc_at_least": -0.02,
+      "generation_fallback_rate_at_most": 0.05,
+      "no_forbidden_field_leak": true
+    },
+    "all_required": true,
+    "negative_results_published": true
+  },
+  "decision_and_stopping_rule": {
+    "if_all_support_requirements_pass": "DYNAMIC_ATOMIC_ROLE_SUPPORT_ESTABLISHED_SINGLE_EXTERNAL_SCIFACT",
+    "otherwise": "SCIFACT_DYNAMIC_ATOMIC_ROLE_SUPPORT_NOT_ESTABLISHED",
+    "no_scifact_tuning_after_any_result": true,
+    "selector_adoption_authorized": false,
+    "same_dataset_family_confirmation": false,
+    "single_external_dataset_only": true,
+    "gate_2_change": false,
+    "canary_or_default_authorized": false,
+    "setr_reproduced": false,
+    "flood_domain_effectiveness_established": false,
+    "next_step_after_result": "Publish the fixed-method transfer result. Any method change requires another untouched dataset and a new preregistration; SciFact must not be reused for tuning."
+  }
+}

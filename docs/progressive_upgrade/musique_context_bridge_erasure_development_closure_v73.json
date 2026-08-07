@@ -1,0 +1,12 @@
+{
+  "confirmation_open_authorized": false,
+  "experiment_id": "FRC-MUSIQUE-CONTEXT-BRIDGE-ERASURE-V73",
+  "gate_2": "NO-GO/SHADOW",
+  "retrieval_scoring_started": false,
+  "reuse_failed_stage_for_feature_model_threshold_rule_gate_or_selection": false,
+  "schema_version": "frc-musique-v73-stage-closure-v1",
+  "selector_adoption_authorized": false,
+  "stage": "development",
+  "stage_result_sha256": "7bcf271563830163116a53bc5f7ebd2f1ed904d558373237f4184b23d2377100",
+  "status": "MUSIQUE_V73_CONTEXT_BRIDGE_ERASURE_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+}

@@ -1,0 +1,46 @@
+{
+  "schema_version": "frc-musique-full-roberta-transfer-invalid-run-v65",
+  "experiment_id": "FRC-MUSIQUE-FULL-ROBERTA-TRANSFER-V65",
+  "registered_after_qa_before_gold_join_or_metric_computation": true,
+  "status": "MUSIQUE_FULL_V65_PROCEDURAL_INVALID_DUPLICATE_SOURCE_ID_STOP_BEFORE_METRICS",
+  "protocol_requirement_violated": "sampling.maximum_cases_per_source_id equals 1",
+  "cause": "MuSiQue-Full answerable and unanswerable variants reuse the same source id. The implementation retained 300 rows independently in each answer-state group and derived the opaque case id only from source id, producing paired duplicate case ids.",
+  "observed_integrity_counts": {
+    "prepared_rows": 600,
+    "unique_prepared_case_ids": 300,
+    "candidate_map_rows": 600,
+    "unique_source_id_commitments": 300,
+    "qa_input_rows": 11998,
+    "raw_paragraph_qa_rows": 11998,
+    "aggregated_case_support_rows": 300
+  },
+  "hashes": {
+    "protocol": "578bd51f20cdec041da034c87e5f3890721c9f317de511574474e07692514a38",
+    "source_registration": "c29637ad608af431bed6bb0992cb0b77fc9da8aa96a20b684fb33176837a36f7",
+    "implementation_registration": "51e8f847029ec8e032d398373efd65a190c01e7b79340b5344828ac4092b755d",
+    "execution_registration": "3dc03e77e3e7524fc3ce0b565d582180ef813e54ff3530c43ed6378da4fcb712",
+    "prepared_blind": "c2e02ff2124edf32ccc9f28961fbc48a547e375ebb8226cbf8dab20c65c96544",
+    "candidate_map": "bd26514fc68009b4f39ca94991d03c8cd980b84df363024d4b9a1f9c434dcbba",
+    "qa_input": "a44ed5cc287e39e86568a3f6faca854dfb89cfb94158c0d179e7928e786641c7",
+    "raw_paragraph_qa": "640431bdcfe88b6c5faf175aac917e08c7fd0562fc45590084273fa4b4fa64f9",
+    "invalid_case_support": "56329a8bdaa14be4c481022e48a4331ae284561d1bab58e443c0dc5def39ca5c"
+  },
+  "information_revealed_before_invalidation": {
+    "source_schema_and_exclusion_counts": true,
+    "duplicate_case_and_source_commitment_counts": true,
+    "raw_model_margin_span_or_support_decision_values": false,
+    "gold_answerability_join": false,
+    "aggregate_or_per_stratum_metric": false,
+    "query_generation_or_neural_retrieval_scoring": false
+  },
+  "disposition": {
+    "invalid_raw_qa_or_case_support_may_be_used_for_tuning_threshold_selection_or_reporting": false,
+    "all_300_unique_source_id_commitments_must_be_excluded_from_corrected_run": true,
+    "corrected_sampling_must_assign_each_paired_source_id_to_at_most_one_answer_state_before_group_selection": true,
+    "corrected_run_must_use_a_new_cache_and_execution_registration": true,
+    "gold_metrics_may_be_computed_for_invalid_run": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  }
+}

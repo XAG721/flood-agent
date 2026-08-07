@@ -1,0 +1,101 @@
+{
+  "schema_version": "frc-musique-graph-router-transfer-implementation-lock-v77",
+  "experiment_id": "FRC-MUSIQUE-FROZEN-HOTPOT-GRAPH-ROUTER-TRANSFER-V77",
+  "locked_on": "2026-08-04",
+  "target_boundary_at_lock": {
+    "v77_development_ids_selected": 0,
+    "v77_confirmation_ids_selected": 0,
+    "v77_target_questions_paragraphs_answers_decomposition_or_support_flags_read": 0,
+    "v77_target_model_scores_seen": false,
+    "v77_target_gold_metrics_seen": false,
+    "metadata_only_capacity_census_completed": true
+  },
+  "files": {
+    "implementation": {
+      "path": "research/frc_rag/musique_graph_router_transfer.py",
+      "bytes": 26236,
+      "sha256": "cd7eb2ae45f1d2b818fadc1eabb4eac73427453374c73739b1111e38a75ce721"
+    },
+    "runner": {
+      "path": "scripts/run_musique_graph_router_transfer.py",
+      "bytes": 12660,
+      "sha256": "5db3798f4eacaf9666ead7ef4d562f2c03ef993c2202e95f2e7920fb5a35cdea"
+    },
+    "tests": {
+      "path": "tests/test_frc_musique_graph_router_transfer.py",
+      "bytes": 10271,
+      "sha256": "7521ad640c78b87075071a3d264feeb8108e3527049ef09335e65f87a1e1454e"
+    },
+    "protocol": {
+      "path": "docs/progressive_upgrade/musique_graph_router_transfer_protocol_v77.json",
+      "bytes": 8465,
+      "sha256": "faff8858902a8c3177625df8798a8c1fd89d220093e5fd983c51d54f494922c4"
+    },
+    "source_registration": {
+      "path": "docs/progressive_upgrade/musique_graph_router_transfer_source_registration_v77.json",
+      "bytes": 9212,
+      "sha256": "2de07a8f4740cdc6834bdc4dfdbab685a2b2c0aad1b940378374d07152ac342b"
+    },
+    "v76_router_model": {
+      "path": "docs/progressive_upgrade/hotpot_graph_router_model_development_v76.json",
+      "bytes": 30275,
+      "sha256": "5bdcf7a229d4208d472b33478c073f29dba082bc012b48c0d2aadad47ad4ecfb",
+      "payload_sha256": "8923f0315e24f38e0552e8140377fe18f8647e76c0cac33f534b451f850eddf0"
+    },
+    "v76_implementation_lock": {
+      "path": "docs/progressive_upgrade/hotpot_graph_router_implementation_v76.json",
+      "bytes": 3449,
+      "sha256": "e0060e7794a60a7d2723095c1561fe4dd6225d8a212ca8b433512efb565170d8"
+    }
+  },
+  "frozen_transfer_contract": {
+    "candidate": "graph_gbr_soft_override_router_v76",
+    "training_history": "1000 permanently excluded HotpotQA cases only",
+    "finite_v76_historical_configurations": 1089,
+    "feature_count": 71,
+    "model": "25-tree depth-2 Huber gradient boosting regressor",
+    "override_rule": "cross_encoder_topk unless predicted v74 soft-title-link gain is strictly above 0",
+    "adapter": "one MuSiQue paragraph per candidate with title as graph source",
+    "target_training_or_tuning_cases": 0,
+    "target_dependent_parameter_or_gate_changes": 0
+  },
+  "sampling_contract": {
+    "prior_source_commitment_union": 16900,
+    "remaining_untouched_answerable_cases": 3038,
+    "development_hop_quota": {
+      "2": 400,
+      "3": 250,
+      "4": 150
+    },
+    "confirmation_hop_quota": {
+      "2": 400,
+      "3": 250,
+      "4": 150
+    },
+    "confirmation_requires_every_strict_development_gate": true
+  },
+  "verification": {
+    "command": "D:/anaconda3/python.exe -m pytest -q tests/test_frc_musique_graph_router_transfer.py tests/test_frc_hotpot_graph_router.py tests/test_frc_twowiki_question_router.py tests/test_frc_twowiki_support_path_closure.py -k 'not implementation_lock' -p no:cacheprovider --basetemp D:/graduation_project/.tmp/pytest-v77-prelock",
+    "passed": 73,
+    "failed": 0,
+    "deselected_lock_tests": 3,
+    "ruff_check": "passed",
+    "compileall": "passed"
+  },
+  "immutability": {
+    "implementation_runner_tests_protocol_source_registration_v76_model_and_v76_lock_must_not_change_after_target_selection": true,
+    "development_failure_stops_before_confirmation": true,
+    "noninferiority_alone_cannot_open_confirmation": true,
+    "development_or_confirmation_data_must_not_be_reused_to_change_router_features_model_hyperparameters_threshold_adapter_controls_gates_noninferiority_envelope_stage_size_or_hop_quota": true
+  },
+  "claim_boundary": {
+    "v76_router_model_trained_only_on_hotpotqa_history": true,
+    "zero_musique_target_training_or_tuning": true,
+    "v77_target_case_ids_disjoint_from_all_recorded_prior_project_musique_exposure": true,
+    "broader_research_program_independent_of_musique": false,
+    "strict_independent_model_training_confirmation": false,
+    "official_musique_leaderboard_result": false,
+    "real_setr_or_flood_domain_expert_evidence": false
+  },
+  "gate_2": "NO-GO/SHADOW"
+}

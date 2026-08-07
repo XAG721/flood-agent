@@ -1,0 +1,38 @@
+{
+  "schema_version": "frc-musique-full-roberta-transfer-source-registration-v65",
+  "experiment_id": "FRC-MUSIQUE-FULL-ROBERTA-TRANSFER-V65",
+  "registered_at": "2026-08-03T23:46:00+08:00",
+  "protocol_sha256": "578bd51f20cdec041da034c87e5f3890721c9f317de511574474e07692514a38",
+  "target": {
+    "path": ".cache/benchmarks/musique/data/musique_full_v1.0_train.jsonl",
+    "bytes": 476696984,
+    "sha256": "b1cd998f7e0e2838d6fda024e4ad1eb0e7fc3edefdadb0bd9b5b10b0907f2034",
+    "content_opened_or_parsed_before_registration": false,
+    "previous_repository_experiment_case_level_use_found": false
+  },
+  "leakage_guard_source": {
+    "path": ".cache/benchmarks/squad2_v2/train-v2.0.json",
+    "bytes": 42123633,
+    "sha256": "68dcfbb971bd3e96d5b46c7177b16c1a4e7d4bdef19fb204502738552dede002",
+    "content_previously_used_by_v58_v61_and_v64": true,
+    "authorized_use_in_v65": "normalized question exact-match exclusion only"
+  },
+  "official_repository": {
+    "path": ".cache/benchmarks/musique_repo",
+    "revision": "922ac98f19a201998dbdae6d7f2887a5258dbdeb",
+    "readme_sha256": "be0c6ebbd2f192c647633bdec79429b3d027bebfd37182f7d8f1d49fb53b3829",
+    "license_sha256": "8a5e40e360ca75413c65917144f6055537bee03e95f727c1bb55a7aff9d8d4e2",
+    "license": "CC BY 4.0",
+    "schema_source": "raw_data_to_official_format.py"
+  },
+  "prior_case_exclusion": {
+    "v36_source_file": ".cache/benchmarks/musique/data/musique_ans_v1.0_dev.jsonl",
+    "v36_source_sha256": "15fa63794d18a94ce12411aca6e2327e65b6e83b0b1490efab3f1962e48abf3b",
+    "v36_prepared_blind": ".cache/benchmarks/musique/prepared_dual_resource_blind.jsonl",
+    "v36_prepared_blind_sha256": "b9a987875dbc7aeaef4720c6df02265d0368b49f344b8a24b933a10ca0cfc28b",
+    "authorized_use": "source-id exclusion only"
+  },
+  "model_overlap_disclosure_complete": true,
+  "strict_independent_model_training_confirmation_claimed": false,
+  "target_jsonl_rows_read": 0
+}

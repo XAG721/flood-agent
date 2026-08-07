@@ -1,0 +1,121 @@
+{
+  "schema_version": "frc-cuad-v53-development-closure-v1",
+  "experiment_id": "FRC-CUAD-TOP3-RANK-CONCURRENCE-ROLE-CLOSURE-V53",
+  "closed_at": "2026-08-02T23:10:02+08:00",
+  "status": "CUAD_V53_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_TEST",
+  "development_result": {
+    "cases": 400,
+    "contracts": 259,
+    "answer_state_counts": {
+      "answer_bearing": 200,
+      "no_answer": 200
+    },
+    "query_fallback_rate": 0.0,
+    "score_fallback_rate": 0.0,
+    "candidate_ceiling_complete_rate_on_answer_bearing_cases": 0.635,
+    "top3_gate": {
+      "passed_cases": 397,
+      "failed_cases": 3,
+      "pass_rate": 0.9925
+    },
+    "candidate": {
+      "answer_or_abstention_macro_f1": 0.046032,
+      "answer_bearing_macro_f1": 0.087063,
+      "answer_macro_precision": 0.069028,
+      "answer_macro_recall": 0.13,
+      "complete_answer_recall": 0.13,
+      "no_answer_abstention_accuracy": 0.005,
+      "abstention_rate": 0.0075,
+      "mean_selected_unit_count": 2.806667,
+      "mean_selected_token_cost": 119.649167
+    },
+    "strongest_shared_gate_non_frc": {
+      "method": "top3_rank_concurrence_hybrid_topk_v53",
+      "answer_or_abstention_macro_f1": 0.069763,
+      "answer_bearing_macro_f1": 0.134526,
+      "answer_macro_recall": 0.263333,
+      "no_answer_abstention_accuracy": 0.005,
+      "abstention_rate": 0.0075
+    },
+    "candidate_minus_strongest_shared_gate_non_frc": {
+      "point": -0.023731,
+      "ci_low": -0.040711,
+      "ci_high": -0.006903,
+      "clusters": 259,
+      "resamples": 10000,
+      "seed": 20260813
+    },
+    "candidate_minus_same_gate_frc_ablation": {
+      "point": 0.004032,
+      "ci_low": -0.001032,
+      "ci_high": 0.010042,
+      "clusters": 259,
+      "resamples": 10000,
+      "seed": 20260813
+    },
+    "candidate_minus_ungated_v49": {
+      "point": 0.006532,
+      "ci_low": 0.00005,
+      "ci_high": 0.014858,
+      "clusters": 259,
+      "resamples": 10000,
+      "seed": 20260813
+    },
+    "answer_macro_recall_drop_vs_ungated_v49": -0.02,
+    "minimum_budget_or_supported_stratum_delta": -0.050796,
+    "worst_supported_stratum": "contract_length_quartile:q4"
+  },
+  "failed_support_gates": {
+    "candidate_ceiling_complete_rate_at_least_0_9": false,
+    "candidate_minus_strongest_shared_gate_non_frc_point_at_least_0_01": false,
+    "candidate_minus_strongest_shared_gate_non_frc_ci_low_above_0": false,
+    "candidate_minus_same_gate_frc_ablation_point_at_least_0_005": false,
+    "candidate_minus_same_gate_frc_ablation_ci_low_above_0": false,
+    "candidate_minus_ungated_v49_point_at_least_0_01": false,
+    "no_answer_abstention_accuracy_at_least_0_2": false,
+    "candidate_abstention_rate_at_least_0_05": false,
+    "every_budget_and_supported_stratum_delta_at_least_minus_0_03": false
+  },
+  "passed_support_gates": {
+    "exact_cases_answer_balance_contract_cap_and_minimum_contracts": true,
+    "candidate_minus_ungated_v49_ci_low_above_0": true,
+    "answer_macro_recall_drop_vs_ungated_v49_at_most_0_03": true,
+    "candidate_abstention_rate_at_most_0_8": true,
+    "deterministic_query_fallback_rate_equals_0": true,
+    "score_or_prediction_fallback_rate_equals_0": true
+  },
+  "mechanism_diagnosis": {
+    "retrieval_bottleneck": "The registered BM25 plus dense Top-48 union retained a complete official-answer match for only 63.5% of answer-bearing cases.",
+    "gate_bottleneck": "Top-3 rank concurrence passed 397 of 400 cases, so it provided almost no no-answer discrimination; no-answer abstention accuracy was 0.5%.",
+    "selector_bottleneck": "Role closure improved over the same-gate FRC ablation by only 0.004032 with a confidence interval crossing zero and was significantly worse than shared-gate hybrid Top-K by 0.023731.",
+    "long_contract_safety": "The worst supported stratum was the longest-contract quartile at -0.050796 versus its strongest shared-gate non-FRC control."
+  },
+  "artifacts": {
+    "protocol_sha256": "9390f8f5642fa7be0de265b59e9aef03d76e303e2fa615bd498a93c5a3e6544c",
+    "source_registration_sha256": "4949e1e00ef3176fdaae778da9a77053358efe8b88d52c2d72d2920b190f8bc0",
+    "implementation_registration_sha256": "680e3ae97a156b153f01e3c2f53463e4b0b9adea1234b1bf0f8841aec9e81e43",
+    "development_execution_registration_sha256": "5f53c09c476e6167faeb2eab8360dc249e74e60b7408f2fadaf6fa445d87f3df",
+    "candidate_coverage_sha256": "29aac67b3ab7a1841e69c36352d85f157463f2a9acd1c98a54c924bdf0c0d370",
+    "queries_sha256": "8118410fcb3883d9fcf218721ed8eb12601e2e2ca1358f90a84ec08ad0fc766b",
+    "scored_sha256": "1109b2d564e7ba7a3dd39d265c1a7b951457f96e0c89a1350fe2e39a7841aeb4",
+    "development_result_sha256": "ff6b44a1cc71655a5c955767c49a4e2c7adae948ccb3e56a826574b2c645a8ef",
+    "development_markdown_sha256": "ea00d6f677bf03681484431f1f08c235ed69495ca18b907aa406f503573509f1",
+    "development_case_evidence_sha256": "9d78bd8f5216c4038053a860b5b076e602022a3164ebd2766be37c44be68880f"
+  },
+  "post_result_runtime_note": "NumPy emitted non-fatal mean-of-empty-slice warnings while the generic aggregate helper computed unused answer-only fields for no-answer-only strata. All published primary, comparison, budget and supported-stratum values are finite and the deterministic report hashes matched across two writes.",
+  "post_result_formatting_erratum": {
+    "path": "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_post_result_formatting_erratum_v53.json",
+    "sha256": "4d08d98cf10b1f65540a5f02733a85c806d597c128411c96bdc481767c26329f",
+    "development_status_changed": false,
+    "current_formatted_files_authorize_rerun_or_test_open": false
+  },
+  "train_reuse_for_tuning_selection_or_reevaluation": false,
+  "test_content_opened": false,
+  "test_open_authorized": false,
+  "official_cuad_roberta_reference_executed": false,
+  "selector_adoption_authorized": false,
+  "canary_or_default_authorized": false,
+  "gate_2": "NO-GO/SHADOW",
+  "boundary": "This is a preregistered balanced full-given-contract CUAD mechanism development result, not an official CUAD leaderboard result, open-corpus retrieval evaluation, legal advice, SetR reproduction, selector adoption, or flood-domain expert validation.",
+  "next_step_boundary": "Do not tune, select, or reevaluate v53 on CUAD train and do not open CUAD test under this protocol. Any later hypothesis requires a newly preregistered method and genuinely independent development and confirmation sources."
+}

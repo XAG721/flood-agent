@@ -1,0 +1,99 @@
+{
+  "schema_version": "frc-conformal-mondrian-development-protocol-v1",
+  "registered_on": "2026-07-31",
+  "purpose": "Post-hoc method development prompted by the observable-subgroup audit: compare a frozen hierarchical Mondrian calibration rule with the existing global split-conformal rule on identical outer evaluation cases.",
+  "development_boundary": {
+    "post_hoc": true,
+    "reason": "The grouping method was designed after observable subgroup instability had been inspected.",
+    "independent_confirmation": false,
+    "gate_evidence": false,
+    "required_next_confirmation": "Any positive development result must be frozen and confirmed on new untouched data or independently judged flood-domain data before deployment review."
+  },
+  "datasets": [
+    {
+      "dataset": "ConditionalQA",
+      "source_path_label": "role_scores_conditionalqa.jsonl",
+      "source_sha256": "feb0d75957c1bb09f07985979bb0816abc761ce6fafc66b40d9d99b02c1374b5"
+    },
+    {
+      "dataset": "HotpotQA",
+      "source_path_label": "role_scores_hotpotqa.jsonl",
+      "source_sha256": "ac5189e4f64e799ca7915a0eff9a304e6d09e0bbc6c4ef233335b17c6d56e6af"
+    },
+    {
+      "dataset": "MultiHop-RAG",
+      "source_path_label": "role_scores_multihoprag.jsonl",
+      "source_sha256": "de5333ecea96ed274afd5d28b4d69af5a63e975fc75c9fa991ade9ce52f296e7"
+    }
+  ],
+  "frozen_model_protocol": {
+    "feature_transform": "linear",
+    "l2": 4.0,
+    "primary_alpha": 0.1,
+    "repeat_count": 10,
+    "split_versions_source": "ConditionalQA conformal robustness report",
+    "sufficiency_head": "One global class-balanced deterministic IRLS head is fitted on each train split.",
+    "outer_evaluation_selection": false
+  },
+  "mondrian_calibration": {
+    "calibration_unit": "Maximum incomplete-variant sufficiency score within each calibration case family.",
+    "declaration_rule": "Declare complete only when the variant score is strictly greater than the selected threshold.",
+    "minimum_calibration_case_families": 30,
+    "fallback_order": [
+      {
+        "source": "joint",
+        "fields": [
+          "question_type",
+          "required_role_count"
+        ]
+      },
+      {
+        "source": "question_type",
+        "fields": [
+          "question_type"
+        ]
+      },
+      {
+        "source": "required_role_count",
+        "fields": [
+          "required_role_count"
+        ]
+      },
+      {
+        "source": "global",
+        "fields": []
+      }
+    ],
+    "gold_fields_used_for_group_assignment": false,
+    "evaluation_data_used_for_thresholds": false,
+    "evaluation_data_used_for_fallback_selection": false
+  },
+  "reporting_support_rule": {
+    "dimensions": [
+      "question_type",
+      "required_role_count",
+      "candidate_count_bucket"
+    ],
+    "min_incomplete_case_families_per_repeat": 30,
+    "min_eligible_repeats": 7
+  },
+  "pre_registered_adoption_checks": {
+    "all_checks_required": true,
+    "no_evaluation_selection": true,
+    "all_threshold_sources_calibration_only": true,
+    "minimum_mean_worst_eligible_subgroup_risk_reduction": 0.02,
+    "maximum_dataset_overall_case_risk_increase": 0.01,
+    "maximum_dataset_complete_recall_decrease": 0.05,
+    "minimum_group_specific_threshold_case_fraction": 0.5,
+    "all_eligible_subgroup_mean_risks_at_or_below_alpha": true,
+    "all_eligible_subgroup_repeat_consistency_targets_met": true,
+    "status_if_all_pass": "DEVELOPMENT_CANDIDATE",
+    "status_if_any_fail": "DO_NOT_ADOPT"
+  },
+  "theoretical_scope": {
+    "groupwise_statement": "A finite-sample groupwise marginal statement requires exchangeability within the exact calibration group whose threshold is used.",
+    "fallback_statement": "A fallback threshold does not create a conditional guarantee for a more specific subgroup that lacked calibration support.",
+    "conditional_guarantee": false
+  },
+  "gate_policy": "This post-hoc development experiment cannot change Gate 2 from NO-GO/SHADOW and cannot authorize CANARY or DEFAULT."
+}

@@ -1,0 +1,47 @@
+{
+  "schema_version": "frc-iirc-cardinality-transfer-source-registration-v1",
+  "registered_at": "2026-08-05T00:33:12.4424317+08:00",
+  "experiment_id": "FRC-IIRC-CARDINALITY-TRANSFER-V86",
+  "purpose": "Register a previously unused incomplete-information, linked-document QA source before downloading or inspecting row content, for a prospective cross-dataset evidence-cardinality transfer test.",
+  "repository_revision_at_registration": "c6c2a107aba1c8af97f38086fc42e759dc1421e2",
+  "source": {
+    "name": "IIRC: A Dataset of Incomplete Information Reading Comprehension Questions",
+    "official_project_url": "https://allennlp.org/iirc",
+    "paper": "https://aclanthology.org/2020.emnlp-main.86/",
+    "official_train_dev_archive_url": "https://iirc-dataset.s3.us-west-2.amazonaws.com/iirc_train_dev.tgz",
+    "official_context_archive_url": "https://iirc-dataset.s3.us-west-2.amazonaws.com/context_articles.tar.gz",
+    "public_reproduction_download_script": "https://raw.githubusercontent.com/StonyBrookNLP/ircot/main/download/raw_data.sh",
+    "intended_split": "dev",
+    "intended_local_root": ".cache/benchmarks/iirc",
+    "license_status": "Must be verified from the downloaded source or official project materials before committing any derived text artifact.",
+    "raw_source_committed": false
+  },
+  "pre_download_boundary": {
+    "source_archives_downloaded": false,
+    "row_content_inspected": false,
+    "row_ids_known": false,
+    "schema_or_split_counts_known": false,
+    "questions_answers_contexts_links_gold_evidence_or_answerability_labels_known": false,
+    "target_metrics_known": false,
+    "prior_project_experiment_on_iirc": false,
+    "public_aggregates_known": "The paper reports 13,441 questions, linked-document missing information, about 30% multi-linked-document questions, and about 30% unanswerable questions.",
+    "registration_is_not_a_protocol_or_result": true
+  },
+  "planned_admission": {
+    "download_and_hash_official_archives_after_registration": true,
+    "inspect_dev_schema_and_evidence_availability_before_defining_algorithm": true,
+    "train_or_calibrate_only_on_permanently_exposed_non_iirc_histories": true,
+    "freeze adapter partitions model selector baselines and gates before IIRC target scoring": true,
+    "keep IIRC dev labels and target metrics sealed until blind selection outputs exist": true,
+    "abandon_without_substitution_if_evidence_units_or_candidate_construction_are_ambiguous": true
+  },
+  "research_boundaries": {
+    "independent_dataset_claim": "Eligible only if no IIRC row or target aggregate informed the transferred method.",
+    "same_task_family_only": true,
+    "setr_reproduced": false,
+    "gate_2_change": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "flood_domain_effectiveness_established": false
+  }
+}

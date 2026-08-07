@@ -1,0 +1,152 @@
+{
+  "schema_version": "frc-whoqa-conflict-coverage-protocol-v1",
+  "registered_on": "2026-08-01",
+  "purpose": "Independently test whether FRC-RAG evidence selection preserves distinct, naturally occurring conflicting answer viewpoints under a fixed context budget better than five reproducible selectors on the previously untouched WhoQA benchmark.",
+  "registration_boundary": {
+    "pre_download_registration": true,
+    "source_data_present_in_workspace_at_registration": false,
+    "instance_labels_or_answers_inspected": false,
+    "paper_schema_and_published_aggregate_results_known": true,
+    "prior_frc_results_on_whoqa_known": false,
+    "implementation_written_after_registration": true,
+    "protocol_must_not_be_tuned_after_results": true,
+    "gate_evidence": false,
+    "production_authorization": false
+  },
+  "frozen_source": {
+    "dataset": "WhoQA",
+    "paper": "Who's Who: Large Language Models Meet Knowledge Conflicts in Practice",
+    "repository": "https://github.com/VinAIResearch/WhoQA",
+    "revision": "02c2b24004fc334c4bf6c9391285eb55e652a86a",
+    "path": "WhoQA.json",
+    "expected_repository_file_size_bytes": 26700000,
+    "license": "BSD-3-Clause",
+    "expected_evaluation_question_count": 5152,
+    "local_cache_path": ".cache/benchmarks/whoqa/WhoQA.json",
+    "cache_committed_to_git": false
+  },
+  "frozen_task": {
+    "unit": "one WhoQA question with all provided supporting contexts as candidate evidence",
+    "query": "the public question text",
+    "candidate": "one supporting context associated with one same-name entity",
+    "candidate_text": "the public supporting context exactly as distributed, with no gold answer metadata appended",
+    "gold_viewpoint": "the public answer set associated with the candidate entity",
+    "gold_visibility": "answer sets and entity-to-answer mapping are isolated from scoring and selection and are read only by the evaluator",
+    "duplicate_viewpoint_rule": "answer sets are canonicalized as sorted case-folded strings; contexts with identical canonical answer sets belong to the same viewpoint",
+    "empty_answer_rule": "cases with missing question, contexts, or answer alignment fail validation rather than being silently dropped",
+    "sampling": "all official evaluation questions; no sampling and no fitting"
+  },
+  "frozen_scoring": {
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "offline_snapshots": "D:/RAG_test/.hf_cache",
+    "score_calibration": "per_case_minmax",
+    "hybrid_fusion": "reciprocal_rank_fusion",
+    "rrf_k": 60,
+    "role_relevance_mix": 0.15,
+    "gold_fields_visible_to_scorer": false,
+    "role_queries": {
+      "answer_claim": "Find evidence that directly states an answer to the question.",
+      "entity_attribution": "Find evidence that identifies which specific same-name entity, source, role, place, or time the answer belongs to.",
+      "alternative_claim": "Find evidence that may support an alternative answer or interpretation of the question.",
+      "ambiguity_disclosure": "Find evidence useful for disclosing that the question can refer to multiple different same-name entities."
+    }
+  },
+  "frozen_selection": {
+    "methods": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "coverage_greedy_proxy",
+      "frc_select"
+    ],
+    "frc_method": "frc_select",
+    "reproducible_baselines": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "coverage_greedy_proxy"
+    ],
+    "predeclared_reference_baseline": "coverage_greedy_proxy",
+    "top_k": 4,
+    "token_budget": 1500,
+    "role_threshold": 0.55,
+    "required_roles": [
+      "answer_claim",
+      "entity_attribution",
+      "alternative_claim",
+      "ambiguity_disclosure"
+    ],
+    "tie_break": "candidate id ascending after the frozen selector-specific score ordering",
+    "gold_fields_visible_to_selector": false
+  },
+  "frozen_metrics": {
+    "primary": {
+      "name": "oracle_normalized_distinct_viewpoint_coverage",
+      "definition": "selected distinct gold viewpoints divided by min(total distinct gold viewpoints, the maximum number of candidates selectable under Top-K and token budget)",
+      "case_range": [
+        0.0,
+        1.0
+      ]
+    },
+    "secondary": [
+      "raw distinct viewpoint recall",
+      "complete viewpoint disclosure rate for cases with at most four viewpoints",
+      "at-least-two-viewpoint coverage rate",
+      "selected candidate count",
+      "selected token cost",
+      "budget shortfall rate",
+      "pairwise selection signature diversity"
+    ],
+    "strata": [
+      "2 viewpoints",
+      "3 viewpoints",
+      "4 viewpoints",
+      "5-8 viewpoints",
+      "each public property type with at least 50 cases"
+    ],
+    "paired_bootstrap": {
+      "resamples": 10000,
+      "seed": 20260801,
+      "confidence": 0.95,
+      "resample_unit": "case"
+    },
+    "strongest_baseline_comparison": "For each bootstrap resample, subtract the maximum aggregate primary score among all five baselines from the FRC aggregate score; percentile bounds are therefore simultaneous with data-dependent strongest-baseline selection.",
+    "reference_baseline_comparison": "Paired FRC minus coverage_greedy_proxy case-level primary difference with the same frozen bootstrap seed."
+  },
+  "frozen_decision_policy": {
+    "independent_support_requires_all": {
+      "frc_minus_strongest_baseline_point_gain_at_least": 0.05,
+      "frc_minus_strongest_baseline_simultaneous_ci_low_above": 0.0,
+      "frc_minus_reference_baseline_ci_low_above": 0.0,
+      "no_viewpoint_count_stratum_point_delta_below": -0.05,
+      "no_property_stratum_with_at_least_50_cases_point_delta_below": -0.05,
+      "frc_budget_shortfall_rate_not_above_strongest_baseline": true,
+      "all_cases_scored": true,
+      "gold_leakage_checks_pass": true
+    },
+    "positive_status": "INDEPENDENT_WHOQA_SELECTION_SUPPORT",
+    "negative_status": "WHOQA_SELECTION_SUPPORT_NOT_ESTABLISHED",
+    "interpretation_boundary": "A positive result supports the evidence-selection mechanism on same-name multi-viewpoint conflicts only. It does not confirm the v32 classifier router, reproduce SetR, establish flood-domain effectiveness, or authorize Gate 2, CANARY, or DEFAULT.",
+    "gate_2": "NO-GO/SHADOW regardless of this standalone result"
+  },
+  "planned_implementation": {
+    "adapter_and_evaluator": "research/frc_rag/whoqa_conflict_coverage.py",
+    "runner": "scripts/run_whoqa_conflict_coverage.py",
+    "tests": "tests/test_frc_whoqa_conflict_coverage.py",
+    "output_directory": "output/rag_evaluation/whoqa_conflict_coverage",
+    "raw_questions_or_answers_in_public_evidence_artifact": false,
+    "deterministic_rerun_required": true
+  },
+  "known_limitations": [
+    "WhoQA conflicts arise from same-name entity ambiguity and do not cover temporal invalidation, misinformation, missing files, or flood-domain policy exceptions.",
+    "The official candidate contexts are curated supporting evidence rather than a noisy open-corpus retrieval pool.",
+    "Gold viewpoint labels evaluate selected contexts but cannot be used to score or select them.",
+    "The frozen Top-K=4 budget creates an intentional coverage ceiling for questions with five to eight viewpoints; the primary metric normalizes only against the attainable ceiling.",
+    "The experiment evaluates evidence selection, not final natural-language conflict disclosure quality."
+  ]
+}

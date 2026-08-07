@@ -1,0 +1,13 @@
+{
+  "canary_or_default_authorized": false,
+  "confirmation_open_authorized": false,
+  "experiment_id": "FRC-MUSIQUE-MULTISIGNAL-CHAIN-SUPPORT-V68",
+  "gate_2": "NO-GO/SHADOW",
+  "retrieval_scoring_started": false,
+  "reuse_failed_stage_for_feature_model_threshold_rule_gate_or_selection": false,
+  "schema_version": "frc-musique-v68-stage-closure-v1",
+  "selector_adoption_authorized": false,
+  "stage": "development",
+  "stage_result_sha256": "d1b2637e1c2a3569b320a53b09b464dfe03d75a81eab9c5e3dfa29eeca1d4e6c",
+  "status": "MUSIQUE_V68_MULTISIGNAL_CHAIN_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+}

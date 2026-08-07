@@ -1,0 +1,129 @@
+{
+  "schema_version": "frc-musique-anchor-default-terminal-holdout-source-registration-v80",
+  "experiment_id": "FRC-MUSIQUE-ANCHOR-DEFAULT-TERMINAL-HOLDOUT-V80",
+  "registered_on": "2026-08-04",
+  "target": {
+    "dataset": "MuSiQue full v1.0",
+    "split": "train",
+    "path": ".cache/benchmarks/musique/data/musique_full_v1.0_train.jsonl",
+    "bytes": 476696984,
+    "sha256": "b1cd998f7e0e2838d6fda024e4ad1eb0e7fc3edefdadb0bd9b5b10b0907f2034",
+    "rows": 39876,
+    "unique_source_ids": 19938,
+    "answerable_cases_by_id_derived_hop": {
+      "2": 14376,
+      "3": 4387,
+      "4": 1175
+    },
+    "authorized_rows": "answerable row only"
+  },
+  "prior_exclusion_registry": {
+    "path": "docs/progressive_upgrade/musique_graph_router_transfer_source_registration_v77.json",
+    "bytes": 9212,
+    "sha256": "2de07a8f4740cdc6834bdc4dfdbab685a2b2c0aad1b940378374d07152ac342b",
+    "expected_unique_source_commitments": 16900,
+    "runner_must_revalidate_every_nested_commitment_map": true
+  },
+  "v77_target_domain_calibration_ids": {
+    "path": ".cache/benchmarks/musique_graph_router_transfer_v77/development/sealed_gold.jsonl",
+    "bytes": 84350,
+    "sha256": "f0354359d52b6e5f082426cc4a91afb8537269e3bd4fec190cf48a1d338013b8",
+    "rows": 800,
+    "unique_ids": 800,
+    "eligible_for_v80_target_stage": false
+  },
+  "v78_target_domain_training_ids": {
+    "path": ".cache/benchmarks/musique_mean_calibrated_three_route_v78/development/sealed_gold.jsonl",
+    "bytes": 62994,
+    "sha256": "44f8d326962363f0d295e42e1570553b974b504b85fca9e407d7929929d4e079",
+    "rows": 600,
+    "unique_ids": 600,
+    "eligible_for_v80_target_stage": false
+  },
+  "v79_target_domain_training_ids": {
+    "path": ".cache/benchmarks/musique_target_three_route_v79/development/sealed_gold.jsonl",
+    "bytes": 48816,
+    "sha256": "6ae402d2d3d43062e277e757ac0933e08fd8045e2f589f9441183ee216279363",
+    "rows": 470,
+    "unique_ids": 470,
+    "eligible_for_v80_target_stage": false
+  },
+  "remaining_untouched_answerable_capacity_after_v79": {
+    "total": 1168,
+    "by_id_derived_hop": {
+      "2": 778,
+      "3": 317,
+      "4": 73
+    },
+    "terminal_holdout_required": {
+      "2": 400,
+      "3": 150,
+      "4": 50
+    },
+    "remaining_after_terminal_holdout": {
+      "total": 568,
+      "by_id_derived_hop": {
+        "2": 378,
+        "3": 167,
+        "4": 23
+      }
+    },
+    "supports_a_second_comparable_disjoint_stage": false
+  },
+  "frozen_dependencies": {
+    "anchor_router_path": "docs/progressive_upgrade/musique_anchor_default_router_model_development_v80.json",
+    "anchor_router_bytes": 770805,
+    "anchor_router_sha256": "c303c68c2f83271bbb3f9f81f75d94defe9135676d7cea02ada1ff28a75df506",
+    "v78_training_scored_path": ".cache/benchmarks/musique_mean_calibrated_three_route_v78/development/scored_blind.jsonl",
+    "v78_training_scored_bytes": 12733267,
+    "v78_training_scored_sha256": "21d57941246609f36f8389ea7480bd64721425eeb944bd2d4a8340cc64dbe1a4",
+    "v78_training_cases_path": "output/rag_evaluation/musique_mean_calibrated_three_route_v78/development/cases.jsonl.gz",
+    "v78_training_cases_bytes": 47932,
+    "v78_training_cases_sha256": "c6fa1fda2b509525a02e9170838a07bea900056f6099e70576a36f10869a3ff3",
+    "v79_training_scored_path": ".cache/benchmarks/musique_target_three_route_v79/development/scored_blind.jsonl",
+    "v79_training_scored_bytes": 9935467,
+    "v79_training_scored_sha256": "5ab8e6172e7b21fa27f9f7418ad3c7fdbb419514151605448b55cab3f46cd762",
+    "v79_training_cases_path": "output/rag_evaluation/musique_target_three_route_v79/development/cases.jsonl.gz",
+    "v79_training_cases_bytes": 55313,
+    "v79_training_cases_sha256": "3a572e4f06d30ee243a43c96ea69a8cd4ced44a9812e67bb3174d3385961e287",
+    "v79_router_path": "docs/progressive_upgrade/musique_target_three_route_router_model_development_v79.json",
+    "v79_router_bytes": 107902,
+    "v79_router_sha256": "a2d02754ca1fd7f24aabe30a5457f3cec5d29a0d227758924b2f814962c91f2b",
+    "history_router_path": "docs/progressive_upgrade/hotpot_three_route_router_model_development_v78.json",
+    "history_router_bytes": 113020,
+    "history_router_sha256": "8eeef297eacf32e6e2b44fffb4d03428dc9046ea4ea5b367a73d59b98cbf7608",
+    "mean_calibration_path": "docs/progressive_upgrade/musique_three_route_mean_calibration_v78.json",
+    "mean_calibration_bytes": 2634,
+    "mean_calibration_sha256": "8b0b986416ac29b311fed71ed7553c4f3766024475016a76146a19f18e9b7930",
+    "v76_router_path": "docs/progressive_upgrade/hotpot_graph_router_model_development_v76.json",
+    "v76_router_bytes": 30275,
+    "v76_router_sha256": "5bdcf7a229d4208d472b33478c073f29dba082bc012b48c0d2aadad47ad4ecfb",
+    "v75_model_path": "docs/progressive_upgrade/twowiki_question_router_model_development_v75.json",
+    "v75_model_bytes": 44494,
+    "v75_model_sha256": "b12c128f06c4ab14851d2f24538a15e76f5f9ff7336a7968c7b01d7c5062cbc0",
+    "embedding_model": "BAAI/bge-large-en-v1.5@d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "offline_snapshot_required": true
+  },
+  "pre_registration_access_boundary": {
+    "source_hash_size_row_count_read": true,
+    "source_id_answerable_flag_and_id_prefix_hop_capacity_read": true,
+    "v77_v78_v79_source_ids_read_for_exclusion_and_capacity_only": true,
+    "v78_v79_per_case_features_and_gold_metrics_used_for_finite_model_selection": true,
+    "v78_v79_model_selection_diagnostic_is_not_unbiased_confirmation": true,
+    "v80_target_ids_selected": 0,
+    "v80_target_questions_paragraphs_answers_decomposition_support_flags_or_scores_read": 0,
+    "v80_target_gold_metrics_seen": false,
+    "candidate_controls_metrics_gates_model_threshold_stage_size_and_hop_quotas_frozen_before_target_selection": true
+  },
+  "claims": {
+    "v80_target_ids_disjoint_from_all_v65_through_v79_project_exposure": true,
+    "v80_target_training_or_tuning_cases": 0,
+    "v78_v79_are_explicit_target_domain_training_and_model_selection": true,
+    "v80_is_prospective_same_dataset_terminal_holdout": true,
+    "strict_zero_target_tuning": false,
+    "independent_training_dataset_confirmation": false,
+    "official_musique_leaderboard_result": false,
+    "real_setr_or_flood_domain_expert_evidence": false
+  }
+}

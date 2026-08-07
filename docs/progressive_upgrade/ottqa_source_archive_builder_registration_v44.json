@@ -1,0 +1,34 @@
+{
+  "schema_version": "frc-ottqa-source-archive-builder-registration-v44",
+  "experiment_id": "FRC-OTTQA-GUARDED-ADAPTIVE-ATOMIC-ROLES-V44",
+  "registered_at": "2026-08-02T04:44:47+08:00",
+  "purpose": "Freeze the byte-preserving source acquisition adapter required by official OTT-QA paths that cannot be materialized on Windows.",
+  "base_protocol_sha256": "95116d2af455d1f8792e81cc1ed1f0f48db5fd7ef1274d257f73cec8e5c1e072",
+  "protocol_erratum_sha256": "e7341f3ce645f27ea1fbf3f8bc79691b14a8c4b5655035f83bdb8112ff906019",
+  "protocol_erratum2_sha256": "1bcbb7ee99e974b80624bdc24392d1c6eb403e2dfdd86b4681afbab55a9b6fbc",
+  "data_content_accessed_before_registration": false,
+  "codeload_tarball_downloaded_before_registration": false,
+  "builder_contract": [
+    "accept only the official codeload tar.gz for the pinned commit",
+    "copy only LICENSE, preprocessed_data/dev_linked.json, data/traindev_tables_tok, and data/traindev_request_tok",
+    "strip only the codeload top-level directory prefix",
+    "preserve selected member payload bytes exactly",
+    "normalize only output tar metadata",
+    "do not parse JSON and do not extract members to the Windows filesystem",
+    "refuse to overwrite an existing output archive",
+    "require 8891 table files and 8891 linked-passage files"
+  ],
+  "hashes": {
+    "builder_sha256": "aee60eb0ff5c5f58fb7fa0e1e0603da2d13a0945e7361492614588f43ba6e6c8",
+    "synthetic_test_sha256": "95e336054fa11f0598b7536a3b45ba680e92fc93000694a956c6560277204981"
+  },
+  "verification": {
+    "targeted_pytest": "1 passed in 0.03s",
+    "ruff": "All checks passed",
+    "python_compile": "passed",
+    "windows_invalid_member_names_preserved": true,
+    "unregistered_member_excluded": true,
+    "payload_bytes_preserved": true
+  },
+  "selection_candidate_method_model_threshold_or_metric_changed": false
+}

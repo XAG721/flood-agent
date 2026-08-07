@@ -1,0 +1,62 @@
+{
+  "schema_version": "frc-qasper-top2-proposal-guarded-atomic-roles-implementation-v48",
+  "experiment_id": "FRC-QASPER-TOP2-PROPOSAL-GUARDED-ATOMIC-ROLES-V48",
+  "registered_at": "2026-08-02T11:02:00+08:00",
+  "implementation_boundary": "The initial protocol, QASPER adapter, selector, multi-reference evaluator, runner and synthetic tests were completed and hashed before download. After download, preparation stopped before opening dev because the frozen card encoded CC-BY-4.0 as a YAML list rather than a scalar. The license parser was amended without opening validation content or changing any method, sample, threshold, model, metric or decision rule, and all implementation hashes were then re-registered.",
+  "initial_implementation_registered_before_archive_download": true,
+  "archive_downloaded_before_this_parser_amendment_registration": true,
+  "validation_member_opened_before_registration": false,
+  "license_parser_failure_occurred_before_dev_member_open": true,
+  "license_parser_amendment_only": true,
+  "qasper_validation_content_seen_before_registration": false,
+  "qasper_train_split_used": false,
+  "fetaqa_v47_case_level_artifact_used_for_v48_design": false,
+  "hashes": {
+    "protocol_sha256": "34c96fda996ab635911a3736b6d0df56598b79f87ed671c1f0050a366f475501",
+    "module_sha256": "2900cc032dbb0864a797f97f830db419d79a125e7b38dd8e59726d1fea5db3f2",
+    "runner_sha256": "15dada7def13b3682ee520c194cbdafb8ec9ae641ba820fbc2470d40a420c256",
+    "test_sha256": "5aefb70433fcb4bfcfb209fc7eabad7a273bc64348701e52379868d06dd9add9"
+  },
+  "synthetic_test_result": {
+    "command": "python -m pytest tests/test_frc_qasper_top2_proposal_guarded_atomic_roles.py -q",
+    "passed": 8,
+    "failed": 0
+  },
+  "synthetic_invariants_verified": {
+    "proposal_count_two_has_target_two": true,
+    "proposal_count_four_has_target_four": true,
+    "proposal_count_eight_has_target_five": true,
+    "every_selected_candidate_is_a_top2_proposal": true,
+    "all_proposals_selected_when_count_at_most_five_and_budget_feasible": true,
+    "candidate_permutation_invariant": true,
+    "strictly_monotone_per_role_transform_invariant": true,
+    "canonical_id_tie_breaking": true,
+    "no_duplicate_selection": true,
+    "budget_respected_and_can_reduce_feasible_count": true,
+    "source_kind_never_changes_formula": true,
+    "ambiguous_normalized_candidate_content_is_excluded": true,
+    "alternative_answer_level_references_are_not_unioned": true,
+    "blind_cache_contains_no_gold_or_annotation_fields": true,
+    "report_is_byte_deterministic": true
+  },
+  "frozen_runtime_defaults": {
+    "generator_batch_size": 8,
+    "embedding_batch_size": 64,
+    "reranker_batch_size": 256,
+    "case_batch_size": 4,
+    "score_calibration": "per-case independent min-max",
+    "rank_coverage_weight": 0.5,
+    "token_budgets": [
+      256,
+      512,
+      1024
+    ],
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 20260808,
+    "offline_model_loading": true
+  },
+  "method_or_threshold_change_after_registration_forbidden": true,
+  "negative_null_or_inconclusive_result_must_be_published": true,
+  "selector_adoption_authorized_by_registration": false,
+  "gate_2": "NO-GO/SHADOW"
+}

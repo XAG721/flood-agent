@@ -1,0 +1,128 @@
+{
+  "experiment_id": "FRC-DOC2DIAL-WOOD-SCHEMA-CORRECTED-TRANSFER-V56",
+  "gold_joined_for_coverage_or_metrics": false,
+  "hashes": {
+    "blind_census_sha256": "6431173eebd3026532f0145abfe0c000acc2eeb5c94f008288ae0b5dd7d7f091",
+    "blind_document_store_sha256": "b4d35b578093302af2d6aa60886fe83cb1abb3e84c7f3d7828b8a90d664ed27a",
+    "candidate_map_sha256": "3b0336bc4b16cc95bd893aae16afa19d26e1bc98943d001cdec9367315db3b2e",
+    "implementation_registration_sha256": "01e8178e75f1af32619b96cc3aeb03fefdca9a7a65a8f07967ce11f3f998a447",
+    "prepared_blind_sha256": "71d24bd890aca046fc1f3d3806032c4dde3d4e9f1f5c2e8852a1c83b2ec111ea",
+    "source_archive_sha256": "9143efd9d12ca30b1c772f65102b1c3e77d625fca03e69d316773acea5406786"
+  },
+  "implementation_registration": {
+    "confirmation_member_opened_before_registration": false,
+    "confirmation_source_access_authorized": false,
+    "experiment_id": "FRC-DOC2DIAL-WOOD-SCHEMA-CORRECTED-TRANSFER-V56",
+    "gate_2": "NO-GO/SHADOW",
+    "hashes": {
+      "module_sha256": "00876c9d83371388ba7c2b970777249798de297d1cc2ac247923b0c46a86cc89",
+      "protocol_sha256": "f3a5282189b5a8bc4e730d880dd17fb9f296bde21ddfa8e0fea0c85e7fa27c90",
+      "runner_sha256": "e0eab505fe14132a302523d30b65e4546034cf8e35500144c00f78e91ec972ac",
+      "source_registration_sha256": "4f231951d9e2769b292ad6557a3abcbe6794990bbc1a55c3a3bc5b6ebf448669",
+      "test_sha256": "f2e5873a897a4fa8820dacee84b4068dbef65929a44c950ac0c2e915e5bcab08"
+    },
+    "implementation_frozen_before_outcome_bearing_development_preparation": true,
+    "outcome_bearing_preparation_started_before_registration": false,
+    "pre_outcome_schema_access_disclosed": true,
+    "registered_at": "2026-08-03T00:44:00+08:00",
+    "schema_corrections": {
+      "adjacent_ood_act_is_descriptive_subtype_only": true,
+      "all_empty_references_are_no_answer_per_official_readme": true,
+      "keyed_object_requires_integer_keys_and_numeric_order": true,
+      "lexical_fallback_for_noninteger_keys": false,
+      "turns_keyed_object_supported": true,
+      "turns_list_supported": true
+    },
+    "schema_version": "frc-doc2dial-wood-v56-implementation-registration-v1",
+    "selector_adoption_authorized": false,
+    "synthetic_invariants_verified": {
+      "balanced_sample_order_invariance_and_caps": true,
+      "blind_cache_hides_state_subtype_dialogue_acts_references_labels_and_raw_ids": true,
+      "empty_reference_official_semantics_and_ood_subtype": true,
+      "gold_minimal_evaluation_adds_subtype_strata_and_v56_bootstrap_seed": true,
+      "integer_key_ordering_and_noninteger_rejection": true,
+      "list_and_keyed_turn_containers_supported": true,
+      "post_score_gold_join_carries_no_answer_subtype": true,
+      "pre_outcome_schema_access_and_confirmation_boundary_disclosed": true,
+      "transferred_retrieval_gate_and_selector_unchanged": true,
+      "v56_decoy_salt_and_deterministic_queries": true
+    },
+    "synthetic_verification": {
+      "compile_command": "python -m compileall -q research/frc_rag/doc2dial_wood_schema_corrected_transfer.py scripts/run_doc2dial_wood_schema_corrected_transfer.py",
+      "compile_result": "passed",
+      "lint_command": "python -m ruff check research/frc_rag/doc2dial_wood_schema_corrected_transfer.py scripts/run_doc2dial_wood_schema_corrected_transfer.py tests/test_frc_doc2dial_wood_schema_corrected_transfer.py",
+      "lint_result": "All checks passed",
+      "test_command": "python -m pytest tests/test_frc_doc2dial_wood_schema_corrected_transfer.py -q --basetemp D:\\graduation_project\\output\\pytest-tmp-doc2dial-wood-v56-synthetic",
+      "test_result": "6 passed, 1 non-fatal pytest cache ACL warning in 0.14s"
+    },
+    "unchanged_mechanism": {
+      "candidate": "v54 anchor Top-1 plus atomic-role Top-1 winners inside anchor Top-3",
+      "gate": "associated document rank one among eight by maximum anchor reranker logit",
+      "learned_parameter": null,
+      "models_queries_candidate_construction_retrieval_pool_probe_pool_gate_selector_budgets_and_support_thresholds_changed": false
+    },
+    "v54_or_v55_case_level_artifact_query_candidate_score_or_metric_used": false
+  },
+  "method_formula_change_after_registration_forbidden": true,
+  "metrics_computed": false,
+  "neural_scoring_started": false,
+  "query_generation_started": false,
+  "registered_at": "2026-08-03T00:45:00+08:00",
+  "retrieval_gate_selector_changed": false,
+  "runtime": {
+    "cuda_available": true,
+    "cuda_runtime": "12.4",
+    "gpu": "NVIDIA GeForce RTX 4060 Ti",
+    "gpu_memory_mib": 16379,
+    "numpy": "2.2.6",
+    "parameters": {
+      "case_batch_size": 2,
+      "contrastive_documents": 8,
+      "device": "cuda",
+      "embedding_batch_size": 64,
+      "fp16": true,
+      "learned_threshold": null,
+      "offline_model_loading": true,
+      "query_generator": "none",
+      "reranker_batch_size": 256,
+      "retrieval_gate_selector_unchanged": true,
+      "token_budgets": [
+        128,
+        256,
+        512
+      ]
+    },
+    "platform": "Windows-10-10.0.19045-SP0",
+    "python": "3.10.20",
+    "torch": "2.4.1+cu124",
+    "transformers": "4.46.3"
+  },
+  "schema_version": "frc-doc2dial-wood-v56-execution-registration-v1",
+  "source_artifacts": {
+    "archive_bytes": 8228534,
+    "archive_sha256": "9143efd9d12ca30b1c772f65102b1c3e77d625fca03e69d316773acea5406786",
+    "confirmation_opened": false,
+    "dataset_version": "v0.9",
+    "license_status": "official v0.9 source has no explicit license statement; no source text is published",
+    "pre_outcome_schema_access_disclosed": true,
+    "resolved_members": {
+      "confirmation": {
+        "compressed_bytes": 382726,
+        "path": "doc2dial/v0.9/data/wOOD/doc2dial_dial_dev.json",
+        "uncompressed_bytes": 6264675
+      },
+      "development": {
+        "compressed_bytes": 1863177,
+        "path": "doc2dial/v0.9/data/wOOD/doc2dial_dial_train.json",
+        "uncompressed_bytes": 33093882
+      },
+      "documents": {
+        "compressed_bytes": 3787701,
+        "path": "doc2dial/v0.9/data/doc2dial_doc.json",
+        "uncompressed_bytes": 46216321
+      }
+    }
+  },
+  "stage": "development",
+  "stage_reuse_for_tuning_or_selection_forbidden": true
+}

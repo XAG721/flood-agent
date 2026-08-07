@@ -1,0 +1,13 @@
+{
+  "canary_or_default_authorized": false,
+  "confirmation_open_authorized": false,
+  "experiment_id": "FRC-MUSIQUE-MONOTONE-INTERACTION-SUPPORT-V69",
+  "gate_2": "NO-GO/SHADOW",
+  "retrieval_scoring_started": false,
+  "reuse_failed_stage_for_basis_interaction_model_threshold_rule_gate_or_selection": false,
+  "schema_version": "frc-musique-v69-stage-closure-v1",
+  "selector_adoption_authorized": false,
+  "stage": "development",
+  "stage_result_sha256": "f9206c52df576be38ef93050b32729866202c3f84537b6f49494b95c0674d6e7",
+  "status": "MUSIQUE_V69_MONOTONE_INTERACTION_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+}

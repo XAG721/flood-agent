@@ -1,0 +1,11 @@
+{
+  "canary_or_default_authorized": false,
+  "confirmation_gate_passed": true,
+  "confirmation_result_sha256": "cd0ec74093a1c3f54cd740503715910514162dabf4bfe4f0a3d7d4e428f21dfc",
+  "experiment_id": "FRC-HOTPOT-GRAPH-SOFT-OVERRIDE-ROUTER-V76",
+  "gate_2": "NO-GO/SHADOW",
+  "reuse_target_stages_for_feature_model_threshold_gate_or_selection": false,
+  "schema_version": "frc-hotpot-graph-router-confirmation-closure-v76",
+  "selector_adoption_authorized": false,
+  "status": "HOTPOT_V76_GRAPH_ROUTER_CASE_DISJOINT_SUPPORT_ESTABLISHED"
+}

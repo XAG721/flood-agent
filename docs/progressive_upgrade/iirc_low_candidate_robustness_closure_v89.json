@@ -1,0 +1,110 @@
+{
+  "schema_version": "frc-iirc-low-candidate-robustness-closure-v89",
+  "experiment_id": "FRC-IIRC-LOW-CANDIDATE-ROBUSTNESS-PROSPECTIVE-V89",
+  "closed_on": "2026-08-05",
+  "status": "ROBUST_CASE_DISJOINT_SAME_DATASET_SOURCE_SELECTION_SUPPORT_ESTABLISHED",
+  "frozen_inputs": {
+    "protocol_sha256": "94470ad7b15771d4932d8c2ed2b08fc51037ad76637b896f2e641f04b3e7af38",
+    "source_registration_sha256": "770697acb839c07cc237c19c404b23f39ef5b4487a085b4e444067a07c8091ac",
+    "implementation_lock_sha256": "c6d55469e5eca367d60f0925b4d0cd297f8aacccced929b7f3e0b69864df41f6",
+    "v88_model_sha256": "b663364f02443f3c7f485a39734ea8f5ef59b25aa5e57a76b0fe1acd9fa23439",
+    "v88_model_payload_sha256": "5b0974a26e601c00ad9de9462cdec967392ff5d3c9c4d2f59d6b6c2bfde3c8c5",
+    "v88_model_retrained_or_tuned": false
+  },
+  "development": {
+    "cases": 800,
+    "selected_ids_sha256": "16d059c8d9cfdb561f2e2aa291df1a5319737d94761bd209b8fe2443d8e45438",
+    "execution_sha256": "fc4d07e1d72e157f7bb93daf678cef20668342f4ff08d3b567a2d2249f59a3da",
+    "result_sha256": "72951ab53fcfc0577184b4b2e280b15151bf8724742ee8d8137b169c55688f52",
+    "blind_score_sha256": "aab7557c0a0473bd24b259e9d5d36eedb697c2ba2dcbc126b4e2bba66e1a5e12",
+    "all_strict_gates_passed": true,
+    "adapter_coverage_rate": 1.0,
+    "low_candidate_cases": 1,
+    "candidate_sources_minimum": 3,
+    "candidate_f1": 0.636527,
+    "candidate_complete_evidence_recall": 0.4275,
+    "candidate_evidence_recall": 0.676583,
+    "candidate_mean_selected_sources": 1.925,
+    "primary_control": "frc_fixed2",
+    "primary_control_f1": 0.606125,
+    "candidate_minus_primary_control": 0.030402,
+    "candidate_minus_primary_control_95_percent_ci": [
+      0.017976,
+      0.042557
+    ],
+    "strongest_observed_control": "iirc_score_gap_frc_v87",
+    "candidate_minus_strongest_observed_control": 0.016119,
+    "candidate_action_counts": {
+      "1": 277,
+      "2": 306,
+      "3": 217
+    },
+    "confirmation_open_artifact_sha256": "780e64171642127f953033f9b0f38dce63b0f871930ba1810baffe753508d5df"
+  },
+  "confirmation": {
+    "cases": 1200,
+    "selected_ids_sha256": "ffda02d3ecd0da07ecb72dd0790d9fd2360be034cc472a464cecaf750b88f21c",
+    "execution_sha256": "638f2193d04782b0e6319675480ea77818d92ac8fe187b8e4029d1474271bc3e",
+    "result_sha256": "95fdbf57f7fadce8f07932338601f07ee9eefbfda26ac7a96670e3d860d64918",
+    "blind_score_sha256": "0cbc79b1da60387bfd99f8dea6f566d845c05b1a9602836984d609a4d03b5b08",
+    "all_strict_gates_passed": true,
+    "adapter_coverage_rate": 1.0,
+    "low_candidate_cases": 0,
+    "candidate_sources_minimum": 8,
+    "candidate_f1": 0.627097,
+    "candidate_complete_evidence_recall": 0.433333,
+    "candidate_evidence_recall": 0.67473,
+    "candidate_mean_selected_sources": 1.930833,
+    "primary_control": "frc_fixed2",
+    "primary_control_f1": 0.598195,
+    "candidate_minus_primary_control": 0.028902,
+    "candidate_minus_primary_control_95_percent_ci": [
+      0.017896,
+      0.039656
+    ],
+    "strongest_observed_control": "iirc_score_gap_frc_v87",
+    "candidate_minus_strongest_observed_control": 0.010936,
+    "candidate_action_counts": {
+      "1": 412,
+      "2": 459,
+      "3": 329
+    }
+  },
+  "artifacts": {
+    "development_report_json_sha256": "1fd548433b902275fd8bdc9ea2a2388192dbcbeb85a1f0fc980d294a5cb000f0",
+    "development_report_markdown_sha256": "c6409ee98aaecbe3e80f9b0d6dcb88b61bfab5d03e0b7a8f4878849f6ec6334b",
+    "development_cases_sha256": "79d2ea5682439226431c7312636724e1d0423f7ca14e57b14fdd2ead69544854",
+    "confirmation_report_json_sha256": "b9e14bebc8e614b19335d75881f573a3514b08ee32c89d7df966ba212b12a9f6",
+    "confirmation_report_markdown_sha256": "9caffa44f60223f9d694e80c07ca11dcb503352d8039f2def565d682a414c23b",
+    "confirmation_cases_sha256": "bc8cb106002e46bb275d9a5013b2be2bccaab7bb0fd47a03ed571331de325814"
+  },
+  "interpretation": {
+    "v88_adapter_coverage_failure_resolved": true,
+    "frozen_v88_model_case_disjoint_same_dataset_replication_established": true,
+    "point_improvement_over_every_registered_control_in_both_stages": true,
+    "primary_control_ci_lower_bound_above_zero_in_both_stages": true,
+    "independent_cross_dataset_transfer_established": false,
+    "reason_cross_dataset_transfer_not_established": "The v86 HotpotQA-to-IIRC question-cardinality router failed its prospective development gates; v89 trains and evaluates within the IIRC research family even though target cases are disjoint.",
+    "low_candidate_performance_established": false,
+    "reason_low_candidate_performance_not_established": "The adapter processed the only three-candidate development case without failure, proving coverage, but one case is insufficient for a performance claim and confirmation contained no fewer-than-four-candidate cases.",
+    "answer_generation_evaluated": false,
+    "setr_reproduced": false,
+    "flood_domain_effectiveness_established": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "production_authorized": false
+  },
+  "future_boundary": {
+    "v89_development_and_confirmation_cases_are_permanently_exposed": 2000,
+    "v89_remaining_commitment": "d2487d7be5b83238830bac0a50b325bb52865c11efebc7b5b13e3f14387b89c7",
+    "future_iirc_targets_must_use_new_ids_from_the_v89_remaining_commitment": true,
+    "future_model_adapter_control_metric_gate_or_partition_changes_require_new_version": true,
+    "recommended_next_evidence": [
+      "independent training-dataset transfer with untouched target data",
+      "end-to-end answer generation and citation correctness",
+      "flood-domain double-expert blinded evaluation",
+      "real SetR comparison only if reproducible weights and compute become available"
+    ]
+  },
+  "gate_2": "NO-GO/SHADOW"
+}

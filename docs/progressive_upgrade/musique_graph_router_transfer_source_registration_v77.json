@@ -1,0 +1,194 @@
+{
+  "schema_version": "frc-musique-graph-router-transfer-source-registration-v77",
+  "experiment_id": "FRC-MUSIQUE-FROZEN-HOTPOT-GRAPH-ROUTER-TRANSFER-V77",
+  "registered_on": "2026-08-04",
+  "target": {
+    "dataset": "MuSiQue full v1.0",
+    "split": "train",
+    "path": ".cache/benchmarks/musique/data/musique_full_v1.0_train.jsonl",
+    "bytes": 476696984,
+    "sha256": "b1cd998f7e0e2838d6fda024e4ad1eb0e7fc3edefdadb0bd9b5b10b0907f2034",
+    "rows": 39876,
+    "unique_source_ids": 19938,
+    "paired_answer_state_pattern": "each unique source id has exactly one answerable and one unanswerable row",
+    "answerable_cases_by_id_derived_hop": {
+      "2": 14376,
+      "3": 4387,
+      "4": 1175
+    },
+    "authorized_rows": "answerable row only",
+    "schema_reference": ".cache/benchmarks/musique_repo/raw_data_to_official_format.py"
+  },
+  "official_repository": {
+    "path": ".cache/benchmarks/musique_repo",
+    "revision": "922ac98f19a201998dbdae6d7f2887a5258dbdeb",
+    "readme_sha256": "be0c6ebbd2f192c647633bdec79429b3d027bebfd37182f7d8f1d49fb53b3829",
+    "license_sha256": "8a5e40e360ca75413c65917144f6055537bee03e95f727c1bb55a7aff9d8d4e2",
+    "license": "CC BY 4.0"
+  },
+  "prior_exclusion_sources": {
+    "v65_invalid": {
+      "path": ".cache/benchmarks/musique_full_roberta_transfer_v65/candidate_map.jsonl",
+      "bytes": 1614348,
+      "sha256": "bd26514fc68009b4f39ca94991d03c8cd980b84df363024d4b9a1f9c434dcbba",
+      "expected_unique_source_commitments": 300
+    },
+    "v65_corrected": {
+      "path": ".cache/benchmarks/musique_full_roberta_transfer_v65_corrected/candidate_map.jsonl",
+      "bytes": 1614474,
+      "sha256": "d5095960ffcf38f4491830e19d5af0ac3c877edb5cd4ca5d5fd73d0f7179a965",
+      "expected_unique_source_commitments": 600
+    },
+    "v66_development": {
+      "path": ".cache/benchmarks/musique_sequential_chain_support_v66/development/candidate_map.jsonl",
+      "bytes": 1368000,
+      "sha256": "51149c2f3d16bb1b666881b3d22c1f36e7d6d41d4f56013afc3be6889c4348fe",
+      "expected_unique_source_commitments": 600
+    },
+    "v67_calibration": {
+      "path": ".cache/benchmarks/musique_calibrated_chain_support_v67/calibration/candidate_map.jsonl",
+      "bytes": 2279790,
+      "sha256": "374e9402a9ff030494756ed52913ea491f7e1bfb6279ae3b12dcbfcda363748f",
+      "expected_unique_source_commitments": 1000
+    },
+    "v67_development": {
+      "path": ".cache/benchmarks/musique_calibrated_chain_support_v67/development/candidate_map.jsonl",
+      "bytes": 1367895,
+      "sha256": "49fb860203848374d9fbbc6decb3690efd7acfd0e1fe9ef0d912cfcf95af31dd",
+      "expected_unique_source_commitments": 600
+    },
+    "v68_calibration": {
+      "path": ".cache/benchmarks/musique_multisignal_chain_support_v68/calibration/candidate_map.jsonl",
+      "bytes": 2735685,
+      "sha256": "524146e4d4a260126511b521b424476c2cb76747b18244b87f2ecfa34c8aa057",
+      "expected_unique_source_commitments": 1200
+    },
+    "v68_development": {
+      "path": ".cache/benchmarks/musique_multisignal_chain_support_v68/development/candidate_map.jsonl",
+      "bytes": 1367370,
+      "sha256": "cf6f8075d903ce2c8141ea84f278933de181f6a1f4ead71279976fbc0960bd6c",
+      "expected_unique_source_commitments": 600
+    },
+    "v69_calibration": {
+      "path": ".cache/benchmarks/musique_monotone_interaction_support_v69/calibration/candidate_map.jsonl",
+      "bytes": 3647580,
+      "sha256": "0ee5e37efd3661679a3ed4fe8b0a3f78e4ba58856161fd3c0130ee019a38e9e2",
+      "expected_unique_source_commitments": 1600
+    },
+    "v69_development": {
+      "path": ".cache/benchmarks/musique_monotone_interaction_support_v69/development/candidate_map.jsonl",
+      "bytes": 1823580,
+      "sha256": "32c8ae4a7d75b07d1d6c829109b49f42e7470ab37bf412e7fd1f4062eba99de2",
+      "expected_unique_source_commitments": 800
+    },
+    "v70_calibration": {
+      "path": ".cache/benchmarks/musique_paragraph_competition_support_v70/calibration/candidate_map.jsonl",
+      "bytes": 3647790,
+      "sha256": "7ac70e9be2038289230d9f09ec870c537ca0ed361e73d6bc47f5da93d1e539f3",
+      "expected_unique_source_commitments": 1600
+    },
+    "v70_development": {
+      "path": ".cache/benchmarks/musique_paragraph_competition_support_v70/development/candidate_map.jsonl",
+      "bytes": 1824000,
+      "sha256": "ce6ec059c8121f7c720815623d451fa9c7a2b7529a3b26d4292e0b2e9d26f087",
+      "expected_unique_source_commitments": 800
+    },
+    "v71_calibration": {
+      "path": ".cache/benchmarks/musique_bridge_counterfactual_dependence_v71/calibration/candidate_map.jsonl",
+      "bytes": 3647895,
+      "sha256": "49e47d9f9b756cb359a6e3742a0b7207204ffc1e7282aa45b06496988bffe400",
+      "expected_unique_source_commitments": 1600
+    },
+    "v71_development": {
+      "path": ".cache/benchmarks/musique_bridge_counterfactual_dependence_v71/development/candidate_map.jsonl",
+      "bytes": 1824000,
+      "sha256": "6abca0ab889a5b6afe54bb01e5f2cf724ea6fb50ecec9322e69ff7d887bbd5b2",
+      "expected_unique_source_commitments": 800
+    },
+    "v72_calibration": {
+      "path": ".cache/benchmarks/musique_in_domain_rival_bridge_v72/calibration/candidate_map.jsonl",
+      "bytes": 3647790,
+      "sha256": "563538fdeef716e100f6821e00e79ce09db1bbe3f22951d45fc9166ad642185a",
+      "expected_unique_source_commitments": 1600
+    },
+    "v72_development": {
+      "path": ".cache/benchmarks/musique_in_domain_rival_bridge_v72/development/candidate_map.jsonl",
+      "bytes": 1824000,
+      "sha256": "3e40f927aa44104d67c50eb6b7bc624dadef49943ff054871bd15301629cd5fe",
+      "expected_unique_source_commitments": 800
+    },
+    "v73_calibration": {
+      "path": ".cache/benchmarks/musique_context_bridge_erasure_v73/calibration/candidate_map.jsonl",
+      "bytes": 3647475,
+      "sha256": "3abe5075d670ad8437d3086642af9973703d61ec9ff4e92b8f280ae4dc946525",
+      "expected_unique_source_commitments": 1600
+    },
+    "v73_development": {
+      "path": ".cache/benchmarks/musique_context_bridge_erasure_v73/development/candidate_map.jsonl",
+      "bytes": 1824000,
+      "sha256": "479fd5f59e0237ce6f4d61d5db7cd2711bebe61f3b062becab18a2c603a692a1",
+      "expected_unique_source_commitments": 800
+    },
+    "expected_sum_source_commitments": 16900,
+    "expected_union_source_commitments": 16900
+  },
+  "earlier_v36_dev_exposure": {
+    "source_path": ".cache/benchmarks/musique/data/musique_ans_v1.0_dev.jsonl",
+    "source_bytes": 30439728,
+    "source_sha256": "15fa63794d18a94ce12411aca6e2327e65b6e83b0b1490efab3f1962e48abf3b",
+    "prepared_path": ".cache/benchmarks/musique/prepared_dual_resource_blind.jsonl",
+    "prepared_bytes": 31390758,
+    "prepared_sha256": "b9a987875dbc7aeaef4720c6df02265d0368b49f344b8a24b933a10ca0cfc28b",
+    "unique_source_ids": 2417,
+    "overlap_with_v77_train_prior_commitment_union": 0,
+    "v77_uses_dev_split": false
+  },
+  "remaining_untouched_answerable_capacity": {
+    "total": 3038,
+    "by_id_derived_hop": {
+      "2": 1728,
+      "3": 917,
+      "4": 393
+    },
+    "required_across_two_stages": {
+      "2": 800,
+      "3": 500,
+      "4": 300
+    },
+    "supports_two_disjoint_registered_stages": true
+  },
+  "frozen_dependencies": {
+    "v76_router_path": "docs/progressive_upgrade/hotpot_graph_router_model_development_v76.json",
+    "v76_router_bytes": 30275,
+    "v76_router_sha256": "5bdcf7a229d4208d472b33478c073f29dba082bc012b48c0d2aadad47ad4ecfb",
+    "v76_router_payload_sha256": "8923f0315e24f38e0552e8140377fe18f8647e76c0cac33f534b451f850eddf0",
+    "v76_implementation_lock_path": "docs/progressive_upgrade/hotpot_graph_router_implementation_v76.json",
+    "v76_implementation_lock_sha256": "e0060e7794a60a7d2723095c1561fe4dd6225d8a212ca8b433512efb565170d8",
+    "v75_model_path": "docs/progressive_upgrade/twowiki_question_router_model_development_v75.json",
+    "v75_model_sha256": "b12c128f06c4ab14851d2f24538a15e76f5f9ff7336a7968c7b01d7c5062cbc0",
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "offline_snapshot_required": true
+  },
+  "pre_registration_access_boundary": {
+    "source_file_hash_size_row_count_read": true,
+    "source_id_answerable_flag_and_id_prefix_hop_capacity_read": true,
+    "prior_commitment_maps_read_for_exclusion_union_only": true,
+    "v77_target_ids_selected": 0,
+    "v77_target_questions_paragraphs_answers_decomposition_or_support_flags_read": 0,
+    "v77_target_model_scores_seen": false,
+    "v77_target_gold_metrics_seen": false,
+    "router_adapter_controls_metrics_gates_noninferiority_envelope_stage_sizes_and_hop_quotas_frozen_before_target_selection": true
+  },
+  "claims": {
+    "v76_router_model_trained_only_on_hotpotqa_history": true,
+    "zero_musique_target_training_or_tuning": true,
+    "v77_target_case_ids_disjoint_from_all_recorded_prior_project_musique_exposure": true,
+    "broader_research_program_independent_of_musique": false,
+    "strict_independent_model_training_confirmation": false,
+    "official_musique_leaderboard_result": false,
+    "real_setr_or_flood_domain_expert_evidence": false
+  }
+}

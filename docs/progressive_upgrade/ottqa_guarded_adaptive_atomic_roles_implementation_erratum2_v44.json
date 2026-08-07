@@ -1,0 +1,52 @@
+{
+  "schema_version": "frc-ottqa-guarded-adaptive-atomic-roles-implementation-erratum2-v44",
+  "experiment_id": "FRC-OTTQA-GUARDED-ADAPTIVE-ATOMIC-ROLES-V44",
+  "registered_at": "2026-08-02T04:58:34+08:00",
+  "base_implementation_registration_sha256": "797aeb50d6fabaf931ba41325c9f9723d44bc6b5b3e66aca04cb5b73aba3df87",
+  "prior_implementation_erratum_sha256": "282622aece3610da4e98868c954c7203fbf42a4df5ce75593fe6589e83b38aa4",
+  "trigger": {
+    "stage": "source archive metadata verification before JSON parsing",
+    "issue": "Locale-sensitive preregistration manifest ordering differed from the locale-independent frozen verifier despite identical Git blobs, counts, and bytes.",
+    "source_archive_downloaded_before_erratum": true,
+    "source_archive_members_copied_before_erratum": true,
+    "question_answer_evidence_table_or_passage_json_parsed_before_erratum": false,
+    "neural_query_generation_started": false,
+    "neural_scoring_started": false,
+    "metrics_computed": false
+  },
+  "correction": {
+    "summary": "Validate all three storage-only protocol errata and replace two locale-sensitive directory manifest constants with Unicode-code-point canonical manifest values.",
+    "individual_git_blob_verification_preserved": true,
+    "file_and_byte_counts_preserved": true,
+    "source_payload_bytes_changed": false,
+    "sampling_rule_changed": false,
+    "candidate_construction_changed": false,
+    "candidate_pool_size_changed": false,
+    "formula_changed": false,
+    "model_or_revision_changed": false,
+    "budget_or_threshold_changed": false,
+    "metric_or_decision_rule_changed": false
+  },
+  "verification": {
+    "targeted_v44_and_builder_pytest": "9 passed in 0.16s",
+    "full_pytest": "378 passed, 1 warning in 305.26s",
+    "ruff": "All checks passed",
+    "python_compile": "passed",
+    "license_and_dev_linked_git_blobs_matched": true,
+    "additional_table_and_passage_blob_spot_checks": 4,
+    "additional_blob_spot_check_mismatches": 0
+  },
+  "hashes": {
+    "protocol_sha256": "95116d2af455d1f8792e81cc1ed1f0f48db5fd7ef1274d257f73cec8e5c1e072",
+    "protocol_erratum_sha256": "e7341f3ce645f27ea1fbf3f8bc79691b14a8c4b5655035f83bdb8112ff906019",
+    "protocol_erratum2_sha256": "1bcbb7ee99e974b80624bdc24392d1c6eb403e2dfdd86b4681afbab55a9b6fbc",
+    "protocol_erratum3_sha256": "aa237afc9062211cc090247285fb8cc3f2f4fb92e6a8f8c190e1c4a77923ee38",
+    "module_sha256": "ce195a5bc68031f4cc38cb819b086bef891df7bad6ecf459746ce33356bf73f8",
+    "runner_sha256": "c8a83479ca2b278d7c5fa47079efc84c847d24e27d280b08d06aacae93c033b6",
+    "test_sha256": "51814d44624fdfd7d0c9ba4c466b3c6c7e7a694a82cc0aa6d51d6ff12d26f197",
+    "inherited_v41_module_sha256": "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621"
+  },
+  "scientific_effect": "none; canonical metadata verification only",
+  "method_or_threshold_changed": false,
+  "negative_null_or_inconclusive_result_must_still_be_published": true
+}

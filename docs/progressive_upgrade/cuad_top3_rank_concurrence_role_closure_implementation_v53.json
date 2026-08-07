@@ -1,0 +1,47 @@
+{
+  "schema_version": "frc-cuad-v53-implementation-registration-v1",
+  "experiment_id": "FRC-CUAD-TOP3-RANK-CONCURRENCE-ROLE-CLOSURE-V53",
+  "registered_at": "2026-08-02T21:59:07+08:00",
+  "hashes": {
+    "protocol_sha256": "9390f8f5642fa7be0de265b59e9aef03d76e303e2fa615bd498a93c5a3e6544c",
+    "source_registration_sha256": "4949e1e00ef3176fdaae778da9a77053358efe8b88d52c2d72d2920b190f8bc0",
+    "module_sha256": "2bb84d08be975d7a964fd16af481a241f1ad58b42b3cb5aab4853e80e8fa2c33",
+    "runner_sha256": "b7ccd5052efa8d87ffed329b9897744a18d13c012d735a5151d09e41fdd93ff2",
+    "test_sha256": "507654a5851ffc4d4a2ba272bc9a303e419bbdd63908ea8b47528bc14e4e733a"
+  },
+  "train_or_test_content_opened_before_registration": false,
+  "learned_or_dataset_fitted_parameter": false,
+  "development_result_used_to_change_implementation": false,
+  "confirmation_result_used_to_change_implementation": false,
+  "source_embedding_cache": {
+    "enabled": true,
+    "key": "sha256 of ordered candidate ids and candidate text sha256 commitments",
+    "gold_label_answer_or_offset_used": false,
+    "purpose": "Reuse identical full-contract source embeddings across questions without changing the frozen retrieval formula."
+  },
+  "synthetic_verification": {
+    "lint_command": "python -m ruff check research/frc_rag/cuad_top3_rank_concurrence_role_closure.py scripts/run_cuad_top3_rank_concurrence_role_closure.py tests/test_frc_cuad_top3_rank_concurrence_role_closure.py",
+    "lint_result": "All checks passed",
+    "test_command": "python -m pytest tests/test_frc_cuad_top3_rank_concurrence_role_closure.py -q --basetemp D:\\graduation_project\\output\\pytest-tmp-cuad-v53-synthetic-registered-2",
+    "test_result": "10 passed in 0.16s",
+    "compile_command": "python -m compileall -q research/frc_rag/cuad_top3_rank_concurrence_role_closure.py scripts/run_cuad_top3_rank_concurrence_role_closure.py",
+    "compile_result": "passed"
+  },
+  "synthetic_invariants_verified": {
+    "protocol_and_source_access_boundary": true,
+    "reader_opens_only_requested_split": true,
+    "balanced_sample_order_invariance_and_contract_cap": true,
+    "candidate_exact_offset_and_determinism": true,
+    "blind_cache_query_and_map_gold_isolation": true,
+    "retrieval_union_order_invariance_and_maximum": true,
+    "source_embedding_cache_is_gold_free": true,
+    "top3_gate_permutation_and_monotone_rank_invariance": true,
+    "candidate_differs_from_same_gate_frc_ablation": true,
+    "official_answer_match_and_post_score_gold_join": true,
+    "deterministic_gold_minimal_report": true
+  },
+  "implementation_frozen_before_development_source_access": true,
+  "test_source_access_authorized": false,
+  "selector_adoption_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

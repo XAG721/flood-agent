@@ -1,0 +1,115 @@
+{
+  "schema_version": "frc-iirc-low-candidate-robustness-implementation-lock-v89",
+  "experiment_id": "FRC-IIRC-LOW-CANDIDATE-ROBUSTNESS-PROSPECTIVE-V89",
+  "frozen_on": "2026-08-05",
+  "frozen_before_v89_target_question_answer_context_or_metric_access": true,
+  "files": {
+    "transfer": {
+      "path": "research/frc_rag/iirc_low_candidate_robustness_transfer.py",
+      "bytes": 24784,
+      "sha256": "e56f68a4cc8ef6a8727245703cfd5083894ad729d380cd7dfa4258b02ecd43ea"
+    },
+    "transfer_runner": {
+      "path": "scripts/run_iirc_low_candidate_robustness_transfer.py",
+      "bytes": 9954,
+      "sha256": "85f9292c5947bbf0d9a8fa9705b404b851d28deee371ad0156b87bf8773cea81"
+    },
+    "transfer_tests": {
+      "path": "tests/test_frc_iirc_low_candidate_robustness_transfer.py",
+      "bytes": 4871,
+      "sha256": "2475a1e2f9c31e5c595b7422573a2b7285d7d71b93a93ca5d056627981328821"
+    },
+    "protocol": {
+      "path": "docs/progressive_upgrade/iirc_low_candidate_robustness_protocol_v89.json",
+      "bytes": 7099,
+      "sha256": "94470ad7b15771d4932d8c2ed2b08fc51037ad76637b896f2e641f04b3e7af38"
+    },
+    "source_registration": {
+      "path": "docs/progressive_upgrade/iirc_low_candidate_robustness_source_registration_v89.json",
+      "bytes": 2976,
+      "sha256": "770697acb839c07cc237c19c404b23f39ef5b4487a085b4e444067a07c8091ac"
+    },
+    "v88_router": {
+      "path": "research/frc_rag/iirc_pooled_score_gap_router.py",
+      "bytes": 15065,
+      "sha256": "8d9ab58d8a7c3545ecc2f11df111f6dd2dcf45f708f914a21619cbc35ef5e314"
+    },
+    "v88_transfer": {
+      "path": "research/frc_rag/iirc_pooled_score_gap_transfer.py",
+      "bytes": 17899,
+      "sha256": "3eac315f1e8dc0cf491615143c61cf83c5cc5c15e7a3f36de13df6ad4f5e76d6"
+    },
+    "v88_model": {
+      "path": "docs/progressive_upgrade/iirc_pooled_score_gap_router_model_development_v88.json",
+      "bytes": 8122541,
+      "sha256": "b663364f02443f3c7f485a39734ea8f5ef59b25aa5e57a76b0fe1acd9fa23439"
+    },
+    "v87_router": {
+      "path": "research/frc_rag/iirc_score_gap_router.py",
+      "bytes": 22839,
+      "sha256": "e09df11916620123543974f4987e4f0bcd3610f083a0e2e0862cf0d14d4830fc"
+    },
+    "v87_transfer": {
+      "path": "research/frc_rag/iirc_score_gap_transfer.py",
+      "bytes": 18669,
+      "sha256": "99c4b6bba235d5490976e2366fbb6bdcdf00d98b891eccc85baa35d500b0e7e4"
+    },
+    "v87_model_control": {
+      "path": "docs/progressive_upgrade/iirc_score_gap_router_model_development_v87.json",
+      "bytes": 2570250,
+      "sha256": "e4a32857ca60ff7fa92c0f14a129b5101c4817fd95856f78e66012457792de70"
+    },
+    "v86_adapter": {
+      "path": "research/frc_rag/iirc_cardinality_transfer.py",
+      "bytes": 34367,
+      "sha256": "43d9f7a1b5619a7f46c0626ac3ba5874a0258e70ffca2d73ce58b1d68319df7a"
+    },
+    "v86_router": {
+      "path": "research/frc_rag/iirc_cardinality_transfer_router.py",
+      "bytes": 23675,
+      "sha256": "2f663c3ba43ac69037102e54b53eed18209735c234cdc9a2ed0150f6a1ed3991"
+    },
+    "v86_model_control": {
+      "path": "docs/progressive_upgrade/iirc_cardinality_transfer_router_model_development_v86.json",
+      "bytes": 140133,
+      "sha256": "3b125e02779d385e63f3cbd47000e2c2fe2882456935150f1e47ec4354a9475c"
+    },
+    "shared_scorer": {
+      "path": "research/frc_rag/twowiki_confirmation.py",
+      "bytes": 16026,
+      "sha256": "6b16fc5aeff31be0ad63e25c08918c6f6fe8ab2cc1b946b4ecf0ee5ad1288cbd"
+    },
+    "shared_tokenizer_loader": {
+      "path": "research/frc_rag/rgb_cost_aware_frc.py",
+      "bytes": 55083,
+      "sha256": "d106e2a201b7dfecbeea21cb702603840ff2c0d79df5bc31dfc4ff96d0d2f46e"
+    },
+    "shared_jsonl_and_hash_helpers": {
+      "path": "research/frc_rag/twowiki_support_path_closure.py",
+      "bytes": 31690,
+      "sha256": "c4ad3ee5b828300d8b9065c4d1a6e93cd02c286a12306fccf9dbbf1822a4f4ea"
+    },
+    "source_fingerprint": {
+      "path": "docs/progressive_upgrade/iirc_cardinality_transfer_source_fingerprint_v86.json",
+      "bytes": 3938,
+      "sha256": "41cd12fd3851ac49d387a6f801c127ddec6f83b082ecbd004b21580f4e4d090c"
+    }
+  },
+  "model_payload_sha256": "5b0974a26e601c00ad9de9462cdec967392ff5d3c9c4d2f59d6b6c2bfde3c8c5",
+  "partition_commitments": {
+    "v88_remaining": "88df288fb0d01f0779dbe20783b04ff4ea41702854e71d8263b9bb35d98eb04d",
+    "eligible": "594ee74f7656577a28640dd6d517aff8374188dd8c54df3fc33d4a78c836de29",
+    "development": "16d059c8d9cfdb561f2e2aa291df1a5319737d94761bd209b8fe2443d8e45438",
+    "confirmation": "ffda02d3ecd0da07ecb72dd0790d9fd2360be034cc472a464cecaf750b88f21c",
+    "remaining": "d2487d7be5b83238830bac0a50b325bb52865c11efebc7b5b13e3f14387b89c7"
+  },
+  "adapter_rule": "Use the exact frozen v88 model when at least four real sources are available; otherwise select every available real source. Controls are capped to the available unique source count. No case drop, substitution, or synthetic padding is allowed.",
+  "mutation_rule": "Any algorithm, model, feature, policy, adapter, control, metric, gate, source, partition, or locked-file change requires v90 and new untouched IDs from the v89 remaining commitment.",
+  "confirmation_rule": "Confirmation remains inaccessible unless every frozen v89 development gate passes and a confirmation-open artifact is created.",
+  "verification_before_freeze": {
+    "ruff": "passed",
+    "py_compile": "passed",
+    "focused_tests": "4 passed"
+  },
+  "gate_2": "NO-GO/SHADOW"
+}

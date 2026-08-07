@@ -1,0 +1,75 @@
+{
+  "experiment_id": "FRC-EVIDENCE-INFERENCE-LOW-CORE-DIVERGENCE-GUARDED-ATOMIC-ROLES-V49",
+  "hashes": {
+    "blind_census_sha256": "0dbd3a5818ab36787f6f888423c0023f8c0a7fb8cc2cdac895ce064f46ad5c5d",
+    "candidate_coverage_sha256": "5dc556a7079d5cc1b1d21b354ba9ba2ecf71695c1c5453a9f4651c044e3b571b",
+    "candidate_map_sha256": "51adbf04399f685aaa6e4d0a7ee0daed143d91a6e9138960f419ef33f056ddd6",
+    "implementation_registration_sha256": "f7c7331321e94040067c9734abcc4adbc87e77db83242843d9cb9441a2a3be4b",
+    "prepared_blind_sha256": "cb8fecea81ed9747d25a098e1d8863d071fc7db5746106143aa44c75056f90e0",
+    "source_archive_sha256": "6abe0d4ec0d331834981c0171c3c79d47515761867f82f1dc6066e43863a1586",
+    "source_card_sha256": "2b5b410bb7c5d147f4a8b7eb683cbde0b0836f8d34b846fe72337f09281882db"
+  },
+  "method_or_threshold_change_after_registration_forbidden": true,
+  "metrics_computed": false,
+  "negative_null_or_inconclusive_result_must_be_published": true,
+  "neural_scoring_started": false,
+  "query_generation_started": false,
+  "registered_at": "2026-08-02T14:00:00+08:00",
+  "runtime": {
+    "cuda_available": true,
+    "cuda_runtime": "12.4",
+    "gpu": "NVIDIA GeForce RTX 4060 Ti",
+    "gpu_memory_mib": 16380,
+    "numpy": "2.2.6",
+    "parameters": {
+      "bootstrap_resamples": 10000,
+      "bootstrap_seed": 20260809,
+      "case_batch_size": 4,
+      "device": "cuda",
+      "embedding_batch_size": 64,
+      "fp16": true,
+      "generator_batch_size": 8,
+      "generator_max_input_tokens": 512,
+      "generator_max_new_tokens": 160,
+      "offline_model_loading": true,
+      "reranker_batch_size": 256
+    },
+    "platform": "Windows-10-10.0.19045-SP0",
+    "python": "3.10.20",
+    "torch": "2.4.1+cu124",
+    "transformers": "4.46.3"
+  },
+  "schema_version": "frc-evidence-inference-low-core-divergence-atomic-roles-execution-v49",
+  "source_artifacts": {
+    "archive_bytes": 36528800,
+    "archive_members": {
+      "plain_text_article_files": 4454,
+      "registered_members": {
+        "annotations_merged.csv": {
+          "bytes": 6457296,
+          "path": "annotations_merged.csv"
+        },
+        "prompts_merged.csv": {
+          "bytes": 1498509,
+          "path": "prompts_merged.csv"
+        },
+        "validation_article_ids.txt": {
+          "bytes": 3981,
+          "path": "splits/validation_article_ids.txt"
+        }
+      },
+      "regular_files": 4467
+    },
+    "archive_sha256": "6abe0d4ec0d331834981c0171c3c79d47515761867f82f1dc6066e43863a1586",
+    "bigbio_repository_revision": "35dce6aba1b3eb9eb9af9bdc38ebeda73dad15b9",
+    "dataset_repository_revision": "a661e8c14f973398380c8865cf2f27a535aaaf6d",
+    "dataset_version": "2.0.0",
+    "license_checked_before_archive_listing_or_validation_open": true,
+    "license_identifier": "MIT",
+    "source_card_bytes": 1824,
+    "source_card_sha256": "2b5b410bb7c5d147f4a8b7eb683cbde0b0836f8d34b846fe72337f09281882db",
+    "test_article_id_member_opened": false,
+    "train_article_id_member_opened": false,
+    "train_or_test_article_text_opened": false
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "exact_quac_training_split_and_checkpoint_selection_disclosed": false,
+  "experiment_id": "FRC-QUAC-TARGET-TRAINED-QA-SUPPORT-V63",
+  "files": {
+    "README.md": "3edaf9e7151a22548220eaaf48b62f24708ab7b3d28612b763c4fe7ad89abc0a",
+    "config.json": "0b13fbf702d6f8c26ad6190c6ffc338c5532011b66206d1a3b33940c632455e5",
+    "model.safetensors": "0c9faa84a845f9344d08626365684ed9d06fac74e6fe88a5dcb7cec31c5b97a6",
+    "vocab.txt": "f0a650346e51ede8996710f79ba65d83fdb8da05b159f17037b74ba4e3a36c6f"
+  },
+  "license_on_model_card": "NOT_DECLARED",
+  "local_finetuning_calibration_or_threshold_fitting": false,
+  "local_offline_loading_required": true,
+  "local_path": "D:\\graduation_project\\.cache\\benchmarks\\models\\ixa_ehu_scibert_squad_quac_8d44c18",
+  "offline_load_smoke": {
+    "model_class": "BertForQuestionAnswering",
+    "parameter_count": 109329410,
+    "pooler_weights_unused_as_reported_by_transformers": true,
+    "tokenizer_class": "BertTokenizerFast",
+    "tokenizer_is_fast": true
+  },
+  "protocol_sha256": "40549911361d112aeac4bd6d1d432fb4068e96106afe53c7727bbb41481f3294",
+  "registered_at": "2026-08-03T22:15:00+08:00",
+  "repository": "ixa-ehu/SciBERT-SQuAD-QuAC",
+  "revision": "8d44c186b6f1662c65d48603ce8e3dedb0093953",
+  "schema_version": "frc-quac-v63-model-registration-v1",
+  "strict_independent_confirmation_claimed": false,
+  "usage_boundary": "research evaluation only; redistribution and production prohibited pending verification"
+}

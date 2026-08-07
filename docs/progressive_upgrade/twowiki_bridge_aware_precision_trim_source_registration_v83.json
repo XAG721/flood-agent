@@ -1,0 +1,166 @@
+{
+  "schema_version": "frc-twowiki-bridge-aware-precision-trim-source-registration-v83",
+  "experiment_id": "FRC-2WIKI-BRIDGE-AWARE-PRECISION-TRIM-PROSPECTIVE-V83",
+  "registered_on": "2026-08-04",
+  "target_source": {
+    "path": ".cache/benchmarks/2wikimultihopqa/dev.parquet",
+    "bytes": 30056098,
+    "sha256": "c0d8b60b9026b728fb07ad74c5252a0f188f6942e8ba5c02df4dfa369502ea8d",
+    "dataset": "2WikiMultiHopQA",
+    "split": "dev",
+    "expected_rows": 12576
+  },
+  "prior_exclusions": {
+    "history": {
+      "path": ".cache/benchmarks/frc_public_reference/candidate_pool_2wikimultihopqa.jsonl",
+      "bytes": 12046987,
+      "sha256": "3398c12efbfbddb1ca726edbe317d74846e122e4f97c105c5226f19b7ef3b8a2",
+      "expected_unique_ids": 1000
+    },
+    "v74": {
+      "path": ".cache/benchmarks/twowiki_support_path_closure_v74/development/sealed_gold.jsonl",
+      "bytes": 176268,
+      "sha256": "a9c9cc2566c6e9871569c69b7b7322d3562456614b5fb19981666238375a98a4",
+      "expected_unique_ids": 800
+    },
+    "v75_development": {
+      "path": ".cache/benchmarks/twowiki_question_router_v75/development/sealed_gold.jsonl",
+      "bytes": 176374,
+      "sha256": "6df25a70bc32985c5c49d714793ca4a0a89c15ca8d99bbd39fe42acc48f73b46",
+      "expected_unique_ids": 800
+    },
+    "v75_confirmation": {
+      "path": ".cache/benchmarks/twowiki_question_router_v75/confirmation/sealed_gold.jsonl",
+      "bytes": 176323,
+      "sha256": "f0896cefd1e617326d8de33ff4209f2bf454e78f4ad6a2fb76b311395417b0fd",
+      "expected_unique_ids": 800
+    },
+    "v81_development": {
+      "path": ".cache/benchmarks/twowiki_residual_router_v81/development/sealed_gold.jsonl",
+      "bytes": 176427,
+      "sha256": "ff60d8248a1149b8890f3e3ec2805301f3bf7223f2ccfa23192cd11657936b13",
+      "expected_unique_ids": 800
+    },
+    "v82_development": {
+      "path": ".cache/benchmarks/twowiki_cascaded_router_v82/development/sealed_gold.jsonl",
+      "bytes": 176269,
+      "sha256": "dce60ad20c0681522c06600f516b36eac2b292a3dec6e3a4ea84d4fc6b385225",
+      "expected_unique_ids": 800
+    },
+    "expected_disjoint_union": 5000,
+    "all_groups_pairwise_disjoint": true,
+    "all_ids_excluded_from_both_v83_target_stages": true
+  },
+  "remaining_capacity_before_target_selection": {
+    "bridge_comparison": 1523,
+    "comparison": 1813,
+    "compositional": 3791,
+    "inference": 449
+  },
+  "frozen_model_development_sources": {
+    "v75_development_scored": {
+      "path": ".cache/benchmarks/twowiki_question_router_v75/development/scored_blind.jsonl",
+      "bytes": 16269572,
+      "sha256": "092bf695c89d4403a0be195ad7bece64aa77814a2dbd877c1e713997af3c2820"
+    },
+    "v75_development_gold": {
+      "path": ".cache/benchmarks/twowiki_question_router_v75/development/sealed_gold.jsonl",
+      "bytes": 176374,
+      "sha256": "6df25a70bc32985c5c49d714793ca4a0a89c15ca8d99bbd39fe42acc48f73b46"
+    },
+    "v75_confirmation_scored": {
+      "path": ".cache/benchmarks/twowiki_question_router_v75/confirmation/scored_blind.jsonl",
+      "bytes": 16341583,
+      "sha256": "0f79d940dc50cc1faa5e0262ccde433d9d20f76eecbef42928ac79c9bdc54914"
+    },
+    "v75_confirmation_gold": {
+      "path": ".cache/benchmarks/twowiki_question_router_v75/confirmation/sealed_gold.jsonl",
+      "bytes": 176323,
+      "sha256": "f0896cefd1e617326d8de33ff4209f2bf454e78f4ad6a2fb76b311395417b0fd"
+    },
+    "v81_development_scored": {
+      "path": ".cache/benchmarks/twowiki_residual_router_v81/development/scored_blind.jsonl",
+      "bytes": 16833722,
+      "sha256": "be957153d20614265f271edb416f35a5fd4b252da2b7b1c76921216093de25dc"
+    },
+    "v81_development_gold": {
+      "path": ".cache/benchmarks/twowiki_residual_router_v81/development/sealed_gold.jsonl",
+      "bytes": 176427,
+      "sha256": "ff60d8248a1149b8890f3e3ec2805301f3bf7223f2ccfa23192cd11657936b13"
+    },
+    "v82_development_scored": {
+      "path": ".cache/benchmarks/twowiki_cascaded_router_v82/development/scored_blind.jsonl",
+      "bytes": 16431683,
+      "sha256": "ff45c917da1941f295316061bbae41ce84d461223756db0a3857cd462adbe1fe"
+    },
+    "v82_development_gold": {
+      "path": ".cache/benchmarks/twowiki_cascaded_router_v82/development/sealed_gold.jsonl",
+      "bytes": 176269,
+      "sha256": "dce60ad20c0681522c06600f516b36eac2b292a3dec6e3a4ea84d4fc6b385225"
+    }
+  },
+  "frozen_dependencies": {
+    "v75_model": {
+      "path": "docs/progressive_upgrade/twowiki_question_router_model_development_v75.json",
+      "bytes": 44494,
+      "sha256": "b12c128f06c4ab14851d2f24538a15e76f5f9ff7336a7968c7b01d7c5062cbc0"
+    },
+    "v76_router": {
+      "path": "docs/progressive_upgrade/hotpot_graph_router_model_development_v76.json",
+      "bytes": 30275,
+      "sha256": "5bdcf7a229d4208d472b33478c073f29dba082bc012b48c0d2aadad47ad4ecfb"
+    },
+    "v78_router": {
+      "path": "docs/progressive_upgrade/hotpot_three_route_router_model_development_v78.json",
+      "bytes": 113020,
+      "sha256": "8eeef297eacf32e6e2b44fffb4d03428dc9046ea4ea5b367a73d59b98cbf7608"
+    },
+    "v79_router": {
+      "path": "docs/progressive_upgrade/musique_target_three_route_router_model_development_v79.json",
+      "bytes": 107902,
+      "sha256": "a2d02754ca1fd7f24aabe30a5457f3cec5d29a0d227758924b2f814962c91f2b"
+    },
+    "v80_router": {
+      "path": "docs/progressive_upgrade/musique_anchor_default_router_model_development_v80.json",
+      "bytes": 770805,
+      "sha256": "c303c68c2f83271bbb3f9f81f75d94defe9135676d7cea02ada1ff28a75df506"
+    },
+    "v81_router": {
+      "path": "docs/progressive_upgrade/twowiki_residual_three_route_router_model_development_v81.json",
+      "bytes": 1558249,
+      "sha256": "391830b3588110f8ac77e71faf507d571460c34cac9289d9eea2e402fbaed580"
+    },
+    "v82_router": {
+      "path": "docs/progressive_upgrade/twowiki_cascaded_style_residual_router_model_development_v82.json",
+      "bytes": 182044,
+      "sha256": "8df7c80fef18d55947d08b1e53fd929871b12b8516468da386579fe5fa61a0e6"
+    },
+    "v83_router": {
+      "path": "docs/progressive_upgrade/twowiki_bridge_aware_precision_trim_router_model_development_v83.json",
+      "bytes": 70672,
+      "sha256": "c083dd34ffbfe9757d897a0e3bd42875b66e395e00110c11cda3a3bd2fa96c91"
+    }
+  },
+  "pre_registration_access_boundary": {
+    "source_schema_row_count_and_id_type_metadata_read": true,
+    "untouched_capacity_counted_by_question_type": true,
+    "v83_target_ids_selected": 0,
+    "v83_target_question_context_candidate_rows_read": 0,
+    "v83_target_scores_seen": false,
+    "v83_target_gold_metrics_seen": false,
+    "selector_features_threshold_controls_gates_stage_sizes_and_salts_frozen_before_target_selection": true
+  },
+  "frozen_model_resources": {
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "offline_snapshot_required": true
+  },
+  "claim_limits": [
+    "Target stages are case-disjoint but share 2WikiMultiHopQA with all model-development history.",
+    "This is not an independent-dataset or official 2WikiMultiHopQA leaderboard result.",
+    "This is not answer-generation, real SetR, flood-domain expert validation, CANARY, DEFAULT, or production evidence.",
+    "Every target result leaves Gate 2 at NO-GO/SHADOW."
+  ]
+}

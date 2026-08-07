@@ -1,0 +1,11 @@
+{
+  "canary_or_default_authorized": false,
+  "confirmation_dev_parsed_or_opened": false,
+  "confirmation_execution_started": false,
+  "development_result_sha256": "871bbddcd4286d4aab19cbb09729261ccb2347eb80801676139159166a2da542",
+  "experiment_id": "FRC-SQUAD2-DUAL-SUPPORT-UNION-V61",
+  "gate_2": "NO-GO/SHADOW",
+  "schema_version": "frc-squad2-v61-development-closure-v1",
+  "selector_adoption_authorized": false,
+  "status": "SQUAD2_V61_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+}

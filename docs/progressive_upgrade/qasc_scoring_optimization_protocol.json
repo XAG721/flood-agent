@@ -1,0 +1,64 @@
+{
+  "schema_version": "frc-qasc-scoring-optimization-protocol-v1",
+  "registered_on": "2026-07-31",
+  "purpose": "Reduce real-model QASC scoring orchestration time through global batching while proving equivalence to the frozen per-case scorer.",
+  "development_boundary": {
+    "qasc_confirmation_result_known": true,
+    "performance_optimization_only": true,
+    "may_change_model_or_revision": false,
+    "may_change_score_calibration": false,
+    "may_change_candidate_pool": false,
+    "may_rewrite_reference_scores": false,
+    "may_change_qasc_confirmation": false,
+    "may_change_gate_2": false,
+    "musique_access_allowed": false
+  },
+  "frozen_inputs": {
+    "prepared_source_path_label": "candidate_pool_qasc.jsonl",
+    "prepared_source_sha256": "cd5989187087bccae1d28fbf71ec443a51d63945ec72f4ae60047ea3386e81e8",
+    "reference_scores_path_label": "role_scores_qasc.jsonl",
+    "reference_scores_sha256": "6419428623c1c4ed1a5935acf1402331c166e9afa9a80f45441e9e7540c759c0",
+    "confirmation_protocol_path_label": "conformal_qasc_confirmation_protocol.json",
+    "confirmation_protocol_sha256": "8c2d286200ad600927504c6c536e4c256754bdf2d2deabcf7e71f551331ffe2c"
+  },
+  "implementation": {
+    "module_path": "research/frc_rag/qasc_scoring_optimization.py",
+    "module_sha256": "90ed8d38556227418487861c1035cdf03a05065e06626d9eaaae651805d56474",
+    "runner_path": "scripts/benchmark_qasc_scoring_optimization.py",
+    "runner_sha256": "9a011cad953004783816bc4254055bd6b556efc4a8dd3da380027320e06c0533"
+  },
+  "benchmark": {
+    "case_count": 32,
+    "selection_seed": "qasc-global-batch-benchmark-v1",
+    "selection_rule": "lowest canonical SHA-256 of [selection_seed, case_id], then case_id",
+    "selected_case_ids_sha256": "870d336ff99b07d00a8d93bef328a3e3c90f99f2dff22098cef35224a0350490",
+    "warmup_rule": "run the frozen per-case scorer once on the first prepared case outside the benchmark sample",
+    "embedding_batch_size": 64,
+    "baseline_rerank_batch_size": 8,
+    "candidate_rerank_batch_sizes": [
+      8,
+      16,
+      32
+    ],
+    "timing_order": "warmup, per-case baseline, global batch 8, global batch 16, global batch 32",
+    "single_model_load": true,
+    "cuda_synchronize_before_and_after_timing": true,
+    "reset_peak_memory_before_each_timing": true
+  },
+  "equivalence": {
+    "absolute_tolerance": 0.000001,
+    "all_candidate_ids_and_order_must_match": true,
+    "all_four_score_rankings_must_match": true,
+    "all_five_role_rankings_must_match": true,
+    "frc_selected_ids_must_match": true,
+    "gold_fields_visible_to_scorer": false,
+    "reference_subset_must_match_frozen_full_score_artifact": true
+  },
+  "adoption_rule": {
+    "minimum_speedup": 1.1,
+    "selection": "Among candidates passing every equivalence check and minimum speedup, select the lowest measured elapsed time, then smaller batch size.",
+    "if_no_candidate_passes": "Keep the frozen per-case scoring entrypoint and retain the negative optimization result.",
+    "if_candidate_passes": "Adopt only as a future score-generation entrypoint; do not rewrite the frozen QASC score artifact or confirmation."
+  },
+  "gate_policy": "This performance benchmark cannot change QASC NOT_CONFIRMED, Gate 2 NO-GO/SHADOW, the three-confirmation series, review ranking, or the MuSiQue boundary."
+}

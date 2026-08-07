@@ -1,0 +1,151 @@
+{
+  "schema_version": "frc-musique-crossfit-support-protocol-v1",
+  "registered_at": "2026-08-01T11:13:17.7925150+08:00",
+  "experiment_id": "FRC-MUSIQUE-CROSSFIT-SUPPORT-V38",
+  "purpose": "Test whether case-isolated support-probability calibration improves evidence selection and whether FRC role scores add signal beyond generic retrieval scores.",
+  "registration_boundary": {
+    "post_result_discovery": true,
+    "v36_and_v37_results_known": true,
+    "v37_status": "MIXED_OPTIMIZATION_AND_ALIGNMENT_DIAGNOSTIC",
+    "v37_mean_normalized_objective_regret": 0.000809,
+    "v37_exact_minus_v36_support_f1": 0.001399,
+    "crossfit_predictions_or_metrics_known_before_registration": false,
+    "adoption_eligible": false,
+    "independent_confirmation": false,
+    "gate_evidence": false
+  },
+  "frozen_inputs": {
+    "dataset": "MuSiQue-Answerable dev",
+    "source_revision": "922ac98f19a201998dbdae6d7f2887a5258dbdeb",
+    "source_sha256": "15fa63794d18a94ce12411aca6e2327e65b6e83b0b1490efab3f1962e48abf3b",
+    "case_count": 2417,
+    "candidate_chunk_count": 48656,
+    "scored_blind_cache_sha256": "e2c688063e694ef0df7df7f6052cb5e68c9739f26a59db8a24c1a54413ce9242",
+    "v37_report_sha256": "f60130a6e9e714b098afab40a16ea92cb823c86123d9019b1fd0c2f9183a3d65",
+    "v37_evidence_sha256": "3d01b2c7a16241aaf8eb0d233c6e9522ef3b010795d7009cb17bda27d5af8f70",
+    "neural_rescoring": false,
+    "case_replacement_or_sampling": false
+  },
+  "frozen_crossfit": {
+    "outer_folds": 5,
+    "fold_assignment": "uint64(first 8 bytes of SHA-256 UTF-8 case_id) modulo 5",
+    "case_isolation": "All chunks from one case stay in one fold.",
+    "train_policy": "For each outer fold, fit on the other four folds only and predict the held-out fold without reading its labels.",
+    "hyperparameter_selection": false,
+    "model": "Weighted L2 logistic regression fitted by deterministic Newton iterations.",
+    "l2": 4.0,
+    "maximum_iterations": 100,
+    "convergence_tolerance": 1e-9,
+    "standardization": "Weighted train-fold mean and population scale; intercept is not standardized or regularized.",
+    "case_class_weighting": "Each train case has total weight 1; supporting and non-supporting chunks each receive total weight 0.5 within that case.",
+    "positive_label": "Candidate chunk belongs to a supporting source paragraph.",
+    "prediction": "Sigmoid probability; no threshold is fitted or used."
+  },
+  "frozen_features": {
+    "base": [
+      "bm25",
+      "dense",
+      "hybrid",
+      "cross_encoder",
+      "token_count_div_384",
+      "cross_encoder_descending_percentile"
+    ],
+    "full_additions": [
+      "direct_answer_support",
+      "entity_and_scope",
+      "corroborating_evidence",
+      "contradiction_detection",
+      "role_score_mean",
+      "role_score_max"
+    ],
+    "gold_or_answer_features": false,
+    "feature_selection_or_ablation_after_outcomes": false
+  },
+  "frozen_methods": [
+    "cross_encoder_topk",
+    "frc_select_v34",
+    "frc_dual_resource_v36",
+    "crossfit_base_support_topk_v38",
+    "crossfit_full_support_topk_v38"
+  ],
+  "frozen_selection": {
+    "top_k": 5,
+    "token_budgets": [512, 1024, 1500],
+    "learned_method": "Sort by descending held-out support probability, then descending frozen cross-encoder score, lower token_count, ascending candidate_id; scan and skip infeasible candidates.",
+    "hard_constraints": "selected count <= top_k and sum token_count <= token budget"
+  },
+  "frozen_metrics": {
+    "primary": "support_evidence_f1",
+    "secondary": [
+      "support_precision",
+      "support_recall",
+      "complete_support_coverage",
+      "non_support_selection_rate",
+      "selected_token_cost",
+      "selected_count"
+    ],
+    "candidate_diagnostics": [
+      "held_out_roc_auc",
+      "held_out_average_precision",
+      "held_out_brier_score"
+    ],
+    "family_aggregation": "Mean within source cases and budgets with equal weight across the three budgets.",
+    "predeclared_strata": [
+      "token_budget=512",
+      "token_budget=1024",
+      "token_budget=1500",
+      "2-hop",
+      "3-hop",
+      "4-hop"
+    ],
+    "paired_bootstrap": {
+      "resamples": 10000,
+      "seed": 20260801,
+      "confidence_level": 0.95,
+      "resample_source_rows": true
+    }
+  },
+  "frozen_outcome_rules": {
+    "frc_incremental_signal": {
+      "full_minus_cross_encoder_topk_at_least": 0.01,
+      "full_minus_cross_encoder_topk_ci_low_above": 0.0,
+      "full_minus_base_at_least": 0.005,
+      "full_minus_base_ci_low_above": 0.0,
+      "every_budget_and_hop_full_minus_cross_delta_at_least": -0.01,
+      "status": "CROSSFIT_FRC_ROLE_INCREMENT_SIGNAL"
+    },
+    "generic_calibration_only_signal": {
+      "full_minus_cross_encoder_topk_at_least": 0.01,
+      "full_minus_cross_encoder_topk_ci_low_above": 0.0,
+      "full_minus_base_or_ci_requirement_failed": true,
+      "every_budget_and_hop_full_minus_cross_delta_at_least": -0.01,
+      "status": "CROSSFIT_GENERIC_CALIBRATION_SIGNAL_FRC_INCREMENT_NOT_ESTABLISHED"
+    },
+    "safety_regression": {
+      "any_budget_or_hop_full_minus_cross_delta_below": -0.01,
+      "status": "CROSSFIT_SUPPORT_SAFETY_REGRESSION"
+    },
+    "otherwise": "CROSSFIT_SUPPORT_SIGNAL_NOT_ESTABLISHED"
+  },
+  "next_action_rules": {
+    "frc_incremental_signal": "Freeze the full model and feature contract before any new independent dataset is accessed; only that dataset may support the FRC role claim.",
+    "generic_calibration_only_signal": "Do not claim an FRC contribution; independently confirm the generic calibration approach before adoption.",
+    "safety_regression_or_no_signal": "Stop this calibration family on revealed MuSiQue and do not tune folds, features, weights, L2, or thresholds."
+  },
+  "publication_boundary": {
+    "publish_negative_or_ambiguous_results": true,
+    "no_musique_fold_feature_weight_l2_or_threshold_tuning": true,
+    "selector_changed": false,
+    "gate_2": "NO-GO/SHADOW",
+    "canary_or_default_authorized": false,
+    "setr_reproduced": false,
+    "flood_domain_effectiveness_established": false,
+    "raw_question_answer_or_candidate_text_exported": false
+  },
+  "deliverables": {
+    "implementation": "research/frc_rag/musique_crossfit_support.py",
+    "runner": "scripts/run_musique_crossfit_support.py",
+    "tests": "tests/test_frc_musique_crossfit_support.py",
+    "output_directory": "output/rag_evaluation/musique_crossfit_support"
+  }
+}

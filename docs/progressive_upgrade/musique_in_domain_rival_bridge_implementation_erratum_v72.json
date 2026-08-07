@@ -1,0 +1,58 @@
+{
+  "schema_version": "frc-musique-in-domain-rival-bridge-implementation-erratum-v72",
+  "experiment_id": "FRC-MUSIQUE-IN-DOMAIN-RIVAL-BRIDGE-V72",
+  "registered_at": "2026-08-04T12:14:00+08:00",
+  "reason": "The first calibration QA attempt completed the direct and first-hop factual model passes but stopped while reconstructing the blind rival catalog because the verifier hashes the exact tokenizer offset slice, including boundary whitespace, whereas the v72 catalog implementation stripped the slice before validating that hash.",
+  "failure_boundary": {
+    "command": "qa --stage calibration",
+    "exception": "ValueError: MuSiQue v72 reconstructed rival span changed",
+    "target_rows_read_for_sampling": 39876,
+    "v72_source_commitments_selected": 1600,
+    "direct_paragraph_model_outputs_completed": 31998,
+    "hop_1_paragraph_model_outputs_completed": 31998,
+    "hop_1_offset_hash_mismatches_under_incorrect_trim_first_validation": 97,
+    "hop_1_offset_hash_mismatches_using_exact_registered_slice": 0,
+    "factual_hops_2_through_4_started": false,
+    "rival_catalog_written": false,
+    "sentinel_counterfactual_inputs_created": false,
+    "rival_counterfactual_inputs_created": false,
+    "counterfactual_model_outputs_seen": false,
+    "feature_decisions_created": false,
+    "gold_join_started": false,
+    "answer_state_labels_or_metrics_seen": false
+  },
+  "correction": {
+    "semantics": "Validate span_sha256 against the exact untrimmed context slice defined by the registered verifier offsets, then trim only the rival span used for the frozen nonempty and normalized-difference checks and downstream question construction.",
+    "rival_ranking_or_eligibility_changed": false,
+    "regression_test_added": "test_rival_catalog_validates_raw_offset_hash_before_trimming",
+    "synthetic_tests_after_correction": {
+      "passed": 17,
+      "failed": 0,
+      "target_source_used": false,
+      "model_files_used": false
+    }
+  },
+  "original_registration_hashes": {
+    "protocol": "9a8c2c059d25847d0fe8f87907902d8ece55cb619398bf8f9a6a9e3100bb7322",
+    "source_registration": "b121331cbd31c46252109a6112b3d3c2df6a269ca58feeb6ce2e86dc34fd7b2b",
+    "model_registration": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "module": "2053001b914275f36d6e9f1aea7698cd35334de73dd18059a063f60954551b24",
+    "runner": "03c217846a4b98cf21cc9931e2ea8b5ea40fe3d3b6c518b5628d8366af1b4c3e",
+    "tests": "4e4cddb9820996101cf625b6cb8cbd5c336f4c860b8200a6414f1af74b4873d1"
+  },
+  "corrected_hashes": {
+    "protocol": "9a8c2c059d25847d0fe8f87907902d8ece55cb619398bf8f9a6a9e3100bb7322",
+    "source_registration": "b121331cbd31c46252109a6112b3d3c2df6a269ca58feeb6ce2e86dc34fd7b2b",
+    "original_implementation": "51706e3bcd742c3e46b74f56488d4562024467970eee7aea62bf0da4f9581ab2",
+    "model_registration": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "module": "1de163a36c3087cdb1e40750d2058c1dac8707c27b8fceac9cf7788a399c0f33",
+    "runner": "6429c2bd1d5808a632e8ec43cef93bad2827165ff28bfeb0f6b5a0e01f2aaba4",
+    "tests": "c25b7778e202b7b65d4452de5c05bfa491f74480d7eca3f5154aff423f9c667a"
+  },
+  "protocol_sample_rival_feature_model_optimizer_threshold_gates_or_stage_sizes_changed": false,
+  "total_learned_scalars_across_reported_methods": 135,
+  "selector_or_retrieval_scoring_part_of_v72": false,
+  "selector_adoption_authorized": false,
+  "canary_or_default_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

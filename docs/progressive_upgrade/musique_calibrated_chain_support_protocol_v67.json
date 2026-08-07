@@ -1,0 +1,159 @@
+{
+  "schema_version": "frc-musique-calibrated-chain-support-protocol-v67",
+  "experiment_id": "FRC-MUSIQUE-CALIBRATED-CHAIN-SUPPORT-V67",
+  "registered_at": "2026-08-04T05:00:00+08:00",
+  "purpose": "Test whether executing every oracle-plan hop before making a decision and calibrating one case-level bottleneck threshold on disjoint MuSiQue train cases can recover answerable chains without giving up broken-chain rejection.",
+  "prior_boundary": {
+    "v66_status": "MUSIQUE_V66_SEQUENTIAL_CHAIN_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+    "v66_fixed_threshold_exact": 0.974609375,
+    "v66_answerable_pass_rate": 0.39,
+    "v66_unanswerable_rejection_rate": 0.816667,
+    "v66_balanced_accuracy": 0.603333,
+    "v66_cases_may_be_reused_for_v67_calibration_development_confirmation_or_threshold_selection": false,
+    "v67_uses_v66_only_as_a_frozen_mechanism_diagnosis": true,
+    "target_train_and_dev_files_were_previously_parsed": true,
+    "v67_case_ids_selected_before_this_protocol": false,
+    "v67_model_outputs_or_joined_metrics_seen_before_this_protocol": false
+  },
+  "sources": {
+    "repository": "https://github.com/stonybrooknlp/musique",
+    "repository_revision": "922ac98f19a201998dbdae6d7f2887a5258dbdeb",
+    "license": "CC BY 4.0",
+    "calibration_and_development_file": ".cache/benchmarks/musique/data/musique_full_v1.0_train.jsonl",
+    "calibration_and_development_sha256": "b1cd998f7e0e2838d6fda024e4ad1eb0e7fc3edefdadb0bd9b5b10b0907f2034",
+    "optional_confirmation_file": ".cache/benchmarks/musique/data/musique_full_v1.0_dev.jsonl",
+    "optional_confirmation_sha256": "8cab31d56a3a1c4ef491b205a8dab3f1ac9c66e472098c6cf1de4e20294f7a4a",
+    "official_schema_source": "raw_data_to_official_format.py at the registered repository revision"
+  },
+  "model_overlap_disclosure": {
+    "support_model_repository": "deepset/roberta-base-squad2",
+    "support_model_revision": "adc3b06f79f797d1c575d5479d6f5efe54a9e3b4",
+    "support_model_was_finetuned_on_squad2": true,
+    "exclude_if_composed_or_any_decomposition_question_exactly_matches_a_normalized_squad2_train_question": true,
+    "exact_match_guard_cannot_rule_out_paraphrase_context_or_pretraining_overlap": true,
+    "strict_independent_model_training_confirmation_claimed": false
+  },
+  "frozen_stages": {
+    "calibration": {
+      "source_split": "train",
+      "target_cases": 1000,
+      "target_per_answer_state": 500,
+      "ordering": "SHA-256('FRC-MUSIQUE-V67-CALIBRATION|' + source id), then source id",
+      "thresholds_learned": 2,
+      "bootstrap_seed": 20260822
+    },
+    "development": {
+      "source_split": "train",
+      "target_cases": 600,
+      "target_per_answer_state": 300,
+      "ordering": "SHA-256('FRC-MUSIQUE-V67-DEVELOPMENT|' + source id), then source id",
+      "exclude_all_calibration_source_commitments": true,
+      "bootstrap_seed": 20260823
+    },
+    "confirmation": {
+      "source_split": "dev",
+      "authorized_only_if_every_development_gate_passes": true,
+      "target_cases": 600,
+      "target_per_answer_state": 300,
+      "ordering": "SHA-256('FRC-MUSIQUE-V67-CONFIRMATION|' + source id), then source id",
+      "exclude_all_prior_and_v67_train_source_commitments": true,
+      "bootstrap_seed": 20260824,
+      "no_score_threshold_gate_or_method_change_after_development": true
+    }
+  },
+  "sampling": {
+    "pair_assignment": "SHA-256('FRC-MUSIQUE-V67-PAIR-ASSIGNMENT|' + source split + '|' + source id) parity assigns each source id to exactly one answer state before stage selection",
+    "maximum_cases_per_source_id_per_split": 1,
+    "minimum_paragraphs_per_case": 3,
+    "minimum_decomposition_hops": 2,
+    "maximum_decomposition_hops": 4,
+    "exclude_v65_invalid_v65_corrected_and_v66_development_source_commitment_union": true,
+    "expected_prior_source_commitment_union_count": 1500,
+    "exclude_exact_normalized_squad2_train_question_overlap": true,
+    "no_replacement": true,
+    "no_balancing_by_hop_count_answer_surface_paragraph_count_or_model_score": true,
+    "no_post_metric_resampling": true,
+    "insufficient_eligible_cases": "MUSIQUE_V67_SCOPE_INCONCLUSIVE_STOP_BEFORE_QA"
+  },
+  "oracle_plan_boundary": {
+    "allowed_decomposition_fields": ["id", "question", "list order"],
+    "forbidden_decomposition_fields": ["answer", "paragraph_support_idx"],
+    "official_decomposition_is_available_at_runtime_for_arbitrary_flood_questions": false,
+    "interpretation": "This remains an oracle-plan component experiment, not an automatic decomposition result."
+  },
+  "blind_execution": {
+    "direct_score": "Run the composed question over every paragraph and use the maximum finite null-vs-span margin with deterministic paragraph-order tie breaking.",
+    "calibrated_chain_score": [
+      "Process every official decomposition question in list order without applying an intermediate margin threshold.",
+      "Resolve each #k placeholder only with the fixed model span predicted at prior hop k; never use a gold answer or alias.",
+      "At every hop run the resolved question over every paragraph and choose the maximum finite margin/span with deterministic paragraph-order tie breaking.",
+      "Fail closed only when a predecessor span cannot be resolved or no valid finite span exists.",
+      "For a fully executed chain define the case score as the minimum hop margin; otherwise define it as negative infinity.",
+      "At evaluation pass iff the case score is strictly greater than the threshold learned on calibration."
+    ],
+    "fixed_v66_comparator": "Apply threshold 0.974609375 to the same fully executed chain bottleneck score.",
+    "model_weights_architecture_or_tokenizer_change": false,
+    "gold_fields_visible_to_qa_or_chain_executor": false,
+    "forbidden_before_complete_stage_execution": [
+      "answerable",
+      "answer",
+      "answer_aliases",
+      "decomposition answer",
+      "paragraph_support_idx",
+      "paragraph is_supporting",
+      "aggregate or per-stratum metrics"
+    ]
+  },
+  "threshold_selection": {
+    "methods": ["direct_composed_question", "oracle_plan_chain_bottleneck"],
+    "candidate_thresholds": "Every unique finite calibration score plus nextafter(minimum score, -infinity); decisions always use score > threshold.",
+    "safety_constraints": {
+      "answerable_pass_rate_at_least": 0.60,
+      "unanswerable_rejection_rate_at_least": 0.80
+    },
+    "selection_rule": "If any threshold meets both safety constraints, maximize balanced accuracy, then answerable pass rate, unanswerable rejection rate, and threshold. Otherwise minimize total safety shortfall, then maximize balanced accuracy, unanswerable rejection rate, and threshold.",
+    "crossfit_diagnostic": "Five folds assigned by SHA-256('FRC-MUSIQUE-V67-CROSSFIT|' + case id) modulo 5; each held-out fold uses a threshold selected only on the other four folds.",
+    "development_or_confirmation_used_for_threshold_selection": false,
+    "learned_parameter_count": 2
+  },
+  "primary_metric": {
+    "name": "answerability balanced accuracy",
+    "strongest_fair_baseline": "the single comparator with the higher aggregate balanced accuracy between separately calibrated direct composed-question score and the fixed-v66-threshold fully executed chain; ties select the direct comparator",
+    "paired_delta": "calibrated chain correctness minus strongest fair baseline correctness",
+    "interval": "10000-resample case bootstrap percentile interval using the stage seed"
+  },
+  "stage_gates": {
+    "exact_cases": 600,
+    "exact_answer_state_balance": true,
+    "schema_exclusion_rate_at_most": 0.01,
+    "selected_prior_or_calibration_source_overlap": 0,
+    "selected_squad2_exact_question_overlap": 0,
+    "invalid_chain_output_rate": 0.0,
+    "calibrated_chain_balanced_accuracy_at_least": 0.72,
+    "calibrated_chain_answerable_pass_rate_at_least": 0.60,
+    "calibrated_chain_unanswerable_rejection_rate_at_least": 0.80,
+    "calibrated_chain_minus_strongest_fair_baseline_at_least": 0.05,
+    "paired_correctness_ci_low_above": 0.0,
+    "every_observed_unanswerable_hop_stratum_rejection_rate_at_least": 0.75,
+    "all_must_pass": true
+  },
+  "stopping_and_outcomes": {
+    "calibration": "Freeze the two thresholds and diagnostics; calibration alone never authorizes adoption.",
+    "development_failure": "MUSIQUE_V67_CALIBRATED_CHAIN_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+    "development_pass": "MUSIQUE_V67_CALIBRATED_CHAIN_DEVELOPMENT_FEASIBILITY_ESTABLISHED_OPEN_CONFIRMATION",
+    "confirmation_failure": "MUSIQUE_V67_CALIBRATED_CHAIN_CONFIRMATION_NOT_ESTABLISHED",
+    "confirmation_pass": "MUSIQUE_V67_ORACLE_PLAN_CALIBRATED_CHAIN_COMPONENT_FEASIBILITY_ESTABLISHED",
+    "selector_or_retrieval_scoring_part_of_v67": false,
+    "reuse_failed_stage_for_tuning_threshold_score_gate_or_selection": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "interpretation_limits": [
+    "Not an official MuSiQue leaderboard result.",
+    "Not an automatic decomposition result because the official decomposition question plan is supplied.",
+    "Not strict independent model-training confirmation.",
+    "Not an FRC retrieval comparison, SetR reproduction, flood-domain evaluation or production result.",
+    "A positive confirmation establishes only case-level calibrated oracle-plan support-gate component feasibility."
+  ]
+}

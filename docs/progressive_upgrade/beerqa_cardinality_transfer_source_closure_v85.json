@@ -1,0 +1,51 @@
+{
+  "schema_version": "frc-beerqa-cardinality-transfer-source-closure-v1",
+  "closed_at": "2026-08-05T00:33:12.4424317+08:00",
+  "experiment_id": "FRC-BEERQA-CARDINALITY-TRANSFER-V85",
+  "status": "SOURCE_INADMISSIBLE_NO_INDEPENDENT_EVALUABLE_SUBSET",
+  "source_registration": {
+    "path": "docs/progressive_upgrade/beerqa_cardinality_transfer_source_registration_v85.json",
+    "sha256": "54feb8997668fb650a23f3b0fc0fb9f321b621c876d7bbec1cea06804e1a010c"
+  },
+  "downloaded_source": {
+    "path": ".cache/benchmarks/beerqa/beerqa_dev_v1.0.json",
+    "size_bytes": 16273342,
+    "sha256": "7d6de86d0c07c6a3ba0b22a4d760866facbcde6386c4c45807146e4921284ac1",
+    "json_parse_valid": true,
+    "top_level_version": "1.0",
+    "top_level_split": "dev",
+    "rows": 14121,
+    "unique_ids": 14121
+  },
+  "source_census": {
+    "squad": {
+      "rows": 8132,
+      "unique_context_titles_per_case_min": 1,
+      "unique_context_titles_per_case_max": 1
+    },
+    "hotpotqa": {
+      "rows": 5989,
+      "unique_context_titles_per_case_min": 2,
+      "unique_context_titles_per_case_max": 2
+    },
+    "newly_annotated_3plus_hop_challenge": {
+      "rows": 0
+    }
+  },
+  "decision": {
+    "reason": "The official development file contains only SQuAD and HotpotQA-derived rows. The newly annotated 3+ hop challenge described by the official homepage is not present as an answer-bearing evaluable subset, so this file cannot support an independent-dataset claim after prior SQuAD and HotpotQA experiments.",
+    "model_scoring_started": false,
+    "selection_metrics_computed": false,
+    "target_effect_estimated": false,
+    "case_substitution_or_relabeling": false,
+    "future_use": "May be used only as a provenance-registered overlap diagnostic, never as the independent v85 target.",
+    "next_action": "Register a genuinely new public evidence-annotated dataset before download and assign a new experiment version."
+  },
+  "gate_boundary": {
+    "gate_2": "NO-GO/SHADOW",
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "setr_reproduced": false,
+    "flood_domain_effectiveness_established": false
+  }
+}

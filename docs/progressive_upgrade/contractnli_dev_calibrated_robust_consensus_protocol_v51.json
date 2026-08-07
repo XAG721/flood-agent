@@ -1,0 +1,183 @@
+{
+  "schema_version": "frc-contractnli-dev-calibrated-robust-consensus-protocol-v51",
+  "experiment_id": "FRC-CONTRACTNLI-DEV-CALIBRATED-ROBUST-CONSENSUS-V51",
+  "registered_at": "2026-08-02T19:05:00+08:00",
+  "purpose": "Test whether a document-isolated development-calibrated threshold on a per-case robust same-span consensus score can abstain on missing evidence without the absolute-logit failure observed in v50, then confirm once on a previously unopened split.",
+  "development_boundary": {
+    "official_archive_already_downloaded_and_member_names_listed_by_v50": true,
+    "official_test_split_opened_scored_and_evaluated_by_v50": true,
+    "official_test_split_permanently_excluded_from_v51": true,
+    "official_dev_member_content_opened_before_v51_registration": false,
+    "official_train_member_content_opened_before_v51_registration": false,
+    "v50_aggregate_status_and_all_cases_passed_native_zero_gate_were_known": true,
+    "v50_case_ids_raw_logits_selected_sets_or_case_level_features_used_for_v51": false,
+    "v50_test_may_not_be_used_for_v51_threshold_fitting_model_selection_or_evaluation": true,
+    "dev_is_development_only_and_may_not_support_a_confirmation_claim": true,
+    "train_may_be_opened_only_after_dev_oof_gate_and_final_threshold_are_frozen": true,
+    "train_confirmation_may_never_be_reused_for_tuning_threshold_selection_or_method_selection": true,
+    "v51_does_not_retroactively_change_v41_through_v50": true
+  },
+  "official_sources": {
+    "dataset_page": "https://stanfordnlp.github.io/contract-nli/",
+    "dataset_archive": "https://stanfordnlp.github.io/contract-nli/resources/contract-nli.zip",
+    "dataset_repository": "https://github.com/stanfordnlp/contract-nli",
+    "dataset_repository_revision": "eced6528dd3c1d14d73f9a87df8f7bdbc03126f9",
+    "paper": "https://aclanthology.org/2021.findings-emnlp.164/",
+    "license_identifier": "CC-BY-4.0",
+    "archive_sha256": "e03fc77bbf8b53e2976a250e81d8a294bc3d5e5fb014521e477dee9340d6287b",
+    "license_sha256": "9e5f1b3c610b9c2da5c313bf81d577a7d1acec686bdb0384edefa6df0f90cd94",
+    "raw_archive_remains_git_ignored_and_is_not_redistributed": true
+  },
+  "source_access_order": [
+    "Freeze this protocol, implementation, runner and synthetic tests and register their SHA-256 values without opening dev or train content.",
+    "Open only dev.json, form the frozen balanced development sample, build a label-free blind cache, generate deterministic queries and score every candidate before joining dev labels.",
+    "Perform the registered document-group five-fold out-of-fold threshold calibration and evaluate the frozen development gate.",
+    "If any development gate fails, publish DEVELOPMENT_SUPPORT_NOT_ESTABLISHED and stop without opening train.json.",
+    "If every development gate passes, freeze the final all-dev threshold, development artifacts, implementation and CUDA environment in a confirmation-opening registration.",
+    "Only then open train.json, form the frozen balanced confirmation sample, build and score a separate blind cache, join train labels once, publish every outcome and forbid reuse."
+  ],
+  "source_schema_erratum_inherited_from_v50": {
+    "rule": "Skip only official spans whose exact half-open text slice is whitespace-only, preserve every retained span's original span_NNNN index, and fail before queries if any gold evidence id is absent.",
+    "new_schema_choice_in_v51": false,
+    "v50_protocol_erratum_sha256": "02b229b4d3258c2448be299c6c105c1b9de1e04e0fe348c2843eac0bfb9c038d"
+  },
+  "development_scope": {
+    "split": "official dev only",
+    "labels": ["Entailment", "Contradiction", "NotMentioned"],
+    "target_per_label": 80,
+    "target_cases": 240,
+    "minimum_documents": 30,
+    "maximum_cases_per_document": 6,
+    "sample_salt": "FRC-CONTRACTNLI-V51-DEV|",
+    "sampling": "Within each label, frozen SHA-256 order over label, document id and hypothesis key; advance labels in lockstep under the shared six-per-document cap; fail before scoring unless exactly 80 per label can be formed.",
+    "document_group_folds": 5,
+    "fold_salt": "FRC-CONTRACTNLI-V51-FOLD|",
+    "fold_assignment": "First 16 hex digits of SHA-256(fold salt plus document id), interpreted as an integer modulo five.",
+    "same_document_may_not_cross_oof_train_and_validation": true
+  },
+  "confirmation_scope": {
+    "split": "official train used once as untouched confirmation",
+    "labels": ["Entailment", "Contradiction", "NotMentioned"],
+    "target_per_label": 200,
+    "target_cases": 600,
+    "minimum_documents": 80,
+    "maximum_cases_per_document": 6,
+    "sample_salt": "FRC-CONTRACTNLI-V51-CONFIRM|",
+    "sampling": "Within each label, frozen SHA-256 order over label, document id and hypothesis key; advance labels in lockstep under the shared six-per-document cap; fail before scoring unless exactly 200 per label can be formed.",
+    "document_cluster_bootstrap": true,
+    "case_level_iid_bootstrap_forbidden": true
+  },
+  "blind_candidate_and_query_contract": {
+    "candidate_pool": "Every retained non-whitespace official span in the full given contract, with original canonical span_NNNN id.",
+    "blind_cache_may_contain": ["opaque case id", "hypothesis query", "candidate id", "candidate text", "token cost", "source kind"],
+    "blind_cache_must_not_contain": ["split role", "document id", "file name or URL", "label", "gold evidence", "document type", "raw offsets", "fold", "sampling stratum"],
+    "score_cache_must_remain_label_and_gold_free": true,
+    "query_generator": "none",
+    "query_templates": {
+      "anchor": "{hypothesis}",
+      "first_fact": "Find contract language that directly entails or supports the following statement: {hypothesis}",
+      "second_fact_or_bridge": "Find contract language that contradicts, negates, or rules out the following statement: {hypothesis}",
+      "counterevidence": "Find exceptions, exclusions, limitations, or scope conditions relevant to the following statement: {hypothesis}"
+    }
+  },
+  "frozen_models": {
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "refs/pr/5",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "refs/pr/4",
+    "offline_model_loading": true
+  },
+  "robust_consensus_score": {
+    "roles": ["anchor", "first_fact", "second_fact_or_bridge"],
+    "quantile_method": "numpy linear",
+    "epsilon": 0.000001,
+    "per_role_normalization": "z_role_i = (raw_logit_role_i - median_role) / max(q75_role - q25_role, epsilon)",
+    "per_candidate_polarity": "max(z_first_fact_i, z_second_fact_or_bridge_i)",
+    "per_candidate_consensus": "min(z_anchor_i, per_candidate_polarity_i)",
+    "case_score": "maximum per_candidate_consensus over all retained spans",
+    "gate": "pass if and only if case_score is greater than or equal to the frozen dev threshold",
+    "text_label_gold_document_metadata_and_absolute_zero_are_not_features": true
+  },
+  "development_threshold_selection": {
+    "threshold_candidates": "The next representable float below the minimum development case score, every midpoint between adjacent unique finite development scores, and the next representable float above the maximum score.",
+    "selector_after_gate": "unchanged low_core_divergence_guarded_frc_v49",
+    "budgets": [256, 512, 1024],
+    "feasibility_constraints": {
+      "evidence_bearing_macro_f1_drop_vs_ungated_v49_at_most": 0.03,
+      "abstention_rate_at_most": 0.8
+    },
+    "fit_order": [
+      "Keep only thresholds satisfying every feasibility constraint on the fit documents.",
+      "Maximize evidence_or_abstention_macro_f1 across the three budgets.",
+      "Then maximize evidence-bearing macro F1.",
+      "Then maximize NotMentioned abstention accuracy.",
+      "Then choose the numerically lower threshold."
+    ],
+    "no_feasible_threshold": "Fail closed and do not open confirmation train.",
+    "oof_procedure": "For each of five document folds, fit the threshold on the other four folds by the frozen rule and evaluate it once on the held-out fold; concatenate held-out predictions for the development gate.",
+    "final_threshold": "After OOF evaluation, fit once on all 240 dev cases by the identical rule; freeze its exact float hexadecimal representation before train is opened."
+  },
+  "development_open_gate": {
+    "all_required": true,
+    "exact_cases": 240,
+    "exact_cases_per_label": 80,
+    "minimum_documents": 30,
+    "all_five_folds_nonempty": true,
+    "oof_candidate_minus_ungated_v49_utility_at_least": 0.02,
+    "oof_not_mentioned_abstention_accuracy_at_least": 0.2,
+    "oof_evidence_bearing_f1_drop_vs_ungated_v49_at_most": 0.03,
+    "oof_candidate_abstention_rate_minimum": 0.05,
+    "oof_candidate_abstention_rate_maximum": 0.8,
+    "deterministic_query_fallback_rate": 0.0,
+    "failure_status": "CONTRACTNLI_V51_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_TRAIN"
+  },
+  "confirmation_methods": {
+    "candidate": "dev_calibrated_robust_consensus_v49_frc_v51",
+    "ungated_frc_controls": ["adaptive_argmax_cardinality_frc_v43", "low_core_divergence_guarded_frc_v49"],
+    "native_zero_control": "native_zero_consensus_v49_frc_control_v51",
+    "shared_gate_non_frc_controls": [
+      "dev_calibrated_robust_consensus_bm25_topk_v51",
+      "dev_calibrated_robust_consensus_dense_topk_v51",
+      "dev_calibrated_robust_consensus_hybrid_topk_v51",
+      "dev_calibrated_robust_consensus_cross_encoder_topk_v51",
+      "dev_calibrated_robust_consensus_cross_encoder_knapsack_v51"
+    ],
+    "official_span_nli_bert": "Paper reference only; no compatible released trained weight is claimed, simulated or included as an executable baseline."
+  },
+  "confirmation_evaluation": {
+    "primary_metric": "evidence_or_abstention_macro_f1",
+    "per_case_metric": "Evidence-set F1 for Entailment or Contradiction; exact empty-selection accuracy for NotMentioned.",
+    "bootstrap": {"resamples": 10000, "seed": 20260811, "confidence": 0.95, "unit": "document commitment cluster"},
+    "minimum_supported_stratum_cases": 60,
+    "mandatory_strata": ["label group", "candidate-pool quartile", "document-length quartile", "document type", "gate outcome"],
+    "support_checks": {
+      "candidate_minus_strongest_shared_gate_non_frc_point_at_least": 0.01,
+      "candidate_minus_strongest_shared_gate_non_frc_ci_low_above": 0.0,
+      "candidate_minus_ungated_v49_point_at_least": 0.01,
+      "candidate_minus_ungated_v49_ci_low_above": 0.0,
+      "candidate_minus_native_zero_v49_point_at_least": 0.02,
+      "candidate_minus_native_zero_v49_ci_low_above": 0.0,
+      "evidence_bearing_macro_f1_drop_vs_ungated_v49_at_most": 0.03,
+      "not_mentioned_abstention_accuracy_at_least": 0.2,
+      "not_mentioned_improvement_vs_native_zero_at_least": 0.2,
+      "candidate_abstention_rate_minimum": 0.05,
+      "candidate_abstention_rate_maximum": 0.8,
+      "every_budget_and_supported_stratum_delta_vs_strongest_shared_gate_non_frc_at_least": -0.03
+    }
+  },
+  "decision_rules": {
+    "development_failure_stops_before_train_content_is_opened": true,
+    "confirmation_support_established_only_if_every_registered_check_passes": true,
+    "confirmation_failure_status": "CONTRACTNLI_V51_CONFIRMATION_SUPPORT_NOT_ESTABLISHED",
+    "selector_adoption_authorized_by_protocol": false,
+    "canary_or_default_authorized_by_protocol": false,
+    "gate_2_before_and_after_experiment": "NO-GO/SHADOW",
+    "negative_null_or_inconclusive_result_must_be_published": true
+  },
+  "known_scope_limits": [
+    "The dev threshold is supervised development and cannot itself prove generalization.",
+    "Using the official train split as untouched confirmation is an explicit experimental role reversal, not an official ContractNLI leaderboard result.",
+    "This is full-given-contract span selection and missing-evidence abstention, not open-corpus retrieval or end-to-end NLI classification.",
+    "A positive result would support only the frozen robust guard under this split protocol; it would not reproduce Span NLI BERT, SetR or a flood-domain expert evaluation."
+  ]
+}

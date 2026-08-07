@@ -1,0 +1,70 @@
+{
+  "experiment_id": "FRC-FINQA-ANCHOR-GUARDED-ATOMIC-ROLES-V45",
+  "hashes": {
+    "blind_census_sha256": "49888944965e1fb5d8e6f67ca4628a54df2dff5bfcbc2e500e784f0f632c9794",
+    "candidate_coverage_sha256": "b77beebec268a628cf538ea044c13ddffadcd89260b954602a15f94440526c08",
+    "candidate_map_sha256": "93c0ecc34496bc6dee3061b84c7ba6899282f7ff596751438bfcbf418bfb719b",
+    "implementation_registration_sha256": "321f163fdad5e7d95be7e5b57d4636b3815b62989328bd12c6c9592682ae00ad",
+    "prepared_blind_sha256": "176587e192019388a8ba87863e8b6024945248f219ef91cfe40e233d48169a1c",
+    "source_archive_sha256": "eec31eec72c4258ba80fa4575c1adc6cdca0ba8aff787f11ce58fab514f93876"
+  },
+  "method_or_threshold_change_after_registration_forbidden": true,
+  "metrics_computed": false,
+  "negative_null_or_inconclusive_result_must_be_published": true,
+  "neural_scoring_started": false,
+  "query_generation_started": false,
+  "registered_at": "2026-08-02T15:30:00+08:00",
+  "runtime": {
+    "cuda_available": true,
+    "cuda_runtime": "12.4",
+    "gpu": "NVIDIA GeForce RTX 4060 Ti",
+    "gpu_memory_mib": 16380,
+    "numpy": "2.2.6",
+    "parameters": {
+      "bootstrap_resamples": 10000,
+      "bootstrap_seed": 20260805,
+      "case_batch_size": 4,
+      "device": "cuda",
+      "embedding_batch_size": 64,
+      "fp16": true,
+      "generator_batch_size": 8,
+      "generator_max_input_tokens": 512,
+      "generator_max_new_tokens": 160,
+      "offline_model_loading": true,
+      "reranker_batch_size": 256
+    },
+    "platform": "Windows-10-10.0.19045-SP0",
+    "python": "3.10.20",
+    "torch": "2.4.1+cu124",
+    "transformers": "4.46.3"
+  },
+  "schema_version": "frc-finqa-anchor-guarded-atomic-roles-execution-v45",
+  "source_artifacts": {
+    "archive_bytes": 21204944,
+    "archive_root": "FinQA-0f16e2867befa6840783e58be38c9efb9229d742",
+    "archive_sha256": "eec31eec72c4258ba80fa4575c1adc6cdca0ba8aff787f11ce58fab514f93876",
+    "members": {
+      "development": {
+        "bytes": 10954658,
+        "path": "dataset/dev.json",
+        "sha256": "a847fb7e0d61a3125a1e2909852df6b89f1ee64d2c5ff1bf689e332214deee51"
+      },
+      "finqa_utils": {
+        "bytes": 11738,
+        "path": "code/retriever/finqa_utils.py",
+        "sha256": "1d9a061b24f33e78b99930f8102f875cd127a986f9eaccf4c715d0e3b602b051"
+      },
+      "general_utils": {
+        "bytes": 607,
+        "path": "code/utils/general_utils.py",
+        "sha256": "98bac4efec9f4b56e11fc50564ebdf1a067cdce565232a10430f3e5343c5f4cc"
+      },
+      "license": {
+        "bytes": 1067,
+        "path": "LICENSE",
+        "sha256": "92c0e67bd762c15c07ba60de09558338315a8ebf99aac4f51f487179809ac087"
+      }
+    },
+    "repository_revision": "0f16e2867befa6840783e58be38c9efb9229d742"
+  }
+}

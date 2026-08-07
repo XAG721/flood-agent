@@ -1,0 +1,47 @@
+{
+  "schema_version": "frc-feverous-adaptive-atomic-roles-implementation-erratum3-v43",
+  "experiment_id": "FRC-FEVEROUS-ADAPTIVE-ATOMIC-ROLES-V43",
+  "registered_at": "2026-08-02T02:33:03.9936139+08:00",
+  "superseded_erratum_sha256": "2c51b2ee4695f5a9200293c62f305e70f2d0ef60ecc09e1b23cb57270b5a9794",
+  "protocol_erratum_sha256": "aec7c5658ee1574a0f8c44a36eb92109cdbfbda6d3cdf4d037257a479191f4db",
+  "trigger": {
+    "stage": "first blind preparation attempt before any cache file was written",
+    "observed_error": "AssertionError: FEVEROUS candidate pool exceeds frozen maximum",
+    "prepared_cache_written": false,
+    "sample_ids_emitted_by_prepare": false,
+    "query_generation_started": false,
+    "neural_scoring_started": false,
+    "gold_metrics_computed": false
+  },
+  "correction": "Implement the protocol erratum by raising only the fail-closed candidate-pool capacity assertion from 110 to 189, the exact maximum implied by BM25 top 80 union at most 109 official raw predicted-evidence ids.",
+  "protocol_alignment": "The previously registered union rule remains authoritative: retain BM25 top 80 and every valid official baseline predicted evidence unit without silent truncation.",
+  "method_or_threshold_changed": false,
+  "unchanged": [
+    "dataset, split, exclusions, six challenge strata, sample salt, and sample size",
+    "candidate pages, candidate unit types, BM25 lexical_pool_size=80, and union membership rule",
+    "all model revisions, queries, score calibration, and rank objectives",
+    "adaptive argmax-cardinality formula",
+    "top_k, token budgets, baselines, metrics, bootstrap, and every support threshold",
+    "Gate 2 remains NO-GO/SHADOW"
+  ],
+  "previous_effective_hashes": {
+    "protocol_sha256": "2591f23a9edc498c800a4dfcad680c5e2df36e8178cb30df7214ac7ed7264b57",
+    "module_sha256": "dd6d08f9a06bfdd1014c8aafbb1c7df4f00ae293dc703783cb8d43bec43d126e",
+    "runner_sha256": "9bbdec505e06e033d0acd587bcb00c0666efebc7e6bf36681c93c5f63b64a107",
+    "test_sha256": "0205c0d82617d97dad98aeed8d5ba208d1dbab9673cf53dd48bddcea29262ea6",
+    "inherited_v41_module_sha256": "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621"
+  },
+  "effective_hashes": {
+    "protocol_sha256": "2591f23a9edc498c800a4dfcad680c5e2df36e8178cb30df7214ac7ed7264b57",
+    "protocol_erratum_sha256": "aec7c5658ee1574a0f8c44a36eb92109cdbfbda6d3cdf4d037257a479191f4db",
+    "module_sha256": "4857989cac63eb371c445d6a820c7a8bf03bf3609c51273e72cfa78379fba1ae",
+    "runner_sha256": "03a0b06b9ebf4424cea4d59e31bd67fdf1c8c4e88a6f10f88c85adf703b5c229",
+    "test_sha256": "7c4738e0c09851623501c2bcc8c78a28ffec8e3f987f4ad003f72371e87d663e",
+    "inherited_v41_module_sha256": "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621"
+  },
+  "verification": {
+    "synthetic_tests": "5 passed",
+    "ruff": "PASS",
+    "compileall": "PASS"
+  }
+}

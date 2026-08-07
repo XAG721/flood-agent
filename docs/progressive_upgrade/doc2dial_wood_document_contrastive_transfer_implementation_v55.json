@@ -1,0 +1,62 @@
+{
+  "schema_version": "frc-doc2dial-wood-v55-implementation-registration-v1",
+  "experiment_id": "FRC-DOC2DIAL-WOOD-DOCUMENT-CONTRASTIVE-TRANSFER-V55",
+  "registered_at": "2026-08-03T00:18:00+08:00",
+  "hashes": {
+    "protocol_sha256": "6765c57d535968272fc5b06d75295f876d9eb7e9d202fa884d0e22452e2d9fc5",
+    "source_registration_sha256": "cceb996cf715c8dd611f817280141e6764148a2ebaef9450feabf8fd67ea4a04",
+    "module_sha256": "3d6e8d993426c85c19e182ed2de1b8f8ad77e962595925be281bd46f7c5d318a",
+    "runner_sha256": "2ad532804f403ccd94605cc8a26e35b5395744d1c2e7b6913bf9296734b98962",
+    "test_sha256": "e132570a05b8aabe067e3161c88a66a2d262bec8af6ba2ce13ae9d154b284730"
+  },
+  "archive_member_content_opened_before_registration": false,
+  "v54_case_level_artifact_used": false,
+  "learned_or_dataset_fitted_parameter": false,
+  "transferred_v54_formula_changed": false,
+  "development_result_used_to_change_implementation": false,
+  "confirmation_result_used_to_change_implementation": false,
+  "v0_9_adapter": {
+    "reference_and_references_supported": true,
+    "id_sp_and_sp_id_supported": true,
+    "empty_reference_requires_adjacent_ood_dialogue_act": true,
+    "dialogue_acts_reference_ids_reference_labels_and_raw_source_ids_removed_from_blind_cache": true,
+    "wood_and_woood_archive_members_are_strictly_separated": true
+  },
+  "transferred_mechanism": {
+    "embedding_and_reranker_models": "identical to v54",
+    "own_document_retrieval_pool": "identical Top-48 union and maximum 96 to v54",
+    "document_probe_pool": "identical Top-8 union and maximum 16 to v54",
+    "gate": "identical assigned-document rank-one among eight documents to v54",
+    "selector": "identical anchor Top-1 plus role Top-1 within anchor Top-3 closure to v54",
+    "budgets": [
+      128,
+      256,
+      512
+    ],
+    "support_thresholds": "identical to v54"
+  },
+  "synthetic_verification": {
+    "lint_command": "python -m ruff check research/frc_rag/doc2dial_wood_document_contrastive_transfer.py scripts/run_doc2dial_wood_document_contrastive_transfer.py tests/test_frc_doc2dial_wood_document_contrastive_transfer.py",
+    "lint_result": "All checks passed",
+    "test_command": "python -m pytest tests/test_frc_doc2dial_wood_document_contrastive_transfer.py -q --basetemp D:\\graduation_project\\output\\pytest-tmp-doc2dial-wood-v55-synthetic-elevated",
+    "test_result": "8 passed in 0.15s",
+    "compile_command": "python -m compileall -q research/frc_rag/doc2dial_wood_document_contrastive_transfer.py scripts/run_doc2dial_wood_document_contrastive_transfer.py",
+    "compile_result": "passed"
+  },
+  "synthetic_invariants_verified": {
+    "protocol_source_and_member_access_boundary": true,
+    "reader_opens_only_requested_wood_split_and_not_woood": true,
+    "v0_9_reference_and_id_sp_schema_normalization": true,
+    "no_answer_requires_empty_reference_and_adjacent_ood_act": true,
+    "balanced_sample_order_invariance_and_caps": true,
+    "blind_case_document_store_and_candidate_map_gold_isolation": true,
+    "v55_decoy_salt_and_deterministic_queries": true,
+    "transferred_v54_selector_and_shared_gate_behavior": true,
+    "post_score_exact_span_gold_join": true,
+    "gold_minimal_deterministic_evaluation_with_v55_bootstrap_seed": true
+  },
+  "implementation_frozen_before_wood_development_source_access": true,
+  "wood_confirmation_source_access_authorized": false,
+  "selector_adoption_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

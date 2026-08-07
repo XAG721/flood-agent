@@ -1,0 +1,162 @@
+{
+  "schema_version": "frc-rgb-cost-aware-protocol-v1",
+  "registered_at": "2026-08-01T08:38:14+08:00",
+  "experiment_id": "FRC-RGB-COST-AWARE-V35",
+  "purpose": "Test whether a theoretically grounded cost-aware submodular FRC selector fixes the tight-budget weakness exposed by v34 on a non-overlapping public RAG benchmark with noise, information-integration, and counterfactual evidence.",
+  "hypothesis_origin": {
+    "v34_result_known": true,
+    "observed_failure": "The frozen FRC selector did not account for marginal utility per token and was most disadvantaged at K=4 / 256 tokens.",
+    "rgb_selection_results_known_at_registration": false,
+    "method_parameters_tuned_on_rgb": false
+  },
+  "source": {
+    "name": "Retrieval-Augmented Generation Benchmark (RGB)",
+    "repository": "https://github.com/chen700564/RGB",
+    "paper": "https://arxiv.org/abs/2309.01431",
+    "revision": "65ec39e40e7dc9abb50e9bf1b4f32be3f6f16615",
+    "license": "CC-BY-NC-SA-4.0",
+    "usage_boundary": "Noncommercial graduation research only; raw source files remain in the ignored benchmark cache.",
+    "files": [
+      {"dataset_id": "rgb_en_refine", "path": "data/en_refine.json", "capability": "noise_robustness"},
+      {"dataset_id": "rgb_en_int", "path": "data/en_int.json", "capability": "information_integration"},
+      {"dataset_id": "rgb_en_fact", "path": "data/en_fact.json", "capability": "counterfactual_robustness"}
+    ],
+    "content_accessed_before_registration": false,
+    "all_rows_policy": "Use every structurally valid JSONL row in each frozen file; do not sample by outcome.",
+    "post_download_registration": "Record exact file SHA-256, row counts, structural exclusions, and candidate distributions before any neural scoring."
+  },
+  "frozen_adapter": {
+    "required_common_fields": ["query", "answer", "positive", "negative"],
+    "counterfactual_required_field": "positive_wrong",
+    "information_integration_positive_shape": "list of positive evidence groups; covering any document in a group covers that gold unit",
+    "normal_positive_shape": "list of positive documents; each unique source document is one gold unit",
+    "candidate_normalization": "Unicode-preserving whitespace collapse and trim",
+    "deduplication": "Deduplicate identical normalized text within a case by SHA-256 while retaining the union of source labels and gold-unit memberships.",
+    "cross_label_duplicate_policy": "If one normalized text is both correct-positive and negative or positive-wrong, exclude that case from the primary analysis and report it separately.",
+    "structural_exclusion_policy": "Exclude only rows with an empty query, no correct-positive gold unit, fewer than two unique candidates, invalid field types, or cross-label duplicate conflicts; report every exclusion reason and do not replace rows.",
+    "chunking": {
+      "tokenizer": "BAAI/bge-reranker-large frozen tokenizer revision",
+      "content_tokens": 384,
+      "overlap_tokens": 64,
+      "special_tokens_excluded_from_cost": true,
+      "label_propagation": "Every chunk inherits its source document label and gold-unit memberships."
+    },
+    "blind_prepared_fields": [
+      "case_id",
+      "dataset_id",
+      "capability",
+      "query",
+      "candidate_id",
+      "candidate_text",
+      "token_count"
+    ],
+    "fields_forbidden_before_selection": [
+      "answer",
+      "source_label",
+      "gold_unit_ids",
+      "is_positive",
+      "is_negative",
+      "is_positive_wrong"
+    ]
+  },
+  "frozen_scoring": {
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "embedding_pooling": "CLS with model normalization",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "score_calibration": "per_case_minmax",
+    "role_relevance_mix": 0.15,
+    "gold_visible_to_scorer": false,
+    "role_queries": {
+      "direct_answer_support": "Find evidence that directly supports a correct answer to the question.",
+      "entity_and_scope": "Find evidence that identifies the relevant entity, scope, time, or conditions for the answer.",
+      "corroborating_evidence": "Find independent evidence that corroborates or completes the answer.",
+      "contradiction_detection": "Find evidence useful for detecting conflicting, false, or misleading claims about the answer."
+    }
+  },
+  "frozen_methods": [
+    "bm25_topk",
+    "dense_topk",
+    "hybrid_topk",
+    "cross_encoder_topk",
+    "cross_encoder_density",
+    "cross_encoder_knapsack",
+    "coverage_greedy_proxy",
+    "frc_select_v34",
+    "frc_cost_aware_v35"
+  ],
+  "frozen_cost_aware_selector": {
+    "top_k": 5,
+    "budgets": [512, 1024, 1500],
+    "set_objective": "F(S) = 2 * mean_over_roles(max role_score in S) + sum_over_selected(cross_encoder_score)",
+    "greedy_rule": "Repeatedly select the feasible candidate with maximum marginal_F / token_count; break ties by larger marginal_F, larger cross-encoder score, lower token_count, then ascending candidate_id.",
+    "singleton_guard": "Compare the greedy set with every feasible singleton under F(S); return the alternative with larger F, then lower token cost, then lexicographically smaller selected-ID tuple.",
+    "score_or_weight_tuning": false,
+    "cost_unit": "reranker content token",
+    "hard_constraints": "sum token_count <= budget and selected count <= top_k"
+  },
+  "frozen_fair_cost_baselines": {
+    "cross_encoder_density": "Greedy cross_encoder_score / token_count under the same hard constraints.",
+    "cross_encoder_knapsack": "Exact dynamic programming maximum sum of cross_encoder scores under the same integer token budget and top_k; deterministic ID tie break.",
+    "coverage_greedy_proxy": "One best candidate per frozen role followed by cross-encoder fill, all under the same budget.",
+    "frc_select_v34": "The previous hard-budget FRC marginal role-gain selector without utility-per-token ranking."
+  },
+  "frozen_metrics": {
+    "statistical_unit": "source JSONL row",
+    "primary": "evidence_f1",
+    "positive_precision": "selected chunks belonging to a correct-positive source document / selected chunks",
+    "gold_unit_recall": "For en_refine/en_fact, unique positive source documents selected / unique positive source documents; for en_int, positive groups with at least one selected member / total positive groups.",
+    "evidence_f1": "harmonic mean of positive_precision and gold_unit_recall, with zero when both are zero",
+    "secondary": [
+      "positive_precision",
+      "gold_unit_recall",
+      "complete_gold_unit_coverage",
+      "negative_selection_rate",
+      "positive_wrong_selection_rate",
+      "selected_token_cost",
+      "budget_utilization",
+      "budget_shortfall"
+    ],
+    "family_aggregation": "Mean within dataset and budget first, equal weight across three budgets within each dataset, then equal weight across the three datasets.",
+    "paired_bootstrap": {
+      "resamples": 10000,
+      "seed": 20260801,
+      "confidence_level": 0.95,
+      "resample_rows_within_each_dataset": true,
+      "equal_dataset_weight_after_resampling": true,
+      "strongest_baseline_selected_inside_each_resample": true
+    }
+  },
+  "frozen_outcome_rules": {
+    "support_established": {
+      "cost_aware_minus_old_frc_point_at_least": 0.01,
+      "cost_aware_minus_old_frc_ci_low_above": 0.0,
+      "cost_aware_minus_strongest_baseline_point_at_least": 0.01,
+      "cost_aware_minus_strongest_simultaneous_ci_low_above": 0.0,
+      "every_dataset_budget_delta_at_least": -0.02,
+      "positive_wrong_rate_increase_over_old_frc_at_most": 0.02,
+      "status": "RGB_COST_AWARE_FRC_SUPPORT_ESTABLISHED"
+    },
+    "safety_regression": {
+      "any_dataset_budget_delta_below": -0.02,
+      "or_positive_wrong_rate_increase_over_old_frc_above": 0.02,
+      "status": "RGB_COST_AWARE_FRC_SAFETY_REGRESSION"
+    },
+    "otherwise": "RGB_COST_AWARE_FRC_SUPPORT_NOT_ESTABLISHED"
+  },
+  "stopping_rule": {
+    "publish_all_valid_rows_and_negative_results": true,
+    "no_rgb_weight_or_formula_tuning_after_scores_or_labels_are_joined": true,
+    "no_replacement_of_excluded_rows": true,
+    "method_adoption_requires_all_support_checks": true,
+    "gate_policy": "This cross-domain selection experiment cannot by itself change Gate 2, authorize CANARY/DEFAULT, reproduce SetR, or establish flood-domain effectiveness."
+  },
+  "deliverables": {
+    "execution_registration": "docs/progressive_upgrade/rgb_cost_aware_frc_execution.json",
+    "implementation": "research/frc_rag/rgb_cost_aware_frc.py",
+    "runner": "scripts/run_rgb_cost_aware_frc.py",
+    "tests": "tests/test_frc_rgb_cost_aware.py",
+    "output_directory": "output/rag_evaluation/rgb_cost_aware_frc"
+  }
+}

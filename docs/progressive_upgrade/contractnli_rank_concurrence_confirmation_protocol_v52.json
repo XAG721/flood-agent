@@ -1,0 +1,145 @@
+{
+  "schema_version": "frc-contractnli-rank-concurrence-confirmation-protocol-v52",
+  "experiment_id": "FRC-CONTRACTNLI-RANK-CONCURRENCE-CONFIRMATION-V52",
+  "registered_at": "2026-08-02T20:12:00+08:00",
+  "purpose": "Prospectively test whether a parameter-free, within-case rank-concurrence gate can abstain on missing contract evidence without the cross-document threshold instability and evidence loss observed in v51.",
+  "development_history_boundary": {
+    "official_archive_already_downloaded_and_member_names_listed": true,
+    "official_test_opened_scored_and_evaluated_by_v50": true,
+    "official_dev_opened_scored_and_evaluated_by_v51": true,
+    "official_train_member_content_opened_before_v52_registration": false,
+    "v50_and_v51_aggregate_results_and_v51_fold_level_thresholds_known": true,
+    "v50_or_v51_case_ids_raw_scores_selected_sets_or_case_level_features_used_for_v52": false,
+    "v52_formula_selected_only_from_role_rank_invariance_and_synthetic_counterexamples": true,
+    "v50_test_and_v51_dev_permanently_excluded_from_v52_fitting_selection_and_evaluation": true,
+    "v52_has_no_learned_threshold_or_dataset_fitted_parameter": true,
+    "synthetic_fixtures_are_invariant_checks_not_performance_evidence": true,
+    "official_train_is_an_untouched_one_time_confirmation_for_v52": true,
+    "train_may_not_be_reused_for_tuning_or_method_selection_after_opening": true,
+    "v52_does_not_retroactively_change_v41_through_v51": true
+  },
+  "official_sources": {
+    "dataset_page": "https://stanfordnlp.github.io/contract-nli/",
+    "dataset_archive": "https://stanfordnlp.github.io/contract-nli/resources/contract-nli.zip",
+    "dataset_repository": "https://github.com/stanfordnlp/contract-nli",
+    "dataset_repository_revision": "eced6528dd3c1d14d73f9a87df8f7bdbc03126f9",
+    "paper": "https://aclanthology.org/2021.findings-emnlp.164/",
+    "license_identifier": "CC-BY-4.0",
+    "archive_sha256": "e03fc77bbf8b53e2976a250e81d8a294bc3d5e5fb014521e477dee9340d6287b",
+    "license_sha256": "9e5f1b3c610b9c2da5c313bf81d577a7d1acec686bdb0384edefa6df0f90cd94",
+    "raw_archive_remains_git_ignored_and_is_not_redistributed": true
+  },
+  "source_access_order": [
+    "Freeze this protocol, implementation, runner and synthetic tests and register their SHA-256 values before opening train content.",
+    "Open only train.json, form the frozen balanced sample and write a label-free blind cache plus opaque source commitments.",
+    "Register the blind artifact hashes, exact CUDA runtime and source manifest before query generation or neural scoring.",
+    "Generate deterministic queries and score every retained candidate span for all 600 cases before any gold evidence is joined.",
+    "After the complete score cache hash is locked, reopen only train.json once to validate candidate coverage, join gold and evaluate all registered methods.",
+    "Publish positive, negative, null or inconclusive outcomes and permanently forbid confirmation reuse."
+  ],
+  "source_schema_rule_inherited_from_v50": {
+    "rule": "Skip only official spans whose exact half-open text slice is whitespace-only, preserve every retained span's original span_NNNN index, and fail before queries if any gold evidence id is absent.",
+    "new_schema_choice_in_v52": false,
+    "v50_protocol_erratum_sha256": "02b229b4d3258c2448be299c6c105c1b9de1e04e0fe348c2843eac0bfb9c038d"
+  },
+  "confirmation_scope": {
+    "split": "official train only",
+    "labels": ["Entailment", "Contradiction", "NotMentioned"],
+    "target_per_label": 200,
+    "target_cases": 600,
+    "minimum_documents": 80,
+    "maximum_cases_per_document": 6,
+    "sample_salt": "FRC-CONTRACTNLI-V52-RANK-CONCURRENCE|",
+    "sampling": "Within each label, frozen SHA-256 order over label, document id and hypothesis key; advance labels in lockstep under the shared six-per-document cap; fail before scoring unless exactly 200 per label can be formed.",
+    "balanced_mechanism_sample_not_natural_prevalence": true,
+    "document_cluster_bootstrap": true,
+    "case_level_iid_bootstrap_forbidden": true
+  },
+  "blind_candidate_and_query_contract": {
+    "candidate_pool": "Every retained non-whitespace official span in the full given contract, with original canonical span_NNNN id.",
+    "blind_cache_may_contain": ["opaque case id", "hypothesis query", "candidate id", "candidate text", "token cost", "source kind"],
+    "blind_cache_must_not_contain": ["split role", "document id", "file name or URL", "label", "gold evidence", "document type", "raw offsets", "sampling stratum"],
+    "score_cache_must_remain_label_and_gold_free": true,
+    "query_generator": "none",
+    "query_templates": {
+      "anchor": "{hypothesis}",
+      "first_fact": "Find contract language that directly entails or supports the following statement: {hypothesis}",
+      "second_fact_or_bridge": "Find contract language that contradicts, negates, or rules out the following statement: {hypothesis}",
+      "counterevidence": "Find exceptions, exclusions, limitations, or scope conditions relevant to the following statement: {hypothesis}"
+    }
+  },
+  "frozen_models": {
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "refs/pr/5",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "refs/pr/4",
+    "offline_model_loading": true
+  },
+  "rank_concurrence_gate": {
+    "roles": ["anchor", "first_fact", "second_fact_or_bridge"],
+    "per_role_winner": "Sort candidates by descending raw reranker logit for that role, then ascending canonical candidate id; take exactly the first candidate.",
+    "pass_rule": "Pass if and only if the anchor winner id equals the first_fact winner id or equals the second_fact_or_bridge winner id.",
+    "fail_rule": "Return the empty evidence set when the pass rule is false.",
+    "selector_after_pass": "unchanged low_core_divergence_guarded_frc_v49",
+    "learned_threshold_temperature_margin_prior_or_candidate_count_feature": false,
+    "invariances": [
+      "candidate input permutation",
+      "strictly increasing transformation applied independently to each role's logits",
+      "additive shift applied independently to each role",
+      "positive scale applied independently to each role"
+    ],
+    "text_label_gold_document_metadata_absolute_zero_and_v51_threshold_are_not_gate_features": true
+  },
+  "confirmation_methods": {
+    "candidate": "rank_concurrence_low_core_divergence_frc_v52",
+    "ungated_frc_controls": ["adaptive_argmax_cardinality_frc_v43", "low_core_divergence_guarded_frc_v49"],
+    "native_zero_control": "native_zero_consensus_low_core_divergence_frc_control_v52",
+    "shared_gate_non_frc_controls": [
+      "rank_concurrence_bm25_topk_v52",
+      "rank_concurrence_dense_topk_v52",
+      "rank_concurrence_hybrid_topk_v52",
+      "rank_concurrence_cross_encoder_topk_v52",
+      "rank_concurrence_cross_encoder_knapsack_v52"
+    ],
+    "span_nli_bert": "Paper reference only; no compatible released trained weight is claimed, simulated or included as an executable baseline.",
+    "setr": "Not claimed or simulated; unavailable trained SetR weights are not an executable baseline."
+  },
+  "confirmation_evaluation": {
+    "primary_metric": "evidence_or_abstention_macro_f1",
+    "per_case_metric": "Evidence-set F1 for Entailment or Contradiction; exact empty-selection accuracy for NotMentioned.",
+    "token_budgets": [256, 512, 1024],
+    "bootstrap": {"resamples": 10000, "seed": 20260812, "confidence": 0.95, "unit": "document commitment cluster"},
+    "minimum_supported_stratum_cases": 60,
+    "mandatory_strata": ["label group", "candidate-pool quartile", "document-length quartile", "document type", "gate outcome"],
+    "support_checks": {
+      "candidate_minus_strongest_shared_gate_non_frc_point_at_least": 0.01,
+      "candidate_minus_strongest_shared_gate_non_frc_ci_low_above": 0.0,
+      "candidate_minus_ungated_v49_point_at_least": 0.01,
+      "candidate_minus_ungated_v49_ci_low_above": 0.0,
+      "candidate_minus_native_zero_control_point_at_least": 0.02,
+      "candidate_minus_native_zero_control_ci_low_above": 0.0,
+      "evidence_bearing_macro_f1_drop_vs_ungated_v49_at_most": 0.03,
+      "not_mentioned_abstention_accuracy_at_least": 0.2,
+      "not_mentioned_improvement_vs_native_zero_at_least": 0.2,
+      "candidate_abstention_rate_minimum": 0.05,
+      "candidate_abstention_rate_maximum": 0.8,
+      "every_budget_and_supported_stratum_delta_vs_strongest_shared_gate_non_frc_at_least": -0.03,
+      "deterministic_query_fallback_rate": 0.0
+    }
+  },
+  "decision_rules": {
+    "support_established_only_if_every_registered_check_passes": true,
+    "support_status": "CONTRACTNLI_V52_RANK_CONCURRENCE_SUPPORT_ESTABLISHED",
+    "failure_status": "CONTRACTNLI_V52_RANK_CONCURRENCE_SUPPORT_NOT_ESTABLISHED",
+    "selector_adoption_authorized_by_protocol": false,
+    "canary_or_default_authorized_by_protocol": false,
+    "gate_2_before_and_after_experiment": "NO-GO/SHADOW",
+    "negative_null_or_inconclusive_result_must_be_published": true
+  },
+  "known_scope_limits": [
+    "This is full-given-contract span selection and missing-evidence abstention, not open-corpus retrieval or end-to-end NLI classification.",
+    "The official train split is intentionally role-reversed as untouched confirmation and this is not an official ContractNLI leaderboard result.",
+    "The hypothesis was designed after aggregate v50 and v51 failures were known, although no v50 or v51 case-level artifact is used.",
+    "A positive result would support only this frozen rank gate under this protocol; it would not reproduce Span NLI BERT, SetR or a flood-domain expert evaluation."
+  ]
+}

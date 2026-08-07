@@ -1,0 +1,12 @@
+{
+  "canary_or_default_authorized": false,
+  "experiment_id": "FRC-QUAC-TARGET-TRAINED-QA-SUPPORT-V63",
+  "gate_2": "NO-GO/SHADOW",
+  "query_generation_started": false,
+  "retrieval_scoring_open_authorized": false,
+  "retrieval_scoring_started": false,
+  "schema_version": "frc-quac-v63-support-closure-v1",
+  "selector_adoption_authorized": false,
+  "status": "QUAC_V63_VALIDATION_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_RETRIEVAL_SCORING",
+  "support_result_sha256": "3b1a675af8d9d057f9067dcbd18769e8921acdcf600e0ac921767d8326e7ee0b"
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": "frc-squad2-v64-implementation-registration-v1",
+  "experiment_id": "FRC-SQUAD2-CALIBRATED-ROBERTA-SUPPORT-V64",
+  "registered_at": "2026-08-03T23:05:00+08:00",
+  "hashes": {
+    "protocol": "2585d468c257de8912c380718d3ea27b7dbd96b6a61d75ff09d5a0901f8f0835",
+    "source_registration": "85f1e206ab0ef1d566f398974ad665045d98789bc2130b81adb9cf1eac6a331c",
+    "model_registration": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "module": "4e11357d3b1b9dd7e163aba5aacc55e37398e2ab51ba037790196b7582a6646e",
+    "runner": "7fa5eb8b591e79fdcdb27c00a8edddce047575dab76d5f24f6f8b7543b141cc6",
+    "tests": "05b6c0275fff2097349e757360caefbd42c8058f3a3190198b9a384a16a76475"
+  },
+  "new_calibration_sample_constructed_before_registration": false,
+  "dev_content_opened_or_parsed": false,
+  "prior_train_content_and_v58_v61_aggregate_results_previously_known": true,
+  "prior_case_level_queries_scores_predictions_labels_or_outputs_reused": false,
+  "prior_commitments_authorized_for_exclusion_only": true,
+  "expected_exclusion_union_count": 2400,
+  "v63_validation_case_level_artifact_reused": false,
+  "article_disjoint_five_fold_oof_and_global_threshold_rule_frozen": true,
+  "learned_parameter_count": 1,
+  "model_weights_architecture_or_selector_parameters_changed": false,
+  "confirmation_support_gate_required_before_query_generation_or_retrieval_scoring": true,
+  "shared_case_level_gate_across_all_gated_methods": true,
+  "self_domain_held_out_component_feasibility_only": true,
+  "independent_model_training_confirmation_claimed": false,
+  "synthetic_tests": {
+    "passed": 10,
+    "failed": 0,
+    "squad2_source_content_used": false,
+    "model_files_used": false
+  }
+}

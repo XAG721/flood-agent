@@ -1,0 +1,11 @@
+{
+  "canary_or_default_authorized": false,
+  "experiment_id": "FRC-SQUAD2-CALIBRATED-ROBERTA-SUPPORT-V64",
+  "gate_2": "NO-GO/SHADOW",
+  "locked_threshold": 0.974609375,
+  "retrieval_scoring_open_authorized": true,
+  "schema_version": "frc-squad2-v64-retrieval-open-v1",
+  "selector_adoption_authorized": false,
+  "status": "SQUAD2_V64_CONFIRMATION_SUPPORT_ESTABLISHED_OPEN_RETRIEVAL",
+  "support_result_sha256": "7a853f38a56a5aa5b9b3d2d0df6cae95d1f9c0b46bd3eb261f11251c3f712038"
+}

@@ -1,0 +1,12 @@
+{
+  "confirmation_open_authorized": false,
+  "experiment_id": "FRC-MUSIQUE-BRIDGE-COUNTERFACTUAL-DEPENDENCE-V71",
+  "gate_2": "NO-GO/SHADOW",
+  "retrieval_scoring_started": false,
+  "reuse_failed_stage_for_feature_model_threshold_rule_gate_or_selection": false,
+  "schema_version": "frc-musique-v71-stage-closure-v1",
+  "selector_adoption_authorized": false,
+  "stage": "development",
+  "stage_result_sha256": "fcc5db4fbe12be4fc5e1782dd46ee560dcddf421681a7dc3652c512ab8fb3652",
+  "status": "MUSIQUE_V71_BRIDGE_COUNTERFACTUAL_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": "frc-squad2-v61-implementation-registration-v1",
+  "experiment_id": "FRC-SQUAD2-DUAL-SUPPORT-UNION-V61",
+  "registered_at": "2026-08-03T18:46:00+08:00",
+  "hashes": {
+    "protocol": "8e07c2404c22a8c19fc879fe18f567ef3a5fec396f8213a657d2c663f9e1cfcd",
+    "source_registration": "85f1e206ab0ef1d566f398974ad665045d98789bc2130b81adb9cf1eac6a331c",
+    "module": "1b41c650502ced437c10ec1b32833de9b461293c71cea8e1214d6984adb898e5",
+    "runner": "41e17e91221cef9ca87cb444527f5eaaae5e9c0af9284a9c5c92dc22eae0bd0f",
+    "tests": "f62e147cf329d38fe98389112eb4a631bdfb8a68a896c248e5758908f62b97a3"
+  },
+  "v61_sample_constructed_before_registration": false,
+  "dev_content_read": false,
+  "prior_case_level_artifact_reused": false,
+  "prior_commitments_authorized_for_exclusion_only": true,
+  "expected_exclusion_union_count": 1800,
+  "binary_structured_union_and_revised_absolute_recall_gate_frozen": true,
+  "synthetic_tests": {
+    "passed": 7,
+    "failed": 0
+  }
+}

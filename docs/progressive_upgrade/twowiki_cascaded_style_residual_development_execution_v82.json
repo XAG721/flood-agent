@@ -1,0 +1,63 @@
+{
+  "cases_sha256": "06e757bd28a01b840812b582b9c86ffed15e91b3a956db9b6657cc1d60a73a08",
+  "elapsed_seconds": 1132.895205,
+  "experiment_id": "FRC-2WIKI-CASCADED-STYLE-RESIDUAL-PROSPECTIVE-V82",
+  "frozen_resources": {
+    "embedding_model": "BAAI/bge-large-en-v1.5@d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "role_relevance_mix": 0.15,
+    "rrf_k": 60,
+    "score_calibration": "per-case min-max",
+    "token_budget": 1500,
+    "top_k": 5
+  },
+  "implementation_lock_sha256": "1f02157e8f4e67b8709935e6a773f7589dd5eceeea3fbca3ad7668cab911e5fa",
+  "leakage_boundary": {
+    "blind_rows_exclude_answer_gold_ids_gold_flags_and_gold_roles": true,
+    "gold_metrics_computed": true,
+    "official_type_used_by_runtime_router": false,
+    "selection_outputs_created_before_gold_join": true
+  },
+  "model_artifact_sha256": "8df7c80fef18d55947d08b1e53fd929871b12b8516468da386579fe5fa61a0e6",
+  "preparation": {
+    "blind_sha256": "9a1f45534423d6a0d0eec52dce23196b7416a5de99ac4c457882f7346d6b44eb",
+    "candidate_count": 25305,
+    "gold_fields_visible_to_model_or_router": false,
+    "gold_sha256": "dce60ad20c0681522c06600f516b36eac2b292a3dec6e3a4ea84d4fc6b385225",
+    "prior_excluded_ids": 4200,
+    "prior_exclusion_group_counts": {
+      "history": 1000,
+      "v74": 800,
+      "v75_confirmation": 800,
+      "v75_development": 800,
+      "v81_development": 800
+    },
+    "prior_overlap": 0,
+    "question_type_counts": {
+      "bridge_comparison": 200,
+      "comparison": 200,
+      "compositional": 200,
+      "inference": 200
+    },
+    "selected_cases": 800,
+    "selected_ids_sha256": "8630681d2d45c975c27bf51a38df0533c59b68131688dd34b1d4901d08d40d76",
+    "stage": "development"
+  },
+  "protocol_sha256": "718f22011df4187c106e9750491fe2750226b1b0a3b0a35bc2c11ce101921335",
+  "registered_claim_limits": [
+    "Target stages are case-disjoint but share 2WikiMultiHopQA with all model-development history.",
+    "This is not an independent-dataset or official 2WikiMultiHopQA leaderboard result.",
+    "This is not answer-generation, real SetR, flood-domain expert validation, CANARY, DEFAULT, or production evidence.",
+    "Every target result leaves Gate 2 at NO-GO/SHADOW."
+  ],
+  "report_sha256": "235d106f6c3cb29a48c8aa2b83f4b85a6d942d01d3dfff7513f2759aef24ac2c",
+  "result_sha256": "85bc05b457bd3301fb1fa11bb47e9212f8ac5b3f0439fb1e4e778bf822268d6b",
+  "schema_version": "frc-twowiki-cascaded-style-residual-execution-v82",
+  "scored_blind_sha256": "ff45c917da1941f295316061bbae41ce84d461223756db0a3857cd462adbe1fe",
+  "scored_cases": 800,
+  "selection_output_sha256": "0932ed6be1f9662d35892d2d1fbe6e9893ef9ab3537b2622a26241377d572182",
+  "source_registration_sha256": "0fc797d90cae338ccbb7179c04de14cfe6a3636a5cd16584cd0e10f279ebdf87",
+  "source_sha256": "c0d8b60b9026b728fb07ad74c5252a0f188f6942e8ba5c02df4dfa369502ea8d",
+  "stage": "development",
+  "status": "EVALUATED"
+}

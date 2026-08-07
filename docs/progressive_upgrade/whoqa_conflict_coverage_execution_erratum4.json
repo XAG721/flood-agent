@@ -1,0 +1,33 @@
+{
+  "schema_version": "frc-whoqa-conflict-coverage-execution-erratum-v4",
+  "registered_on": "2026-08-01",
+  "registered_before_gold_evaluation": true,
+  "trigger": "The FP16 per-q_id run reached about 23 q_id per minute; small independent model calls left substantial batching capacity unused.",
+  "result_exposure_before_registration": {
+    "gold_metrics_computed": false,
+    "selector_outputs_computed": false,
+    "model_score_values_inspected": false,
+    "only_progress_and_resource_usage_seen": true,
+    "discarded_partial_case_rows": 23
+  },
+  "parent_files": {
+    "protocol_sha256": "7a92b637521a8b0ee5d9620b2972c1dfb95a5f0b6c246974171749f7b53c6bb9",
+    "execution_sha256": "ba9df61c8a146901df35a1af6216f694bd1a3b7bcbe9477ecb37c55ee02b57aa",
+    "execution_erratum_sha256": "1e7ac8fe9bf6008fba27c63ed4895d9ff976f6efec407bd682307984bf7212a2",
+    "execution_erratum2_sha256": "8e39f2cddb2e73add09b8c1785ae539403f87c16aac5cbc65c62d783f2e4d86f",
+    "execution_erratum3_sha256": "2027903c6a71e9b06d1bc8e9c592e37730fdb2cdc15fd652f060a4e92ccfa7f7"
+  },
+  "corrected_frozen_runtime": {
+    "device": "cuda",
+    "floating_point_dtype": "float16",
+    "q_id_batch_size": 16,
+    "embedding_batch_size": 64,
+    "reranker_batch_size": 128,
+    "all_text_embeddings_batched_across_q_id": true,
+    "all_prompt_context_pairs_batched_across_q_id": true,
+    "score_split_and_minmax_calibration": "restore each q_id and each prompt row before per-case min-max",
+    "resumable_write_granularity": "one q_id row, flushed after each q_id batch",
+    "discard_existing_partial_before_restart": true
+  },
+  "unchanged_contract": "Dataset, q_id and template coverage, model revisions, FP16 dtype, prompt text, score values before per-case calibration, six selectors, Top-K, token budget, gold isolation, metrics, bootstrap, thresholds, decision policy and Gate 2 boundary remain unchanged."
+}

@@ -1,0 +1,52 @@
+{
+  "schema_version": "frc-cuad-v53-post-result-formatting-erratum-v1",
+  "experiment_id": "FRC-CUAD-TOP3-RANK-CONCURRENCE-ROLE-CLOSURE-V53",
+  "recorded_at": "2026-08-02T23:19:00+08:00",
+  "timing": {
+    "development_scoring_complete": true,
+    "development_result_locked": true,
+    "development_closure_initially_written": true,
+    "formatting_occurred_after_all_outcome_bearing_work": true,
+    "cuad_test_content_opened": false
+  },
+  "cause": {
+    "command": "python -m ruff format flood_system/completion_audit.py tests/test_completion_audit.py research/frc_rag/cuad_top3_rank_concurrence_role_closure.py scripts/run_cuad_top3_rank_concurrence_role_closure.py tests/test_frc_cuad_top3_rank_concurrence_role_closure.py",
+    "intent": "Format the newly extended completion audit and tests.",
+    "scope_error": "The command also reformatted the already registered v53 experiment module, runner and synthetic test.",
+    "formula_threshold_sample_score_or_result_changed": false
+  },
+  "registered_hashes_used_for_scoring_and_result": {
+    "module_sha256": "2bb84d08be975d7a964fd16af481a241f1ad58b42b3cb5aab4853e80e8fa2c33",
+    "runner_sha256": "b7ccd5052efa8d87ffed329b9897744a18d13c012d735a5151d09e41fdd93ff2",
+    "test_sha256": "507654a5851ffc4d4a2ba272bc9a303e419bbdd63908ea8b47528bc14e4e733a",
+    "implementation_registration_sha256": "680e3ae97a156b153f01e3c2f53463e4b0b9adea1234b1bf0f8841aec9e81e43",
+    "scored_sha256": "1109b2d564e7ba7a3dd39d265c1a7b951457f96e0c89a1350fe2e39a7841aeb4",
+    "development_result_sha256": "ff6b44a1cc71655a5c955767c49a4e2c7adae948ccb3e56a826574b2c645a8ef",
+    "initial_development_closure_sha256": "9ce20575bfcb5f7ee965f5d2230c71180008602330870c3db2cf50813687cdfa"
+  },
+  "current_post_result_presentation_hashes": {
+    "module_sha256": "a690e711c42bb8560157b6d08029c13c6edae2cfc66b4091b665522c1a1faa35",
+    "runner_sha256": "7ae89483c21e3de11c9f5afb4d310ae6a86de487e8aa44b7f1bfd47d4e469ae4",
+    "test_sha256": "931c063de14432c8fef2f28ef8a3592ab06bc8bad8394d11514edc8a98ef058c"
+  },
+  "post_format_verification": {
+    "lint_result": "All checks passed",
+    "synthetic_test_command": "python -m pytest tests/test_frc_cuad_top3_rank_concurrence_role_closure.py -q --basetemp D:\\graduation_project\\output\\pytest-tmp-cuad-v53-postformat",
+    "synthetic_test_result": "10 passed in 0.16s",
+    "registered_result_recomputed": false,
+    "registered_score_cache_recomputed": false,
+    "confirmation_started": false
+  },
+  "integrity_boundary": {
+    "original_execution_and_result_remain_bound_to_registered_hashes": true,
+    "current_formatted_files_are_not_retroactively_substituted_into_execution_registration": true,
+    "registered_implementation_validator_is_expected_to_reject_current_formatted_hashes": true,
+    "current_formatted_files_must_not_be_used_to_rerun_v53_on_cuad_train_or_open_test_under_the_same_protocol": true,
+    "old_source_bytes_were_not_preserved_so_byte_or_ast_identity_is_not_claimed": true,
+    "change_provenance_and_passing_behavior_tests_support_a_formatting_only_classification": true
+  },
+  "development_status_changed": false,
+  "test_open_authorized": false,
+  "selector_adoption_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

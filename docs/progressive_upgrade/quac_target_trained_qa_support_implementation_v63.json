@@ -1,0 +1,31 @@
+{
+  "schema_version": "frc-quac-v63-implementation-registration-v1",
+  "experiment_id": "FRC-QUAC-TARGET-TRAINED-QA-SUPPORT-V63",
+  "registered_at": "2026-08-03T22:10:00+08:00",
+  "hashes": {
+    "protocol": "40549911361d112aeac4bd6d1d432fb4068e96106afe53c7727bbb41481f3294",
+    "source_registration": "8ccd3f1bffb8292c114d17e0d734f2651122906f33b2a101f801d0b0bde702c9",
+    "module": "b70ba35173b6b66033c7b5f5aae194b291476b7e27a057855d38f46b4d5355f2",
+    "runner": "a494e23c17ff76ccafee2d0fb20082b3a7b70f53ed5474a7459f0d7dc72aa00e",
+    "tests": "c361d88836c86aa8c734787aed403be4a43b53b3d88e6b8db6f4be8905d7c914"
+  },
+  "model_files_downloaded_before_registration": false,
+  "model_repository_and_revision_known_from_public_metadata": true,
+  "quac_train_schema_and_v57_v62_aggregate_results_previously_known": true,
+  "quac_validation_content_opened_or_parsed": false,
+  "v63_sample_constructed_before_registration": false,
+  "v57_or_v62_case_level_scores_predictions_or_labels_reused": false,
+  "model_native_null_vs_span_rule_frozen": true,
+  "learned_threshold_or_local_target_domain_calibration": false,
+  "support_gate_required_before_query_generation_or_retrieval_scoring": true,
+  "shared_case_level_gate_across_all_gated_methods": true,
+  "candidate_selector_reuses_v43_without_parameter_change": true,
+  "public_model_exact_training_split_and_checkpoint_selection_disclosed": false,
+  "strict_independent_confirmation_claimed": false,
+  "synthetic_tests": {
+    "passed": 8,
+    "failed": 0,
+    "quac_source_content_used": false,
+    "model_files_used": false
+  }
+}

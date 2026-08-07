@@ -1,0 +1,238 @@
+{
+  "schema_version": "frc-tatqa-consensus-guarded-atomic-roles-protocol-v46",
+  "experiment_id": "FRC-TATQA-CONSENSUS-GUARDED-ATOMIC-ROLES-V46",
+  "registered_at": "2026-08-02T08:13:21+08:00",
+  "purpose": "Prospectively test whether rank-only agreement among atomic-role runner-ups can trigger evidence-count expansion only when multiple roles support it, improving the precision-recall trade-off between the frozen v43 and v44/v45 selectors on an untouched hybrid table-text dataset.",
+  "development_boundary": {
+    "finqa_v45_result_status": "FINQA_ANCHOR_GUARDED_SUPPORT_NOT_ESTABLISHED",
+    "finqa_v45_post_result_diagnostic": "The explicit relevance anchor changed order but not the final evidence set on the frozen FinQA cache.",
+    "revealed_v43_v44_v45_cases_scores_labels_and_metrics_must_not_be_used_for_v46_parameter_selection": true,
+    "v46_formula_is_frozen_by_rank_invariance_and_synthetic_counterexamples_only": true,
+    "no_tatqa_sample_content_has_been_seen_before_this_protocol": true,
+    "tatqa_is_an_independent_evaluation_and_must_not_retroactively_change_v45": true
+  },
+  "official_sources": {
+    "repository": "https://github.com/NExTplusplus/TAT-QA",
+    "revision": "870accc41953dcde885aabeb963d94aabdc0fbc3",
+    "paper": "https://aclanthology.org/2021.acl-long.254/",
+    "project_site": "https://nextplusplus.github.io/TAT-QA/",
+    "registered_split": "dataset_raw/tatqa_dataset_dev.json",
+    "registered_source_members": [
+      "dataset_raw/tatqa_dataset_dev.json",
+      "README.md",
+      "LICENSE"
+    ],
+    "license_rule": "Verify the frozen repository LICENSE before opening the data member; stop before data use if redistribution or research evaluation is not permitted."
+  },
+  "pre_registration_access_disclosure": {
+    "allowed_metadata_seen": [
+      "official repository name, task summary and public branch commit id",
+      "official paper abstract and dataset-level counts",
+      "paper statement that the task uses relevant table cells and text spans",
+      "repository path names and the existence of README.md and LICENSE"
+    ],
+    "sample_content_seen": false,
+    "dev_json_downloaded_or_opened_before_protocol_hash": false,
+    "question_answer_derivation_mapping_table_or_paragraph_content_seen_before_protocol_hash": false
+  },
+  "source_access_order": [
+    "Write and hash this protocol.",
+    "Implement and test the selector, schema adapter, sealed sampling, candidate construction, blind-cache boundary and evaluation using synthetic fixtures only.",
+    "Register implementation and test hashes before acquiring the frozen official source archive.",
+    "Acquire the frozen archive without printing or browsing the registered dev JSON member.",
+    "Verify revision, archive, LICENSE and registered source-member hashes before opening the dev JSON.",
+    "Run a structural census and sealed candidate-ceiling check; stop before query generation if the registered schema or minimum scope fails.",
+    "Generate every query and neural score without mapping, answer, derivation or answer-type fields, then join gold evidence exactly once for a locked evaluation.",
+    "Publish favorable, null, negative or inconclusive results and never tune on v46 cases."
+  ],
+  "dataset_scope": {
+    "evaluation_name": "TAT-QA full-context table-cell and paragraph evidence selection",
+    "split": "official dataset_raw/tatqa_dataset_dev.json at the frozen revision",
+    "eligible_question": [
+      "context has a nonempty table, nonempty paragraph list and stable context identity",
+      "question has a nonempty stable uid and question text",
+      "official mapping is nonempty and every mapped table coordinate or paragraph order maps exactly to a canonical candidate",
+      "at least three candidate units are available"
+    ],
+    "gold_source_mode": "table_only when all mapped evidence is table cells, text_only when all mapped evidence is paragraphs, and hybrid otherwise; this field is allowed only for sealed sampling and post-score stratification",
+    "sampling_rule": "Within table_only, text_only and hybrid source modes, sort eligible question ids by SHA-256 of 'FRC-TATQA-V46|' plus uid and then uid; take the first 120 per mode. If a mode has 60 to 119 eligible questions, take all of that mode and fill toward 360 from the remaining modes by the same hash ordering. If any mode has fewer than 60 or fewer than 300 questions are selected, stop as inconclusive before query generation.",
+    "target_cases": 360,
+    "minimum_total_cases": 300,
+    "minimum_cases_per_source_mode": 60,
+    "no_replacement": true,
+    "no_post_access_resampling": true
+  },
+  "blind_candidate_construction": {
+    "table_units": "One candidate per nonempty table cell, including row and column header context in the text; canonical id table_<row>_<column> preserves the official zero-based coordinate.",
+    "text_units": "One candidate per official paragraph, ordered by its official order field and identified as paragraph_<order>; gold text spans map to the containing paragraph candidate.",
+    "pool": "All nonempty table-cell and paragraph units from the question's attached context; no gold-driven pruning, answer matching or learned first-stage truncation.",
+    "stored_fields": [
+      "case_id",
+      "opaque context commitment",
+      "candidate canonical id",
+      "candidate source kind",
+      "candidate text",
+      "candidate token cost",
+      "question text only until query generation completes"
+    ],
+    "forbidden_blind_fields": [
+      "answer",
+      "answer_from",
+      "answer_type",
+      "derivation",
+      "facts",
+      "mapping",
+      "scale",
+      "gold candidate ids",
+      "gold count",
+      "gold source mode",
+      "answer-derived strings"
+    ],
+    "candidate_ceiling_registration": "After sealed sampling and candidate construction, official mapping may be used only to verify exact mapping coverage and source-mode counts. No method, formula, threshold, query or candidate member may change afterward.",
+    "protective_behavior": "Any unmapped evidence coordinate/order, duplicate canonical id, forbidden blind field, uid mismatch, alignment mismatch or nondeterministic rerun stops before query generation and writes no neural score cache."
+  },
+  "frozen_models": {
+    "atomic_query_generator": "Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4",
+    "atomic_query_generator_revision": "e9c932ac1893a49ae0fc497ad6e1e86e2e39af20",
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "offline_loading": true,
+    "score_calibration": "per-case independent min-max inherited from v41",
+    "rank_coverage_weight": 0.5
+  },
+  "methods": {
+    "shared_candidate_pool": true,
+    "top_k": 5,
+    "token_budgets": [
+      256,
+      512,
+      1024
+    ],
+    "non_frc_baselines": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "cross_encoder_knapsack"
+    ],
+    "frc_controls": [
+      "static_threshold_frc_v39_replay",
+      "static_rank_coverage_frc_v41",
+      "dynamic_rank_coverage_frc_v41",
+      "adaptive_argmax_cardinality_frc_v43",
+      "guarded_adaptive_cardinality_frc_v44",
+      "anchor_guarded_adaptive_cardinality_frc_v45"
+    ],
+    "candidate_method": "consensus_guarded_adaptive_cardinality_frc_v46",
+    "candidate_method_formula": [
+      "Compute the unchanged four v41 dynamic atomic-role score columns for every candidate.",
+      "For each role, rank candidates by descending role score with canonical id as the only tie-breaker.",
+      "Let A be the set of distinct rank-1 candidate ids across the four roles.",
+      "For every role with at least two candidates, give one runner-up vote to its rank-2 candidate only when that candidate is not in A.",
+      "Set consensus_expansion to one if any non-argmax candidate receives at least two runner-up votes, otherwise zero.",
+      "Set target_cardinality = min(5, max(1, abs(A) + consensus_expansion)).",
+      "Select target_cardinality candidates with the unchanged v41 dynamic rank-coverage greedy objective, deterministic tie-breaking, no duplicates and the frozen token budget.",
+      "No score magnitude threshold, source kind, answer, derivation, mapping, gold count, source mode, dataset statistic or post-result rule may affect the target or selection."
+    ],
+    "synthetic_invariants": {
+      "one_argmax_without_shared_runner_up_target": 1,
+      "one_argmax_with_shared_runner_up_target": 2,
+      "two_argmax_with_shared_runner_up_target": 3,
+      "four_argmax_with_shared_runner_up_target": 5,
+      "four_argmax_without_shared_runner_up_target": 4,
+      "permutation_invariant": true,
+      "strictly_monotone_per_role_transform_invariant": true,
+      "canonical_id_tie_breaking": true,
+      "no_duplicate_selection": true,
+      "budget_can_only_reduce_feasible_selected_count": true,
+      "source_kind_never_changes_the_formula": true
+    }
+  },
+  "query_generation": {
+    "input": "question text only",
+    "output_keys": [
+      "anchor",
+      "first_fact",
+      "second_fact_or_bridge",
+      "counterevidence"
+    ],
+    "do_sample": false,
+    "max_input_tokens": 512,
+    "max_new_tokens": 160,
+    "batch_size": 8,
+    "fallback": "frozen label-neutral templates plus the original question",
+    "gold_fields_visible_to_generator": false
+  },
+  "evaluation": {
+    "gold_join": "After complete ordered query and score caches are validated, map official table coordinates to table-cell ids and official text-span mappings to paragraph ids.",
+    "primary_metric": "mean across budgets of evidence macro F1",
+    "macro_precision": "Mean per-case fraction of selected candidate ids in mapped official gold evidence ids; empty prediction precision is 1.",
+    "macro_recall": "Mean per-case fraction of mapped official gold evidence ids selected.",
+    "macro_f1": "Mean per-case harmonic mean of evidence precision and recall.",
+    "paired_bootstrap": {
+      "resamples": 10000,
+      "seed": 20260806,
+      "unit": "question uid",
+      "interval": "percentile 95%",
+      "strongest_non_frc_selected_inside_each_resample": true,
+      "strongest_frozen_frc_control_selected_inside_each_resample": true
+    },
+    "mandatory_strata": [
+      "table_only versus text_only versus hybrid source mode",
+      "single versus multiple mapped evidence units",
+      "official answer type when present, post-score only",
+      "token budget",
+      "consensus expansion triggered versus not triggered"
+    ],
+    "secondary_metrics": [
+      "macro precision",
+      "macro recall",
+      "complete evidence recall",
+      "selected unit count and token cost",
+      "consensus trigger rate",
+      "target-cardinality distribution",
+      "selection-set difference rates versus v43, v44 and v45",
+      "candidate pool size"
+    ]
+  },
+  "support_checks": {
+    "minimum_total_cases_met": ">= 300",
+    "minimum_cases_per_source_mode": ">= 60",
+    "candidate_ceiling_complete_rate": ">= 0.95",
+    "query_parser_fallback_rate": "<= 0.05",
+    "consensus_trigger_rate": ">= 0.05 and <= 0.95",
+    "selection_set_difference_rate_vs_v43": ">= 0.05",
+    "selection_set_difference_rate_vs_v44": ">= 0.05",
+    "v46_minus_strongest_frozen_frc_control_point": ">= 0.005",
+    "v46_minus_strongest_frozen_frc_control_ci_low": "> 0",
+    "v46_minus_strongest_non_frc_point": ">= 0.01",
+    "v46_minus_strongest_non_frc_ci_low": "> 0",
+    "every_budget_and_supported_source_mode_delta_vs_strongest_non_frc": ">= -0.02",
+    "mean_selected_unit_reduction_vs_dynamic": ">= 0.50",
+    "evidence_recall_drop_vs_dynamic": "<= 0.02"
+  },
+  "decision_rules": {
+    "all_support_checks_pass": "TATQA_CONSENSUS_GUARDED_SUPPORT_ESTABLISHED_ON_FULL_CONTEXT_POOL",
+    "informative_but_any_support_check_fails": "TATQA_CONSENSUS_GUARDED_SUPPORT_NOT_ESTABLISHED",
+    "minimum_scope_schema_license_or_ceiling_fails": "TATQA_FULL_CONTEXT_POOL_INCONCLUSIVE",
+    "gate_2": "Always remains NO-GO/SHADOW in v46; one public-domain evidence-selection result cannot authorize CANARY or DEFAULT.",
+    "publication": "Publish favorable, null, negative or inconclusive results with source, protocol, implementation, cache and result hashes.",
+    "claims_forbidden": [
+      "official TAT-QA end-to-end leaderboard result",
+      "answer or numerical-reasoning superiority",
+      "open-corpus financial report retrieval superiority",
+      "retroactive improvement on FinQA v45",
+      "real SetR reproduction",
+      "flood-domain validity",
+      "production readiness"
+    ]
+  },
+  "known_scope_limits": [
+    "The candidate pool is the complete context attached to each official dev record, not an open-corpus retriever.",
+    "Table cells are exact evidence units while a mapped text span is evaluated at its containing paragraph granularity.",
+    "The primary endpoint is evidence selection, not answer generation, arithmetic execution or official EM/F1.",
+    "Financial table-text evidence is an external mechanism test and cannot replace district flood-domain expert evaluation."
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "schema_version": "frc-musique-bridge-counterfactual-dependence-implementation-erratum-v71",
+  "experiment_id": "FRC-MUSIQUE-BRIDGE-COUNTERFACTUAL-DEPENDENCE-V71",
+  "registered_at": "2026-08-04T10:20:00+08:00",
+  "reason": "The first calibration QA attempt completed the factual pass but stopped before counterfactual input creation because 58 of 2,062 downstream official decomposition questions contained no #k placeholder and the implementation incorrectly required at least one substitution.",
+  "failure_boundary": {
+    "command": "qa --stage calibration",
+    "exception": "ValueError: MuSiQue v71 downstream hop lacks a placeholder",
+    "target_rows_read_for_sampling": 39876,
+    "v71_source_commitments_selected": 1600,
+    "blind_factual_cases": 1600,
+    "downstream_transitions": 2062,
+    "downstream_transitions_without_placeholder": 58,
+    "without_placeholder_by_hop": {"2": 40, "3": 18},
+    "factual_model_outputs_completed": true,
+    "counterfactual_inputs_created": false,
+    "counterfactual_model_outputs_seen": false,
+    "feature_decisions_created": false,
+    "gold_join_started": false,
+    "answer_state_labels_or_metrics_seen": false
+  },
+  "correction": {
+    "semantics": "Replacing every member of an empty placeholder set performs zero substitutions and leaves the registered downstream question unchanged; running the deterministic model on the same paragraphs therefore measures zero bridge dependence without changing the protocol.",
+    "input_metadata_added": "placeholder_substitutions records zero or more mechanical replacements and contains no gold field.",
+    "regression_test_added": "test_downstream_question_without_placeholder_is_unchanged_zero_substitution",
+    "synthetic_tests_after_correction": {
+      "passed": 16,
+      "failed": 0,
+      "target_source_used": false,
+      "model_files_used": false
+    }
+  },
+  "original_registration_hashes": {
+    "protocol": "2422a11e9eb8247b6e66bc928a5920575f9d752fb04707f0e116598c9c50ef15",
+    "source_registration": "fcafc7a1448e7150afb3090010faba188ee5141bf536966f80dd1608fc54af8f",
+    "model_registration": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "module": "6fc943f037a015d5cfdcc9789d5018fde744c2f9bffc45ecca8cd6f93fbb2982",
+    "runner": "80b0e89416af3a10eba8bd5bdbb043b3900921bf287b2cb1c56a2f3707de804e",
+    "tests": "222a49aa4a9693bed7edffeae89da98adb8fcbd057d04fe3e2cb99b382e024af"
+  },
+  "corrected_hashes": {
+    "protocol": "2422a11e9eb8247b6e66bc928a5920575f9d752fb04707f0e116598c9c50ef15",
+    "source_registration": "fcafc7a1448e7150afb3090010faba188ee5141bf536966f80dd1608fc54af8f",
+    "original_implementation": "f6caaa344750cbc6ff2e918f01e40b3fd64e297817da0d5bccb79af71f7517e6",
+    "model_registration": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "module": "8a02a73ebf148ed06cae23687839d3d058b61cd86e929de498a100eff79f5a94",
+    "runner": "44e05ac96186e859594323f6336aa82a673a13d06d10f26d078994067611d709",
+    "tests": "a7410b9749af310fb033ef7c5758ad5cf2b83d92a88b4fa8c072979fc57b1f8d"
+  },
+  "protocol_sample_feature_model_optimizer_threshold_gates_or_stage_sizes_changed": false,
+  "total_learned_scalars_across_reported_methods": 118,
+  "selector_or_retrieval_scoring_part_of_v71": false,
+  "selector_adoption_authorized": false,
+  "canary_or_default_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

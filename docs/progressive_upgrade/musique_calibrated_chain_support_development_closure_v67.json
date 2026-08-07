@@ -1,0 +1,13 @@
+{
+  "canary_or_default_authorized": false,
+  "confirmation_open_authorized": false,
+  "experiment_id": "FRC-MUSIQUE-CALIBRATED-CHAIN-SUPPORT-V67",
+  "gate_2": "NO-GO/SHADOW",
+  "retrieval_scoring_started": false,
+  "reuse_failed_stage_for_tuning_threshold_score_gate_or_selection": false,
+  "schema_version": "frc-musique-v67-stage-closure-v1",
+  "selector_adoption_authorized": false,
+  "stage": "development",
+  "stage_result_sha256": "19389c4857a0504658655fdaefdb18259179187c1d2858b397078e9416d31e7c",
+  "status": "MUSIQUE_V67_CALIBRATED_CHAIN_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+}

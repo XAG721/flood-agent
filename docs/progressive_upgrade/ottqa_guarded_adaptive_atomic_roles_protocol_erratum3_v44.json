@@ -1,0 +1,49 @@
+{
+  "schema_version": "frc-ottqa-guarded-adaptive-atomic-roles-protocol-erratum3-v44",
+  "experiment_id": "FRC-OTTQA-GUARDED-ADAPTIVE-ATOMIC-ROLES-V44",
+  "registered_at": "2026-08-02T04:50:24+08:00",
+  "base_protocol_sha256": "95116d2af455d1f8792e81cc1ed1f0f48db5fd7ef1274d257f73cec8e5c1e072",
+  "prior_protocol_erratum_sha256": "e7341f3ce645f27ea1fbf3f8bc79691b14a8c4b5655035f83bdb8112ff906019",
+  "prior_protocol_erratum2_sha256": "1bcbb7ee99e974b80624bdc24392d1c6eb403e2dfdd86b4681afbab55a9b6fbc",
+  "trigger": {
+    "stage": "source archive metadata verification before JSON parsing",
+    "observed_issue": "The preregistered directory manifest was generated with locale-sensitive PowerShell Sort-Object ordering, while the frozen Python verifier uses locale-independent Unicode path ordering.",
+    "individual_git_blob_mismatches_observed": 0,
+    "file_count_mismatch_observed": false,
+    "byte_count_mismatch_observed": false,
+    "question_answer_evidence_or_table_json_parsed_before_erratum": false,
+    "neural_query_generation_started": false,
+    "neural_scoring_started": false,
+    "metrics_computed": false
+  },
+  "correction": {
+    "field": "official_sources.table_manifest_sha256 and linked_passage_manifest_sha256 canonical ordering",
+    "original_ordering": "PowerShell Sort-Object path using the host locale",
+    "effective_ordering": "Sort complete original Git paths by Unicode code point, then SHA-256 the UTF-8 encoding of newline-joined 'path git_blob_sha1 byte_size' records without a trailing newline.",
+    "table_files": 8891,
+    "table_bytes": 65523616,
+    "effective_table_manifest_sha256": "bb8bfda9233ad197cf2c21c8a2657e1428065d268d79a939e15602f46bd42e69",
+    "linked_passage_files": 8891,
+    "linked_passage_bytes": 255477273,
+    "effective_linked_passage_manifest_sha256": "8f13044a1fe5ec93f0daf60c6bab13d5e8edfba3d5c9ca29530b4ad88eeafe96",
+    "official_subtree_git_ids_unchanged": true,
+    "selected_member_payload_bytes_changed": false,
+    "selection_rule_changed": false,
+    "candidate_construction_changed": false,
+    "candidate_pool_size_changed": false,
+    "model_or_revision_changed": false,
+    "method_or_formula_changed": false,
+    "budget_or_threshold_changed": false,
+    "metric_or_decision_rule_changed": false
+  },
+  "verification_evidence": {
+    "license_git_blob_matched": "6cce7fb48f73fe3e9cf469ebefa2d29293c6f056",
+    "dev_linked_git_blob_matched": "3454a0dea9fd3a284ec9cd376fc21bcb63ec9ca1",
+    "additional_table_and_passage_blob_spot_checks": 4,
+    "additional_blob_spot_check_mismatches": 0
+  },
+  "scientific_effect": "none; canonical metadata ordering only",
+  "scoring_implementation_changed": false,
+  "method_or_threshold_changed": false,
+  "negative_null_or_inconclusive_result_must_still_be_published": true
+}

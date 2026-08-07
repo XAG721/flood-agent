@@ -1,0 +1,246 @@
+{
+  "schema_version": "frc-ottqa-guarded-adaptive-atomic-roles-protocol-v44",
+  "experiment_id": "FRC-OTTQA-GUARDED-ADAPTIVE-ATOMIC-ROLES-V44",
+  "registered_at": "2026-08-02T04:07:20+08:00",
+  "purpose": "Prospectively test whether a one-step multiplicity guard repairs the recall loss of the frozen v43 role-argmax cardinality rule while retaining useful evidence-count reduction on an untouched public table-text QA development split.",
+  "development_boundary": {
+    "v43_result_status": "FEVEROUS_BOUNDED_POOL_INCONCLUSIVE",
+    "v43_result_is_development_evidence_only": true,
+    "v43_cases_must_not_be_rescored_or_used_for_v44_parameter_selection": true,
+    "formula_was_frozen_from_mechanistic_reasoning_and_synthetic_invariants_only": true,
+    "ottqa_question_answer_or_evidence_content_inspected_before_registration": false,
+    "ottqa_data_blob_downloaded_before_registration": false,
+    "repository_tree_filenames_were_inspected_before_registration": true,
+    "official_parser_retriever_and_tracing_source_code_were_inspected_before_registration": true,
+    "allowed_pre_registration_information": [
+      "official paper and repository descriptions",
+      "official license and scorer, parser, retriever, preprocessing, and answer-tracing source code",
+      "official repository tree paths, Git object identifiers, byte sizes, and pinned revision",
+      "HTTP status, content length, content type, and last-modified headers"
+    ],
+    "hybridqa_excluded_from_blind_confirmation": "Its official development content was exposed while screening documentation sources.",
+    "sparta_excluded_from_blind_confirmation": "Its official README embeds a complete question, SQL query, answer, and source-table example.",
+    "ottqa_documentation_examples_opened_before_registration": false,
+    "permanently_excluded_question_ids": []
+  },
+  "official_sources": {
+    "paper": "https://openreview.net/forum?id=MmCRswl1UYl",
+    "code_repository": "https://github.com/wenhuchen/OTT-QA",
+    "code_revision": "b289bcca691db21a5259c3420e6b9819a9be9ba3",
+    "license": "MIT",
+    "license_git_blob": "6cce7fb48f73fe3e9cf469ebefa2d29293c6f056",
+    "development_traced_path": "released_data/dev.traced.json",
+    "development_traced_git_blob": "af782c4e999a1ac54d48c5eac064ab47de5b146e",
+    "development_traced_bytes": 1737959,
+    "development_linked_path": "preprocessed_data/dev_linked.json",
+    "development_linked_git_blob": "3454a0dea9fd3a284ec9cd376fc21bcb63ec9ca1",
+    "development_linked_bytes": 7545087,
+    "table_directory": "data/traindev_tables_tok",
+    "table_directory_git_tree": "0f34e366d672eb6e9f5da9640e26e6fd5ff79baf",
+    "table_files": 8891,
+    "table_bytes": 65523616,
+    "table_manifest_sha256": "84b7d9ce0d34f89a7b9320603dda0888adc206c4ba334e590deaf5f10bef6f73",
+    "linked_passage_directory": "data/traindev_request_tok",
+    "linked_passage_directory_git_tree": "2ebfec4768637e062ada6ef45c6a76330422807f",
+    "linked_passage_files": 8891,
+    "linked_passage_bytes": 255477273,
+    "linked_passage_manifest_sha256": "44d85265e4ca551e8374fc69981f9141db8cbc9cdc890a6f30d80c860938f934",
+    "full_open_domain_table_url": "https://opendomainhybridqa.s3-us-west-2.amazonaws.com/all_plain_tables.json",
+    "full_open_domain_passage_url": "https://opendomainhybridqa.s3-us-west-2.amazonaws.com/all_passages.json",
+    "full_open_domain_urls_status_at_registration": "Both official S3 URLs returned HTTP 404 on 2026-08-02; full-corpus retrieval is therefore outside the reproducible v44 scope."
+  },
+  "source_access_order": [
+    "write and hash this protocol before opening any OTT-QA data blob",
+    "implement the adapter, guarded selector, synthetic invariants, and cache-blindness tests",
+    "write an implementation registration containing all protocol, code, runner, test, and inherited-module hashes",
+    "checkout only the pinned official development, table, linked-passage, license, and preprocessing artifacts",
+    "verify Git object identities, byte counts, local SHA-256 values, and directory manifest hashes",
+    "deterministically select question ids using gold-derived source mode only inside the sealed preparation process",
+    "construct blind candidate and candidate-map caches, then remove all answers, answer nodes, source modes, and gold coordinates from generator and scorer inputs",
+    "write a candidate-coverage registration after candidate construction and before query generation or neural scoring",
+    "write an execution registration containing source hashes and frozen runtime parameters",
+    "generate atomic queries and score every prepared case with the registered offline models",
+    "validate complete ordered caches and only then join answer-node gold",
+    "evaluate once and publish favorable, null, negative, or inconclusive results"
+  ],
+  "dataset_scope": {
+    "split": "official development records present in preprocessed_data/dev_linked.json at the pinned revision",
+    "evaluation_name": "OTT-QA oracle-table linked-evidence bounded confirmation",
+    "eligible_before_sampling": [
+      "row has nonempty string question_id, question, table_id, answer-text, and answer-node",
+      "the referenced table and linked-passage files exist at the pinned revision",
+      "at least one answer node has a valid table coordinate and type table or passage",
+      "the union of official question-driven tf-idf, string-overlap, and links nodes contains at least one valid table coordinate",
+      "question id is not permanently excluded"
+    ],
+    "source_mode": "passage when the first valid answer-node type is passage, otherwise table; this field may be used only for sealed sampling and post-score stratification",
+    "sampling_rule": "Within table and passage source modes, sort eligible rows by SHA-256 of 'FRC-OTTQA-V44|' plus question_id, then question_id, and take the first 120 per mode. If one mode has fewer than 120 but at least 80, take all of that mode and fill to 240 from the other mode using the same ordering. No case may be replaced after data inspection.",
+    "target_cases": 240,
+    "minimum_total_cases": 180,
+    "minimum_cases_per_source_mode": 80,
+    "no_replacement": true,
+    "no_post_download_resampling": true
+  },
+  "blind_candidate_construction": {
+    "oracle_boundary": "The official table_id identifies one gold table and its linked passages before blind export. This is an oracle-table bounded selector test, not table retrieval.",
+    "all_units": [
+      "Each table data row is linearized with table title, section title, headers, and cell surface values, then token-chunked.",
+      "Each unique passage URL linked from any table cell is linearized with its URL-derived title and passage text, then token-chunked."
+    ],
+    "token_chunking": {
+      "tokenizer": "Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4 frozen local tokenizer",
+      "window_tokens": 192,
+      "stride_tokens": 160,
+      "retain_final_partial_window": true,
+      "source_uniqueness": "The v41 rank-coverage selector may select at most one chunk from the same table row or passage URL."
+    },
+    "official_anchor_units": "For every node in tf-idf, string-overlap, and links in that family order and original list order, include every chunk of its referenced row and, when present, every chunk of its referenced passage URL. Deduplicate by canonical unit id.",
+    "lexical_pool_size": 96,
+    "lexical_pool": "Rank every table-row and linked-passage chunk by deterministic BM25 against the question, breaking ties by canonical unit id, and take the first 96.",
+    "pool_rule": "Union official anchor units with lexical units. Order anchored units first by family order, original node order, row-before-passage, chunk index, and canonical id; order remaining units by BM25 rank and canonical id; deduplicate and keep the first 128.",
+    "maximum_pool_size": 128,
+    "gold_row_passage_or_answer_fallback_forbidden": true,
+    "fields_exported_to_generator": ["opaque case id", "question"],
+    "fields_exported_to_scorer": [
+      "opaque case id",
+      "question",
+      "opaque candidate id",
+      "opaque source id",
+      "candidate text",
+      "token cost",
+      "official anchor rank when present"
+    ],
+    "forbidden_blind_cache_fields": [
+      "answer",
+      "answer-node",
+      "answer-text",
+      "candidate_ceiling",
+      "gold",
+      "gold_candidate_ids",
+      "gold_coordinates",
+      "label",
+      "source_mode",
+      "supporting_facts",
+      "table_id",
+      "where"
+    ]
+  },
+  "frozen_models": {
+    "atomic_query_generator": "Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4 local snapshot",
+    "embedding_model": "BAAI/bge-base-en-v1.5",
+    "reranker_model": "BAAI/bge-reranker-base",
+    "revisions": "Inherited byte-for-byte from the registered v41 scorer and resolved local snapshots; offline loading is mandatory.",
+    "score_calibration": "per-query min-max, inherited from v41",
+    "rank_coverage_weight": 0.5
+  },
+  "methods": {
+    "shared_candidate_pool": true,
+    "top_k": 5,
+    "token_budgets": [512, 1024, 1500],
+    "non_frc_baselines": [
+      "official_anchor_topk",
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "cross_encoder_knapsack"
+    ],
+    "frc_controls": [
+      "static_threshold_frc_v39_replay",
+      "static_rank_coverage_frc_v41",
+      "dynamic_rank_coverage_frc_v41",
+      "adaptive_argmax_cardinality_frc_v43"
+    ],
+    "candidate_method": "guarded_adaptive_cardinality_frc_v44",
+    "candidate_method_formula": [
+      "For each of the four frozen dynamic atomic roles, find the candidate with maximum role score, breaking ties by canonical id.",
+      "Let distinct_role_argmax be the number of distinct argmax candidate ids.",
+      "Let target_cardinality = min(5, max(3, distinct_role_argmax + 1)).",
+      "Run the unchanged v41 dynamic rank-coverage greedy objective and deterministic tie-breaking, but stop after target_cardinality selected units or when the token budget has no eligible unit.",
+      "No score threshold, answer, answer node, source mode, gold count, candidate ceiling, label, challenge, or dataset statistic may alter target_cardinality."
+    ],
+    "synthetic_invariants": {
+      "distinct_argmax_1": 3,
+      "distinct_argmax_2": 3,
+      "distinct_argmax_3": 4,
+      "distinct_argmax_4": 5,
+      "empty_pool": 0,
+      "budget_can_only_reduce_feasible_selected_count": true,
+      "deterministic_tie_break_by_canonical_id": true,
+      "at_least_one_spare_slot_beyond_distinct_argmax_when_below_top_k": true,
+      "minimum_three_evidence_units_when_pool_and_budget_allow": true
+    }
+  },
+  "evaluation": {
+    "gold_mapping": [
+      "A table answer node maps to every retained chunk of its table row whose decoded text contains the normalized answer-node surface string.",
+      "A passage answer node maps to every retained chunk of its passage URL whose decoded text contains the normalized answer-text.",
+      "Gold mapping occurs only after complete ordered query and score caches have been validated."
+    ],
+    "primary_metric": "mean across budgets of answer-bearing evidence macro F1",
+    "macro_precision": "Mean per-case fraction of selected candidate ids in the union of mapped answer-bearing candidate ids; empty prediction precision is 1.",
+    "macro_recall": "Mean per-case indicator that at least one mapped answer-bearing candidate id is selected.",
+    "macro_f1": "Harmonic mean of macro precision and macro recall.",
+    "candidate_ceiling_complete": "At least one official answer node maps to a retained candidate unit.",
+    "paired_bootstrap": {
+      "resamples": 10000,
+      "seed": 20260804,
+      "unit": "case",
+      "interval": "percentile 95%",
+      "strongest_non_frc_selected_inside_each_resample": true
+    },
+    "secondary_metrics": [
+      "macro precision",
+      "answer-bearing evidence recall",
+      "selected unit count",
+      "selected token cost",
+      "target cardinality",
+      "candidate ceiling complete rate",
+      "candidate pool size",
+      "source type of selected evidence",
+      "v44 versus v43 recall and F1 repair"
+    ],
+    "mandatory_strata": [
+      "table versus passage answer source mode",
+      "single versus multiple answer nodes",
+      "candidate ceiling complete versus incomplete",
+      "token budget"
+    ]
+  },
+  "support_checks": {
+    "minimum_total_cases_met": ">= 180",
+    "minimum_cases_per_source_mode": ">= 80",
+    "candidate_ceiling_complete_rate": ">= 0.60",
+    "query_parser_fallback_rate": "<= 0.05",
+    "guarded_minus_dynamic_point": ">= 0.005",
+    "guarded_minus_dynamic_ci_low": "> 0",
+    "guarded_minus_strongest_non_frc_point": ">= 0.01",
+    "guarded_minus_strongest_non_frc_ci_low": "> 0",
+    "every_budget_and_supported_source_mode_delta_vs_strongest_non_frc": ">= -0.02",
+    "mean_selected_unit_reduction_vs_dynamic": ">= 0.50",
+    "answer_evidence_recall_drop_vs_dynamic": "<= 0.02",
+    "guarded_minus_v43_answer_evidence_recall": ">= 0.02",
+    "guarded_minus_v43_f1": ">= -0.005"
+  },
+  "decision_rules": {
+    "all_support_checks_pass": "OTTQA_GUARDED_ADAPTIVE_SUPPORT_ESTABLISHED_ON_ORACLE_TABLE_BOUNDED_POOL",
+    "informative_but_any_support_check_fails": "OTTQA_GUARDED_ADAPTIVE_SUPPORT_NOT_ESTABLISHED",
+    "minimum_cases_source_balance_or_ceiling_fails": "OTTQA_ORACLE_TABLE_BOUNDED_POOL_INCONCLUSIVE",
+    "gate_2": "Always remains NO-GO/SHADOW in v44; this oracle-table bounded selector test alone cannot authorize CANARY or DEFAULT.",
+    "publication": "Publish favorable, null, negative, or inconclusive results with source, protocol, implementation, cache, and result hashes.",
+    "claims_forbidden": [
+      "official OTT-QA leaderboard result",
+      "full-corpus table or passage retrieval superiority",
+      "complete intermediate multi-hop evidence-chain recovery",
+      "real SetR reproduction",
+      "flood-domain validity",
+      "production readiness"
+    ]
+  },
+  "known_scope_limits": [
+    "The official full open-domain S3 resources were unavailable at registration time, so table retrieval is replaced by the official oracle table_id.",
+    "OTT-QA answer-node traces identify answer-bearing cells or passages, not every intermediate fact in a multi-hop reasoning chain.",
+    "This dataset covers table-text and multi-hop evidence selection but does not independently cover conflict, expired-document, missing-document, or policy-exception behavior.",
+    "The result is one public-dataset mechanism confirmation and cannot by itself change Gate 2."
+  ]
+}

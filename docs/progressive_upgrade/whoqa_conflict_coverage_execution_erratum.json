@@ -1,0 +1,38 @@
+{
+  "schema_version": "frc-whoqa-conflict-coverage-execution-erratum-v1",
+  "registered_on": "2026-08-01",
+  "registered_before_model_scoring": true,
+  "trigger": "The fail-closed full-source preparation rejected q_id 7393 because the source contains eight rather than five non-empty public question templates.",
+  "supersedes_only": "frozen_template_handling.expected_templates_per_q_id in whoqa_conflict_coverage_execution.json",
+  "parent_files": {
+    "protocol_sha256": "7a92b637521a8b0ee5d9620b2972c1dfb95a5f0b6c246974171749f7b53c6bb9",
+    "execution_sha256": "ba9df61c8a146901df35a1af6216f694bd1a3b7bcbe9477ecb37c55ee02b57aa"
+  },
+  "blind_structure_audit": {
+    "answer_contents_read": false,
+    "model_scores_generated": false,
+    "template_count_distribution": {
+      "5": 4753,
+      "8": 399
+    },
+    "records_with_empty_template": 0,
+    "total_template_runs": 26957,
+    "context_count_range": [
+      2,
+      12
+    ]
+  },
+  "corrected_frozen_template_handling": {
+    "score_all_non_empty_public_templates": true,
+    "allowed_templates_per_q_id": [
+      5,
+      8
+    ],
+    "statistical_unit": "q_id",
+    "case_metric": "arithmetic mean over every public template available for that q_id",
+    "bootstrap_unit": "q_id",
+    "no_record_or_template_dropped": true,
+    "template_cherry_picking": false
+  },
+  "unchanged_contract": "Dataset revision, all 5,152 q_id records, models, role prompts, six methods, Top-K, token budget, metrics, thresholds, bootstrap, decision policy and Gate 2 boundary remain unchanged."
+}

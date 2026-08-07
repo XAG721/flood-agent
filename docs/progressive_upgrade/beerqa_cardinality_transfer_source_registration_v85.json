@@ -1,0 +1,45 @@
+{
+  "schema_version": "frc-beerqa-cardinality-transfer-source-registration-v1",
+  "registered_at": "2026-08-05T00:21:21.5405074+08:00",
+  "experiment_id": "FRC-BEERQA-CARDINALITY-TRANSFER-V85",
+  "purpose": "Register a previously unused public varying-hop QA source before downloading or inspecting any row content, so a cross-dataset cardinality-transfer experiment can be designed without target-label leakage.",
+  "repository_revision_at_registration": "c6c2a107aba1c8af97f38086fc42e759dc1421e2",
+  "source": {
+    "name": "BeerQA: A Dataset for Open-Domain Varying-hop Question Answering",
+    "official_homepage": "https://beerqa.github.io/",
+    "official_repository": "https://github.com/beerqa/IRRR",
+    "paper": "https://aclanthology.org/2021.emnlp-main.292/",
+    "license": "CC BY-SA 4.0",
+    "split": "development v1.0",
+    "official_url": "https://nlp.stanford.edu/projects/beerqa/beerqa_dev_v1.0.json",
+    "official_homepage_reported_size": "16MB",
+    "intended_local_path": ".cache/benchmarks/beerqa/beerqa_dev_v1.0.json",
+    "raw_source_committed": false
+  },
+  "pre_download_boundary": {
+    "source_file_downloaded": false,
+    "row_content_inspected": false,
+    "row_ids_known": false,
+    "schema_or_case_counts_known": false,
+    "labels_answers_contexts_supporting_facts_or_hops_known": false,
+    "target_metrics_known": false,
+    "prior_project_experiment_on_beerqa": false,
+    "public_aggregate_known": "The official homepage states that BeerQA combines SQuAD, HotpotQA, and newly annotated questions requiring at least three supporting Wikipedia documents.",
+    "registration_is_not_a_protocol_or_result": true
+  },
+  "planned_admission": {
+    "inspect_only_after_source_registration": true,
+    "use_new_3plus_hop_challenge_rows_if_the_public_schema_supports_unambiguous_filtering": true,
+    "exclude_squad_and_hotpot_rows_from_independent_target_claims": true,
+    "freeze_source_hash_schema_census_partition_and_method_before_target_scoring": true,
+    "abandon_without_substitution_if_the_schema_cannot_support_blind_evidence_selection": true
+  },
+  "research_boundaries": {
+    "independent_dataset_claim_requires_newly_annotated_challenge_subset": true,
+    "setr_reproduced": false,
+    "gate_2_change": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "flood_domain_effectiveness_established": false
+  }
+}

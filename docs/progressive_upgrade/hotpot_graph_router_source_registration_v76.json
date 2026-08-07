@@ -1,0 +1,70 @@
+{
+  "schema_version": "frc-hotpot-graph-router-source-registration-v76",
+  "experiment_id": "FRC-HOTPOT-GRAPH-SOFT-OVERRIDE-ROUTER-V76",
+  "registered_on": "2026-08-04",
+  "source": {
+    "dataset": "HotpotQA",
+    "configuration": "distractor",
+    "split": "validation",
+    "path": ".cache/benchmarks/hotpot_hf/distractor/validation-00000-of-00001.parquet",
+    "bytes": 27452575,
+    "sha256": "c20b638ca82b21d04fe12e14ff417ad05153d4d215a65de54497fca4e972f7c6",
+    "expected_rows": 7405,
+    "schema_fields": [
+      "id",
+      "question",
+      "answer",
+      "type",
+      "level",
+      "supporting_facts",
+      "context"
+    ]
+  },
+  "history_exclusion": {
+    "path": ".cache/benchmarks/frc_public_reference/role_scores_hotpotqa.jsonl",
+    "bytes": 29609025,
+    "sha256": "ac5189e4f64e799ca7915a0eff9a304e6d09e0bbc6c4ef233335b17c6d56e6af",
+    "cases": 1000,
+    "unique_ids": 1000,
+    "question_type_counts": {
+      "bridge": 803,
+      "comparison": 197
+    },
+    "all_ids_excluded_from_development_and_confirmation": true,
+    "history_used_for_finite_model_and_gate_development_only": true,
+    "history_eligible_for_v76_target_metrics": false
+  },
+  "remaining_capacity_after_history_exclusion": {
+    "cases": 6405,
+    "bridge": 5115,
+    "comparison": 1290,
+    "supports_two_disjoint_stages_with_400_cases_per_type": true
+  },
+  "frozen_dependencies": {
+    "v75_model_path": "docs/progressive_upgrade/twowiki_question_router_model_development_v75.json",
+    "v75_model_sha256": "b12c128f06c4ab14851d2f24538a15e76f5f9ff7336a7968c7b01d7c5062cbc0",
+    "v75_model_payload_sha256": "31562661eacb70f3881dad0a6b17a70d272d7012d938187ef59a29336af5aa7b",
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "offline_snapshot_required": true
+  },
+  "pre_registration_access_boundary": {
+    "source_file_hash_size_schema_and_row_count_read": true,
+    "source_id_type_capacity_read": true,
+    "v76_target_rows_read": 0,
+    "v76_development_ids_selected": 0,
+    "v76_confirmation_ids_selected": 0,
+    "v76_target_model_scores_seen": false,
+    "v76_target_gold_metrics_seen": false,
+    "model_features_hyperparameters_threshold_controls_gates_and_stage_sizes_frozen_before_target_selection": true
+  },
+  "claims": {
+    "independent_public_dataset_from_v75_2wiki_target_and_history": true,
+    "case_disjoint_from_all_v76_hotpot_model_development_history": true,
+    "independent_dataset_from_v76_hotpot_model_development_history": false,
+    "strict_independent_model_training_confirmation": false,
+    "official_hotpotqa_leaderboard_result": false
+  }
+}

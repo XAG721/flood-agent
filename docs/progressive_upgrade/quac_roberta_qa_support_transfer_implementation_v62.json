@@ -1,0 +1,29 @@
+{
+  "schema_version": "frc-quac-v62-implementation-registration-v1",
+  "experiment_id": "FRC-QUAC-ROBERTA-QA-SUPPORT-TRANSFER-V62",
+  "registered_at": "2026-08-03T19:42:00+08:00",
+  "hashes": {
+    "protocol": "130b703c7b69aa5556f7ed85d759d8865ed2fa40206ce91dabfbd6d12d80b007",
+    "source_registration": "8ccd3f1bffb8292c114d17e0d734f2651122906f33b2a101f801d0b0bde702c9",
+    "module": "f3cd95f65646bec80c6eeecfabee6140ebf334c36f2840e5ce35595ee2184561",
+    "runner": "7e7723179153b393b76065cf0b10045b5b17ffaa37e47fa0e8636bf483720191",
+    "tests": "f0c9568569bab9e8a8ed6353119e2cf10f256d47b4c38abae9e3201ab367b9f8"
+  },
+  "model_files_downloaded_before_registration": false,
+  "model_repository_and_revision_known_from_public_metadata": true,
+  "quac_train_schema_and_v57_results_previously_known": true,
+  "quac_validation_content_opened_or_parsed": false,
+  "v62_sample_constructed_before_registration": false,
+  "v57_case_commitments_authorized_for_exclusion_only": true,
+  "v57_case_level_scores_or_predictions_reused": false,
+  "model_native_null_vs_span_rule_frozen": true,
+  "learned_threshold_or_target_domain_calibration": false,
+  "shared_case_level_gate_across_all_gated_methods": true,
+  "candidate_selector_reuses_v43_without_parameter_change": true,
+  "synthetic_tests": {
+    "passed": 6,
+    "failed": 0,
+    "quac_source_content_used": false,
+    "model_files_used": false
+  }
+}

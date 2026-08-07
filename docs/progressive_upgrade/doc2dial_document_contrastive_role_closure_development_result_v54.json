@@ -1,0 +1,65 @@
+{
+  "schema_version": "frc-doc2dial-document-contrastive-pre-scoring-result-v54",
+  "experiment_id": "FRC-DOC2DIAL-DOCUMENT-CONTRASTIVE-ROLE-CLOSURE-V54",
+  "closed_at": "2026-08-02T23:52:00+08:00",
+  "stage": "development",
+  "phase_reached": "pre_scoring_data_eligibility_check",
+  "registered_artifacts": {
+    "protocol_sha256": "4e5b348ab823d16f60e2d92b4dcf92dcca02e3eb9d11ffba3e8228138d68e23c",
+    "source_registration_sha256": "51249c4fdcd1483c4048d1ae3e2a051c39e06c9e6343a8bb68c7e146f678e407",
+    "implementation_registration": "docs/progressive_upgrade/doc2dial_document_contrastive_role_closure_implementation_v54.json",
+    "source_document_sha256": "547ed8ee5bfd7babdadfb6246b1b3fc5fa107a4abdef972bc63c9b717000f56f",
+    "source_development_sha256": "c5e66816b28137ae4ba82e310cdc691b7608b123eda23f1f8f7021f3df8a4dff",
+    "source_confirmation_sha256": "9b4118e345af47451c84e8e27c1dba2844fcaafeacb059380b4ac8fbb9b62a16"
+  },
+  "frozen_prepare_command": "python scripts/run_doc2dial_document_contrastive_role_closure.py prepare --stage development",
+  "observed_error": "ValueError: Doc2Dial v54 source lacks the registered answer-state quota",
+  "aggregate_eligibility_census": {
+    "candidate_agent_turns": 20431,
+    "eligible_cases": 20431,
+    "answer_state_counts": {
+      "answer_bearing": 20431,
+      "no_answer": 0
+    },
+    "documents_with_eligible_cases": 415,
+    "dialogues_with_eligible_cases": 3474,
+    "schema_excluded_cases": 0,
+    "schema_exclusion_rate": 0.0,
+    "schema_exclusion_reasons": {}
+  },
+  "registered_quota": {
+    "answer_bearing": 200,
+    "no_answer": 200
+  },
+  "interpretation": {
+    "official_readme_capability_claim": "The official DATA_README says references may be empty when the previous user query is not answerable or irrelevant.",
+    "fixed_v1_0_1_repository_train_observation": "No target agent turn eligible under the frozen adjacency rule has an empty references list.",
+    "conclusion": "The fixed repository train split is unsuitable for the preregistered grounded-versus-irrelevant abstention experiment. Reducing the quota, synthesizing negatives, treating other states as no-answer, or opening validation to recover quota is forbidden after registration."
+  },
+  "access_and_execution_boundary": {
+    "document_json_opened": true,
+    "development_dialogue_json_opened": true,
+    "confirmation_dialogue_json_opened_or_parsed": false,
+    "blind_cache_written": false,
+    "query_generation_started": false,
+    "neural_scoring_started": false,
+    "gold_join_after_score_started": false,
+    "metrics_computed": false,
+    "v54_implementation_changed_after_source_access": false
+  },
+  "analysis": {
+    "support_checks": {
+      "exact_answer_state_quota_available": false,
+      "confirmation_open_authorized": false
+    },
+    "outcome": {
+      "status": "DOC2DIAL_V54_SCHEMA_INCONCLUSIVE_STOP",
+      "support_established": false,
+      "validation_open_authorized": false,
+      "selector_adoption_authorized": false,
+      "canary_or_default_authorized": false,
+      "reuse_development_for_tuning_or_selection": false,
+      "gate_2": "NO-GO/SHADOW"
+    }
+  }
+}

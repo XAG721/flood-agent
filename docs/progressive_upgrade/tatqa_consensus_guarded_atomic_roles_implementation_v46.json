@@ -1,0 +1,41 @@
+{
+  "schema_version": "frc-tatqa-consensus-guarded-atomic-roles-implementation-v46",
+  "experiment_id": "FRC-TATQA-CONSENSUS-GUARDED-ATOMIC-ROLES-V46",
+  "registered_at": "2026-08-02T08:24:30+08:00",
+  "data_json_downloaded_or_opened_before_registration": false,
+  "tatqa_sample_content_seen_before_registration": false,
+  "hashes": {
+    "protocol_sha256": "107ceca66c00bb70e424923c7ea879f16a24004debfe90f738ee7d89d8903ce8",
+    "module_sha256": "535726c01badae90bc6cf8e5f42395375472b79ba9374b2bf0576106ebd957ad",
+    "runner_sha256": "db202b308d123b68d732d7d2637b56541bd37838f6f0174999e1f9b10ea486f7",
+    "test_sha256": "2bbd285e0e98e31bd9f75d7583fa2f4a547a3030f42fe63531bd5d4de3a603aa"
+  },
+  "synthetic_invariants_verified": {
+    "one_argmax_without_shared_runner_up_target_equals_1": true,
+    "one_argmax_with_shared_runner_up_target_equals_2": true,
+    "two_argmax_with_shared_runner_up_target_equals_3": true,
+    "four_argmax_with_shared_runner_up_target_equals_5": true,
+    "four_argmax_without_shared_runner_up_target_equals_4": true,
+    "empty_pool_target_equals_0": true,
+    "candidate_permutation_invariant": true,
+    "strictly_monotone_per_role_transform_invariant": true,
+    "canonical_id_tie_breaking": true,
+    "source_kind_invariant": true,
+    "selection_has_no_duplicate": true,
+    "selection_respects_token_budget": true,
+    "table_cell_mapping_is_exact": true,
+    "paragraph_span_mapping_uses_containing_paragraph": true,
+    "balanced_sealed_sampling_is_deterministic": true,
+    "blind_cache_excludes_answer_derivation_mapping_and_strata": true,
+    "gold_join_occurs_after_blind_cache_construction": true
+  },
+  "synthetic_test_result": {
+    "command": "python -m pytest tests/test_frc_tatqa_consensus_guarded_atomic_roles.py -q -p no:cacheprovider",
+    "passed": 6,
+    "failed": 0
+  },
+  "method_or_threshold_change_after_registration_forbidden": true,
+  "source_access_order_must_be_followed": true,
+  "negative_null_or_inconclusive_result_must_be_published": true,
+  "gate_2": "NO-GO/SHADOW"
+}

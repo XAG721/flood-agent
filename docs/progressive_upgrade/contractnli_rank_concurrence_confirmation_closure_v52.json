@@ -1,0 +1,87 @@
+{
+  "schema_version": "frc-contractnli-v52-rank-concurrence-confirmation-closure-v1",
+  "experiment_id": "FRC-CONTRACTNLI-RANK-CONCURRENCE-CONFIRMATION-V52",
+  "closed_at": "2026-08-02T21:17:00+08:00",
+  "status": "CONTRACTNLI_V52_RANK_CONCURRENCE_SUPPORT_NOT_ESTABLISHED",
+  "confirmation_result": {
+    "cases": 600,
+    "documents": 319,
+    "label_counts": {
+      "Entailment": 200,
+      "Contradiction": 200,
+      "NotMentioned": 200
+    },
+    "query_fallback_rate": 0.0,
+    "candidate_ceiling_complete_rate_on_evidence_cases": 1.0,
+    "not_mentioned_official_empty_evidence_rate": 1.0,
+    "candidate": {
+      "evidence_or_abstention_macro_f1": 0.250304,
+      "evidence_bearing_macro_f1": 0.170455,
+      "not_mentioned_abstention_accuracy": 0.41,
+      "abstention_rate": 0.373333
+    },
+    "strongest_shared_gate_non_frc": "rank_concurrence_hybrid_topk_v52",
+    "candidate_minus_strongest_shared_gate_non_frc": {
+      "point": 0.009038,
+      "ci_low": -0.006814,
+      "ci_high": 0.024925,
+      "clusters": 319,
+      "resamples": 10000,
+      "seed": 20260812
+    },
+    "candidate_minus_ungated_v49": {
+      "point": 0.081783,
+      "ci_low": 0.047778,
+      "ci_high": 0.117474,
+      "clusters": 319,
+      "resamples": 10000,
+      "seed": 20260812
+    },
+    "candidate_minus_native_zero_control": {
+      "point": 0.081783,
+      "ci_low": 0.047778,
+      "ci_high": 0.117474,
+      "clusters": 319,
+      "resamples": 10000,
+      "seed": 20260812
+    },
+    "evidence_bearing_macro_f1_drop_vs_ungated_v49": 0.082325,
+    "minimum_budget_or_supported_stratum_delta": -0.027922
+  },
+  "failed_support_gates": {
+    "candidate_minus_strongest_shared_gate_non_frc_point_at_least_0_01": false,
+    "candidate_minus_strongest_shared_gate_non_frc_ci_low_above_0": false,
+    "evidence_bearing_macro_f1_drop_vs_ungated_v49_at_most_0_03": false
+  },
+  "passed_support_gates": {
+    "exact_cases_and_per_label_quota": true,
+    "candidate_ceiling_and_not_mentioned_schema_checks": true,
+    "candidate_minus_ungated_v49_point_and_ci": true,
+    "candidate_minus_native_zero_control_point_and_ci": true,
+    "not_mentioned_abstention_accuracy_and_native_zero_improvement": true,
+    "abstention_rate_between_0_05_and_0_8": true,
+    "every_budget_and_supported_stratum_delta_at_least_minus_0_03": true,
+    "deterministic_query_fallback_rate_equals_0": true
+  },
+  "artifacts": {
+    "protocol_sha256": "048fe13d87a58e8b6630387c9c0cc8e7c1e72119a54ed8719498d32ef6bc9251",
+    "implementation_registration_sha256": "90bc2a52b5feaf4fd20198e0a9f21ea8da5a71f5e5924fe941c33b215465cb8b",
+    "execution_registration_sha256": "73ff52938f6b86f9844216330875c385af700b5798aa2bce130e82ec15873801",
+    "candidate_coverage_sha256": "852f0ac5593dda9466cc946d56a0b3e64ef29ce905e513d9455fd52cf522b42b",
+    "queries_sha256": "ccc92eae1a7e459bc8bed475911516f1ff98b2c7923235713b3ce93914af4be6",
+    "scored_sha256": "120055e204035c60800844993db2f22d399ac32011c7a3d0ee27fb44fc353175",
+    "confirmation_result_sha256": "c95d3f271de34387553d19a87469f7cb54281d890fa97b5b84bd9b7c3d9742c2",
+    "confirmation_markdown_sha256": "de07d9833f72d938fb972ae86ac4a3aa367656af6740232648c027d31e64d1be",
+    "confirmation_case_evidence_sha256": "a5b2ce3ed48836f7de0e22038a5bf733931492ce3125e46adf6b66ddb3fb6996"
+  },
+  "parameter_free_gate": true,
+  "learned_or_dataset_fitted_threshold": false,
+  "gold_joined_only_after_complete_score_cache": true,
+  "v50_test_or_v51_dev_reused": false,
+  "confirmation_train_reuse_for_tuning_or_selection": false,
+  "selector_adoption_authorized": false,
+  "canary_or_default_authorized": false,
+  "gate_2": "NO-GO/SHADOW",
+  "boundary": "This one-time role-reversed official ContractNLI train confirmation is a bounded full-contract span-selection experiment, not an official ContractNLI leaderboard result, open-corpus retrieval evaluation, SetR reproduction, selector adoption, or flood-domain expert validation.",
+  "next_step_boundary": "Do not tune, select, or reevaluate the rank-concurrence gate on ContractNLI train, v51 dev, or v50 test. Any later hypothesis requires a newly preregistered method and a genuinely independent development and confirmation source."
+}

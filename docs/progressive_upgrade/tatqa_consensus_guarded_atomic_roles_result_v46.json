@@ -1,0 +1,100 @@
+{
+  "schema_version": "frc-tatqa-consensus-guarded-closure-v46",
+  "experiment_id": "FRC-TATQA-CONSENSUS-GUARDED-ATOMIC-ROLES-V46",
+  "closed_at": "2026-08-02T08:28:02+08:00",
+  "status": "TATQA_FULL_CONTEXT_POOL_INCONCLUSIVE",
+  "stage_reached": "POST_ACCESS_STRUCTURAL_CENSUS_PRE_QUERY",
+  "registered_method": "consensus_guarded_adaptive_cardinality_frc_v46",
+  "source_artifacts": {
+    "repository_revision": "870accc41953dcde885aabeb963d94aabdc0fbc3",
+    "archive_bytes": 7559183,
+    "archive_sha256": "0358a861b82273ac2d39d50460b1184037d5877f0d356fae10f071a066c586f9",
+    "license_identifier": "MIT",
+    "license_checked_before_data_member_opened": true,
+    "raw_dev": {
+      "path": "dataset_raw/tatqa_dataset_dev.json",
+      "bytes": 1637431,
+      "sha256": "8da095a819af6db3c14877c6df2d4d29960e41d1a63dd1fa853507bd2a616af5"
+    },
+    "tagop_dev": {
+      "path": "dataset_tagop/tatqa_dataset_dev.json",
+      "bytes": 915046,
+      "sha256": "9f19895ad2a37c8d9e06f7167e196237fe4351555198c80f633184dfb38d6607"
+    }
+  },
+  "registration_integrity": {
+    "protocol_sha256": "107ceca66c00bb70e424923c7ea879f16a24004debfe90f738ee7d89d8903ce8",
+    "implementation_registration_sha256": "2a2cfda4ffbe93d40b58aa8c3e80eed2d8409ae216f50e222723cd9868276d25",
+    "module_sha256": "535726c01badae90bc6cf8e5f42395375472b79ba9374b2bf0576106ebd957ad",
+    "runner_sha256": "db202b308d123b68d732d7d2637b56541bd37838f6f0174999e1f9b10ea486f7",
+    "test_sha256": "2bbd285e0e98e31bd9f75d7583fa2f4a547a3030f42fe63531bd5d4de3a603aa",
+    "synthetic_tests_passed": 6,
+    "method_or_threshold_changed_after_registration": false
+  },
+  "structural_census": {
+    "contexts": 278,
+    "questions": 1668,
+    "raw_dev_question_fields": [
+      "answer",
+      "answer_from",
+      "answer_type",
+      "derivation",
+      "order",
+      "question",
+      "rel_paragraphs",
+      "req_comparison",
+      "scale",
+      "uid"
+    ],
+    "raw_dev_mapping_field_present_questions": 0,
+    "tagop_dev_question_fields": [
+      "order",
+      "question",
+      "uid"
+    ],
+    "tagop_dev_mapping_field_present_questions": 0,
+    "eligible_questions_with_exact_official_table_cell_or_paragraph_mapping": 0,
+    "selected_questions": 0,
+    "source_modes": {
+      "table_only": 0,
+      "text_only": 0,
+      "hybrid": 0
+    }
+  },
+  "stop_rule": {
+    "triggered": "minimum_scope_schema_license_or_ceiling_fails",
+    "reason": "Neither the registered raw dev member nor the official TAGOP dev member exposes the exact table-cell/paragraph evidence mapping required by the protocol.",
+    "answer_or_derivation_based_pseudo_gold_created": false,
+    "rel_paragraphs_only_used_as_partial_gold": false,
+    "schema_adapter_or_gold_definition_changed_after_access": false
+  },
+  "execution_boundary": {
+    "prepared_blind_rows": 0,
+    "prepared_blind_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "candidate_map_rows": 0,
+    "candidate_map_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "blind_census_sha256": "e7392896b16d997acb1114181bebaf5aecb59a69e2b69f468aacfb8aca191950",
+    "execution_registration_written": false,
+    "query_generation_started": false,
+    "neural_scoring_started": false,
+    "gold_join_started": false,
+    "metrics_computed": false,
+    "bootstrap_started": false
+  },
+  "decision": {
+    "method_support_established": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "reuse_v46_cases_for_tuning_or_selection": false,
+    "gate_2": "NO-GO/SHADOW",
+    "next_step": "Use a new independently frozen dataset with explicit public gold evidence annotations; do not retrofit TAT-QA labels from answers or derivations."
+  },
+  "claims_forbidden": [
+    "TAT-QA evidence-selection performance result",
+    "official TAT-QA leaderboard result",
+    "support for or against the v46 selector",
+    "answer or numerical-reasoning superiority",
+    "flood-domain validity",
+    "production readiness"
+  ]
+}

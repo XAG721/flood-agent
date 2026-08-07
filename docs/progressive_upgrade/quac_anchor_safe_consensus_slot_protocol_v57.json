@@ -1,0 +1,151 @@
+{
+  "schema_version": "frc-quac-anchor-safe-consensus-slot-protocol-v57",
+  "experiment_id": "FRC-QUAC-ANCHOR-SAFE-CONSENSUS-SLOT-V57",
+  "registered_at": "2026-08-03T01:17:00+08:00",
+  "purpose": "Prospectively test whether a parameter-free single-slot role-consensus intervention can add FRC evidence utility without repeating v56's over-compression, while preserving the document-contrastive abstention mechanism on a previously unused conversational answer/no-answer source.",
+  "prior_result_boundary": {
+    "v56_development_outcome_known": true,
+    "v56_confirmation_opened": false,
+    "v56_case_level_artifact_query_candidate_score_or_prediction_reused": false,
+    "v56_development_used_for_parameter_prompt_rank_cutoff_budget_or_threshold_selection": false,
+    "allowed_aggregate_motivation_only": "v56 established that the document gate can reject no-answer cases but the role-closure candidate over-compressed answer-bearing evidence.",
+    "quac_train_or_validation_downloaded_or_opened_before_protocol_registration": false
+  },
+  "theoretical_mechanism": {
+    "name": "anchor_safe_single_slot_consensus_frc_v57",
+    "base": "Shared-gate cross-encoder Top-5 under the same token budget, including its frozen skip-over-budget behavior.",
+    "anchor_floor": "When the baseline selects five units, preserve its first four budget-feasible selections exactly; otherwise reproduce the baseline.",
+    "eligible_contender": "A candidate at anchor rank 6 through 12 that appears in the Top-3 of at least two non-anchor atomic roles.",
+    "single_slot_rule": "If the baseline selected five units and an eligible contender fits beside the preserved first four, replace only the fifth baseline selection with the contender having the largest supporting-role count, then the smallest summed supporting-role rank, then the best anchor rank, then opaque id. Otherwise reproduce the baseline exactly.",
+    "budget_rule": "Reuse the frozen cross-encoder Top-5 budget selection first, then permit the one-for-one fifth-slot replacement only when the contender keeps total cost within the same budget.",
+    "learned_parameter": null,
+    "maximum_set_change_from_anchor_top5": 1,
+    "minimum_anchor_members_preserved_when_five_are_budget_feasible": 4,
+    "rationale": "The formula can expose one independently supported functional-role candidate while bounding baseline displacement to 20 percent and reverting exactly when role concurrence is absent."
+  },
+  "source": {
+    "official_homepage": "https://quac.ai/",
+    "paper": "https://arxiv.org/abs/1808.07036",
+    "datasheet": "https://quac.ai/datasheet.pdf",
+    "development_url": "https://s3.amazonaws.com/my89public/quac/train_v0.2.json",
+    "confirmation_url": "https://s3.amazonaws.com/my89public/quac/val_v0.2.json",
+    "hidden_test_available_locally": false,
+    "license": "CC BY-SA 4.0 as stated on the official QuAC homepage",
+    "known_public_structure": "SQuAD-like data -> section -> paragraphs/dialogues -> qas, with question, orig_answer, answers, followup and yesno fields; CANNOTANSWER denotes no answer.",
+    "published_scale": "98,407 QA pairs in 13,594 dialogs; train and validation have no overlapping sections; approximately 20.2 percent are unanswerable according to the authors' datasheet."
+  },
+  "access_order": [
+    "Freeze this protocol and the source-independent selector implementation and synthetic invariants before downloading either source file.",
+    "Download train and validation as opaque bytes, record size and SHA-256, and register the source without parsing JSON content.",
+    "Freeze protocol, source, module, runner and test hashes before opening train for outcome-bearing development preparation.",
+    "Parse train only, construct the balanced blind cache, and keep validation unopened.",
+    "Register the blind-cache hashes and CUDA runtime before query generation or neural scoring.",
+    "Complete every score row before joining answer state or gold evidence intervals.",
+    "Run the registered development gates exactly once. Parse validation exactly once only if every development gate passes; otherwise publish a closure and stop.",
+    "Never reuse revealed development cases for formula, prompt, cutoff, budget, decoy, threshold or method selection."
+  ],
+  "task_construction": {
+    "case": "Each QuAC QA turn with a non-empty question and valid original-answer schema.",
+    "answer_bearing": "orig_answer text is not CANNOTANSWER and its exact character interval lies in the dialogue context.",
+    "no_answer": "orig_answer text canonicalizes to CANNOTANSWER.",
+    "gold_evidence": "All deterministic context units whose character intervals overlap the original teacher answer interval; no official answer-generation score is claimed.",
+    "anchor_query": "Current question plus at most two preceding question/original-answer pairs from the same dialogue, in chronological order.",
+    "forbidden_to_query_or_scorer": "Current answer text or offset, answer state, future turns, followup/yesno labels, raw source ids, page title and section title.",
+    "candidate_units": "Deterministic sentence spans, with overlong spans split into offset-preserving clauses/windows; trailing CANNOTANSWER sentinel is excluded.",
+    "schema_exclusion": "Missing or malformed context, ids, questions, answer text/offset, invalid answer interval or empty candidate set; rate above 0.01 fails development."
+  },
+  "scope": {
+    "development_cases": 600,
+    "confirmation_cases": 600,
+    "answer_bearing_per_stage": 300,
+    "no_answer_per_stage": 300,
+    "maximum_cases_per_dialogue": 2,
+    "maximum_cases_per_document_per_answer_state": 4,
+    "minimum_dialogues": 250,
+    "minimum_documents": 200,
+    "development_salt": "FRC-QUAC-V57-DEVELOPMENT|",
+    "confirmation_salt": "FRC-QUAC-V57-CONFIRMATION|",
+    "document_cluster_bootstrap": true,
+    "balanced_mechanism_sample_not_natural_prevalence": true
+  },
+  "blind_retrieval_and_models": {
+    "own_retrieval_pool": "BM25 Top-48 union BGE dense Top-48, at most 96 candidate units.",
+    "contrastive_probe_pool": "BM25 Top-8 union BGE dense Top-8 per document, at most 16 candidate units.",
+    "decoys": "Seven other dialogue documents from the same context-length quartile, hash ordered with FRC-QUAC-V57-DECOY; any fallback fails development.",
+    "gate": "The associated dialogue document must rank first among eight by maximum raw anchor reranker logit, giving p=1/8 under the registered exchangeability construction.",
+    "embedding": "BAAI/bge-large-en-v1.5@refs/pr/5 offline",
+    "reranker": "BAAI/bge-reranker-large@refs/pr/4 offline",
+    "query_generator": "none",
+    "gold_before_complete_scoring": false
+  },
+  "frozen_queries": {
+    "anchor": "{conversation_query}",
+    "direct_answer": "Find the passage that directly answers the current question in this conversation: {conversation_query}",
+    "context_bridge": "Find antecedents, people, events, or earlier context needed to resolve the current question: {conversation_query}",
+    "contrast_or_limit": "Find negations, contrasts, qualifications, dates, or limitations relevant to the current question: {conversation_query}"
+  },
+  "methods": {
+    "candidate": "anchor_safe_single_slot_consensus_frc_v57",
+    "exact_anchor_ablation": "document_contrastive_cross_encoder_topk_v57",
+    "same_gate_frc_controls": [
+      "document_contrastive_rank_concurrent_atomic_role_closure_frc_v54_transferred_v57",
+      "document_contrastive_low_core_divergence_frc_v49_transferred_v57"
+    ],
+    "shared_gate_non_frc": [
+      "BM25 Top-5",
+      "dense Top-5",
+      "hybrid Top-5",
+      "cross-encoder Top-5",
+      "cross-encoder knapsack"
+    ],
+    "ungated_controls": "Frozen v41/v43/v49 FRC controls and the five frozen non-FRC controls.",
+    "budgets": [128, 256, 512]
+  },
+  "evaluation": {
+    "primary": "answer_or_abstention_macro_f1",
+    "answer_metric": "Exact deterministic evidence-unit set F1 against the original teacher answer interval.",
+    "no_answer_metric": "Exact empty selection.",
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 20260817,
+    "minimum_supported_stratum_cases": 50,
+    "mandatory_strata": [
+      "answer state",
+      "dialogue turn-position quartile",
+      "context-length quartile",
+      "candidate-count quartile",
+      "answer-length quartile",
+      "history-depth group",
+      "gate outcome",
+      "single-slot trigger outcome"
+    ]
+  },
+  "development_gates_all_required": {
+    "exact_cases_balance_caps_and_minimum_clusters": true,
+    "schema_exclusion_rate_at_most": 0.01,
+    "candidate_ceiling_complete_rate_at_least": 0.99,
+    "single_slot_trigger_rate_between": [0.1, 0.8],
+    "candidate_minus_exact_anchor_ablation_point_at_least": 0.005,
+    "candidate_minus_exact_anchor_ablation_ci_low_above": 0.0,
+    "candidate_minus_strongest_shared_gate_non_frc_point_at_least": 0.005,
+    "candidate_minus_strongest_shared_gate_non_frc_ci_low_above": 0.0,
+    "candidate_minus_strongest_same_gate_frc_point_at_least": 0.005,
+    "candidate_minus_strongest_same_gate_frc_ci_low_above": 0.0,
+    "answer_recall_drop_vs_exact_anchor_ablation_at_most": 0.01,
+    "no_answer_abstention_accuracy_at_least": 0.5,
+    "answer_gate_pass_rate_at_least": 0.5,
+    "candidate_abstention_rate_between": [0.1, 0.8],
+    "every_budget_and_supported_stratum_delta_at_least": -0.02,
+    "decoy_query_and_score_fallback_rates": 0.0
+  },
+  "outcomes": {
+    "development_failure": "QUAC_V57_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_VALIDATION",
+    "confirmation_support": "QUAC_V57_ANCHOR_SAFE_CONSENSUS_SLOT_SUPPORT_ESTABLISHED",
+    "confirmation_failure": "QUAC_V57_ANCHOR_SAFE_CONSENSUS_SLOT_SUPPORT_NOT_ESTABLISHED",
+    "schema_inconclusive": "QUAC_V57_SCHEMA_INCONCLUSIVE_STOP",
+    "confirmation_open_only_after_all_development_gates": true,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "scope_limits": "English Wikipedia conversational evidence-unit selection under an artificial balanced mechanism sample; not QuAC official answer extraction, hidden-test submission, open-corpus retrieval, SetR reproduction, flood-domain validation or rollout authorization."
+}

@@ -1,0 +1,148 @@
+{
+  "schema_version": "frc-conflicts-expected-behavior-protocol-v1",
+  "protocol_path_label": "conflicts_expected_behavior_protocol.json",
+  "registered_on": "2026-07-31",
+  "status": "REGISTERED_BEFORE_RESPONSE_GENERATION",
+  "research_question": "Under the same deterministic local generator and fixed token budget, do FRC-selected sources yield better independently judged conflict-type-appropriate answers than the strongest reproducible coverage-greedy baseline?",
+  "primary_sources": {
+    "paper": "https://arxiv.org/abs/2506.08500",
+    "official_dataset": "https://github.com/google-research-datasets/rag_conflicts",
+    "paper_scope": "The paper evaluates factual grounding, answer recall, and nuanced expected-behavior adherence; simple conflict-type classification is not an adherence reproduction."
+  },
+  "development_boundary": {
+    "conflicts_results_already_known": true,
+    "retrieval_methods_frozen": true,
+    "selected_evidence_frozen": true,
+    "generator_model_frozen": true,
+    "generation_prompt_frozen_before_generation": true,
+    "gold_conflict_type_visible_to_generator": false,
+    "correct_answer_visible_to_generator": false,
+    "retrieval_scores_visible_to_generator": false,
+    "method_identity_visible_to_reviewers": false,
+    "empty_templates_count_as_human_evidence": false,
+    "automatic_judging_allowed": false,
+    "may_change_gate_2": false,
+    "may_claim_setr_reproduction": false
+  },
+  "frozen_inputs": {
+    "dataset_path_label": "conflicts.jsonl",
+    "dataset_sha256": "9ed5907314a4907c36219aaab0fd570ce54892bbd6dd8386aa729a1a236a2781",
+    "case_count": 458,
+    "selected_evidence_path_label": "evaluation_cache_full/selected_evidence.jsonl",
+    "selected_evidence_sha256": "8241ee7d1592e4b4b8fa58baebfa43b59ebe78a6b09627ceac6cf36a9d21d728",
+    "selected_evidence_all_method_row_count": 2748,
+    "comparison_methods": [
+      "coverage_greedy_proxy",
+      "frc_select"
+    ],
+    "comparison_row_count": 916,
+    "equal_selection_case_count": 19,
+    "unique_generation_prompt_count": 897,
+    "classification_report_path_label": "conflicts_frc_report.json",
+    "classification_report_sha256": "8b908a51cd47a8d3ca2998a3ea4d1289e051741971d232c8159aa69b995a6e5a",
+    "strongest_reproducible_baseline": "coverage_greedy_proxy"
+  },
+  "model": {
+    "repository_id": "Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4",
+    "repository_revision": "e9c932ac1893a49ae0fc497ad6e1e86e2e39af20",
+    "local_path_label": "Qwen2.5-7B-Instruct-GPTQ-Int4",
+    "prior_generation_status_sha256": "505222b490c70dd4e12c63e0789ceeaaceb9dcb06989b273d6212c309c545638",
+    "file_sha256": {
+      "config.json": "b369e58aa34e19e76ea67455c6386c60f220e5cf57068ebd0b6a6449b41853d5",
+      "generation_config.json": "fd01df57931815767cb12a9f0fe479a1ed9a5b2a4e7a203e751e54e5b01669dc",
+      "merges.txt": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+      "model-00001-of-00002.safetensors": "278698de6ca93314e68edf14f57fe14af9fb4255034f06d4eb8272671b4973d2",
+      "model-00002-of-00002.safetensors": "77b6cb5d6c191b97a8afa9a19092db693db41068241cf27c7c67cedb096e9664",
+      "model.safetensors.index.json": "a6ac80547c7291a7e64f14e299f75263d30383e0737a881517eb0083255aca7d",
+      "tokenizer.json": "22bfef58b74d2fa40f402ac0c8d638d9e54d12137da2e2c7e9f32a1e7534e42f",
+      "tokenizer_config.json": "5b5d4f65d0acd3b2d56a35b56d374a36cbc1c8fa5cf3b3febbbfabf22f359583",
+      "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+    }
+  },
+  "generation": {
+    "do_sample": false,
+    "model_batch_size": 8,
+    "checkpoint_batch_size": 32,
+    "max_input_tokens": 4096,
+    "max_new_tokens": 192,
+    "maximum_requested_words": 160,
+    "inline_citations_required": true,
+    "same_prompt_and_model_for_both_methods": true,
+    "identical_selected_id_order_reuses_one_generation": true,
+    "resume_requires_exact_cache_key": true
+  },
+  "blinding": {
+    "seed": "conflicts-expected-behavior-blind-v1",
+    "assignment": "For each case, sort the two frozen methods, then reverse them when the first 32 bits of SHA-256([seed, case_id]) are odd.",
+    "review_package_contains": [
+      "question",
+      "gold conflict type",
+      "type-specific expected behavior",
+      "official correct answer when nonblank",
+      "A/B responses",
+      "the sources and dates shown to each response"
+    ],
+    "review_package_excludes": [
+      "method names",
+      "retrieval scores",
+      "role scores",
+      "selection explanations",
+      "unblinding map"
+    ],
+    "mapping_storage": "Ignored local cache only; the published manifest records its canonical SHA-256 commitment.",
+    "unblinding_time": "Only after two complete independent submissions and a complete independent adjudication pass validation."
+  },
+  "human_evaluation": {
+    "independent_annotator_count": 2,
+    "independent_adjudicator_count": 1,
+    "same_person_may_hold_multiple_roles": false,
+    "ratings": [
+      "expected_behavior_adherence",
+      "factual_grounding",
+      "citation_correctness",
+      "answer_correctness"
+    ],
+    "rating_values": [
+      "PASS",
+      "FAIL",
+      "UNCERTAIN"
+    ],
+    "answer_correctness_without_official_answer": "NOT_APPLICABLE",
+    "pair_preferences": [
+      "A",
+      "B",
+      "TIE",
+      "NEITHER",
+      "UNCERTAIN"
+    ],
+    "rationale_required_for_every_response": true,
+    "agreement": "Categorical Cohen kappa is reported separately for four ratings and pair preference.",
+    "primary_metric": "adjudicated expected_behavior_adherence PASS rate",
+    "secondary_metrics": [
+      "factual_grounding PASS rate",
+      "citation_correctness PASS rate",
+      "answer_correctness PASS rate when applicable",
+      "pair preference counts"
+    ],
+    "uncertain_counts_as_primary_pass": false,
+    "paired_comparison": {
+      "contrast": "frc_select minus coverage_greedy_proxy",
+      "resamples": 10000,
+      "seed": 20260731,
+      "interval": "paired nonparametric percentile bootstrap 95% CI"
+    }
+  },
+  "decision_policy": {
+    "before_human_completion": "GENERATED_AWAITING_INDEPENDENT_HUMAN_ANNOTATION",
+    "blank_templates_are_results": false,
+    "cross_domain_result_may_replace_flood_expert_validation": false,
+    "gate_2_during_and_after_this_workflow": "NO-GO/SHADOW",
+    "interpretation": "A completed result can add cross-domain conflict-handling evidence, but cannot by itself prove FRC retrieval superiority, authorize CANARY/DEFAULT, or reproduce SetR."
+  },
+  "implementation": {
+    "module_path": "research/frc_rag/conflicts_expected_behavior.py",
+    "module_sha256": "74312efd49730dc59966b6e4d7c3ec3a658d1427a2d0a7fbc332b25e6830e4e6",
+    "runner_path": "scripts/run_conflicts_expected_behavior_workflow.py",
+    "runner_sha256": "e36360624df703c485b298958089cce7cfbd7196e3f224705f894c1744da52f9"
+  }
+}

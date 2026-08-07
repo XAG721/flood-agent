@@ -1,0 +1,97 @@
+{
+  "schema_version": "frc-twowiki-support-path-closure-mechanism-development-v74",
+  "experiment_id": "FRC-2WIKI-SUPPORT-PATH-CLOSURE-V74",
+  "recorded_on": "2026-08-04",
+  "role": "mechanism-development-history-only",
+  "source": {
+    "dataset": "2WikiMultiHopQA",
+    "split": "dev",
+    "sample_size": 1000,
+    "sample_seed": 42,
+    "candidate_pool_path": ".cache/benchmarks/frc_public_reference/candidate_pool_2wikimultihopqa.jsonl",
+    "candidate_pool_bytes": 12046987,
+    "candidate_pool_sha256": "3398c12efbfbddb1ca726edbe317d74846e122e4f97c105c5226f19b7ef3b8a2",
+    "scored_source_path": ".cache/benchmarks/frc_public_reference/role_scores_2wikimultihopqa.jsonl",
+    "scored_source_bytes": 21825399,
+    "scored_source_sha256": "7add5a5ec5206a33848de0eecc76a8697dc321e03946fcfefee20df0525a6104",
+    "prior_result_already_revealed": true,
+    "eligible_for_v74_development_or_confirmation": false
+  },
+  "fixed_common_resources": {
+    "top_k": 5,
+    "token_budget": 1500,
+    "cross_encoder_scores": "per-case min-max calibrated BAAI/bge-reranker-large revision 55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "link_rule": "case-insensitive exact normalized title surface match in a different-title candidate sentence, with alphanumeric boundaries; edges are symmetrized",
+    "gold_or_answer_used_by_selector": false
+  },
+  "finite_search_space": {
+    "soft_link_bonus": [0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0],
+    "new_source_bonus": [0.0, 0.05, 0.1],
+    "soft_configurations": 21,
+    "additional_interpretable_controls": [
+      "hard_link_then_new_source_then_cross_chain",
+      "single_seed_linked_pair_then_cross_fill",
+      "alternating_cross_anchor_linked_pair"
+    ],
+    "total_configurations_considered": 24,
+    "selection_rule": "maximize mean evidence macro F1; break ties by complete-evidence recall, then lower link bonus, then lower new-source bonus"
+  },
+  "reference_controls": {
+    "cross_encoder_topk": {
+      "evidence_macro_f1": 0.443618,
+      "evidence_macro_recall": 0.708667,
+      "complete_evidence_recall": 0.409
+    },
+    "frc_select": {
+      "evidence_macro_f1": 0.443618,
+      "evidence_macro_recall": 0.708667,
+      "complete_evidence_recall": 0.409
+    }
+  },
+  "selected_mechanism": {
+    "name": "soft_title_link_support_path_closure_v74",
+    "link_bonus": 1.0,
+    "new_source_bonus": 0.1,
+    "score": "cross_encoder + link_bonus * linked_to_any_selected + new_source_bonus * source_not_yet_selected",
+    "first_selection": "cross_encoder only because both bonuses are zero before a path exists",
+    "tie_break": "higher total score, then higher cross-encoder score, then lexicographically smaller candidate id",
+    "evidence_macro_f1": 0.516325,
+    "evidence_macro_recall": 0.81675,
+    "complete_evidence_recall": 0.621,
+    "delta_f1_vs_cross_encoder_topk": 0.072707,
+    "delta_complete_recall_vs_cross_encoder_topk": 0.212
+  },
+  "important_controls": {
+    "link_bonus_1_new_source_bonus_0": {
+      "evidence_macro_f1": 0.490261,
+      "evidence_macro_recall": 0.78475,
+      "complete_evidence_recall": 0.57
+    },
+    "hard_link_then_new_source_then_cross_chain": {
+      "evidence_macro_f1": 0.496837,
+      "evidence_macro_recall": 0.793167,
+      "complete_evidence_recall": 0.606
+    },
+    "single_seed_linked_pair_then_cross_fill": {
+      "evidence_macro_f1": 0.485332,
+      "evidence_macro_recall": 0.769167,
+      "complete_evidence_recall": 0.486
+    },
+    "alternating_cross_anchor_linked_pair": {
+      "evidence_macro_f1": 0.51345,
+      "evidence_macro_recall": 0.804333,
+      "complete_evidence_recall": 0.562
+    }
+  },
+  "structural_diagnostic": {
+    "gold_cross_title_link_case_rate": 0.689,
+    "any_graph_link_case_rate": 0.848
+  },
+  "prospective_boundary": {
+    "all_1000_history_ids_permanently_excluded": true,
+    "history_case_level_outputs_may_not_select_or_modify_v74_after_protocol_lock": true,
+    "v74_target_case_ids_or_target_metrics_seen_before_protocol_lock": false,
+    "claim_supported_if_v74_passes": "case-disjoint prospective development support within the same public dataset",
+    "dataset_independent_or_official_leaderboard_claimed": false
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": "frc-squad2-v58-predownload-freeze-v1",
+  "experiment_id": "FRC-SQUAD2-GENERATIVE-ANSWERABILITY-GATE-V58",
+  "registered_before_source_download": true,
+  "squad2_train_bytes_downloaded_or_content_read": false,
+  "squad2_dev_bytes_downloaded_or_content_read": false,
+  "hashes": {
+    "protocol": "fc84cadc924ce091999ddfaa6419aad52d73fe420806310f65dae9a383f79b84",
+    "module": "6594a9afaff2595b40d2f0732ee6ab2cb662572d0574465d46044a703fb38f32",
+    "runner": "0adc86bcada8cc6da8614d34d5a0fa49680df2260124af3178d95b1eabbaffef",
+    "tests": "788db35e85a1f03e19f8b9686dc5e279682b55616909dd5a2461b8e357ad4b22"
+  },
+  "bytes": {
+    "protocol": 11978,
+    "module": 54556,
+    "runner": 20805,
+    "tests": 7247
+  },
+  "synthetic_invariants": {
+    "command": "D:\\anaconda3\\python.exe -m pytest tests/test_frc_squad2_generative_answerability_gate.py -q --basetemp .pytest_tmp_v58",
+    "passed": 6,
+    "failed": 0,
+    "source_content_used": false,
+    "covers": [
+      "protocol and exact prompt hash",
+      "balanced schema sampling",
+      "blind-cache gold exclusion",
+      "deterministic atomic queries",
+      "exact fail-closed support parsing",
+      "identical shared-gate semantics and post-score gold interval join"
+    ]
+  }
+}

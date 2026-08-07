@@ -1,0 +1,62 @@
+{
+  "schema_version": "frc-musique-sequential-chain-support-source-registration-v66",
+  "experiment_id": "FRC-MUSIQUE-SEQUENTIAL-CHAIN-SUPPORT-V66",
+  "registered_at": "2026-08-04T01:02:00+08:00",
+  "target": {
+    "path": ".cache/benchmarks/musique/data/musique_full_v1.0_train.jsonl",
+    "bytes": 476696984,
+    "sha256": "b1cd998f7e0e2838d6fda024e4ad1eb0e7fc3edefdadb0bd9b5b10b0907f2034",
+    "previously_parsed_for_v65": true,
+    "remaining_case_predictions_or_joined_metrics_seen": false,
+    "v66_source_commitments_selected": 0
+  },
+  "official_repository": {
+    "path": ".cache/benchmarks/musique_repo",
+    "revision": "922ac98f19a201998dbdae6d7f2887a5258dbdeb",
+    "readme_sha256": "be0c6ebbd2f192c647633bdec79429b3d027bebfd37182f7d8f1d49fb53b3829",
+    "license_sha256": "8a5e40e360ca75413c65917144f6055537bee03e95f727c1bb55a7aff9d8d4e2",
+    "license": "CC BY 4.0",
+    "schema_source": "raw_data_to_official_format.py"
+  },
+  "model_registration": {
+    "path": "docs/progressive_upgrade/quac_roberta_qa_support_transfer_model_registration_v62.json",
+    "sha256": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "locked_threshold_exact": 0.974609375
+  },
+  "leakage_guard_source": {
+    "path": ".cache/benchmarks/squad2_v2/train-v2.0.json",
+    "bytes": 42123633,
+    "sha256": "68dcfbb971bd3e96d5b46c7177b16c1a4e7d4bdef19fb204502738552dede002",
+    "authorized_use": "normalized exact-question exclusion only"
+  },
+  "v65_exclusion_sources": {
+    "invalid_candidate_map": {
+      "path": ".cache/benchmarks/musique_full_roberta_transfer_v65/candidate_map.jsonl",
+      "bytes": 1614348,
+      "sha256": "bd26514fc68009b4f39ca94991d03c8cd980b84df363024d4b9a1f9c434dcbba",
+      "expected_unique_source_commitments": 300
+    },
+    "corrected_candidate_map": {
+      "path": ".cache/benchmarks/musique_full_roberta_transfer_v65_corrected/candidate_map.jsonl",
+      "bytes": 1614474,
+      "sha256": "d5095960ffcf38f4491830e19d5af0ac3c877edb5cd4ca5d5fd73d0f7179a965",
+      "expected_unique_source_commitments": 600
+    },
+    "expected_union_source_commitments": 900
+  },
+  "oracle_plan_access": {
+    "allowed_fields": [
+      "question_decomposition[].id",
+      "question_decomposition[].question",
+      "decomposition list order"
+    ],
+    "forbidden_fields": [
+      "question_decomposition[].answer",
+      "question_decomposition[].paragraph_support_idx"
+    ]
+  },
+  "strict_independent_model_training_confirmation_claimed": false,
+  "selector_adoption_authorized": false,
+  "canary_or_default_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

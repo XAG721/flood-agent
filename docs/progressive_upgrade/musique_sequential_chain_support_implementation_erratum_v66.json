@@ -1,0 +1,40 @@
+{
+  "schema_version": "frc-musique-sequential-chain-support-implementation-erratum-v66",
+  "experiment_id": "FRC-MUSIQUE-SEQUENTIAL-CHAIN-SUPPORT-V66",
+  "registered_after_import_failure_before_target_rows_read_for_v66": true,
+  "issue": {
+    "command": "python scripts/run_musique_sequential_chain_support.py prepare --stage development",
+    "failure": "ModuleNotFoundError: No module named 'research'",
+    "failure_stage": "module import before argument parsing, source validation, target open or sample selection",
+    "target_rows_read_for_v66": 0,
+    "v66_source_commitments_selected": 0,
+    "model_predictions_computed": 0,
+    "gold_or_metric_seen": false
+  },
+  "correction": {
+    "change": "Insert the repository root at the front of sys.path before importing research modules and point the runner default to this erratum registration.",
+    "sample_selection_model_tokenizer_threshold_chain_rule_gate_or_stopping_logic_changed": false,
+    "target_or_prediction_value_used_to_choose_correction": false
+  },
+  "hashes": {
+    "protocol": "518bb128745521677e3e5b33e42cfd7484aab8163c1fb3441fb4192c1aa70456",
+    "source_registration": "0febdc4c8ae7e495c7f79d826444633a154feeac64017d5d22095dbd6494dd3f",
+    "model_registration": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "module": "b437dff0881df1d0a974a5120a7425dc6f8b3348a852f8d195007b9dc8fa5690",
+    "runner": "52e77b01495c9508832eec53038f7160382fe09393bc36ace63706a72c3e47cd",
+    "tests": "e68187e4b9d838a22b120c081632e21bd9f9b11fafe6b3afe6a95fcbc571bf25"
+  },
+  "original_implementation_registration_sha256": "d3915aa423472f18197b26e6336e36b41eb89802852d05c511e862f39fb5dd66",
+  "target_rows_read_for_v66_before_registration": 0,
+  "source_independent_synthetic_fixtures_only": true,
+  "synthetic_tests": {
+    "passed": 11,
+    "failed": 0,
+    "target_source_used": false,
+    "model_files_used": false
+  },
+  "strict_independent_model_training_confirmation_claimed": false,
+  "selector_adoption_authorized": false,
+  "canary_or_default_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

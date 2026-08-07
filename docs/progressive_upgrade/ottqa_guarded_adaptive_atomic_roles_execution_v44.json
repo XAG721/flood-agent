@@ -1,0 +1,96 @@
+{
+  "schema_version": "frc-ottqa-guarded-adaptive-atomic-roles-execution-v44",
+  "experiment_id": "FRC-OTTQA-GUARDED-ADAPTIVE-ATOMIC-ROLES-V44",
+  "registered_at": "2026-08-02T05:00:41+08:00",
+  "source_representation": {
+    "archive_path": "D:\\graduation_project\\.cache\\benchmarks\\ottqa\\ottqa_b289bcca_registered_sources.tar",
+    "archive_format": "uncompressed tar with original Git member paths",
+    "archive_bytes": 342927360,
+    "official_revision": "b289bcca691db21a5259c3420e6b9819a9be9ba3",
+    "members_extracted_to_windows_filesystem": false
+  },
+  "source_acquisition": {
+    "codeload_url": "https://codeload.github.com/wenhuchen/OTT-QA/tar.gz/b289bcca691db21a5259c3420e6b9819a9be9ba3",
+    "codeload_etag": "5f4e48933a5eaa35998b9fedb458ff546d35a1d6b8f0f727250ffc24402bb113",
+    "codeload_tar_gz_bytes": 263803288,
+    "codeload_tar_gz_sha256": "c4df4f1a0a9686c55dbb8a5f8b7e56d57911675acf10eb94b3f7f140173dc3f3",
+    "source_archive_builder_registration_sha256": "18d0333f344bc06aee48b6420d781ee1c3045768269c77a1176c033971f8162b",
+    "source_archive_builder_sha256": "aee60eb0ff5c5f58fb7fa0e1e0603da2d13a0945e7361492614588f43ba6e6c8",
+    "source_archive_builder_test_sha256": "95e336054fa11f0598b7536a3b45ba680e92fc93000694a956c6560277204981",
+    "selected_member_content_manifest_sha256": "9acedd3e535c1726b3f476ebb0b17a3dbe217c5bc2645ac7b7ceaa4c4ce037ef",
+    "json_content_parsed_during_acquisition": false
+  },
+  "source_verification": {
+    "license_git_blob": "6cce7fb48f73fe3e9cf469ebefa2d29293c6f056",
+    "dev_linked_git_blob": "3454a0dea9fd3a284ec9cd376fc21bcb63ec9ca1",
+    "table_files": 8891,
+    "table_bytes": 65523616,
+    "table_manifest_sha256": "bb8bfda9233ad197cf2c21c8a2657e1428065d268d79a939e15602f46bd42e69",
+    "linked_passage_files": 8891,
+    "linked_passage_bytes": 255477273,
+    "linked_passage_manifest_sha256": "8f13044a1fe5ec93f0daf60c6bab13d5e8edfba3d5c9ca29530b4ad88eeafe96",
+    "all_registered_source_checks_passed": true
+  },
+  "candidate_coverage_registration": {
+    "cases": 240,
+    "source_modes": {
+      "table": 120,
+      "passage": 120
+    },
+    "candidate_ceiling_complete_rate": 0.995833,
+    "table_candidate_ceiling_complete_rate": 0.991667,
+    "passage_candidate_ceiling_complete_rate": 1.0,
+    "minimum_cases_and_ceiling_checks_passed": true,
+    "candidate_method_or_threshold_changed": false,
+    "query_generation_started": false,
+    "neural_scoring_started": false,
+    "metrics_computed": false
+  },
+  "runtime_environment": {
+    "python_executable": "D:\\anaconda3\\envs\\rag_exp\\python.exe",
+    "python": "3.10.20",
+    "numpy": "2.2.6",
+    "torch": "2.4.1+cu124",
+    "transformers": "4.46.3",
+    "cuda_available": true,
+    "cuda_runtime": "12.4",
+    "gpu": "NVIDIA GeForce RTX 4060 Ti",
+    "gpu_memory_mib": 16380
+  },
+  "runtime_parameters": {
+    "device": "cuda",
+    "fp16": true,
+    "embedding_batch_size": 64,
+    "reranker_batch_size": 256,
+    "case_batch_size": 4,
+    "generator_batch_size": 8,
+    "generator_max_input_tokens": 512,
+    "generator_max_new_tokens": 160,
+    "chunk_window_tokens": 192,
+    "chunk_stride_tokens": 160,
+    "lexical_pool_size": 96,
+    "maximum_pool_size": 128,
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 20260804,
+    "offline_model_loading": true
+  },
+  "hashes": {
+    "implementation_registration_sha256": "797aeb50d6fabaf931ba41325c9f9723d44bc6b5b3e66aca04cb5b73aba3df87",
+    "implementation_erratum_sha256": "282622aece3610da4e98868c954c7203fbf42a4df5ce75593fe6589e83b38aa4",
+    "implementation_erratum2_sha256": "8287e4895e28286ddb26ef27222ed7e5432d11f0a3177a92fad614bc9782f76c",
+    "protocol_sha256": "95116d2af455d1f8792e81cc1ed1f0f48db5fd7ef1274d257f73cec8e5c1e072",
+    "protocol_erratum_sha256": "e7341f3ce645f27ea1fbf3f8bc79691b14a8c4b5655035f83bdb8112ff906019",
+    "protocol_erratum2_sha256": "1bcbb7ee99e974b80624bdc24392d1c6eb403e2dfdd86b4681afbab55a9b6fbc",
+    "protocol_erratum3_sha256": "aa237afc9062211cc090247285fb8cc3f2f4fb92e6a8f8c190e1c4a77923ee38",
+    "source_archive_sha256": "0746c60de6bcd5a5628db743235fb2664efdb3c6aead0858941827801d3db10b",
+    "prepared_blind_sha256": "f7f13e6268f5816f9498f72fe4d50ebb3b1c9aafe0af6b6bc2c99e88afba3d23",
+    "candidate_map_sha256": "491913b3d152ca07de649ed5242969eef019b49c4311f7be2f370da96258e05f",
+    "blind_census_sha256": "fce5812f39b3d67e14518448edeb7b0a30f9b9c51b617e02c3d6da0879014a33",
+    "candidate_coverage_sha256": "08be25ddcdaee8224cbdc5200a6312cb06aa70d36b29616117a059505cbd1c16"
+  },
+  "gold_access_before_execution_registration": "Only sealed sampling and candidate-ceiling registration; no method, threshold, candidate, query, or score was changed.",
+  "query_generation_started": false,
+  "neural_scoring_started": false,
+  "metrics_computed": false,
+  "negative_null_or_inconclusive_result_must_be_published": true
+}

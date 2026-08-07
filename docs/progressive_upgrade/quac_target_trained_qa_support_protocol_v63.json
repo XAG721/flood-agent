@@ -1,0 +1,146 @@
+{
+  "schema_version": "frc-quac-target-trained-qa-support-protocol-v63",
+  "experiment_id": "FRC-QUAC-TARGET-TRAINED-QA-SUPPORT-V63",
+  "registered_at": "2026-08-03T22:00:00+08:00",
+  "research_question": "Can a fixed publicly released QA model explicitly fine-tuned on SQuAD2.0 and QuAC provide a useful answer-support gate for frozen FRC and non-FRC evidence selectors on a balanced QuAC validation mechanism sample?",
+  "prior_boundary": {
+    "v62_result_sha256": "866e1f2d803b0ddfc68b8c78ced82de45dbb722a856b841417fa90dd7b539dc3",
+    "v62_closure_sha256": "b4c5bf7b000c40441721190d6a7fce49baa0d91c6e9bc69326a3128ea530f4f2",
+    "v62_status": "QUAC_V62_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_VALIDATION",
+    "v62_validation_content_opened_or_parsed": false,
+    "v62_post_result_scalar_threshold_diagnostic": {
+      "purpose": "mechanism diagnosis only; no threshold or case-level decision transfers to v63",
+      "best_balanced_accuracy": 0.63,
+      "answer_bearing_support_pass_rate": 0.5,
+      "no_answer_rejection_rate": 0.76,
+      "threshold": 3.22998046875,
+      "independent_or_supportive_evidence": false
+    },
+    "v57_or_v62_case_level_scores_predictions_or_labels_reused": false
+  },
+  "source": {
+    "dataset": "QuAC v0.2",
+    "official_homepage": "https://quac.ai/",
+    "license": "CC BY-SA 4.0 as stated on the official QuAC homepage",
+    "source_registration": "docs/progressive_upgrade/quac_source_registration_v57.json",
+    "source_registration_sha256": "8ccd3f1bffb8292c114d17e0d734f2651122906f33b2a101f801d0b0bde702c9",
+    "file": "val_v0.2.json",
+    "sha256": "09e622916280ba04c9352acb1bc5bbe80f11a2598f6f34e934c51d9e6570f378",
+    "content_may_open_only_after_protocol_implementation_and_model_registrations": true
+  },
+  "public_support_model": {
+    "repository": "ixa-ehu/SciBERT-SQuAD-QuAC",
+    "repository_url": "https://huggingface.co/ixa-ehu/SciBERT-SQuAD-QuAC",
+    "revision": "8d44c186b6f1662c65d48603ce8e3dedb0093953",
+    "architecture": "AutoModelForQuestionAnswering",
+    "training_disclosure": "The repository model card and cited paper state that SciBERT was fine-tuned first on SQuAD2.0 and then on QuAC.",
+    "exact_quac_training_split_and_checkpoint_selection_disclosed": false,
+    "evaluation_independent_of_all_model_training_and_selection_data_claimed": false,
+    "license_on_model_card": "NOT_DECLARED",
+    "usage_boundary": "research evaluation only; no redistribution, production use, CANARY or DEFAULT authorization until license and training provenance are independently verified",
+    "offline_loading_required_after_registration": true,
+    "local_finetuning_calibration_or_threshold_fitting": false
+  },
+  "scope": {
+    "stage": "validation",
+    "cases": 600,
+    "answer_bearing": 300,
+    "no_answer": 300,
+    "maximum_cases_per_dialogue": 2,
+    "maximum_cases_per_document_per_answer_state": 2,
+    "minimum_dialogues": 250,
+    "minimum_documents": 200,
+    "sample_salt": "FRC-QUAC-V63-TARGET-TRAINED-VALIDATION|",
+    "balanced_mechanism_sample_not_natural_prevalence": true,
+    "token_budgets": [128, 256, 512]
+  },
+  "blind_execution": {
+    "qa_input_fields": ["id", "question", "context"],
+    "qa_input_forbidden_fields": ["answer_state", "answer_text", "answer_start", "answer_end", "gold_candidate_ids"],
+    "qa_question_uses_current_question_only": true,
+    "retrieval_query_uses_current_question_and_up_to_two_prior_turns": true,
+    "support_inference_cache_must_complete_before_gold_join": true,
+    "support_gate_must_pass_before_query_generation_or_neural_retrieval_scoring": true,
+    "full_gold_join_occurs_only_after_complete_retrieval_score_cache": true,
+    "fallback_predictions_fail_closed": true
+  },
+  "qa_inference": {
+    "tokenizer_truncation": "only_second",
+    "max_length": 384,
+    "doc_stride": 128,
+    "maximum_answer_tokens": 30,
+    "batch_size": 16,
+    "do_sample": false,
+    "support_rule": "SUPPORTED iff the maximum valid context span start_logit+end_logit is strictly greater than the minimum CLS null start_logit+end_logit across overflow features",
+    "tie_rule": "ties are UNSUPPORTED",
+    "invalid_or_nonfinite_rule": "UNSUPPORTED",
+    "learned_threshold": null
+  },
+  "support_open_gate": {
+    "exact_cases_equals_600": true,
+    "exact_answer_state_balance": true,
+    "schema_exclusion_rate_at_most": 0.01,
+    "qa_invalid_rate_equals": 0.0,
+    "support_verifier_balanced_accuracy_at_least": 0.75,
+    "answer_bearing_support_pass_rate_at_least": 0.75,
+    "no_answer_rejection_rate_at_least": 0.65,
+    "minimum_dialogues_at_least": 250,
+    "minimum_documents_at_least": 200,
+    "all_required": true
+  },
+  "retrieval_and_selector_methods_if_support_gate_passes": {
+    "shared_case_level_gate": true,
+    "ungated_controls": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "cross_encoder_knapsack",
+      "static_threshold_frc_v39_replay",
+      "static_rank_coverage_frc_v41",
+      "dynamic_rank_coverage_frc_v41",
+      "adaptive_argmax_cardinality_frc_v43",
+      "guarded_adaptive_cardinality_frc_v44",
+      "anchor_guarded_adaptive_cardinality_frc_v45",
+      "consensus_guarded_adaptive_cardinality_frc_v46",
+      "low_core_divergence_guarded_frc_v49"
+    ],
+    "candidate": "scibert_quac_supported_adaptive_argmax_cardinality_frc_v43_v63",
+    "gated_exact_anchor": "scibert_quac_supported_cross_encoder_topk_v63",
+    "frozen_models": {
+      "dense": "BAAI/bge-large-en-v1.5@refs/pr/5",
+      "reranker": "BAAI/bge-reranker-large@main"
+    },
+    "score_calibration": "per_case_minmax",
+    "selector_parameter_change": false
+  },
+  "final_method_gates_if_support_gate_passes": {
+    "candidate_ceiling_complete_rate_at_least": 0.99,
+    "candidate_answer_recall_at_least": 0.70,
+    "candidate_no_answer_abstention_accuracy_at_least": 0.65,
+    "candidate_abstention_rate_range": [0.15, 0.70],
+    "candidate_minus_gated_exact_anchor_point_at_least": 0.005,
+    "candidate_minus_gated_exact_anchor_ci_low_above": 0.0,
+    "candidate_minus_strongest_shared_gate_non_frc_point_at_least": 0.005,
+    "candidate_minus_strongest_shared_gate_non_frc_ci_low_above": 0.0,
+    "candidate_minus_strongest_same_gate_frc_point_at_least": -0.005,
+    "gated_exact_anchor_minus_ungated_exact_anchor_point_at_least": 0.10,
+    "gated_exact_anchor_minus_ungated_exact_anchor_ci_low_above": 0.0,
+    "minimum_budget_or_supported_stratum_delta_at_least": -0.02,
+    "deterministic_query_and_score_fallback_rate_equals": 0.0,
+    "all_required": true
+  },
+  "stopping_and_claim_boundary": {
+    "if_support_open_gate_fails": "STOP_BEFORE_QUERY_GENERATION_AND_RETRIEVAL_SCORING",
+    "if_final_method_gate_fails": "CLOSE_WITHOUT_SELECTOR_ADOPTION",
+    "if_all_gates_pass": "REPORT_TARGET_TRAINED_MODEL_FEASIBILITY_SIGNAL_WITH_PROVENANCE_LIMITATION",
+    "validation_reuse_for_tuning_selection_or_threshold_fitting": false,
+    "official_quac_answer_metric_claimed": false,
+    "strict_independent_confirmation_claimed": false,
+    "real_setr_reproduction_claimed": false,
+    "flood_domain_effectiveness_claimed": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  }
+}

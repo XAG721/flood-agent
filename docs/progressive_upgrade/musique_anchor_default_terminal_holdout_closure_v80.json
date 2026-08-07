@@ -1,0 +1,12 @@
+{
+  "experiment_id": "FRC-MUSIQUE-ANCHOR-DEFAULT-TERMINAL-HOLDOUT-V80",
+  "further_same_source_confirmation_authorized": false,
+  "gate_2": "NO-GO/SHADOW",
+  "noninferiority_supported": true,
+  "reuse_v80_holdout_for_model_threshold_gate_or_selection": false,
+  "schema_version": "frc-musique-anchor-default-terminal-closure-v80",
+  "selector_adoption_authorized": false,
+  "status": "MUSIQUE_V80_ANCHOR_DEFAULT_TERMINAL_HOLDOUT_ADVANTAGE_NOT_ESTABLISHED",
+  "strict_gate_passed": false,
+  "terminal_result_sha256": "c0f7b13cd39360e2fe75e6133a12f614e8ec20fb936e0683ac8966b586424c78"
+}

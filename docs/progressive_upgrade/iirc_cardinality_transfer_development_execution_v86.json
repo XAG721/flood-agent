@@ -1,0 +1,40 @@
+{
+  "elapsed_seconds": 1127.413573,
+  "experiment_id": "FRC-IIRC-CARDINALITY-TRANSFER-PROSPECTIVE-V86",
+  "implementation_lock_sha256": "80f8b6b3415069995cbd3d61f1d480edfd99a0daf836be6a83e8d85a0de8028a",
+  "leakage_boundary": {
+    "blind_cache_excludes_answer_answer_type_context_question_links_and_gold": true,
+    "sealed_gold_created_but_not_read_by_scorer_or_selector": true,
+    "selection_metrics_computed": false
+  },
+  "model_sha256": "3b125e02779d385e63f3cbd47000e2c2fe2882456935150f1e47ec4354a9475c",
+  "outcome": "IIRC_V86_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED",
+  "preparation": {
+    "blind_sha256": "f5c57b84933bdbb5f45b06c3a68c94d93de6592362d033d711ab43c7b90c7b80",
+    "candidate_sources": {
+      "maximum": 43,
+      "mean": 15.2975,
+      "minimum": 7
+    },
+    "confirmation_overlap": 0,
+    "gold_statistics_sealed_not_reported": true,
+    "requested_unique_context_titles": 5052,
+    "resolved_unique_context_titles": 5045,
+    "sealed_gold_sha256": "29a350a3ada1cb4362abed8ae4a2d8bfd9796ad3fd143ca87c047ac7e4427e61",
+    "selected_cases": 400,
+    "selected_ids_sha256": "e5cf8c245933581c2386c4aefbcff439c4429a66bf679509f2310346fd2224a0",
+    "stage": "development",
+    "unresolved_link_sources": 9
+  },
+  "protocol_sha256": "b81e550ede8163464b29e5298fd8f7ba3319152f6bc34b4c0d53a3565dcef48d",
+  "result_sha256": "4c05989b1e825184f43127d704f5461b107087ede79e5bbc344b072b96502438",
+  "schema_version": "frc-iirc-cardinality-transfer-execution-v86",
+  "scored_blind_sha256": "f7b54f2873a85f623e4d42d6a990323ee1429f1f70ece9c16362a339e5a4477f",
+  "scored_cases": 400,
+  "selection_rows": 400,
+  "selection_sha256": "9ca73980bd37d00b391f2ad8bbd78d25e61a3c7f042406729f10dfe11f8a48aa",
+  "source_fingerprint_sha256": "41cd12fd3851ac49d387a6f801c127ddec6f83b082ecbd004b21580f4e4d090c",
+  "source_registration_sha256": "7729fab320b62b510cbe3a6ebe71e138595db007749d6b6b9c2423cc75dd1509",
+  "stage": "development",
+  "status": "EVALUATED_GOLD_JOINED"
+}

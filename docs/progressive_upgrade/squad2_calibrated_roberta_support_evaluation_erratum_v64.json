@@ -1,0 +1,33 @@
+{
+  "schema_version": "frc-squad2-v64-evaluation-implementation-erratum-v1",
+  "experiment_id": "FRC-SQUAD2-CALIBRATED-ROBERTA-SUPPORT-V64",
+  "registered_after_retrieval_scoring_before_final_metric_computation": true,
+  "issue": {
+    "failed_command_stage": "confirmation evaluate",
+    "exception": "KeyError: selected_v58_commitment_overlap",
+    "cause": "The inherited v59 candidate-coverage helper requires its legacy v58-only audit-key name, while v64 records the stricter v58-v61 union overlap as selected_prior_commitment_overlap.",
+    "failure_occurred_before_gold_coverage_write_final_metric_computation_or_result_freeze": true
+  },
+  "correction": {
+    "compatibility_mapping": "Pass selected_prior_commitment_overlap through the inherited helper under its legacy selected_v58_commitment_overlap key, while retaining the v64 union field as the source of truth.",
+    "mapping_is_audit_metadata_only": true,
+    "sample_score_threshold_metric_or_gate_changed": false,
+    "prepared_query_raw_qa_thresholded_support_or_score_cache_rewritten": false,
+    "final_metrics_computed_before_erratum": false,
+    "selector_adoption_or_rollout_authorized": false
+  },
+  "hashes": {
+    "prior_implementation_erratum": "d1f1a85c446bf5a02e93f5f022fb87cec6fd0616be5ed77d74742344166facfb",
+    "retrieval_open": "3d91bc031168214c3f1bce986ba14ae7033d7c7f952cdc59c5156ec03e52ec3e",
+    "score_cache": "659d913a6893e7caf339ba887d561b4ce0b6eb7ce50e1a375625d378aafe87ea",
+    "corrected_module": "5ffc87ac3f3185a09ab2b60a82fd1558f9f6368da7b20ba51d39985691f02053",
+    "corrected_runner": "d2b8f321c8548741532408bb66253045e90fe0e06d79efc9d5afdc775643a559",
+    "regression_tests": "02bae2ec45e82a48590caae6b8640713788408e7934ab818102ac46b6c1f5f1c"
+  },
+  "synthetic_tests": {
+    "passed": 12,
+    "failed": 0,
+    "new_regression": "candidate coverage adapts the v64 union-overlap field to the inherited legacy audit key"
+  },
+  "gate_2": "NO-GO/SHADOW"
+}

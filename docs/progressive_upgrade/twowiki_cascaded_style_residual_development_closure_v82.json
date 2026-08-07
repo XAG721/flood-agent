@@ -1,0 +1,12 @@
+{
+  "confirmation_open_authorized": false,
+  "experiment_id": "FRC-2WIKI-CASCADED-STYLE-RESIDUAL-PROSPECTIVE-V82",
+  "further_same_source_confirmation_authorized": false,
+  "gate_2": "NO-GO/SHADOW",
+  "result_sha256": "85bc05b457bd3301fb1fa11bb47e9212f8ac5b3f0439fb1e4e778bf822268d6b",
+  "reuse_stage_for_model_feature_threshold_gate_or_selection": false,
+  "schema_version": "frc-twowiki-cascaded-style-residual-closure-v82",
+  "selector_adoption_authorized": false,
+  "stage": "development",
+  "status": "2WIKI_V82_CASCADED_ROUTER_DEVELOPMENT_ADVANTAGE_NOT_ESTABLISHED_STOP"
+}

@@ -1,0 +1,65 @@
+{
+  "schema_version": "frc-twowiki-cascaded-style-residual-implementation-lock-v82",
+  "experiment_id": "FRC-2WIKI-CASCADED-STYLE-RESIDUAL-PROSPECTIVE-V82",
+  "frozen_on": "2026-08-04",
+  "lock_boundary": "Created after v82 model development, protocol/source registration, implementation, and focused tests; before selecting any v82 target-stage id or reading any selected target row.",
+  "files": {
+    "router": {
+      "path": "research/frc_rag/twowiki_cascaded_style_residual_router.py",
+      "bytes": 29462,
+      "sha256": "68f54b3c90efe1d38904577363a590d137dfae02664f7c42e51bcc421b1a12fd"
+    },
+    "transfer": {
+      "path": "research/frc_rag/twowiki_cascaded_style_residual_transfer.py",
+      "bytes": 27694,
+      "sha256": "a97ea28117bc6185b5b647d3c8980843e49b6cf852aad8331c7e5eddb72ff56d"
+    },
+    "model_runner": {
+      "path": "scripts/run_twowiki_cascaded_style_residual_model.py",
+      "bytes": 2373,
+      "sha256": "8309890419d540d7626005c3967183f645fd7d219a4f9b939e259e325cabe94d"
+    },
+    "transfer_runner": {
+      "path": "scripts/run_twowiki_cascaded_style_residual_transfer.py",
+      "bytes": 15051,
+      "sha256": "4727eaf5c8b1802a69266660455a9aa8c38ba0c48ee2ee4e0d99b46ef5a1c370"
+    },
+    "router_tests": {
+      "path": "tests/test_frc_twowiki_cascaded_style_residual_router.py",
+      "bytes": 3672,
+      "sha256": "4035d92b14b869a6f2463c0d8e0316056f99d2ad946227371228a868f6f92906"
+    },
+    "transfer_tests": {
+      "path": "tests/test_frc_twowiki_cascaded_style_residual_transfer.py",
+      "bytes": 6392,
+      "sha256": "5a55d511443f3ed88a92b8600a6130ca83aa2e4219236dc5678a0ed5ba5b6e8a"
+    },
+    "protocol": {
+      "path": "docs/progressive_upgrade/twowiki_cascaded_style_residual_protocol_v82.json",
+      "bytes": 6990,
+      "sha256": "718f22011df4187c106e9750491fe2750226b1b0a3b0a35bc2c11ce101921335"
+    },
+    "source_registration": {
+      "path": "docs/progressive_upgrade/twowiki_cascaded_style_residual_source_registration_v82.json",
+      "bytes": 6232,
+      "sha256": "0fc797d90cae338ccbb7179c04de14cfe6a3636a5cd16584cd0e10f279ebdf87"
+    },
+    "model_artifact": {
+      "path": "docs/progressive_upgrade/twowiki_cascaded_style_residual_router_model_development_v82.json",
+      "bytes": 182044,
+      "sha256": "8df7c80fef18d55947d08b1e53fd929871b12b8516468da386579fe5fa61a0e6"
+    }
+  },
+  "invariants": {
+    "target_ids_selected_before_lock": 0,
+    "target_rows_read_before_lock": 0,
+    "target_scores_or_gold_metrics_seen_before_lock": false,
+    "all_4200_prior_2wiki_ids_excluded": true,
+    "v81_development_reclassified_as_training_evidence": true,
+    "development_confirmation_disjoint_by_deterministic_selection": true,
+    "confirmation_requires_every_development_strict_gate": true,
+    "model_features_thresholds_controls_gates_stage_sizes_salts_and_metric_seeds_locked": true,
+    "locked_files_must_not_change_after_target_selection": true,
+    "gate_2": "NO-GO/SHADOW"
+  }
+}

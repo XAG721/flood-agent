@@ -1,0 +1,44 @@
+{
+  "elapsed_seconds": 3330.384029,
+  "experiment_id": "FRC-IIRC-LOW-CANDIDATE-ROBUSTNESS-PROSPECTIVE-V89",
+  "implementation_lock_sha256": "c6d55469e5eca367d60f0925b4d0cd297f8aacccced929b7f3e0b69864df41f6",
+  "leakage_boundary": {
+    "blind_cache_excludes_answer_answer_type_context_question_links_and_gold": true,
+    "sealed_gold_created_but_not_read_by_scorer_or_selector": true,
+    "selection_metrics_computed": false
+  },
+  "outcome": "IIRC_V89_ROBUST_CASE_DISJOINT_SUPPORT_ESTABLISHED",
+  "preparation": {
+    "adapter_coverage_rate": 1.0,
+    "blind_sha256": "a5e5f1e70a269fcafecf8a89d6ab061813f958bb22ddba7504f549d758a6adf6",
+    "candidate_sources": {
+      "maximum": 43,
+      "mean": 15.051667,
+      "minimum": 8
+    },
+    "development_confirmation_overlap": 0,
+    "gold_statistics_sealed_not_reported": true,
+    "low_candidate_cases": 0,
+    "overlap_with_any_prior_development_or_confirmation": 0,
+    "requested_unique_context_titles": 12829,
+    "resolved_unique_context_titles": 12819,
+    "sealed_gold_sha256": "a763d4cc9051ad1be43b41384099f834c6b77ef843376c1be95714b3c19f5a10",
+    "selected_cases": 1200,
+    "selected_ids_sha256": "ffda02d3ecd0da07ecb72dd0790d9fd2360be034cc472a464cecaf750b88f21c",
+    "stage": "confirmation",
+    "unresolved_link_sources": 21
+  },
+  "protocol_sha256": "94470ad7b15771d4932d8c2ed2b08fc51037ad76637b896f2e641f04b3e7af38",
+  "result_sha256": "95fdbf57f7fadce8f07932338601f07ee9eefbfda26ac7a96670e3d860d64918",
+  "schema_version": "frc-iirc-low-candidate-robustness-execution-v89",
+  "scored_blind_sha256": "0cbc79b1da60387bfd99f8dea6f566d845c05b1a9602836984d609a4d03b5b08",
+  "scored_cases": 1200,
+  "selection_rows": 1200,
+  "selection_sha256": "ac03c985a4b3753af46a74be7466aa9d8ec43a10126569c7d155c5556480782b",
+  "source_registration_sha256": "770697acb839c07cc237c19c404b23f39ef5b4487a085b4e444067a07c8091ac",
+  "stage": "confirmation",
+  "status": "EVALUATED_GOLD_JOINED",
+  "v86_model_sha256": "3b125e02779d385e63f3cbd47000e2c2fe2882456935150f1e47ec4354a9475c",
+  "v87_model_sha256": "e4a32857ca60ff7fa92c0f14a129b5101c4817fd95856f78e66012457792de70",
+  "v88_model_sha256": "b663364f02443f3c7f485a39734ea8f5ef59b25aa5e57a76b0fe1acd9fa23439"
+}

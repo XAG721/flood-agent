@@ -1,0 +1,55 @@
+{
+  "schema_version": "frc-hotpot-question-type-cardinality-implementation-lock-v84",
+  "experiment_id": "FRC-HOTPOT-QUESTION-TYPE-CARDINALITY-PROSPECTIVE-V84",
+  "frozen_on": "2026-08-04",
+  "frozen_before_v84_target_id_selection": true,
+  "files": {
+    "router": {
+      "path": "research/frc_rag/hotpot_question_type_cardinality_router.py",
+      "bytes": 26325,
+      "sha256": "bfce1bd1f6e88cfe210e56b9d3e5327e4add425ab82196637bfc1329caed3bf3"
+    },
+    "transfer": {
+      "path": "research/frc_rag/hotpot_question_type_cardinality_transfer.py",
+      "bytes": 32364,
+      "sha256": "35309b98a47ec7bf3a9a3ae5f6aba6f22079aeb309defa97f76a0f724388b9b5"
+    },
+    "model_runner": {
+      "path": "scripts/run_hotpot_question_type_cardinality_model.py",
+      "bytes": 2071,
+      "sha256": "c118ddd92e272899a704e0bc31a44ddffa6c5b29ad171bed6453ff4ccf1654af"
+    },
+    "transfer_runner": {
+      "path": "scripts/run_hotpot_question_type_cardinality_transfer.py",
+      "bytes": 13493,
+      "sha256": "ef5266a39d53aeabbfe43efb4399f49944a7b19a8b6e6ed64eb7128f01b98dbe"
+    },
+    "router_tests": {
+      "path": "tests/test_frc_hotpot_question_type_cardinality_router.py",
+      "bytes": 3778,
+      "sha256": "be86b70c5275c69f606c92ca8e2489370cdd8962e8ff5a35f70d47a6a4910ef1"
+    },
+    "transfer_tests": {
+      "path": "tests/test_frc_hotpot_question_type_cardinality_transfer.py",
+      "bytes": 5548,
+      "sha256": "ee339b11778c63c4d70c198674e5ffa4164416b24a66c23809b596daa8dfb3ac"
+    },
+    "protocol": {
+      "path": "docs/progressive_upgrade/hotpot_question_type_cardinality_protocol_v84.json",
+      "bytes": 7395,
+      "sha256": "17cd5e97a3540e02e1211d91535612f5ac3095127871bb38f09a2dd1dfa4478e"
+    },
+    "source_registration": {
+      "path": "docs/progressive_upgrade/hotpot_question_type_cardinality_source_registration_v84.json",
+      "bytes": 5039,
+      "sha256": "0f6ffd721ba36c44e5d1d30331a2160e138a7081d4017b0025f37b274a41907a"
+    },
+    "model_artifact": {
+      "path": "docs/progressive_upgrade/hotpot_question_type_cardinality_router_model_development_v84.json",
+      "bytes": 327765,
+      "sha256": "5b32dc2138469b0a64f14852ed233810c56f7f3572a059c3c987f28670ae3db3"
+    }
+  },
+  "mutation_rule": "Any change to a locked file requires a new experiment version and new untouched target ids.",
+  "gate_2": "NO-GO/SHADOW"
+}

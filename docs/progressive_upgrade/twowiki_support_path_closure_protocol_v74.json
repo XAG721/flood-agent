@@ -1,0 +1,115 @@
+{
+  "schema_version": "frc-twowiki-support-path-closure-protocol-v74",
+  "experiment_id": "FRC-2WIKI-SUPPORT-PATH-CLOSURE-V74",
+  "frozen_on": "2026-08-04",
+  "research_question": "Can a gold-free exact-title support graph close multi-hop evidence paths more accurately than same-resource frozen retrieval controls on case-disjoint 2WikiMultiHopQA examples?",
+  "history_boundary": {
+    "mechanism_development_artifact": "docs/progressive_upgrade/twowiki_support_path_closure_mechanism_development_v74.json",
+    "history_cases": 1000,
+    "all_history_ids_excluded": true,
+    "no_v74_target_case_metric_used_to_choose_mechanism_weight_gate_or_stage_size": true
+  },
+  "stages": {
+    "development": {
+      "source_split": "dev",
+      "cases": 800,
+      "question_type_quota": {"bridge_comparison": 200, "comparison": 200, "compositional": 200, "inference": 200},
+      "ordering": "SHA-256('FRC-2WIKI-V74-DEVELOPMENT|' + case id), then case id",
+      "exclude_history_ids": true
+    },
+    "confirmation": {
+      "source_split": "dev",
+      "cases": 800,
+      "question_type_quota": {"bridge_comparison": 200, "comparison": 200, "compositional": 200, "inference": 200},
+      "ordering": "SHA-256('FRC-2WIKI-V74-CONFIRMATION|' + case id), then case id",
+      "exclude_history_and_development_ids": true,
+      "open_only_if_every_development_gate_passes": true
+    }
+  },
+  "common_resources": {
+    "top_k": 5,
+    "token_budget": 1500,
+    "embedding_model": "BAAI/bge-large-en-v1.5@d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "score_calibration": "per-case min-max",
+    "role_relevance_mix": 0.15,
+    "rrf_k": 60
+  },
+  "candidate": {
+    "name": "soft_title_link_support_path_closure_v74",
+    "link_normalization": "lowercase ASCII alphanumeric tokens joined by one space",
+    "link_match": "case-insensitive exact normalized title surface with alphanumeric boundaries in a different-title candidate text",
+    "edge_direction": "symmetrized",
+    "link_bonus": 1.0,
+    "new_source_bonus": 0.1,
+    "selection_score": "cross_encoder + 1.0 * linked_to_any_selected + 0.1 * source_not_yet_selected",
+    "first_selection": "cross_encoder only",
+    "tie_break": "higher selection score, then higher cross_encoder score, then lexicographically smaller candidate id",
+    "gold_answer_or_official_question_type_used_by_selector": false
+  },
+  "controls": [
+    "bm25_topk",
+    "dense_topk",
+    "hybrid_topk",
+    "cross_encoder_topk",
+    "coverage_greedy_proxy",
+    "frc_select",
+    "title_link_only_control",
+    "cross_plus_title_link_without_source_diversity_control",
+    "hard_title_link_chain_control",
+    "alternating_anchor_link_control"
+  ],
+  "metrics": {
+    "primary": "evidence_macro_f1",
+    "secondary": [
+      "evidence_macro_recall",
+      "complete_evidence_recall",
+      "mean_selected_tokens",
+      "per_question_type_evidence_macro_f1"
+    ],
+    "paired_uncertainty": "10000 case bootstrap resamples",
+    "development_seed": 20261001,
+    "confirmation_seed": 20261002
+  },
+  "development_gates": {
+    "exact_cases": 800,
+    "exact_question_type_balance": true,
+    "history_or_stage_overlap": 0,
+    "invalid_selector_output_rate": 0.0,
+    "candidate_evidence_macro_f1_at_least": 0.5,
+    "candidate_evidence_macro_recall_at_least": 0.8,
+    "candidate_complete_evidence_recall_at_least": 0.55,
+    "candidate_minus_strongest_same_resource_control_f1_at_least": 0.01,
+    "candidate_minus_strongest_same_resource_control_ci_low_above": 0.0,
+    "candidate_minus_frc_select_f1_at_least": 0.03,
+    "candidate_minus_frc_select_ci_low_above": 0.0,
+    "every_question_type_delta_vs_strongest_control_at_least": -0.02,
+    "mean_selected_tokens_not_above_strongest_control_by_more_than_fraction": 0.05
+  },
+  "confirmation_policy": {
+    "all_development_gates_required": true,
+    "no_target_stage_tuning": true,
+    "confirmation_uses_identical_selector_controls_metrics_and_thresholds": true,
+    "confirmation_success_does_not_authorize_production_or_gate_2_promotion": true
+  },
+  "leakage_controls": {
+    "stage_selection_uses_only_case_id_and_question_type": true,
+    "model_side_blind_rows_exclude_answer_gold_evidence_ids_gold_flags_and_gold_roles": true,
+    "selection_outputs_written_before_gold_join": true,
+    "audited_case_evidence_excludes_question_context_answer_and_candidate_text": true
+  },
+  "stopping_and_outcomes": {
+    "development_failure": "2WIKI_V74_SUPPORT_PATH_CLOSURE_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+    "confirmation_failure": "2WIKI_V74_SUPPORT_PATH_CLOSURE_CONFIRMATION_SUPPORT_NOT_ESTABLISHED",
+    "confirmation_success": "2WIKI_V74_SUPPORT_PATH_CLOSURE_CASE_DISJOINT_SUPPORT_ESTABLISHED",
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "claim_limits": [
+    "Not an official 2WikiMultiHopQA leaderboard result.",
+    "Not an independent-dataset result because the mechanism history and target stages share the public dataset.",
+    "Not strict independent model-training confirmation.",
+    "Not automatic decomposition, answer generation, flood-domain expert validation, production, CANARY, or DEFAULT evidence."
+  ]
+}

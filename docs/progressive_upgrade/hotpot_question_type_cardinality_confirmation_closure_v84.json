@@ -1,0 +1,12 @@
+{
+  "confirmation_open_authorized": false,
+  "experiment_id": "FRC-HOTPOT-QUESTION-TYPE-CARDINALITY-PROSPECTIVE-V84",
+  "further_same_source_confirmation_authorized": false,
+  "gate_2": "NO-GO/SHADOW",
+  "result_sha256": "7d6aa9d39db81df4b75f120941445db49cbaabcffde32cccfd3582addba5e7ff",
+  "reuse_stage_for_model_feature_threshold_gate_or_selection": false,
+  "schema_version": "frc-hotpot-question-type-cardinality-closure-v84",
+  "selector_adoption_authorized": false,
+  "stage": "confirmation",
+  "status": "HOTPOT_V84_CARDINALITY_CASE_DISJOINT_CONSTRAINED_ADVANTAGE_ESTABLISHED"
+}

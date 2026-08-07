@@ -1,0 +1,31 @@
+{
+  "schema_version": "frc-fetaqa-consensus-guarded-execution-erratum-v47",
+  "experiment_id": "FRC-FETAQA-CONSENSUS-GUARDED-ATOMIC-ROLES-V47",
+  "recorded_at": "2026-08-02T08:43:00+08:00",
+  "superseded_execution_sha256": "bc3de77a6ddd5be0b0ce67827cc97efcdb4ab478e95a9678889f778cd1ac4c48",
+  "effective_execution_sha256": "8a90760341d384cc260d165c8354f731475d78ee2fe79dc162fc4ce1adc373cd",
+  "reason": "The first execution registration used the active base Python 3.13 interpreter with CPU-only torch 2.13.0 while the frozen device parameter was cuda. No query generation, neural scoring, gold join, metric computation or bootstrap had started. The registration was immediately replaced using the pre-existing rag_exp Python 3.10 environment with torch 2.4.1+cu124 and the NVIDIA GeForce RTX 4060 Ti used by the preceding registered experiments.",
+  "unchanged": {
+    "protocol_sha256": "29e10028399535034b5384186565660ac4d051d2cd37d4990b7bdcc175540a7d",
+    "implementation_registration_sha256": "3f89607c7f9e1f3e06e26d0aeea1fcf7b8e8552da55a0549355efa6df84bb686",
+    "source_archive_sha256": "cc514ecdde2b7bfd9d7929f1062c95cc80478697d06d1a201146f3da7812e22b",
+    "prepared_blind_sha256": "edb4c1e25b2b067b2b09af9674979c390d77a76a0b8d4b956aa195b74f4e79c4",
+    "candidate_map_sha256": "9b88dd649dfd4ef04d70b9228ff83592ecb49bf33e12bac2b8414a77d1f07b67",
+    "blind_census_sha256": "be6ee5d6bc803e467e286878482d90370a09db6866fcb60292428e6a768e5d82",
+    "candidate_coverage_sha256": "e1e49a7c044791291bca21880c87612308e1aa1242765b89a576ab20d44dc1d8",
+    "sample_cases": 600,
+    "method": "consensus_guarded_adaptive_cardinality_frc_v46",
+    "token_budgets": [
+      256,
+      512,
+      1024
+    ],
+    "bootstrap_seed": 20260807,
+    "bootstrap_resamples": 10000
+  },
+  "method_threshold_sample_metric_or_seed_changed": false,
+  "queries_generated_before_correction": false,
+  "neural_scores_generated_before_correction": false,
+  "metrics_seen_before_correction": false,
+  "gate_2": "NO-GO/SHADOW"
+}

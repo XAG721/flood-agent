@@ -1,0 +1,40 @@
+{
+  "schema_version": "frc-evidence-inference-low-core-divergence-execution-erratum-v49",
+  "experiment_id": "FRC-EVIDENCE-INFERENCE-LOW-CORE-DIVERGENCE-GUARDED-ATOMIC-ROLES-V49",
+  "recorded_at": "2026-08-02T17:45:00+08:00",
+  "effective_execution_sha256": "294e7a63298fc4fba1e2e6d487f00029da999a1be72087b04af8033ef8284b8e",
+  "reason": "The outer command orchestrator returned exit code 124 after 4845.3 seconds, after the query-generation process had completed all 600 rows and emitted its valid completion summary. The completed cache was independently reopened and validated for row count, frozen case order, schema, absence of gold fields, parser fallback rate and SHA-256 before neural scoring began. The cache was not regenerated and no method, threshold, sample, metric, seed or runtime parameter changed.",
+  "completed_cache": {
+    "path": ".cache/benchmarks/evidence_inference/v49/queries.jsonl",
+    "rows": 600,
+    "queries_sha256": "2f5f3458766d5a75d9e35cb4ee150b7f576422b70ae7b0e1c55ce9fe4b11b516",
+    "fallback_count": 16,
+    "fallback_rate": 0.026667,
+    "gold_fields_visible_to_generator": false,
+    "independent_validation_passed": true
+  },
+  "unchanged": {
+    "protocol_sha256": "e937f230bbb4a359cc2787edd6f33e90e5e6b084c5b7f14a8ca9f4f58c3d5d0c",
+    "implementation_registration_sha256": "f7c7331321e94040067c9734abcc4adbc87e77db83242843d9cb9441a2a3be4b",
+    "source_archive_sha256": "6abe0d4ec0d331834981c0171c3c79d47515761867f82f1dc6066e43863a1586",
+    "prepared_blind_sha256": "cb8fecea81ed9747d25a098e1d8863d071fc7db5746106143aa44c75056f90e0",
+    "candidate_map_sha256": "51adbf04399f685aaa6e4d0a7ee0daed143d91a6e9138960f419ef33f056ddd6",
+    "blind_census_sha256": "0dbd3a5818ab36787f6f888423c0023f8c0a7fb8cc2cdac895ce064f46ad5c5d",
+    "candidate_coverage_sha256": "5dc556a7079d5cc1b1d21b354ba9ba2ecf71695c1c5453a9f4651c044e3b571b",
+    "sample_cases": 600,
+    "method": "low_core_divergence_guarded_frc_v49",
+    "token_budgets": [
+      256,
+      512,
+      1024
+    ],
+    "bootstrap_seed": 20260809,
+    "bootstrap_resamples": 10000
+  },
+  "method_threshold_sample_metric_or_seed_changed": false,
+  "query_cache_regenerated_after_timeout": false,
+  "gold_joined_before_independent_cache_validation": false,
+  "neural_scores_generated_before_independent_cache_validation": false,
+  "metrics_seen_before_independent_cache_validation": false,
+  "gate_2": "NO-GO/SHADOW"
+}

@@ -1,0 +1,183 @@
+{
+  "schema_version": "frc-conflicts-selector-routing-protocol-v1",
+  "registered_on": "2026-08-01",
+  "purpose": "Retrospectively test whether runtime-observable disagreement and retrieval diagnostics can cross-fit a per-case selector router over the six already frozen CONFLICTS methods, while separately measuring whether FRC contributes beyond the five reproducible baselines.",
+  "development_boundary": {
+    "retrospective_discovery": true,
+    "pre_registered_confirmation": false,
+    "prior_aggregate_probe_disclosed": true,
+    "independent_confirmation": false,
+    "gate_evidence": false,
+    "production_authorization": false,
+    "existing_predictions_reused": true,
+    "new_model_generation": false,
+    "automatic_system_policy_changed": false
+  },
+  "prior_exposure": {
+    "disclosed_before_canonical_artifact_generation": true,
+    "aggregate_oracle_accuracy_seen": 0.545852,
+    "sklearn_probe_version": "1.7.2",
+    "sklearn_probe_all_router_accuracy_seen": 0.395197,
+    "sklearn_probe_all_router_gain_seen": 0.050218,
+    "sklearn_probe_paired_ci_seen": [
+      0.008734,
+      0.091703
+    ],
+    "strict_no_frc_router_accuracy_seen": 0.393013,
+    "dependency_free_newton_reproduction_correct_counts_seen": {
+      "all_methods": 181,
+      "without_frc": 180
+    },
+    "canonical_diagnostic_first_run_seen_before_final_status": {
+      "all_router_outdated_conflict_recall": 0.258065,
+      "static_outdated_conflict_recall": 0.693548,
+      "folds_with_negative_accuracy_gain": 2
+    },
+    "interpretation": "These values were visible before this protocol file and canonical output were written. The experiment is therefore a transparent retrospective discovery and must not be described as preregistered confirmation."
+  },
+  "frozen_inputs": {
+    "dataset": "Google CONFLICTS",
+    "dataset_license": "Apache-2.0",
+    "scored_cases": {
+      "path_label": "scored_cases.jsonl",
+      "sha256": "45973a7fa91c83119858dbe67d28c5b959a9ee79b0a6606abeb62ebdce4c4072",
+      "record_count": 458
+    },
+    "selected_evidence": {
+      "path_label": "selected_evidence.jsonl",
+      "sha256": "8241ee7d1592e4b4b8fa58baebfa43b59ebe78a6b09627ceac6cf36a9d21d728",
+      "record_count": 2748
+    },
+    "conflict_predictions": {
+      "path_label": "conflict_predictions.jsonl",
+      "sha256": "be739f8d649e7cb841e99c6d318400a536f76cc84d0b44a072d0fbe2c1c39db8",
+      "record_count": 2748
+    },
+    "selection_budget": {
+      "top_k": 5,
+      "token_budget": 1500
+    },
+    "shared_classifier": "Qwen2.5-7B-Instruct-GPTQ-Int4"
+  },
+  "frozen_router": {
+    "methods": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "coverage_greedy_proxy",
+      "frc_select"
+    ],
+    "static_baseline": "coverage_greedy_proxy",
+    "strict_without_frc_methods": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "coverage_greedy_proxy"
+    ],
+    "fold_namespace": "frc-router-v1",
+    "fold_count": 5,
+    "fold_assignment": "int(sha256('frc-router-v1|' + case_id)[:8], 16) mod 5",
+    "case_grouped": true,
+    "training_unit": "one case-method pair from folds other than the evaluation fold",
+    "target": "whether the frozen shared classifier prediction for that case-method pair equals the public conflict label",
+    "logistic_solver": "dependency-free standardized Newton/IRLS binary logistic regression",
+    "logistic_l2": 1.0,
+    "logistic_max_iterations": 100,
+    "logistic_step_tolerance": 1e-09,
+    "method_choice": "highest predicted correctness probability; frozen method order breaks exact ties",
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 20260713
+  },
+  "feature_contract": {
+    "all_method_feature_count": 47,
+    "strict_without_frc_feature_count": 45,
+    "whitelisted_families": [
+      "candidate method one-hot",
+      "shared classifier predicted-label one-hot",
+      "own-label vote share and distinct-label share within the variant method set",
+      "selected count, token cost, source-domain coverage and lexical diversity",
+      "mean, standard deviation, maximum and top margin for BM25, dense, hybrid and cross-encoder scores",
+      "mean and maximum for four role scores",
+      "pairwise selected-ID Jaccard against methods inside the same variant"
+    ],
+    "strict_without_frc_reads_frc_prediction_or_selection": false,
+    "banned_runtime_features": [
+      "gold_label",
+      "conflict_type",
+      "correct_answer",
+      "classification_correct",
+      "answer_token_recall",
+      "exact_answer_support",
+      "newest_date_retention",
+      "temporal_endpoint_coverage"
+    ],
+    "gold_usage": "training target and reporting metrics only",
+    "raw_question_or_answer_written_to_evidence": false
+  },
+  "frozen_metrics": {
+    "primary": [
+      "cross-fitted accuracy",
+      "paired all-router minus static-baseline accuracy with 95% bootstrap interval"
+    ],
+    "secondary": [
+      "macro-F1",
+      "per-label precision, recall and F1",
+      "per-label recall delta against the static baseline",
+      "per-fold accuracy",
+      "method choice counts",
+      "strict no-FRC cross-fitted accuracy",
+      "all-method and no-FRC oracle upper bounds",
+      "FRC-unique oracle correct cases",
+      "unique selection signatures per case"
+    ],
+    "discovery_signal_checks": {
+      "all_router_point_gain_at_least_0_05": 0.05,
+      "all_router_paired_ci_low_above_zero": 0.0
+    },
+    "confirmation_or_adoption_checks": {
+      "paired_ci_low_at_least_0_05": 0.05,
+      "frc_crossfit_contribution_at_least_0_01": 0.01,
+      "frc_unique_oracle_gain_at_least_0_05": 0.05,
+      "all_folds_nonnegative_accuracy_gain": true,
+      "outdated_conflict_recall_not_lower_than_static": true,
+      "misinformation_recall_above_zero": true,
+      "untouched_independent_dataset_required": true
+    }
+  },
+  "implementation": {
+    "files": [
+      {
+        "path": "research/frc_rag/conflicts_selector_router.py",
+        "sha256": "f74b5647e54864f482b5ca8a34928594b38bea5134eefdafdc020d139e34c77c"
+      },
+      {
+        "path": "scripts/run_conflicts_selector_router.py",
+        "sha256": "e8a6dc690e57fa7888e4880b685ee4532193c7c0064c9b2cd1a435f203386f7a"
+      },
+      {
+        "path": "tests/test_frc_conflicts_selector_router.py",
+        "sha256": "f6792b22ebc2300623f03c54753e75eebf3fa5b16ffefa92be9529cee618d9ea"
+      }
+    ],
+    "automated_test_count": 4,
+    "automated_test_status": "PASS",
+    "deterministic_output_rerun": "3/3 byte-identical"
+  },
+  "decision_policy": {
+    "status_if_discovery_signal_only": "DISCOVERY_ROUTING_SIGNAL_NOT_ADOPTED_FRC_CONTRIBUTION_NOT_ESTABLISHED",
+    "router_adopted": false,
+    "frc_selector_replaced": false,
+    "next_step": "Freeze a genuinely untouched independent routing confirmation before any adoption; do not tune this router further on CONFLICTS.",
+    "gate_2": "NO-GO/SHADOW regardless of this retrospective result",
+    "canary_or_default_authorized": false
+  },
+  "limitations": [
+    "The aggregate CONFLICTS outcome and one exploratory router probe were visible before canonicalization.",
+    "All six method predictions must be available, increasing inference work relative to one static selector.",
+    "The same local Qwen classifier supplies every method prediction and is not an independent expert judge.",
+    "A system-level routing gain does not establish that FRC itself outperforms the reproducible baselines.",
+    "No expected-behavior human adherence, flood-domain expert evaluation or production traffic is measured."
+  ]
+}

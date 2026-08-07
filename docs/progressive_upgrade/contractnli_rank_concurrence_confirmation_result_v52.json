@@ -1,0 +1,540 @@
+{
+  "analysis": {
+    "aggregates": {
+      "adaptive_argmax_cardinality_frc_v43": {
+        "abstention_rate": 0.0,
+        "complete_evidence_recall": 0.18,
+        "evidence_bearing_macro_f1": 0.251004,
+        "evidence_macro_precision": 0.270694,
+        "evidence_macro_recall": 0.281752,
+        "evidence_or_abstention_macro_f1": 0.167336,
+        "mean_selected_token_cost": 78.485,
+        "mean_selected_unit_count": 1.826667,
+        "not_mentioned_abstention_accuracy": 0.0
+      },
+      "anchor_guarded_adaptive_cardinality_frc_v45": {
+        "abstention_rate": 0.0,
+        "complete_evidence_recall": 0.290833,
+        "evidence_bearing_macro_f1": 0.261453,
+        "evidence_macro_precision": 0.207903,
+        "evidence_macro_recall": 0.423902,
+        "evidence_or_abstention_macro_f1": 0.174302,
+        "mean_selected_token_cost": 141.010556,
+        "mean_selected_unit_count": 3.222222,
+        "not_mentioned_abstention_accuracy": 0.0
+      },
+      "bm25_topk": {
+        "abstention_rate": 0.0,
+        "complete_evidence_recall": 0.319167,
+        "evidence_bearing_macro_f1": 0.208331,
+        "evidence_macro_precision": 0.144333,
+        "evidence_macro_recall": 0.458033,
+        "evidence_or_abstention_macro_f1": 0.138888,
+        "mean_selected_token_cost": 245.554444,
+        "mean_selected_unit_count": 4.982222,
+        "not_mentioned_abstention_accuracy": 0.0
+      },
+      "consensus_guarded_adaptive_cardinality_frc_v46": {
+        "abstention_rate": 0.0,
+        "complete_evidence_recall": 0.233333,
+        "evidence_bearing_macro_f1": 0.264797,
+        "evidence_macro_precision": 0.238542,
+        "evidence_macro_recall": 0.351776,
+        "evidence_or_abstention_macro_f1": 0.176532,
+        "mean_selected_token_cost": 103.488889,
+        "mean_selected_unit_count": 2.398333,
+        "not_mentioned_abstention_accuracy": 0.0
+      },
+      "cross_encoder_knapsack": {
+        "abstention_rate": 0.0,
+        "complete_evidence_recall": 0.340833,
+        "evidence_bearing_macro_f1": 0.223132,
+        "evidence_macro_precision": 0.156083,
+        "evidence_macro_recall": 0.488547,
+        "evidence_or_abstention_macro_f1": 0.148755,
+        "mean_selected_token_cost": 217.727222,
+        "mean_selected_unit_count": 4.997778,
+        "not_mentioned_abstention_accuracy": 0.0
+      },
+      "cross_encoder_topk": {
+        "abstention_rate": 0.0,
+        "complete_evidence_recall": 0.345,
+        "evidence_bearing_macro_f1": 0.225001,
+        "evidence_macro_precision": 0.157431,
+        "evidence_macro_recall": 0.492991,
+        "evidence_or_abstention_macro_f1": 0.150001,
+        "mean_selected_token_cost": 218.613333,
+        "mean_selected_unit_count": 4.987778,
+        "not_mentioned_abstention_accuracy": 0.0
+      },
+      "dense_topk": {
+        "abstention_rate": 0.0,
+        "complete_evidence_recall": 0.37,
+        "evidence_bearing_macro_f1": 0.232186,
+        "evidence_macro_precision": 0.158708,
+        "evidence_macro_recall": 0.521126,
+        "evidence_or_abstention_macro_f1": 0.154791,
+        "mean_selected_token_cost": 221.605556,
+        "mean_selected_unit_count": 4.985556,
+        "not_mentioned_abstention_accuracy": 0.0
+      },
+      "dynamic_rank_coverage_frc_v41": {
+        "abstention_rate": 0.0,
+        "complete_evidence_recall": 0.34,
+        "evidence_bearing_macro_f1": 0.224049,
+        "evidence_macro_precision": 0.157056,
+        "evidence_macro_recall": 0.489459,
+        "evidence_or_abstention_macro_f1": 0.149366,
+        "mean_selected_token_cost": 215.920556,
+        "mean_selected_unit_count": 4.99,
+        "not_mentioned_abstention_accuracy": 0.0
+      },
+      "guarded_adaptive_cardinality_frc_v44": {
+        "abstention_rate": 0.0,
+        "complete_evidence_recall": 0.290833,
+        "evidence_bearing_macro_f1": 0.261215,
+        "evidence_macro_precision": 0.207694,
+        "evidence_macro_recall": 0.423624,
+        "evidence_or_abstention_macro_f1": 0.174143,
+        "mean_selected_token_cost": 141.011111,
+        "mean_selected_unit_count": 3.222222,
+        "not_mentioned_abstention_accuracy": 0.0
+      },
+      "hybrid_topk": {
+        "abstention_rate": 0.0,
+        "complete_evidence_recall": 0.385833,
+        "evidence_bearing_macro_f1": 0.239614,
+        "evidence_macro_precision": 0.164806,
+        "evidence_macro_recall": 0.531391,
+        "evidence_or_abstention_macro_f1": 0.159743,
+        "mean_selected_token_cost": 245.153889,
+        "mean_selected_unit_count": 4.977222,
+        "not_mentioned_abstention_accuracy": 0.0
+      },
+      "low_core_divergence_guarded_frc_v49": {
+        "abstention_rate": 0.0,
+        "complete_evidence_recall": 0.195,
+        "evidence_bearing_macro_f1": 0.25278,
+        "evidence_macro_precision": 0.262778,
+        "evidence_macro_recall": 0.300079,
+        "evidence_or_abstention_macro_f1": 0.16852,
+        "mean_selected_token_cost": 86.314444,
+        "mean_selected_unit_count": 1.976667,
+        "not_mentioned_abstention_accuracy": 0.0
+      },
+      "native_zero_consensus_low_core_divergence_frc_control_v52": {
+        "abstention_rate": 0.0,
+        "complete_evidence_recall": 0.195,
+        "evidence_bearing_macro_f1": 0.25278,
+        "evidence_macro_precision": 0.262778,
+        "evidence_macro_recall": 0.300079,
+        "evidence_or_abstention_macro_f1": 0.16852,
+        "mean_selected_token_cost": 86.314444,
+        "mean_selected_unit_count": 1.976667,
+        "not_mentioned_abstention_accuracy": 0.0
+      },
+      "rank_concurrence_bm25_topk_v52": {
+        "abstention_rate": 0.373333,
+        "complete_evidence_recall": 0.215833,
+        "evidence_bearing_macro_f1": 0.135198,
+        "evidence_macro_precision": 0.092583,
+        "evidence_macro_recall": 0.301871,
+        "evidence_or_abstention_macro_f1": 0.226799,
+        "mean_selected_token_cost": 151.873889,
+        "mean_selected_unit_count": 3.121667,
+        "not_mentioned_abstention_accuracy": 0.41
+      },
+      "rank_concurrence_cross_encoder_knapsack_v52": {
+        "abstention_rate": 0.373333,
+        "complete_evidence_recall": 0.2325,
+        "evidence_bearing_macro_f1": 0.146914,
+        "evidence_macro_precision": 0.101542,
+        "evidence_macro_recall": 0.329625,
+        "evidence_or_abstention_macro_f1": 0.23461,
+        "mean_selected_token_cost": 136.111667,
+        "mean_selected_unit_count": 3.131667,
+        "not_mentioned_abstention_accuracy": 0.41
+      },
+      "rank_concurrence_cross_encoder_topk_v52": {
+        "abstention_rate": 0.373333,
+        "complete_evidence_recall": 0.236667,
+        "evidence_bearing_macro_f1": 0.14792,
+        "evidence_macro_precision": 0.102139,
+        "evidence_macro_recall": 0.332958,
+        "evidence_or_abstention_macro_f1": 0.23528,
+        "mean_selected_token_cost": 136.72,
+        "mean_selected_unit_count": 3.126667,
+        "not_mentioned_abstention_accuracy": 0.41
+      },
+      "rank_concurrence_dense_topk_v52": {
+        "abstention_rate": 0.373333,
+        "complete_evidence_recall": 0.250833,
+        "evidence_bearing_macro_f1": 0.152435,
+        "evidence_macro_precision": 0.103222,
+        "evidence_macro_recall": 0.34702,
+        "evidence_or_abstention_macro_f1": 0.23829,
+        "mean_selected_token_cost": 138.482222,
+        "mean_selected_unit_count": 3.123333,
+        "not_mentioned_abstention_accuracy": 0.41
+      },
+      "rank_concurrence_hybrid_topk_v52": {
+        "abstention_rate": 0.373333,
+        "complete_evidence_recall": 0.256667,
+        "evidence_bearing_macro_f1": 0.156899,
+        "evidence_macro_precision": 0.107097,
+        "evidence_macro_recall": 0.352329,
+        "evidence_or_abstention_macro_f1": 0.241266,
+        "mean_selected_token_cost": 152.787778,
+        "mean_selected_unit_count": 3.117778,
+        "not_mentioned_abstention_accuracy": 0.41
+      },
+      "rank_concurrence_low_core_divergence_frc_v52": {
+        "abstention_rate": 0.373333,
+        "complete_evidence_recall": 0.121667,
+        "evidence_bearing_macro_f1": 0.170455,
+        "evidence_macro_precision": 0.187917,
+        "evidence_macro_recall": 0.186702,
+        "evidence_or_abstention_macro_f1": 0.250304,
+        "mean_selected_token_cost": 44.507778,
+        "mean_selected_unit_count": 1.016667,
+        "not_mentioned_abstention_accuracy": 0.41
+      },
+      "static_rank_coverage_frc_v41": {
+        "abstention_rate": 0.0,
+        "complete_evidence_recall": 0.341667,
+        "evidence_bearing_macro_f1": 0.225477,
+        "evidence_macro_precision": 0.158097,
+        "evidence_macro_recall": 0.492515,
+        "evidence_or_abstention_macro_f1": 0.150318,
+        "mean_selected_token_cost": 216.756111,
+        "mean_selected_unit_count": 4.989444,
+        "not_mentioned_abstention_accuracy": 0.0
+      },
+      "static_threshold_frc_v39_replay": {
+        "abstention_rate": 0.0,
+        "complete_evidence_recall": 0.344167,
+        "evidence_bearing_macro_f1": 0.226321,
+        "evidence_macro_precision": 0.158597,
+        "evidence_macro_recall": 0.494598,
+        "evidence_or_abstention_macro_f1": 0.150881,
+        "mean_selected_token_cost": 217.801667,
+        "mean_selected_unit_count": 4.990556,
+        "not_mentioned_abstention_accuracy": 0.0
+      }
+    },
+    "budget_deltas": {
+      "1024": 0.006616,
+      "256": 0.013881,
+      "512": 0.006616
+    },
+    "evidence_bearing_macro_f1_drop_vs_ungated_v49": 0.082325,
+    "family_comparison": {
+      "candidate_minus_native_zero_control": {
+        "ci_high": 0.117474,
+        "ci_low": 0.047778,
+        "clusters": 319,
+        "point": 0.081783,
+        "resamples": 10000,
+        "seed": 20260812
+      },
+      "candidate_minus_strongest_shared_gate_non_frc": {
+        "ci_high": 0.024925,
+        "ci_low": -0.006814,
+        "clusters": 319,
+        "point": 0.009038,
+        "resamples": 10000,
+        "seed": 20260812
+      },
+      "candidate_minus_strongest_ungated_frozen_frc": {
+        "ci_high": 0.117474,
+        "ci_low": 0.047778,
+        "clusters": 319,
+        "point": 0.081783,
+        "resamples": 10000,
+        "seed": 20260812
+      },
+      "candidate_minus_ungated_v49": {
+        "ci_high": 0.117474,
+        "ci_low": 0.047778,
+        "clusters": 319,
+        "point": 0.081783,
+        "resamples": 10000,
+        "seed": 20260812
+      }
+    },
+    "gate_formula": "anchor_argmax_id == support_argmax_id or anchor_argmax_id == contradiction_argmax_id",
+    "minimum_budget_or_supported_stratum_delta": -0.027922,
+    "not_mentioned_improvement_vs_native_zero": 0.41,
+    "outcome": {
+      "canary_or_default_authorized": false,
+      "gate_2": "NO-GO/SHADOW",
+      "reuse_train_for_tuning_or_selection": false,
+      "reuse_v50_test_or_v51_dev": false,
+      "selector_adoption_authorized": false,
+      "status": "CONTRACTNLI_V52_RANK_CONCURRENCE_SUPPORT_NOT_ESTABLISHED",
+      "support_established": false
+    },
+    "query_cache": {
+      "deterministic_templates": true,
+      "fallback_count": 0,
+      "fallback_rate": 0.0,
+      "gold_fields_visible_to_generator": false,
+      "rows": 600
+    },
+    "strongest_shared_gate_non_frc": "rank_concurrence_hybrid_topk_v52",
+    "strongest_ungated_frozen_frc": "low_core_divergence_guarded_frc_v49",
+    "support_checks": {
+      "candidate_abstention_rate_at_least_0_05": true,
+      "candidate_abstention_rate_at_most_0_8": true,
+      "candidate_ceiling_complete_rate_on_evidence_cases_equals_1": true,
+      "candidate_minus_native_zero_control_ci_low_above_0": true,
+      "candidate_minus_native_zero_control_point_at_least_0_02": true,
+      "candidate_minus_strongest_shared_gate_non_frc_ci_low_above_0": false,
+      "candidate_minus_strongest_shared_gate_non_frc_point_at_least_0_01": false,
+      "candidate_minus_ungated_v49_ci_low_above_0": true,
+      "candidate_minus_ungated_v49_point_at_least_0_01": true,
+      "deterministic_query_fallback_rate_equals_0": true,
+      "every_budget_and_supported_stratum_delta_at_least_minus_0_03": true,
+      "evidence_bearing_macro_f1_drop_vs_ungated_v49_at_most_0_03": false,
+      "exact_cases_equals_600": true,
+      "not_mentioned_abstention_accuracy_at_least_0_2": true,
+      "not_mentioned_improvement_vs_native_zero_at_least_0_2": true,
+      "not_mentioned_official_empty_evidence_rate_equals_1": true
+    },
+    "supported_stratum_deltas": {
+      "candidate_pool_quartile:q1": {
+        "cases": 153,
+        "delta": 0.031876,
+        "strongest_shared_gate_non_frc": "rank_concurrence_hybrid_topk_v52"
+      },
+      "candidate_pool_quartile:q2": {
+        "cases": 147,
+        "delta": 0.031005,
+        "strongest_shared_gate_non_frc": "rank_concurrence_hybrid_topk_v52"
+      },
+      "candidate_pool_quartile:q3": {
+        "cases": 152,
+        "delta": -0.016114,
+        "strongest_shared_gate_non_frc": "rank_concurrence_dense_topk_v52"
+      },
+      "candidate_pool_quartile:q4": {
+        "cases": 148,
+        "delta": -0.024282,
+        "strongest_shared_gate_non_frc": "rank_concurrence_cross_encoder_topk_v52"
+      },
+      "document_length_quartile:q1": {
+        "cases": 150,
+        "delta": 0.01455,
+        "strongest_shared_gate_non_frc": "rank_concurrence_hybrid_topk_v52"
+      },
+      "document_length_quartile:q2": {
+        "cases": 150,
+        "delta": 0.022175,
+        "strongest_shared_gate_non_frc": "rank_concurrence_hybrid_topk_v52"
+      },
+      "document_length_quartile:q3": {
+        "cases": 151,
+        "delta": 0.004468,
+        "strongest_shared_gate_non_frc": "rank_concurrence_dense_topk_v52"
+      },
+      "document_length_quartile:q4": {
+        "cases": 149,
+        "delta": -0.023279,
+        "strongest_shared_gate_non_frc": "rank_concurrence_cross_encoder_topk_v52"
+      },
+      "document_type:search-pdf": {
+        "cases": 365,
+        "delta": 0.010145,
+        "strongest_shared_gate_non_frc": "rank_concurrence_hybrid_topk_v52"
+      },
+      "document_type:sec-html": {
+        "cases": 104,
+        "delta": -0.0001,
+        "strongest_shared_gate_non_frc": "rank_concurrence_cross_encoder_topk_v52"
+      },
+      "document_type:sec-text": {
+        "cases": 131,
+        "delta": 0.008916,
+        "strongest_shared_gate_non_frc": "rank_concurrence_dense_topk_v52"
+      },
+      "gate_outcome:abstained": {
+        "cases": 224,
+        "delta": 0.0,
+        "strongest_shared_gate_non_frc": "rank_concurrence_bm25_topk_v52"
+      },
+      "gate_outcome:passed": {
+        "cases": 376,
+        "delta": 0.014422,
+        "strongest_shared_gate_non_frc": "rank_concurrence_hybrid_topk_v52"
+      },
+      "label_group:Contradiction": {
+        "cases": 200,
+        "delta": -0.027922,
+        "strongest_shared_gate_non_frc": "rank_concurrence_hybrid_topk_v52"
+      },
+      "label_group:Entailment": {
+        "cases": 200,
+        "delta": 0.054701,
+        "strongest_shared_gate_non_frc": "rank_concurrence_dense_topk_v52"
+      },
+      "label_group:NotMentioned": {
+        "cases": 200,
+        "delta": 0.0,
+        "strongest_shared_gate_non_frc": "rank_concurrence_bm25_topk_v52"
+      }
+    }
+  },
+  "experiment_id": "FRC-CONTRACTNLI-RANK-CONCURRENCE-CONFIRMATION-V52",
+  "metadata": {
+    "balanced_mechanism_sample_not_natural_prevalence": true,
+    "budgets": [
+      256,
+      512,
+      1024
+    ],
+    "cases": 600,
+    "dataset_id": "contractnli_official_train_rank_concurrence_confirmation_v52",
+    "documents": 319,
+    "full_contract_bounded_pool": true,
+    "gold_joined_after_complete_score_cache": true,
+    "label_counts": {
+      "Contradiction": 200,
+      "Entailment": 200,
+      "NotMentioned": 200
+    },
+    "official_leaderboard_result": false,
+    "source_artifacts": {
+      "blind_census_sha256": "8ec57b16adb8686be16d45ef52e5a289624d20e5f3ef1901c0c11ad68b998e15",
+      "candidate_coverage_sha256": "852f0ac5593dda9466cc946d56a0b3e64ef29ce905e513d9455fd52cf522b42b",
+      "candidate_map_sha256": "932704016497132cb5355d1edc6b123b9cf6c4e378279bc0c638930abc7787eb",
+      "execution_registration": {
+        "confirmation_reuse_forbidden": true,
+        "experiment_id": "FRC-CONTRACTNLI-RANK-CONCURRENCE-CONFIRMATION-V52",
+        "gold_joined_for_coverage_or_metrics": false,
+        "hashes": {
+          "blind_census_sha256": "8ec57b16adb8686be16d45ef52e5a289624d20e5f3ef1901c0c11ad68b998e15",
+          "candidate_map_sha256": "932704016497132cb5355d1edc6b123b9cf6c4e378279bc0c638930abc7787eb",
+          "implementation_registration_sha256": "90bc2a52b5feaf4fd20198e0a9f21ea8da5a71f5e5924fe941c33b215465cb8b",
+          "prepared_blind_sha256": "1524c104949521c180e869a107f883c5df84186c42b77cb5ff28a4ba9fd501c8",
+          "source_archive_sha256": "e03fc77bbf8b53e2976a250e81d8a294bc3d5e5fb014521e477dee9340d6287b"
+        },
+        "implementation_registration": {
+          "experiment_id": "FRC-CONTRACTNLI-RANK-CONCURRENCE-CONFIRMATION-V52",
+          "frozen_implementation_contract": {
+            "confirmation_cases": 600,
+            "confirmation_reuse_forbidden": true,
+            "confirmation_split": "official train",
+            "formula_or_method_change_after_registration_forbidden": true,
+            "gold_join_only_after_complete_score_cache": true,
+            "minimum_documents": 80,
+            "negative_null_or_inconclusive_result_must_be_published": true,
+            "query_generator": "none",
+            "rank_gate": "anchor argmax id equals support argmax id or contradiction argmax id",
+            "selector_after_pass": "low_core_divergence_guarded_frc_v49",
+            "threshold": null
+          },
+          "hashes": {
+            "module_sha256": "2d18cb0ea7a319b6e4ca0c56b84765e66e79deeeaa12b8213ac8833b39564345",
+            "protocol_sha256": "048fe13d87a58e8b6630387c9c0cc8e7c1e72119a54ed8719498d32ef6bc9251",
+            "runner_sha256": "386304650a00f7e42477d4b419e03b94088e16f980ef9add328a916a999c0407",
+            "test_sha256": "d290ca46728119aae6b7d5fd4c8d482b51ab35c6e2ae446a146abc47d124cd81"
+          },
+          "learned_or_dataset_fitted_parameter": false,
+          "purpose": "Freeze the parameter-free rank-concurrence gate, one-split blind confirmation runner and synthetic invariants before official ContractNLI train content is opened.",
+          "registered_at": "2026-08-02T20:21:00+08:00",
+          "schema_version": "frc-contractnli-rank-concurrence-implementation-v52",
+          "synthetic_invariants_verified": {
+            "archive_reader_opens_only_requested_train_member": true,
+            "balanced_sampling_is_order_invariant_and_document_capped": true,
+            "blind_cache_and_deterministic_queries_are_gold_free": true,
+            "candidate_and_non_frc_controls_share_the_identical_gate": true,
+            "candidate_coverage_requires_exact_registered_confirmation_structure": true,
+            "evaluation_bootstrap_and_outputs_are_deterministic": true,
+            "exact_ties_use_canonical_candidate_id": true,
+            "gate_is_candidate_permutation_invariant": true,
+            "gate_is_independently_strictly_monotone_role_score_invariant": true,
+            "protocol_hash_untouched_train_and_parameter_free_boundary_frozen": true,
+            "published_case_evidence_contains_no_text_or_gold_candidate_ids": true,
+            "same_top_span_rank_concurrence_is_required": true
+          },
+          "synthetic_test_command": "python -m pytest tests/test_frc_contractnli_rank_concurrence_confirmation.py -q --basetemp D:\\graduation_project\\output\\pytest-tmp-contractnli-v52-synthetic-2",
+          "synthetic_test_result": {
+            "duration_seconds": 0.22,
+            "failed": 0,
+            "passed": 8
+          },
+          "train_content_opened_before_registration": false,
+          "v50_test_or_v51_dev_case_level_artifact_used": false
+        },
+        "metrics_computed": false,
+        "neural_scoring_started": false,
+        "query_generation_started": false,
+        "rank_gate_formula_change_after_registration_forbidden": true,
+        "registered_at": "2026-08-02T20:25:00+08:00",
+        "runtime": {
+          "cuda_available": true,
+          "cuda_runtime": "12.4",
+          "gpu": "NVIDIA GeForce RTX 4060 Ti",
+          "gpu_memory_mib": 16379,
+          "numpy": "2.2.6",
+          "parameters": {
+            "case_batch_size": 4,
+            "device": "cuda",
+            "embedding_batch_size": 64,
+            "fp16": true,
+            "learned_threshold": null,
+            "offline_model_loading": true,
+            "query_generator": "none",
+            "reranker_batch_size": 256,
+            "token_budgets": [
+              256,
+              512,
+              1024
+            ]
+          },
+          "platform": "Windows-10-10.0.19045-SP0",
+          "python": "3.10.20",
+          "torch": "2.4.1+cu124",
+          "transformers": "4.46.3"
+        },
+        "schema_version": "frc-contractnli-v52-execution-registration-v1",
+        "source_artifacts": {
+          "archive_bytes": 65362913,
+          "archive_sha256": "e03fc77bbf8b53e2976a250e81d8a294bc3d5e5fb014521e477dee9340d6287b",
+          "dev_member_opened_by_v52": false,
+          "dev_or_test_member_opened_by_v52": false,
+          "license_identifier": "CC-BY-4.0",
+          "license_sha256": "9e5f1b3c610b9c2da5c313bf81d577a7d1acec686bdb0384edefa6df0f90cd94",
+          "regular_files": 613,
+          "split_members": {
+            "dev": {
+              "bytes": 1183107,
+              "path": "contract-nli/dev.json"
+            },
+            "test": {
+              "bytes": 2260203,
+              "path": "contract-nli/test.json"
+            },
+            "train": {
+              "bytes": 7608211,
+              "path": "contract-nli/train.json"
+            }
+          },
+          "test_member_opened_by_v52": false,
+          "train_member_opened_by_v52": false,
+          "train_member_opened_for_registered_blind_preparation": true
+        }
+      },
+      "execution_registration_sha256": "73ff52938f6b86f9844216330875c385af700b5798aa2bce130e82ec15873801",
+      "module_sha256": "2d18cb0ea7a319b6e4ca0c56b84765e66e79deeeaa12b8213ac8833b39564345",
+      "prepared_blind_sha256": "1524c104949521c180e869a107f883c5df84186c42b77cb5ff28a4ba9fd501c8",
+      "queries_sha256": "ccc92eae1a7e459bc8bed475911516f1ff98b2c7923235713b3ce93914af4be6",
+      "runner_sha256": "386304650a00f7e42477d4b419e03b94088e16f980ef9add328a916a999c0407",
+      "scored_sha256": "120055e204035c60800844993db2f22d399ac32011c7a3d0ee27fb44fc353175",
+      "test_sha256": "d290ca46728119aae6b7d5fd4c8d482b51ab35c6e2ae446a146abc47d124cd81"
+    },
+    "split": "official train role-reversed as untouched confirmation",
+    "v50_test_or_v51_dev_reused": false
+  },
+  "schema_version": "frc-contractnli-rank-concurrence-report-v52"
+}

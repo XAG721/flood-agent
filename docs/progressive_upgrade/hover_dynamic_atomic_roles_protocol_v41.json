@@ -1,0 +1,165 @@
+{
+  "schema_version": "frc-hover-dynamic-atomic-roles-protocol-v2",
+  "registered_at": "2026-08-01T14:31:35.3203718+08:00",
+  "experiment_id": "FRC-HOVER-DYNAMIC-ATOMIC-ROLES-V41",
+  "purpose": "Recover the v40 prospective mechanism and confirmation test without changing its algorithm, after permanently excluding every v40 partition ID whose aggregate labels and hops were accidentally disclosed.",
+  "integrity_lineage": {
+    "v40_protocol_sha256": "0a3b4302d50dd1d83ff97689e69968effc28abd8ac1c29e682fc4eee6bdbc4f3",
+    "v40_closure_path": "docs/progressive_upgrade/hover_dynamic_atomic_roles_v40_closure.json",
+    "v40_status": "REGISTRATION_BOUNDARY_VIOLATED_BEFORE_SCORING",
+    "v40_algorithm_inherited_without_change": true,
+    "v40_excluded_id_count": 2512,
+    "v41_pool_label_hop_claim_supporting_fact_or_candidate_statistics_known_before_registration": false,
+    "v41_dynamic_queries_scores_selections_or_metrics_known_before_registration": false,
+    "source_files_downloaded_before_v41_registration": true,
+    "boundary_interpretation": "Source file hashes and all 18,171 public UIDs are known. Only v40 partition aggregate labels/hops were disclosed; those IDs are excluded. No non-v40 row content or gold aggregate informed this frozen recovery protocol."
+  },
+  "frozen_sources": {
+    "repository_revision": "39b84697f196308f398a251a7aea9b82ae0f0562",
+    "dataset": {
+      "path": ".cache/benchmarks/hover/hover_train_release_v1.1.json",
+      "size_bytes": 9205582,
+      "sha256": "1f1cd57abd616fa00c70bdc575ce77c16fc6cf1a6cffd5ff87c208030a336bb6"
+    },
+    "official_tfidf_candidates": {
+      "path": ".cache/benchmarks/hover/train_tfidf_doc_retrieval_results.json",
+      "size_bytes": 87299624,
+      "sha256": "45e03a5e47ce8076981eefc86f28d764f4c2eddf1b94b69d9263675260108462"
+    },
+    "wikipedia_database": {
+      "path": ".cache/benchmarks/hover/wiki_wo_links.db",
+      "size_bytes": 2156273664,
+      "sha256": "c37ee397916ec0bffacfe8902db454a5cda88a7a188409217b2e15231fe5ee2f"
+    },
+    "raw_sources_committed": false
+  },
+  "frozen_partition": {
+    "v40_exclusion": "Compute v40 ordering exactly as SHA-256('FRC-HOVER-DYNAMIC-ATOMIC-ROLES-V40|' + uid), then uid; exclude the first 2512 IDs.",
+    "eligible_pool": "All remaining rows with unique non-empty uid and an official TF-IDF row with the same unique id. Do not compute claims, labels, hops, supporting facts, candidate titles, or candidate-ceiling statistics while constructing the ID pool.",
+    "v41_ordering": "Sort eligible IDs by SHA-256 of UTF-8 'FRC-HOVER-DYNAMIC-ATOMIC-ROLES-V41|' + uid, then uid.",
+    "mechanism_pilot": "First 512 v41-ordered IDs.",
+    "confirmation": "Next 2000 v41-ordered IDs; do not prepare, generate, score, or join any content/gold until every pilot mechanism gate passes and an execution registration is written.",
+    "remaining_rows": "Excluded without substitution.",
+    "content_balancing_or_case_replacement": false
+  },
+  "frozen_candidate_adapter": {
+    "candidate_depth": 20,
+    "membership": "Use only doc_retrieval_results[0][0][:20], Unicode-whitespace normalize, deduplicate in release order, and exact-resolve against the frozen database.",
+    "source_order": "SHA-256(normalized title), then normalized title.",
+    "chunking": {
+      "content_tokens": 384,
+      "overlap_tokens": 64,
+      "stride_tokens": 320,
+      "tokenizer_model_revision": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312"
+    },
+    "blindness": "Prepared/query/scored caches exclude label, hop count, supporting facts, public titles, candidate-gold flags, gold units, and candidate ceiling."
+  },
+  "frozen_dynamic_query_generator": {
+    "model": "Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4",
+    "revision": "e9c932ac1893a49ae0fc497ad6e1e86e2e39af20",
+    "input": "Normalized claim only.",
+    "keys": [
+      "anchor",
+      "first_fact",
+      "second_fact_or_bridge",
+      "counterevidence"
+    ],
+    "prompt_and_parse_contract": "Exactly the v40 prompt, exact-four-key strict JSON parser, whitespace normalization, 256-code-point truncation, and four fixed label-neutral fallback templates.",
+    "generation": {
+      "do_sample": false,
+      "max_input_tokens": 512,
+      "max_new_tokens": 160,
+      "batch_size": 8
+    },
+    "forbidden_inputs": [
+      "candidate text or title",
+      "retrieval or role score",
+      "label",
+      "hop count",
+      "supporting fact",
+      "gold unit or candidate-gold flag"
+    ]
+  },
+  "frozen_scoring": {
+    "embedding_model_revision": "BAAI/bge-large-en-v1.5@d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model_revision": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "scores": "BM25, dense cosine, hybrid RRF, direct cross-encoder, four v39 static verification roles, and four dynamic atomic queries.",
+    "calibration": "Independent per-case min-max for every score column; stable candidate-id ties.",
+    "runtime": {
+      "device": "cuda",
+      "fp16": true,
+      "embedding_batch_size": 64,
+      "reranker_batch_size": 256,
+      "case_batch_size": 8,
+      "offline_model_loading": true
+    }
+  },
+  "frozen_methods": [
+    "bm25_topk",
+    "dense_topk",
+    "hybrid_topk",
+    "cross_encoder_topk",
+    "cross_encoder_knapsack",
+    "static_threshold_frc_v39_replay",
+    "static_rank_coverage_frc_v41",
+    "dynamic_rank_coverage_frc_v41"
+  ],
+  "frozen_selector": {
+    "top_k": 5,
+    "token_budgets": [512, 1024, 1500],
+    "v39_replay": "Threshold 0.55, role coverage weight 2, direct relevance weight 1, original feasibility scan and candidate-id tie break.",
+    "v41_source_constraint": "At most one selected chunk per neutral source for both rank-coverage methods.",
+    "rank_utility": "1/log2(2 + zero-based descending role-score rank), candidate-id tie break.",
+    "rank_coverage_gain": "direct_cross_encoder_score + 0.5 * sum(max(0, candidate_rank_utility - current_best_for_role)).",
+    "static_dynamic_isolation": "Only the four static versus dynamic score columns differ.",
+    "post_registration_tuning": false
+  },
+  "gold_free_mechanism_gate": {
+    "partition": "512-row v41 pilot only",
+    "checks": {
+      "generation_fallback_rate_at_most": 0.05,
+      "dynamic_mean_spearman_at_least_0_05_below_static": true,
+      "dynamic_mean_distinct_role_argmax_at_least_0_25_above_static": true,
+      "dynamic_static_ordered_selection_identity_across_all_budgets_at_most": 0.9,
+      "no_forbidden_field_leak": true
+    },
+    "all_required": true,
+    "failure_action": "MECHANISM_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+  },
+  "confirmation_evaluation": {
+    "open_condition": "All pilot mechanism checks pass and execution registration freezes source, ID commitments, pilot artifacts, census, code hashes, and runtime.",
+    "partition": "2000-row v41 confirmation only",
+    "primary": "document_evidence_f1 equally weighted over 512/1024/1500 token budgets",
+    "bootstrap": {
+      "resamples": 10000,
+      "seed": 20260801,
+      "strongest_non_frc_selected_inside_each_resample": true
+    },
+    "strata": [
+      "label=SUPPORTED",
+      "label=NOT_SUPPORTED",
+      "2-hop",
+      "3-hop",
+      "4-hop",
+      "candidate_ceiling_complete",
+      "candidate_ceiling_incomplete"
+    ],
+    "support_requirements": {
+      "dynamic_minus_static_rank_coverage_point_at_least": 0.005,
+      "dynamic_minus_static_rank_coverage_ci_low_above": 0.0,
+      "dynamic_minus_bootstrap_strongest_non_frc_point_at_least": 0.01,
+      "dynamic_minus_bootstrap_strongest_non_frc_ci_low_above": 0.0,
+      "every_budget_and_supported_stratum_delta_vs_strongest_non_frc_at_least": -0.02
+    },
+    "all_required": true,
+    "negative_results_published": true
+  },
+  "boundaries": {
+    "same_dataset_family_confirmation_only": true,
+    "independent_dataset_or_flood_domain_claim": false,
+    "setr_reproduced": false,
+    "gate_2_change": false,
+    "canary_or_default_authorized": false,
+    "selector_adoption": false
+  }
+}

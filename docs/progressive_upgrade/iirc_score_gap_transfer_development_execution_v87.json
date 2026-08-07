@@ -1,0 +1,41 @@
+{
+  "elapsed_seconds": 1124.795404,
+  "experiment_id": "FRC-IIRC-SCORE-GAP-ROUTER-PROSPECTIVE-V87",
+  "implementation_lock_sha256": "6e0461b44e9195bc59181676a1b9f45c0c12cce15853cb244f2eaf64d80a8d13",
+  "leakage_boundary": {
+    "blind_cache_excludes_answer_answer_type_context_question_links_and_gold": true,
+    "sealed_gold_created_but_not_read_by_scorer_or_selector": true,
+    "selection_metrics_computed": false
+  },
+  "outcome": "IIRC_V87_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED",
+  "preparation": {
+    "blind_sha256": "49e08081f1ea2b62e6473574378f2fcbc80a0d9d2e57db69e9bfedd7264fc3c5",
+    "candidate_sources": {
+      "maximum": 37,
+      "mean": 15.295,
+      "minimum": 8
+    },
+    "development_confirmation_overlap": 0,
+    "gold_statistics_sealed_not_reported": true,
+    "overlap_with_v86_development_or_confirmation": 0,
+    "requested_unique_context_titles": 5111,
+    "resolved_unique_context_titles": 5110,
+    "sealed_gold_sha256": "cd614a5872205741cdfa8ecf4cd5b344a480f627b3719199420c421c7c818f37",
+    "selected_cases": 400,
+    "selected_ids_sha256": "b72274afdc26ff3c817a2a8456503567f767b80f828afc7f4a3926ad2e971167",
+    "stage": "development",
+    "unresolved_link_sources": 3
+  },
+  "protocol_sha256": "316b5f589e2c412f9d853264fd899dcb8f86291372282f507cf564e548e15be1",
+  "result_sha256": "2a6c8d92cd417c67c1ebb34b15b3bc819136ba1e2e51e97ea7ef53a6d9bc7239",
+  "schema_version": "frc-iirc-score-gap-transfer-execution-v87",
+  "scored_blind_sha256": "c1ab79f190fdf6c78d89cb97c07b92bc4fe4587717e533f64df50259bacbe930",
+  "scored_cases": 400,
+  "selection_rows": 400,
+  "selection_sha256": "2a7b7d4880f16005d044f5cf8f5ff360a9bacd24f274e5f50b9253f4d3373e1d",
+  "source_registration_sha256": "28e9898cbfe98e8b1ef3aaabdc5ea2cb07fc36e5f650654b4881d3164c0df483",
+  "stage": "development",
+  "status": "EVALUATED_GOLD_JOINED",
+  "v86_model_sha256": "3b125e02779d385e63f3cbd47000e2c2fe2882456935150f1e47ec4354a9475c",
+  "v87_model_sha256": "e4a32857ca60ff7fa92c0f14a129b5101c4817fd95856f78e66012457792de70"
+}

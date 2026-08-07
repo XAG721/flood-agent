@@ -1,0 +1,131 @@
+{
+  "schema_version": "frc-musique-objective-gap-diagnostic-protocol-v1",
+  "registered_at": "2026-08-01T11:01:30.6736693+08:00",
+  "experiment_id": "FRC-MUSIQUE-OBJECTIVE-GAP-DIAGNOSTIC-V37",
+  "purpose": "Distinguish dual-resource greedy optimization error from frozen score/objective misalignment after the v36 MuSiQue negative result.",
+  "registration_boundary": {
+    "post_result_diagnostic": true,
+    "v36_result_known": true,
+    "v36_status": "MUSIQUE_DUAL_RESOURCE_FRC_SUPPORT_NOT_ESTABLISHED",
+    "v36_dual_minus_v35": 0.004402,
+    "v36_dual_minus_old_frc": -0.002256,
+    "v36_dual_minus_strongest_non_frc": -0.001854,
+    "exact_objective_results_known_before_registration": false,
+    "exact_selector_gold_metrics_known_before_registration": false,
+    "adoption_eligible": false,
+    "gate_evidence": false
+  },
+  "frozen_inputs": {
+    "dataset": "MuSiQue-Answerable dev",
+    "source_revision": "922ac98f19a201998dbdae6d7f2887a5258dbdeb",
+    "source_sha256": "15fa63794d18a94ce12411aca6e2327e65b6e83b0b1490efab3f1962e48abf3b",
+    "case_count": 2417,
+    "candidate_chunk_count": 48656,
+    "scored_blind_cache_sha256": "e2c688063e694ef0df7df7f6052cb5e68c9739f26a59db8a24c1a54413ce9242",
+    "v36_report_sha256": "27cdba122f94be27991768363cef23d860834d198a6d029ea07f7a9fdc0d22a8",
+    "v36_implementation_sha256": "2c102c594d81fa11b1dfbeb23d61ae3b7b87bc46660fb0a890a7e5e737ee3657",
+    "neural_rescoring": false,
+    "case_replacement_or_sampling": false
+  },
+  "frozen_constraints": {
+    "top_k": 5,
+    "token_budgets": [512, 1024, 1500],
+    "set_objective": "F(S) = 2 * mean_over_roles(max role_score in S) + sum_over_selected(cross_encoder_score)",
+    "greedy_method": "frc_dual_resource_v36",
+    "exact_method": "frc_exact_objective_v37",
+    "reference_methods": [
+      "cross_encoder_topk",
+      "frc_select_v34",
+      "frc_cost_aware_v35",
+      "frc_dual_resource_v36"
+    ]
+  },
+  "frozen_exact_algorithm": {
+    "search_space": "Every non-empty candidate subset with cardinality at most top_k and total token_count at most the requested budget.",
+    "candidate_order": "Ascending candidate_id before subset enumeration.",
+    "primary_choice": "Maximum frozen set objective F(S).",
+    "tie_breaks": [
+      "lower total token_count",
+      "lexicographically smaller ascending selected candidate_id tuple"
+    ],
+    "gold_visible_during_search": false,
+    "approximation_or_pruning_that_can_change_optimum": false
+  },
+  "frozen_metrics": {
+    "statistical_unit": "source dev row",
+    "objective_diagnostics": [
+      "greedy_objective",
+      "exact_objective",
+      "absolute_objective_regret",
+      "normalized_objective_regret",
+      "near_zero_regret_rate_at_1e-9",
+      "regret_above_0_01_rate",
+      "selection_disagreement_rate"
+    ],
+    "gold_late_metrics": [
+      "support_evidence_f1",
+      "support_precision",
+      "support_recall",
+      "complete_support_coverage",
+      "non_support_selection_rate",
+      "selected_token_cost",
+      "selected_count"
+    ],
+    "predeclared_strata": [
+      "token_budget=512",
+      "token_budget=1024",
+      "token_budget=1500",
+      "2-hop",
+      "3-hop",
+      "4-hop"
+    ],
+    "paired_bootstrap": {
+      "resamples": 10000,
+      "seed": 20260801,
+      "confidence_level": 0.95,
+      "resample_source_rows": true
+    }
+  },
+  "frozen_interpretation_rules": {
+    "optimization_error_signal": {
+      "mean_normalized_objective_regret_at_least": 0.005,
+      "exact_minus_v36_support_f1_at_least": 0.005,
+      "exact_minus_v36_support_f1_ci_low_above": 0.0,
+      "every_budget_and_hop_support_f1_delta_at_least": -0.01,
+      "status": "OPTIMIZATION_ERROR_SIGNAL"
+    },
+    "greedy_near_optimal_signal": {
+      "mean_normalized_objective_regret_at_most": 0.001,
+      "regret_above_0_01_rate_at_most": 0.01,
+      "status": "GREEDY_NEAR_OBJECTIVE_OPTIMAL"
+    },
+    "objective_misalignment_signal": {
+      "mean_normalized_objective_regret_at_least": 0.005,
+      "exact_minus_v36_support_f1_below": 0.005,
+      "status": "FROZEN_OBJECTIVE_ALIGNMENT_SIGNAL_INSUFFICIENT"
+    },
+    "otherwise": "MIXED_OPTIMIZATION_AND_ALIGNMENT_DIAGNOSTIC"
+  },
+  "next_action_rules": {
+    "optimization_error_signal": "Freeze the exact or provably equivalent optimizer before touching a new independent dataset; only the new dataset can support adoption.",
+    "greedy_near_optimal_signal": "Stop optimizer development on revealed MuSiQue and seek new scoring signals using train-only or newly collected data.",
+    "objective_misalignment_signal": "Stop maximizing the current frozen objective on revealed MuSiQue; any new score/objective must be developed without using MuSiQue evaluation labels and independently confirmed.",
+    "mixed": "Do not adopt or tune on MuSiQue; publish the ambiguity and require a separately frozen study."
+  },
+  "publication_boundary": {
+    "publish_negative_or_ambiguous_results": true,
+    "no_formula_score_threshold_prompt_or_weight_tuning": true,
+    "selector_changed": false,
+    "gate_2": "NO-GO/SHADOW",
+    "canary_or_default_authorized": false,
+    "setr_reproduced": false,
+    "flood_domain_effectiveness_established": false,
+    "raw_question_answer_or_candidate_text_exported": false
+  },
+  "deliverables": {
+    "implementation": "research/frc_rag/musique_objective_gap.py",
+    "runner": "scripts/run_musique_objective_gap.py",
+    "tests": "tests/test_frc_musique_objective_gap.py",
+    "output_directory": "output/rag_evaluation/musique_objective_gap"
+  }
+}

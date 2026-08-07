@@ -1,0 +1,230 @@
+{
+  "schema_version": "frc-doc2dial-document-contrastive-role-closure-protocol-v54",
+  "experiment_id": "FRC-DOC2DIAL-DOCUMENT-CONTRASTIVE-ROLE-CLOSURE-V54",
+  "registered_at": "2026-08-02T23:16:00+08:00",
+  "purpose": "Prospectively test whether a parameter-free document-contrastive abstention gate plus compact rank-concurrent role closure can distinguish grounded from irrelevant dialogue queries while recovering exact official document spans on an untouched public source.",
+  "prior_experiment_boundary": {
+    "v53_individual_cases_scores_queries_candidates_and_gold_are_permanently_excluded": true,
+    "no_cuad_train_or_test_case_level_artifact_is_used": true,
+    "known_aggregate_failures_used_only_for_theory": [
+      "v53 source-candidate completeness was only 0.635, so v54 uses the source dataset's complete document-span inventory without consulting case references during scoring.",
+      "v53 Top-3 role concurrence passed 397 of 400 cases, so v54 tests whether relevance is identifiable by ranking the assigned document against deterministic decoy documents rather than intersecting correlated within-document rankings.",
+      "v53 role closure lost precision by admitting too many spans, so v54 admits one anchor plus only rank-concurrent atomic-role winners."
+    ],
+    "v54_does_not_retroactively_change_v41_through_v53": true
+  },
+  "source_access_boundary_at_registration": {
+    "official_project_page_read": true,
+    "official_data_readme_read": true,
+    "official_repository_metadata_and_file_names_read": true,
+    "dialogue_json_content_opened": false,
+    "document_json_content_opened": false,
+    "sample_utterance_document_span_reference_distribution_or_gold_inspected": false,
+    "method_formula_gate_or_budget_selected_from_doc2dial_outcome": false
+  },
+  "official_sources": {
+    "project_data_page": "https://doc2dial.github.io/data.html",
+    "paper": "https://aclanthology.org/2020.emnlp-main.652/",
+    "repository": "https://github.com/doc2dial/sharedtask-dialdoc2021",
+    "repository_revision": "7584ac0c1c617496d644f1ea34a6b812a5771539",
+    "dataset_version": "v1.0.1",
+    "document_file": "data/doc2dial/v1.0.1/doc2dial_doc.json",
+    "development_file": "data/doc2dial/v1.0.1/doc2dial_dial_train.json",
+    "confirmation_file": "data/doc2dial/v1.0.1/doc2dial_dial_validation.json",
+    "official_schema_contract": "Documents provide domain, doc_id, doc_text and an exhaustive span map with exact offsets. Dialogue turns provide role, dialogue act, references and utterance; references are empty when the prior user query is not answerable or is irrelevant to the document.",
+    "license_status": {
+      "official_repository_license_file": null,
+      "official_project_page_license_statement": null,
+      "huggingface_ibm_doc2dial_card_identifier": "cc-by-3.0",
+      "registered_interpretation": "License is not independently explicit in the fixed official repository. Retain attribution, keep the source in the ignored benchmark cache, publish only aggregate metrics and opaque commitments, and do not redistribute source text."
+    }
+  },
+  "source_access_order": [
+    "Freeze this protocol before downloading or opening any Doc2Dial JSON source.",
+    "Download only the three fixed-revision v1.0.1 JSON files plus DATA_README.md into the ignored Doc2Dial cache, hash every file, and register source hashes without parsing JSON content.",
+    "Implement and synthetically test the source reader, case extraction, balanced sampler, blind cache, complete span candidates, deterministic decoys, document-contrastive gate, selectors, metrics and reports before opening any JSON source.",
+    "Register protocol, source, implementation, runner and test hashes before parsing the document or development dialogue JSON.",
+    "Open doc2dial_doc.json and doc2dial_dial_train.json only to construct the development blind cache; do not open doc2dial_dial_validation.json.",
+    "Register development sample commitments, structural census and runtime before neural scoring.",
+    "Score all own-document candidates and all preregistered decoy-document candidates before joining any target-turn references.",
+    "Lock the complete development score cache, then join target references once and run the preregistered gates.",
+    "If and only if every development gate passes, freeze the developed implementation and repeat the blind sequence once on untouched doc2dial_dial_validation.json. Otherwise stop before validation content is opened.",
+    "Publish positive, negative, null, schema-inconclusive or runtime-incompatible outcomes and forbid reuse of a revealed split for tuning or method selection."
+  ],
+  "task_construction": {
+    "target_turn": "Each agent turn with an immediately preceding user turn in the same dialogue.",
+    "query": "The exact utterance of the immediately preceding user turn only; no dialogue act, reference, document title, gold label or future turn is visible to query construction.",
+    "answer_bearing": "The target agent turn has at least one official reference whose sp_id exists in the associated document's span map.",
+    "no_answer": "The target agent turn has an empty official references list. The official README defines this state as the prior user query being not answerable or irrelevant to the document.",
+    "schema_inconclusive": "A non-empty target reference that cannot be mapped to the associated document span map, or a user-agent adjacency/schema violation, is reported and excluded before balancing; exclusion rate above 0.01 fails development.",
+    "gold_free_scoring": true
+  },
+  "development_and_confirmation_scope": {
+    "development_split": "doc2dial_dial_train.json",
+    "confirmation_split": "doc2dial_dial_validation.json",
+    "shared_document_file": "doc2dial_doc.json",
+    "development_target_cases": 400,
+    "confirmation_target_cases": 400,
+    "target_answer_bearing_cases_per_stage": 200,
+    "target_no_answer_cases_per_stage": 200,
+    "maximum_cases_per_dialogue_per_stage": 2,
+    "maximum_cases_per_document_per_answer_state_per_stage": 4,
+    "minimum_dialogues_per_stage": 160,
+    "minimum_documents_per_stage": 80,
+    "development_sample_salt": "FRC-DOC2DIAL-V54-DEVELOPMENT|",
+    "confirmation_sample_salt": "FRC-DOC2DIAL-V54-CONFIRMATION|",
+    "sampling": "Within answer-bearing and no-answer groups, sort by SHA-256 over fixed stage salt, opaque dialogue commitment and turn id; advance groups in lockstep under shared dialogue and per-document-per-state caps.",
+    "balanced_mechanism_sample_not_natural_prevalence": true,
+    "document_cluster_bootstrap": true,
+    "case_level_iid_bootstrap_forbidden": true
+  },
+  "gold_free_candidate_construction": {
+    "source": "Every non-empty official span in the associated document's spans map.",
+    "official_reference_labels_visible_to_candidate_construction": false,
+    "span_label_visible_to_candidate_construction_or_scorer": false,
+    "exact_text_and_offsets_preserved": true,
+    "canonical_id": "opaque SHA-256 commitment over domain, doc_id and sp_id; raw domain, doc_id and sp_id remain only in a post-score gold map.",
+    "deduplication": "Deduplicate exact start_sp/end_sp/text_sp triples; retain the lexicographically first source sp_id only in the post-score map.",
+    "own_document_retrieval_pool": "Union BM25 Top-48 and BGE dense Top-48 over all official spans, at most 96 unique candidates ordered by best rank, sum of ranks with missing rank set to source span count plus one, then canonical candidate id.",
+    "decoy_document_probe_pool": "For each own or decoy document, union BM25 Top-8 and BGE dense Top-8 over all official spans for the anchor query, at most 16 unique candidates, then rerank that probe pool.",
+    "gold_use_before_complete_scoring": false,
+    "post_score_candidate_ceiling": "An answer-bearing case is complete only if every distinct official referenced sp_id maps to a retained own-document candidate."
+  },
+  "frozen_models": {
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "refs/pr/5",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "refs/pr/4",
+    "offline_model_loading": true,
+    "query_generator": "none"
+  },
+  "deterministic_role_queries": {
+    "anchor": "{query}",
+    "condition": "Find prerequisites, eligibility requirements, conditions, or definitions needed to answer: {query}",
+    "solution": "Find steps, benefits, outcomes, or direct answers that resolve: {query}",
+    "exception": "Find exceptions, exclusions, deadlines, limitations, or cases where this does not apply: {query}",
+    "fallback_rate_required": 0.0,
+    "gold_fields_visible_to_query_construction": false
+  },
+  "deterministic_decoy_documents": {
+    "count": 7,
+    "selection": "From other documents in the same domain, prefer the same document-length quartile, then remaining same-domain documents. Sort each tier by SHA-256 over FRC-DOC2DIAL-V54-DECOY, opaque case id and opaque document commitment; take seven unique documents.",
+    "insufficient_same_domain_documents": "If fewer than seven other same-domain documents exist, fill from other domains by the same hash order and record a fallback; any fallback rate above zero fails development.",
+    "labels_references_dialogue_acts_or_case_outcomes_used": false
+  },
+  "document_contrastive_gate": {
+    "document_score": "For the anchor query, the maximum raw BGE reranker logit across the document's deterministic probe pool; an empty probe pool scores negative infinity.",
+    "ranking": "Sort the assigned document and seven decoys by descending document score, then ascending opaque document commitment.",
+    "pass_rule": "Pass if and only if the assigned document ranks first among the eight documents; otherwise every shared-gate method returns an empty evidence set.",
+    "randomization_interpretation": "Under exchangeability of an irrelevant query across the eight documents, assigned-document rank one has exact randomization p-value 1/8 without a learned threshold.",
+    "learned_threshold_temperature_margin_prior_or_answer_prevalence": false,
+    "gate_identical_for_candidate_ablation_and_all_shared_gate_controls": true
+  },
+  "rank_concurrent_atomic_role_closure": {
+    "candidate": "document_contrastive_rank_concurrent_atomic_role_closure_frc_v54",
+    "pass_behavior": "Start with the anchor-ranked Top-1 own-document candidate. For condition, solution and exception in that order, add the role Top-1 candidate only when it is also inside anchor Top-3. Remove normalized-text duplicates and stop before exceeding the registered token budget.",
+    "minimum_nonempty_output_after_gate_pass": "If the anchor Top-1 alone exceeds the token budget, emit it and report one deterministic budget overrun; otherwise no overrun is allowed.",
+    "same_gate_frc_ablation": "Apply the unchanged low_core_divergence_guarded_frc_v49 selector after the identical document-contrastive gate, without atomic-role closure.",
+    "why_this_tests_frc_specific_value": "Every comparator receives the same candidates, scores, budget and abstention gate; the candidate alone applies compact agreement between anchor and atomic semantic roles."
+  },
+  "methods": {
+    "candidate": "document_contrastive_rank_concurrent_atomic_role_closure_frc_v54",
+    "same_gate_frc_ablation": "document_contrastive_low_core_only_frc_v54",
+    "shared_gate_non_frc_controls": [
+      "document_contrastive_bm25_topk_v54",
+      "document_contrastive_dense_topk_v54",
+      "document_contrastive_hybrid_topk_v54",
+      "document_contrastive_cross_encoder_topk_v54",
+      "document_contrastive_cross_encoder_knapsack_v54"
+    ],
+    "ungated_frc_controls": [
+      "adaptive_argmax_cardinality_frc_v43",
+      "low_core_divergence_guarded_frc_v49"
+    ],
+    "ungated_non_frc_controls": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "cross_encoder_knapsack"
+    ],
+    "external_doc2dial_baselines": "Official BERT-base and BERT-large shared-task validation F1/EM are literature references only because they are supervised end-to-end QA systems with different training information and candidate space. They are not included in FRC support gates and are not called SetR."
+  },
+  "evaluation": {
+    "primary_metric": "answer_or_abstention_macro_f1",
+    "answer_bearing_per_case_metric": "Set F1 over selected canonical candidate ids versus all distinct official target-turn referenced spans.",
+    "no_answer_per_case_metric": "Exact empty-selection accuracy.",
+    "secondary_metrics": [
+      "answer-bearing macro precision, recall and F1",
+      "complete-reference recall",
+      "no-answer abstention accuracy",
+      "gate true-positive rate and false-positive rate",
+      "abstention rate",
+      "mean selected unit and token cost",
+      "candidate ceiling complete rate",
+      "document-rank distribution"
+    ],
+    "token_budgets": [
+      128,
+      256,
+      512
+    ],
+    "bootstrap": {
+      "resamples": 10000,
+      "seed": 20260814,
+      "confidence": 0.95,
+      "unit": "opaque associated-document commitment cluster"
+    },
+    "minimum_supported_stratum_cases": 40,
+    "mandatory_strata": [
+      "answer-bearing versus no-answer",
+      "domain",
+      "candidate-count quartile",
+      "document-length quartile",
+      "dialogue-turn-position quartile",
+      "reference-count group",
+      "gate outcome"
+    ]
+  },
+  "development_gates_all_required": {
+    "exact_cases_answer_balance_caps_minimum_dialogues_and_documents": true,
+    "schema_exclusion_rate_at_most": 0.01,
+    "candidate_ceiling_complete_rate_on_answer_bearing_cases_at_least": 0.99,
+    "candidate_minus_strongest_shared_gate_non_frc_point_at_least": 0.01,
+    "candidate_minus_strongest_shared_gate_non_frc_ci_low_above": 0.0,
+    "candidate_minus_same_gate_frc_ablation_point_at_least": 0.005,
+    "candidate_minus_same_gate_frc_ablation_ci_low_above": 0.0,
+    "candidate_minus_ungated_v49_point_at_least": 0.01,
+    "candidate_minus_ungated_v49_ci_low_above": 0.0,
+    "answer_bearing_macro_recall_drop_vs_ungated_v49_at_most": 0.03,
+    "no_answer_abstention_accuracy_at_least": 0.5,
+    "answer_bearing_gate_pass_rate_at_least": 0.5,
+    "candidate_abstention_rate_minimum": 0.1,
+    "candidate_abstention_rate_maximum": 0.8,
+    "every_budget_and_supported_stratum_delta_vs_strongest_shared_gate_non_frc_at_least": -0.03,
+    "deterministic_decoy_fallback_rate": 0.0,
+    "deterministic_query_fallback_rate": 0.0,
+    "score_or_prediction_fallback_rate": 0.0
+  },
+  "confirmation_rule": {
+    "validation_content_open_authorized_only_if_every_development_gate_passes": true,
+    "development_failure_status": "DOC2DIAL_V54_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_VALIDATION",
+    "confirmation_support_status": "DOC2DIAL_V54_DOCUMENT_CONTRASTIVE_ROLE_CLOSURE_SUPPORT_ESTABLISHED",
+    "confirmation_failure_status": "DOC2DIAL_V54_DOCUMENT_CONTRASTIVE_ROLE_CLOSURE_SUPPORT_NOT_ESTABLISHED",
+    "schema_inconclusive_status": "DOC2DIAL_V54_SCHEMA_INCONCLUSIVE_STOP",
+    "runtime_incompatible_status": "DOC2DIAL_V54_RUNTIME_INCOMPATIBLE_STOP",
+    "confirmation_uses_identical_checks_except_candidate_ceiling_is_descriptive_not_an_opening_gate": true,
+    "development_threshold_or_parameter_transferred_to_confirmation": null,
+    "selector_adoption_authorized_by_protocol": false,
+    "canary_or_default_authorized_by_protocol": false,
+    "gate_2_before_and_after_experiment": "NO-GO/SHADOW",
+    "negative_null_schema_inconclusive_or_runtime_incompatible_result_must_be_published": true
+  },
+  "known_scope_limits": [
+    "Doc2Dial is document-grounded English customer-service dialogue, not flood-domain Chinese operations, open-corpus retrieval or response generation.",
+    "The balanced mechanism sample is not the dataset's natural prevalence and is not an official shared-task submission.",
+    "Official source spans reduce segmentation error but do not grant the selector access to target-turn references or fuzzy precondition/solution labels.",
+    "The document-contrastive randomization interpretation relies on approximate exchangeability of assigned and decoy documents for irrelevant queries; observed no-answer behavior remains the empirical check.",
+    "A positive result would support only this frozen selector and abstention mechanism under this protocol; it would not reproduce SetR or establish flood-domain expert validity."
+  ]
+}

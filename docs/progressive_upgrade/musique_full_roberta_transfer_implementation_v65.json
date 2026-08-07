@@ -1,0 +1,39 @@
+{
+  "schema_version": "frc-musique-full-roberta-transfer-implementation-registration-v65",
+  "experiment_id": "FRC-MUSIQUE-FULL-ROBERTA-TRANSFER-V65",
+  "registered_at": "2026-08-03T23:52:00+08:00",
+  "hashes": {
+    "protocol": "578bd51f20cdec041da034c87e5f3890721c9f317de511574474e07692514a38",
+    "source_registration": "c29637ad608af431bed6bb0992cb0b77fc9da8aa96a20b684fb33176837a36f7",
+    "model_registration": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "module": "edf32a3cf1c3d869859cd4bcf11b0581623f83e836ce160905a0fc14f90970c3",
+    "runner": "c517de7ecca36c040d532125d8a731403c1b58697bb13603f9bbf1ddd411aa7d",
+    "tests": "05dceb60f7d8041b53a5b5337b8e65275c2e61403924b648f260850cb7337d50"
+  },
+  "target_jsonl_rows_read_before_registration": 0,
+  "target_question_answerability_answer_alias_decomposition_or_paragraph_seen_before_registration": false,
+  "source_independent_synthetic_fixtures_only": true,
+  "synthetic_tests": {
+    "passed": 9,
+    "failed": 0,
+    "target_source_used": false,
+    "model_files_used": false
+  },
+  "frozen_behaviors": [
+    "normalized exact SQuAD2 question leakage exclusion",
+    "v36 source-id exclusion",
+    "balanced deterministic sampling",
+    "paragraph-level blind QA cache",
+    "strict maximum-margin case aggregation",
+    "unchanged v64 threshold",
+    "local-span-trap and hop-stratum support gates",
+    "pre-retrieval stopping rule",
+    "deterministic result and compressed evidence writer"
+  ],
+  "model_weights_architecture_threshold_sample_selector_or_gate_changed": false,
+  "learned_or_adjusted_parameter_count_on_musique": 0,
+  "strict_independent_model_training_confirmation_claimed": false,
+  "selector_adoption_authorized": false,
+  "canary_or_default_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

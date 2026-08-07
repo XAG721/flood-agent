@@ -1,0 +1,13 @@
+{
+  "canary_or_default_authorized": false,
+  "experiment_id": "FRC-MUSIQUE-FULL-ROBERTA-TRANSFER-V65",
+  "gate_2": "NO-GO/SHADOW",
+  "neural_retrieval_scoring_started": false,
+  "query_generation_started": false,
+  "retrieval_scoring_open_authorized": false,
+  "reuse_v65_for_tuning_threshold_or_selection": false,
+  "schema_version": "frc-musique-v65-support-closure-v1",
+  "selector_adoption_authorized": false,
+  "status": "MUSIQUE_FULL_V65_ROBERTA_TRANSFER_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_RETRIEVAL",
+  "support_result_sha256": "92ce72a89d87655d0e7767d49bbeda33f154c9bcfe48c6dbd8717f2057eb52eb"
+}

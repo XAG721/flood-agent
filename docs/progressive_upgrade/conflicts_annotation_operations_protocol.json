@@ -1,0 +1,109 @@
+{
+  "schema_version": "frc-conflicts-annotation-operations-protocol-v1",
+  "protocol_path_label": "conflicts_annotation_operations_protocol.json",
+  "registered_on": "2026-08-01",
+  "status": "REGISTERED_BEFORE_HUMAN_ANNOTATION",
+  "research_question": "Can the frozen 458-case CONFLICTS expected-behavior package be assigned to three independent people in balanced, resumable, method-blind batches while detecting inadequate within-reviewer consistency before any inter-annotator or method comparison?",
+  "registration_state": {
+    "response_generation_complete": true,
+    "review_package_complete": true,
+    "human_decisions_observed": false,
+    "intrarater_quality_results_observed": false,
+    "inter_annotator_results_observed": false,
+    "method_mapping_opened": false
+  },
+  "frozen_inputs": {
+    "source_manifest_path_label": "conflicts_expected_behavior/manifest.json",
+    "source_manifest_file_sha256": "7bd91abd97d865167c5d4db7394c4e8761c9e184468f967b4caa8708d1a55b0b",
+    "package_path_label": "conflicts_expected_behavior/package.jsonl.gz",
+    "package_file_sha256": "484c27ad8c5dc25c659ac244a5317926fd892ee9c0fb82885370423a1bc54813",
+    "package_items_sha256": "5abab8ed31f83e6cc810f591f316196e842b0c8fd00e66d2f17cb798fc39e757",
+    "package_id": "CONFLICTS-BEHAVIOR-5ABAB8ED31F83E6C",
+    "case_count": 458,
+    "response_count": 916,
+    "core_expected_behavior_protocol_sha256": "7060ca11bb52afdb95925fe47b6a119bced5b0ecf83e3525a85fc31b38452dfc"
+  },
+  "batching": {
+    "seed": "conflicts-annotation-operations-2026-08-01-v1",
+    "reviewer_slots": [
+      "reviewer_1",
+      "reviewer_2",
+      "adjudicator"
+    ],
+    "distinct_person_count": 3,
+    "batch_count_per_slot": 8,
+    "primary_task_count_per_slot": 458,
+    "repeat_task_count_per_slot": 23,
+    "total_task_count_per_slot": 481,
+    "minimum_repeat_batch_distance": 4,
+    "primary_strata": "gold conflict type crossed with official-answer availability",
+    "primary_assignment": "Within each stratum, stable-hash order followed by round-robin assignment; reviewer slots receive deterministic rotations.",
+    "repeat_selection": "Approximately proportional by conflict type with at least one repeat from every conflict type.",
+    "repeat_placement": "Each repeat is placed exactly half of the eight-batch cycle away from its primary occurrence."
+  },
+  "blinding": {
+    "public_batch_contains": [
+      "opaque review task id",
+      "question",
+      "gold conflict type",
+      "type-specific expected behavior",
+      "official correct answer when nonblank",
+      "blinded A/B responses and their shown sources"
+    ],
+    "public_batch_excludes": [
+      "original package item id",
+      "primary or repeat occurrence label",
+      "paired primary task id",
+      "retrieval method identity",
+      "retrieval and role scores",
+      "private task routing"
+    ],
+    "private_routing_storage": "Ignored local .cache only.",
+    "public_routing_commitment": "Canonical JSON SHA-256 in the operations manifest.",
+    "reviewer_instruction": "Complete every task independently and do not inspect other reviewers' forms, private routing, implementation code, or method mapping."
+  },
+  "quality_control": {
+    "repeat_fraction_per_slot": 0.050218,
+    "dimensions": [
+      "expected_behavior_adherence",
+      "factual_grounding",
+      "citation_correctness",
+      "answer_correctness",
+      "pair_preference"
+    ],
+    "minimum_exact_agreement_each_dimension": 0.8,
+    "cohen_kappa_role": "Descriptive only; null with UNDEFINED_NO_VARIANCE when marginal variance is absent.",
+    "failure_status": "REVIEW_REQUIRED",
+    "failure_policy": "Any dimension below the exact-agreement threshold makes the role ineligible for inter-annotator comparison until independently reviewed and recollected under a new registered operation.",
+    "repeat_interpretation": "Hidden repeats measure within-reviewer consistency and do not create gold labels or adjudicated results."
+  },
+  "human_execution": {
+    "independent_annotator_count": 2,
+    "independent_adjudicator_count": 1,
+    "same_person_may_hold_multiple_slots": false,
+    "batch_resume_unit": "one frozen submission template",
+    "all_batches_required": true,
+    "same_private_annotator_id_required_within_slot": true,
+    "different_private_annotator_id_required_across_slots": true,
+    "core_comparison_after_qc_only": true
+  },
+  "decision_boundary": {
+    "prepared_batches_are_human_results": false,
+    "blank_templates_are_human_results": false,
+    "automatic_or_model_filled_templates_allowed": false,
+    "may_open_blind_method_mapping": false,
+    "may_change_gate_2": false,
+    "gate_2": "NO-GO/SHADOW",
+    "may_claim_setr_reproduction": false,
+    "interpretation": "This protocol reduces operational and reproducibility risk only. It cannot substitute for three independent people, flood-domain expert validation, or deployment evidence."
+  },
+  "expected_operations_id": "CONFLICTS-ANNOTATION-OPS-5A6EE0F6420F2251",
+  "expected_routing_sha256": "b4818883beb4ed3e256895a2161f2641656707639ded4ee858633e5e4bb25ef3",
+  "implementation": {
+    "module_path": "research/frc_rag/conflicts_annotation_operations.py",
+    "module_sha256": "a716a9958fec890947e1c88c812755c23f4d065f8fb0f51200ba9c4a3e76d196",
+    "runner_path": "scripts/run_conflicts_annotation_operations.py",
+    "runner_sha256": "cda77536af5cd25d727b80fcf42e552014a236550f68f2ed4572b8499e090a99",
+    "test_path": "tests/test_frc_conflicts_annotation_operations.py"
+  }
+}

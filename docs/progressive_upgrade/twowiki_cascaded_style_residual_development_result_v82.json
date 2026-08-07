@@ -1,0 +1,286 @@
+{
+  "analysis": {
+    "methods": {
+      "alternating_anchor_link_control": {
+        "cases": 800,
+        "complete_evidence_recall": 0.5375,
+        "evidence_macro_f1": 0.515069,
+        "evidence_macro_recall": 0.795208,
+        "mean_selected_tokens": 123.93875
+      },
+      "cross_encoder_topk": {
+        "cases": 800,
+        "complete_evidence_recall": 0.39375,
+        "evidence_macro_f1": 0.441855,
+        "evidence_macro_recall": 0.698333,
+        "mean_selected_tokens": 122.625
+      },
+      "frc_select": {
+        "cases": 800,
+        "complete_evidence_recall": 0.39375,
+        "evidence_macro_f1": 0.441855,
+        "evidence_macro_recall": 0.698333,
+        "mean_selected_tokens": 122.625
+      },
+      "graph_gbr_soft_override_router_v76": {
+        "cases": 800,
+        "complete_evidence_recall": 0.41875,
+        "evidence_macro_f1": 0.449831,
+        "evidence_macro_recall": 0.711771,
+        "mean_selected_tokens": 122.71875
+      },
+      "history_three_route_graph_router_v78": {
+        "cases": 800,
+        "complete_evidence_recall": 0.44875,
+        "evidence_macro_f1": 0.461577,
+        "evidence_macro_recall": 0.729896,
+        "mean_selected_tokens": 122.395
+      },
+      "learned_question_routed_support_path_v75": {
+        "cases": 800,
+        "complete_evidence_recall": 0.62,
+        "evidence_macro_f1": 0.538284,
+        "evidence_macro_recall": 0.835833,
+        "mean_selected_tokens": 124.30625
+      },
+      "lexical_question_router_control": {
+        "cases": 800,
+        "complete_evidence_recall": 0.6175,
+        "evidence_macro_f1": 0.537569,
+        "evidence_macro_recall": 0.834583,
+        "mean_selected_tokens": 124.255
+      },
+      "musique_anchor_default_three_route_router_v80": {
+        "cases": 800,
+        "complete_evidence_recall": 0.52125,
+        "evidence_macro_f1": 0.510104,
+        "evidence_macro_recall": 0.786563,
+        "mean_selected_tokens": 123.6625
+      },
+      "musique_target_trained_three_route_router_v79": {
+        "cases": 800,
+        "complete_evidence_recall": 0.50625,
+        "evidence_macro_f1": 0.50126,
+        "evidence_macro_recall": 0.775208,
+        "mean_selected_tokens": 123.44375
+      },
+      "soft_title_link_support_path_closure_v74": {
+        "cases": 800,
+        "complete_evidence_recall": 0.60125,
+        "evidence_macro_f1": 0.519033,
+        "evidence_macro_recall": 0.808438,
+        "mean_selected_tokens": 124.60375
+      },
+      "twowiki_cascaded_style_residual_router_v82": {
+        "cases": 800,
+        "complete_evidence_recall": 0.64375,
+        "evidence_macro_f1": 0.544792,
+        "evidence_macro_recall": 0.844271,
+        "mean_selected_tokens": 124.53
+      },
+      "twowiki_residual_three_route_router_v81": {
+        "cases": 800,
+        "complete_evidence_recall": 0.63625,
+        "evidence_macro_f1": 0.542649,
+        "evidence_macro_recall": 0.840521,
+        "mean_selected_tokens": 124.5775
+      }
+    },
+    "noninferiority_checks": {
+      "candidate_minus_frozen_v75_point_at_least_0": true,
+      "candidate_minus_strongest_control_ci_low_at_least_minus_0_01": true,
+      "candidate_minus_strongest_control_point_at_least_minus_0_005": true,
+      "every_question_type_delta_vs_best_control_at_least_minus_0_02": true,
+      "invalid_selector_output_rate_equals_0": true
+    },
+    "outcome": {
+      "canary_or_default_authorized": false,
+      "confirmation_open_authorized": false,
+      "further_same_source_confirmation_authorized": false,
+      "gate_2": "NO-GO/SHADOW",
+      "noninferiority_envelope_supported": true,
+      "reuse_stage_for_model_feature_threshold_gate_or_selection": false,
+      "selector_adoption_authorized": false,
+      "status": "2WIKI_V82_CASCADED_ROUTER_DEVELOPMENT_ADVANTAGE_NOT_ESTABLISHED_STOP",
+      "strict_gate_passed": false
+    },
+    "paired_f1_delta": {
+      "alternating_anchor_link_control": {
+        "ci_high": 0.036468,
+        "ci_low": 0.023095,
+        "point": 0.029722,
+        "resamples": 10000,
+        "seed": 20261195
+      },
+      "cross_encoder_topk": {
+        "ci_high": 0.113571,
+        "ci_low": 0.092619,
+        "point": 0.102937,
+        "resamples": 10000,
+        "seed": 20261192
+      },
+      "frc_select": {
+        "ci_high": 0.114048,
+        "ci_low": 0.092302,
+        "point": 0.102937,
+        "resamples": 10000,
+        "seed": 20261193
+      },
+      "graph_gbr_soft_override_router_v76": {
+        "ci_high": 0.105517,
+        "ci_low": 0.084722,
+        "point": 0.09496,
+        "resamples": 10000,
+        "seed": 20261198
+      },
+      "history_three_route_graph_router_v78": {
+        "ci_high": 0.093651,
+        "ci_low": 0.073055,
+        "point": 0.083214,
+        "resamples": 10000,
+        "seed": 20261199
+      },
+      "learned_question_routed_support_path_v75": {
+        "ci_high": 0.009762,
+        "ci_low": 0.003373,
+        "point": 0.006508,
+        "resamples": 10000,
+        "seed": 20261197
+      },
+      "lexical_question_router_control": {
+        "ci_high": 0.010675,
+        "ci_low": 0.003968,
+        "point": 0.007222,
+        "resamples": 10000,
+        "seed": 20261196
+      },
+      "musique_anchor_default_three_route_router_v80": {
+        "ci_high": 0.041792,
+        "ci_low": 0.02754,
+        "point": 0.034688,
+        "resamples": 10000,
+        "seed": 20261201
+      },
+      "musique_target_trained_three_route_router_v79": {
+        "ci_high": 0.051667,
+        "ci_low": 0.035794,
+        "point": 0.043532,
+        "resamples": 10000,
+        "seed": 20261200
+      },
+      "soft_title_link_support_path_closure_v74": {
+        "ci_high": 0.032818,
+        "ci_low": 0.019052,
+        "point": 0.025759,
+        "resamples": 10000,
+        "seed": 20261194
+      },
+      "twowiki_residual_three_route_router_v81": {
+        "ci_high": 0.004286,
+        "ci_low": 0.000357,
+        "point": 0.002143,
+        "resamples": 10000,
+        "seed": 20261202
+      }
+    },
+    "per_question_type_delta_vs_best_control": {
+      "bridge_comparison": {
+        "best_control": "twowiki_residual_three_route_router_v81",
+        "best_control_evidence_macro_f1": 0.696667,
+        "candidate_evidence_macro_f1": 0.696667,
+        "cases": 200,
+        "delta": 0.0
+      },
+      "comparison": {
+        "best_control": "cross_encoder_topk",
+        "best_control_evidence_macro_f1": 0.556786,
+        "candidate_evidence_macro_f1": 0.556786,
+        "cases": 200,
+        "delta": 0.0
+      },
+      "compositional": {
+        "best_control": "soft_title_link_support_path_closure_v74",
+        "best_control_evidence_macro_f1": 0.485714,
+        "candidate_evidence_macro_f1": 0.484286,
+        "cases": 200,
+        "delta": -0.001429
+      },
+      "inference": {
+        "best_control": "soft_title_link_support_path_closure_v74",
+        "best_control_evidence_macro_f1": 0.444286,
+        "candidate_evidence_macro_f1": 0.441429,
+        "cases": 200,
+        "delta": -0.002857
+      }
+    },
+    "router": {
+      "action_counts": {
+        "direct_comparison_cross_override": 168,
+        "v75_default": 478,
+        "v81_safe_flip_override": 154
+      },
+      "default_action_fraction": 0.5975,
+      "direct_comparison_balanced_accuracy": 0.92,
+      "material_route_count": 3,
+      "override_action_fraction": 0.4025,
+      "route_counts": {
+        "alternating_anchor_link_control": 155,
+        "cross_encoder_topk": 168,
+        "soft_title_link_support_path_closure_v74": 477
+      },
+      "route_fractions": {
+        "alternating_anchor_link_control": 0.19375,
+        "cross_encoder_topk": 0.21,
+        "soft_title_link_support_path_closure_v74": 0.59625
+      }
+    },
+    "strict_gate_checks": {
+      "at_least_two_routes_each_cover_at_least_0_05": true,
+      "candidate_complete_evidence_recall_at_least_0_58": true,
+      "candidate_evidence_macro_f1_at_least_0_535": true,
+      "candidate_minus_frozen_v75_ci_low_above_0": true,
+      "candidate_minus_frozen_v75_f1_at_least_0_005": true,
+      "candidate_minus_strongest_control_ci_low_above_0": true,
+      "candidate_minus_strongest_control_f1_at_least_0_005": false,
+      "direct_comparison_balanced_accuracy_at_least_0_90": true,
+      "every_question_type_delta_vs_best_control_at_least_minus_0_005": true,
+      "exact_cases_equals_800": true,
+      "exact_question_type_quota": true,
+      "invalid_selector_output_rate_equals_0": true,
+      "largest_route_fraction_at_most_0_9": true,
+      "mean_selected_tokens_within_1_05_of_strongest_control": true,
+      "override_action_fraction_at_least_0_05": true,
+      "prior_or_stage_overlap_equals_0": true
+    },
+    "strongest_registered_control": {
+      "cases": 800,
+      "complete_evidence_recall": 0.63625,
+      "evidence_macro_f1": 0.542649,
+      "evidence_macro_recall": 0.840521,
+      "mean_selected_tokens": 124.5775,
+      "name": "twowiki_residual_three_route_router_v81"
+    }
+  },
+  "metadata": {
+    "cases": 800,
+    "experiment_id": "FRC-2WIKI-CASCADED-STYLE-RESIDUAL-PROSPECTIVE-V82",
+    "gold_answer_or_official_type_used_by_runtime_router": false,
+    "invalid_selector_output_count": 0,
+    "model_development_experiment_id": "FRC-2WIKI-CASCADED-STYLE-RESIDUAL-ROUTER-V82",
+    "official_2wiki_leaderboard_result": false,
+    "prior_overlap": 0,
+    "question_type_distribution": {
+      "bridge_comparison": 200,
+      "comparison": 200,
+      "compositional": 200,
+      "inference": 200
+    },
+    "same_dataset_case_disjoint_target": true,
+    "schema_version": "frc-twowiki-cascaded-style-residual-prospective-v82",
+    "selection_output_sha256": "0932ed6be1f9662d35892d2d1fbe6e9893ef9ab3537b2622a26241377d572182",
+    "selection_written_before_gold_join": true,
+    "stage": "development",
+    "stage_overlap": 0,
+    "v82_router_sha256": "8df7c80fef18d55947d08b1e53fd929871b12b8516468da386579fe5fa61a0e6"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "schema_version": "frc-qasper-top2-proposal-guarded-execution-erratum-v48",
+  "experiment_id": "FRC-QASPER-TOP2-PROPOSAL-GUARDED-ATOMIC-ROLES-V48",
+  "recorded_at": "2026-08-02T11:08:00+08:00",
+  "superseded_execution_sha256": "8c8131727c78e38db1eb216baba54e821cd2c70385b1541e40bc1ea4d38c515c",
+  "effective_execution_sha256": "007ce9a2b44f6ebc42e2e108ed793df84f5ba72518e71f540a83bc48b3311e76",
+  "reason": "The first execution registration used the active base Python 3.13 interpreter with CPU-only torch 2.13.0 while the frozen device parameter was cuda. No query generation, neural scoring, gold join, metric computation or bootstrap had started. The registration was immediately replaced using the pre-existing rag_exp Python 3.10 environment with torch 2.4.1+cu124 and the NVIDIA GeForce RTX 4060 Ti used by the preceding registered experiments.",
+  "unchanged": {
+    "protocol_sha256": "34c96fda996ab635911a3736b6d0df56598b79f87ed671c1f0050a366f475501",
+    "implementation_registration_sha256": "051895e3ae32b5b1a679220b939447150bda955cee087216dd4d16ac98045006",
+    "source_archive_sha256": "a28fdf966db827bcee3d873107d6b6669864fb7ca8fbf73a192f5e39191bdb5a",
+    "source_card_sha256": "da348d3f8277f8a93ca397941f6a525433e282858b1c0562aed3f667d8e55b05",
+    "prepared_blind_sha256": "0962a241d2dd49c447331230aa3b7e7f0a7a19be8bfacb25b5a65fb9b8f5523e",
+    "candidate_map_sha256": "471bbba96c6098dfdb7551dceb3a080c97cbb4947ad13fcc2de8096c7ef09176",
+    "blind_census_sha256": "d842d7bfaaedac62f90580954bebf8cfbf037d19648cf24bd747e1c1e0283924",
+    "candidate_coverage_sha256": "b3ed456d3fd438b330c6325cae724a0dddc2e9b629bc6b10ba4cf5a58614bc4c",
+    "sample_cases": 600,
+    "method": "top2_proposal_guarded_frc_v48",
+    "token_budgets": [
+      256,
+      512,
+      1024
+    ],
+    "bootstrap_seed": 20260808,
+    "bootstrap_resamples": 10000
+  },
+  "method_threshold_sample_metric_or_seed_changed": false,
+  "queries_generated_before_correction": false,
+  "neural_scores_generated_before_correction": false,
+  "metrics_seen_before_correction": false,
+  "gate_2": "NO-GO/SHADOW"
+}

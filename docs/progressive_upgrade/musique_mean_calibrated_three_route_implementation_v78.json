@@ -1,0 +1,111 @@
+{
+  "schema_version": "frc-musique-mean-calibrated-three-route-implementation-lock-v78",
+  "experiment_id": "FRC-MUSIQUE-MEAN-CALIBRATED-THREE-ROUTE-TRANSFER-V78",
+  "locked_on": "2026-08-04",
+  "files": {
+    "history_router_implementation": {
+      "path": "research/frc_rag/hotpot_three_route_router.py",
+      "bytes": 22742,
+      "sha256": "c90c6366fcb7eebcc682f101ee80023aa62f185f299afa8a38a282cfdac1f1b0"
+    },
+    "target_transfer_implementation": {
+      "path": "research/frc_rag/musique_mean_calibrated_three_route.py",
+      "bytes": 28580,
+      "sha256": "1f822aba981966da720dc21f67fa695300e9b2249014f7bc79e8465abf7f04a1"
+    },
+    "history_model_runner": {
+      "path": "scripts/run_hotpot_three_route_model.py",
+      "bytes": 1941,
+      "sha256": "574b15f803bdd6e323b8557ffe7887b4cde57cd6d68ba9fa8235152799b35707"
+    },
+    "target_transfer_runner": {
+      "path": "scripts/run_musique_mean_calibrated_three_route.py",
+      "bytes": 13226,
+      "sha256": "ef4062eeaa9fa8c4f0d56c0063c736459dd87eedf8e3408f3a0bc39fea90e20c"
+    },
+    "tests": {
+      "path": "tests/test_frc_musique_mean_calibrated_three_route.py",
+      "bytes": 11601,
+      "sha256": "b6cc277f63f9325cf4d9e2542b209b6b5ccad9f8091b3decff357d6a8f72fddb"
+    },
+    "lock_tests": {
+      "path": "tests/test_frc_musique_mean_calibrated_three_route_lock.py",
+      "bytes": 3753,
+      "sha256": "cdde4fa4e909d51a0560bfce1da93018f7b2823ff8a6050549113176b5383847"
+    },
+    "protocol": {
+      "path": "docs/progressive_upgrade/musique_mean_calibrated_three_route_protocol_v78.json",
+      "bytes": 5048,
+      "sha256": "ad8292649d2b3a1367a200fd4e8ff985f5f0b86068183a702f71c8206cd3563f"
+    },
+    "source_registration": {
+      "path": "docs/progressive_upgrade/musique_mean_calibrated_three_route_source_registration_v78.json",
+      "bytes": 4078,
+      "sha256": "4b1c6ab14fded479b20311f5b9fb5fa7e96ed96505acc8b4f93190a1819d4b4a"
+    },
+    "history_router_model": {
+      "path": "docs/progressive_upgrade/hotpot_three_route_router_model_development_v78.json",
+      "bytes": 113020,
+      "sha256": "8eeef297eacf32e6e2b44fffb4d03428dc9046ea4ea5b367a73d59b98cbf7608"
+    },
+    "target_mean_calibration": {
+      "path": "docs/progressive_upgrade/musique_three_route_mean_calibration_v78.json",
+      "bytes": 2634,
+      "sha256": "8b0b986416ac29b311fed71ed7553c4f3766024475016a76146a19f18e9b7930"
+    }
+  },
+  "history_model_development": {
+    "permanently_excluded_hotpotqa_cases": 1000,
+    "gold_free_runtime_features": 71,
+    "learned_gain_heads": 2,
+    "model_configurations": 108,
+    "thresholds_per_model": 4,
+    "finite_route_policy_configurations": 432,
+    "selected_oof_evidence_macro_f1": 0.563008,
+    "reproduced_v76_oof_evidence_macro_f1": 0.562448,
+    "selected_minus_v76_point": 0.00056,
+    "selected_routes": {
+      "cross_encoder_topk": 602,
+      "soft_title_link_support_path_closure_v74": 398,
+      "alternating_anchor_link_control": 0
+    },
+    "interpretation": "history-only addition of an anchor head did not materially improve v76 and selected no anchor routes; target-domain route-mean calibration is evaluated separately"
+  },
+  "target_calibration": {
+    "v77_cases": 800,
+    "configuration_count": 1,
+    "per_case_feature_or_gold_fit": false,
+    "soft_gain_offset": -0.009434,
+    "anchor_gain_offset": 0.013651,
+    "hop_or_case_specific_offset": false,
+    "v77_is_calibration_not_confirmation": true
+  },
+  "pre_target_fail_closed_events": [
+    {
+      "event": "v76 exporter rejected non-25-tree grid members",
+      "effect": "no model artifact written; no v78 target ids or content read",
+      "repair": "configuration-aware v78 exporter"
+    },
+    {
+      "event": "some unselected grid models were not exactly reproduced by the portable tree evaluator",
+      "effect": "search stopped before artifact write; no v78 target ids or content read",
+      "repair": "grid selection uses sklearn-native OOF predictions and the final selected configuration alone must pass portable-export equivalence"
+    }
+  ],
+  "pre_target_verification": {
+    "ruff": "PASS",
+    "targeted_tests": "14 passed",
+    "synthetic_selection_and_reaggregation": "PASS",
+    "selected_full_and_fold_model_portable_export_equivalence": "PASS",
+    "v78_target_ids_selected": 0,
+    "v78_target_questions_paragraphs_scores_gold_or_metrics_seen": false
+  },
+  "frozen_boundaries": {
+    "history_model_features_heads_hyperparameters_and_threshold": true,
+    "v77_route_mean_offsets_and_formula": true,
+    "v78_stage_sizes_hop_quotas_salts_controls_metrics_gates_and_noninferiority": true,
+    "implementation_protocol_source_registration_model_calibration_and_tests": true,
+    "confirmation_requires_every_strict_development_gate": true,
+    "gate_2_canary_default_or_selector_adoption_authorized": false
+  }
+}

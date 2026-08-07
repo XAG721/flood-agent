@@ -1,0 +1,123 @@
+{
+  "schema_version": "frc-conformal-cross-dataset-head-transfer-protocol-v1",
+  "registered_on": "2026-07-31",
+  "purpose": "Test whether the frozen 37-dimensional FRC sufficiency head can transfer across public datasets without using target-dataset train labels, while retaining target-only calibration of the automatic safety threshold.",
+  "development_boundary": {
+    "post_hoc": true,
+    "reason": "Existing confirmation reports refit the head on each target dataset and therefore do not establish model-parameter transfer.",
+    "independent_confirmation": false,
+    "gate_evidence": false,
+    "new_untouched_data_used": false,
+    "required_next_confirmation": "Only an all-checks post-hoc transfer candidate may be frozen for one later confirmation on genuinely untouched data or independently judged flood-domain data."
+  },
+  "datasets": [
+    {
+      "dataset": "2WikiMultiHopQA",
+      "source_path_label": "role_scores_2wikimultihopqa.jsonl",
+      "source_sha256": "7add5a5ec5206a33848de0eecc76a8697dc321e03946fcfefee20df0525a6104",
+      "reference_report_path_label": "2wikimultihopqa_confirmation.json",
+      "reference_report_sha256": "de5163c16023b5f03198f81149a0608330d8f44d8f20e5ab2772489e94f5d7a1"
+    },
+    {
+      "dataset": "ConditionalQA",
+      "source_path_label": "role_scores_conditionalqa.jsonl",
+      "source_sha256": "feb0d75957c1bb09f07985979bb0816abc761ce6fafc66b40d9d99b02c1374b5",
+      "reference_report_path_label": "conformal_robustness.json",
+      "reference_report_sha256": "c1d9068333f3bc7b79e3039d120c8120ae2f0f00ff48c5a653b97545bee79dce"
+    },
+    {
+      "dataset": "HotpotQA",
+      "source_path_label": "role_scores_hotpotqa.jsonl",
+      "source_sha256": "ac5189e4f64e799ca7915a0eff9a304e6d09e0bbc6c4ef233335b17c6d56e6af",
+      "reference_report_path_label": "hotpotqa_confirmation.json",
+      "reference_report_sha256": "fed46418df2a071befda86120f71bda4f4d30073eeb7af76c4a5c23981d5825b"
+    },
+    {
+      "dataset": "MultiHop-RAG",
+      "source_path_label": "role_scores_multihoprag.jsonl",
+      "source_sha256": "de5333ecea96ed274afd5d28b4d69af5a63e975fc75c9fa991ade9ce52f296e7",
+      "reference_report_path_label": "multihoprag_confirmation.json",
+      "reference_report_sha256": "d71bf632dc8461cec0e70715782c1f3f2cad48d73fe92307071f8e684b0ef8b1"
+    }
+  ],
+  "frozen_split_and_selector": {
+    "split_versions": [
+      "frc-conformal-sufficiency-split-v1",
+      "frc-conformal-sufficiency-split-v1-repeat-01",
+      "frc-conformal-sufficiency-split-v1-repeat-02",
+      "frc-conformal-sufficiency-split-v1-repeat-03",
+      "frc-conformal-sufficiency-split-v1-repeat-04",
+      "frc-conformal-sufficiency-split-v1-repeat-05",
+      "frc-conformal-sufficiency-split-v1-repeat-06",
+      "frc-conformal-sufficiency-split-v1-repeat-07",
+      "frc-conformal-sufficiency-split-v1-repeat-08",
+      "frc-conformal-sufficiency-split-v1-repeat-09"
+    ],
+    "case_assignment": "SHA-256(split_version, case_id): 40% train, 30% calibration, 30% evaluation within every dataset.",
+    "selector": "frc_select",
+    "top_k": 5,
+    "token_budget": 1500,
+    "role_threshold": 0.55,
+    "missing_ratios": [
+      0.0,
+      0.25,
+      0.5,
+      0.75
+    ]
+  },
+  "frozen_transfer_head": {
+    "feature_names_source": "The unchanged 37 observable features in research/frc_rag/conformal_sufficiency.py.",
+    "feature_transform": "linear",
+    "l2": 4.0,
+    "iterations": 80,
+    "target_train_variants_used": false,
+    "source_training_data": "For each target and split version, only train variants from the other three datasets are used.",
+    "pool_weighting": "Each source dataset receives equal total weight; within each source dataset, complete and incomplete classes each receive half of that dataset's weight.",
+    "standardization_source": "Pooled source-dataset train variants only.",
+    "standardization_weighting": "Weighted means and variances use the same equal-dataset, equal-within-dataset-class weights as model fitting.",
+    "dataset_identity_feature": false,
+    "question_type_feature": false,
+    "gold_fields_in_features": false
+  },
+  "frozen_target_calibration": {
+    "primary_alpha": 0.1,
+    "unit": "Maximum transferred-head score among incomplete variants in each target calibration case family.",
+    "declaration_rule": "Declare complete only when the target evaluation score is strictly greater than the target calibration threshold.",
+    "target_train_used_for_threshold": false,
+    "target_calibration_labels_used": true,
+    "target_evaluation_used_for_threshold_or_selection": false
+  },
+  "reference_comparator": {
+    "method": "Existing target-fitted linear L2=4 global split-conformal head on the identical split version.",
+    "purpose": "Separate model-parameter transfer from the already established per-dataset refit result.",
+    "reference_result_must_be_exactly_reproduced": true
+  },
+  "pre_registered_adoption_checks": {
+    "all_checks_required": true,
+    "minimum_source_dataset_count_per_target": 3,
+    "no_target_train_labels_or_features_used_for_transferred_head": true,
+    "source_training_uses_train_splits_only": true,
+    "target_threshold_uses_calibration_only": true,
+    "no_evaluation_selection": true,
+    "maximum_mean_case_family_false_complete_rate_each_dataset": 0.1,
+    "maximum_dataset_case_family_risk_increase_vs_target_fitted": 0.01,
+    "maximum_dataset_complete_recall_decrease_vs_target_fitted": 0.05,
+    "maximum_cross_dataset_mean_evaluation_auc_decrease_vs_target_fitted": 0.02,
+    "minimum_datasets_with_at_least_7_of_10_alpha_control_repeats": 3,
+    "all_40_finite_sample_nominal_bounds_at_or_below_alpha": true,
+    "status_if_all_pass": "POST_HOC_TRANSFER_CANDIDATE",
+    "status_if_any_fail": "DO_NOT_ADOPT"
+  },
+  "execution_policy": {
+    "if_all_checks_pass": "Freeze the transferred-head method before selecting or inspecting any new confirmation dataset.",
+    "if_any_check_fails": "Retain the negative result and do not use a new dataset to continue this transfer-method selection cycle."
+  },
+  "theoretical_scope": {
+    "head_transfer_claim": "The experiment can test parameter portability across the four revealed public datasets because target train labels are excluded from the transferred head.",
+    "calibration_claim": "The finite-sample marginal statement still requires exchangeability between target calibration and target evaluation case families.",
+    "zero_shot_claim": false,
+    "reason_not_zero_shot": "Target calibration labels are used to set the conformal threshold.",
+    "conditional_subgroup_guarantee": false
+  },
+  "gate_policy": "This post-hoc cross-domain experiment cannot change Gate 2 from NO-GO/SHADOW or authorize CANARY or DEFAULT."
+}

@@ -1,0 +1,1413 @@
+{
+  "crossfit": {
+    "candidate": {
+      "complete_evidence_recall": 0.722,
+      "evidence_macro_f1": 0.562448,
+      "evidence_macro_recall": 0.883505,
+      "mean_selected_tokens": 133.418
+    },
+    "candidate_minus_cross_encoder": {
+      "ci_high": 0.01691,
+      "ci_low": 0.006596,
+      "point": 0.011694,
+      "resamples": 10000,
+      "seed": 20261021
+    },
+    "controls": {
+      "alternating_anchor_link_control": {
+        "complete_evidence_recall": 0.69,
+        "evidence_macro_f1": 0.550418,
+        "evidence_macro_recall": 0.866688,
+        "mean_selected_tokens": 135.269
+      },
+      "cross_encoder_topk": {
+        "complete_evidence_recall": 0.689,
+        "evidence_macro_f1": 0.550754,
+        "evidence_macro_recall": 0.865712,
+        "mean_selected_tokens": 133.964
+      },
+      "learned_question_routed_support_path_v75": {
+        "complete_evidence_recall": 0.658,
+        "evidence_macro_f1": 0.538971,
+        "evidence_macro_recall": 0.848971,
+        "mean_selected_tokens": 134.536
+      },
+      "lexical_question_router_control": {
+        "complete_evidence_recall": 0.648,
+        "evidence_macro_f1": 0.535524,
+        "evidence_macro_recall": 0.844071,
+        "mean_selected_tokens": 134.564
+      },
+      "soft_title_link_support_path_closure_v74": {
+        "complete_evidence_recall": 0.601,
+        "evidence_macro_f1": 0.51978,
+        "evidence_macro_recall": 0.818221,
+        "mean_selected_tokens": 134.881
+      }
+    },
+    "fold_models": [
+      {
+        "fold": 0,
+        "held_out_cases": 193,
+        "model_sha256": "2192f7ef6eee962e082c383504683fe4b8ea0b2ac69464c52e9c698303db7a61",
+        "training_cases": 807
+      },
+      {
+        "fold": 1,
+        "held_out_cases": 213,
+        "model_sha256": "4d96197c9974b86edd3c88a07d14048658f5e6f66d368eb722ccf47295261076",
+        "training_cases": 787
+      },
+      {
+        "fold": 2,
+        "held_out_cases": 210,
+        "model_sha256": "e13728b81ab79d6404ac54fa206153d431a17935c73f1bcb0de0e5731b919fd0",
+        "training_cases": 790
+      },
+      {
+        "fold": 3,
+        "held_out_cases": 195,
+        "model_sha256": "eeb3312040196def0ba1f9ccf571dd1608663d8f03b3973e475e20ca29ad359e",
+        "training_cases": 805
+      },
+      {
+        "fold": 4,
+        "held_out_cases": 189,
+        "model_sha256": "e1bc85df51cd9a09764c853ec2c24722ef35e90659a160507fe13440d314f313",
+        "training_cases": 811
+      }
+    ],
+    "folds": 5,
+    "override_rate": 0.346,
+    "per_question_type": {
+      "bridge": {
+        "candidate_evidence_macro_f1": 0.554196,
+        "cases": 803,
+        "cross_encoder_evidence_macro_f1": 0.539278,
+        "delta": 0.014918,
+        "override_rate": 0.408468
+      },
+      "comparison": {
+        "candidate_evidence_macro_f1": 0.596082,
+        "cases": 197,
+        "cross_encoder_evidence_macro_f1": 0.597532,
+        "delta": -0.00145,
+        "override_rate": 0.091371
+      }
+    }
+  },
+  "experiment_id": "FRC-HOTPOT-GRAPH-SOFT-OVERRIDE-ROUTER-V76",
+  "exploration_disclosure": {
+    "all_exploration_used_only_permanently_excluded_history": true,
+    "best_single_soft_ridge_oof_f1": 0.557323,
+    "best_three_way_ridge_oof_f1": 0.558123,
+    "gradient_boosting_configurations": 252,
+    "selected_gradient_boosting_oof_f1": 0.562448,
+    "single_soft_ridge_configurations": 525,
+    "three_way_ridge_configurations": 200,
+    "total_historical_configurations": 1089,
+    "tree_configurations": 112,
+    "zero_shot_v75_transfer_diagnostic_run": true
+  },
+  "history": {
+    "case_ids_sha256": "6884ab2a03c8fb63a7b9319e1ed867d44529c120a6594ab54507b236cb1949cb",
+    "cases": 1000,
+    "eligible_for_v76_target_stages": false,
+    "question_type_counts": {
+      "bridge": 803,
+      "comparison": 197
+    },
+    "source_sha256": "ac5189e4f64e799ca7915a0eff9a304e6d09e0bbc6c4ef233335b17c6d56e6af",
+    "unique_ids": 1000
+  },
+  "history_artifacts": {
+    "bytes": 29609025,
+    "path": ".cache/benchmarks/frc_public_reference/role_scores_hotpotqa.jsonl",
+    "sha256": "ac5189e4f64e799ca7915a0eff9a304e6d09e0bbc6c4ef233335b17c6d56e6af",
+    "v75_model_path": "docs/progressive_upgrade/twowiki_question_router_model_development_v75.json",
+    "v75_model_sha256": "b12c128f06c4ab14851d2f24538a15e76f5f9ff7336a7968c7b01d7c5062cbc0"
+  },
+  "model": {
+    "estimators": 25,
+    "feature_count": 71,
+    "init_prediction": 0.0,
+    "learning_rate": 0.1,
+    "loss": "huber",
+    "max_depth": 2,
+    "min_samples_leaf": 40,
+    "model_type": "gradient_boosting_regressor_export",
+    "random_state": 7,
+    "sklearn_version": "1.7.2",
+    "trees": [
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          4,
+          31,
+          -2,
+          -2,
+          51,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.164728686213493,
+          0.954521119594574,
+          -2.0,
+          -2.0,
+          0.102744549512863,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.028896103896104,
+          0.004494032045052,
+          0.013509070294785,
+          -0.061069882498454,
+          -0.087489813522871,
+          0.006533101045296,
+          -0.114927105318564
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          3,
+          58,
+          -2,
+          -2,
+          70,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.022775812074542,
+          0.250000007450581,
+          -2.0,
+          -2.0,
+          0.300000004470348,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.026428073910353,
+          0.002967121465962,
+          0.014640905843194,
+          -0.037831828641894,
+          -0.081745257140134,
+          -0.047160432800443,
+          -0.19088332913019
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          8,
+          10,
+          -2,
+          -2,
+          65,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.107625484466553,
+          0.011815409641713,
+          -2.0,
+          -2.0,
+          0.700000017881393,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.023759894955945,
+          0.000535357480497,
+          -0.026312909289546,
+          0.018265640457029,
+          -0.078090054935173,
+          -0.169568271295913,
+          -0.035578862480512
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          53,
+          23,
+          -2,
+          -2,
+          4,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.700000017881393,
+          0.639951795339584,
+          -2.0,
+          -2.0,
+          0.17817460745573,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.021349276410333,
+          -0.131338221586137,
+          -0.10607810907759,
+          -0.198868151168603,
+          -0.010736308016177,
+          0.006563946407237,
+          -0.051213197754507
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          46,
+          50,
+          -2,
+          -2,
+          68,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.350000008940697,
+          0.300000004470348,
+          -2.0,
+          -2.0,
+          0.300000004470348,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.019370726105584,
+          0.012724038321194,
+          -0.001263338315879,
+          0.081108123207742,
+          -0.049475117544654,
+          -0.032528472890264,
+          -0.182458565438798
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          8,
+          52,
+          -2,
+          -2,
+          46,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.08135686442256,
+          0.623310804367065,
+          -2.0,
+          -2.0,
+          0.550000011920929,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.017502869502747,
+          0.007304367462172,
+          0.001532862963689,
+          0.082889551198019,
+          -0.052907372743943,
+          -0.03121520680719,
+          -0.144789886586118
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          4,
+          10,
+          -2,
+          -2,
+          52,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.168699190020561,
+          0.0018487116904,
+          -2.0,
+          -2.0,
+          0.102744549512863,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.015839167762087,
+          0.004429791216049,
+          -0.028646770759059,
+          0.014586404822137,
+          -0.053316530658983,
+          0.022767817612909,
+          -0.072488887030269
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          47,
+          50,
+          -2,
+          -2,
+          10,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.900000005960464,
+          0.300000004470348,
+          -2.0,
+          -2.0,
+          0.014142800122499,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.014566923915051,
+          0.012081710899592,
+          -0.001491328782534,
+          0.077281365821934,
+          -0.040170514227159,
+          -0.07387382943996,
+          -9.9426373362e-05
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          8,
+          64,
+          -2,
+          -2,
+          66,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.068573668599129,
+          0.104754444211721,
+          -2.0,
+          -2.0,
+          0.300000004470348,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.013149912504041,
+          0.010893821447028,
+          -0.00057184013374,
+          0.050067390048566,
+          -0.038275368636958,
+          -0.009621823648102,
+          -0.109785509544449
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          58,
+          48,
+          -2,
+          -2,
+          69,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.250000007450581,
+          0.900000005960464,
+          -2.0,
+          -2.0,
+          0.700000017881393,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.011578266266056,
+          0.00825969946897,
+          0.017055852410002,
+          -0.041659557087608,
+          -0.04000785706394,
+          -0.151384969946145,
+          -0.016801730850949
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          62,
+          10,
+          -2,
+          -2,
+          56,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.300000004470348,
+          0.002180675859563,
+          -2.0,
+          -2.0,
+          0.010099766310304,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.010454456897198,
+          -0.003618873860377,
+          -0.030689105638278,
+          0.007342926138717,
+          -0.081295953824254,
+          -0.129025965268992,
+          -0.069778645912451
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          46,
+          50,
+          -2,
+          -2,
+          10,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.350000008940697,
+          0.300000004470348,
+          -2.0,
+          -2.0,
+          0.019308237358928,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.009391171957223,
+          0.012644182104844,
+          0.000467139807109,
+          0.071279642795538,
+          -0.030059992434045,
+          -0.056670144946068,
+          0.00857684767425
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          46,
+          43,
+          -2,
+          -2,
+          64,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.550000011920929,
+          0.234599731862545,
+          -2.0,
+          -2.0,
+          0.073344949632883,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.008571068653504,
+          0.000191321105752,
+          -0.110247010828158,
+          0.004580907737907,
+          -0.055620078634732,
+          0.004457157109668,
+          -0.124040780196755
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          8,
+          52,
+          -2,
+          -2,
+          52,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.08135686442256,
+          0.623310804367065,
+          -2.0,
+          -2.0,
+          0.103103742003441,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.007746836303167,
+          0.008238801210923,
+          0.003247007160637,
+          0.072699727759504,
+          -0.030561289842693,
+          0.022917890027962,
+          -0.049097349085868
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          47,
+          50,
+          -2,
+          -2,
+          10,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.900000005960464,
+          0.300000004470348,
+          -2.0,
+          -2.0,
+          0.004479039926082,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.007130998371276,
+          0.011344756092083,
+          -0.000344373107144,
+          0.066431904267584,
+          -0.024882213443916,
+          -0.057742557692675,
+          -0.002007661915783
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          46,
+          43,
+          -2,
+          -2,
+          64,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.550000011920929,
+          0.234599731862545,
+          -2.0,
+          -2.0,
+          0.073344949632883,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.006492133468615,
+          0.000848094451341,
+          -0.098700529609538,
+          0.004748264675406,
+          -0.045904949624808,
+          0.006650850469445,
+          -0.105340170872156
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          8,
+          64,
+          -2,
+          -2,
+          70,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.068573668599129,
+          0.104754444211721,
+          -2.0,
+          -2.0,
+          0.100000001490116,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.005847429005081,
+          0.010210166934037,
+          -0.001728201248505,
+          0.051029563940747,
+          -0.022627452573363,
+          0.018706130882737,
+          -0.039232809704269
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          54,
+          43,
+          -2,
+          -2,
+          37,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.300000004470348,
+          0.230010911822319,
+          -2.0,
+          -2.0,
+          0.079666666686535,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.005326666364306,
+          -0.00039719056655,
+          -0.095605849975115,
+          0.002828338448097,
+          -0.056413960995596,
+          -0.105639001965442,
+          -0.038413268573352
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          46,
+          50,
+          -2,
+          -2,
+          10,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.350000008940697,
+          0.300000004470348,
+          -2.0,
+          -2.0,
+          0.014142800122499,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.00476629017768,
+          0.011007001957292,
+          0.001043847375999,
+          0.05791758601653,
+          -0.019561393653119,
+          -0.040452280979774,
+          0.009117930117962
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          36,
+          4,
+          -2,
+          -2,
+          48,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.900000005960464,
+          0.17192118614912,
+          -2.0,
+          -2.0,
+          0.900000005960464,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.00437276477515,
+          -0.009924382875692,
+          0.002131554962728,
+          -0.030832996870052,
+          0.035580683522193,
+          0.066006875589962,
+          0.00821430535804
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          56,
+          4,
+          -2,
+          -2,
+          31,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.042101923376322,
+          0.177521012723446,
+          -2.0,
+          -2.0,
+          0.978289663791656,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.004004156532159,
+          -0.020606774485972,
+          -0.003392933893388,
+          -0.062394089263117,
+          0.00831764703635,
+          0.015781080672699,
+          -0.034679982724369
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          46,
+          52,
+          -2,
+          -2,
+          63,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.550000011920929,
+          0.586581707000732,
+          -2.0,
+          -2.0,
+          0.073344949632883,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.00360447395563,
+          0.002176597704279,
+          -0.001551339569694,
+          0.047644383494076,
+          -0.034645514779218,
+          0.009958149686334,
+          -0.082429823951321
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          36,
+          31,
+          -2,
+          -2,
+          49,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.900000005960464,
+          0.982815623283386,
+          -2.0,
+          -2.0,
+          0.090333331376314,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.00326223329227,
+          -0.008148060522333,
+          -0.003271297496041,
+          -0.051084073292369,
+          0.031899703658511,
+          0.056818754119609,
+          0.003684809350979
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          56,
+          8,
+          -2,
+          -2,
+          31,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.042101923376322,
+          0.040408162400126,
+          -2.0,
+          -2.0,
+          0.978289663791656,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.002996286637227,
+          -0.017557557950261,
+          0.008716932652307,
+          -0.035608243035431,
+          0.007810510539345,
+          0.013811047225363,
+          -0.02617563977316
+        ]
+      },
+      {
+        "children_left": [
+          1,
+          2,
+          -1,
+          -1,
+          5,
+          -1,
+          -1
+        ],
+        "children_right": [
+          4,
+          3,
+          -1,
+          -1,
+          6,
+          -1,
+          -1
+        ],
+        "features": [
+          46,
+          50,
+          -2,
+          -2,
+          34,
+          -2,
+          -2
+        ],
+        "thresholds": [
+          0.350000008940697,
+          0.100000001490116,
+          -2.0,
+          -2.0,
+          0.350000008940697,
+          -2.0,
+          -2.0
+        ],
+        "values": [
+          -0.002733468619603,
+          0.009549379356041,
+          -0.009365539203324,
+          0.030050072163988,
+          -0.014254589589005,
+          -0.029383993271839,
+          0.02484359583506
+        ]
+      }
+    ]
+  },
+  "model_sha256": "8923f0315e24f38e0552e8140377fe18f8647e76c0cac33f534b451f850eddf0",
+  "prospective_boundary": {
+    "all_1000_history_ids_excluded_from_v76_target_stages": true,
+    "v76_target_rows_ids_scores_or_metrics_seen": false
+  },
+  "schema_version": "frc-hotpot-graph-router-model-development-v76",
+  "selected_configuration": {
+    "default_route": "cross_encoder_topk",
+    "estimators": 25,
+    "feature_names": [
+      "candidate_count_scaled",
+      "unique_source_fraction",
+      "linked_node_fraction",
+      "mean_degree_fraction",
+      "max_degree_fraction",
+      "component_fraction",
+      "largest_component_fraction",
+      "v75_comparison_probability",
+      "question_title_mention_fraction",
+      "cross_encoder_top1",
+      "cross_encoder_top1_top2_gap",
+      "cross_encoder_top5_mean",
+      "cross_encoder_top5_std",
+      "cross_encoder_top5_floor",
+      "dense_top1",
+      "dense_top1_top2_gap",
+      "dense_top5_mean",
+      "dense_top5_std",
+      "dense_top5_floor",
+      "bm25_top1",
+      "bm25_top1_top2_gap",
+      "bm25_top5_mean",
+      "bm25_top5_std",
+      "bm25_top5_floor",
+      "hybrid_top1",
+      "hybrid_top1_top2_gap",
+      "hybrid_top5_mean",
+      "hybrid_top5_std",
+      "hybrid_top5_floor",
+      "cross_cross_overlap_fraction",
+      "cross_cross_added_fraction",
+      "cross_cross_score_mean",
+      "cross_cross_score_min",
+      "cross_cross_score_max",
+      "cross_internal_edge_fraction",
+      "cross_linked_node_fraction",
+      "cross_unique_source_fraction",
+      "cross_token_budget_fraction",
+      "cross_added_link_to_cross_fraction",
+      "cross_added_mean_cross_rank_fraction",
+      "cross_added_max_cross_rank_fraction",
+      "soft_cross_overlap_fraction",
+      "soft_cross_added_fraction",
+      "soft_cross_score_mean",
+      "soft_cross_score_min",
+      "soft_cross_score_max",
+      "soft_internal_edge_fraction",
+      "soft_linked_node_fraction",
+      "soft_unique_source_fraction",
+      "soft_token_budget_fraction",
+      "soft_added_link_to_cross_fraction",
+      "soft_added_mean_cross_rank_fraction",
+      "soft_added_max_cross_rank_fraction",
+      "anchor_cross_overlap_fraction",
+      "anchor_cross_added_fraction",
+      "anchor_cross_score_mean",
+      "anchor_cross_score_min",
+      "anchor_cross_score_max",
+      "anchor_internal_edge_fraction",
+      "anchor_linked_node_fraction",
+      "anchor_unique_source_fraction",
+      "anchor_token_budget_fraction",
+      "anchor_added_link_to_cross_fraction",
+      "anchor_added_mean_cross_rank_fraction",
+      "anchor_added_max_cross_rank_fraction",
+      "pair_soft_cross_overlap_fraction",
+      "pair_soft_minus_cross_fraction",
+      "pair_anchor_cross_overlap_fraction",
+      "pair_anchor_minus_cross_fraction",
+      "pair_soft_anchor_overlap_fraction",
+      "pair_soft_minus_anchor_fraction"
+    ],
+    "features": "71 gold-free graph, score, selection-overlap and frozen v75 question-probability features",
+    "learning_rate": 0.1,
+    "loss": "huber",
+    "max_depth": 2,
+    "min_samples_leaf": 40,
+    "official_type_answer_or_gold_used_at_runtime": false,
+    "override_threshold": 0.0,
+    "positive_route": "soft_title_link_support_path_closure_v74",
+    "random_state": 7,
+    "runtime_target": "soft_title_link_f1_minus_cross_encoder_f1"
+  },
+  "v75_router_model_payload_sha256": "31562661eacb70f3881dad0a6b17a70d272d7012d938187ef59a29336af5aa7b"
+}
