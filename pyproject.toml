@@ -24,6 +24,7 @@ test = [
   "numpy>=1.26,<3",
   "pytest>=9.0.3,<10",
   "ruff>=0.15.21,<0.16",
+  "scikit-learn>=1.6,<2",
 ]
 postgres = [
   "psycopg[binary]>=3.3,<4",

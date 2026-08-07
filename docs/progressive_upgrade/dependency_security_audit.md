@@ -19,7 +19,7 @@
 - 主前端升级到 Vite 8.1.4、Vitest 4.1.10、`@vitejs/plugin-react` 6.0.3；
 - 主前端增加固定 Playwright 1.55.1 和 Chromium 验收；
 - Cesium 前端升级到 Vite 8.1.4、`@vitejs/plugin-react` 6.0.3、`vite-plugin-static-copy` 4.1.1；
-- 两份 npm 锁文件通过兼容更新清除 `form-data`、`ws`、`protobufjs`、DOMPurify、PostCSS 和 React Router 公告链。
+- 两份 npm 锁文件通过兼容更新清除 `form-data`、`ws`、`protobufjs`、DOMPurify 和 PostCSS 的高危公告链；React Router 6.30.4 仍有 2 个中危公告，保留在下述已知边界内。
 
 ## 当前结果
 
@@ -27,7 +27,7 @@
 |---|---|---|
 | Python 隔离项目环境 | pip-audit 2.10.1，`.[test,postgres]`，pip 26.1.2 | 0 个已知漏洞；本地项目包因不在 PyPI 而跳过，项目代码由自动测试和其他安全检查覆盖 |
 | FR-04 新增解析依赖 | pip-audit 2.10.1；pypdf 6.14.2、Pillow 12.3.0 | 0 个已知漏洞；使用完全固定版本执行发布前复核 |
-| 主前端 | npm audit，`--audit-level=high` | 0 个漏洞 |
+| 主前端 | npm audit，`--audit-level=high` | 0 个高危/严重漏洞；React Router 6.30.4 仍报告 2 个中危漏洞 |
 | Cesium 前端 | npm audit，`--audit-level=high` | 0 个漏洞 |
 | 主前端兼容性 | Vitest / TypeScript / Vite production build | 19/19 测试与构建通过 |
 | 主前端浏览器兼容性 | Playwright / Chromium | 2/2 新版与回退页面验收通过 |
@@ -45,6 +45,10 @@ npm audit --prefix 3D_visual --audit-level=high
 ```
 
 任何高危/严重 npm 公告或任何 pip-audit 已知漏洞都会使 CI 失败。中低危公告也会显示在日志中，并应在不破坏回归的前提下尽快处理。
+
+### React Router 中危边界（2026-08-07）
+
+主前端是纯客户端 BrowserRouter 应用，不启用 React Server Components 或 SSR hydration，也不把外部输入直接传给 `Link` / `useNavigate`。npm 当前建议升级到 7.18.2 以修复 6.x 的两个中危公告，但 7.18.2 同时命中 RSC action 的高危公告；强制升级会增加严重度和主版本兼容风险。因此本版本保持 6.30.4，并将剩余 2 个中危项记录为受控残余风险，等待上游发布不存在公告区间重叠的版本后再升级。该决定不降低 CI 对 high/critical 的失败门槛。
 
 本机 Anaconda 全局环境不属于项目部署环境：对其直接执行 `pip-audit --local` 检出 44 个旧工具包的 162 条公告，主要来自 Jupyter、Scrapy、Bokeh、aiohttp 等非项目依赖。项目结论只采用从空 venv 安装 `.[test,postgres]` 的隔离审计；若继续将该 Anaconda 环境用于其他工作，应由环境所有者单独升级或重建，不能把项目隔离审计误当作全局环境已安全。
 
