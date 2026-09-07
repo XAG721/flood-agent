@@ -6,8 +6,7 @@ api_key.txt
 /.pytest_tmp/
 /.pytest-tmp-*/
 /.pytest_tmp*/
-/.test-tmp-*/
-/.test-release-*/
+/.test-*/
 /.tmp/
 __pycache__/
 *.egg-info/
