@@ -1,0 +1,2294 @@
+{
+  "metadata": {
+    "schema_version": "frc-conformal-transfer-admission-guard-v1",
+    "status": "RUN_PUBLIC_REAL_MODEL_POST_HOC_TRANSFER_ADMISSION_GUARD",
+    "datasets": [
+      "2WikiMultiHopQA",
+      "ConditionalQA",
+      "HotpotQA",
+      "MultiHop-RAG"
+    ],
+    "dataset_count": 4,
+    "split_versions": [
+      "frc-conformal-sufficiency-split-v1",
+      "frc-conformal-sufficiency-split-v1-repeat-01",
+      "frc-conformal-sufficiency-split-v1-repeat-02",
+      "frc-conformal-sufficiency-split-v1-repeat-03",
+      "frc-conformal-sufficiency-split-v1-repeat-04",
+      "frc-conformal-sufficiency-split-v1-repeat-05",
+      "frc-conformal-sufficiency-split-v1-repeat-06",
+      "frc-conformal-sufficiency-split-v1-repeat-07",
+      "frc-conformal-sufficiency-split-v1-repeat-08",
+      "frc-conformal-sufficiency-split-v1-repeat-09"
+    ],
+    "repeat_count_per_dataset": 10,
+    "primary_alpha": 0.1,
+    "minimum_useful_evaluation_recall": 0.1,
+    "evidence_artifact": {
+      "path_label": "conformal_transfer_admission_evidence.jsonl.gz",
+      "sha256": "1d9f62956f2526e059c3db15f4567201a0273e04743c6dd3bfc438f22bb53fd0",
+      "record_count": 40
+    }
+  },
+  "input_provenance": {
+    "transfer_report_path_label": "conformal_head_transfer.json",
+    "transfer_report_sha256": "aeff1b020006d921e7d7460fcf58f7e1e7d5b2d4e9e4f6a59b8e86b8b1189646",
+    "transfer_case_artifact_path_label": "conformal_head_transfer_cases.jsonl.gz",
+    "transfer_case_artifact_sha256": "88915c50bf846ab28c1cd8540dbfdba4dc83c2fdab1e4f1d7ae40da8ebf39542",
+    "transfer_case_record_count": 179880,
+    "transfer_report_validated_before_guard": true
+  },
+  "development_protocol": {
+    "post_hoc": true,
+    "independent_confirmation": false,
+    "admission_only_no_score_threshold_or_declaration_change": true,
+    "certificate_uses_calibration_only": true,
+    "evaluation_used_to_issue_certificate": false,
+    "target_train_used_to_issue_certificate": false,
+    "certificate_targets": {
+      "minimum_incomplete_calibration_case_families": 30,
+      "minimum_complete_calibration_variants": 30,
+      "minimum_calibration_auc": 0.75,
+      "minimum_calibration_complete_recall_at_frozen_threshold": 0.15
+    },
+    "adoption_targets": {
+      "minimum_total_certified_repeats": 8,
+      "minimum_datasets_with_at_least_one_certificate": 2,
+      "maximum_unsafe_certificate_count": 0,
+      "maximum_low_utility_certificate_count": 0,
+      "minimum_safe_and_useful_certificate_precision": 1.0
+    }
+  },
+  "evidence": [
+    {
+      "dataset": "2WikiMultiHopQA",
+      "split_version": "frc-conformal-sufficiency-split-v1",
+      "calibration_evidence": {
+        "incomplete_case_families": 306,
+        "complete_variants": 246,
+        "incomplete_variants": 1006,
+        "auc": 0.701175,
+        "threshold": 0.802596997752,
+        "complete_recall_at_threshold": 0.174797
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 306,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 246,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.701175,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.174797,
+            "target": ">=0.15",
+            "passed": true
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.124113,
+        "true_complete_declaration_rate": 0.123762,
+        "safe_at_alpha": false,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "2WikiMultiHopQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-01",
+      "calibration_evidence": {
+        "incomplete_case_families": 309,
+        "complete_variants": 237,
+        "incomplete_variants": 1031,
+        "auc": 0.674258,
+        "threshold": 0.837135616904,
+        "complete_recall_at_threshold": 0.139241
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 309,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 237,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.674258,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.139241,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.113712,
+        "true_complete_declaration_rate": 0.112069,
+        "safe_at_alpha": false,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "2WikiMultiHopQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-02",
+      "calibration_evidence": {
+        "incomplete_case_families": 321,
+        "complete_variants": 265,
+        "incomplete_variants": 1059,
+        "auc": 0.670879,
+        "threshold": 0.804768152122,
+        "complete_recall_at_threshold": 0.090566
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 321,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 265,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.670879,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.090566,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.096886,
+        "true_complete_declaration_rate": 0.131915,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "2WikiMultiHopQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-03",
+      "calibration_evidence": {
+        "incomplete_case_families": 294,
+        "complete_variants": 220,
+        "incomplete_variants": 988,
+        "auc": 0.640155,
+        "threshold": 0.815517148886,
+        "complete_recall_at_threshold": 0.1
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 294,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 220,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.640155,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.1,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.088889,
+        "true_complete_declaration_rate": 0.11236,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "2WikiMultiHopQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-04",
+      "calibration_evidence": {
+        "incomplete_case_families": 321,
+        "complete_variants": 244,
+        "incomplete_variants": 1064,
+        "auc": 0.63889,
+        "threshold": 0.782016221367,
+        "complete_recall_at_threshold": 0.131148
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 321,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 244,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.63889,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.131148,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.073427,
+        "true_complete_declaration_rate": 0.069869,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": false
+      }
+    },
+    {
+      "dataset": "2WikiMultiHopQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-05",
+      "calibration_evidence": {
+        "incomplete_case_families": 284,
+        "complete_variants": 222,
+        "incomplete_variants": 950,
+        "auc": 0.652627,
+        "threshold": 0.815457017718,
+        "complete_recall_at_threshold": 0.099099
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 284,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 222,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.652627,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.099099,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.092784,
+        "true_complete_declaration_rate": 0.122449,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "2WikiMultiHopQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-06",
+      "calibration_evidence": {
+        "incomplete_case_families": 300,
+        "complete_variants": 216,
+        "incomplete_variants": 1020,
+        "auc": 0.673457,
+        "threshold": 0.788358062473,
+        "complete_recall_at_threshold": 0.152778
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 300,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 216,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.673457,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.152778,
+            "target": ">=0.15",
+            "passed": true
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.102941,
+        "true_complete_declaration_rate": 0.107759,
+        "safe_at_alpha": false,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "2WikiMultiHopQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-07",
+      "calibration_evidence": {
+        "incomplete_case_families": 312,
+        "complete_variants": 271,
+        "incomplete_variants": 1013,
+        "auc": 0.720202,
+        "threshold": 0.790673891874,
+        "complete_recall_at_threshold": 0.180812
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 312,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 271,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.720202,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.180812,
+            "target": ">=0.15",
+            "passed": true
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.124113,
+        "true_complete_declaration_rate": 0.115,
+        "safe_at_alpha": false,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "2WikiMultiHopQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-08",
+      "calibration_evidence": {
+        "incomplete_case_families": 334,
+        "complete_variants": 258,
+        "incomplete_variants": 1110,
+        "auc": 0.653838,
+        "threshold": 0.797348435807,
+        "complete_recall_at_threshold": 0.100775
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 334,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 258,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.653838,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.100775,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.090253,
+        "true_complete_declaration_rate": 0.099548,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": false
+      }
+    },
+    {
+      "dataset": "2WikiMultiHopQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-09",
+      "calibration_evidence": {
+        "incomplete_case_families": 293,
+        "complete_variants": 223,
+        "incomplete_variants": 973,
+        "auc": 0.686721,
+        "threshold": 0.770856816097,
+        "complete_recall_at_threshold": 0.170404
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 293,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 223,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.686721,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.170404,
+            "target": ">=0.15",
+            "passed": true
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.136986,
+        "true_complete_declaration_rate": 0.154185,
+        "safe_at_alpha": false,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "ConditionalQA",
+      "split_version": "frc-conformal-sufficiency-split-v1",
+      "calibration_evidence": {
+        "incomplete_case_families": 75,
+        "complete_variants": 40,
+        "incomplete_variants": 264,
+        "auc": 0.803883,
+        "threshold": 0.521983139129,
+        "complete_recall_at_threshold": 0.0
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 75,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 40,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.803883,
+            "target": ">=0.75",
+            "passed": true
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.0,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.067568,
+        "true_complete_declaration_rate": 0.0,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": false
+      }
+    },
+    {
+      "dataset": "ConditionalQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-01",
+      "calibration_evidence": {
+        "incomplete_case_families": 70,
+        "complete_variants": 30,
+        "incomplete_variants": 250,
+        "auc": 0.843733,
+        "threshold": 0.467511234484,
+        "complete_recall_at_threshold": 0.166667
+      },
+      "certificate": {
+        "status": "CALIBRATION_CERTIFIED",
+        "certified": true,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 70,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 30,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.843733,
+            "target": ">=0.75",
+            "passed": true
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.166667,
+            "target": ">=0.15",
+            "passed": true
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.1125,
+        "true_complete_declaration_rate": 0.272727,
+        "safe_at_alpha": false,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "ConditionalQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-02",
+      "calibration_evidence": {
+        "incomplete_case_families": 69,
+        "complete_variants": 34,
+        "incomplete_variants": 246,
+        "auc": 0.824366,
+        "threshold": 0.836944299735,
+        "complete_recall_at_threshold": 0.088235
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 69,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 34,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.824366,
+            "target": ">=0.75",
+            "passed": true
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.088235,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.136364,
+        "true_complete_declaration_rate": 0.142857,
+        "safe_at_alpha": false,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "ConditionalQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-03",
+      "calibration_evidence": {
+        "incomplete_case_families": 66,
+        "complete_variants": 28,
+        "incomplete_variants": 236,
+        "auc": 0.880448,
+        "threshold": 0.903569480953,
+        "complete_recall_at_threshold": 0.0
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 66,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 28,
+            "target": ">=30",
+            "passed": false
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.880448,
+            "target": ">=0.75",
+            "passed": true
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.0,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.051282,
+        "true_complete_declaration_rate": 0.0,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": false
+      }
+    },
+    {
+      "dataset": "ConditionalQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-04",
+      "calibration_evidence": {
+        "incomplete_case_families": 88,
+        "complete_variants": 58,
+        "incomplete_variants": 298,
+        "auc": 0.859292,
+        "threshold": 0.964557363253,
+        "complete_recall_at_threshold": 0.017241
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 88,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 58,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.859292,
+            "target": ">=0.75",
+            "passed": true
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.017241,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.038961,
+        "true_complete_declaration_rate": 0.0,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": false
+      }
+    },
+    {
+      "dataset": "ConditionalQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-05",
+      "calibration_evidence": {
+        "incomplete_case_families": 71,
+        "complete_variants": 37,
+        "incomplete_variants": 247,
+        "auc": 0.893424,
+        "threshold": 0.944630924783,
+        "complete_recall_at_threshold": 0.081081
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 71,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 37,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.893424,
+            "target": ">=0.75",
+            "passed": true
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.081081,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.061728,
+        "true_complete_declaration_rate": 0.153846,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "ConditionalQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-06",
+      "calibration_evidence": {
+        "incomplete_case_families": 70,
+        "complete_variants": 35,
+        "incomplete_variants": 249,
+        "auc": 0.83821,
+        "threshold": 0.448192168742,
+        "complete_recall_at_threshold": 0.114286
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 70,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 35,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.83821,
+            "target": ">=0.75",
+            "passed": true
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.114286,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.075949,
+        "true_complete_declaration_rate": 0.163265,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "ConditionalQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-07",
+      "calibration_evidence": {
+        "incomplete_case_families": 67,
+        "complete_variants": 53,
+        "incomplete_variants": 219,
+        "auc": 0.72215,
+        "threshold": 0.288711452091,
+        "complete_recall_at_threshold": 0.0
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 67,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 53,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.72215,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.0,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.101266,
+        "true_complete_declaration_rate": 0.0,
+        "safe_at_alpha": false,
+        "useful_at_minimum_recall": false
+      }
+    },
+    {
+      "dataset": "ConditionalQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-08",
+      "calibration_evidence": {
+        "incomplete_case_families": 69,
+        "complete_variants": 37,
+        "incomplete_variants": 243,
+        "auc": 0.842287,
+        "threshold": 0.890752599774,
+        "complete_recall_at_threshold": 0.162162
+      },
+      "certificate": {
+        "status": "CALIBRATION_CERTIFIED",
+        "certified": true,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 69,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 37,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.842287,
+            "target": ">=0.75",
+            "passed": true
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.162162,
+            "target": ">=0.15",
+            "passed": true
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.153846,
+        "true_complete_declaration_rate": 0.134615,
+        "safe_at_alpha": false,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "ConditionalQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-09",
+      "calibration_evidence": {
+        "incomplete_case_families": 72,
+        "complete_variants": 37,
+        "incomplete_variants": 259,
+        "auc": 0.7578,
+        "threshold": 0.451731205898,
+        "complete_recall_at_threshold": 0.135135
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 72,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 37,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.7578,
+            "target": ">=0.75",
+            "passed": true
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.135135,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.058824,
+        "true_complete_declaration_rate": 0.0,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": false
+      }
+    },
+    {
+      "dataset": "HotpotQA",
+      "split_version": "frc-conformal-sufficiency-split-v1",
+      "calibration_evidence": {
+        "incomplete_case_families": 270,
+        "complete_variants": 370,
+        "incomplete_variants": 754,
+        "auc": 0.725722,
+        "threshold": 0.643472352933,
+        "complete_recall_at_threshold": 0.191892
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 270,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 370,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.725722,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.191892,
+            "target": ">=0.15",
+            "passed": true
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.141343,
+        "true_complete_declaration_rate": 0.184971,
+        "safe_at_alpha": false,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "HotpotQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-01",
+      "calibration_evidence": {
+        "incomplete_case_families": 304,
+        "complete_variants": 388,
+        "incomplete_variants": 868,
+        "auc": 0.731879,
+        "threshold": 0.712478909242,
+        "complete_recall_at_threshold": 0.167526
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 304,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 388,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.731879,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.167526,
+            "target": ">=0.15",
+            "passed": true
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.096774,
+        "true_complete_declaration_rate": 0.134921,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "HotpotQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-02",
+      "calibration_evidence": {
+        "incomplete_case_families": 280,
+        "complete_variants": 350,
+        "incomplete_variants": 794,
+        "auc": 0.707305,
+        "threshold": 0.685214375412,
+        "complete_recall_at_threshold": 0.214286
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 280,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 350,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.707305,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.214286,
+            "target": ">=0.15",
+            "passed": true
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.11032,
+        "true_complete_declaration_rate": 0.19891,
+        "safe_at_alpha": false,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "HotpotQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-03",
+      "calibration_evidence": {
+        "incomplete_case_families": 293,
+        "complete_variants": 345,
+        "incomplete_variants": 863,
+        "auc": 0.662428,
+        "threshold": 0.699886809822,
+        "complete_recall_at_threshold": 0.142029
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 293,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 345,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.662428,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.142029,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.079585,
+        "true_complete_declaration_rate": 0.149485,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "HotpotQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-04",
+      "calibration_evidence": {
+        "incomplete_case_families": 275,
+        "complete_variants": 351,
+        "incomplete_variants": 781,
+        "auc": 0.725686,
+        "threshold": 0.681370270725,
+        "complete_recall_at_threshold": 0.185185
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 275,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 351,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.725686,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.185185,
+            "target": ">=0.15",
+            "passed": true
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.098639,
+        "true_complete_declaration_rate": 0.112022,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "HotpotQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-05",
+      "calibration_evidence": {
+        "incomplete_case_families": 292,
+        "complete_variants": 390,
+        "incomplete_variants": 810,
+        "auc": 0.766068,
+        "threshold": 0.665636976329,
+        "complete_recall_at_threshold": 0.235897
+      },
+      "certificate": {
+        "status": "CALIBRATION_CERTIFIED",
+        "certified": true,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 292,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 390,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.766068,
+            "target": ">=0.75",
+            "passed": true
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.235897,
+            "target": ">=0.15",
+            "passed": true
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.132616,
+        "true_complete_declaration_rate": 0.131579,
+        "safe_at_alpha": false,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "HotpotQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-06",
+      "calibration_evidence": {
+        "incomplete_case_families": 288,
+        "complete_variants": 384,
+        "incomplete_variants": 804,
+        "auc": 0.723259,
+        "threshold": 0.67870396471,
+        "complete_recall_at_threshold": 0.151042
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 288,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 384,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.723259,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.151042,
+            "target": ">=0.15",
+            "passed": true
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.092857,
+        "true_complete_declaration_rate": 0.148825,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "HotpotQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-07",
+      "calibration_evidence": {
+        "incomplete_case_families": 282,
+        "complete_variants": 352,
+        "incomplete_variants": 824,
+        "auc": 0.73062,
+        "threshold": 0.635170634112,
+        "complete_recall_at_threshold": 0.184659
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 282,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 352,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.73062,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.184659,
+            "target": ">=0.15",
+            "passed": true
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.116438,
+        "true_complete_declaration_rate": 0.182243,
+        "safe_at_alpha": false,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "HotpotQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-08",
+      "calibration_evidence": {
+        "incomplete_case_families": 275,
+        "complete_variants": 381,
+        "incomplete_variants": 775,
+        "auc": 0.707832,
+        "threshold": 0.647962465252,
+        "complete_recall_at_threshold": 0.133858
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 275,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 381,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.707832,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.133858,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.073579,
+        "true_complete_declaration_rate": 0.129199,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "HotpotQA",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-09",
+      "calibration_evidence": {
+        "incomplete_case_families": 274,
+        "complete_variants": 354,
+        "incomplete_variants": 782,
+        "auc": 0.726281,
+        "threshold": 0.663074208004,
+        "complete_recall_at_threshold": 0.163842
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 274,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 354,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.726281,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.163842,
+            "target": ">=0.15",
+            "passed": true
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.086093,
+        "true_complete_declaration_rate": 0.153453,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": true
+      }
+    },
+    {
+      "dataset": "MultiHop-RAG",
+      "split_version": "frc-conformal-sufficiency-split-v1",
+      "calibration_evidence": {
+        "incomplete_case_families": 663,
+        "complete_variants": 467,
+        "incomplete_variants": 2217,
+        "auc": 0.669497,
+        "threshold": 0.001435625217,
+        "complete_recall_at_threshold": 0.057816
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 663,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 467,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.669497,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.057816,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.097523,
+        "true_complete_declaration_rate": 0.061002,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": false
+      }
+    },
+    {
+      "dataset": "MultiHop-RAG",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-01",
+      "calibration_evidence": {
+        "incomplete_case_families": 675,
+        "complete_variants": 472,
+        "incomplete_variants": 2260,
+        "auc": 0.649459,
+        "threshold": 0.000682776393,
+        "complete_recall_at_threshold": 0.076271
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 675,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 472,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.649459,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.076271,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.091691,
+        "true_complete_declaration_rate": 0.033028,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": false
+      }
+    },
+    {
+      "dataset": "MultiHop-RAG",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-02",
+      "calibration_evidence": {
+        "incomplete_case_families": 652,
+        "complete_variants": 493,
+        "incomplete_variants": 2155,
+        "auc": 0.68304,
+        "threshold": 0.004785281943,
+        "complete_recall_at_threshold": 0.079108
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 652,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 493,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.68304,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.079108,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.094551,
+        "true_complete_declaration_rate": 0.09292,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": false
+      }
+    },
+    {
+      "dataset": "MultiHop-RAG",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-03",
+      "calibration_evidence": {
+        "incomplete_case_families": 676,
+        "complete_variants": 493,
+        "incomplete_variants": 2247,
+        "auc": 0.705858,
+        "threshold": 1.6574016e-05,
+        "complete_recall_at_threshold": 0.054767
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 676,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 493,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.705858,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.054767,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.108397,
+        "true_complete_declaration_rate": 0.061372,
+        "safe_at_alpha": false,
+        "useful_at_minimum_recall": false
+      }
+    },
+    {
+      "dataset": "MultiHop-RAG",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-04",
+      "calibration_evidence": {
+        "incomplete_case_families": 680,
+        "complete_variants": 479,
+        "incomplete_variants": 2277,
+        "auc": 0.65694,
+        "threshold": 0.004865038193,
+        "complete_recall_at_threshold": 0.096033
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 680,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 479,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.65694,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.096033,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.080182,
+        "true_complete_declaration_rate": 0.086345,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": false
+      }
+    },
+    {
+      "dataset": "MultiHop-RAG",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-05",
+      "calibration_evidence": {
+        "incomplete_case_families": 644,
+        "complete_variants": 440,
+        "incomplete_variants": 2156,
+        "auc": 0.617618,
+        "threshold": 2.30365e-06,
+        "complete_recall_at_threshold": 0.018182
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 644,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 440,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.617618,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.018182,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.065625,
+        "true_complete_declaration_rate": 0.014493,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": false
+      }
+    },
+    {
+      "dataset": "MultiHop-RAG",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-06",
+      "calibration_evidence": {
+        "incomplete_case_families": 648,
+        "complete_variants": 494,
+        "incomplete_variants": 2138,
+        "auc": 0.653167,
+        "threshold": 0.000510963284,
+        "complete_recall_at_threshold": 0.038462
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 648,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 494,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.653167,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.038462,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.096542,
+        "true_complete_declaration_rate": 0.056926,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": false
+      }
+    },
+    {
+      "dataset": "MultiHop-RAG",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-07",
+      "calibration_evidence": {
+        "incomplete_case_families": 693,
+        "complete_variants": 494,
+        "incomplete_variants": 2306,
+        "auc": 0.670103,
+        "threshold": 0.005758288032,
+        "complete_recall_at_threshold": 0.062753
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 693,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 494,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.670103,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.062753,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.090333,
+        "true_complete_declaration_rate": 0.068182,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": false
+      }
+    },
+    {
+      "dataset": "MultiHop-RAG",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-08",
+      "calibration_evidence": {
+        "incomplete_case_families": 697,
+        "complete_variants": 513,
+        "incomplete_variants": 2335,
+        "auc": 0.702547,
+        "threshold": 0.01198443911,
+        "complete_recall_at_threshold": 0.11306
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 697,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 513,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.702547,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.11306,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.091729,
+        "true_complete_declaration_rate": 0.094758,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": false
+      }
+    },
+    {
+      "dataset": "MultiHop-RAG",
+      "split_version": "frc-conformal-sufficiency-split-v1-repeat-09",
+      "calibration_evidence": {
+        "incomplete_case_families": 654,
+        "complete_variants": 475,
+        "incomplete_variants": 2173,
+        "auc": 0.650093,
+        "threshold": 0.002519032444,
+        "complete_recall_at_threshold": 0.067368
+      },
+      "certificate": {
+        "status": "REJECT_TRANSFER_REQUIRE_TARGET_FIT",
+        "certified": false,
+        "input_fields": [
+          "auc",
+          "complete_recall_at_threshold",
+          "complete_variants",
+          "incomplete_case_families",
+          "incomplete_variants",
+          "threshold"
+        ],
+        "evaluation_fields_used": false,
+        "target_train_fields_used": false,
+        "checks": {
+          "minimum_incomplete_calibration_case_families": {
+            "measured": 654,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_complete_calibration_variants": {
+            "measured": 475,
+            "target": ">=30",
+            "passed": true
+          },
+          "minimum_calibration_auc": {
+            "measured": 0.650093,
+            "target": ">=0.75",
+            "passed": false
+          },
+          "minimum_calibration_complete_recall_at_frozen_threshold": {
+            "measured": 0.067368,
+            "target": ">=0.15",
+            "passed": false
+          }
+        }
+      },
+      "retrospective_evaluation": {
+        "false_complete_case_family_rate": 0.078402,
+        "true_complete_declaration_rate": 0.071429,
+        "safe_at_alpha": true,
+        "useful_at_minimum_recall": false
+      }
+    }
+  ],
+  "outcome": {
+    "status": "DO_NOT_ADOPT",
+    "post_hoc_method_development": true,
+    "independent_confirmation": false,
+    "certificate_count": 3,
+    "certificate_count_by_dataset": {
+      "2WikiMultiHopQA": 0,
+      "ConditionalQA": 2,
+      "HotpotQA": 1,
+      "MultiHop-RAG": 0
+    },
+    "unsafe_certificate_count": 3,
+    "low_utility_certificate_count": 0,
+    "safe_and_useful_certificate_count": 0,
+    "safe_and_useful_certificate_precision": 0.0,
+    "checks": {
+      "certificate_uses_calibration_only": {
+        "measured": true,
+        "target": true,
+        "passed": true
+      },
+      "minimum_total_certified_repeats": {
+        "measured": 3,
+        "target": ">=8",
+        "passed": false
+      },
+      "minimum_datasets_with_at_least_one_certificate": {
+        "measured": {
+          "count": 2,
+          "per_dataset": {
+            "2WikiMultiHopQA": 0,
+            "ConditionalQA": 2,
+            "HotpotQA": 1,
+            "MultiHop-RAG": 0
+          }
+        },
+        "target": ">=2",
+        "passed": true
+      },
+      "maximum_unsafe_certificate_count": {
+        "measured": 3,
+        "target": "<=0",
+        "passed": false
+      },
+      "maximum_low_utility_certificate_count": {
+        "measured": 0,
+        "target": "<=0",
+        "passed": true
+      },
+      "minimum_safe_and_useful_certificate_precision": {
+        "measured": 0.0,
+        "target": ">=1.0",
+        "passed": false
+      }
+    },
+    "all_pre_registered_adoption_checks_passed": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "decision": {
+    "finding": "The guard is evaluated as a fail-closed admission mechanism for an already frozen transferred head.",
+    "next_step": "REQUIRE_TARGET_FITTED_HEAD_STOP_GUARD_TUNING",
+    "gate_2": "NO-GO/SHADOW",
+    "production_policy": "REQUIRE_TARGET_FITTED_HEAD",
+    "limitations": [
+      "The guard was designed after transfer evaluation failures were known.",
+      "Calibration AUC and recall are not independent validation estimates.",
+      "The guard cannot improve the transferred head's score ranking.",
+      "No result authorizes CANARY or DEFAULT."
+    ]
+  }
+}

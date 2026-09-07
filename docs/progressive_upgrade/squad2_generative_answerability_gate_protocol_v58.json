@@ -1,0 +1,162 @@
+{
+  "schema_version": "frc-squad2-generative-answerability-gate-protocol-v58",
+  "experiment_id": "FRC-SQUAD2-GENERATIVE-ANSWERABILITY-GATE-V58",
+  "registered_at": "2026-08-03T16:20:00+08:00",
+  "purpose": "Prospectively test whether an explicit frozen local generative support verifier repairs answer/no-answer abstention on a previously unused adversarial source, and whether the frozen v49 low-core FRC selector adds evidence utility beyond non-FRC and FRC controls under that identical verifier decision.",
+  "prior_result_boundary": {
+    "v57_development_outcome_known": true,
+    "v57_confirmation_opened": false,
+    "v57_case_level_artifact_query_candidate_score_prediction_or_gold_reused": false,
+    "v57_development_used_for_prompt_threshold_budget_sample_or_selector_selection": false,
+    "allowed_aggregate_motivation_only": "v57 showed that relevance and document-identity gates did not reliably distinguish whether a relevant paragraph actually supported an answer; no v57 case was inspected or transferred.",
+    "squad2_train_or_dev_downloaded_or_opened_before_protocol_registration": false
+  },
+  "theoretical_mechanism": {
+    "name": "shared_paragraph_support_verifier_plus_transferred_low_core_frc_v58",
+    "support_decision": "A frozen local instruction model sees only the question and its provided paragraph, then returns exactly SUPPORTED when the paragraph explicitly contains enough information to answer, otherwise UNSUPPORTED.",
+    "shared_gate": "The one case-level support decision is reused unchanged across every token budget and every gated selector, preventing method-specific prompts or verifier calls from confounding selector comparisons.",
+    "candidate_selector": "Reuse low_core_divergence_guarded_frc_v49 exactly, with no v58 parameter, cutoff or source-specific adjustment.",
+    "fail_closed_rule": "Any output other than an exact case-insensitive SUPPORTED or UNSUPPORTED token is recorded as malformed and mapped to UNSUPPORTED; any malformed output fails the registered development gate.",
+    "learned_parameter": null,
+    "rationale": "Answerability is a semantic support property rather than a relevance rank property. A shared verifier can supply the missing abstention signal, while the transferred selector comparison tests whether FRC still contributes after that signal is held constant."
+  },
+  "source": {
+    "official_homepage": "https://rajpurkar.github.io/SQuAD-explorer/",
+    "paper": "https://arxiv.org/abs/1806.03822",
+    "development_url": "https://rajpurkar.github.io/SQuAD-explorer/dataset/train-v2.0.json",
+    "confirmation_url": "https://rajpurkar.github.io/SQuAD-explorer/dataset/dev-v2.0.json",
+    "hidden_test_available_locally": false,
+    "license": "CC BY-SA 4.0 as stated on the official SQuAD homepage",
+    "known_public_structure": "data -> article(title, paragraphs) -> paragraph(context, qas) -> question(id, question, is_impossible, answers, plausible_answers)",
+    "published_scale": "SQuAD 2.0 combines the SQuAD 1.1 questions with more than 50,000 adversarial unanswerable questions that resemble answerable questions."
+  },
+  "access_order": [
+    "Freeze this protocol, the source-independent implementation, the exact support prompt and synthetic invariants before downloading either source file.",
+    "Download train and dev as opaque bytes, record size and SHA-256, and register both without parsing JSON content.",
+    "Freeze protocol, source, module, runner and test hashes before opening train for development preparation.",
+    "Parse train only, construct blind retrieval and verifier-input caches, and keep dev unopened.",
+    "Register blind-cache hashes, local model hashes and CUDA runtime before deterministic query generation, BGE scoring or Qwen inference.",
+    "Complete every BGE score and Qwen support-decision row before joining is_impossible, answers or gold evidence intervals.",
+    "Run the registered development gates exactly once. Parse dev exactly once only if every development gate passes; otherwise publish a closure and stop.",
+    "Never reuse revealed development cases for formula, prompt, threshold, budget, sample, model or method selection."
+  ],
+  "task_construction": {
+    "case": "Each SQuAD 2.0 QA object with a non-empty unique id and question in a non-empty paragraph.",
+    "answer_bearing": "is_impossible is false and every retained answer has a valid exact character interval in the paragraph.",
+    "no_answer": "is_impossible is true; plausible_answers are never exposed to preparation, scoring, prompting or evaluation.",
+    "gold_evidence": "For answer-bearing cases, the union of deterministic paragraph units overlapping any official answer interval; no official answer-string EM or F1 is claimed.",
+    "verifier_input": "The complete provided paragraph and current question only, with raw ids, article title, is_impossible, answers and plausible_answers excluded.",
+    "candidate_units": "Deterministic sentence spans, with overlong spans split into offset-preserving windows.",
+    "schema_exclusion": "Missing or malformed article, paragraph, QA, id, question, context, impossible flag, answer list or exact answer interval; rate above 0.01 fails development."
+  },
+  "scope": {
+    "development_cases": 600,
+    "confirmation_cases": 600,
+    "answer_bearing_per_stage": 300,
+    "no_answer_per_stage": 300,
+    "maximum_cases_per_paragraph": 2,
+    "maximum_cases_per_article_per_answer_state": 12,
+    "minimum_paragraphs": 250,
+    "minimum_articles_development": 100,
+    "minimum_articles_confirmation": 25,
+    "development_salt": "FRC-SQUAD2-V58-DEVELOPMENT|",
+    "confirmation_salt": "FRC-SQUAD2-V58-CONFIRMATION|",
+    "article_cluster_bootstrap": true,
+    "balanced_mechanism_sample_not_natural_prevalence": true
+  },
+  "blind_retrieval_and_models": {
+    "retrieval_pool": "Every deterministic unit from the provided paragraph; no external document or decoy is added.",
+    "embedding": "BAAI/bge-large-en-v1.5@refs/pr/5 offline",
+    "reranker": "BAAI/bge-reranker-large@refs/pr/4 offline",
+    "role_relevance_mix": 0.15,
+    "score_calibration": "per_case_minmax",
+    "support_verifier": "Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4",
+    "support_verifier_revision": "e9c932ac1893a49ae0fc497ad6e1e86e2e39af20",
+    "support_verifier_license": "Apache-2.0",
+    "support_verifier_model_file_sha256": {
+      "config.json": "b369e58aa34e19e76ea67455c6386c60f220e5cf57068ebd0b6a6449b41853d5",
+      "generation_config.json": "fd01df57931815767cb12a9f0fe479a1ed9a5b2a4e7a203e751e54e5b01669dc",
+      "merges.txt": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+      "model-00001-of-00002.safetensors": "278698de6ca93314e68edf14f57fe14af9fb4255034f06d4eb8272671b4973d2",
+      "model-00002-of-00002.safetensors": "77b6cb5d6c191b97a8afa9a19092db693db41068241cf27c7c67cedb096e9664",
+      "model.safetensors.index.json": "a6ac80547c7291a7e64f14e299f75263d30383e0737a881517eb0083255aca7d",
+      "tokenizer.json": "22bfef58b74d2fa40f402ac0c8d638d9e54d12137da2e2c7e9f32a1e7534e42f",
+      "tokenizer_config.json": "5b5d4f65d0acd3b2d56a35b56d374a36cbc1c8fa5cf3b3febbbfabf22f359583",
+      "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+    },
+    "generation": {
+      "do_sample": false,
+      "max_new_tokens": 4,
+      "maximum_input_tokens": 3072,
+      "batch_size": 16,
+      "padding_side": "left"
+    },
+    "gold_before_complete_scoring_or_generation": false
+  },
+  "frozen_support_prompt": "Determine whether the paragraph explicitly contains enough information to answer the question. Return exactly one token and no explanation: SUPPORTED or UNSUPPORTED. Choose SUPPORTED only when the answer is stated or can be directly resolved from the paragraph. Choose UNSUPPORTED when the paragraph is merely related, lacks the needed fact, or the question assumes something the paragraph does not establish. Do not use outside knowledge.\n\nQuestion: {question}\n\nParagraph:\n{context}\n\nDecision:",
+  "frozen_atomic_queries": {
+    "anchor": "{question}",
+    "direct_answer": "Find the sentence that directly contains the answer to this question: {question}",
+    "context_bridge": "Find context, definitions, entities, or relations needed to resolve this question: {question}",
+    "counterevidence": "Find negations, missing assumptions, contrasts, qualifications, dates, or limitations relevant to this question: {question}"
+  },
+  "methods": {
+    "candidate": "qwen_supported_low_core_divergence_guarded_frc_v49_transferred_v58",
+    "exact_anchor_gated_ablation": "qwen_supported_cross_encoder_topk_v58",
+    "shared_gate_non_frc": "The five frozen v49 non-FRC selectors, each preceded by the identical case-level Qwen support decision.",
+    "shared_gate_frc_controls": "Every frozen v49 FRC control except low_core_divergence_guarded_frc_v49, each preceded by the identical case-level Qwen support decision.",
+    "ungated_controls": "All frozen v49 methods with no support verifier.",
+    "budgets": [128, 256, 512]
+  },
+  "evaluation": {
+    "primary": "answer_or_abstention_macro_f1",
+    "answer_metric": "Exact deterministic evidence-unit set F1 against the union of official answer-overlap units.",
+    "no_answer_metric": "Exact empty selection.",
+    "verifier_metric": "Balanced accuracy across answer-bearing pass and no-answer rejection, plus each component separately.",
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 20260818,
+    "minimum_supported_stratum_cases": 50,
+    "mandatory_strata": [
+      "answer state",
+      "paragraph-length quartile",
+      "candidate-count quartile",
+      "answer-length quartile",
+      "article case-count quartile",
+      "support-verifier outcome"
+    ]
+  },
+  "development_gates_all_required": {
+    "exact_cases_balance_caps_and_minimum_clusters": true,
+    "schema_exclusion_rate_at_most": 0.01,
+    "candidate_ceiling_complete_rate_at_least": 0.99,
+    "support_verifier_balanced_accuracy_at_least": 0.75,
+    "answer_bearing_support_pass_rate_at_least": 0.75,
+    "no_answer_support_rejection_rate_at_least": 0.75,
+    "malformed_or_fallback_rate": 0.0,
+    "gated_exact_anchor_minus_ungated_exact_anchor_point_at_least": 0.1,
+    "gated_exact_anchor_minus_ungated_exact_anchor_ci_low_above": 0.0,
+    "candidate_minus_exact_anchor_gated_ablation_point_at_least": 0.005,
+    "candidate_minus_exact_anchor_gated_ablation_ci_low_above": 0.0,
+    "candidate_minus_strongest_shared_gate_non_frc_point_at_least": 0.005,
+    "candidate_minus_strongest_shared_gate_non_frc_ci_low_above": 0.0,
+    "candidate_minus_strongest_same_gate_frc_point_at_least": 0.005,
+    "candidate_minus_strongest_same_gate_frc_ci_low_above": 0.0,
+    "answer_recall_drop_vs_ungated_exact_anchor_at_most": 0.1,
+    "candidate_no_answer_abstention_accuracy_at_least": 0.75,
+    "candidate_abstention_rate_between": [0.25, 0.75],
+    "every_budget_and_supported_stratum_delta_at_least": -0.02,
+    "query_score_and_generation_fallback_rates": 0.0
+  },
+  "outcomes": {
+    "development_support": "SQUAD2_V58_DEVELOPMENT_SUPPORT_ESTABLISHED_OPEN_CONFIRMATION",
+    "development_failure": "SQUAD2_V58_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+    "confirmation_support": "SQUAD2_V58_GENERATIVE_ANSWERABILITY_GATE_SUPPORT_ESTABLISHED",
+    "confirmation_failure": "SQUAD2_V58_GENERATIVE_ANSWERABILITY_GATE_SUPPORT_NOT_ESTABLISHED",
+    "schema_inconclusive": "SQUAD2_V58_SCHEMA_INCONCLUSIVE_STOP",
+    "confirmation_open_only_after_all_development_gates": true,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "scope_limits": "English closed-paragraph SQuAD 2.0 evidence-unit selection and support verification on balanced public samples; not official answer-string evaluation, hidden-test submission, open-corpus retrieval, SetR reproduction, flood-domain validation, selector adoption or rollout authorization."
+}

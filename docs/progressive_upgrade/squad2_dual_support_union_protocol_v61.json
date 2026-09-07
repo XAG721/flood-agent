@@ -1,0 +1,103 @@
+{
+  "schema_version": "frc-squad2-dual-support-union-protocol-v61",
+  "experiment_id": "FRC-SQUAD2-DUAL-SUPPORT-UNION-V61",
+  "registered_at": "2026-08-03T18:28:00+08:00",
+  "purpose": "Prospectively test whether the OR union of the frozen v58 binary support decision and frozen v60 structured-span decision recovers complementary answer-bearing cases while retaining useful adversarial no-answer rejection and the unchanged v59 FRC family advantage.",
+  "prior_boundary": {
+    "v58_v59_v60_development_failed_and_confirmation_dev_unopened": true,
+    "allowed_v60_aggregate_motivation": {
+      "structured_invalid_rate": 0.016667,
+      "answer_bearing_pass_rate": 0.693333,
+      "no_answer_rejection_rate": 0.78,
+      "balanced_accuracy": 0.736667,
+      "candidate_minus_strongest_non_frc": 0.140103,
+      "candidate_minus_strongest_frc": 0.005,
+      "candidate_minus_strongest_frc_ci": [0.002193, 0.008375]
+    },
+    "case_level_query_candidate_score_prediction_gold_or_raw_output_inspected_or_reused": false,
+    "only_1800_prior_source_case_commitments_used_for_exclusion": true,
+    "required_development_overlap": 0,
+    "dev_content_opened": false
+  },
+  "mechanism": {
+    "binary_component": "Frozen v58 exact SUPPORTED/UNSUPPORTED prompt and exact parser.",
+    "structured_component": "Frozen v60 exact SPAN/UNSUPPORTED prompt and generic wrapper parser.",
+    "union": "A case passes when either component passes; it rejects only when both components reject or fail closed.",
+    "execution": "Load the same frozen local Qwen model once, execute both deterministic prompts for every case, and persist both raw-output hashes and component decisions before gold join.",
+    "downstream": "Reuse v59/v60 candidate, method identifiers, selectors, BGE scores, budgets and bootstrap exactly.",
+    "learned_parameter": null
+  },
+  "source_and_scope": {
+    "source_registration_sha256": "85f1e206ab0ef1d566f398974ad665045d98789bc2130b81adb9cf1eac6a331c",
+    "development": "train-v2.0.json excluding the union of v58, v59 and v60 development commitments",
+    "conditional_confirmation": "unopened dev-v2.0.json",
+    "development_cases": 600,
+    "confirmation_cases": 600,
+    "answer_bearing_per_stage": 300,
+    "no_answer_per_stage": 300,
+    "maximum_cases_per_paragraph": 2,
+    "maximum_cases_per_article_per_answer_state": 12,
+    "minimum_paragraphs": 250,
+    "minimum_articles_development": 100,
+    "minimum_articles_confirmation": 25,
+    "development_salt": "FRC-SQUAD2-V61-DISJOINT-DEVELOPMENT|",
+    "confirmation_salt": "FRC-SQUAD2-V61-CONFIRMATION|",
+    "expected_prior_exclusion_commitments": 1800,
+    "balanced_mechanism_sample_not_natural_prevalence": true
+  },
+  "model_and_prompts": {
+    "model": "Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4@e9c932ac1893a49ae0fc497ad6e1e86e2e39af20",
+    "model_hashes": "Frozen v58 nine-file manifest",
+    "binary_prompt": "Determine whether the paragraph explicitly contains enough information to answer the question. Return exactly one token and no explanation: SUPPORTED or UNSUPPORTED. Choose SUPPORTED only when the answer is stated or can be directly resolved from the paragraph. Choose UNSUPPORTED when the paragraph is merely related, lacks the needed fact, or the question assumes something the paragraph does not establish. Do not use outside knowledge.\n\nQuestion: {question}\n\nParagraph:\n{context}\n\nDecision:",
+    "structured_prompt": "Determine whether the paragraph contains a contiguous span that directly answers the requested fact. Return exactly one line in one of these forms:\nSPAN: <copy the shortest exact answer span from the paragraph>\nUNSUPPORTED\nDo not add explanation, markdown, quotation commentary, or outside knowledge. Use UNSUPPORTED for a related topic, a plausible guess, or an unstated assumption.\n\nQuestion: {question}\n\nParagraph:\n{context}\n\nOutput:",
+    "binary_max_new_tokens": 4,
+    "structured_max_new_tokens": 40,
+    "maximum_input_tokens": 3072,
+    "batch_size": 16,
+    "do_sample": false
+  },
+  "evaluation_change": {
+    "unchanged": "All v60 family comparisons, utility metrics, bootstrap, budgets and supported-stratum requirements.",
+    "replaced_gate": "Replace answer recall drop versus the never-abstaining ungated exact-anchor control <=0.1 with absolute candidate answer recall >=0.75.",
+    "rationale": "The ungated control cannot reject any no-answer case, so near-parity to its recall is incompatible with evaluating a safety abstention mechanism. The absolute recall floor is paired prospectively with balanced accuracy, no-answer rejection, significant utility improvement and public confirmation.",
+    "no_answer_floor": 0.6
+  },
+  "development_gates_all_required": {
+    "exact_cases_balance_caps_minimum_clusters_and_zero_prior_overlap": true,
+    "schema_exclusion_rate_at_most": 0.01,
+    "candidate_ceiling_complete_rate_at_least": 0.99,
+    "union_balanced_accuracy_at_least": 0.75,
+    "answer_bearing_union_pass_rate_at_least": 0.8,
+    "no_answer_union_rejection_rate_at_least": 0.6,
+    "binary_malformed_rate": 0.0,
+    "structured_invalid_rate_at_most": 0.02,
+    "candidate_answer_recall_at_least": 0.75,
+    "gated_exact_anchor_minus_ungated_exact_anchor_point_at_least": 0.1,
+    "gated_exact_anchor_minus_ungated_exact_anchor_ci_low_above": 0.0,
+    "candidate_minus_gated_exact_anchor_point_at_least": 0.05,
+    "candidate_minus_gated_exact_anchor_ci_low_above": 0.0,
+    "candidate_minus_strongest_shared_gate_non_frc_point_at_least": 0.05,
+    "candidate_minus_strongest_shared_gate_non_frc_ci_low_above": 0.0,
+    "candidate_minus_strongest_same_gate_frc_point_at_least": -0.005,
+    "candidate_no_answer_abstention_accuracy_at_least": 0.6,
+    "candidate_abstention_rate_between": [0.15, 0.65],
+    "every_budget_and_supported_stratum_delta_vs_non_frc_at_least": -0.02,
+    "query_and_score_fallback_rates": 0.0
+  },
+  "access_order": [
+    "Freeze protocol, dual verifier, union rule, gates and synthetic invariants before sample construction.",
+    "Verify 1,800 unique prior commitments, construct a zero-overlap blind train sample, and register all hashes.",
+    "Complete BGE and both Qwen components before gold join.",
+    "Open public dev only if every development gate passes; otherwise seal it."
+  ],
+  "outcomes": {
+    "development_support": "SQUAD2_V61_DEVELOPMENT_SUPPORT_ESTABLISHED_OPEN_CONFIRMATION",
+    "development_failure": "SQUAD2_V61_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+    "confirmation_support": "SQUAD2_V61_DUAL_SUPPORT_FRC_FEASIBILITY_ESTABLISHED",
+    "confirmation_failure": "SQUAD2_V61_DUAL_SUPPORT_FRC_FEASIBILITY_NOT_ESTABLISHED",
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "scope_limits": "Balanced public closed-paragraph evidence; not official answer-string scoring, hidden-test submission, SetR reproduction, flood-domain validation or rollout authorization."
+}

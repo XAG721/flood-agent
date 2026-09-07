@@ -1,0 +1,55 @@
+{
+  "schema_version": "frc-iirc-pooled-score-gap-source-registration-v88",
+  "experiment_id": "FRC-IIRC-POOLED-SCORE-GAP-PROSPECTIVE-V88",
+  "registered_on": "2026-08-05",
+  "purpose": "Register a higher-power, case-disjoint IIRC experiment after v87 showed positive but statistically inconclusive score-gap routing gain.",
+  "pre_partition_boundary": {
+    "exposed_training_cohorts": {
+      "v86_development": 400,
+      "v87_development": 400
+    },
+    "total_exposed_training_cases": 800,
+    "v86_confirmation_cases_exposed": 0,
+    "v87_confirmation_cases_exposed": 0,
+    "all_prior_confirmation_ids_permanently_excluded": true,
+    "eligible_v87_remaining_cases": 8439,
+    "eligible_v87_remaining_commitment": "0681233dd79b5a21d717fd9e541b404b166673b6d08b24154825b321249a2d64",
+    "eligible_case_questions_answers_contexts_or_metrics_inspected": false,
+    "v88_partition_ids_selected": false,
+    "v88_target_metrics_known": false
+  },
+  "planned_model_development": {
+    "training_source": "The 800 fully exposed v86 and v87 development cases.",
+    "feature_family": "The frozen 154-dimensional v87 question and blind retrieval-score feature schema.",
+    "finite_forest_and_policy_grid": true,
+    "five_fold_hash_crossfit": true,
+    "cohort_transfer_diagnostics": true,
+    "runtime_gold_or_answer_inputs": false
+  },
+  "planned_target_partition": {
+    "eligible_pool": "v87 remaining 8439 IDs only",
+    "partition_salt": "FRC-IIRC-V88-REMAINING-PARTITION|",
+    "development_cases": 800,
+    "confirmation_cases": 1200,
+    "confirmation_requires_all_development_gates": true,
+    "remaining_after_both_stages": 6439
+  },
+  "primary_comparison_plan": {
+    "pre_specified_primary_control": "frc_fixed2",
+    "justification": "frc_fixed2 was the strongest registered control on both fully exposed v86 and v87 IIRC development cohorts before v88 target partitioning.",
+    "all_other_controls_remain_disclosed": true,
+    "candidate_must_have_nonnegative_point_delta_against_every_control": true
+  },
+  "freeze_rule": "Freeze model, policy, adapter, controls, metrics, gates, exact partitions, and implementation hashes before preparing any v88 target case.",
+  "mutation_rule": "Any post-freeze change requires v89 and new untouched IDs.",
+  "claim_limits": {
+    "case_disjoint_same_dataset_prospective_test": true,
+    "independent_cross_dataset_transfer": false,
+    "answer_generation_evaluated": false,
+    "setr_reproduced": false,
+    "flood_domain_effectiveness_established": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  }
+}

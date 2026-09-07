@@ -1,0 +1,48 @@
+{
+  "schema_version": "frc-doc2dial-v54-implementation-registration-v1",
+  "experiment_id": "FRC-DOC2DIAL-DOCUMENT-CONTRASTIVE-ROLE-CLOSURE-V54",
+  "registered_at": "2026-08-02T23:44:00+08:00",
+  "hashes": {
+    "protocol_sha256": "4e5b348ab823d16f60e2d92b4dcf92dcca02e3eb9d11ffba3e8228138d68e23c",
+    "source_registration_sha256": "51249c4fdcd1483c4048d1ae3e2a051c39e06c9e6343a8bb68c7e146f678e407",
+    "module_sha256": "00cbe55328d4f74f1034b0a032ab5f376fc64535fe7de671985f940e61df02e4",
+    "runner_sha256": "8c4dc1c30446299bac1612f13f787c36bc1b5936348ce3416d678dab6b949a61",
+    "test_sha256": "19e3ed2ce60e191da329ff25b6acd81b2f73deb3307f59b520ff7722383a1867"
+  },
+  "dialogue_or_document_json_opened_before_registration": false,
+  "learned_or_dataset_fitted_parameter": false,
+  "v53_case_level_artifact_used": false,
+  "development_result_used_to_change_implementation": false,
+  "confirmation_result_used_to_change_implementation": false,
+  "blind_document_store": {
+    "enabled": true,
+    "one_canonical_copy_per_document": true,
+    "case_rows_contain_only_opaque_own_and_probe_document_keys": true,
+    "official_span_labels_references_dialogue_acts_raw_doc_ids_raw_dialogue_ids_or_raw_span_ids_visible": false,
+    "source_embedding_cache_key": "SHA-256 over ordered candidate ids and candidate text commitments"
+  },
+  "synthetic_verification": {
+    "lint_command": "python -m ruff check research/frc_rag/doc2dial_document_contrastive_role_closure.py scripts/run_doc2dial_document_contrastive_role_closure.py tests/test_frc_doc2dial_document_contrastive_role_closure.py",
+    "lint_result": "All checks passed",
+    "test_command": "python -m pytest tests/test_frc_doc2dial_document_contrastive_role_closure.py -q --basetemp D:\\graduation_project\\output\\pytest-tmp-doc2dial-v54-synthetic-elevated",
+    "test_result": "10 passed in 0.20s",
+    "compile_command": "python -m compileall -q research/frc_rag/doc2dial_document_contrastive_role_closure.py scripts/run_doc2dial_document_contrastive_role_closure.py",
+    "compile_result": "passed"
+  },
+  "synthetic_invariants_verified": {
+    "protocol_source_and_confirmation_access_boundary": true,
+    "reader_opens_only_requested_dialogue_split": true,
+    "case_extraction_balancing_order_invariance_and_caps": true,
+    "official_span_candidate_exact_offsets_deduplication_and_label_hiding": true,
+    "blind_case_document_store_and_candidate_map_gold_isolation": true,
+    "deterministic_same_domain_decoys_without_fallback": true,
+    "deterministic_queries_and_bounded_order_invariant_retrieval": true,
+    "shared_document_embedding_cache_and_assigned_document_rank_gate": true,
+    "rank_concurrent_role_closure_is_separate_from_shared_gate": true,
+    "post_score_exact_span_gold_join_and_gold_minimal_deterministic_report": true
+  },
+  "implementation_frozen_before_development_source_access": true,
+  "validation_source_access_authorized": false,
+  "selector_adoption_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

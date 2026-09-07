@@ -1,0 +1,66 @@
+{
+  "experiment_id": "FRC-SQUAD2-DUAL-SUPPORT-UNION-V61",
+  "gold_joined_for_coverage_or_metrics": false,
+  "hashes": {
+    "blind_census_sha256": "8e550f624953a10e3c597939e25d818460489ae65f3cf6f3adcdebf1dd008689",
+    "candidate_map_sha256": "572160cc45d4da3f1730c361bf0f91517b10d67739b7dc97bee8d06f2695ebbc",
+    "implementation_registration_sha256": "5dca15776e02745c24cf18a4a7ea2787adcd67eb942ecb0fe94149520b479827",
+    "prepared_blind_sha256": "06f862bc306bcb59e0d56b60feaabbbd828387e5cc0cef9bf442a5b56989beb3",
+    "prior_exclusion_union_sha256": "9f7143820308716cd83e883ca8f2c192108b56a1b9e1ff86dee0e567037c2478",
+    "stage_source_sha256": "68dcfbb971bd3e96d5b46c7177b16c1a4e7d4bdef19fb204502738552dede002",
+    "v58_exclusion_map_sha256": "9c18ac46a311ba441358a0815c01ad3373b333cff4b92b8fd381e3777364471e",
+    "v59_exclusion_map_sha256": "c442280066aa519e84e0aa973d2dc0e1c415bd8d55fa5f1614b32a1d3be7cdf7",
+    "v60_exclusion_map_sha256": "8ddd0a03e054a36df1cc8fc467ec772e1b6364f05c5ce6cac37cc0326bc3a9e1",
+    "verifier_input_sha256": "1d1eaa4ba6a5f5a5fe6e927eefc773ed88aabd595e4561647dafc792c5be23ad"
+  },
+  "local_support_verifier": {
+    "file_sha256": {
+      "config.json": "b369e58aa34e19e76ea67455c6386c60f220e5cf57068ebd0b6a6449b41853d5",
+      "generation_config.json": "fd01df57931815767cb12a9f0fe479a1ed9a5b2a4e7a203e751e54e5b01669dc",
+      "merges.txt": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+      "model-00001-of-00002.safetensors": "278698de6ca93314e68edf14f57fe14af9fb4255034f06d4eb8272671b4973d2",
+      "model-00002-of-00002.safetensors": "77b6cb5d6c191b97a8afa9a19092db693db41068241cf27c7c67cedb096e9664",
+      "model.safetensors.index.json": "a6ac80547c7291a7e64f14e299f75263d30383e0737a881517eb0083255aca7d",
+      "tokenizer.json": "22bfef58b74d2fa40f402ac0c8d638d9e54d12137da2e2c7e9f32a1e7534e42f",
+      "tokenizer_config.json": "5b5d4f65d0acd3b2d56a35b56d374a36cbc1c8fa5cf3b3febbbfabf22f359583",
+      "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+    },
+    "path": "D:\\RAG_test\\.hf_cache\\local_models\\Qwen2.5-7B-Instruct-GPTQ-Int4"
+  },
+  "other_stage_source_content_read": false,
+  "query_scoring_or_generation_started": false,
+  "runtime": {
+    "cuda_available": true,
+    "cuda_runtime": "12.4",
+    "gpu": "NVIDIA GeForce RTX 4060 Ti",
+    "gpu_memory_mib": 16379,
+    "numpy": "2.2.6",
+    "parameters": {
+      "binary_max_new_tokens": 4,
+      "case_batch_size": 8,
+      "device": "cuda",
+      "do_sample": false,
+      "dual_support_verifier_batch_size": 16,
+      "embedding_batch_size": 64,
+      "fp16": true,
+      "learned_parameter": null,
+      "maximum_input_tokens": 3072,
+      "offline_model_loading": true,
+      "query_generator": "deterministic_templates",
+      "reranker_batch_size": 256,
+      "structured_max_new_tokens": 40,
+      "token_budgets": [
+        128,
+        256,
+        512
+      ]
+    },
+    "platform": "Windows-10-10.0.19045-SP0",
+    "python": "3.10.20",
+    "torch": "2.4.1+cu124",
+    "transformers": "4.46.3"
+  },
+  "schema_version": "frc-squad2-v61-execution-registration-v1",
+  "stage": "development",
+  "target_cases": 600
+}

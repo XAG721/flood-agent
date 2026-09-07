@@ -1,0 +1,51 @@
+{
+  "schema_version": "frc-iirc-score-gap-router-source-registration-v87",
+  "experiment_id": "FRC-IIRC-SCORE-GAP-ROUTER-PROSPECTIVE-V87",
+  "registered_on": "2026-08-05",
+  "purpose": "Register a case-disjoint IIRC improvement experiment after v86 development exposed a domain-shift failure in the question-only cross-dataset cardinality router.",
+  "pre_partition_boundary": {
+    "v86_development_cases_exposed": 400,
+    "v86_development_commitment": "e5cf8c245933581c2386c4aefbcff439c4429a66bf679509f2310346fd2224a0",
+    "v86_confirmation_cases_exposed": 0,
+    "v86_confirmation_commitment_permanently_excluded_from_v87": "ca5f157b14ba0dd035fb5efbfa9c6c44d25d0878ce41cf498648d69b434e5c70",
+    "eligible_v86_remaining_cases": 9639,
+    "eligible_v86_remaining_commitment": "d9e86cd22b2ffe43a48357ac4b1a226e026fb4ab742719b9f1743da6ee15d7f4",
+    "eligible_case_questions_answers_contexts_or_metrics_inspected": false,
+    "v87_partition_ids_selected": false,
+    "v87_target_metrics_known": false
+  },
+  "planned_model_development": {
+    "training_source": "The 400 fully exposed v86 development cases only.",
+    "runtime_inputs": [
+      "question surface cues",
+      "blind candidate count",
+      "BM25, dense, hybrid, and cross-encoder score distributions",
+      "frozen FRC top-four cross-encoder and role-coverage signals"
+    ],
+    "training_target": "Observed source-level F1 utility of each frozen FRC prefix length from one through four.",
+    "finite_model_grid": true,
+    "five_fold_hash_crossfit": true,
+    "safety_constrained_policy_selection": true,
+    "answer_answer_type_gold_context_or_gold_cardinality_used_at_runtime": false
+  },
+  "planned_target_partition": {
+    "eligible_pool": "v86 remaining 9639 IDs only",
+    "partition_salt": "FRC-IIRC-V87-REMAINING-PARTITION|",
+    "development_cases": 400,
+    "confirmation_cases": 800,
+    "confirmation_requires_all_development_gates": true,
+    "remaining_after_both_stages": 8439
+  },
+  "freeze_rule": "Freeze feature extraction, model artifact, policy biases, adapter, baselines, metrics, gates, exact partitions, and implementation hashes before preparing any v87 target case.",
+  "mutation_rule": "Any post-freeze change requires v88 and new untouched IDs.",
+  "claim_limits": {
+    "independent_cross_dataset_transfer_claim": false,
+    "case_disjoint_same_dataset_prospective_test": true,
+    "answer_generation_evaluated": false,
+    "setr_reproduced": false,
+    "flood_domain_effectiveness_established": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  }
+}

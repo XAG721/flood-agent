@@ -1,0 +1,49 @@
+{
+  "schema_version": "frc-whoqa-conflict-coverage-post-result-correction-v1",
+  "registered_on": "2026-08-01",
+  "registered_after_initial_gold_evaluation": true,
+  "initial_result_disclosed": {
+    "status": "WHOQA_SELECTION_SUPPORT_NOT_ESTABLISHED",
+    "frc_primary": 0.995,
+    "strongest_baseline": "bm25_topk",
+    "strongest_baseline_primary": 0.995282,
+    "frc_minus_strongest": -0.000282,
+    "simultaneous_ci": [
+      -0.001078,
+      0.000039
+    ]
+  },
+  "source_structure_findings": {
+    "public_num_distinct_answer_distribution": {
+      "2": 2450,
+      "3": 919,
+      "4": 664,
+      "5": 479,
+      "6": 398,
+      "7": 139,
+      "8": 70,
+      "9": 22,
+      "10": 9,
+      "11": 2
+    },
+    "initial_alias_canonicalization_mismatch_count": 15,
+    "initial_mismatch_pairs": {
+      "2_to_3": 2,
+      "3_to_4": 9,
+      "4_to_5": 3,
+      "5_to_6": 1
+    }
+  },
+  "frozen_correction_before_recalculation": {
+    "alias_equivalence": "Within one q_id, two answer-concept alias groups are equivalent when their normalized alias sets overlap; equivalence uses transitive closure.",
+    "viewpoint_key": "For each context, sort the unique global alias-equivalence component identifiers of all answer concepts supported by that context.",
+    "required_validation": "The recomputed distinct viewpoint count must equal the official num_distinct_answers for all 5,152 q_id records.",
+    "additional_stratum": "9+ viewpoints",
+    "additional_stratum_in_safety_check": true,
+    "primary_metric_or_threshold_changed": false,
+    "bootstrap_or_seed_changed": false,
+    "selector_outputs_changed": false,
+    "blind_model_scores_changed": false
+  },
+  "interpretation_boundary": "This is a disclosed data-structure correction after the initial negative result, not a preregistered change. The corrected report remains the canonical artifact only if zero official-count mismatches are achieved; any positive-status reversal would require a new untouched confirmation and cannot authorize Gate 2."
+}

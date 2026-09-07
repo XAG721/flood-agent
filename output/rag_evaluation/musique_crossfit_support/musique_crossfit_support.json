@@ -1,0 +1,737 @@
+{
+  "aggregates": {
+    "method_means": {
+      "cross_encoder_topk": {
+        "complete_support_coverage": 0.497035,
+        "non_support_selection_rate": 0.57778,
+        "selected_count": 4.719901,
+        "selected_token_cost": 619.914632,
+        "support_evidence_f1": 0.530399,
+        "support_precision": 0.42222,
+        "support_recall": 0.761389
+      },
+      "crossfit_base_support_topk_v38": {
+        "complete_support_coverage": 0.508344,
+        "non_support_selection_rate": 0.573532,
+        "selected_count": 4.737553,
+        "selected_token_cost": 610.733968,
+        "support_evidence_f1": 0.537234,
+        "support_precision": 0.426468,
+        "support_recall": 0.773261
+      },
+      "crossfit_full_support_topk_v38": {
+        "complete_support_coverage": 0.508895,
+        "non_support_selection_rate": 0.572967,
+        "selected_count": 4.735071,
+        "selected_token_cost": 611.885809,
+        "support_evidence_f1": 0.537782,
+        "support_precision": 0.427033,
+        "support_recall": 0.773882
+      },
+      "frc_dual_resource_v36": {
+        "complete_support_coverage": 0.501172,
+        "non_support_selection_rate": 0.581037,
+        "selected_count": 4.758378,
+        "selected_token_cost": 604.471245,
+        "support_evidence_f1": 0.528545,
+        "support_precision": 0.418963,
+        "support_recall": 0.762596
+      },
+      "frc_select_v34": {
+        "complete_support_coverage": 0.497311,
+        "non_support_selection_rate": 0.577173,
+        "selected_count": 4.718659,
+        "selected_token_cost": 619.91284,
+        "support_evidence_f1": 0.530801,
+        "support_precision": 0.422827,
+        "support_recall": 0.761746
+      }
+    },
+    "model_audit": {
+      "base": [
+        {
+          "coefficients": [
+            -0.2133922061,
+            0.8137513939,
+            0.107837022,
+            0.7805974475,
+            -0.0502763831,
+            0.8230401084
+          ],
+          "converged": true,
+          "evaluation_candidates": 10099,
+          "evaluation_cases": 501,
+          "evaluation_labels_visible_to_fit": false,
+          "feature_names": [
+            "bm25",
+            "dense",
+            "hybrid",
+            "cross_encoder",
+            "token_count_div_384",
+            "cross_encoder_descending_percentile"
+          ],
+          "fold": 0,
+          "intercept": 0.1266282752,
+          "iterations": 7,
+          "mean": [
+            0.4478891747,
+            0.5760067132,
+            0.571005998,
+            0.2923936389,
+            0.3335839663,
+            0.6465674231
+          ],
+          "scale": [
+            0.3282434285,
+            0.3104534634,
+            0.3196833193,
+            0.4148867466,
+            0.1902627167,
+            0.3222827936
+          ],
+          "train_candidates": 38557,
+          "train_cases": 1916
+        },
+        {
+          "coefficients": [
+            -0.2243756635,
+            0.8023991696,
+            0.1250967747,
+            0.7898938637,
+            -0.0486304132,
+            0.8166377615
+          ],
+          "converged": true,
+          "evaluation_candidates": 9789,
+          "evaluation_cases": 486,
+          "evaluation_labels_visible_to_fit": false,
+          "feature_names": [
+            "bm25",
+            "dense",
+            "hybrid",
+            "cross_encoder",
+            "token_count_div_384",
+            "cross_encoder_descending_percentile"
+          ],
+          "fold": 1,
+          "intercept": 0.1281726496,
+          "iterations": 7,
+          "mean": [
+            0.4462447937,
+            0.5761368993,
+            0.5708427533,
+            0.2939640517,
+            0.3335977032,
+            0.6466089874
+          ],
+          "scale": [
+            0.3284683669,
+            0.3112105056,
+            0.3197990866,
+            0.4158680594,
+            0.1906308222,
+            0.322098616
+          ],
+          "train_candidates": 38867,
+          "train_cases": 1931
+        },
+        {
+          "coefficients": [
+            -0.2068337878,
+            0.8148323923,
+            0.0846034421,
+            0.7804280672,
+            -0.0578692133,
+            0.8133694184
+          ],
+          "converged": true,
+          "evaluation_candidates": 9617,
+          "evaluation_cases": 478,
+          "evaluation_labels_visible_to_fit": false,
+          "feature_names": [
+            "bm25",
+            "dense",
+            "hybrid",
+            "cross_encoder",
+            "token_count_div_384",
+            "cross_encoder_descending_percentile"
+          ],
+          "fold": 2,
+          "intercept": 0.1297588225,
+          "iterations": 7,
+          "mean": [
+            0.4441033894,
+            0.5733282081,
+            0.56921427,
+            0.2918127908,
+            0.334499934,
+            0.6458543227
+          ],
+          "scale": [
+            0.3272813355,
+            0.3104224992,
+            0.3184016773,
+            0.4151803006,
+            0.1923615119,
+            0.3222488376
+          ],
+          "train_candidates": 39039,
+          "train_cases": 1939
+        },
+        {
+          "coefficients": [
+            -0.2416833981,
+            0.7915514443,
+            0.1361005827,
+            0.8111308873,
+            -0.0509089454,
+            0.8400614043
+          ],
+          "converged": true,
+          "evaluation_candidates": 9244,
+          "evaluation_cases": 460,
+          "evaluation_labels_visible_to_fit": false,
+          "feature_names": [
+            "bm25",
+            "dense",
+            "hybrid",
+            "cross_encoder",
+            "token_count_div_384",
+            "cross_encoder_descending_percentile"
+          ],
+          "fold": 3,
+          "intercept": 0.1343785816,
+          "iterations": 7,
+          "mean": [
+            0.447055602,
+            0.5754879178,
+            0.570513828,
+            0.2908687418,
+            0.3347332539,
+            0.6471664503
+          ],
+          "scale": [
+            0.3269793659,
+            0.3103244634,
+            0.3197042587,
+            0.414231535,
+            0.192031844,
+            0.3222389005
+          ],
+          "train_candidates": 39412,
+          "train_cases": 1957
+        },
+        {
+          "coefficients": [
+            -0.208077846,
+            0.7946777138,
+            0.1046144652,
+            0.7854529192,
+            -0.0352776904,
+            0.8559250986
+          ],
+          "converged": true,
+          "evaluation_candidates": 9907,
+          "evaluation_cases": 492,
+          "evaluation_labels_visible_to_fit": false,
+          "feature_names": [
+            "bm25",
+            "dense",
+            "hybrid",
+            "cross_encoder",
+            "token_count_div_384",
+            "cross_encoder_descending_percentile"
+          ],
+          "fold": 4,
+          "intercept": 0.1240197347,
+          "iterations": 7,
+          "mean": [
+            0.446237148,
+            0.5763493182,
+            0.5705064616,
+            0.2916059016,
+            0.3359085829,
+            0.6475159052
+          ],
+          "scale": [
+            0.3274175871,
+            0.3105358998,
+            0.3192106834,
+            0.4143782055,
+            0.1922859855,
+            0.3218466517
+          ],
+          "train_candidates": 38749,
+          "train_cases": 1925
+        }
+      ],
+      "candidate_metrics": {
+        "base": {
+          "held_out_average_precision": 0.645178,
+          "held_out_brier_score": 0.124061,
+          "held_out_roc_auc": 0.880769
+        },
+        "full": {
+          "held_out_average_precision": 0.6515,
+          "held_out_brier_score": 0.123131,
+          "held_out_roc_auc": 0.881182
+        }
+      },
+      "full": [
+        {
+          "coefficients": [
+            -0.2525081602,
+            0.780144833,
+            0.1282810865,
+            0.4162556727,
+            -0.0438353491,
+            0.8298261628,
+            0.105532735,
+            0.077373365,
+            0.0317014,
+            0.2138522634,
+            0.1076666059,
+            -0.0492719388
+          ],
+          "converged": true,
+          "evaluation_candidates": 10099,
+          "evaluation_cases": 501,
+          "evaluation_labels_visible_to_fit": false,
+          "feature_names": [
+            "bm25",
+            "dense",
+            "hybrid",
+            "cross_encoder",
+            "token_count_div_384",
+            "cross_encoder_descending_percentile",
+            "direct_answer_support",
+            "entity_and_scope",
+            "corroborating_evidence",
+            "contradiction_detection",
+            "role_score_mean",
+            "role_score_max"
+          ],
+          "fold": 0,
+          "intercept": 0.1676144408,
+          "iterations": 7,
+          "mean": [
+            0.4478891747,
+            0.5760067132,
+            0.571005998,
+            0.2923936389,
+            0.3335839663,
+            0.6465674231,
+            0.2525874129,
+            0.250406618,
+            0.2523261399,
+            0.2543754358,
+            0.2524239016,
+            0.2674261501
+          ],
+          "scale": [
+            0.3282434285,
+            0.3104534634,
+            0.3196833193,
+            0.4148867466,
+            0.1902627167,
+            0.3222827936,
+            0.4000891093,
+            0.398966471,
+            0.4004619426,
+            0.4008679296,
+            0.3982516053,
+            0.4085868867
+          ],
+          "train_candidates": 38557,
+          "train_cases": 1916
+        },
+        {
+          "coefficients": [
+            -0.2634629014,
+            0.7686912033,
+            0.1446961007,
+            0.4393137506,
+            -0.0430363356,
+            0.8235842574,
+            0.1076219805,
+            0.0644015702,
+            -0.017156447,
+            0.2418693552,
+            0.0996661198,
+            -0.0271851871
+          ],
+          "converged": true,
+          "evaluation_candidates": 9789,
+          "evaluation_cases": 486,
+          "evaluation_labels_visible_to_fit": false,
+          "feature_names": [
+            "bm25",
+            "dense",
+            "hybrid",
+            "cross_encoder",
+            "token_count_div_384",
+            "cross_encoder_descending_percentile",
+            "direct_answer_support",
+            "entity_and_scope",
+            "corroborating_evidence",
+            "contradiction_detection",
+            "role_score_mean",
+            "role_score_max"
+          ],
+          "fold": 1,
+          "intercept": 0.1672990767,
+          "iterations": 7,
+          "mean": [
+            0.4462447937,
+            0.5761368993,
+            0.5708427533,
+            0.2939640517,
+            0.3335977032,
+            0.6466089874,
+            0.2540936294,
+            0.2515666896,
+            0.2539973324,
+            0.2553435389,
+            0.2537502976,
+            0.2686244721
+          ],
+          "scale": [
+            0.3284683669,
+            0.3112105056,
+            0.3197990866,
+            0.4158680594,
+            0.1906308222,
+            0.322098616,
+            0.4013079987,
+            0.3993816206,
+            0.4018345597,
+            0.4014613645,
+            0.3991263868,
+            0.4094951071
+          ],
+          "train_candidates": 38867,
+          "train_cases": 1931
+        },
+        {
+          "coefficients": [
+            -0.2456822592,
+            0.7799040944,
+            0.1045154053,
+            0.4220804052,
+            -0.0503816075,
+            0.8206423578,
+            0.1006344711,
+            0.1018764763,
+            -0.0277005385,
+            0.2589063548,
+            0.1089774015,
+            -0.0650385266
+          ],
+          "converged": true,
+          "evaluation_candidates": 9617,
+          "evaluation_cases": 478,
+          "evaluation_labels_visible_to_fit": false,
+          "feature_names": [
+            "bm25",
+            "dense",
+            "hybrid",
+            "cross_encoder",
+            "token_count_div_384",
+            "cross_encoder_descending_percentile",
+            "direct_answer_support",
+            "entity_and_scope",
+            "corroborating_evidence",
+            "contradiction_detection",
+            "role_score_mean",
+            "role_score_max"
+          ],
+          "fold": 2,
+          "intercept": 0.1686663531,
+          "iterations": 7,
+          "mean": [
+            0.4441033894,
+            0.5733282081,
+            0.56921427,
+            0.2918127908,
+            0.334499934,
+            0.6458543227,
+            0.2532275883,
+            0.2510526791,
+            0.2531467558,
+            0.2550990587,
+            0.2531315205,
+            0.268371264
+          ],
+          "scale": [
+            0.3272813355,
+            0.3104224992,
+            0.3184016773,
+            0.4151803006,
+            0.1923615119,
+            0.3222488376,
+            0.4004330651,
+            0.399042665,
+            0.4009067106,
+            0.4011450349,
+            0.3984865094,
+            0.4091399293
+          ],
+          "train_candidates": 39039,
+          "train_cases": 1939
+        },
+        {
+          "coefficients": [
+            -0.2770785444,
+            0.7592717796,
+            0.1544872008,
+            0.4701615717,
+            -0.0456747231,
+            0.8457668857,
+            0.119710115,
+            0.0381445806,
+            0.0237789568,
+            0.2032971451,
+            0.096778653,
+            -0.0273967044
+          ],
+          "converged": true,
+          "evaluation_candidates": 9244,
+          "evaluation_cases": 460,
+          "evaluation_labels_visible_to_fit": false,
+          "feature_names": [
+            "bm25",
+            "dense",
+            "hybrid",
+            "cross_encoder",
+            "token_count_div_384",
+            "cross_encoder_descending_percentile",
+            "direct_answer_support",
+            "entity_and_scope",
+            "corroborating_evidence",
+            "contradiction_detection",
+            "role_score_mean",
+            "role_score_max"
+          ],
+          "fold": 3,
+          "intercept": 0.1718574382,
+          "iterations": 7,
+          "mean": [
+            0.447055602,
+            0.5754879178,
+            0.570513828,
+            0.2908687418,
+            0.3347332539,
+            0.6471664503,
+            0.2525208583,
+            0.2507957107,
+            0.2523519541,
+            0.2544479361,
+            0.2525291148,
+            0.2681303055
+          ],
+          "scale": [
+            0.3269793659,
+            0.3103244634,
+            0.3197042587,
+            0.414231535,
+            0.192031844,
+            0.3222389005,
+            0.3999304452,
+            0.3987803769,
+            0.4003729038,
+            0.4005763609,
+            0.3979273982,
+            0.4090442731
+          ],
+          "train_candidates": 39412,
+          "train_cases": 1957
+        },
+        {
+          "coefficients": [
+            -0.2431337259,
+            0.7629064363,
+            0.1233633427,
+            0.4444999879,
+            -0.0302021759,
+            0.8636315846,
+            0.1364902464,
+            0.0244634555,
+            0.009526977,
+            0.2381858948,
+            0.1027369877,
+            -0.0600803808
+          ],
+          "converged": true,
+          "evaluation_candidates": 9907,
+          "evaluation_cases": 492,
+          "evaluation_labels_visible_to_fit": false,
+          "feature_names": [
+            "bm25",
+            "dense",
+            "hybrid",
+            "cross_encoder",
+            "token_count_div_384",
+            "cross_encoder_descending_percentile",
+            "direct_answer_support",
+            "entity_and_scope",
+            "corroborating_evidence",
+            "contradiction_detection",
+            "role_score_mean",
+            "role_score_max"
+          ],
+          "fold": 4,
+          "intercept": 0.1610347528,
+          "iterations": 7,
+          "mean": [
+            0.446237148,
+            0.5763493182,
+            0.5705064616,
+            0.2916059016,
+            0.3359085829,
+            0.6475159052,
+            0.2524071888,
+            0.2501106824,
+            0.2522825658,
+            0.2543181922,
+            0.2522796573,
+            0.2672255615
+          ],
+          "scale": [
+            0.3274175871,
+            0.3105358998,
+            0.3192106834,
+            0.4143782055,
+            0.1922859855,
+            0.3218466517,
+            0.4003948027,
+            0.3987214331,
+            0.4008067613,
+            0.4007771062,
+            0.3983035309,
+            0.40856469
+          ],
+          "train_candidates": 38749,
+          "train_cases": 1925
+        }
+      ]
+    }
+  },
+  "analysis": {
+    "budget_deltas": {
+      "1024": 0.008082,
+      "1500": 0.008473,
+      "512": 0.005594
+    },
+    "full_minus_base": {
+      "ci_high": 0.001834,
+      "ci_low": -0.000744,
+      "point": 0.000548,
+      "resamples": 10000,
+      "seed": 20260801
+    },
+    "full_minus_cross_encoder_topk": {
+      "ci_high": 0.011259,
+      "ci_low": 0.003425,
+      "point": 0.007383,
+      "resamples": 10000,
+      "seed": 20260801
+    },
+    "hop_deltas": {
+      "2-hop": 0.007371,
+      "3-hop": 0.000525,
+      "4-hop": 0.020289
+    },
+    "outcome": {
+      "adoption_eligible": false,
+      "canary_or_default_authorized": false,
+      "flood_domain_effectiveness_established": false,
+      "gate_2": "NO-GO/SHADOW",
+      "independent_confirmation": false,
+      "next_action": "STOP_THIS_CALIBRATION_FAMILY_ON_MUSIQUE",
+      "post_result_discovery": true,
+      "selector_changed": false,
+      "setr_reproduced": false,
+      "status": "CROSSFIT_SUPPORT_SIGNAL_NOT_ESTABLISHED"
+    },
+    "predeclared_checks": {
+      "every_budget_and_hop_delta_at_least_minus_0_01": true,
+      "full_minus_base_at_least_0_005": false,
+      "full_minus_base_ci_low_above_0": false,
+      "full_minus_cross_at_least_0_01": false,
+      "full_minus_cross_ci_low_above_0": true
+    },
+    "worst_budget_or_hop_delta": 0.000525
+  },
+  "development_boundary": {
+    "musique_results_known_before_model_registration": true,
+    "no_musique_fold_feature_weight_l2_or_threshold_tuning": true,
+    "raw_question_answer_or_candidate_text_exported": false
+  },
+  "metadata": {
+    "budgets": [
+      512,
+      1024,
+      1500
+    ],
+    "candidate_chunks": 48656,
+    "cases": 2417,
+    "dataset": "MuSiQue-Answerable dev",
+    "deterministic_output_rerun": "2/2 byte-identical",
+    "evidence_artifact": {
+      "path": "musique_crossfit_support_cases.jsonl.gz",
+      "raw_question_answer_or_candidate_text_exported": false,
+      "rows": 2417,
+      "sha256": "14b08d9f890c139058c9995f76df381828dfa5985118b7fca7ae9868e992582e"
+    },
+    "fold_distribution": {
+      "0": 501,
+      "1": 486,
+      "2": 478,
+      "3": 460,
+      "4": 492
+    },
+    "folds": 5,
+    "gold_visible_to_held_out_model": false,
+    "hop_distribution": {
+      "2": 1252,
+      "3": 760,
+      "4": 405
+    },
+    "methods": [
+      "cross_encoder_topk",
+      "frc_select_v34",
+      "frc_dual_resource_v36",
+      "crossfit_base_support_topk_v38",
+      "crossfit_full_support_topk_v38"
+    ],
+    "neural_rescoring": false,
+    "protocol_sha256": "957b7590c46d0a3875ff56c486c637b0ecf0925117993658902c384081eb62bc",
+    "raw_text_committed": false,
+    "scored_blind_sha256": "e2c688063e694ef0df7df7f6052cb5e68c9739f26a59db8a24c1a54413ce9242",
+    "selection_runs": 36255,
+    "source_artifacts": {
+      "implementation": {
+        "path_label": "musique_crossfit_support.py",
+        "sha256": "268606a240a979addae723eb40022cdabda9df2825b403313bfd8cd7834eed00"
+      },
+      "protocol": {
+        "path_label": "musique_crossfit_support_protocol.json",
+        "sha256": "957b7590c46d0a3875ff56c486c637b0ecf0925117993658902c384081eb62bc"
+      },
+      "raw_source": {
+        "path_label": "musique_ans_v1.0_dev.jsonl",
+        "sha256": "15fa63794d18a94ce12411aca6e2327e65b6e83b0b1490efab3f1962e48abf3b"
+      },
+      "scored_blind": {
+        "path_label": "scored_dual_resource_blind.jsonl",
+        "sha256": "e2c688063e694ef0df7df7f6052cb5e68c9739f26a59db8a24c1a54413ce9242"
+      },
+      "v37_report": {
+        "path_label": "musique_objective_gap.json",
+        "sha256": "f60130a6e9e714b098afab40a16ea92cb823c86123d9019b1fd0c2f9183a3d65"
+      }
+    },
+    "v37_report_sha256": "f60130a6e9e714b098afab40a16ea92cb823c86123d9019b1fd0c2f9183a3d65"
+  },
+  "schema_version": "frc-musique-crossfit-support-v1"
+}

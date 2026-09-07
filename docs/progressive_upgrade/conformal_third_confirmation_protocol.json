@@ -1,0 +1,96 @@
+{
+  "schema_version": "frc-conformal-third-confirmation-protocol-v1",
+  "registered_on": "2026-07-31",
+  "registration_state": {
+    "dataset_present_locally": false,
+    "role_scores_present_locally": false,
+    "confirmation_result_observed": false,
+    "feature_or_threshold_selection_authorized": false
+  },
+  "dataset": {
+    "name": "2WikiMultiHopQA",
+    "split": "dev",
+    "role": "third_independent_cross_dataset_confirmation",
+    "official_project": "https://github.com/Alab-NII/2wikimultihop",
+    "download_url": "https://huggingface.co/datasets/xanhho/2WikiMultihopQA/resolve/main/dev.parquet?download=true",
+    "artifact_name": "dev.parquet",
+    "expected_sha256": "c0d8b60b9026b728fb07ad74c5252a0f188f6942e8ba5c02df4dfa369502ea8d",
+    "license": "Apache-2.0",
+    "evidence_annotation": "sentence-level supporting_facts from the public dev split",
+    "question_type_field": "type",
+    "declared_question_types": [
+      "comparison",
+      "inference",
+      "compositional",
+      "bridge_comparison"
+    ]
+  },
+  "frozen_sampling": {
+    "sample_size": 1000,
+    "seed": 42,
+    "algorithm": "sort all rows by sha256('42\\0' + _id), then take the first 1000",
+    "candidate_unit": "every sentence in each sampled row's provided distractor context",
+    "minimum_gold_evidence_sentences": 2,
+    "post_sampling_case_or_type_balancing": false
+  },
+  "frozen_scoring": {
+    "backend": "sentence_transformers_real_models",
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "score_calibration": "per_case_minmax",
+    "role_relevance_mix": 0.15,
+    "rrf_k": 60,
+    "required_roles": [
+      "procedure",
+      "answer"
+    ],
+    "role_queries": {
+      "condition": "Find evidence stating conditions, thresholds, requirements, limitations, or triggers.",
+      "attribution": "Find evidence stating the responsible entity, authority, source, or actor.",
+      "procedure": "Find evidence describing intermediate reasoning, procedure, process, steps, or bridge entities.",
+      "answer": "Find evidence directly supporting the final answer.",
+      "exception": "Find evidence stating exceptions, exclusions, insufficiency, not applicable cases, or unanswerability."
+    },
+    "model_or_prompt_changes_after_scoring": false
+  },
+  "frozen_confirmation": {
+    "method": "class-balanced linear logistic sufficiency head",
+    "feature_transform": "linear",
+    "l2": 4.0,
+    "primary_alpha": 0.1,
+    "split_versions_source": "ConditionalQA conformal robustness report",
+    "repeat_count": 10,
+    "missing_ratios": [
+      0.0,
+      0.25,
+      0.5,
+      0.75
+    ],
+    "selection_k": 5,
+    "selection_token_budget": 1500,
+    "role_threshold": 0.55,
+    "confirmation_feature_or_model_selection": false
+  },
+  "per_dataset_confirmation_rule": {
+    "required_safety_reduction_repeats": 10,
+    "required_alpha_control_repeats": 7,
+    "max_mean_case_family_false_complete_rate": 0.1,
+    "full_confirmation": "all checks pass",
+    "partial_confirmation": "safety reduction, mean risk, dataset independence and frozen split checks pass but at least one remaining check fails",
+    "not_confirmed": "the mean safety signal or protocol-independence checks fail"
+  },
+  "observable_subgroup_audit": {
+    "dimensions": [
+      "question_type",
+      "required_role_count",
+      "candidate_count_bucket"
+    ],
+    "minimum_incomplete_case_families_per_repeat": 30,
+    "minimum_eligible_repeats": 7,
+    "uses_global_threshold_only": true,
+    "conditional_coverage_guarantee_claimed": false
+  },
+  "decision_boundary": "This independent public confirmation can strengthen or weaken the experimental sufficiency claim, but cannot by itself change Gate 2 from NO-GO/SHADOW or authorize district-flood production use."
+}

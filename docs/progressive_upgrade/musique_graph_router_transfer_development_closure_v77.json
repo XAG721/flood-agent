@@ -1,0 +1,13 @@
+{
+  "confirmation_open_authorized": false,
+  "development_result_sha256": "28f35bf13b42bcd50a378a39bd9643b3a21bd69009b04516176f9146763a0af8",
+  "experiment_id": "FRC-MUSIQUE-FROZEN-HOTPOT-GRAPH-ROUTER-TRANSFER-V77",
+  "feature_model_threshold_controls_gates_or_stage_size_changed": false,
+  "gate_2": "NO-GO/SHADOW",
+  "noninferiority_envelope_supported": false,
+  "reuse_development_for_selection_or_tuning": false,
+  "schema_version": "frc-musique-graph-router-transfer-development-decision-v77",
+  "selector_adoption_authorized": false,
+  "status": "MUSIQUE_V77_FROZEN_V76_ROUTER_TRANSFER_ADVANTAGE_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+  "strict_transfer_gate_passed": false
+}

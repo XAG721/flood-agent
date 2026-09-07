@@ -1,0 +1,23 @@
+{
+  "schema_version": "frc-squad2-v60-implementation-registration-v1",
+  "experiment_id": "FRC-SQUAD2-STRUCTURED-SPAN-GATE-V60",
+  "registered_at": "2026-08-03T18:04:00+08:00",
+  "hashes": {
+    "protocol": "8033a31ce20219cdd1fa654f13fbd53fd24b7bae4c126035d14595c7c12940d1",
+    "source_registration": "85f1e206ab0ef1d566f398974ad665045d98789bc2130b81adb9cf1eac6a331c",
+    "module": "22d7ff67f3789cd9ffca8c2eb78098877f4ae19afc8ec1b0bdf65a8fbd0aae38",
+    "runner": "278199294aba3340f194e50d5697f58cf49d9f39699cda240aa27ed89703c654",
+    "tests": "683fc2dd7f9aa384a2963d37ca48f8120f6b0bcad79610bafd4090efc7f84505"
+  },
+  "v60_sample_constructed_before_registration": false,
+  "dev_content_read": false,
+  "v58_or_v59_case_level_artifact_reused": false,
+  "prior_commitments_authorized_for_exclusion_only": true,
+  "expected_exclusion_union_count": 1200,
+  "structured_prompt_parser_and_v59_downstream_frozen": true,
+  "synthetic_tests": {
+    "passed": 7,
+    "failed": 0,
+    "raw_v59_output_used": false
+  }
+}

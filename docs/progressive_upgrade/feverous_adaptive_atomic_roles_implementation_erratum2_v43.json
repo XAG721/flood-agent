@@ -1,0 +1,45 @@
+{
+  "schema_version": "frc-feverous-adaptive-atomic-roles-implementation-erratum2-v43",
+  "experiment_id": "FRC-FEVEROUS-ADAPTIVE-ATOMIC-ROLES-V43",
+  "registered_at": "2026-08-01T23:41:19.8596920+08:00",
+  "superseded_erratum_sha256": "f3f2d782364d33bddf84c68baeaf6a18ef79df0562ee543c95201614e9dfcace",
+  "trigger": {
+    "stage": "schema-only eligibility validation after the empty-id header erratum and before sample selection completed",
+    "observed_condition": "All 125903 official baseline predicted_evidence entries are canonical evidence-id strings, while the official scorer documentation describes three-field lists.",
+    "claim_or_evidence_text_emitted": false,
+    "sample_ids_emitted": false,
+    "gold_metrics_computed": false,
+    "neural_generation_or_scoring_started": false
+  },
+  "correction": "Accept either a canonical FEVEROUS evidence-id string or the documented [page, type, position] list and normalize both representations to the identical internal triple.",
+  "protocol_alignment": "The protocol defines candidate pages and seed units from official baseline predicted_evidence but does not depend on its serialization; both representations identify the same page, type, and position.",
+  "method_or_threshold_changed": false,
+  "unchanged": [
+    "dataset and split",
+    "documentation example exclusions",
+    "challenge strata and hash sampling salt",
+    "candidate pages and candidate evidence identities",
+    "candidate pool size and all model revisions",
+    "adaptive argmax-cardinality formula",
+    "budgets, baselines, bootstrap seed, metrics, and support thresholds"
+  ],
+  "previous_effective_hashes": {
+    "protocol_sha256": "2591f23a9edc498c800a4dfcad680c5e2df36e8178cb30df7214ac7ed7264b57",
+    "module_sha256": "fa089b7b3eb45c01b90e1b59fec81a7c305323e67bbbc1d6c11e6dadcc37e097",
+    "runner_sha256": "3147b588096280fdc3243e2f15efd1a0c8f891d9bf393d030272bb99b25aaba3",
+    "test_sha256": "95b1bf56da02423e799700cfcb0809e3f3fd02de9995baaa544681e2d7930ec1",
+    "inherited_v41_module_sha256": "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621"
+  },
+  "effective_hashes": {
+    "protocol_sha256": "2591f23a9edc498c800a4dfcad680c5e2df36e8178cb30df7214ac7ed7264b57",
+    "module_sha256": "dd6d08f9a06bfdd1014c8aafbb1c7df4f00ae293dc703783cb8d43bec43d126e",
+    "runner_sha256": "9bbdec505e06e033d0acd587bcb00c0666efebc7e6bf36681c93c5f63b64a107",
+    "test_sha256": "0205c0d82617d97dad98aeed8d5ba208d1dbab9673cf53dd48bddcea29262ea6",
+    "inherited_v41_module_sha256": "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621"
+  },
+  "verification": {
+    "synthetic_tests": "5 passed with both official predicted-evidence serializations",
+    "ruff": "PASS",
+    "compileall": "PASS"
+  }
+}

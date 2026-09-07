@@ -1,0 +1,73 @@
+{
+  "cases_sha256": "b4d8428b2792dedf6c4f0accd1e3863b17362ec429cb94a6209257d7509e60a8",
+  "elapsed_seconds": 1178.131034,
+  "experiment_id": "FRC-HOTPOT-QUESTION-TYPE-CARDINALITY-PROSPECTIVE-V84",
+  "frozen_resources": {
+    "embedding_model": "BAAI/bge-large-en-v1.5@d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "role_relevance_mix": 0.15,
+    "rrf_k": 60,
+    "score_calibration": "per-case min-max",
+    "token_budget": 1500,
+    "top_k": 5
+  },
+  "implementation_lock_sha256": "cf44da9ef774a3b01b4018a0033237e49e7210764a37d5a680defcfa1ea76e4f",
+  "leakage_boundary": {
+    "blind_rows_exclude_answer_gold_ids_gold_flags_and_gold_roles": true,
+    "gold_metrics_computed": true,
+    "official_type_used_by_runtime_selector": false,
+    "selection_outputs_created_before_gold_join": true
+  },
+  "model_artifact_sha256": "5b32dc2138469b0a64f14852ed233810c56f7f3572a059c3c987f28670ae3db3",
+  "preparation": {
+    "blind_sha256": "560970d8531fa49db55d5a2bb818f2e296ac3bddc60a2ad7f81602b7a1952044",
+    "candidate_count": 24604,
+    "gold_fields_visible_to_model_or_router": false,
+    "gold_sha256": "f75ada14595322964dade650a8bc435084d069330659eda0a25f1ddc339b317a",
+    "prior_excluded_ids": 2600,
+    "prior_exclusion_group_counts": {
+      "history": 1000,
+      "v76_confirmation": 800,
+      "v76_development": 800
+    },
+    "prior_overlap": 0,
+    "question_type_counts": {
+      "bridge": 400,
+      "comparison": 200
+    },
+    "remaining_after_both_registered_stages": {
+      "bridge": 3515,
+      "comparison": 90
+    },
+    "selected_cases": 600,
+    "selected_ids_sha256": "eccfd6b602fad13642e4b4081a6fac6abcad19fa73c1638653a48f1151d9dc29",
+    "source_question_type_counts": {
+      "bridge": 5918,
+      "comparison": 1487
+    },
+    "stage": "development",
+    "untouched_before_v84_question_type_counts": {
+      "bridge": 4315,
+      "comparison": 490
+    }
+  },
+  "protocol_sha256": "17cd5e97a3540e02e1211d91535612f5ac3095127871bb38f09a2dd1dfa4478e",
+  "registered_claim_limits": {
+    "answer_generation_or_flood_domain_validation": false,
+    "gate_2": "NO-GO/SHADOW",
+    "independent_dataset_from_model_development": false,
+    "official_hotpotqa_leaderboard_result": false,
+    "same_dataset_case_disjoint_target": true,
+    "strict_independent_model_training_confirmation": false
+  },
+  "report_sha256": "c156193aa0e4e52417579d5774ec5c04902e7441a354764aed5f7b7591935cd8",
+  "result_sha256": "0889476fe76143c4f8bff1fc9514dcc8bad281f8b283d31f7a99defe02c5a4c9",
+  "schema_version": "frc-hotpot-question-type-cardinality-execution-v84",
+  "scored_blind_sha256": "f1b360196a3bb2d708cc1d6955f825dbec866c54190e56687a79f9c56121691e",
+  "scored_cases": 600,
+  "selection_output_sha256": "902ad3e376013e22ff205bc5d3e0978c46f6ce340e1d5fed0a4c526b35f68591",
+  "source_registration_sha256": "0f6ffd721ba36c44e5d1d30331a2160e138a7081d4017b0025f37b274a41907a",
+  "source_sha256": "c20b638ca82b21d04fe12e14ff417ad05153d4d215a65de54497fca4e972f7c6",
+  "stage": "development",
+  "status": "EVALUATED"
+}

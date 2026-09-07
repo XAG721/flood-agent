@@ -1,0 +1,24 @@
+{
+  "schema_version": "frc-squad2-v58-implementation-registration-v1",
+  "experiment_id": "FRC-SQUAD2-GENERATIVE-ANSWERABILITY-GATE-V58",
+  "registered_at": "2026-08-03T16:42:00+08:00",
+  "hashes": {
+    "protocol": "fc84cadc924ce091999ddfaa6419aad52d73fe420806310f65dae9a383f79b84",
+    "source_registration": "85f1e206ab0ef1d566f398974ad665045d98789bc2130b81adb9cf1eac6a331c",
+    "module": "6594a9afaff2595b40d2f0732ee6ab2cb662572d0574465d46044a703fb38f32",
+    "runner": "0adc86bcada8cc6da8614d34d5a0fa49680df2260124af3178d95b1eabbaffef",
+    "tests": "788db35e85a1f03e19f8b9686dc5e279682b55616909dd5a2461b8e357ad4b22"
+  },
+  "predownload_freeze_sha256": "719e52859672287906087e3ee030a28ddacc9f73219f5ffb7d6a7ca8e3f85d33",
+  "train_content_read_before_registration": false,
+  "dev_content_read": false,
+  "implementation_frozen_before_opening_train": true,
+  "exact_support_prompt_frozen": true,
+  "shared_case_level_gate_across_all_gated_methods": true,
+  "candidate_selector_reuses_v49_without_parameter_change": true,
+  "synthetic_tests": {
+    "passed": 6,
+    "failed": 0,
+    "source_content_used": false
+  }
+}

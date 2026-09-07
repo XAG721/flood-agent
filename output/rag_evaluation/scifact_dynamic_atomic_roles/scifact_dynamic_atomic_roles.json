@@ -1,0 +1,247 @@
+{
+  "aggregates": {
+    "method_primary_means": {
+      "bm25_topk": 0.373394,
+      "cross_encoder_knapsack": 0.435839,
+      "cross_encoder_topk": 0.442744,
+      "dense_topk": 0.460616,
+      "dynamic_rank_coverage_frc_v41": 0.403909,
+      "hybrid_topk": 0.437297,
+      "static_rank_coverage_frc_v41": 0.401088,
+      "static_threshold_frc_v39_replay": 0.441734
+    }
+  },
+  "analysis": {
+    "budget_deltas": {
+      "1024": -0.074217,
+      "1500": -0.072248,
+      "512": -0.025847
+    },
+    "family_comparison": {
+      "dynamic_minus_bootstrap_strongest_non_frc": {
+        "ci_high": -0.036516,
+        "ci_low": -0.078099,
+        "point": -0.056707,
+        "resamples": 10000,
+        "seed": 20260802
+      },
+      "dynamic_minus_static_rank": {
+        "ci_high": 0.012092,
+        "ci_low": -0.007003,
+        "point": 0.002821,
+        "resamples": 10000,
+        "seed": 20260802
+      },
+      "method_primary_means": {
+        "bm25_topk": 0.373394,
+        "cross_encoder_knapsack": 0.435839,
+        "cross_encoder_topk": 0.442744,
+        "dense_topk": 0.460616,
+        "dynamic_rank_coverage_frc_v41": 0.403909,
+        "hybrid_topk": 0.437297,
+        "static_rank_coverage_frc_v41": 0.401088,
+        "static_threshold_frc_v39_replay": 0.441734
+      },
+      "observed_strongest_non_frc": "dense_topk"
+    },
+    "outcome": {
+      "canary_or_default_authorized": false,
+      "flood_domain_effectiveness_established": false,
+      "gate_2": "NO-GO/SHADOW",
+      "scifact_reuse_for_tuning_authorized": false,
+      "selector_adoption_authorized": false,
+      "setr_reproduced": false,
+      "single_external_dataset_only": true,
+      "status": "SCIFACT_DYNAMIC_ATOMIC_ROLE_SUPPORT_NOT_ESTABLISHED",
+      "support_established": false
+    },
+    "query_generation": {
+      "fallback_count": 1,
+      "fallback_rate": 0.005348,
+      "fallback_reasons": {
+        "Unterminated string starting at: line 5 column 24 (char 534)": 1
+      },
+      "gold_fields_visible_to_generator": false,
+      "query_length_codepoints": {
+        "maximum": 292,
+        "mean": 55.399733,
+        "minimum": 10
+      },
+      "rows": 187
+    },
+    "strata": {
+      "candidate_ceiling_complete": {
+        "cases": 173,
+        "dynamic_minus_strongest_non_frc": -0.06428,
+        "safety_supported": true
+      },
+      "candidate_ceiling_incomplete": {
+        "cases": 14,
+        "dynamic_minus_strongest_non_frc": null,
+        "safety_supported": false
+      },
+      "gold_documents=1": {
+        "cases": 177,
+        "dynamic_minus_strongest_non_frc": -0.058569,
+        "safety_supported": true
+      },
+      "gold_documents>=2": {
+        "cases": 10,
+        "dynamic_minus_strongest_non_frc": null,
+        "safety_supported": false
+      },
+      "label=CONTRADICT": {
+        "cases": 64,
+        "dynamic_minus_strongest_non_frc": -0.086562,
+        "safety_supported": true
+      },
+      "label=MIXED": {
+        "cases": 0,
+        "dynamic_minus_strongest_non_frc": null,
+        "safety_supported": false
+      },
+      "label=SUPPORT": {
+        "cases": 123,
+        "dynamic_minus_strongest_non_frc": -0.041173,
+        "safety_supported": true
+      }
+    },
+    "support_checks": {
+      "dynamic_minus_static_ci_low_above_0": false,
+      "dynamic_minus_static_point_at_least_0_005": false,
+      "dynamic_minus_strongest_ci_low_above_0": false,
+      "dynamic_minus_strongest_point_at_least_0_01": false,
+      "every_budget_and_supported_stratum_at_least_minus_0_02": false,
+      "generation_fallback_rate_at_most_0_05": true,
+      "no_forbidden_field_leak": true
+    }
+  },
+  "metadata": {
+    "budgets": [
+      512,
+      1024,
+      1500
+    ],
+    "cases": 187,
+    "experiment_id": "FRC-SCIFACT-DYNAMIC-ATOMIC-ROLES-V42",
+    "gold_joined_only_after_complete_blind_score_cache": true,
+    "methods": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "cross_encoder_knapsack",
+      "static_threshold_frc_v39_replay",
+      "static_rank_coverage_frc_v41",
+      "dynamic_rank_coverage_frc_v41"
+    ],
+    "primary_metric": "document_evidence_f1",
+    "protocol_sha256": "62987d6430cef9ef91c0de1f15f8f192749f5ab6b5341117da99933d3b7892ab",
+    "raw_text_committed": false,
+    "source_artifacts": {
+      "execution_registration": {
+        "artifact_bytes": {
+          "archive": 3115079,
+          "blind_census": 4744,
+          "claims_dev": 65007,
+          "corpus": 8307875,
+          "implementation_registration": 2694,
+          "inherited_v41_module": 57997,
+          "module": 34136,
+          "prepared_blind": 7048901,
+          "protocol": 9682,
+          "runner": 13165,
+          "test": 8519
+        },
+        "artifact_sha256": {
+          "archive": "11c621288d41ac144d29b13b0f8503b3820b7d6e8b1f6ff24dff335c196d76be",
+          "blind_census": "e5ecea9d2b6ac2a077551c3d592a8d260bc83b8dbf2cd989729e4056b00c7a86",
+          "claims_dev": "86f0435d08fdb65d1aa41d1472684f57e6e71930626497bdf4d7a9ec1a632217",
+          "corpus": "b8d6c89624cb2ed74dee8938effc4f5d8bd2086887880af8110d64be4ceade62",
+          "implementation_registration": "1cc0a7cbe572b3332c2a9f879495ca939aa019928cb64ede6d7cb9905b459a62",
+          "inherited_v41_module": "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621",
+          "module": "62d40bf673a84471b3628070ebf5e29ba68e780432417251a14fae3df34c7404",
+          "prepared_blind": "c937155aec761b6cfed5718ef7d5cec33de9d9ca2a2cc8d9bcd60c970559de53",
+          "protocol": "62987d6430cef9ef91c0de1f15f8f192749f5ab6b5341117da99933d3b7892ab",
+          "runner": "893df359cc3f95027d7a3fd2bed7375f4267b464baa7a28a08e80280fd16751c",
+          "test": "62c29b7caaf44b22192574726d83fec4abaf5570a106b2fc5c489f6d5603c5f5"
+        },
+        "blind_generation_and_scoring_authorized": true,
+        "experiment_id": "FRC-SCIFACT-DYNAMIC-ATOMIC-ROLES-V42",
+        "gate_2_change_authorized": false,
+        "gold_aggregate_statistics_computed_before_registration": false,
+        "gold_join_authorized_only_after_complete_ordered_score_cache": true,
+        "implementation_registration_sha256": "1cc0a7cbe572b3332c2a9f879495ca939aa019928cb64ede6d7cb9905b459a62",
+        "metric_evaluation_authorized_only_after_complete_ordered_score_cache": true,
+        "protocol_sha256": "62987d6430cef9ef91c0de1f15f8f192749f5ab6b5341117da99933d3b7892ab",
+        "registered_at": "2026-08-01T22:08:04.8802267+08:00",
+        "registration_boundary": {
+          "candidate_ceiling_computed": false,
+          "effect_metrics_computed": false,
+          "evidence_used_before_execution_registration_only_for_preregistered_eligibility_and_missing_document_validation": true,
+          "gold_document_count_distribution_computed": false,
+          "label_distribution_computed": false,
+          "method_selection_started": false,
+          "neural_scoring_started": false,
+          "official_content_accessed_only_after_protocol_and_implementation_registration": true,
+          "only_preauthorized_structural_counts_computed": true,
+          "query_generation_started": false
+        },
+        "runtime": {
+          "cuda_available": true,
+          "cuda_runtime": "12.4",
+          "gpu": "NVIDIA GeForce RTX 4060 Ti",
+          "gpu_memory_mib": 16380,
+          "numpy": "2.2.6",
+          "platform": "Windows-10-10.0.19045-SP0",
+          "python": "3.10.20",
+          "python_executable": "D:\\anaconda3\\envs\\rag_exp\\python.exe",
+          "torch": "2.4.1+cu124",
+          "transformers": "4.46.3"
+        },
+        "runtime_parameters": {
+          "bootstrap_resamples": 10000,
+          "bootstrap_seed": 20260802,
+          "case_batch_size": 8,
+          "device": "cuda",
+          "embedding_batch_size": 64,
+          "fp16": true,
+          "generator_batch_size": 8,
+          "generator_max_input_tokens": 512,
+          "generator_max_new_tokens": 160,
+          "offline_model_loading": true,
+          "reranker_batch_size": 256
+        },
+        "schema_version": "frc-scifact-v42-execution-registration-v1",
+        "scifact_tuning_authorized_after_result": false,
+        "scores_or_metrics_computed_before_registration": false,
+        "selector_adoption_authorized": false,
+        "source_and_blind_census": {
+          "candidate_chunks": 5701,
+          "candidate_documents_per_case": 20,
+          "claims_dev_rows": 300,
+          "corpus_rows": 5183,
+          "documentation_example_ids_present_and_excluded": 1,
+          "empty_evidence_structurally_non_evaluable": 112,
+          "extracted_release_files": [
+            "data/corpus.jsonl",
+            "data/claims_dev.jsonl"
+          ],
+          "forbidden_cache_rows": 0,
+          "official_release_url": "https://scifact.s3-us-west-2.amazonaws.com/release/latest/data.tar.gz",
+          "prepared_and_census_second_run_byte_deterministic": true,
+          "prepared_case_ids_sha256": "a708cf1c0e37f2e1be3e860bbf714086aa96db4eb7f3370cf95ce703730c0d61",
+          "primary_eligible_cases": 187,
+          "train_test_or_cross_validation_files_extracted": false
+        }
+      },
+      "execution_registration_sha256": "81664c78d757154cdfe1a1f87dd2c0d5c9d948721b4c081aad5dfe5b106827a8",
+      "inherited_v41_module_sha256": "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621",
+      "module_sha256": "62d40bf673a84471b3628070ebf5e29ba68e780432417251a14fae3df34c7404",
+      "prepared_blind_sha256": "c937155aec761b6cfed5718ef7d5cec33de9d9ca2a2cc8d9bcd60c970559de53",
+      "queries_sha256": "326166e8fa6ff1cd96bdb9bcbd8f35a0a46fbfda3e77222963f9a096b5fd2325",
+      "scored_sha256": "f97d8482f2b730ff3f1dc7cdf4f38773a20030e4366a531d798857c3b15ff529"
+    }
+  },
+  "schema_version": "frc-scifact-dynamic-atomic-report-v1"
+}

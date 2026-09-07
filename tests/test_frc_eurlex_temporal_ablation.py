@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from flood_system.frc_eurlex_temporal_ablation import (
+from research.frc_rag.eurlex_temporal_ablation import (
     EURLEX_METHODS,
     EURLEX_SOURCE_SCHEMA,
     _is_applicable,
@@ -18,7 +18,7 @@ from flood_system.frc_eurlex_temporal_ablation import (
     select_eurlex_methods,
     sha256_text,
 )
-from flood_system.frc_public_evidence import load_eurlex_temporal_ablation
+from research.frc_rag.public_evidence import load_eurlex_temporal_ablation
 
 
 def _binding(value: str) -> dict[str, str]:

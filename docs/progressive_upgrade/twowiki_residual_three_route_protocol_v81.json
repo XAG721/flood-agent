@@ -1,0 +1,141 @@
+{
+  "schema_version": "frc-twowiki-residual-three-route-protocol-v81",
+  "experiment_id": "FRC-2WIKI-RESIDUAL-THREE-ROUTE-PROSPECTIVE-V81",
+  "frozen_on": "2026-08-04",
+  "research_question": "Can a frozen residual router improve on the v75 default by applying only high-confidence cross or soft/anchor flip overrides on new case-disjoint 2WikiMultiHopQA examples?",
+  "model_development": {
+    "experiment_id": "FRC-2WIKI-RESIDUAL-THREE-ROUTE-ROUTER-V81",
+    "artifact": "docs/progressive_upgrade/twowiki_residual_three_route_router_model_development_v81.json",
+    "artifact_sha256": "391830b3588110f8ac77e71faf507d571460c34cac9289d9eea2e402fbaed580",
+    "training_cases": 1600,
+    "training_sources": ["v75 development", "v75 confirmation"],
+    "finite_model_configurations": 216,
+    "thresholds_per_model": 7,
+    "finite_route_policies": 1512,
+    "selected_model_configuration_index": 188,
+    "selected_threshold": 0.0025,
+    "selected_oof_candidate_f1": 0.540164,
+    "selected_oof_delta_vs_v75": 0.005913,
+    "selected_oof_delta_95_ci": [0.004067, 0.007857],
+    "oof_is_model_selection_evidence_not_independent_confirmation": true
+  },
+  "stages": {
+    "development": {
+      "source_split": "dev",
+      "cases": 800,
+      "question_type_quota": {
+        "bridge_comparison": 200,
+        "comparison": 200,
+        "compositional": 200,
+        "inference": 200
+      },
+      "ordering": "SHA-256('FRC-2WIKI-V81-DEVELOPMENT|' + case id), then case id",
+      "exclude_all_3400_prior_ids": true
+    },
+    "confirmation": {
+      "source_split": "dev",
+      "cases": 800,
+      "question_type_quota": {
+        "bridge_comparison": 200,
+        "comparison": 200,
+        "compositional": 200,
+        "inference": 200
+      },
+      "ordering": "SHA-256('FRC-2WIKI-V81-CONFIRMATION|' + case id), then case id",
+      "exclude_all_3400_prior_and_v81_development_ids": true,
+      "open_only_if_every_development_strict_gate_passes": true
+    }
+  },
+  "common_resources": {
+    "top_k": 5,
+    "token_budget": 1500,
+    "embedding_model": "BAAI/bge-large-en-v1.5@d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "score_calibration": "per-case min-max",
+    "role_relevance_mix": 0.15,
+    "rrf_k": 60
+  },
+  "candidate": {
+    "name": "twowiki_residual_three_route_router_v81",
+    "default": "frozen v75 learned question router route",
+    "learned_actions": ["cross_override", "soft_anchor_flip_override"],
+    "actual_routes": ["cross_encoder_topk", "soft_title_link_support_path_closure_v74", "alternating_anchor_link_control"],
+    "runtime_features": 73,
+    "gold_answer_or_official_question_type_used_at_runtime": false,
+    "target_stage_training_or_tuning_cases": 0
+  },
+  "controls": [
+    "cross_encoder_topk",
+    "frc_select",
+    "soft_title_link_support_path_closure_v74",
+    "alternating_anchor_link_control",
+    "lexical_question_router_control",
+    "learned_question_routed_support_path_v75",
+    "graph_gbr_soft_override_router_v76",
+    "history_three_route_graph_router_v78",
+    "musique_target_trained_three_route_router_v79",
+    "musique_anchor_default_three_route_router_v80"
+  ],
+  "metrics": {
+    "primary": "evidence_macro_f1",
+    "secondary": ["evidence_macro_recall", "complete_evidence_recall", "mean_selected_tokens", "per_question_type_evidence_macro_f1", "action_and_route_coverage"],
+    "paired_uncertainty": "10000 case bootstrap resamples",
+    "seeds": {
+      "development": 20261181,
+      "confirmation": 20261182
+    }
+  },
+  "strict_gates": {
+    "exact_cases": 800,
+    "exact_question_type_quota": {
+      "bridge_comparison": 200,
+      "comparison": 200,
+      "compositional": 200,
+      "inference": 200
+    },
+    "prior_or_stage_overlap": 0,
+    "invalid_selector_output_rate": 0.0,
+    "candidate_evidence_macro_f1_at_least": 0.535,
+    "candidate_complete_evidence_recall_at_least": 0.58,
+    "candidate_minus_strongest_registered_control_f1_at_least": 0.005,
+    "candidate_minus_strongest_registered_control_ci_low_above": 0.0,
+    "candidate_minus_frozen_v75_f1_at_least": 0.005,
+    "candidate_minus_frozen_v75_ci_low_above": 0.0,
+    "every_question_type_delta_vs_best_control_at_least": -0.005,
+    "override_action_fraction_at_least": 0.05,
+    "at_least_two_routes_each_cover_at_least_fraction": 0.05,
+    "largest_route_fraction_at_most": 0.9,
+    "mean_selected_tokens_not_above_strongest_control_by_more_than_fraction": 0.05
+  },
+  "noninferiority_envelope": {
+    "candidate_minus_strongest_control_point_at_least": -0.005,
+    "candidate_minus_strongest_control_ci_low_at_least": -0.01,
+    "candidate_minus_frozen_v75_point_at_least": 0.0,
+    "every_question_type_delta_vs_best_control_at_least": -0.02,
+    "invalid_selector_output_rate": 0.0
+  },
+  "leakage_controls": {
+    "stage_selection_uses_only_case_id_and_official_question_type_for_pre_registered_balanced_sampling": true,
+    "runtime_router_uses_only_question_and_candidate_retrieval_features": true,
+    "model_side_blind_rows_exclude_answer_gold_evidence_ids_gold_flags_and_gold_roles": true,
+    "selection_outputs_written_before_gold_join": true,
+    "all_3400_prior_ids_excluded_from_both_target_stages": true,
+    "development_and_confirmation_are_mutually_disjoint": true,
+    "no_target_stage_tuning": true
+  },
+  "outcomes": {
+    "development_failure": "2WIKI_V81_RESIDUAL_ROUTER_DEVELOPMENT_ADVANTAGE_NOT_ESTABLISHED_STOP",
+    "development_success": "2WIKI_V81_RESIDUAL_ROUTER_DEVELOPMENT_ADVANTAGE_ESTABLISHED_OPEN_CONFIRMATION",
+    "confirmation_failure": "2WIKI_V81_RESIDUAL_ROUTER_CONFIRMATION_ADVANTAGE_NOT_ESTABLISHED",
+    "confirmation_success": "2WIKI_V81_RESIDUAL_ROUTER_CASE_DISJOINT_ADVANTAGE_ESTABLISHED",
+    "further_same_source_confirmation_authorized": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "claim_limits": [
+    "Same-dataset case-disjoint evaluation, not an independent dataset.",
+    "Not an official 2WikiMultiHopQA leaderboard result.",
+    "Not answer generation, real SetR, flood-domain expert validation, CANARY, DEFAULT, or production evidence."
+  ]
+}

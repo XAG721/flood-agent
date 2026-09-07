@@ -1,0 +1,144 @@
+{
+  "schema_version": "frc-qasc-confirmation-protocol-v1",
+  "registered_on": "2026-07-31",
+  "purpose": "Run one supplemental external confirmation of the frozen target-fitted 37-feature FRC sufficiency and abstention protocol on QASC without reopening any failed post-hoc method line.",
+  "registration_boundary": {
+    "raw_qasc_artifact_downloaded_before_registration": false,
+    "qasc_neural_scores_seen_before_registration": false,
+    "qasc_confirmation_metrics_seen_before_registration": false,
+    "public_schema_license_and_dataset_card_examples_inspected": true,
+    "method_or_threshold_selection_on_qasc": false,
+    "musique_downloaded_or_inspected": false,
+    "note": "Public schema inspection was used only to define a deterministic adapter. No QASC model output or confirmation metric was available when this protocol was written."
+  },
+  "frozen_source": {
+    "repository": "allenai/qasc",
+    "revision": "a34ba204eb9a33b919c10cc08f4f1c8dae5ec070",
+    "split": "validation",
+    "path_label": "validation-00000-of-00001.parquet",
+    "url": "https://huggingface.co/datasets/allenai/qasc/resolve/a34ba204eb9a33b919c10cc08f4f1c8dae5ec070/data/validation-00000-of-00001.parquet?download=true",
+    "sha256": "d1ae34ae13c5fce2c55305372c203c6cdb789728d0d7e5ea2956d55bc33f40ae",
+    "license": "CC-BY-4.0",
+    "expected_rows_from_dataset_card": 926,
+    "eligibility": [
+      "non-empty id and question",
+      "aligned choice text and label arrays with answerKey present",
+      "non-empty distinct normalized fact1 and fact2"
+    ],
+    "minimum_eligible_cases": 800,
+    "sampling": "all eligible validation rows sorted by id; no outcome-dependent sampling"
+  },
+  "frozen_controlled_candidate_pool": {
+    "scope": "controlled evidence-pool selection, not the original 17M-sentence open-corpus QASC retrieval task",
+    "fact_corpus": "case-folded whitespace-normalized union of validation fact1 and fact2, preserving first display text and sorting global ids by SHA-256",
+    "query": "formatted_question containing the question and all answer choices; answerKey and correct answer are not used",
+    "candidate_count_per_case": 40,
+    "gold_candidates": "the two official distinct facts, included for controlled selection evaluation",
+    "gold_role_mapping": {
+      "fact1": [
+        "procedure"
+      ],
+      "fact2": [
+        "answer"
+      ]
+    },
+    "hard_distractors": "top 38 non-gold validation facts by deterministic BM25 over formatted_question",
+    "bm25": {
+      "k1": 1.5,
+      "b": 0.75,
+      "tokenizer": "lowercase ASCII alphanumeric tokens with internal apostrophes",
+      "tie_break": "global qasc fact id ascending"
+    },
+    "final_candidate_order": "candidate id ascending",
+    "question_type": "first interrogative token mapped to what/which/how/where/when/why/who/other",
+    "required_roles": [
+      "procedure",
+      "answer"
+    ],
+    "gold_fields_used_for_neural_scoring": false,
+    "limitations": [
+      "Gold facts are forced into each controlled candidate pool.",
+      "Results measure evidence selection and sufficiency behavior, not full-corpus retrieval recall.",
+      "Validation facts may recur across cases and are deduplicated by normalized text."
+    ]
+  },
+  "frozen_real_model_scoring": {
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "offline_local_snapshots": true,
+    "bm25_dense_hybrid_cross_encoder": true,
+    "role_names": [
+      "condition",
+      "attribution",
+      "procedure",
+      "answer",
+      "exception"
+    ],
+    "role_relevance_mix": 0.15,
+    "score_calibration": "per_case_minmax",
+    "gold_fields_visible_to_scorer": false,
+    "gold_blind_boundary": "answer, gold_evidence_ids, candidate.gold and candidate.gold_roles are removed before the scorer call and restored only after scores are returned"
+  },
+  "frozen_implementation": {
+    "adapter_path": "research/frc_rag/qasc_confirmation.py",
+    "adapter_sha256": "2b7c68b28a869f97b3922ae96cd451cf0745bb1490c0f27dc5239013fe758618",
+    "download_runner_path": "scripts/download_qasc_validation.py",
+    "download_runner_sha256": "1d8ff07659354373da12120be305a93d78404eae5271e6cc47bc23718219a47b",
+    "score_runner_path": "scripts/prepare_qasc_confirmation_scores.py",
+    "score_runner_sha256": "927b7c9679c16aa72b783273574cc116737dc9ff91f9611c972917946a5735cd",
+    "synthetic_adapter_tests_passed_before_registration": 2
+  },
+  "frozen_confirmation_protocol": {
+    "reference_report_path_label": "conformal_robustness.json",
+    "reference_report_sha256": "c1d9068333f3bc7b79e3039d120c8120ae2f0f00ff48c5a653b97545bee79dce",
+    "model": "37 observable features, standardized target train only, logistic regression L2=4",
+    "selector": {
+      "method": "frc_select",
+      "top_k": 5,
+      "token_budget": 1500,
+      "role_threshold": 0.55
+    },
+    "split": "10 pre-registered SHA-256 case-family assignments, each 40% train, 30% calibration and 30% evaluation",
+    "split_versions": [
+      "frc-conformal-sufficiency-split-v1",
+      "frc-conformal-sufficiency-split-v1-repeat-01",
+      "frc-conformal-sufficiency-split-v1-repeat-02",
+      "frc-conformal-sufficiency-split-v1-repeat-03",
+      "frc-conformal-sufficiency-split-v1-repeat-04",
+      "frc-conformal-sufficiency-split-v1-repeat-05",
+      "frc-conformal-sufficiency-split-v1-repeat-06",
+      "frc-conformal-sufficiency-split-v1-repeat-07",
+      "frc-conformal-sufficiency-split-v1-repeat-08",
+      "frc-conformal-sufficiency-split-v1-repeat-09"
+    ],
+    "alphas": [
+      0.05,
+      0.1,
+      0.2
+    ],
+    "primary_alpha": 0.1,
+    "threshold_source": "target calibration case-family units only",
+    "evaluation_used_for_feature_model_threshold_or_split_selection": false,
+    "missing_evidence": "deterministic synthetic removal from the frozen scored candidates",
+    "review_ranking_policy": "Keep the baseline 37-feature review order. Do not evaluate or revive the failed 64-feature review-ranker candidate on QASC."
+  },
+  "pre_registered_confirmation_checks": {
+    "safety_reduction_repeats": "10 of 10",
+    "case_family_rate_at_or_below_alpha_repeats": "at least 7 of 10",
+    "maximum_mean_case_family_false_complete_rate": 0.1,
+    "full_confirmation": "all three checks pass",
+    "partial_confirmation": "10 of 10 safety reduction passes but at least one absolute-risk check fails",
+    "not_confirmed": "the 10 of 10 safety-reduction check fails"
+  },
+  "decision_boundary": {
+    "existing_three_confirmation_series_may_change": false,
+    "failed_post_hoc_method_lines_may_reopen": false,
+    "gate_2_may_change": false,
+    "production_authorization": false,
+    "if_full_confirmation": "Report supplemental protocol transfer evidence only; retain NO-GO/SHADOW and require flood-domain expert validation.",
+    "if_partial_or_not_confirmed": "Report the negative or mixed result without modifying the method on QASC or any revealed evaluation data.",
+    "musique_policy": "Remain STOP_WITHOUT_MUSIQUE_DOWNLOAD from the earlier frozen multi-axis protocol."
+  }
+}

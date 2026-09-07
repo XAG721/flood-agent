@@ -17,7 +17,7 @@ from ..models import CorpusType, RAGDocument
 from ..rag_runtime import RAGService, RuntimeRAGDocumentProvider
 from ..repository import SQLiteRepository
 from ..sample_data import build_area_profiles, build_resource_status, load_observations_from_csv
-from ..v2.models import EntityProfile
+from ..compat.legacy_platform.models import EntityProfile
 
 
 BEILIN_AREA_ID = "beilin_10km2"

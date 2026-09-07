@@ -1,0 +1,1067 @@
+{
+  "metadata": {
+    "schema_version": "frc-qasc-question-type-diagnostic-v1",
+    "status": "RUN_QASC_POST_CONFIRMATION_DESCRIPTIVE_DIAGNOSTIC",
+    "dataset": "QASC",
+    "split": "validation",
+    "dimension": "question_type",
+    "alpha": 0.1,
+    "split_versions": [
+      "frc-conformal-sufficiency-split-v1",
+      "frc-conformal-sufficiency-split-v1-repeat-01",
+      "frc-conformal-sufficiency-split-v1-repeat-02",
+      "frc-conformal-sufficiency-split-v1-repeat-03",
+      "frc-conformal-sufficiency-split-v1-repeat-04",
+      "frc-conformal-sufficiency-split-v1-repeat-05",
+      "frc-conformal-sufficiency-split-v1-repeat-06",
+      "frc-conformal-sufficiency-split-v1-repeat-07",
+      "frc-conformal-sufficiency-split-v1-repeat-08",
+      "frc-conformal-sufficiency-split-v1-repeat-09"
+    ],
+    "minimum_incomplete_case_families": 30,
+    "minimum_eligible_repeats": 7,
+    "post_confirmation_descriptive_only": true,
+    "case_artifact": {
+      "path_label": "conformal_qasc_subgroup_cases.jsonl.gz",
+      "sha256": "074232062d7e9d9230e60d9a46216e0d5bce0e26172466c7cc5a4d1ab352ddfb",
+      "record_count": 10900
+    }
+  },
+  "provenance": {
+    "protocol_path_label": "conformal_qasc_subgroup_diagnostic_protocol.json",
+    "protocol_sha256": "d3df75f7c927dae2e1a4e38695a1f3b7a691eabd215f14fb2cb2b1bc850b45f0",
+    "score_source_path_label": "role_scores_qasc.jsonl",
+    "score_source_sha256": "6419428623c1c4ed1a5935acf1402331c166e9afa9a80f45441e9e7540c759c0",
+    "confirmation_report_path_label": "qasc_confirmation.json",
+    "confirmation_report_sha256": "54e96f3d1d5d7d5f4f9dbcc2e01496ff26abfe86e96f99f9f1c3be9e26ef3b30",
+    "confirmation_repeats_exactly_reproduced": true
+  },
+  "analysis": {
+    "per_repeat": [
+      {
+        "split_version": "frc-conformal-sufficiency-split-v1",
+        "evaluation_case_families": 295,
+        "question_types": [
+          {
+            "question_type": "qasc_how",
+            "case_families": 10,
+            "variants": 40,
+            "incomplete_case_families": 9,
+            "false_complete_case_families": 2,
+            "false_complete_case_family_rate": 0.222222,
+            "abstention_rate": 0.75,
+            "complete_variants": 13,
+            "true_complete_declaration_rate": 0.461538,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_other",
+            "case_families": 93,
+            "variants": 372,
+            "incomplete_case_families": 91,
+            "false_complete_case_families": 12,
+            "false_complete_case_family_rate": 0.131868,
+            "abstention_rate": 0.895161,
+            "complete_variants": 76,
+            "true_complete_declaration_rate": 0.210526,
+            "eligible": true
+          },
+          {
+            "question_type": "qasc_what",
+            "case_families": 178,
+            "variants": 712,
+            "incomplete_case_families": 175,
+            "false_complete_case_families": 20,
+            "false_complete_case_family_rate": 0.114286,
+            "abstention_rate": 0.877809,
+            "complete_variants": 165,
+            "true_complete_declaration_rate": 0.278788,
+            "eligible": true
+          },
+          {
+            "question_type": "qasc_when",
+            "case_families": 7,
+            "variants": 28,
+            "incomplete_case_families": 7,
+            "false_complete_case_families": 2,
+            "false_complete_case_family_rate": 0.285714,
+            "abstention_rate": 0.571429,
+            "complete_variants": 9,
+            "true_complete_declaration_rate": 1.0,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_where",
+            "case_families": 4,
+            "variants": 16,
+            "incomplete_case_families": 4,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 0.8125,
+            "complete_variants": 5,
+            "true_complete_declaration_rate": 0.6,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_which",
+            "case_families": 2,
+            "variants": 8,
+            "incomplete_case_families": 2,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 0.875,
+            "complete_variants": 1,
+            "true_complete_declaration_rate": 1.0,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_who",
+            "case_families": 1,
+            "variants": 4,
+            "incomplete_case_families": 1,
+            "false_complete_case_families": 1,
+            "false_complete_case_family_rate": 1.0,
+            "abstention_rate": 0.75,
+            "complete_variants": 0,
+            "true_complete_declaration_rate": 0.0,
+            "eligible": false
+          }
+        ]
+      },
+      {
+        "split_version": "frc-conformal-sufficiency-split-v1-repeat-01",
+        "evaluation_case_families": 261,
+        "question_types": [
+          {
+            "question_type": "qasc_how",
+            "case_families": 4,
+            "variants": 16,
+            "incomplete_case_families": 4,
+            "false_complete_case_families": 1,
+            "false_complete_case_family_rate": 0.25,
+            "abstention_rate": 0.8125,
+            "complete_variants": 4,
+            "true_complete_declaration_rate": 0.0,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_other",
+            "case_families": 67,
+            "variants": 268,
+            "incomplete_case_families": 64,
+            "false_complete_case_families": 2,
+            "false_complete_case_family_rate": 0.03125,
+            "abstention_rate": 0.88806,
+            "complete_variants": 73,
+            "true_complete_declaration_rate": 0.383562,
+            "eligible": true
+          },
+          {
+            "question_type": "qasc_what",
+            "case_families": 174,
+            "variants": 696,
+            "incomplete_case_families": 167,
+            "false_complete_case_families": 14,
+            "false_complete_case_family_rate": 0.083832,
+            "abstention_rate": 0.925287,
+            "complete_variants": 171,
+            "true_complete_declaration_rate": 0.152047,
+            "eligible": true
+          },
+          {
+            "question_type": "qasc_when",
+            "case_families": 8,
+            "variants": 32,
+            "incomplete_case_families": 8,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 0.75,
+            "complete_variants": 11,
+            "true_complete_declaration_rate": 0.727273,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_where",
+            "case_families": 5,
+            "variants": 20,
+            "incomplete_case_families": 5,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 0.9,
+            "complete_variants": 7,
+            "true_complete_declaration_rate": 0.285714,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_which",
+            "case_families": 3,
+            "variants": 12,
+            "incomplete_case_families": 3,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 1.0,
+            "complete_variants": 2,
+            "true_complete_declaration_rate": 0.0,
+            "eligible": false
+          }
+        ]
+      },
+      {
+        "split_version": "frc-conformal-sufficiency-split-v1-repeat-02",
+        "evaluation_case_families": 268,
+        "question_types": [
+          {
+            "question_type": "qasc_how",
+            "case_families": 7,
+            "variants": 28,
+            "incomplete_case_families": 6,
+            "false_complete_case_families": 3,
+            "false_complete_case_family_rate": 0.5,
+            "abstention_rate": 0.785714,
+            "complete_variants": 4,
+            "true_complete_declaration_rate": 0.0,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_other",
+            "case_families": 85,
+            "variants": 340,
+            "incomplete_case_families": 82,
+            "false_complete_case_families": 6,
+            "false_complete_case_family_rate": 0.073171,
+            "abstention_rate": 0.905882,
+            "complete_variants": 88,
+            "true_complete_declaration_rate": 0.215909,
+            "eligible": true
+          },
+          {
+            "question_type": "qasc_what",
+            "case_families": 158,
+            "variants": 632,
+            "incomplete_case_families": 154,
+            "false_complete_case_families": 18,
+            "false_complete_case_family_rate": 0.116883,
+            "abstention_rate": 0.849684,
+            "complete_variants": 151,
+            "true_complete_declaration_rate": 0.437086,
+            "eligible": true
+          },
+          {
+            "question_type": "qasc_when",
+            "case_families": 7,
+            "variants": 28,
+            "incomplete_case_families": 7,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 0.964286,
+            "complete_variants": 3,
+            "true_complete_declaration_rate": 0.333333,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_where",
+            "case_families": 7,
+            "variants": 28,
+            "incomplete_case_families": 7,
+            "false_complete_case_families": 2,
+            "false_complete_case_family_rate": 0.285714,
+            "abstention_rate": 0.892857,
+            "complete_variants": 0,
+            "true_complete_declaration_rate": 0.0,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_which",
+            "case_families": 3,
+            "variants": 12,
+            "incomplete_case_families": 3,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 0.833333,
+            "complete_variants": 2,
+            "true_complete_declaration_rate": 1.0,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_who",
+            "case_families": 1,
+            "variants": 4,
+            "incomplete_case_families": 1,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 1.0,
+            "complete_variants": 3,
+            "true_complete_declaration_rate": 0.0,
+            "eligible": false
+          }
+        ]
+      },
+      {
+        "split_version": "frc-conformal-sufficiency-split-v1-repeat-03",
+        "evaluation_case_families": 280,
+        "question_types": [
+          {
+            "question_type": "qasc_how",
+            "case_families": 5,
+            "variants": 20,
+            "incomplete_case_families": 5,
+            "false_complete_case_families": 1,
+            "false_complete_case_family_rate": 0.2,
+            "abstention_rate": 0.9,
+            "complete_variants": 4,
+            "true_complete_declaration_rate": 0.0,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_other",
+            "case_families": 84,
+            "variants": 336,
+            "incomplete_case_families": 79,
+            "false_complete_case_families": 6,
+            "false_complete_case_family_rate": 0.075949,
+            "abstention_rate": 0.907738,
+            "complete_variants": 102,
+            "true_complete_declaration_rate": 0.22549,
+            "eligible": true
+          },
+          {
+            "question_type": "qasc_what",
+            "case_families": 169,
+            "variants": 676,
+            "incomplete_case_families": 166,
+            "false_complete_case_families": 16,
+            "false_complete_case_family_rate": 0.096386,
+            "abstention_rate": 0.911243,
+            "complete_variants": 167,
+            "true_complete_declaration_rate": 0.161677,
+            "eligible": true
+          },
+          {
+            "question_type": "qasc_when",
+            "case_families": 6,
+            "variants": 24,
+            "incomplete_case_families": 6,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 0.875,
+            "complete_variants": 6,
+            "true_complete_declaration_rate": 0.5,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_where",
+            "case_families": 9,
+            "variants": 36,
+            "incomplete_case_families": 8,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 0.888889,
+            "complete_variants": 16,
+            "true_complete_declaration_rate": 0.25,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_which",
+            "case_families": 7,
+            "variants": 28,
+            "incomplete_case_families": 7,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 0.964286,
+            "complete_variants": 4,
+            "true_complete_declaration_rate": 0.25,
+            "eligible": false
+          }
+        ]
+      },
+      {
+        "split_version": "frc-conformal-sufficiency-split-v1-repeat-04",
+        "evaluation_case_families": 272,
+        "question_types": [
+          {
+            "question_type": "qasc_how",
+            "case_families": 8,
+            "variants": 32,
+            "incomplete_case_families": 7,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 1.0,
+            "complete_variants": 11,
+            "true_complete_declaration_rate": 0.0,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_other",
+            "case_families": 82,
+            "variants": 328,
+            "incomplete_case_families": 81,
+            "false_complete_case_families": 9,
+            "false_complete_case_family_rate": 0.111111,
+            "abstention_rate": 0.884146,
+            "complete_variants": 62,
+            "true_complete_declaration_rate": 0.322581,
+            "eligible": true
+          },
+          {
+            "question_type": "qasc_what",
+            "case_families": 158,
+            "variants": 632,
+            "incomplete_case_families": 155,
+            "false_complete_case_families": 13,
+            "false_complete_case_family_rate": 0.083871,
+            "abstention_rate": 0.881329,
+            "complete_variants": 153,
+            "true_complete_declaration_rate": 0.326797,
+            "eligible": true
+          },
+          {
+            "question_type": "qasc_when",
+            "case_families": 9,
+            "variants": 36,
+            "incomplete_case_families": 9,
+            "false_complete_case_families": 1,
+            "false_complete_case_family_rate": 0.111111,
+            "abstention_rate": 0.888889,
+            "complete_variants": 7,
+            "true_complete_declaration_rate": 0.285714,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_where",
+            "case_families": 9,
+            "variants": 36,
+            "incomplete_case_families": 9,
+            "false_complete_case_families": 2,
+            "false_complete_case_family_rate": 0.222222,
+            "abstention_rate": 0.888889,
+            "complete_variants": 11,
+            "true_complete_declaration_rate": 0.181818,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_which",
+            "case_families": 2,
+            "variants": 8,
+            "incomplete_case_families": 2,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 1.0,
+            "complete_variants": 0,
+            "true_complete_declaration_rate": 0.0,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_who",
+            "case_families": 3,
+            "variants": 12,
+            "incomplete_case_families": 3,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 0.916667,
+            "complete_variants": 3,
+            "true_complete_declaration_rate": 0.333333,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_why",
+            "case_families": 1,
+            "variants": 4,
+            "incomplete_case_families": 1,
+            "false_complete_case_families": 1,
+            "false_complete_case_family_rate": 1.0,
+            "abstention_rate": 0.75,
+            "complete_variants": 0,
+            "true_complete_declaration_rate": 0.0,
+            "eligible": false
+          }
+        ]
+      },
+      {
+        "split_version": "frc-conformal-sufficiency-split-v1-repeat-05",
+        "evaluation_case_families": 261,
+        "question_types": [
+          {
+            "question_type": "qasc_how",
+            "case_families": 8,
+            "variants": 32,
+            "incomplete_case_families": 8,
+            "false_complete_case_families": 2,
+            "false_complete_case_family_rate": 0.25,
+            "abstention_rate": 0.875,
+            "complete_variants": 4,
+            "true_complete_declaration_rate": 0.5,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_other",
+            "case_families": 62,
+            "variants": 248,
+            "incomplete_case_families": 61,
+            "false_complete_case_families": 7,
+            "false_complete_case_family_rate": 0.114754,
+            "abstention_rate": 0.887097,
+            "complete_variants": 68,
+            "true_complete_declaration_rate": 0.279412,
+            "eligible": true
+          },
+          {
+            "question_type": "qasc_what",
+            "case_families": 169,
+            "variants": 676,
+            "incomplete_case_families": 166,
+            "false_complete_case_families": 16,
+            "false_complete_case_family_rate": 0.096386,
+            "abstention_rate": 0.887574,
+            "complete_variants": 170,
+            "true_complete_declaration_rate": 0.252941,
+            "eligible": true
+          },
+          {
+            "question_type": "qasc_when",
+            "case_families": 6,
+            "variants": 24,
+            "incomplete_case_families": 6,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 0.958333,
+            "complete_variants": 7,
+            "true_complete_declaration_rate": 0.142857,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_where",
+            "case_families": 7,
+            "variants": 28,
+            "incomplete_case_families": 7,
+            "false_complete_case_families": 1,
+            "false_complete_case_family_rate": 0.142857,
+            "abstention_rate": 0.928571,
+            "complete_variants": 6,
+            "true_complete_declaration_rate": 0.166667,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_which",
+            "case_families": 6,
+            "variants": 24,
+            "incomplete_case_families": 6,
+            "false_complete_case_families": 1,
+            "false_complete_case_family_rate": 0.166667,
+            "abstention_rate": 0.791667,
+            "complete_variants": 4,
+            "true_complete_declaration_rate": 0.75,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_who",
+            "case_families": 1,
+            "variants": 4,
+            "incomplete_case_families": 1,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 0.75,
+            "complete_variants": 1,
+            "true_complete_declaration_rate": 1.0,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_why",
+            "case_families": 2,
+            "variants": 8,
+            "incomplete_case_families": 2,
+            "false_complete_case_families": 1,
+            "false_complete_case_family_rate": 0.5,
+            "abstention_rate": 0.625,
+            "complete_variants": 2,
+            "true_complete_declaration_rate": 1.0,
+            "eligible": false
+          }
+        ]
+      },
+      {
+        "split_version": "frc-conformal-sufficiency-split-v1-repeat-06",
+        "evaluation_case_families": 270,
+        "question_types": [
+          {
+            "question_type": "qasc_how",
+            "case_families": 11,
+            "variants": 44,
+            "incomplete_case_families": 10,
+            "false_complete_case_families": 1,
+            "false_complete_case_family_rate": 0.1,
+            "abstention_rate": 0.886364,
+            "complete_variants": 15,
+            "true_complete_declaration_rate": 0.266667,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_other",
+            "case_families": 83,
+            "variants": 332,
+            "incomplete_case_families": 81,
+            "false_complete_case_families": 8,
+            "false_complete_case_family_rate": 0.098765,
+            "abstention_rate": 0.900602,
+            "complete_variants": 66,
+            "true_complete_declaration_rate": 0.333333,
+            "eligible": true
+          },
+          {
+            "question_type": "qasc_what",
+            "case_families": 154,
+            "variants": 616,
+            "incomplete_case_families": 148,
+            "false_complete_case_families": 8,
+            "false_complete_case_family_rate": 0.054054,
+            "abstention_rate": 0.912338,
+            "complete_variants": 173,
+            "true_complete_declaration_rate": 0.225434,
+            "eligible": true
+          },
+          {
+            "question_type": "qasc_when",
+            "case_families": 6,
+            "variants": 24,
+            "incomplete_case_families": 6,
+            "false_complete_case_families": 1,
+            "false_complete_case_family_rate": 0.166667,
+            "abstention_rate": 0.75,
+            "complete_variants": 6,
+            "true_complete_declaration_rate": 0.666667,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_where",
+            "case_families": 10,
+            "variants": 40,
+            "incomplete_case_families": 9,
+            "false_complete_case_families": 2,
+            "false_complete_case_family_rate": 0.222222,
+            "abstention_rate": 0.95,
+            "complete_variants": 11,
+            "true_complete_declaration_rate": 0.0,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_which",
+            "case_families": 5,
+            "variants": 20,
+            "incomplete_case_families": 5,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 0.95,
+            "complete_variants": 4,
+            "true_complete_declaration_rate": 0.25,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_who",
+            "case_families": 1,
+            "variants": 4,
+            "incomplete_case_families": 1,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 0.25,
+            "complete_variants": 3,
+            "true_complete_declaration_rate": 1.0,
+            "eligible": false
+          }
+        ]
+      },
+      {
+        "split_version": "frc-conformal-sufficiency-split-v1-repeat-07",
+        "evaluation_case_families": 281,
+        "question_types": [
+          {
+            "question_type": "qasc_how",
+            "case_families": 9,
+            "variants": 36,
+            "incomplete_case_families": 9,
+            "false_complete_case_families": 3,
+            "false_complete_case_family_rate": 0.333333,
+            "abstention_rate": 0.722222,
+            "complete_variants": 6,
+            "true_complete_declaration_rate": 0.5,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_other",
+            "case_families": 71,
+            "variants": 284,
+            "incomplete_case_families": 69,
+            "false_complete_case_families": 10,
+            "false_complete_case_family_rate": 0.144928,
+            "abstention_rate": 0.883803,
+            "complete_variants": 57,
+            "true_complete_declaration_rate": 0.245614,
+            "eligible": true
+          },
+          {
+            "question_type": "qasc_what",
+            "case_families": 174,
+            "variants": 696,
+            "incomplete_case_families": 167,
+            "false_complete_case_families": 14,
+            "false_complete_case_family_rate": 0.083832,
+            "abstention_rate": 0.880747,
+            "complete_variants": 198,
+            "true_complete_declaration_rate": 0.292929,
+            "eligible": true
+          },
+          {
+            "question_type": "qasc_when",
+            "case_families": 6,
+            "variants": 24,
+            "incomplete_case_families": 6,
+            "false_complete_case_families": 2,
+            "false_complete_case_family_rate": 0.333333,
+            "abstention_rate": 0.625,
+            "complete_variants": 5,
+            "true_complete_declaration_rate": 1.0,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_where",
+            "case_families": 10,
+            "variants": 40,
+            "incomplete_case_families": 10,
+            "false_complete_case_families": 1,
+            "false_complete_case_family_rate": 0.1,
+            "abstention_rate": 0.925,
+            "complete_variants": 8,
+            "true_complete_declaration_rate": 0.25,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_which",
+            "case_families": 5,
+            "variants": 20,
+            "incomplete_case_families": 5,
+            "false_complete_case_families": 1,
+            "false_complete_case_family_rate": 0.2,
+            "abstention_rate": 0.75,
+            "complete_variants": 5,
+            "true_complete_declaration_rate": 0.6,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_who",
+            "case_families": 5,
+            "variants": 20,
+            "incomplete_case_families": 5,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 0.7,
+            "complete_variants": 6,
+            "true_complete_declaration_rate": 1.0,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_why",
+            "case_families": 1,
+            "variants": 4,
+            "incomplete_case_families": 1,
+            "false_complete_case_families": 1,
+            "false_complete_case_family_rate": 1.0,
+            "abstention_rate": 0.75,
+            "complete_variants": 0,
+            "true_complete_declaration_rate": 0.0,
+            "eligible": false
+          }
+        ]
+      },
+      {
+        "split_version": "frc-conformal-sufficiency-split-v1-repeat-08",
+        "evaluation_case_families": 269,
+        "question_types": [
+          {
+            "question_type": "qasc_how",
+            "case_families": 8,
+            "variants": 32,
+            "incomplete_case_families": 7,
+            "false_complete_case_families": 1,
+            "false_complete_case_family_rate": 0.142857,
+            "abstention_rate": 0.9375,
+            "complete_variants": 7,
+            "true_complete_declaration_rate": 0.142857,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_other",
+            "case_families": 66,
+            "variants": 264,
+            "incomplete_case_families": 64,
+            "false_complete_case_families": 7,
+            "false_complete_case_family_rate": 0.109375,
+            "abstention_rate": 0.867424,
+            "complete_variants": 73,
+            "true_complete_declaration_rate": 0.287671,
+            "eligible": true
+          },
+          {
+            "question_type": "qasc_what",
+            "case_families": 174,
+            "variants": 696,
+            "incomplete_case_families": 172,
+            "false_complete_case_families": 19,
+            "false_complete_case_family_rate": 0.110465,
+            "abstention_rate": 0.880747,
+            "complete_variants": 172,
+            "true_complete_declaration_rate": 0.284884,
+            "eligible": true
+          },
+          {
+            "question_type": "qasc_when",
+            "case_families": 5,
+            "variants": 20,
+            "incomplete_case_families": 5,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 0.8,
+            "complete_variants": 4,
+            "true_complete_declaration_rate": 1.0,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_where",
+            "case_families": 9,
+            "variants": 36,
+            "incomplete_case_families": 8,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 0.861111,
+            "complete_variants": 13,
+            "true_complete_declaration_rate": 0.384615,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_which",
+            "case_families": 4,
+            "variants": 16,
+            "incomplete_case_families": 4,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 1.0,
+            "complete_variants": 2,
+            "true_complete_declaration_rate": 0.0,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_who",
+            "case_families": 2,
+            "variants": 8,
+            "incomplete_case_families": 2,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 0.75,
+            "complete_variants": 2,
+            "true_complete_declaration_rate": 1.0,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_why",
+            "case_families": 1,
+            "variants": 4,
+            "incomplete_case_families": 1,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 1.0,
+            "complete_variants": 0,
+            "true_complete_declaration_rate": 0.0,
+            "eligible": false
+          }
+        ]
+      },
+      {
+        "split_version": "frc-conformal-sufficiency-split-v1-repeat-09",
+        "evaluation_case_families": 268,
+        "question_types": [
+          {
+            "question_type": "qasc_how",
+            "case_families": 8,
+            "variants": 32,
+            "incomplete_case_families": 7,
+            "false_complete_case_families": 2,
+            "false_complete_case_family_rate": 0.285714,
+            "abstention_rate": 0.84375,
+            "complete_variants": 7,
+            "true_complete_declaration_rate": 0.142857,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_other",
+            "case_families": 77,
+            "variants": 308,
+            "incomplete_case_families": 76,
+            "false_complete_case_families": 5,
+            "false_complete_case_family_rate": 0.065789,
+            "abstention_rate": 0.905844,
+            "complete_variants": 86,
+            "true_complete_declaration_rate": 0.232558,
+            "eligible": true
+          },
+          {
+            "question_type": "qasc_what",
+            "case_families": 163,
+            "variants": 652,
+            "incomplete_case_families": 160,
+            "false_complete_case_families": 21,
+            "false_complete_case_family_rate": 0.13125,
+            "abstention_rate": 0.863497,
+            "complete_variants": 148,
+            "true_complete_declaration_rate": 0.317568,
+            "eligible": true
+          },
+          {
+            "question_type": "qasc_when",
+            "case_families": 7,
+            "variants": 28,
+            "incomplete_case_families": 7,
+            "false_complete_case_families": 3,
+            "false_complete_case_family_rate": 0.428571,
+            "abstention_rate": 0.678571,
+            "complete_variants": 5,
+            "true_complete_declaration_rate": 0.8,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_where",
+            "case_families": 4,
+            "variants": 16,
+            "incomplete_case_families": 3,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 1.0,
+            "complete_variants": 7,
+            "true_complete_declaration_rate": 0.0,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_which",
+            "case_families": 3,
+            "variants": 12,
+            "incomplete_case_families": 3,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 1.0,
+            "complete_variants": 1,
+            "true_complete_declaration_rate": 0.0,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_who",
+            "case_families": 4,
+            "variants": 16,
+            "incomplete_case_families": 4,
+            "false_complete_case_families": 0,
+            "false_complete_case_family_rate": 0.0,
+            "abstention_rate": 1.0,
+            "complete_variants": 5,
+            "true_complete_declaration_rate": 0.0,
+            "eligible": false
+          },
+          {
+            "question_type": "qasc_why",
+            "case_families": 2,
+            "variants": 8,
+            "incomplete_case_families": 2,
+            "false_complete_case_families": 1,
+            "false_complete_case_family_rate": 0.5,
+            "abstention_rate": 0.625,
+            "complete_variants": 2,
+            "true_complete_declaration_rate": 1.0,
+            "eligible": false
+          }
+        ]
+      }
+    ],
+    "question_types": [
+      {
+        "question_type": "qasc_how",
+        "observed_repeats": 10,
+        "eligible_repeats": 0,
+        "eligible_for_conclusion": false
+      },
+      {
+        "question_type": "qasc_other",
+        "observed_repeats": 10,
+        "eligible_repeats": 10,
+        "eligible_for_conclusion": true,
+        "false_complete_case_family_rate_mean": 0.095696,
+        "false_complete_case_family_rate_min": 0.03125,
+        "false_complete_case_family_rate_max": 0.144928,
+        "risk_at_or_below_alpha_repeats": 5,
+        "abstention_rate_mean": 0.892576,
+        "true_complete_declaration_rate_mean": 0.273666
+      },
+      {
+        "question_type": "qasc_what",
+        "observed_repeats": 10,
+        "eligible_repeats": 10,
+        "eligible_for_conclusion": true,
+        "false_complete_case_family_rate_mean": 0.097125,
+        "false_complete_case_family_rate_min": 0.054054,
+        "false_complete_case_family_rate_max": 0.13125,
+        "risk_at_or_below_alpha_repeats": 6,
+        "abstention_rate_mean": 0.887026,
+        "true_complete_declaration_rate_mean": 0.273015
+      },
+      {
+        "question_type": "qasc_when",
+        "observed_repeats": 10,
+        "eligible_repeats": 0,
+        "eligible_for_conclusion": false
+      },
+      {
+        "question_type": "qasc_where",
+        "observed_repeats": 10,
+        "eligible_repeats": 0,
+        "eligible_for_conclusion": false
+      },
+      {
+        "question_type": "qasc_which",
+        "observed_repeats": 10,
+        "eligible_repeats": 0,
+        "eligible_for_conclusion": false
+      },
+      {
+        "question_type": "qasc_who",
+        "observed_repeats": 8,
+        "eligible_repeats": 0,
+        "eligible_for_conclusion": false
+      },
+      {
+        "question_type": "qasc_why",
+        "observed_repeats": 5,
+        "eligible_repeats": 0,
+        "eligible_for_conclusion": false
+      }
+    ],
+    "outcome": {
+      "status": "DESCRIPTIVE_HETEROGENEITY_DETECTED",
+      "eligible_question_type_count": 2,
+      "all_eligible_mean_risks_at_or_below_alpha": true,
+      "all_eligible_repeat_consistency_targets_met": false,
+      "worst_eligible_question_type": {
+        "question_type": "qasc_what",
+        "observed_repeats": 10,
+        "eligible_repeats": 10,
+        "eligible_for_conclusion": true,
+        "false_complete_case_family_rate_mean": 0.097125,
+        "false_complete_case_family_rate_min": 0.054054,
+        "false_complete_case_family_rate_max": 0.13125,
+        "risk_at_or_below_alpha_repeats": 6,
+        "abstention_rate_mean": 0.887026,
+        "true_complete_declaration_rate_mean": 0.273015
+      }
+    }
+  },
+  "decision": {
+    "confirmation_status_changed": false,
+    "method_or_threshold_selection_allowed": false,
+    "review_ranking_run": false,
+    "gate_2": "NO-GO/SHADOW",
+    "production_policy": "SHADOW_OR_HUMAN_REVIEW_ONLY",
+    "claim_boundary": "Post-confirmation question-type results are correlated descriptive diagnostics, not conditional conformal guarantees."
+  }
+}

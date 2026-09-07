@@ -1,0 +1,239 @@
+{
+  "schema_version": "frc-evidence-inference-low-core-divergence-atomic-roles-protocol-v49",
+  "experiment_id": "FRC-EVIDENCE-INFERENCE-LOW-CORE-DIVERGENCE-GUARDED-ATOMIC-ROLES-V49",
+  "registered_at": "2026-08-02T13:30:00+08:00",
+  "purpose": "Prospectively test whether one rank-only expansion over the frozen v43 adaptive core can recover evidence only when concentrated role winners coexist with broad runner-up disagreement, on an untouched long-document biomedical evidence-retrieval validation set.",
+  "development_boundary": {
+    "theory_and_synthetic_fixtures_only_for_formula_design": true,
+    "v49_validation_prompt_article_annotation_gold_score_or_case_level_stratum_used_for_design": false,
+    "qasper_v48_case_level_artifact_used_for_v49_design": false,
+    "qasper_v48_aggregate_negative_status_was_known": true,
+    "evidence_inference_train_split_permanently_excluded": true,
+    "evidence_inference_test_split_permanently_excluded": true,
+    "v49_cases_may_never_be_reused_for_tuning_threshold_selection_or_method_selection": true,
+    "v49_does_not_retroactively_change_v43_through_v48": true
+  },
+  "official_sources": {
+    "dataset_name": "Evidence Inference 2.0",
+    "dataset_home": "https://github.com/jayded/evidence-inference",
+    "dataset_repository_revision": "a661e8c14f973398380c8865cf2f27a535aaaf6d",
+    "paper": "https://aclanthology.org/2020.bionlp-1.13/",
+    "archive_url": "https://evidence-inference.ebm-nlp.com/v2.0.tar.gz",
+    "archive_expected_bytes": 36528800,
+    "archive_etag_observed_before_registration": "W/\"22d62a0-172068d8730\"",
+    "archive_last_modified_observed_before_registration": "Tue, 12 May 2020 01:43:58 GMT",
+    "bigbio_loader_repository": "https://huggingface.co/datasets/bigbio/evidence_inference",
+    "bigbio_loader_revision": "35dce6aba1b3eb9eb9af9bdc38ebeda73dad15b9",
+    "bigbio_source_version": "2.0.0",
+    "license": "MIT for the original dataset as declared by the original repository and the frozen BigBio card; the ERASER code repository is Apache-2.0 but its obsolete v1.2 data link is not used"
+  },
+  "source_change_from_initial_plan": {
+    "eraser_v1_2_url": "https://storage.googleapis.com/sfr-nazneen-website-files-research/data_v1.2.tar.gz",
+    "eraser_v1_2_status_observed": "HTTP 404 on both HEAD and one-byte Range checks",
+    "registered_replacement": "The original-author Evidence Inference 2.0 archive and original validation split, not the ERASER-normalized 972-instance development split.",
+    "claim_boundary": "All reports must call the source Evidence Inference 2.0 validation and must not claim an ERASER dev result."
+  },
+  "pre_registration_access_disclosure": {
+    "allowed_metadata_seen": [
+      "official task description, paper statistics, repository revisions and licenses",
+      "official annotation column documentation and the statement that evidence end offsets are inclusive",
+      "official split filenames and preprocessing source code",
+      "frozen BigBio loader schema, source URL, source version and public caveat prompt-id lists",
+      "archive response headers, byte count, ETag and last-modified timestamp",
+      "original repository file paths and biomedical article filenames without file contents"
+    ],
+    "range_probe_disclosure": "Availability checks fetched one compressed byte from the HTTP and HTTPS archive URLs; no archive was saved, decompressed, listed or opened.",
+    "validation_article_id_prompt_annotation_evidence_label_or_article_text_seen": false,
+    "validation_archive_downloaded_listed_or_opened_before_protocol_hash": false,
+    "training_or_test_content_seen_or_used": false
+  },
+  "source_access_order": [
+    "Write and hash this protocol.",
+    "Implement the archive adapter, deterministic sentence splitter, grouped annotator references, selector, evaluator, runner and tests using synthetic fixtures only.",
+    "Register hashes of the protocol, module, runner and test before downloading the official archive.",
+    "Download the registered archive without listing or opening its members and verify byte count plus SHA-256.",
+    "Verify the frozen original-repository MIT license and BigBio source declaration before listing the archive.",
+    "Open only validation_article_ids.txt plus the global prompt/annotation CSV headers; stream the global CSVs while retaining rows whose PMCID is in validation, and never open train/test article-id files or their article texts.",
+    "Construct validation-only blind candidates, map all retained evidence spans and freeze the candidate-ceiling census before neural work.",
+    "Generate every atomic query and neural score without annotation, label, user, evidence span, gold reference or stratum fields.",
+    "Join alternative annotator-level gold references once after complete ordered query and score caches validate.",
+    "Publish favorable, null, negative or inconclusive results and never tune or select a method on v49 cases."
+  ],
+  "dataset_scope": {
+    "evaluation_name": "Evidence Inference 2.0 validation full-article sentence evidence selection",
+    "split": "original v2.0 validation_article_ids.txt only",
+    "eligible_prompt": [
+      "PMCID belongs to the registered validation article-id split and PromptID is unique",
+      "PromptID is absent from the frozen incorrect, questionable and somewhat-malformed lists published by the original repository and frozen BigBio loader",
+      "intervention, comparator and outcome are nonempty strings",
+      "the attached PMC plain-text article exists and yields at least five deterministic nonempty sentence candidates",
+      "at least one annotator group has accepted label and reasoning, a non-invalid label, a nonempty UserID and one or more finite nonnegative evidence spans",
+      "every retained inclusive evidence span maps by character overlap to at least one deterministic sentence candidate"
+    ],
+    "annotation_filter": "Retain rows only when Valid Label and Valid Reasoning are truthy, Label is not 'invalid prompt', UserID is nonempty and Evidence Start/End are finite integers with 0 <= start <= end < article length.",
+    "multi_reference_gold": "Group retained annotation rows by PromptID and UserID. Union sentence ids from multiple evidence spans only within the same annotator group. Distinct annotators remain alternative gold references and are never unioned. Per-case precision, recall and F1 use the alternative reference with maximum F1 and the canonical reference tuple as deterministic tie-breaker.",
+    "offset_rule": "Evidence Start is inclusive and Evidence End is inclusive exactly as documented by the original repository; convert to the half-open interval [start, end + 1) before sentence overlap mapping.",
+    "sampling_rule": "Sort eligible validation PromptIDs by SHA-256 of 'FRC-EVIDENCE-INFERENCE-V49|' plus PromptID and then PromptID; select the first 600 without replacement. If 500 to 599 are eligible, use all. If fewer than 500 are eligible, stop before query generation.",
+    "target_cases": 600,
+    "minimum_cases": 500,
+    "no_replacement": true,
+    "no_post_access_resampling": true,
+    "no_label_gold_count_article_size_annotator_count_or_evidence_position_balancing": true
+  },
+  "blind_candidate_construction": {
+    "sentence_units": "Split the complete official PMC plain-text article with the registered regex boundary '(?:[.!?][\\\"\\')\\]]*|\\n)\\s+'; trim only leading/trailing whitespace while retaining character offsets; emit every nonempty span plus the final tail in article order.",
+    "canonical_id": "sentence_<zero-padded ordinal> in deterministic article order",
+    "candidate_text": "The whitespace-normalized sentence text with no prompt, annotation or evidence-derived augmentation.",
+    "pool": "Every deterministic nonempty sentence from the complete attached article; no evidence-driven pruning, section filtering, training retrieval or first-stage truncation.",
+    "stored_blind_fields": [
+      "opaque case id and PMCID commitment",
+      "label-neutral intervention/comparator/outcome question",
+      "candidate canonical id, normalized text and token cost"
+    ],
+    "forbidden_blind_fields": [
+      "PromptID or PMCID in plaintext",
+      "UserID, label, classification or In Abstract",
+      "annotation text, Evidence Start, Evidence End or mapped evidence ids",
+      "gold reference ids, gold count, annotator count or evidence-location stratum"
+    ],
+    "candidate_ceiling_registration": "After sealed sampling and blind candidate construction, gold references may be used only to verify complete character-overlap coverage and freeze strata. No prompt, sample, candidate, method, formula or threshold may change afterward.",
+    "protective_behavior": "Any invalid source hash, duplicate PromptID, missing article, malformed accepted span, incomplete retained reference, forbidden blind key, case-order mismatch or nondeterministic rerun stops before neural work."
+  },
+  "frozen_models": {
+    "atomic_query_generator": "Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4",
+    "atomic_query_generator_revision": "e9c932ac1893a49ae0fc497ad6e1e86e2e39af20",
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "offline_loading": true,
+    "score_calibration": "per-case independent min-max inherited from v41",
+    "rank_coverage_weight": 0.5
+  },
+  "methods": {
+    "shared_candidate_pool": true,
+    "top_k": 5,
+    "token_budgets": [256, 512, 1024],
+    "non_frc_baselines": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "cross_encoder_knapsack"
+    ],
+    "frc_controls": [
+      "static_threshold_frc_v39_replay",
+      "static_rank_coverage_frc_v41",
+      "dynamic_rank_coverage_frc_v41",
+      "adaptive_argmax_cardinality_frc_v43",
+      "guarded_adaptive_cardinality_frc_v44",
+      "anchor_guarded_adaptive_cardinality_frc_v45",
+      "consensus_guarded_adaptive_cardinality_frc_v46"
+    ],
+    "candidate_method": "low_core_divergence_guarded_frc_v49",
+    "candidate_method_formula": [
+      "Compute the unchanged four v41 dynamic atomic-role score columns for every candidate.",
+      "For each role, rank candidates by descending role score with canonical id as the only tie-breaker.",
+      "Let A be the union of the four role rank-1 ids and P be the union of the four role rank-1 and rank-2 ids.",
+      "Let runner_up_surplus = abs(P minus A).",
+      "Set expansion_triggered exactly when abs(A) <= 2 and runner_up_surplus >= 3.",
+      "Set target_cardinality = min(5, max(1, abs(A) + int(expansion_triggered))).",
+      "Select exactly up to target_cardinality candidates from the complete pool with the unchanged v41 dynamic rank-coverage greedy objective, frozen weight 0.5, canonical-id tie-breaking and the registered token budget.",
+      "The rule adds at most one reserve unit to the v43 argmax core and only when concentrated role winners coexist with at least three distinct non-core top-two proposals.",
+      "No score magnitude threshold, label, evidence, annotation, source position, candidate text class, dataset statistic or post-result rule may change A, P, the trigger, target or selection."
+    ],
+    "synthetic_invariants": {
+      "one_shared_argmax_and_one_shared_runner_up_does_not_trigger": true,
+      "one_shared_argmax_and_at_least_three_distinct_runner_ups_triggers_target_two": true,
+      "two_argmax_core_and_at_least_three_noncore_top2_proposals_triggers_target_three": true,
+      "three_or_more_argmax_ids_never_trigger": true,
+      "candidate_adds_at_most_one_unit_over_v43_target": true,
+      "candidate_permutation_invariant": true,
+      "strictly_monotone_per_role_transform_invariant": true,
+      "canonical_id_tie_breaking": true,
+      "no_duplicate_selection": true,
+      "budget_can_only_reduce_feasible_selected_count": true,
+      "sentence_position_and_text_never_change_the_formula": true
+    }
+  },
+  "query_generation": {
+    "input": "Compared with <Comparator>, what effect did <Intervention> have on <Outcome>?",
+    "output_keys": ["anchor", "first_fact", "second_fact_or_bridge", "counterevidence"],
+    "do_sample": false,
+    "max_input_tokens": 512,
+    "max_new_tokens": 160,
+    "batch_size": 8,
+    "fallback": "frozen label-neutral templates plus the original question",
+    "gold_fields_visible_to_generator": false
+  },
+  "evaluation": {
+    "gold_join": "After complete ordered query and score caches validate, attach alternative annotator-level sentence-id references and pre-neural strata to opaque cases.",
+    "primary_metric": "mean across budgets of maximum-reference evidence macro F1",
+    "macro_precision": "Mean per-case precision against the alternative reference maximizing case F1.",
+    "macro_recall": "Mean per-case recall against the same deterministically selected reference.",
+    "macro_f1": "Mean per-case maximum F1 over distinct annotator-level evidence references.",
+    "complete_reference_recall": "A case is complete when at least one alternative annotator reference is a subset of selected ids.",
+    "paired_bootstrap": {
+      "resamples": 10000,
+      "seed": 20260809,
+      "unit": "PromptID",
+      "interval": "percentile 95%",
+      "strongest_non_frc_selected_inside_each_resample": true,
+      "strongest_frozen_frc_control_selected_inside_each_resample": true
+    },
+    "mandatory_strata": [
+      "one versus multiple sentences in the smallest annotator reference",
+      "one versus multiple annotator references",
+      "all accepted references marked In Abstract versus includes non-abstract evidence",
+      "unambiguous significantly increased versus no significant difference versus significantly decreased label",
+      "article candidate-count quartiles frozen before neural scoring",
+      "expansion triggered versus not triggered",
+      "token budget"
+    ],
+    "secondary_metrics": [
+      "macro precision and recall",
+      "complete alternative-reference recall",
+      "selected unit count and token cost",
+      "argmax-core size, runner-up-surplus and target distributions",
+      "expansion-trigger rate",
+      "selection-set difference rates versus v43, dynamic v41 and v46",
+      "candidate pool size"
+    ]
+  },
+  "support_checks": {
+    "minimum_cases_met": ">= 500",
+    "candidate_ceiling_complete_rate": "= 1.00",
+    "query_parser_fallback_rate": "<= 0.05",
+    "expansion_trigger_rate": ">= 0.05 and <= 0.95",
+    "selection_set_difference_rate_vs_v43": ">= 0.05",
+    "v49_minus_strongest_frozen_frc_control_point": ">= 0.005",
+    "v49_minus_strongest_frozen_frc_control_ci_low": "> 0",
+    "v49_minus_strongest_non_frc_point": ">= 0.01",
+    "v49_minus_strongest_non_frc_ci_low": "> 0",
+    "every_budget_and_supported_stratum_delta_vs_strongest_non_frc": ">= -0.02",
+    "mean_selected_unit_reduction_vs_dynamic": ">= 1.00",
+    "macro_recall_improvement_vs_v43": ">= 0.01"
+  },
+  "decision_rules": {
+    "all_support_checks_pass": "EVIDENCE_INFERENCE_LOW_CORE_DIVERGENCE_SUPPORT_ESTABLISHED_ON_VALIDATION",
+    "informative_but_any_support_check_fails": "EVIDENCE_INFERENCE_LOW_CORE_DIVERGENCE_SUPPORT_NOT_ESTABLISHED",
+    "minimum_scope_schema_license_alignment_or_ceiling_fails": "EVIDENCE_INFERENCE_V2_VALIDATION_INCONCLUSIVE",
+    "gate_2": "Always remains NO-GO/SHADOW in v49; one biomedical full-article validation result cannot authorize CANARY or DEFAULT.",
+    "publication": "Publish favorable, null, negative or inconclusive results with source, protocol, implementation, cache and result hashes.",
+    "claims_forbidden": [
+      "official ERASER or Evidence Inference leaderboard result",
+      "treatment-effect classification or answer-generation superiority",
+      "open-corpus biomedical retrieval superiority",
+      "real SetR reproduction",
+      "flood-domain validity",
+      "production readiness"
+    ]
+  },
+  "known_scope_limits": [
+    "Evidence Inference supplies one attached full article per prompt rather than an open-corpus retrieval task.",
+    "Evidence spans are projected to deterministic sentence units and the registered splitter is not the original SciSpaCy pipeline.",
+    "Validation is used as a one-shot untouched confirmation set, not for tuning.",
+    "The endpoint is evidence selection, not comparative-treatment classification or clinical advice.",
+    "Biomedical evidence cannot replace district flood-domain expert evaluation."
+  ]
+}

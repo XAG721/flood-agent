@@ -1,23 +1,154 @@
 from __future__ import annotations
 
+import gzip
 import hashlib
 import json
+import math
 import re
 from pathlib import Path
 from typing import Any, Iterable
 
 from flood_system.design_contract_audit import build_design_contract_audit
 
+AUDIT_VERSION = "progressive-completion-audit-v84"
 
-AUDIT_VERSION = "progressive-completion-audit-v10"
+SQUAD2_SUPPORT_ITERATIONS: tuple[dict[str, Any], ...] = (
+    {
+        "version": 58,
+        "slug": "generative_answerability_gate",
+        "experiment_id": "FRC-SQUAD2-GENERATIVE-ANSWERABILITY-GATE-V58",
+        "status": "SQUAD2_V58_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+        "protocol_sha256": "fc84cadc924ce091999ddfaa6419aad52d73fe420806310f65dae9a383f79b84",
+        "implementation_sha256": "c2446e8b997ffd49afa9ece4d99fb6a538ba515a3ea78b1daf11a564e4216217",
+        "execution_sha256": "3ccb8a019acb94ed8d1d565d0faef60ae6cdd10646401e0554480a0bcef3d5db",
+        "result_sha256": "495537e1d183a42e1eca81b22e51344cd591e802477a1e7c73248737629912ba",
+        "closure_sha256": "9580a77a50ad377e4e9c408052ba9cc160652cc999708fa6212250a19500ab21",
+        "report_sha256": "c33238a8631901660cbc392fc033b3bb30867878d065de151b0c952462723311",
+        "cases_sha256": "748b3a9e990db4f2d86358c5ca96bf788f194fd21c6ec32d676a59677f107ca4",
+        "candidate_method": "qwen_supported_low_core_divergence_guarded_frc_v49_transferred_v58",
+        "candidate_metrics": {
+            "answer_or_abstention_macro_f1": 0.672593,
+            "answer_bearing_macro_f1": 0.485185,
+            "answer_macro_recall": 0.516667,
+            "no_answer_abstention_accuracy": 0.86,
+            "abstention_rate": 0.65,
+        },
+        "verifier_metrics": {
+            "balanced_accuracy": 0.71,
+            "answer_bearing_pass_rate": 0.56,
+            "no_answer_rejection_rate": 0.86,
+            "malformed_or_fallback_rate": 0.0,
+        },
+        "non_frc_delta": 0.107759,
+        "same_gate_frc_delta": -0.004444,
+        "prior_overlap": None,
+    },
+    {
+        "version": 59,
+        "slug": "extractive_support_gate",
+        "experiment_id": "FRC-SQUAD2-EXTRACTIVE-SUPPORT-GATE-V59",
+        "status": "SQUAD2_V59_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+        "protocol_sha256": "d9c3350f9f54db473bbd1d521bfd1d052832712f9e554b31aed3e3e866b570f7",
+        "implementation_sha256": "c8151a2c20a5055a0866d0a2a6a3535ea115c7989812a2f1139129c645f15d9b",
+        "execution_sha256": "cb2f22075eea1814eaf14ff35eb2ab64abe35e071952b20fc58f35c4ff733cfe",
+        "result_sha256": "d3d251a529974cec04d89a6b4b5bd3d498eb9a13e1f194f8faf13d2043170cb0",
+        "closure_sha256": "8e480f9e598b75a86ec0ddc52af62a01f9254c98c4cd95cc7b4f1b57f049fc6d",
+        "report_sha256": "d3508e1d57195adb1f82876d5610ccbf77668edd901ed0c1d1e39f8d7e5d8887",
+        "cases_sha256": "b2be84319a14a824bbdd8f04f774f3f683f392eb03a6cbe5ef4850774d26617d",
+        "candidate_method": "qwen_span_supported_adaptive_argmax_cardinality_frc_v43_transferred_v59",
+        "candidate_metrics": {
+            "answer_or_abstention_macro_f1": 0.631667,
+            "answer_bearing_macro_f1": 0.363333,
+            "answer_macro_recall": 0.386667,
+            "no_answer_abstention_accuracy": 0.9,
+            "abstention_rate": 0.736667,
+        },
+        "verifier_metrics": {
+            "balanced_accuracy": 0.663333,
+            "answer_bearing_span_pass_rate": 0.426667,
+            "no_answer_rejection_rate": 0.9,
+            "invalid_output_rate": 0.503333,
+        },
+        "non_frc_delta": 0.08023,
+        "same_gate_frc_delta": 0.001389,
+        "prior_overlap": 0,
+    },
+    {
+        "version": 60,
+        "slug": "structured_span_gate",
+        "experiment_id": "FRC-SQUAD2-STRUCTURED-SPAN-GATE-V60",
+        "status": "SQUAD2_V60_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+        "protocol_sha256": "8033a31ce20219cdd1fa654f13fbd53fd24b7bae4c126035d14595c7c12940d1",
+        "implementation_sha256": "7b7cdaceb3a9453368448f47a8b33a358983cb551e063f799c65ff18ea0e5271",
+        "execution_sha256": "91d8562cc8af580ce02e3320a553002cee3c6e3065c60762c3ec71b7de406d19",
+        "result_sha256": "ff2c7f9031a9523f4841bc0dfc899baae88d3f7047afb5ee4315ea51ab51bad9",
+        "closure_sha256": "e7fad713d0c7e7538f5cb3c591041f85210b622a940a2dcc904d4b4d19f263b1",
+        "report_sha256": "6640ab0c2866ac5ac8b1fc102b7284edcaf5a63b2f9e4be5b5f0f3e00947544d",
+        "cases_sha256": "ab6f3463557dfda11695294ccc767d9606c85b9efc7836b0d04c8ccb93a6c5ba",
+        "candidate_method": "qwen_span_supported_adaptive_argmax_cardinality_frc_v43_transferred_v59",
+        "candidate_metrics": {
+            "answer_or_abstention_macro_f1": 0.691019,
+            "answer_bearing_macro_f1": 0.602037,
+            "answer_macro_recall": 0.633889,
+            "no_answer_abstention_accuracy": 0.78,
+            "abstention_rate": 0.543333,
+        },
+        "verifier_metrics": {
+            "balanced_accuracy": 0.736667,
+            "answer_bearing_span_pass_rate": 0.693333,
+            "no_answer_rejection_rate": 0.78,
+            "invalid_output_rate": 0.016667,
+        },
+        "non_frc_delta": 0.140103,
+        "same_gate_frc_delta": 0.005,
+        "prior_overlap": 0,
+    },
+    {
+        "version": 61,
+        "slug": "dual_support_union",
+        "experiment_id": "FRC-SQUAD2-DUAL-SUPPORT-UNION-V61",
+        "status": "SQUAD2_V61_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+        "protocol_sha256": "8e07c2404c22a8c19fc879fe18f567ef3a5fec396f8213a657d2c663f9e1cfcd",
+        "implementation_sha256": "5dca15776e02745c24cf18a4a7ea2787adcd67eb942ecb0fe94149520b479827",
+        "execution_sha256": "4bb3fe42190cab36f1a97988a6720251607315344eae6dc385ff07d65f0e9dfb",
+        "result_sha256": "871bbddcd4286d4aab19cbb09729261ccb2347eb80801676139159166a2da542",
+        "closure_sha256": "86a9ef49fc08279d7a2e3e2479393a6d4aafae64aab7b298e02af76643f3cfcb",
+        "report_sha256": "1f77173320c4b354253c6fe210b62aba3b83873881fca060233cea2fd728fa72",
+        "cases_sha256": "03c67d05fdb06ebfe6397a4c97b5e8483ce738a5c3c576a45235409570808789",
+        "candidate_method": "qwen_span_supported_adaptive_argmax_cardinality_frc_v43_transferred_v59",
+        "candidate_metrics": {
+            "answer_or_abstention_macro_f1": 0.701389,
+            "answer_bearing_macro_f1": 0.629444,
+            "answer_macro_recall": 0.655,
+            "no_answer_abstention_accuracy": 0.773333,
+            "abstention_rate": 0.525,
+        },
+        "verifier_metrics": {
+            "balanced_accuracy": 0.748333,
+            "answer_bearing_span_pass_rate": 0.723333,
+            "no_answer_rejection_rate": 0.773333,
+            "invalid_output_rate": 0.011667,
+            "binary_malformed_rate": 0.0,
+        },
+        "non_frc_delta": 0.143495,
+        "same_gate_frc_delta": 0.007778,
+        "prior_overlap": 0,
+    },
+)
 
 SOFTWARE_DELIVERABLES: dict[str, tuple[str, ...]] = {
     "web_and_cesium": (
         "frontend/src/pages/ResponseWorkflowPage.tsx",
+        "frontend/src/features/response/ResponseWorkflowPanels.tsx",
+        "frontend/src/features/response/api/shared.ts",
         "3D_visual/src/App.tsx",
+        "3D_visual/src/scenePlacement.ts",
     ),
     "core_api": (
         "flood_system/api.py",
+        "flood_system/http/operations_router.py",
+        "flood_system/http/legacy_platform_router.py",
+        "flood_system/http/agent_twin_router.py",
         "flood_system/http/idempotency.py",
         "flood_system/http/response_router.py",
     ),
@@ -29,15 +160,18 @@ SOFTWARE_DELIVERABLES: dict[str, tuple[str, ...]] = {
     ),
     "frc_rag_service": (
         "flood_system/rag.py",
-        "flood_system/response_workflow/service.py",
+        "flood_system/response_workflow/service_evidence.py",
+        "flood_system/response_workflow/service_tasks.py",
     ),
     "evidence_governance": (
         "flood_system/response_workflow/evidence_governance.py",
-        "tests/test_response_workflow.py",
-        "frontend/src/pages/ResponseWorkflowPage.tsx",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
+        "frontend/src/features/response/ResponseWorkflowPanels.tsx",
     ),
     "draft_rules_state_machine": (
-        "flood_system/response_workflow/service.py",
+        "flood_system/response_workflow/service_tasks.py",
+        "flood_system/response_workflow/service_dispatch.py",
         "flood_system/response_workflow/state_machine.py",
     ),
     "simulation": (
@@ -45,6 +179,8 @@ SOFTWARE_DELIVERABLES: dict[str, tuple[str, ...]] = {
         "scripts/run_simulation_scenario_acceptance.py",
     ),
     "migration": (
+        "flood_system/storage/migrations.py",
+        "tests/test_repository_migrations.py",
         "scripts/migrate_response_schema.py",
         "scripts/migrate_response_to_postgis.py",
         "infra/postgis/001_shadow_projection.sql",
@@ -87,6 +223,54 @@ DOCUMENT_DELIVERABLES: dict[str, tuple[str, ...]] = {
     "experiments": (
         "docs/progressive_upgrade/evaluation_and_gate_report.md",
         "docs/progressive_upgrade/frc_public_evaluation_protocol.md",
+        "docs/progressive_upgrade/conformal_cross_dataset_protocol.json",
+        "docs/progressive_upgrade/conformal_subgroup_protocol.json",
+        "docs/progressive_upgrade/conformal_mondrian_protocol.json",
+        "docs/progressive_upgrade/conformal_multi_axis_mondrian_protocol.json",
+        "docs/progressive_upgrade/conformal_cross_dataset_head_transfer_protocol.json",
+        "docs/progressive_upgrade/conformal_transfer_admission_protocol.json",
+        "docs/progressive_upgrade/conformal_contextual_protocol.json",
+        "docs/progressive_upgrade/conformal_score_stability_protocol.json",
+        "docs/progressive_upgrade/conformal_review_ranking_protocol.json",
+        "docs/progressive_upgrade/conformal_third_confirmation_protocol.json",
+        "docs/progressive_upgrade/conformal_qasc_confirmation_protocol.json",
+        "docs/progressive_upgrade/conformal_qasc_subgroup_diagnostic_protocol.json",
+        "docs/progressive_upgrade/qasc_scoring_optimization_protocol.json",
+        "docs/progressive_upgrade/conflicts_expected_behavior_protocol.json",
+        "docs/progressive_upgrade/conflicts_annotation_operations_protocol.json",
+        "docs/progressive_upgrade/conflicts_annotation_workstation_contract.json",
+        "docs/progressive_upgrade/conflicts_annotation_collection_contract.json",
+        "docs/progressive_upgrade/conflicts_selector_router_protocol.json",
+        "docs/progressive_upgrade/whoqa_conflict_coverage_protocol.json",
+        "docs/progressive_upgrade/whoqa_conflict_coverage_execution.json",
+        "docs/progressive_upgrade/whoqa_conflict_coverage_execution_erratum.json",
+        "docs/progressive_upgrade/whoqa_conflict_coverage_execution_erratum2.json",
+        "docs/progressive_upgrade/whoqa_conflict_coverage_execution_erratum3.json",
+        "docs/progressive_upgrade/whoqa_conflict_coverage_execution_erratum4.json",
+        "docs/progressive_upgrade/whoqa_conflict_coverage_execution_erratum5.json",
+        "docs/progressive_upgrade/whoqa_conflict_coverage_post_result_correction.json",
+        "docs/progressive_upgrade/whoqa_budget_stress_protocol.json",
+        "docs/progressive_upgrade/rgb_cost_aware_frc_protocol.json",
+        "docs/progressive_upgrade/rgb_cost_aware_frc_execution.json",
+        "docs/progressive_upgrade/rgb_cost_aware_frc_post_result_correction.json",
+        "docs/progressive_upgrade/musique_dual_resource_protocol.json",
+        "docs/progressive_upgrade/musique_dual_resource_execution.json",
+        "docs/progressive_upgrade/musique_objective_gap_diagnostic_protocol.json",
+        "docs/progressive_upgrade/musique_crossfit_support_protocol.json",
+        "docs/progressive_upgrade/hover_verification_roles_protocol.json",
+        "docs/progressive_upgrade/hover_verification_roles_execution.json",
+        "docs/progressive_upgrade/hover_dynamic_atomic_roles_protocol.json",
+        "docs/progressive_upgrade/hover_dynamic_atomic_roles_v40_closure.json",
+        "docs/progressive_upgrade/hover_dynamic_atomic_roles_protocol_v41.json",
+        "docs/progressive_upgrade/hover_dynamic_atomic_roles_pilot_start_v41.json",
+        "docs/progressive_upgrade/hover_dynamic_atomic_roles_confirmation_open_v41.json",
+        "docs/progressive_upgrade/hover_dynamic_atomic_roles_confirmation_open_v41_v2.json",
+        "docs/progressive_upgrade/hover_dynamic_atomic_roles_execution_v41.json",
+        "docs/progressive_upgrade/hover_dynamic_atomic_roles_result_v41.json",
+        "docs/progressive_upgrade/scifact_dynamic_atomic_roles_protocol_v42.json",
+        "docs/progressive_upgrade/scifact_dynamic_atomic_roles_implementation_v42.json",
+        "docs/progressive_upgrade/scifact_dynamic_atomic_roles_execution_v42.json",
+        "docs/progressive_upgrade/scifact_dynamic_atomic_roles_result_v42.json",
     ),
     "contract_traceability": (
         "docs/progressive_upgrade/design_contract_evidence_policy.json",
@@ -124,6 +308,81 @@ DATA_EXPERIMENT_DELIVERABLES: dict[str, tuple[str, ...]] = {
         "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.json",
         "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.md",
         "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation_cases.jsonl.gz",
+        "output/rag_evaluation/conformal_sufficiency/conformal_sufficiency.json",
+        "output/rag_evaluation/conformal_sufficiency/conformal_sufficiency.md",
+        "output/rag_evaluation/conformal_sufficiency/conformal_sufficiency_cases.jsonl.gz",
+        "output/rag_evaluation/conformal_robustness/conformal_robustness.json",
+        "output/rag_evaluation/conformal_robustness/conformal_robustness.md",
+        "output/rag_evaluation/conformal_model_selection/conformal_model_selection.json",
+        "output/rag_evaluation/conformal_model_selection/conformal_model_selection.md",
+        "output/rag_evaluation/conformal_cross_dataset/hotpotqa_confirmation.json",
+        "output/rag_evaluation/conformal_cross_dataset/hotpotqa_confirmation.md",
+        "output/rag_evaluation/conformal_cross_dataset/multihoprag_confirmation.json",
+        "output/rag_evaluation/conformal_cross_dataset/multihoprag_confirmation.md",
+        "output/rag_evaluation/conformal_cross_dataset/2wikimultihopqa_confirmation.json",
+        "output/rag_evaluation/conformal_cross_dataset/2wikimultihopqa_confirmation.md",
+        "output/rag_evaluation/conformal_cross_dataset/cross_dataset_confirmation_series.json",
+        "output/rag_evaluation/conformal_cross_dataset/cross_dataset_confirmation_series.md",
+        "output/rag_evaluation/conformal_cross_dataset/source_preparation_benchmark.json",
+        "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_audit.json",
+        "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_audit.md",
+        "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_cases.jsonl.gz",
+        "output/rag_evaluation/conformal_mondrian/conformal_mondrian.json",
+        "output/rag_evaluation/conformal_mondrian/conformal_mondrian.md",
+        "output/rag_evaluation/conformal_mondrian/conformal_mondrian_cases.jsonl.gz",
+        "output/rag_evaluation/conformal_multi_axis_mondrian/conformal_multi_axis_mondrian.json",
+        "output/rag_evaluation/conformal_multi_axis_mondrian/conformal_multi_axis_mondrian.md",
+        "output/rag_evaluation/conformal_multi_axis_mondrian/conformal_multi_axis_mondrian_cases.jsonl.gz",
+        "output/rag_evaluation/conformal_head_transfer/conformal_head_transfer.json",
+        "output/rag_evaluation/conformal_head_transfer/conformal_head_transfer.md",
+        "output/rag_evaluation/conformal_head_transfer/conformal_head_transfer_cases.jsonl.gz",
+        "output/rag_evaluation/conformal_transfer_admission/conformal_transfer_admission.json",
+        "output/rag_evaluation/conformal_transfer_admission/conformal_transfer_admission.md",
+        "output/rag_evaluation/conformal_transfer_admission/conformal_transfer_admission_evidence.jsonl.gz",
+        "output/rag_evaluation/conformal_contextual/conformal_contextual.json",
+        "output/rag_evaluation/conformal_contextual/conformal_contextual.md",
+        "output/rag_evaluation/conformal_contextual/conformal_contextual_cases.jsonl.gz",
+        "output/rag_evaluation/conformal_score_stability/conformal_score_stability.json",
+        "output/rag_evaluation/conformal_score_stability/conformal_score_stability.md",
+        "output/rag_evaluation/conformal_score_stability/conformal_score_stability_cases.jsonl.gz",
+        "output/rag_evaluation/conformal_review_ranking/conformal_review_ranking.json",
+        "output/rag_evaluation/conformal_review_ranking/conformal_review_ranking.md",
+        "output/rag_evaluation/conformal_review_ranking/conformal_review_ranking_evidence.jsonl.gz",
+        "output/rag_evaluation/conformal_cross_dataset/qasc_confirmation.json",
+        "output/rag_evaluation/conformal_cross_dataset/qasc_confirmation.md",
+        "output/rag_evaluation/conformal_qasc_confirmation/conformal_qasc_confirmation.json",
+        "output/rag_evaluation/conformal_qasc_confirmation/conformal_qasc_confirmation.md",
+        "output/rag_evaluation/conformal_qasc_subgroup_diagnostic/conformal_qasc_subgroup_diagnostic.json",
+        "output/rag_evaluation/conformal_qasc_subgroup_diagnostic/conformal_qasc_subgroup_diagnostic.md",
+        "output/rag_evaluation/conformal_qasc_subgroup_diagnostic/conformal_qasc_subgroup_cases.jsonl.gz",
+        "output/rag_evaluation/qasc_scoring_optimization/qasc_scoring_optimization.json",
+        "output/rag_evaluation/qasc_scoring_optimization/qasc_scoring_optimization.md",
+        "output/rag_evaluation/conflicts_expected_behavior/manifest.json",
+        "output/rag_evaluation/conflicts_expected_behavior/package.jsonl.gz",
+        "output/rag_evaluation/conflicts_expected_behavior/annotator-template.json",
+        "output/rag_evaluation/conflicts_expected_behavior/adjudicator-template.json",
+        "output/rag_evaluation/conflicts_expected_behavior/PROTOCOL.md",
+        "output/rag_evaluation/conflicts_annotation_operations/manifest.json",
+        "output/rag_evaluation/conflicts_annotation_operations/PROTOCOL.md",
+        "output/rag_evaluation/conflicts_selector_router/conflicts_selector_router.json",
+        "output/rag_evaluation/conflicts_selector_router/conflicts_selector_router.md",
+        "output/rag_evaluation/conflicts_selector_router/conflicts_selector_router_cases.jsonl.gz",
+        "output/rag_evaluation/whoqa_conflict_coverage/whoqa_conflict_coverage.json",
+        "output/rag_evaluation/whoqa_conflict_coverage/whoqa_conflict_coverage.md",
+        "output/rag_evaluation/whoqa_conflict_coverage/whoqa_conflict_coverage_cases.jsonl.gz",
+        "output/rag_evaluation/whoqa_budget_stress/whoqa_budget_stress.json",
+        "output/rag_evaluation/whoqa_budget_stress/whoqa_budget_stress.md",
+        "output/rag_evaluation/whoqa_budget_stress/whoqa_budget_stress_cases.jsonl.gz",
+        "output/rag_evaluation/hover_verification_roles/hover_role_mechanism_diagnostic.json",
+        "output/rag_evaluation/hover_verification_roles/hover_role_mechanism_diagnostic.md",
+        "output/rag_evaluation/hover_dynamic_atomic_roles/hover_dynamic_atomic_roles_pilot.json",
+        "output/rag_evaluation/hover_dynamic_atomic_roles/hover_dynamic_atomic_roles_pilot.md",
+        "output/rag_evaluation/hover_dynamic_atomic_roles/hover_dynamic_atomic_roles.json",
+        "output/rag_evaluation/hover_dynamic_atomic_roles/hover_dynamic_atomic_roles.md",
+        "output/rag_evaluation/hover_dynamic_atomic_roles/hover_dynamic_atomic_roles_cases.jsonl.gz",
+        "output/rag_evaluation/scifact_dynamic_atomic_roles/scifact_dynamic_atomic_roles.json",
+        "output/rag_evaluation/scifact_dynamic_atomic_roles/scifact_dynamic_atomic_roles.md",
+        "output/rag_evaluation/scifact_dynamic_atomic_roles/scifact_dynamic_atomic_roles_cases.jsonl.gz",
     ),
     "reproduction_entrypoints": (
         "scripts/run_candidate_evaluation.py",
@@ -137,8 +396,82 @@ DATA_EXPERIMENT_DELIVERABLES: dict[str, tuple[str, ...]] = {
         "scripts/run_lawshift_temporal_ablation.py",
         "scripts/prepare_eurlex_temporal_source.py",
         "scripts/run_eurlex_temporal_ablation.py",
-        "flood_system/frc_eurlex_temporal_ablation.py",
-        "flood_system/frc_housing_weight_sensitivity.py",
+        "scripts/run_conformal_sufficiency.py",
+        "scripts/run_conformal_robustness.py",
+        "scripts/run_conformal_model_selection.py",
+        "scripts/run_conformal_cross_dataset.py",
+        "scripts/run_conformal_cross_dataset_series.py",
+        "scripts/benchmark_conformal_source_preparation.py",
+        "scripts/run_conformal_subgroup_audit.py",
+        "scripts/run_conformal_mondrian.py",
+        "scripts/run_conformal_multi_axis_mondrian.py",
+        "scripts/run_conformal_cross_dataset_head_transfer.py",
+        "scripts/run_conformal_transfer_admission.py",
+        "scripts/run_conformal_contextual.py",
+        "scripts/run_conformal_score_stability.py",
+        "scripts/run_conformal_review_ranking.py",
+        "scripts/prepare_2wiki_confirmation_scores.py",
+        "scripts/download_qasc_validation.py",
+        "scripts/prepare_qasc_confirmation_scores.py",
+        "scripts/run_qasc_confirmation_audit.py",
+        "scripts/run_qasc_subgroup_diagnostic.py",
+        "scripts/benchmark_qasc_scoring_optimization.py",
+        "scripts/run_conflicts_expected_behavior_workflow.py",
+        "scripts/run_conflicts_annotation_operations.py",
+        "scripts/run_conflicts_annotation_workstation.py",
+        "scripts/run_conflicts_annotation_collection.py",
+        "scripts/run_conflicts_selector_router.py",
+        "scripts/run_whoqa_conflict_coverage.py",
+        "scripts/run_whoqa_budget_stress.py",
+        "research/frc_rag/eurlex_temporal_ablation.py",
+        "research/frc_rag/housing_weight_sensitivity.py",
+        "research/frc_rag/conformal_sufficiency.py",
+        "research/frc_rag/conformal_robustness.py",
+        "research/frc_rag/conformal_model_selection.py",
+        "research/frc_rag/conformal_cross_dataset.py",
+        "research/frc_rag/conformal_subgroup_audit.py",
+        "research/frc_rag/conformal_mondrian.py",
+        "research/frc_rag/conformal_multi_axis_mondrian.py",
+        "research/frc_rag/conformal_head_transfer.py",
+        "research/frc_rag/conformal_transfer_admission.py",
+        "research/frc_rag/conformal_contextual.py",
+        "research/frc_rag/conformal_score_stability.py",
+        "research/frc_rag/conformal_review_ranking.py",
+        "research/frc_rag/twowiki_confirmation.py",
+        "research/frc_rag/qasc_confirmation.py",
+        "research/frc_rag/qasc_confirmation_audit.py",
+        "research/frc_rag/qasc_subgroup_diagnostic.py",
+        "research/frc_rag/qasc_scoring_optimization.py",
+        "research/frc_rag/conflicts_expected_behavior.py",
+        "research/frc_rag/conflicts_annotation_operations.py",
+        "research/frc_rag/conflicts_annotation_workstation.py",
+        "research/frc_rag/conflicts_annotation_collection.py",
+        "research/frc_rag/conflicts_selector_router.py",
+        "research/frc_rag/whoqa_conflict_coverage.py",
+        "research/frc_rag/whoqa_budget_stress.py",
+        "research/frc_rag/hover_dynamic_atomic_roles.py",
+        "scripts/run_hover_dynamic_atomic_roles.py",
+        "scripts/run_hover_role_mechanism_diagnostic.py",
+        "tests/test_frc_hover_dynamic_atomic_roles.py",
+        "research/frc_rag/scifact_dynamic_atomic_roles.py",
+        "scripts/run_scifact_dynamic_atomic_roles.py",
+        "tests/test_frc_scifact_dynamic_atomic_roles.py",
+        "research/frc_rag/annotation_workstation/index.html",
+        "research/frc_rag/annotation_workstation/styles.css",
+        "research/frc_rag/annotation_workstation/app.js",
+        "tests/test_frc_conformal_sufficiency.py",
+        "tests/test_frc_twowiki_confirmation.py",
+        "tests/test_frc_qasc_confirmation.py",
+        "tests/test_frc_qasc_confirmation_audit.py",
+        "tests/test_frc_qasc_subgroup_diagnostic.py",
+        "tests/test_frc_qasc_scoring_optimization.py",
+        "tests/test_frc_conflicts_expected_behavior.py",
+        "tests/test_frc_conflicts_annotation_operations.py",
+        "tests/test_frc_conflicts_annotation_workstation.py",
+        "tests/test_frc_conflicts_annotation_collection.py",
+        "tests/test_frc_conflicts_selector_router.py",
+        "tests/test_frc_whoqa_conflict_coverage.py",
+        "tests/test_frc_whoqa_budget_stress.py",
     ),
     "contract_and_legacy_baseline_evidence": (
         "output/acceptance/legacy_baseline_manifest.json",
@@ -209,6 +542,570 @@ EVIDENCE_FILES = (
     "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.json",
     "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.md",
     "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation_cases.jsonl.gz",
+    "output/rag_evaluation/conformal_sufficiency/conformal_sufficiency.json",
+    "output/rag_evaluation/conformal_sufficiency/conformal_sufficiency.md",
+    "output/rag_evaluation/conformal_sufficiency/conformal_sufficiency_cases.jsonl.gz",
+    "output/rag_evaluation/conformal_robustness/conformal_robustness.json",
+    "output/rag_evaluation/conformal_robustness/conformal_robustness.md",
+    "output/rag_evaluation/conformal_model_selection/conformal_model_selection.json",
+    "output/rag_evaluation/conformal_model_selection/conformal_model_selection.md",
+    "output/rag_evaluation/conformal_cross_dataset/hotpotqa_confirmation.json",
+    "output/rag_evaluation/conformal_cross_dataset/hotpotqa_confirmation.md",
+    "output/rag_evaluation/conformal_cross_dataset/multihoprag_confirmation.json",
+    "output/rag_evaluation/conformal_cross_dataset/multihoprag_confirmation.md",
+    "output/rag_evaluation/conformal_cross_dataset/2wikimultihopqa_confirmation.json",
+    "output/rag_evaluation/conformal_cross_dataset/2wikimultihopqa_confirmation.md",
+    "output/rag_evaluation/conformal_cross_dataset/cross_dataset_confirmation_series.json",
+    "output/rag_evaluation/conformal_cross_dataset/cross_dataset_confirmation_series.md",
+    "output/rag_evaluation/conformal_cross_dataset/source_preparation_benchmark.json",
+    "docs/progressive_upgrade/conformal_cross_dataset_protocol.json",
+    "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_audit.json",
+    "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_audit.md",
+    "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_cases.jsonl.gz",
+    "docs/progressive_upgrade/conformal_subgroup_protocol.json",
+    "output/rag_evaluation/conformal_mondrian/conformal_mondrian.json",
+    "output/rag_evaluation/conformal_mondrian/conformal_mondrian.md",
+    "output/rag_evaluation/conformal_mondrian/conformal_mondrian_cases.jsonl.gz",
+    "docs/progressive_upgrade/conformal_mondrian_protocol.json",
+    "output/rag_evaluation/conformal_multi_axis_mondrian/conformal_multi_axis_mondrian.json",
+    "output/rag_evaluation/conformal_multi_axis_mondrian/conformal_multi_axis_mondrian.md",
+    "output/rag_evaluation/conformal_multi_axis_mondrian/conformal_multi_axis_mondrian_cases.jsonl.gz",
+    "docs/progressive_upgrade/conformal_multi_axis_mondrian_protocol.json",
+    "output/rag_evaluation/conformal_head_transfer/conformal_head_transfer.json",
+    "output/rag_evaluation/conformal_head_transfer/conformal_head_transfer.md",
+    "output/rag_evaluation/conformal_head_transfer/conformal_head_transfer_cases.jsonl.gz",
+    "docs/progressive_upgrade/conformal_cross_dataset_head_transfer_protocol.json",
+    "output/rag_evaluation/conformal_transfer_admission/conformal_transfer_admission.json",
+    "output/rag_evaluation/conformal_transfer_admission/conformal_transfer_admission.md",
+    "output/rag_evaluation/conformal_transfer_admission/conformal_transfer_admission_evidence.jsonl.gz",
+    "docs/progressive_upgrade/conformal_transfer_admission_protocol.json",
+    "output/rag_evaluation/conformal_contextual/conformal_contextual.json",
+    "output/rag_evaluation/conformal_contextual/conformal_contextual.md",
+    "output/rag_evaluation/conformal_contextual/conformal_contextual_cases.jsonl.gz",
+    "docs/progressive_upgrade/conformal_contextual_protocol.json",
+    "output/rag_evaluation/conformal_score_stability/conformal_score_stability.json",
+    "output/rag_evaluation/conformal_score_stability/conformal_score_stability.md",
+    "output/rag_evaluation/conformal_score_stability/conformal_score_stability_cases.jsonl.gz",
+    "docs/progressive_upgrade/conformal_score_stability_protocol.json",
+    "output/rag_evaluation/conformal_review_ranking/conformal_review_ranking.json",
+    "output/rag_evaluation/conformal_review_ranking/conformal_review_ranking.md",
+    "output/rag_evaluation/conformal_review_ranking/conformal_review_ranking_evidence.jsonl.gz",
+    "docs/progressive_upgrade/conformal_review_ranking_protocol.json",
+    "docs/progressive_upgrade/conformal_third_confirmation_protocol.json",
+    "output/rag_evaluation/conformal_cross_dataset/qasc_confirmation.json",
+    "output/rag_evaluation/conformal_cross_dataset/qasc_confirmation.md",
+    "docs/progressive_upgrade/conformal_qasc_confirmation_protocol.json",
+    "output/rag_evaluation/conformal_qasc_confirmation/conformal_qasc_confirmation.json",
+    "output/rag_evaluation/conformal_qasc_confirmation/conformal_qasc_confirmation.md",
+    "output/rag_evaluation/conformal_qasc_subgroup_diagnostic/conformal_qasc_subgroup_diagnostic.json",
+    "output/rag_evaluation/conformal_qasc_subgroup_diagnostic/conformal_qasc_subgroup_diagnostic.md",
+    "output/rag_evaluation/conformal_qasc_subgroup_diagnostic/conformal_qasc_subgroup_cases.jsonl.gz",
+    "docs/progressive_upgrade/conformal_qasc_subgroup_diagnostic_protocol.json",
+    "output/rag_evaluation/qasc_scoring_optimization/qasc_scoring_optimization.json",
+    "output/rag_evaluation/qasc_scoring_optimization/qasc_scoring_optimization.md",
+    "docs/progressive_upgrade/qasc_scoring_optimization_protocol.json",
+    "docs/progressive_upgrade/conflicts_expected_behavior_protocol.json",
+    "output/rag_evaluation/conflicts_expected_behavior/manifest.json",
+    "output/rag_evaluation/conflicts_expected_behavior/package.jsonl.gz",
+    "output/rag_evaluation/conflicts_expected_behavior/annotator-template.json",
+    "output/rag_evaluation/conflicts_expected_behavior/adjudicator-template.json",
+    "output/rag_evaluation/conflicts_expected_behavior/PROTOCOL.md",
+    "docs/progressive_upgrade/conflicts_annotation_operations_protocol.json",
+    "output/rag_evaluation/conflicts_annotation_operations/manifest.json",
+    "output/rag_evaluation/conflicts_annotation_operations/PROTOCOL.md",
+    "docs/progressive_upgrade/conflicts_annotation_workstation_contract.json",
+    "docs/progressive_upgrade/conflicts_annotation_collection_contract.json",
+    "docs/progressive_upgrade/conflicts_selector_router_protocol.json",
+    "output/rag_evaluation/conflicts_selector_router/conflicts_selector_router.json",
+    "output/rag_evaluation/conflicts_selector_router/conflicts_selector_router.md",
+    "output/rag_evaluation/conflicts_selector_router/conflicts_selector_router_cases.jsonl.gz",
+    "docs/progressive_upgrade/whoqa_conflict_coverage_protocol.json",
+    "docs/progressive_upgrade/whoqa_conflict_coverage_execution.json",
+    "docs/progressive_upgrade/whoqa_conflict_coverage_execution_erratum.json",
+    "docs/progressive_upgrade/whoqa_conflict_coverage_execution_erratum2.json",
+    "docs/progressive_upgrade/whoqa_conflict_coverage_execution_erratum3.json",
+    "docs/progressive_upgrade/whoqa_conflict_coverage_execution_erratum4.json",
+    "docs/progressive_upgrade/whoqa_conflict_coverage_execution_erratum5.json",
+    "docs/progressive_upgrade/whoqa_conflict_coverage_post_result_correction.json",
+    "output/rag_evaluation/whoqa_conflict_coverage/whoqa_conflict_coverage.json",
+    "output/rag_evaluation/whoqa_conflict_coverage/whoqa_conflict_coverage.md",
+    "output/rag_evaluation/whoqa_conflict_coverage/whoqa_conflict_coverage_cases.jsonl.gz",
+    "docs/progressive_upgrade/whoqa_budget_stress_protocol.json",
+    "output/rag_evaluation/whoqa_budget_stress/whoqa_budget_stress.json",
+    "output/rag_evaluation/whoqa_budget_stress/whoqa_budget_stress.md",
+    "output/rag_evaluation/whoqa_budget_stress/whoqa_budget_stress_cases.jsonl.gz",
+    "docs/progressive_upgrade/hover_dynamic_atomic_roles_protocol.json",
+    "docs/progressive_upgrade/hover_dynamic_atomic_roles_v40_closure.json",
+    "docs/progressive_upgrade/hover_dynamic_atomic_roles_protocol_v41.json",
+    "docs/progressive_upgrade/hover_dynamic_atomic_roles_pilot_start_v41.json",
+    "docs/progressive_upgrade/hover_dynamic_atomic_roles_confirmation_open_v41.json",
+    "docs/progressive_upgrade/hover_dynamic_atomic_roles_confirmation_open_v41_v2.json",
+    "docs/progressive_upgrade/hover_dynamic_atomic_roles_execution_v41.json",
+    "docs/progressive_upgrade/hover_dynamic_atomic_roles_result_v41.json",
+    "output/rag_evaluation/hover_verification_roles/hover_role_mechanism_diagnostic.json",
+    "output/rag_evaluation/hover_verification_roles/hover_role_mechanism_diagnostic.md",
+    "output/rag_evaluation/hover_dynamic_atomic_roles/hover_dynamic_atomic_roles_pilot.json",
+    "output/rag_evaluation/hover_dynamic_atomic_roles/hover_dynamic_atomic_roles_pilot.md",
+    "output/rag_evaluation/hover_dynamic_atomic_roles/hover_dynamic_atomic_roles.json",
+    "output/rag_evaluation/hover_dynamic_atomic_roles/hover_dynamic_atomic_roles.md",
+    "output/rag_evaluation/hover_dynamic_atomic_roles/hover_dynamic_atomic_roles_cases.jsonl.gz",
+    "docs/progressive_upgrade/scifact_dynamic_atomic_roles_protocol_v42.json",
+    "docs/progressive_upgrade/scifact_dynamic_atomic_roles_implementation_v42.json",
+    "docs/progressive_upgrade/scifact_dynamic_atomic_roles_execution_v42.json",
+    "docs/progressive_upgrade/scifact_dynamic_atomic_roles_result_v42.json",
+    "output/rag_evaluation/scifact_dynamic_atomic_roles/scifact_dynamic_atomic_roles.json",
+    "output/rag_evaluation/scifact_dynamic_atomic_roles/scifact_dynamic_atomic_roles.md",
+    "output/rag_evaluation/scifact_dynamic_atomic_roles/scifact_dynamic_atomic_roles_cases.jsonl.gz",
+    "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_protocol_v52.json",
+    "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_implementation_v52.json",
+    "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_execution_v52.json",
+    "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_result_v52.json",
+    "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_closure_v52.json",
+    "output/rag_evaluation/contractnli_rank_concurrence_confirmation/report.md",
+    "output/rag_evaluation/contractnli_rank_concurrence_confirmation/cases.jsonl.gz",
+    "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_protocol_v53.json",
+    "docs/progressive_upgrade/cuad_source_registration_v53.json",
+    "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_implementation_v53.json",
+    "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_execution_v53.json",
+    "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_result_v53.json",
+    "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_closure_v53.json",
+    "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_post_result_formatting_erratum_v53.json",
+    "output/rag_evaluation/cuad_top3_rank_concurrence_role_closure/development/report.md",
+    "output/rag_evaluation/cuad_top3_rank_concurrence_role_closure/development/cases.jsonl.gz",
+    "docs/progressive_upgrade/doc2dial_document_contrastive_role_closure_protocol_v54.json",
+    "docs/progressive_upgrade/doc2dial_source_registration_v54.json",
+    "docs/progressive_upgrade/doc2dial_document_contrastive_role_closure_implementation_v54.json",
+    "docs/progressive_upgrade/doc2dial_document_contrastive_role_closure_development_result_v54.json",
+    "output/rag_evaluation/doc2dial_document_contrastive_role_closure/development/report.md",
+    "docs/progressive_upgrade/doc2dial_wood_document_contrastive_transfer_protocol_v55.json",
+    "docs/progressive_upgrade/doc2dial_wood_source_registration_v55.json",
+    "docs/progressive_upgrade/doc2dial_wood_document_contrastive_transfer_implementation_v55.json",
+    "docs/progressive_upgrade/doc2dial_wood_document_contrastive_transfer_development_result_v55.json",
+    "output/rag_evaluation/doc2dial_wood_document_contrastive_transfer/development/report.md",
+    "docs/progressive_upgrade/doc2dial_wood_schema_corrected_transfer_protocol_v56.json",
+    "docs/progressive_upgrade/doc2dial_wood_source_registration_v56.json",
+    "docs/progressive_upgrade/doc2dial_wood_schema_corrected_transfer_implementation_v56.json",
+    "docs/progressive_upgrade/doc2dial_wood_schema_corrected_transfer_development_execution_v56.json",
+    "docs/progressive_upgrade/doc2dial_wood_schema_corrected_transfer_development_result_v56.json",
+    "docs/progressive_upgrade/doc2dial_wood_schema_corrected_transfer_development_closure_v56.json",
+    "output/rag_evaluation/doc2dial_wood_schema_corrected_transfer/development/report.md",
+    "output/rag_evaluation/doc2dial_wood_schema_corrected_transfer/development/cases.jsonl.gz",
+    "docs/progressive_upgrade/quac_anchor_safe_consensus_slot_protocol_v57.json",
+    "docs/progressive_upgrade/quac_source_registration_v57.json",
+    "docs/progressive_upgrade/quac_anchor_safe_consensus_slot_implementation_v57.json",
+    "docs/progressive_upgrade/quac_anchor_safe_consensus_slot_development_execution_v57.json",
+    "docs/progressive_upgrade/quac_anchor_safe_consensus_slot_development_result_v57.json",
+    "docs/progressive_upgrade/quac_anchor_safe_consensus_slot_development_closure_v57.json",
+    "output/rag_evaluation/quac_anchor_safe_consensus_slot/development/report.md",
+    "output/rag_evaluation/quac_anchor_safe_consensus_slot/development/cases.jsonl.gz",
+    "docs/progressive_upgrade/squad2_generative_answerability_gate_predownload_freeze_v58.json",
+    "docs/progressive_upgrade/squad2_source_registration_v58.json",
+    "docs/progressive_upgrade/squad2_generative_answerability_gate_protocol_v58.json",
+    "docs/progressive_upgrade/squad2_generative_answerability_gate_implementation_v58.json",
+    "docs/progressive_upgrade/squad2_generative_answerability_gate_development_execution_v58.json",
+    "docs/progressive_upgrade/squad2_generative_answerability_gate_development_result_v58.json",
+    "docs/progressive_upgrade/squad2_generative_answerability_gate_development_closure_v58.json",
+    "output/rag_evaluation/squad2_generative_answerability_gate/development/report.md",
+    "output/rag_evaluation/squad2_generative_answerability_gate/development/cases.jsonl.gz",
+    "docs/progressive_upgrade/squad2_extractive_support_gate_protocol_v59.json",
+    "docs/progressive_upgrade/squad2_extractive_support_gate_implementation_v59.json",
+    "docs/progressive_upgrade/squad2_extractive_support_gate_development_execution_v59.json",
+    "docs/progressive_upgrade/squad2_extractive_support_gate_development_result_v59.json",
+    "docs/progressive_upgrade/squad2_extractive_support_gate_development_closure_v59.json",
+    "output/rag_evaluation/squad2_extractive_support_gate/development/report.md",
+    "output/rag_evaluation/squad2_extractive_support_gate/development/cases.jsonl.gz",
+    "docs/progressive_upgrade/squad2_structured_span_gate_protocol_v60.json",
+    "docs/progressive_upgrade/squad2_structured_span_gate_implementation_v60.json",
+    "docs/progressive_upgrade/squad2_structured_span_gate_development_execution_v60.json",
+    "docs/progressive_upgrade/squad2_structured_span_gate_development_result_v60.json",
+    "docs/progressive_upgrade/squad2_structured_span_gate_development_closure_v60.json",
+    "output/rag_evaluation/squad2_structured_span_gate/development/report.md",
+    "output/rag_evaluation/squad2_structured_span_gate/development/cases.jsonl.gz",
+    "docs/progressive_upgrade/squad2_dual_support_union_protocol_v61.json",
+    "docs/progressive_upgrade/squad2_dual_support_union_implementation_v61.json",
+    "docs/progressive_upgrade/squad2_dual_support_union_development_execution_v61.json",
+    "docs/progressive_upgrade/squad2_dual_support_union_development_result_v61.json",
+    "docs/progressive_upgrade/squad2_dual_support_union_development_closure_v61.json",
+    "output/rag_evaluation/squad2_dual_support_union/development/report.md",
+    "output/rag_evaluation/squad2_dual_support_union/development/cases.jsonl.gz",
+    "docs/progressive_upgrade/quac_roberta_qa_support_transfer_protocol_v62.json",
+    "docs/progressive_upgrade/quac_roberta_qa_support_transfer_implementation_v62.json",
+    "docs/progressive_upgrade/quac_roberta_qa_support_transfer_model_registration_v62.json",
+    "docs/progressive_upgrade/quac_roberta_qa_support_transfer_development_execution_v62.json",
+    "docs/progressive_upgrade/quac_roberta_qa_support_transfer_development_result_v62.json",
+    "docs/progressive_upgrade/quac_roberta_qa_support_transfer_development_closure_v62.json",
+    "output/rag_evaluation/quac_roberta_qa_support_transfer/development/report.md",
+    "output/rag_evaluation/quac_roberta_qa_support_transfer/development/cases.jsonl.gz",
+    "docs/progressive_upgrade/quac_target_trained_qa_support_protocol_v63.json",
+    "docs/progressive_upgrade/quac_target_trained_qa_support_implementation_v63.json",
+    "docs/progressive_upgrade/quac_target_trained_qa_support_model_registration_v63.json",
+    "docs/progressive_upgrade/quac_target_trained_qa_support_validation_execution_v63.json",
+    "docs/progressive_upgrade/quac_target_trained_qa_support_validation_support_result_v63.json",
+    "docs/progressive_upgrade/quac_target_trained_qa_support_validation_support_closure_v63.json",
+    "docs/progressive_upgrade/quac_target_trained_qa_support_synthesis_v63.md",
+    "output/rag_evaluation/quac_target_trained_qa_support/support_gate/report.md",
+    "output/rag_evaluation/quac_target_trained_qa_support/support_gate/cases.jsonl.gz",
+    "docs/progressive_upgrade/squad2_calibrated_roberta_support_protocol_v64.json",
+    "docs/progressive_upgrade/squad2_calibrated_roberta_support_implementation_v64.json",
+    "docs/progressive_upgrade/squad2_calibrated_roberta_support_implementation_erratum_v64.json",
+    "docs/progressive_upgrade/squad2_calibrated_roberta_support_calibration_execution_v64.json",
+    "docs/progressive_upgrade/squad2_calibrated_roberta_support_calibration_result_v64.json",
+    "docs/progressive_upgrade/squad2_calibrated_roberta_support_confirmation_open_v64.json",
+    "output/rag_evaluation/squad2_calibrated_roberta_support/calibration/report.md",
+    "output/rag_evaluation/squad2_calibrated_roberta_support/calibration/cases.jsonl.gz",
+    "docs/progressive_upgrade/squad2_calibrated_roberta_support_confirmation_execution_v64.json",
+    "docs/progressive_upgrade/squad2_calibrated_roberta_support_confirmation_support_result_v64.json",
+    "docs/progressive_upgrade/squad2_calibrated_roberta_support_retrieval_open_v64.json",
+    "output/rag_evaluation/squad2_calibrated_roberta_support/confirmation_support/report.md",
+    "output/rag_evaluation/squad2_calibrated_roberta_support/confirmation_support/cases.jsonl.gz",
+    "docs/progressive_upgrade/squad2_calibrated_roberta_support_evaluation_erratum_v64.json",
+    "docs/progressive_upgrade/squad2_calibrated_roberta_support_confirmation_result_v64.json",
+    "docs/progressive_upgrade/squad2_calibrated_roberta_support_confirmation_closure_v64.json",
+    "docs/progressive_upgrade/squad2_calibrated_roberta_support_result_label_erratum_v64.json",
+    "docs/progressive_upgrade/squad2_calibrated_roberta_support_synthesis_v64.md",
+    "output/rag_evaluation/squad2_calibrated_roberta_support/confirmation_final/report.md",
+    "output/rag_evaluation/squad2_calibrated_roberta_support/confirmation_final/cases.jsonl.gz",
+    "docs/progressive_upgrade/musique_full_roberta_transfer_protocol_v65.json",
+    "docs/progressive_upgrade/musique_full_roberta_transfer_source_registration_v65.json",
+    "docs/progressive_upgrade/musique_full_roberta_transfer_implementation_v65.json",
+    "docs/progressive_upgrade/musique_full_roberta_transfer_execution_v65.json",
+    "docs/progressive_upgrade/musique_full_roberta_transfer_invalid_run_v65.json",
+    "docs/progressive_upgrade/musique_full_roberta_transfer_implementation_erratum_v65.json",
+    "docs/progressive_upgrade/musique_full_roberta_transfer_corrected_execution_v65.json",
+    "docs/progressive_upgrade/musique_full_roberta_transfer_support_result_v65.json",
+    "docs/progressive_upgrade/musique_full_roberta_transfer_support_closure_v65.json",
+    "docs/progressive_upgrade/musique_full_roberta_transfer_synthesis_v65.md",
+    "output/rag_evaluation/musique_full_roberta_transfer/support_gate/report.md",
+    "output/rag_evaluation/musique_full_roberta_transfer/support_gate/cases.jsonl.gz",
+    "docs/progressive_upgrade/musique_sequential_chain_support_protocol_v66.json",
+    "docs/progressive_upgrade/musique_sequential_chain_support_source_registration_v66.json",
+    "docs/progressive_upgrade/musique_sequential_chain_support_implementation_v66.json",
+    "docs/progressive_upgrade/musique_sequential_chain_support_implementation_erratum_v66.json",
+    "docs/progressive_upgrade/musique_sequential_chain_support_development_execution_v66.json",
+    "docs/progressive_upgrade/musique_sequential_chain_support_development_result_v66.json",
+    "docs/progressive_upgrade/musique_sequential_chain_support_development_closure_v66.json",
+    "docs/progressive_upgrade/musique_sequential_chain_support_synthesis_v66.md",
+    "output/rag_evaluation/musique_sequential_chain_support_v66/development/report.md",
+    "output/rag_evaluation/musique_sequential_chain_support_v66/development/cases.jsonl.gz",
+    "docs/progressive_upgrade/musique_calibrated_chain_support_protocol_v67.json",
+    "docs/progressive_upgrade/musique_calibrated_chain_support_source_registration_v67.json",
+    "docs/progressive_upgrade/musique_calibrated_chain_support_implementation_v67.json",
+    "docs/progressive_upgrade/musique_calibrated_chain_support_calibration_execution_v67.json",
+    "docs/progressive_upgrade/musique_calibrated_chain_support_calibration_result_v67.json",
+    "docs/progressive_upgrade/musique_calibrated_chain_support_development_execution_v67.json",
+    "docs/progressive_upgrade/musique_calibrated_chain_support_development_result_v67.json",
+    "docs/progressive_upgrade/musique_calibrated_chain_support_development_closure_v67.json",
+    "docs/progressive_upgrade/musique_calibrated_chain_support_synthesis_v67.md",
+    "output/rag_evaluation/musique_calibrated_chain_support_v67/calibration/report.md",
+    "output/rag_evaluation/musique_calibrated_chain_support_v67/calibration/cases.jsonl.gz",
+    "output/rag_evaluation/musique_calibrated_chain_support_v67/development/report.md",
+    "output/rag_evaluation/musique_calibrated_chain_support_v67/development/cases.jsonl.gz",
+    "research/frc_rag/musique_calibrated_chain_support.py",
+    "scripts/run_musique_calibrated_chain_support.py",
+    "tests/test_frc_musique_calibrated_chain_support.py",
+    "docs/progressive_upgrade/musique_multisignal_chain_support_protocol_v68.json",
+    "docs/progressive_upgrade/musique_multisignal_chain_support_source_registration_v68.json",
+    "docs/progressive_upgrade/musique_multisignal_chain_support_implementation_v68.json",
+    "docs/progressive_upgrade/musique_multisignal_chain_support_calibration_execution_v68.json",
+    "docs/progressive_upgrade/musique_multisignal_chain_support_calibration_result_v68.json",
+    "docs/progressive_upgrade/musique_multisignal_chain_support_development_execution_v68.json",
+    "docs/progressive_upgrade/musique_multisignal_chain_support_development_result_v68.json",
+    "docs/progressive_upgrade/musique_multisignal_chain_support_development_closure_v68.json",
+    "docs/progressive_upgrade/musique_multisignal_chain_support_synthesis_v68.md",
+    "output/rag_evaluation/musique_multisignal_chain_support_v68/calibration/report.md",
+    "output/rag_evaluation/musique_multisignal_chain_support_v68/calibration/cases.jsonl.gz",
+    "output/rag_evaluation/musique_multisignal_chain_support_v68/development/report.md",
+    "output/rag_evaluation/musique_multisignal_chain_support_v68/development/cases.jsonl.gz",
+    "research/frc_rag/musique_multisignal_chain_support.py",
+    "scripts/run_musique_multisignal_chain_support.py",
+    "tests/test_frc_musique_multisignal_chain_support.py",
+    "docs/progressive_upgrade/musique_monotone_interaction_support_protocol_v69.json",
+    "docs/progressive_upgrade/musique_monotone_interaction_support_source_registration_v69.json",
+    "docs/progressive_upgrade/musique_monotone_interaction_support_implementation_v69.json",
+    "docs/progressive_upgrade/musique_monotone_interaction_support_implementation_erratum_v69.json",
+    "docs/progressive_upgrade/musique_monotone_interaction_support_calibration_execution_v69.json",
+    "docs/progressive_upgrade/musique_monotone_interaction_support_calibration_result_v69.json",
+    "docs/progressive_upgrade/musique_monotone_interaction_support_development_execution_v69.json",
+    "docs/progressive_upgrade/musique_monotone_interaction_support_development_result_v69.json",
+    "docs/progressive_upgrade/musique_monotone_interaction_support_development_closure_v69.json",
+    "docs/progressive_upgrade/musique_monotone_interaction_support_synthesis_v69.md",
+    "output/rag_evaluation/musique_monotone_interaction_support_v69/calibration/report.md",
+    "output/rag_evaluation/musique_monotone_interaction_support_v69/calibration/cases.jsonl.gz",
+    "output/rag_evaluation/musique_monotone_interaction_support_v69/development/report.md",
+    "output/rag_evaluation/musique_monotone_interaction_support_v69/development/cases.jsonl.gz",
+    "research/frc_rag/musique_monotone_interaction_support.py",
+    "scripts/run_musique_monotone_interaction_support.py",
+    "tests/test_frc_musique_monotone_interaction_support.py",
+    "docs/progressive_upgrade/musique_paragraph_competition_support_protocol_v70.json",
+    "docs/progressive_upgrade/musique_paragraph_competition_support_source_registration_v70.json",
+    "docs/progressive_upgrade/musique_paragraph_competition_support_implementation_v70.json",
+    "docs/progressive_upgrade/musique_paragraph_competition_support_implementation_erratum_v70.json",
+    "docs/progressive_upgrade/musique_paragraph_competition_support_calibration_execution_v70.json",
+    "docs/progressive_upgrade/musique_paragraph_competition_support_calibration_result_v70.json",
+    "docs/progressive_upgrade/musique_paragraph_competition_support_development_execution_v70.json",
+    "docs/progressive_upgrade/musique_paragraph_competition_support_development_result_v70.json",
+    "docs/progressive_upgrade/musique_paragraph_competition_support_development_closure_v70.json",
+    "docs/progressive_upgrade/musique_paragraph_competition_support_synthesis_v70.md",
+    "output/rag_evaluation/musique_paragraph_competition_support_v70/calibration/report.md",
+    "output/rag_evaluation/musique_paragraph_competition_support_v70/calibration/cases.jsonl.gz",
+    "output/rag_evaluation/musique_paragraph_competition_support_v70/development/report.md",
+    "output/rag_evaluation/musique_paragraph_competition_support_v70/development/cases.jsonl.gz",
+    "research/frc_rag/musique_paragraph_competition_support.py",
+    "scripts/run_musique_paragraph_competition_support.py",
+    "tests/test_frc_musique_paragraph_competition_support.py",
+    "docs/progressive_upgrade/musique_bridge_counterfactual_dependence_protocol_v71.json",
+    "docs/progressive_upgrade/musique_bridge_counterfactual_dependence_source_registration_v71.json",
+    "docs/progressive_upgrade/musique_bridge_counterfactual_dependence_implementation_v71.json",
+    "docs/progressive_upgrade/musique_bridge_counterfactual_dependence_implementation_erratum_v71.json",
+    "docs/progressive_upgrade/musique_bridge_counterfactual_dependence_calibration_execution_v71.json",
+    "docs/progressive_upgrade/musique_bridge_counterfactual_dependence_calibration_result_v71.json",
+    "docs/progressive_upgrade/musique_bridge_counterfactual_dependence_development_execution_v71.json",
+    "docs/progressive_upgrade/musique_bridge_counterfactual_dependence_development_result_v71.json",
+    "docs/progressive_upgrade/musique_bridge_counterfactual_dependence_development_closure_v71.json",
+    "docs/progressive_upgrade/musique_bridge_counterfactual_dependence_synthesis_v71.md",
+    "output/rag_evaluation/musique_bridge_counterfactual_dependence_v71/calibration/report.md",
+    "output/rag_evaluation/musique_bridge_counterfactual_dependence_v71/calibration/cases.jsonl.gz",
+    "output/rag_evaluation/musique_bridge_counterfactual_dependence_v71/development/report.md",
+    "output/rag_evaluation/musique_bridge_counterfactual_dependence_v71/development/cases.jsonl.gz",
+    "research/frc_rag/musique_bridge_counterfactual_dependence.py",
+    "scripts/run_musique_bridge_counterfactual_dependence.py",
+    "tests/test_frc_musique_bridge_counterfactual_dependence.py",
+    "docs/progressive_upgrade/musique_in_domain_rival_bridge_protocol_v72.json",
+    "docs/progressive_upgrade/musique_in_domain_rival_bridge_source_registration_v72.json",
+    "docs/progressive_upgrade/musique_in_domain_rival_bridge_implementation_v72.json",
+    "docs/progressive_upgrade/musique_in_domain_rival_bridge_implementation_erratum_v72.json",
+    "docs/progressive_upgrade/musique_in_domain_rival_bridge_calibration_execution_v72.json",
+    "docs/progressive_upgrade/musique_in_domain_rival_bridge_calibration_result_v72.json",
+    "docs/progressive_upgrade/musique_in_domain_rival_bridge_development_execution_v72.json",
+    "docs/progressive_upgrade/musique_in_domain_rival_bridge_development_result_v72.json",
+    "docs/progressive_upgrade/musique_in_domain_rival_bridge_development_closure_v72.json",
+    "docs/progressive_upgrade/musique_in_domain_rival_bridge_synthesis_v72.md",
+    "output/rag_evaluation/musique_in_domain_rival_bridge_v72/calibration/report.md",
+    "output/rag_evaluation/musique_in_domain_rival_bridge_v72/calibration/cases.jsonl.gz",
+    "output/rag_evaluation/musique_in_domain_rival_bridge_v72/development/report.md",
+    "output/rag_evaluation/musique_in_domain_rival_bridge_v72/development/cases.jsonl.gz",
+    "research/frc_rag/musique_in_domain_rival_bridge.py",
+    "scripts/run_musique_in_domain_rival_bridge.py",
+    "tests/test_frc_musique_in_domain_rival_bridge.py",
+    "docs/progressive_upgrade/musique_context_bridge_erasure_protocol_v73.json",
+    "docs/progressive_upgrade/musique_context_bridge_erasure_source_registration_v73.json",
+    "docs/progressive_upgrade/musique_context_bridge_erasure_implementation_v73.json",
+    "docs/progressive_upgrade/musique_context_bridge_erasure_implementation_erratum_v73.json",
+    "docs/progressive_upgrade/musique_context_bridge_erasure_calibration_execution_v73.json",
+    "docs/progressive_upgrade/musique_context_bridge_erasure_calibration_result_v73.json",
+    "docs/progressive_upgrade/musique_context_bridge_erasure_development_execution_v73.json",
+    "docs/progressive_upgrade/musique_context_bridge_erasure_development_result_v73.json",
+    "docs/progressive_upgrade/musique_context_bridge_erasure_development_closure_v73.json",
+    "docs/progressive_upgrade/musique_context_bridge_erasure_synthesis_v73.md",
+    "output/rag_evaluation/musique_context_bridge_erasure_v73/calibration/report.md",
+    "output/rag_evaluation/musique_context_bridge_erasure_v73/calibration/cases.jsonl.gz",
+    "output/rag_evaluation/musique_context_bridge_erasure_v73/development/report.md",
+    "output/rag_evaluation/musique_context_bridge_erasure_v73/development/cases.jsonl.gz",
+    "research/frc_rag/musique_context_bridge_erasure.py",
+    "scripts/run_musique_context_bridge_erasure.py",
+    "tests/test_frc_musique_context_bridge_erasure.py",
+    "docs/progressive_upgrade/twowiki_support_path_closure_mechanism_development_v74.json",
+    "docs/progressive_upgrade/twowiki_support_path_closure_source_registration_v74.json",
+    "docs/progressive_upgrade/twowiki_support_path_closure_protocol_v74.json",
+    "docs/progressive_upgrade/twowiki_support_path_closure_implementation_v74.json",
+    "docs/progressive_upgrade/twowiki_support_path_closure_development_execution_v74.json",
+    "docs/progressive_upgrade/twowiki_support_path_closure_development_result_v74.json",
+    "docs/progressive_upgrade/twowiki_support_path_closure_development_closure_v74.json",
+    "docs/progressive_upgrade/twowiki_support_path_closure_synthesis_v74.md",
+    "output/rag_evaluation/twowiki_support_path_closure_v74/development/result.json",
+    "output/rag_evaluation/twowiki_support_path_closure_v74/development/report.md",
+    "output/rag_evaluation/twowiki_support_path_closure_v74/development/cases.jsonl.gz",
+    "research/frc_rag/twowiki_support_path_closure.py",
+    "scripts/run_twowiki_support_path_closure.py",
+    "tests/test_frc_twowiki_support_path_closure.py",
+    "docs/progressive_upgrade/twowiki_question_router_model_development_v75.json",
+    "docs/progressive_upgrade/twowiki_question_router_source_registration_v75.json",
+    "docs/progressive_upgrade/twowiki_question_router_protocol_v75.json",
+    "docs/progressive_upgrade/twowiki_question_router_implementation_v75.json",
+    "docs/progressive_upgrade/twowiki_question_router_development_execution_v75.json",
+    "docs/progressive_upgrade/twowiki_question_router_development_result_v75.json",
+    "docs/progressive_upgrade/twowiki_question_router_confirmation_open_v75.json",
+    "docs/progressive_upgrade/twowiki_question_router_confirmation_execution_v75.json",
+    "docs/progressive_upgrade/twowiki_question_router_confirmation_result_v75.json",
+    "docs/progressive_upgrade/twowiki_question_router_confirmation_closure_v75.json",
+    "docs/progressive_upgrade/twowiki_question_router_synthesis_v75.md",
+    "output/rag_evaluation/twowiki_question_router_v75/development/result.json",
+    "output/rag_evaluation/twowiki_question_router_v75/development/report.md",
+    "output/rag_evaluation/twowiki_question_router_v75/development/cases.jsonl.gz",
+    "output/rag_evaluation/twowiki_question_router_v75/confirmation/result.json",
+    "output/rag_evaluation/twowiki_question_router_v75/confirmation/report.md",
+    "output/rag_evaluation/twowiki_question_router_v75/confirmation/cases.jsonl.gz",
+    "research/frc_rag/twowiki_question_router.py",
+    "scripts/run_twowiki_question_router.py",
+    "tests/test_frc_twowiki_question_router.py",
+    "docs/progressive_upgrade/hotpot_graph_router_model_development_v76.json",
+    "docs/progressive_upgrade/hotpot_graph_router_source_registration_v76.json",
+    "docs/progressive_upgrade/hotpot_graph_router_protocol_v76.json",
+    "docs/progressive_upgrade/hotpot_graph_router_implementation_v76.json",
+    "docs/progressive_upgrade/hotpot_graph_router_development_execution_v76.json",
+    "docs/progressive_upgrade/hotpot_graph_router_development_result_v76.json",
+    "docs/progressive_upgrade/hotpot_graph_router_confirmation_open_v76.json",
+    "docs/progressive_upgrade/hotpot_graph_router_confirmation_execution_v76.json",
+    "docs/progressive_upgrade/hotpot_graph_router_confirmation_result_v76.json",
+    "docs/progressive_upgrade/hotpot_graph_router_confirmation_closure_v76.json",
+    "docs/progressive_upgrade/hotpot_graph_router_synthesis_v76.md",
+    "output/rag_evaluation/hotpot_graph_router_v76/development/result.json",
+    "output/rag_evaluation/hotpot_graph_router_v76/development/report.md",
+    "output/rag_evaluation/hotpot_graph_router_v76/development/cases.jsonl.gz",
+    "output/rag_evaluation/hotpot_graph_router_v76/confirmation/result.json",
+    "output/rag_evaluation/hotpot_graph_router_v76/confirmation/report.md",
+    "output/rag_evaluation/hotpot_graph_router_v76/confirmation/cases.jsonl.gz",
+    "research/frc_rag/hotpot_graph_router.py",
+    "scripts/run_hotpot_graph_router.py",
+    "tests/test_frc_hotpot_graph_router.py",
+    "docs/progressive_upgrade/musique_graph_router_transfer_protocol_v77.json",
+    "docs/progressive_upgrade/musique_graph_router_transfer_source_registration_v77.json",
+    "docs/progressive_upgrade/musique_graph_router_transfer_implementation_v77.json",
+    "docs/progressive_upgrade/musique_graph_router_transfer_development_execution_v77.json",
+    "docs/progressive_upgrade/musique_graph_router_transfer_development_result_v77.json",
+    "docs/progressive_upgrade/musique_graph_router_transfer_development_closure_v77.json",
+    "docs/progressive_upgrade/musique_graph_router_transfer_synthesis_v77.md",
+    "output/rag_evaluation/musique_graph_router_transfer_v77/development/result.json",
+    "output/rag_evaluation/musique_graph_router_transfer_v77/development/report.md",
+    "output/rag_evaluation/musique_graph_router_transfer_v77/development/cases.jsonl.gz",
+    "research/frc_rag/musique_graph_router_transfer.py",
+    "scripts/run_musique_graph_router_transfer.py",
+    "tests/test_frc_musique_graph_router_transfer.py",
+    "docs/progressive_upgrade/hotpot_three_route_router_model_development_v78.json",
+    "docs/progressive_upgrade/musique_three_route_mean_calibration_v78.json",
+    "docs/progressive_upgrade/musique_mean_calibrated_three_route_protocol_v78.json",
+    "docs/progressive_upgrade/musique_mean_calibrated_three_route_source_registration_v78.json",
+    "docs/progressive_upgrade/musique_mean_calibrated_three_route_implementation_v78.json",
+    "docs/progressive_upgrade/musique_mean_calibrated_three_route_development_execution_v78.json",
+    "docs/progressive_upgrade/musique_mean_calibrated_three_route_development_result_v78.json",
+    "docs/progressive_upgrade/musique_mean_calibrated_three_route_development_closure_v78.json",
+    "docs/progressive_upgrade/musique_mean_calibrated_three_route_synthesis_v78.md",
+    "output/rag_evaluation/musique_mean_calibrated_three_route_v78/development/result.json",
+    "output/rag_evaluation/musique_mean_calibrated_three_route_v78/development/report.md",
+    "output/rag_evaluation/musique_mean_calibrated_three_route_v78/development/cases.jsonl.gz",
+    "research/frc_rag/hotpot_three_route_router.py",
+    "research/frc_rag/musique_mean_calibrated_three_route.py",
+    "scripts/run_hotpot_three_route_model.py",
+    "scripts/run_musique_mean_calibrated_three_route.py",
+    "tests/test_frc_musique_mean_calibrated_three_route.py",
+    "tests/test_frc_musique_mean_calibrated_three_route_lock.py",
+    "docs/progressive_upgrade/musique_target_three_route_router_model_development_v79.json",
+    "docs/progressive_upgrade/musique_target_three_route_protocol_v79.json",
+    "docs/progressive_upgrade/musique_target_three_route_source_registration_v79.json",
+    "docs/progressive_upgrade/musique_target_three_route_implementation_v79.json",
+    "docs/progressive_upgrade/musique_target_three_route_development_execution_v79.json",
+    "docs/progressive_upgrade/musique_target_three_route_development_result_v79.json",
+    "docs/progressive_upgrade/musique_target_three_route_development_closure_v79.json",
+    "docs/progressive_upgrade/musique_target_three_route_synthesis_v79.md",
+    "output/rag_evaluation/musique_target_three_route_v79/development/result.json",
+    "output/rag_evaluation/musique_target_three_route_v79/development/report.md",
+    "output/rag_evaluation/musique_target_three_route_v79/development/cases.jsonl.gz",
+    "research/frc_rag/musique_target_three_route_router.py",
+    "research/frc_rag/musique_target_three_route_transfer.py",
+    "scripts/run_musique_target_three_route_model.py",
+    "scripts/run_musique_target_three_route_transfer.py",
+    "tests/test_frc_musique_target_three_route.py",
+    "tests/test_frc_musique_target_three_route_lock.py",
+    "docs/progressive_upgrade/musique_anchor_default_router_model_development_v80.json",
+    "docs/progressive_upgrade/musique_anchor_default_terminal_holdout_protocol_v80.json",
+    "docs/progressive_upgrade/musique_anchor_default_terminal_holdout_source_registration_v80.json",
+    "docs/progressive_upgrade/musique_anchor_default_terminal_holdout_implementation_v80.json",
+    "docs/progressive_upgrade/musique_anchor_default_terminal_holdout_execution_v80.json",
+    "docs/progressive_upgrade/musique_anchor_default_terminal_holdout_result_v80.json",
+    "docs/progressive_upgrade/musique_anchor_default_terminal_holdout_closure_v80.json",
+    "docs/progressive_upgrade/musique_anchor_default_terminal_holdout_synthesis_v80.md",
+    "output/rag_evaluation/musique_anchor_default_v80/terminal_holdout/result.json",
+    "output/rag_evaluation/musique_anchor_default_v80/terminal_holdout/report.md",
+    "output/rag_evaluation/musique_anchor_default_v80/terminal_holdout/cases.jsonl.gz",
+    "research/frc_rag/musique_anchor_default_router.py",
+    "research/frc_rag/musique_anchor_default_transfer.py",
+    "scripts/run_musique_anchor_default_router_model.py",
+    "scripts/run_musique_anchor_default_transfer.py",
+    "tests/test_frc_musique_anchor_default_transfer.py",
+    "tests/test_frc_musique_anchor_default_transfer_lock.py",
+    "docs/progressive_upgrade/twowiki_residual_three_route_router_model_development_v81.json",
+    "docs/progressive_upgrade/twowiki_residual_three_route_protocol_v81.json",
+    "docs/progressive_upgrade/twowiki_residual_three_route_source_registration_v81.json",
+    "docs/progressive_upgrade/twowiki_residual_three_route_implementation_v81.json",
+    "docs/progressive_upgrade/twowiki_residual_three_route_development_execution_v81.json",
+    "docs/progressive_upgrade/twowiki_residual_three_route_development_result_v81.json",
+    "docs/progressive_upgrade/twowiki_residual_three_route_development_closure_v81.json",
+    "docs/progressive_upgrade/twowiki_residual_three_route_synthesis_v81.md",
+    "output/rag_evaluation/twowiki_residual_router_v81/development/result.json",
+    "output/rag_evaluation/twowiki_residual_router_v81/development/report.md",
+    "output/rag_evaluation/twowiki_residual_router_v81/development/cases.jsonl.gz",
+    "research/frc_rag/twowiki_residual_three_route_router.py",
+    "research/frc_rag/twowiki_residual_three_route_transfer.py",
+    "scripts/run_twowiki_residual_three_route_model.py",
+    "scripts/run_twowiki_residual_three_route_transfer.py",
+    "tests/test_frc_twowiki_residual_three_route_transfer.py",
+    "tests/test_frc_twowiki_residual_three_route_transfer_lock.py",
+    "docs/progressive_upgrade/twowiki_cascaded_style_residual_router_model_development_v82.json",
+    "docs/progressive_upgrade/twowiki_cascaded_style_residual_protocol_v82.json",
+    "docs/progressive_upgrade/twowiki_cascaded_style_residual_source_registration_v82.json",
+    "docs/progressive_upgrade/twowiki_cascaded_style_residual_implementation_v82.json",
+    "docs/progressive_upgrade/twowiki_cascaded_style_residual_development_execution_v82.json",
+    "docs/progressive_upgrade/twowiki_cascaded_style_residual_development_result_v82.json",
+    "docs/progressive_upgrade/twowiki_cascaded_style_residual_development_closure_v82.json",
+    "docs/progressive_upgrade/twowiki_cascaded_style_residual_synthesis_v82.md",
+    "output/rag_evaluation/twowiki_cascaded_router_v82/development/result.json",
+    "output/rag_evaluation/twowiki_cascaded_router_v82/development/report.md",
+    "output/rag_evaluation/twowiki_cascaded_router_v82/development/cases.jsonl.gz",
+    "research/frc_rag/twowiki_cascaded_style_residual_router.py",
+    "research/frc_rag/twowiki_cascaded_style_residual_transfer.py",
+    "scripts/run_twowiki_cascaded_style_residual_model.py",
+    "scripts/run_twowiki_cascaded_style_residual_transfer.py",
+    "tests/test_frc_twowiki_cascaded_style_residual_router.py",
+    "tests/test_frc_twowiki_cascaded_style_residual_transfer.py",
+    "tests/test_frc_twowiki_cascaded_style_residual_lock.py",
+    "docs/progressive_upgrade/twowiki_bridge_aware_precision_trim_router_model_development_v83.json",
+    "docs/progressive_upgrade/twowiki_bridge_aware_precision_trim_protocol_v83.json",
+    "docs/progressive_upgrade/twowiki_bridge_aware_precision_trim_source_registration_v83.json",
+    "docs/progressive_upgrade/twowiki_bridge_aware_precision_trim_implementation_v83.json",
+    "docs/progressive_upgrade/twowiki_bridge_aware_precision_trim_development_execution_v83.json",
+    "docs/progressive_upgrade/twowiki_bridge_aware_precision_trim_development_result_v83.json",
+    "docs/progressive_upgrade/twowiki_bridge_aware_precision_trim_confirmation_open_v83.json",
+    "docs/progressive_upgrade/twowiki_bridge_aware_precision_trim_confirmation_execution_v83.json",
+    "docs/progressive_upgrade/twowiki_bridge_aware_precision_trim_confirmation_result_v83.json",
+    "docs/progressive_upgrade/twowiki_bridge_aware_precision_trim_confirmation_closure_v83.json",
+    "docs/progressive_upgrade/twowiki_bridge_aware_precision_trim_synthesis_v83.md",
+    "output/rag_evaluation/twowiki_precision_trim_v83/development/result.json",
+    "output/rag_evaluation/twowiki_precision_trim_v83/development/report.md",
+    "output/rag_evaluation/twowiki_precision_trim_v83/development/cases.jsonl.gz",
+    "output/rag_evaluation/twowiki_precision_trim_v83/confirmation/result.json",
+    "output/rag_evaluation/twowiki_precision_trim_v83/confirmation/report.md",
+    "output/rag_evaluation/twowiki_precision_trim_v83/confirmation/cases.jsonl.gz",
+    "research/frc_rag/twowiki_bridge_aware_precision_trim_router.py",
+    "research/frc_rag/twowiki_bridge_aware_precision_trim_transfer.py",
+    "scripts/run_twowiki_bridge_aware_precision_trim_model.py",
+    "scripts/run_twowiki_bridge_aware_precision_trim_transfer.py",
+    "tests/test_frc_twowiki_bridge_aware_precision_trim_router.py",
+    "tests/test_frc_twowiki_bridge_aware_precision_trim_transfer.py",
+    "tests/test_frc_twowiki_bridge_aware_precision_trim_lock.py",
+    "docs/progressive_upgrade/hotpot_question_type_cardinality_router_model_development_v84.json",
+    "docs/progressive_upgrade/hotpot_question_type_cardinality_protocol_v84.json",
+    "docs/progressive_upgrade/hotpot_question_type_cardinality_source_registration_v84.json",
+    "docs/progressive_upgrade/hotpot_question_type_cardinality_implementation_v84.json",
+    "docs/progressive_upgrade/hotpot_question_type_cardinality_development_execution_v84.json",
+    "docs/progressive_upgrade/hotpot_question_type_cardinality_development_result_v84.json",
+    "docs/progressive_upgrade/hotpot_question_type_cardinality_confirmation_open_v84.json",
+    "docs/progressive_upgrade/hotpot_question_type_cardinality_confirmation_execution_v84.json",
+    "docs/progressive_upgrade/hotpot_question_type_cardinality_confirmation_result_v84.json",
+    "docs/progressive_upgrade/hotpot_question_type_cardinality_confirmation_closure_v84.json",
+    "docs/progressive_upgrade/hotpot_question_type_cardinality_synthesis_v84.md",
+    "output/rag_evaluation/hotpot_cardinality_v84/development/result.json",
+    "output/rag_evaluation/hotpot_cardinality_v84/development/report.md",
+    "output/rag_evaluation/hotpot_cardinality_v84/development/cases.jsonl.gz",
+    "output/rag_evaluation/hotpot_cardinality_v84/confirmation/result.json",
+    "output/rag_evaluation/hotpot_cardinality_v84/confirmation/report.md",
+    "output/rag_evaluation/hotpot_cardinality_v84/confirmation/cases.jsonl.gz",
+    "research/frc_rag/hotpot_question_type_cardinality_router.py",
+    "research/frc_rag/hotpot_question_type_cardinality_transfer.py",
+    "scripts/run_hotpot_question_type_cardinality_model.py",
+    "scripts/run_hotpot_question_type_cardinality_transfer.py",
+    "tests/test_frc_hotpot_question_type_cardinality_router.py",
+    "tests/test_frc_hotpot_question_type_cardinality_transfer.py",
+    "tests/test_frc_hotpot_question_type_cardinality_lock.py",
     "docs/progressive_upgrade/design_contract_evidence_policy.json",
     "output/acceptance/legacy_baseline_manifest.json",
     "output/acceptance/legacy_baseline_manifest.md",
@@ -231,6 +1128,32 @@ EXTERNAL_NO_GO_ITEMS = (
 
 def _load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8-sig"))
+
+
+def _load_jsonl(path: Path) -> list[dict[str, Any]]:
+    opener = gzip.open if path.suffix.lower() == ".gz" else open
+    with opener(path, "rt", encoding="utf-8-sig") as handle:
+        return [json.loads(line) for line in handle if line.strip()]
+
+
+def _canonical_json_sha256(payload: Any) -> str:
+    encoded = json.dumps(
+        payload,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def _nested_keys(payload: Any) -> set[str]:
+    if isinstance(payload, dict):
+        return set(payload) | {
+            key for value in payload.values() for key in _nested_keys(value)
+        }
+    if isinstance(payload, list):
+        return {key for value in payload for key in _nested_keys(value)}
+    return set()
 
 
 def _canonical_text_sha256(path: Path) -> str:
@@ -261,6 +1184,3002 @@ def _check(
         "evidence": list(evidence),
         "details": details or {},
     }
+
+
+def _check_squad2_support_iteration(
+    repo_root: Path,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    version = int(config["version"])
+    slug = str(config["slug"])
+    base = f"squad2_{slug}"
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = repo_root / "output/rag_evaluation" / base / "development"
+    protocol_path = docs_root / f"{base}_protocol_v{version}.json"
+    source_path = docs_root / "squad2_source_registration_v58.json"
+    implementation_path = docs_root / f"{base}_implementation_v{version}.json"
+    execution_path = docs_root / f"{base}_development_execution_v{version}.json"
+    result_path = docs_root / f"{base}_development_result_v{version}.json"
+    closure_path = docs_root / f"{base}_development_closure_v{version}.json"
+    report_path = output_root / "report.md"
+    cases_path = output_root / "cases.jsonl.gz"
+    module_path = repo_root / "research/frc_rag" / f"{base}.py"
+    runner_path = repo_root / "scripts" / f"run_{base}.py"
+    tests_path = repo_root / "tests" / f"test_frc_{base}.py"
+
+    source = _load_json(source_path)
+    implementation = _load_json(implementation_path)
+    execution = _load_json(execution_path)
+    result = _load_json(result_path)
+    closure = _load_json(closure_path)
+    cases = _load_jsonl(cases_path)
+    metadata = result["metadata"]
+    analysis = result["analysis"]
+    outcome = analysis["outcome"]
+    candidate = analysis["aggregates"][config["candidate_method"]]
+    sampling = metadata["source_artifacts"]["sampling"]
+    verifier = analysis["support_verifier"]
+    family_comparison = analysis["family_comparison"]
+    confirmation_opened = closure.get(
+        "confirmation_source_parsed_or_opened",
+        closure.get("confirmation_dev_parsed_or_opened"),
+    )
+    prior_overlap = config["prior_overlap"]
+    observed_prior_overlap = sampling.get(
+        "selected_prior_commitment_overlap",
+        sampling.get("selected_v58_commitment_overlap"),
+    )
+    predownload_path = (
+        docs_root / "squad2_generative_answerability_gate_predownload_freeze_v58.json"
+    )
+    confirmation_result_path = docs_root / f"{base}_confirmation_result_v{version}.json"
+    confirmation_execution_path = (
+        docs_root / f"{base}_confirmation_execution_v{version}.json"
+    )
+
+    passed = (
+        _evidence_sha256(protocol_path) == config["protocol_sha256"]
+        and _evidence_sha256(source_path)
+        == "85f1e206ab0ef1d566f398974ad665045d98789bc2130b81adb9cf1eac6a331c"
+        and _evidence_sha256(implementation_path) == config["implementation_sha256"]
+        and _evidence_sha256(execution_path) == config["execution_sha256"]
+        and _evidence_sha256(result_path) == config["result_sha256"]
+        and _evidence_sha256(closure_path) == config["closure_sha256"]
+        and _evidence_sha256(report_path) == config["report_sha256"]
+        and _evidence_sha256(cases_path) == config["cases_sha256"]
+        and implementation["experiment_id"] == config["experiment_id"]
+        and implementation["hashes"]["protocol"] == config["protocol_sha256"]
+        and implementation["hashes"]["source_registration"]
+        == _evidence_sha256(source_path)
+        and implementation["hashes"]["module"] == _evidence_sha256(module_path)
+        and implementation["hashes"]["runner"] == _evidence_sha256(runner_path)
+        and implementation["hashes"]["tests"] == _evidence_sha256(tests_path)
+        and execution["experiment_id"] == config["experiment_id"]
+        and execution["stage"] == "development"
+        and execution["target_cases"] == 600
+        and execution["gold_joined_for_coverage_or_metrics"] is False
+        and execution["other_stage_source_content_read"] is False
+        and execution["hashes"]["implementation_registration_sha256"]
+        == config["implementation_sha256"]
+        and metadata["stage"] == "development"
+        and metadata["cases"] == 600
+        and metadata["answer_state_counts"] == {"answer_bearing": 300, "no_answer": 300}
+        and metadata["gold_joined_after_complete_score_and_generation_caches"] is True
+        and metadata["official_squad2_answer_string_result"] is False
+        and metadata["source_artifacts"]["protocol_sha256"] == config["protocol_sha256"]
+        and metadata["source_artifacts"]["implementation_registration_sha256"]
+        == config["implementation_sha256"]
+        and metadata["source_artifacts"]["execution_registration_sha256"]
+        == config["execution_sha256"]
+        and sampling["selected_cases"] == 600
+        and sampling["schema_exclusion_rate"] == 0.0
+        and (prior_overlap is None or observed_prior_overlap == prior_overlap)
+        and all(
+            candidate[key] == value
+            for key, value in config["candidate_metrics"].items()
+        )
+        and all(
+            verifier[key] == value for key, value in config["verifier_metrics"].items()
+        )
+        and family_comparison["candidate_minus_strongest_shared_gate_non_frc"]["point"]
+        == config["non_frc_delta"]
+        and family_comparison["candidate_minus_strongest_same_gate_frc"]["point"]
+        == config["same_gate_frc_delta"]
+        and any(value is False for value in analysis["support_checks"].values())
+        and outcome["status"] == config["status"]
+        and outcome["support_established"] is False
+        and outcome["confirmation_open_authorized"] is False
+        and outcome["selector_adoption_authorized"] is False
+        and outcome["canary_or_default_authorized"] is False
+        and outcome["gate_2"] == "NO-GO/SHADOW"
+        and closure["status"] == config["status"]
+        and closure["development_result_sha256"] == config["result_sha256"]
+        and closure["confirmation_execution_started"] is False
+        and confirmation_opened is False
+        and closure["selector_adoption_authorized"] is False
+        and closure["canary_or_default_authorized"] is False
+        and closure["gate_2"] == "NO-GO/SHADOW"
+        and source["downloaded_as_opaque_bytes"] is True
+        and source["dev_content_read"] is False
+        and len(cases) == 600
+        and len({row["case_id"] for row in cases}) == 600
+        and not (
+            {
+                "question",
+                "context",
+                "answers",
+                "gold_candidate_ids",
+                "candidate_text",
+            }
+            & _nested_keys(cases)
+        )
+        and not confirmation_result_path.exists()
+        and not confirmation_execution_path.exists()
+        and (
+            version != 58
+            or (
+                _evidence_sha256(predownload_path)
+                == "719e52859672287906087e3ee030a28ddacc9f73219f5ffb7d6a7ca8e3f85d33"
+                and implementation["predownload_freeze_sha256"]
+                == _evidence_sha256(predownload_path)
+            )
+        )
+    )
+    relative_paths = [
+        protocol_path,
+        source_path,
+        implementation_path,
+        execution_path,
+        result_path,
+        closure_path,
+        report_path,
+        cases_path,
+        module_path,
+        runner_path,
+        tests_path,
+    ]
+    if version == 58:
+        relative_paths.insert(1, predownload_path)
+    evidence = [path.relative_to(repo_root).as_posix() for path in relative_paths]
+    return _check(
+        f"squad2_v{version}_{slug}_boundary",
+        (
+            f"SQuAD2 v{version} prospective support-gate development is "
+            "hash-locked, disjoint where applicable, reproducible, and closed "
+            "before confirmation without selector or Gate 2 promotion"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": config["experiment_id"],
+            "status": outcome["status"],
+            "cases": metadata["cases"],
+            "articles": metadata["articles"],
+            "paragraphs": metadata["paragraphs"],
+            "answer_state_counts": metadata["answer_state_counts"],
+            "prior_commitment_overlap": observed_prior_overlap,
+            "candidate_method": config["candidate_method"],
+            "candidate_aggregate": candidate,
+            "support_verifier": verifier,
+            "strongest_shared_gate_non_frc": analysis["strongest_shared_gate_non_frc"],
+            "strongest_same_gate_frc": analysis["strongest_same_gate_frc"],
+            "family_comparison": family_comparison,
+            "support_checks": analysis["support_checks"],
+            "confirmation_opened": confirmation_opened,
+            "confirmation_open_authorized": outcome["confirmation_open_authorized"],
+            "selector_adoption_authorized": outcome["selector_adoption_authorized"],
+            "gate_2": outcome["gate_2"],
+        },
+    )
+
+
+def _check_quac_roberta_qa_support_transfer_v62(repo_root: Path) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = (
+        repo_root / "output/rag_evaluation/quac_roberta_qa_support_transfer/development"
+    )
+    paths = {
+        "protocol": docs_root / "quac_roberta_qa_support_transfer_protocol_v62.json",
+        "source": docs_root / "quac_source_registration_v57.json",
+        "implementation": docs_root
+        / "quac_roberta_qa_support_transfer_implementation_v62.json",
+        "model": docs_root
+        / "quac_roberta_qa_support_transfer_model_registration_v62.json",
+        "execution": docs_root
+        / "quac_roberta_qa_support_transfer_development_execution_v62.json",
+        "result": docs_root
+        / "quac_roberta_qa_support_transfer_development_result_v62.json",
+        "closure": docs_root
+        / "quac_roberta_qa_support_transfer_development_closure_v62.json",
+        "report": output_root / "report.md",
+        "cases": output_root / "cases.jsonl.gz",
+        "module": repo_root / "research/frc_rag/quac_roberta_qa_support_transfer.py",
+        "runner": repo_root / "scripts/run_quac_roberta_qa_support_transfer.py",
+        "tests": repo_root / "tests/test_frc_quac_roberta_qa_support_transfer.py",
+    }
+    expected_hashes = {
+        "protocol": "130b703c7b69aa5556f7ed85d759d8865ed2fa40206ce91dabfbd6d12d80b007",
+        "source": "8ccd3f1bffb8292c114d17e0d734f2651122906f33b2a101f801d0b0bde702c9",
+        "implementation": "4a2f9521b2b155ffe11f19f8ce52fc7228c5d7c7aab270a49678948734210d8e",
+        "model": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+        "execution": "23013f494761b93c67111513e18e52435f56bb8f96c5b79226a00f4e808aff20",
+        "result": "866e1f2d803b0ddfc68b8c78ced82de45dbb722a856b841417fa90dd7b539dc3",
+        "closure": "b4c5bf7b000c40441721190d6a7fce49baa0d91c6e9bc69326a3128ea530f4f2",
+        "report": "9172ee2af06b0b1c0243edb1615c6018a09a04e871c99bc576162096932fe6ec",
+        "cases": "e9ff7e5853b586986149b06294daee2cd5541ab14221b6668514ad75c6cd2a47",
+        "module": "f3cd95f65646bec80c6eeecfabee6140ebf334c36f2840e5ce35595ee2184561",
+        "runner": "7e7723179153b393b76065cf0b10045b5b17ffaa37e47fa0e8636bf483720191",
+        "tests": "f0c9568569bab9e8a8ed6353119e2cf10f256d47b4c38abae9e3201ab367b9f8",
+    }
+    protocol = _load_json(paths["protocol"])
+    source = _load_json(paths["source"])
+    implementation = _load_json(paths["implementation"])
+    model = _load_json(paths["model"])
+    execution = _load_json(paths["execution"])
+    result = _load_json(paths["result"])
+    closure = _load_json(paths["closure"])
+    cases = _load_jsonl(paths["cases"])
+    metadata = result["metadata"]
+    analysis = result["analysis"]
+    outcome = analysis["outcome"]
+    verifier = analysis["support_verifier"]
+    candidate_name = "roberta_supported_adaptive_argmax_cardinality_frc_v43_v62"
+    candidate = analysis["aggregates"][candidate_name]
+    comparisons = analysis["family_comparison"]
+    sampling = metadata["source_artifacts"]["sampling"]
+    validation_result = docs_root / (
+        "quac_roberta_qa_support_transfer_validation_result_v62.json"
+    )
+    validation_execution = docs_root / (
+        "quac_roberta_qa_support_transfer_validation_execution_v62.json"
+    )
+    experiment_id = "FRC-QUAC-ROBERTA-QA-SUPPORT-TRANSFER-V62"
+    status = "QUAC_V62_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_VALIDATION"
+
+    passed = (
+        all(
+            _evidence_sha256(paths[key]) == value
+            for key, value in expected_hashes.items()
+        )
+        and protocol["experiment_id"] == experiment_id
+        and protocol["source_and_split"][
+            "confirmation_open_authorized_only_if_every_development_gate_passes"
+        ]
+        is True
+        and protocol["public_support_model"]["revision"]
+        == "adc3b06f79f797d1c575d5479d6f5efe54a9e3b4"
+        and protocol["public_support_model"][
+            "no_finetuning_calibration_or_threshold_fitting"
+        ]
+        is True
+        and protocol["qa_inference"]["learned_threshold"] is None
+        and source["validation_content_read"] is False
+        and source["validation_open_authorized"] is False
+        and implementation["experiment_id"] == experiment_id
+        and implementation["hashes"]["protocol"] == expected_hashes["protocol"]
+        and implementation["hashes"]["source_registration"] == expected_hashes["source"]
+        and implementation["hashes"]["module"] == expected_hashes["module"]
+        and implementation["hashes"]["runner"] == expected_hashes["runner"]
+        and implementation["hashes"]["tests"] == expected_hashes["tests"]
+        and implementation["quac_validation_content_opened_or_parsed"] is False
+        and implementation["learned_threshold_or_target_domain_calibration"] is False
+        and implementation["shared_case_level_gate_across_all_gated_methods"] is True
+        and model["experiment_id"] == experiment_id
+        and model["repository"] == "deepset/roberta-base-squad2"
+        and model["revision"] == "adc3b06f79f797d1c575d5479d6f5efe54a9e3b4"
+        and model["quac_content_used_for_model_training_or_finetuning"] is False
+        and model["local_serialization_derivation"]["source_pytorch_model_sha256"]
+        == "e0b64ccefc1bcb569b604baea27eb873e5482fdf6eb3ceff1fb5368397db5aed"
+        and model["local_serialization_derivation"]["derived_model_safetensors_sha256"]
+        == "5da10c5315517d9c8750f2e0ff4fd319476b4d93ae0e7f346f120d4c855bfa8c"
+        and model["local_serialization_derivation"][
+            "weight_values_or_architecture_changed"
+        ]
+        is False
+        and execution["experiment_id"] == experiment_id
+        and execution["stage"] == "development"
+        and execution["gold_joined_for_coverage_or_metrics"] is False
+        and execution["other_stage_source_content_read"] is False
+        and execution["hashes"]["implementation_registration_sha256"]
+        == expected_hashes["implementation"]
+        and execution["hashes"]["model_registration_sha256"] == expected_hashes["model"]
+        and metadata["stage"] == "development"
+        and metadata["cases"] == 600
+        and metadata["dialogues"] == 587
+        and metadata["documents"] == 566
+        and metadata["answer_state_counts"] == {"answer_bearing": 300, "no_answer": 300}
+        and metadata["gold_joined_after_complete_score_and_generation_caches"] is True
+        and metadata["official_quac_answer_result"] is False
+        and metadata["official_squad2_answer_string_result"] is False
+        and sampling["selected_v57_commitment_overlap"] == 0
+        and sampling["schema_exclusion_rate"] == 0.0
+        and metadata["source_artifacts"]["score_fallback_rate"] == 0.0
+        and analysis["query_cache"]["fallback_rate"] == 0.0
+        and verifier
+        == {
+            "rows": 600,
+            "gold_fields_visible_to_verifier": False,
+            "answer_bearing_support_pass_rate": 0.686667,
+            "no_answer_rejection_rate": 0.493333,
+            "balanced_accuracy": 0.59,
+            "invalid_output_count": 0,
+            "invalid_output_rate": 0.0,
+        }
+        and all(
+            candidate[key] == value
+            for key, value in {
+                "answer_or_abstention_macro_f1": 0.308444,
+                "answer_bearing_macro_f1": 0.123556,
+                "answer_macro_recall": 0.139722,
+                "no_answer_abstention_accuracy": 0.493333,
+                "abstention_rate": 0.403333,
+            }.items()
+        )
+        and comparisons["candidate_minus_gated_exact_anchor"]["point"] == -0.013077
+        and comparisons["candidate_minus_strongest_shared_gate_non_frc"]["point"]
+        == -0.013077
+        and comparisons["candidate_minus_strongest_same_gate_frc"]["point"] == -0.013272
+        and analysis["strongest_shared_gate_non_frc"]
+        == "roberta_supported_cross_encoder_topk_v62"
+        and analysis["strongest_same_gate_frc"]
+        == "roberta_supported_guarded_adaptive_cardinality_frc_v44_v62"
+        and any(value is False for value in analysis["support_checks"].values())
+        and outcome["status"] == status
+        and outcome["support_established"] is False
+        and outcome["confirmation_open_authorized"] is False
+        and outcome["selector_adoption_authorized"] is False
+        and outcome["canary_or_default_authorized"] is False
+        and outcome["gate_2"] == "NO-GO/SHADOW"
+        and closure["status"] == status
+        and closure["development_result_sha256"] == expected_hashes["result"]
+        and closure["quac_validation_content_opened_or_parsed"] is False
+        and closure["confirmation_execution_started"] is False
+        and closure["selector_adoption_authorized"] is False
+        and closure["canary_or_default_authorized"] is False
+        and closure["gate_2"] == "NO-GO/SHADOW"
+        and len(cases) == 600
+        and len({row["case_id"] for row in cases}) == 600
+        and not (
+            {"question", "context", "candidate_text", "answer_text"}
+            & _nested_keys(cases)
+        )
+        and not validation_result.exists()
+        and not validation_execution.exists()
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    return _check(
+        "quac_v62_roberta_qa_support_transfer_boundary",
+        (
+            "QuAC v62 fixed public QA-model transfer is hash-locked, blind, "
+            "disjoint from v57, closed before validation, and preserves Gate 2 No-Go"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": experiment_id,
+            "status": outcome["status"],
+            "cases": metadata["cases"],
+            "dialogues": metadata["dialogues"],
+            "documents": metadata["documents"],
+            "answer_state_counts": metadata["answer_state_counts"],
+            "selected_v57_commitment_overlap": sampling[
+                "selected_v57_commitment_overlap"
+            ],
+            "support_verifier": verifier,
+            "candidate_method": candidate_name,
+            "candidate_aggregate": candidate,
+            "strongest_shared_gate_non_frc": analysis["strongest_shared_gate_non_frc"],
+            "strongest_same_gate_frc": analysis["strongest_same_gate_frc"],
+            "family_comparison": comparisons,
+            "support_checks": analysis["support_checks"],
+            "validation_opened": False,
+            "validation_open_authorized": outcome["confirmation_open_authorized"],
+            "selector_adoption_authorized": outcome["selector_adoption_authorized"],
+            "gate_2": outcome["gate_2"],
+        },
+    )
+
+
+def _check_quac_target_trained_qa_support_v63(repo_root: Path) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = (
+        repo_root / "output/rag_evaluation/quac_target_trained_qa_support/support_gate"
+    )
+    paths = {
+        "protocol": docs_root / "quac_target_trained_qa_support_protocol_v63.json",
+        "source": docs_root / "quac_source_registration_v57.json",
+        "implementation": docs_root
+        / "quac_target_trained_qa_support_implementation_v63.json",
+        "model": docs_root
+        / "quac_target_trained_qa_support_model_registration_v63.json",
+        "execution": docs_root
+        / "quac_target_trained_qa_support_validation_execution_v63.json",
+        "result": docs_root
+        / "quac_target_trained_qa_support_validation_support_result_v63.json",
+        "closure": docs_root
+        / "quac_target_trained_qa_support_validation_support_closure_v63.json",
+        "synthesis": docs_root / "quac_target_trained_qa_support_synthesis_v63.md",
+        "report": output_root / "report.md",
+        "cases": output_root / "cases.jsonl.gz",
+        "module": repo_root / "research/frc_rag/quac_target_trained_qa_support.py",
+        "runner": repo_root / "scripts/run_quac_target_trained_qa_support.py",
+        "tests": repo_root / "tests/test_frc_quac_target_trained_qa_support.py",
+    }
+    expected_hashes = {
+        "protocol": "40549911361d112aeac4bd6d1d432fb4068e96106afe53c7727bbb41481f3294",
+        "source": "8ccd3f1bffb8292c114d17e0d734f2651122906f33b2a101f801d0b0bde702c9",
+        "implementation": "d81c66a98ebbee16b5af7f525520dc79082b100c062deb3bf25f6a8cfb6f9bc4",
+        "model": "d1c9c062d41aa8f7d3da54f00d87accb2520ec5bf9231107fce347bd3391b26a",
+        "execution": "89f459fa63ae067cbcf0d16ffbf99447cb3326d3efe84091d75395418d9f4330",
+        "result": "3b1a675af8d9d057f9067dcbd18769e8921acdcf600e0ac921767d8326e7ee0b",
+        "closure": "e6e3fe44c495488a2760c178d532e9288614a84cc7683c0726ebe8b29dab6dc9",
+        "synthesis": "811ae2e856dc49aa368ffd95a3e17a449eb286a6481b64e2ae5260c139cb099d",
+        "report": "89978a4037769428a98d638097d9fffd08ba3b3d583c76e39dd95997b8200df3",
+        "cases": "cb4809bbec6dddbab8bf62e5d1595ef3c9abfa7d476819f1e42ff6190a7182bd",
+        "module": "b70ba35173b6b66033c7b5f5aae194b291476b7e27a057855d38f46b4d5355f2",
+        "runner": "a494e23c17ff76ccafee2d0fb20082b3a7b70f53ed5474a7459f0d7dc72aa00e",
+        "tests": "c361d88836c86aa8c734787aed403be4a43b53b3d88e6b8db6f4be8905d7c914",
+    }
+    protocol = _load_json(paths["protocol"])
+    implementation = _load_json(paths["implementation"])
+    model = _load_json(paths["model"])
+    execution = _load_json(paths["execution"])
+    result = _load_json(paths["result"])
+    closure = _load_json(paths["closure"])
+    cases = _load_jsonl(paths["cases"])
+    metadata = result["metadata"]
+    artifacts = metadata["source_artifacts"]
+    sampling = artifacts["sampling"]
+    analysis = result["analysis"]
+    verifier = analysis["support_verifier"]
+    outcome = analysis["outcome"]
+    final_or_open_paths = (
+        docs_root / "quac_target_trained_qa_support_retrieval_open_v63.json",
+        docs_root / "quac_target_trained_qa_support_validation_result_v63.json",
+        docs_root / "quac_target_trained_qa_support_validation_closure_v63.json",
+        repo_root
+        / "output/rag_evaluation/quac_target_trained_qa_support/final/report.md",
+        repo_root
+        / "output/rag_evaluation/quac_target_trained_qa_support/final/cases.jsonl.gz",
+    )
+    experiment_id = "FRC-QUAC-TARGET-TRAINED-QA-SUPPORT-V63"
+    status = "QUAC_V63_VALIDATION_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_RETRIEVAL_SCORING"
+
+    passed = (
+        all(
+            _evidence_sha256(paths[key]) == value
+            for key, value in expected_hashes.items()
+        )
+        and protocol["experiment_id"] == experiment_id
+        and protocol["source"]["file"] == "val_v0.2.json"
+        and protocol["source"][
+            "content_may_open_only_after_protocol_implementation_and_model_registrations"
+        ]
+        is True
+        and protocol["public_support_model"]["repository"]
+        == "ixa-ehu/SciBERT-SQuAD-QuAC"
+        and protocol["public_support_model"]["revision"]
+        == "8d44c186b6f1662c65d48603ce8e3dedb0093953"
+        and protocol["public_support_model"][
+            "exact_quac_training_split_and_checkpoint_selection_disclosed"
+        ]
+        is False
+        and protocol["public_support_model"]["license_on_model_card"] == "NOT_DECLARED"
+        and protocol["public_support_model"][
+            "local_finetuning_calibration_or_threshold_fitting"
+        ]
+        is False
+        and protocol["blind_execution"][
+            "support_gate_must_pass_before_query_generation_or_neural_retrieval_scoring"
+        ]
+        is True
+        and protocol["qa_inference"]["learned_threshold"] is None
+        and implementation["experiment_id"] == experiment_id
+        and implementation["hashes"]["protocol"] == expected_hashes["protocol"]
+        and implementation["hashes"]["source_registration"] == expected_hashes["source"]
+        and implementation["hashes"]["module"] == expected_hashes["module"]
+        and implementation["hashes"]["runner"] == expected_hashes["runner"]
+        and implementation["hashes"]["tests"] == expected_hashes["tests"]
+        and implementation["model_files_downloaded_before_registration"] is False
+        and implementation["quac_validation_content_opened_or_parsed"] is False
+        and implementation["learned_threshold_or_local_target_domain_calibration"]
+        is False
+        and implementation[
+            "support_gate_required_before_query_generation_or_retrieval_scoring"
+        ]
+        is True
+        and implementation["strict_independent_confirmation_claimed"] is False
+        and model["experiment_id"] == experiment_id
+        and model["repository"] == "ixa-ehu/SciBERT-SQuAD-QuAC"
+        and model["revision"] == "8d44c186b6f1662c65d48603ce8e3dedb0093953"
+        and model["exact_quac_training_split_and_checkpoint_selection_disclosed"]
+        is False
+        and model["license_on_model_card"] == "NOT_DECLARED"
+        and model["local_finetuning_calibration_or_threshold_fitting"] is False
+        and model["strict_independent_confirmation_claimed"] is False
+        and model["files"]
+        == {
+            "README.md": "3edaf9e7151a22548220eaaf48b62f24708ab7b3d28612b763c4fe7ad89abc0a",
+            "config.json": "0b13fbf702d6f8c26ad6190c6ffc338c5532011b66206d1a3b33940c632455e5",
+            "model.safetensors": "0c9faa84a845f9344d08626365684ed9d06fac74e6fe88a5dcb7cec31c5b97a6",
+            "vocab.txt": "f0a650346e51ede8996710f79ba65d83fdb8da05b159f17037b74ba4e3a36c6f",
+        }
+        and execution["experiment_id"] == experiment_id
+        and execution["stage"] == "validation"
+        and execution["gold_joined_for_coverage_or_metrics"] is False
+        and execution["query_scoring_or_qa_started"] is False
+        and execution["other_source_content_read"] is False
+        and execution["hashes"]["implementation_registration_sha256"]
+        == expected_hashes["implementation"]
+        and execution["hashes"]["model_registration_sha256"] == expected_hashes["model"]
+        and metadata["stage"] == "validation_support_gate"
+        and metadata["cases"] == 600
+        and metadata["dialogues"] == 477
+        and metadata["documents"] == 477
+        and metadata["answer_state_counts"] == {"answer_bearing": 300, "no_answer": 300}
+        and sampling["selected_v57_commitment_overlap"] == 0
+        and sampling["schema_exclusion_rate"] == 0.0
+        and artifacts["gold_joined_after_complete_qa_cache"] is True
+        and artifacts["query_or_retrieval_scoring_started"] is False
+        and artifacts["qa_support_cache_sha256"]
+        == "77c1cbc30c282eac734de66854f46ac26d064c994426d8e7212c9976174a1e9e"
+        and verifier
+        == {
+            "rows": 600,
+            "gold_fields_visible_to_verifier": False,
+            "answer_bearing_support_pass_rate": 0.486667,
+            "no_answer_rejection_rate": 0.5,
+            "balanced_accuracy": 0.493333,
+            "invalid_output_count": 0,
+            "invalid_output_rate": 0.0,
+        }
+        and analysis["support_checks"]
+        == {
+            "answer_bearing_support_pass_rate_at_least_0_75": False,
+            "exact_answer_state_balance": True,
+            "exact_cases_equals_600": True,
+            "minimum_dialogues_at_least_250": True,
+            "minimum_documents_at_least_200": True,
+            "no_answer_rejection_rate_at_least_0_65": False,
+            "qa_invalid_rate_equals_0": True,
+            "schema_exclusion_rate_at_most_0_01": True,
+            "support_verifier_balanced_accuracy_at_least_0_75": False,
+        }
+        and outcome["status"] == status
+        and outcome["support_gate_passed"] is False
+        and outcome["retrieval_scoring_open_authorized"] is False
+        and outcome["validation_reuse_for_tuning_or_selection"] is False
+        and outcome["strict_independent_confirmation_claimed"] is False
+        and outcome["selector_adoption_authorized"] is False
+        and outcome["canary_or_default_authorized"] is False
+        and outcome["gate_2"] == "NO-GO/SHADOW"
+        and closure["status"] == status
+        and closure["support_result_sha256"] == expected_hashes["result"]
+        and closure["query_generation_started"] is False
+        and closure["retrieval_scoring_started"] is False
+        and closure["retrieval_scoring_open_authorized"] is False
+        and closure["selector_adoption_authorized"] is False
+        and closure["canary_or_default_authorized"] is False
+        and closure["gate_2"] == "NO-GO/SHADOW"
+        and len(cases) == 600
+        and len({row["case_id"] for row in cases}) == 600
+        and not (
+            {"question", "context", "candidate_text", "answer_text"}
+            & _nested_keys(cases)
+        )
+        and all(not path.exists() for path in final_or_open_paths)
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    return _check(
+        "quac_v63_target_trained_qa_support_boundary",
+        (
+            "QuAC v63 target-trained public QA support gate is hash-locked, "
+            "blind, stopped before retrieval scoring, and preserves Gate 2 No-Go"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": experiment_id,
+            "status": outcome["status"],
+            "cases": metadata["cases"],
+            "dialogues": metadata["dialogues"],
+            "documents": metadata["documents"],
+            "answer_state_counts": metadata["answer_state_counts"],
+            "selected_v57_commitment_overlap": sampling[
+                "selected_v57_commitment_overlap"
+            ],
+            "support_verifier": verifier,
+            "support_checks": analysis["support_checks"],
+            "query_generation_started": closure["query_generation_started"],
+            "retrieval_scoring_started": closure["retrieval_scoring_started"],
+            "retrieval_scoring_open_authorized": outcome[
+                "retrieval_scoring_open_authorized"
+            ],
+            "strict_independent_confirmation_claimed": outcome[
+                "strict_independent_confirmation_claimed"
+            ],
+            "validation_reuse_for_tuning_or_selection": outcome[
+                "validation_reuse_for_tuning_or_selection"
+            ],
+            "selector_adoption_authorized": outcome["selector_adoption_authorized"],
+            "gate_2": outcome["gate_2"],
+        },
+    )
+
+
+def _check_squad2_calibrated_roberta_support_v64(
+    repo_root: Path,
+) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = repo_root / "output/rag_evaluation/squad2_calibrated_roberta_support"
+    paths = {
+        "protocol": docs_root / "squad2_calibrated_roberta_support_protocol_v64.json",
+        "source": docs_root / "squad2_source_registration_v58.json",
+        "model": docs_root
+        / "quac_roberta_qa_support_transfer_model_registration_v62.json",
+        "implementation": docs_root
+        / "squad2_calibrated_roberta_support_implementation_v64.json",
+        "implementation_erratum": docs_root
+        / "squad2_calibrated_roberta_support_implementation_erratum_v64.json",
+        "calibration_execution": docs_root
+        / "squad2_calibrated_roberta_support_calibration_execution_v64.json",
+        "calibration_result": docs_root
+        / "squad2_calibrated_roberta_support_calibration_result_v64.json",
+        "confirmation_open": docs_root
+        / "squad2_calibrated_roberta_support_confirmation_open_v64.json",
+        "calibration_report": output_root / "calibration/report.md",
+        "calibration_cases": output_root / "calibration/cases.jsonl.gz",
+        "confirmation_execution": docs_root
+        / "squad2_calibrated_roberta_support_confirmation_execution_v64.json",
+        "support_result": docs_root
+        / "squad2_calibrated_roberta_support_confirmation_support_result_v64.json",
+        "retrieval_open": docs_root
+        / "squad2_calibrated_roberta_support_retrieval_open_v64.json",
+        "support_report": output_root / "confirmation_support/report.md",
+        "support_cases": output_root / "confirmation_support/cases.jsonl.gz",
+        "evaluation_erratum": docs_root
+        / "squad2_calibrated_roberta_support_evaluation_erratum_v64.json",
+        "final_result": docs_root
+        / "squad2_calibrated_roberta_support_confirmation_result_v64.json",
+        "final_closure": docs_root
+        / "squad2_calibrated_roberta_support_confirmation_closure_v64.json",
+        "label_erratum": docs_root
+        / "squad2_calibrated_roberta_support_result_label_erratum_v64.json",
+        "synthesis": docs_root / "squad2_calibrated_roberta_support_synthesis_v64.md",
+        "final_report": output_root / "confirmation_final/report.md",
+        "final_cases": output_root / "confirmation_final/cases.jsonl.gz",
+        "module": repo_root / "research/frc_rag/squad2_calibrated_roberta_support.py",
+        "runner": repo_root / "scripts/run_squad2_calibrated_roberta_support.py",
+        "tests": repo_root / "tests/test_frc_squad2_calibrated_roberta_support.py",
+    }
+    expected_hashes = {
+        "protocol": "2585d468c257de8912c380718d3ea27b7dbd96b6a61d75ff09d5a0901f8f0835",
+        "source": "85f1e206ab0ef1d566f398974ad665045d98789bc2130b81adb9cf1eac6a331c",
+        "model": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+        "implementation": "3658c2077e1b16cd7ed7fa65942cf9d10b1988313e20c332110841b9b77417c6",
+        "implementation_erratum": "d1f1a85c446bf5a02e93f5f022fb87cec6fd0616be5ed77d74742344166facfb",
+        "calibration_execution": "c96f1124a436c4d33ea08a8bd8f6e54c1cc52c859c1bf60d1aab670603173e73",
+        "calibration_result": "eace7c801253ee9868061c9a718924fac9e40ba64be17b02bbf76b82b09a0355",
+        "confirmation_open": "385408ebd91f548fb3f6651abba2fdbe3de838392b269af8f9255de412e57874",
+        "calibration_report": "7544ffcc60493d33eb80f18b49a96c790c16c1401b8480e084b5ac19198e7b53",
+        "calibration_cases": "fdcb2b8be33713b200a0d460cfc9811a620de10f65bfd99142c44cf7e060e455",
+        "confirmation_execution": "fe63e1a5a0d1ea33a6cc0559c8847678044afc8de86f0a81a0ba0360f580bd0c",
+        "support_result": "7a853f38a56a5aa5b9b3d2d0df6cae95d1f9c0b46bd3eb261f11251c3f712038",
+        "retrieval_open": "3d91bc031168214c3f1bce986ba14ae7033d7c7f952cdc59c5156ec03e52ec3e",
+        "support_report": "eabf4731e87997130f4c4f37069443ac183e1a8d9d50b7bb35a2cdaa2bad2a60",
+        "support_cases": "84997dea2c2000dc19361360d7cb1c446d26423621e0a337140262cba6ea3c33",
+        "evaluation_erratum": "fdfcc377e6b23b6dab5058b31266f4c1badb9b56660db2f9a95410e5b49de061",
+        "final_result": "240f9ba217bc56dfdc5b6266f1a5ffb4120675cd6ad2694c4e31325a6bc12532",
+        "final_closure": "627b9cdbb163130eae929be052e7b3b932351906e069fe7d724060100be50ece",
+        "label_erratum": "e586d022560ddcda72e97f80dd8ef1879955bf30f942b108621d6b40b422c268",
+        "synthesis": "b34923cfeba0934686cd0ad8cda3141d499c1456a0bf268c9fca2c230e96edb5",
+        "final_report": "d5810e6046a26898758dcf7651ff97e15a4fbdd00b57ad2975634b6675adcf15",
+        "final_cases": "8bb2b41dfa6a91685be32ca282c4ea8fc65372b61450962469cb60b7b7f815af",
+        "module": "330c01972b579485783607a0454be8c40ac83b79e0d6dbcae9ccb9202daac6f5",
+        "runner": "d2b8f321c8548741532408bb66253045e90fe0e06d79efc9d5afdc775643a559",
+        "tests": "dfc6cb059ecfdaae9c5f7283d9b42527a516fd0293c0c9d1217ef7da3b94d427",
+    }
+    protocol = _load_json(paths["protocol"])
+    implementation = _load_json(paths["implementation"])
+    implementation_erratum = _load_json(paths["implementation_erratum"])
+    calibration_execution = _load_json(paths["calibration_execution"])
+    calibration_result = _load_json(paths["calibration_result"])
+    confirmation_open = _load_json(paths["confirmation_open"])
+    confirmation_execution = _load_json(paths["confirmation_execution"])
+    support_result = _load_json(paths["support_result"])
+    retrieval_open = _load_json(paths["retrieval_open"])
+    evaluation_erratum = _load_json(paths["evaluation_erratum"])
+    final_result = _load_json(paths["final_result"])
+    final_closure = _load_json(paths["final_closure"])
+    label_erratum = _load_json(paths["label_erratum"])
+    calibration_cases = _load_jsonl(paths["calibration_cases"])
+    support_cases = _load_jsonl(paths["support_cases"])
+    final_cases = _load_jsonl(paths["final_cases"])
+
+    experiment_id = "FRC-SQUAD2-CALIBRATED-ROBERTA-SUPPORT-V64"
+    status = "SQUAD2_V64_CALIBRATED_QA_FRC_COMPONENT_FEASIBILITY_ESTABLISHED"
+    calibration = calibration_result["analysis"]["calibration"]
+    calibration_outcome = calibration_result["analysis"]["outcome"]
+    support_analysis = support_result["analysis"]
+    support_outcome = support_analysis["outcome"]
+    final_analysis = final_result["analysis"]
+    final_outcome = final_analysis["outcome"]
+    candidate_name = (
+        "calibrated_roberta_supported_adaptive_argmax_cardinality_frc_v43_v64"
+    )
+    candidate = final_analysis["aggregates"][candidate_name]
+    comparisons = final_analysis["family_comparison"]
+    final_checks = final_analysis["support_checks"]
+    expected_candidate = {
+        "abstention_rate": 0.486667,
+        "answer_bearing_macro_f1": 0.755889,
+        "answer_macro_precision": 0.760556,
+        "answer_macro_recall": 0.781111,
+        "answer_or_abstention_macro_f1": 0.807944,
+        "complete_reference_recall": 0.743333,
+        "mean_selected_token_cost": 24.237222,
+        "mean_selected_unit_count": 0.615556,
+        "no_answer_abstention_accuracy": 0.86,
+    }
+    no_raw_text_keys = {"question", "context", "candidate_text", "answer_text"}
+
+    passed = (
+        all(
+            _evidence_sha256(paths[key]) == value
+            for key, value in expected_hashes.items()
+        )
+        and protocol["experiment_id"] == experiment_id
+        and protocol["prior_boundary"]["dev_v2_content_opened_or_parsed"] is False
+        and protocol["threshold_calibration"]["learned_parameter_count"] == 1
+        and implementation["experiment_id"] == experiment_id
+        and implementation["new_calibration_sample_constructed_before_registration"]
+        is False
+        and implementation["dev_content_opened_or_parsed"] is False
+        and implementation["expected_exclusion_union_count"] == 2400
+        and implementation["independent_model_training_confirmation_claimed"] is False
+        and implementation_erratum[
+            "observed_after_calibration_result_before_dev_access"
+        ]
+        is True
+        and implementation_erratum["correction"][
+            "calibration_sample_prediction_folds_threshold_selection_metrics_or_gate_changed"
+        ]
+        is False
+        and calibration_execution["stage"] == "calibration"
+        and calibration_execution["target_cases"] == 2000
+        and calibration_execution["gold_joined_for_metrics"] is False
+        and calibration_execution["qa_query_or_retrieval_started"] is False
+        and calibration_execution["sampling"]["selected_prior_commitment_overlap"] == 0
+        and calibration_result["metadata"]["cases"] == 2000
+        and calibration_result["metadata"]["answer_state_counts"]
+        == {"answer_bearing": 1000, "no_answer": 1000}
+        and calibration_result["metadata"]["articles"] == 426
+        and calibration_result["metadata"]["paragraphs"] == 1889
+        and calibration["article_disjoint"] is True
+        and calibration["fold_count"] == 5
+        and calibration["oof_metrics"]["balanced_accuracy"] == 0.944
+        and calibration["oof_metrics"]["answer_bearing_support_pass_rate"] == 0.956
+        and calibration["oof_metrics"]["no_answer_rejection_rate"] == 0.932
+        and all(calibration_result["analysis"]["support_checks"].values())
+        and calibration_outcome["calibration_gate_passed"] is True
+        and calibration_outcome["confirmation_dev_open_authorized"] is True
+        and calibration_outcome["locked_threshold"] == 0.974609
+        and confirmation_open["calibration_result_sha256"]
+        == expected_hashes["calibration_result"]
+        and confirmation_open["locked_threshold"] == 0.974609375
+        and confirmation_execution["stage"] == "confirmation"
+        and confirmation_execution["target_cases"] == 600
+        and confirmation_execution["gold_joined_for_metrics"] is False
+        and confirmation_execution["qa_query_or_retrieval_started"] is False
+        and confirmation_execution["hashes"]["calibration_open_sha256"]
+        == expected_hashes["confirmation_open"]
+        and support_result["metadata"]["cases"] == 600
+        and support_result["metadata"]["answer_state_counts"]
+        == {"answer_bearing": 300, "no_answer": 300}
+        and support_result["metadata"]["articles"] == 35
+        and support_result["metadata"]["paragraphs"] == 492
+        and support_analysis["support_verifier"]
+        == {
+            "answer_bearing_rows": 300,
+            "answer_bearing_support_pass_rate": 0.886667,
+            "balanced_accuracy": 0.873333,
+            "gold_fields_visible_to_verifier": False,
+            "invalid_output_count": 0,
+            "invalid_output_rate": 0.0,
+            "no_answer_rejection_rate": 0.86,
+            "no_answer_rows": 300,
+            "rows": 600,
+        }
+        and all(support_analysis["support_checks"].values())
+        and support_outcome["support_gate_passed"] is True
+        and support_outcome["retrieval_scoring_open_authorized"] is True
+        and support_outcome["selector_adoption_authorized"] is False
+        and support_outcome["gate_2"] == "NO-GO/SHADOW"
+        and retrieval_open["support_result_sha256"] == expected_hashes["support_result"]
+        and retrieval_open["locked_threshold"] == 0.974609375
+        and retrieval_open["retrieval_scoring_open_authorized"] is True
+        and evaluation_erratum["hashes"]["retrieval_open"]
+        == expected_hashes["retrieval_open"]
+        and evaluation_erratum["hashes"]["score_cache"]
+        == "659d913a6893e7caf339ba887d561b4ce0b6eb7ce50e1a375625d378aafe87ea"
+        and evaluation_erratum["correction"][
+            "sample_score_threshold_metric_or_gate_changed"
+        ]
+        is False
+        and final_result["metadata"]["self_domain_held_out_component_feasibility_only"]
+        is True
+        and final_result["metadata"]["independent_model_training_confirmation"] is False
+        and final_result["metadata"]["official_squad2_answer_string_result"] is False
+        and final_result["metadata"]["source_artifacts"]["query_cache_sha256"]
+        == "f0e3e71e1c62cab4adaa423ecec92ceb773e50500f6da056b288ad64cbd7b64d"
+        and final_result["metadata"]["source_artifacts"]["score_cache_sha256"]
+        == "659d913a6893e7caf339ba887d561b4ce0b6eb7ce50e1a375625d378aafe87ea"
+        and final_analysis["query_cache"]["fallback_rate"] == 0.0
+        and final_analysis["support_verifier"]["balanced_accuracy"] == 0.873333
+        and candidate == expected_candidate
+        and comparisons["candidate_minus_gated_exact_anchor"]
+        == {
+            "ci_high": 0.207057,
+            "ci_low": 0.160868,
+            "clusters": 35,
+            "point": 0.183828,
+            "resamples": 10000,
+            "seed": 20260819,
+        }
+        and comparisons["candidate_minus_strongest_shared_gate_non_frc"]
+        == {
+            "ci_high": 0.194769,
+            "ci_low": 0.146246,
+            "clusters": 35,
+            "point": 0.171069,
+            "resamples": 10000,
+            "seed": 20260819,
+        }
+        and comparisons["candidate_minus_strongest_same_gate_frc"]
+        == {
+            "ci_high": 0.010753,
+            "ci_low": 0.003472,
+            "clusters": 35,
+            "point": 0.006944,
+            "resamples": 10000,
+            "seed": 20260819,
+        }
+        and final_checks[
+            "calibration_or_confirmation_reuse_for_additional_tuning_or_selection"
+        ]
+        is False
+        and all(
+            value
+            for key, value in final_checks.items()
+            if key
+            != "calibration_or_confirmation_reuse_for_additional_tuning_or_selection"
+        )
+        and final_outcome["status"] == status
+        and final_outcome["support_established"] is True
+        and final_outcome["independent_model_training_confirmation_claimed"] is False
+        and final_outcome["selector_adoption_authorized"] is False
+        and final_outcome["canary_or_default_authorized"] is False
+        and final_outcome["gate_2"] == "NO-GO/SHADOW"
+        and final_closure["confirmation_result_sha256"]
+        == expected_hashes["final_result"]
+        and final_closure["status"] == status
+        and final_closure["selector_adoption_authorized"] is False
+        and final_closure["gate_2"] == "NO-GO/SHADOW"
+        and label_erratum["hashes"]["pre_correction_result"]
+        == "8fccb87aa3e684b328106476e46c1811935301d74819fe02559ceca1ec1bbf21"
+        and label_erratum["hashes"]["corrected_result"]
+        == expected_hashes["final_result"]
+        and label_erratum["correction"]["all_numeric_values_unchanged"] is True
+        and label_erratum["issue"]["affected_fields"] == 22
+        and "Qwen" not in final_analysis["mechanism"]
+        and all(
+            not row["strongest_shared_gate_non_frc"].startswith("qwen_")
+            for row in final_analysis["supported_stratum_deltas"].values()
+        )
+        and len(calibration_cases) == 2000
+        and len({row["case_id"] for row in calibration_cases}) == 2000
+        and len(support_cases) == 600
+        and len({row["case_id"] for row in support_cases}) == 600
+        and len(final_cases) == 600
+        and len({row["case_id"] for row in final_cases}) == 600
+        and not no_raw_text_keys
+        & _nested_keys([*calibration_cases, *support_cases, *final_cases])
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    return _check(
+        "squad2_v64_calibrated_roberta_component_feasibility",
+        (
+            "SQuAD2 v64 one-threshold RoBERTa calibration and held-out component "
+            "confirmation are hash-locked without selector adoption or Gate 2 promotion"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": experiment_id,
+            "status": final_outcome["status"],
+            "calibration_cases": calibration_result["metadata"]["cases"],
+            "calibration_articles": calibration_result["metadata"]["articles"],
+            "calibration_oof_metrics": calibration["oof_metrics"],
+            "locked_threshold_exact": confirmation_open["locked_threshold"],
+            "confirmation_cases": final_result["metadata"]["cases"],
+            "confirmation_articles": final_result["metadata"]["articles"],
+            "confirmation_support_verifier": final_analysis["support_verifier"],
+            "candidate_method": candidate_name,
+            "candidate_aggregate": candidate,
+            "family_comparison": comparisons,
+            "self_domain_held_out_component_feasibility_only": True,
+            "independent_model_training_confirmation_claimed": False,
+            "selector_adoption_authorized": final_outcome[
+                "selector_adoption_authorized"
+            ],
+            "canary_or_default_authorized": final_outcome[
+                "canary_or_default_authorized"
+            ],
+            "gate_2": final_outcome["gate_2"],
+        },
+    )
+
+
+def _check_musique_full_roberta_transfer_v65(
+    repo_root: Path,
+) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = repo_root / "output/rag_evaluation/musique_full_roberta_transfer"
+    paths = {
+        "protocol": docs_root / "musique_full_roberta_transfer_protocol_v65.json",
+        "source": docs_root
+        / "musique_full_roberta_transfer_source_registration_v65.json",
+        "model": docs_root
+        / "quac_roberta_qa_support_transfer_model_registration_v62.json",
+        "original_implementation": docs_root
+        / "musique_full_roberta_transfer_implementation_v65.json",
+        "invalid_execution": docs_root
+        / "musique_full_roberta_transfer_execution_v65.json",
+        "invalid_run": docs_root / "musique_full_roberta_transfer_invalid_run_v65.json",
+        "implementation_erratum": docs_root
+        / "musique_full_roberta_transfer_implementation_erratum_v65.json",
+        "corrected_execution": docs_root
+        / "musique_full_roberta_transfer_corrected_execution_v65.json",
+        "support_result": docs_root
+        / "musique_full_roberta_transfer_support_result_v65.json",
+        "support_closure": docs_root
+        / "musique_full_roberta_transfer_support_closure_v65.json",
+        "synthesis": docs_root / "musique_full_roberta_transfer_synthesis_v65.md",
+        "report": output_root / "support_gate/report.md",
+        "cases": output_root / "support_gate/cases.jsonl.gz",
+        "module": repo_root / "research/frc_rag/musique_full_roberta_transfer.py",
+        "runner": repo_root / "scripts/run_musique_full_roberta_transfer.py",
+        "tests": repo_root / "tests/test_frc_musique_full_roberta_transfer.py",
+    }
+    expected_hashes = {
+        "protocol": "578bd51f20cdec041da034c87e5f3890721c9f317de511574474e07692514a38",
+        "source": "c29637ad608af431bed6bb0992cb0b77fc9da8aa96a20b684fb33176837a36f7",
+        "model": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+        "original_implementation": "51e8f847029ec8e032d398373efd65a190c01e7b79340b5344828ac4092b755d",
+        "invalid_execution": "3dc03e77e3e7524fc3ce0b565d582180ef813e54ff3530c43ed6378da4fcb712",
+        "invalid_run": "fbd3ec04b7285497d6f42e3e14a2038b49c33401a8e495c7a6dd650da89fb441",
+        "implementation_erratum": "6d9315b831e739dd965beaefdca4b1b7156fe526810f7d9ffb527bda02faaf5d",
+        "corrected_execution": "97df4e95b341269ea61581564099f5474c0a48d6ea1a7b4edbf235e885727c23",
+        "support_result": "92ce72a89d87655d0e7767d49bbeda33f154c9bcfe48c6dbd8717f2057eb52eb",
+        "support_closure": "330900a534c601734738c622f2b2cdc91ae9e2bf3528c9c81938139d2cc74a00",
+        "synthesis": "7bf1be6e38f5427b16d83b18d449f0252759cdeaba5f69a29139bf25872ce789",
+        "report": "6df05c0d00516dfd62882259f96a1fe5594b7e4c41ed9e6b24cfa138deabb73f",
+        "cases": "22094492584ca99eaae516058f31b7a3b3182f6d6a14499a9291bb03e07bc552",
+        "module": "4908c9337433e43f4eef1fda06e5f763f686a321d5bcdbef221775c8b0fa2d99",
+        "runner": "29142ac793bf2c30f8a29adfe0811a9b0193b1ad3cf05889e4812545b98210e2",
+        "tests": "6fd61ac5e7ad179abb12e4910e5d7cf57861f875530a8d9beedad32e0e168609",
+    }
+    protocol = _load_json(paths["protocol"])
+    source = _load_json(paths["source"])
+    original_implementation = _load_json(paths["original_implementation"])
+    invalid_execution = _load_json(paths["invalid_execution"])
+    invalid_run = _load_json(paths["invalid_run"])
+    implementation_erratum = _load_json(paths["implementation_erratum"])
+    corrected_execution = _load_json(paths["corrected_execution"])
+    support_result = _load_json(paths["support_result"])
+    support_closure = _load_json(paths["support_closure"])
+    cases = _load_jsonl(paths["cases"])
+
+    experiment_id = "FRC-MUSIQUE-FULL-ROBERTA-TRANSFER-V65"
+    failure_status = (
+        "MUSIQUE_FULL_V65_ROBERTA_TRANSFER_SUPPORT_NOT_ESTABLISHED_"
+        "STOP_BEFORE_RETRIEVAL"
+    )
+    invalid_status = (
+        "MUSIQUE_FULL_V65_PROCEDURAL_INVALID_DUPLICATE_SOURCE_ID_STOP_BEFORE_METRICS"
+    )
+    analysis = support_result["analysis"]
+    metadata = support_result["metadata"]
+    verifier = analysis["support_verifier"]
+    outcome = analysis["outcome"]
+    sampling = metadata["source_artifacts"]["sampling"]
+    answerable_cases = [row for row in cases if row["answer_state"] == "answerable"]
+    unanswerable_cases = [row for row in cases if row["answer_state"] == "unanswerable"]
+    answerable_pass_rate = round(
+        sum(bool(row["support_passed"]) for row in answerable_cases)
+        / len(answerable_cases),
+        6,
+    )
+    no_answer_rejection_rate = round(
+        sum(not bool(row["support_passed"]) for row in unanswerable_cases)
+        / len(unanswerable_cases),
+        6,
+    )
+    balanced_accuracy = round(
+        (
+            sum(bool(row["support_passed"]) for row in answerable_cases)
+            + sum(not bool(row["support_passed"]) for row in unanswerable_cases)
+        )
+        / (len(answerable_cases) + len(unanswerable_cases)),
+        6,
+    )
+    trap_cases = [row for row in unanswerable_cases if row["local_span_trap"]]
+    trap_rejection_rate = round(
+        sum(not bool(row["support_passed"]) for row in trap_cases) / len(trap_cases),
+        6,
+    )
+    hop_strata = {
+        str(hop): {
+            "cases": len(rows),
+            "rejection_rate": round(
+                sum(not bool(row["support_passed"]) for row in rows) / len(rows),
+                6,
+            ),
+        }
+        for hop in sorted({int(row["hop_count"]) for row in unanswerable_cases})
+        if (rows := [row for row in unanswerable_cases if int(row["hop_count"]) == hop])
+    }
+    forbidden_text_keys = {
+        "question",
+        "context",
+        "answer",
+        "answer_aliases",
+        "question_decomposition",
+        "paragraph_text",
+        "paragraph_title",
+    }
+
+    passed = (
+        all(
+            _evidence_sha256(paths[key]) == value
+            for key, value in expected_hashes.items()
+        )
+        and protocol["experiment_id"] == experiment_id
+        and protocol["prior_boundary"][
+            "v65_target_content_opened_or_parsed_before_this_protocol"
+        ]
+        is False
+        and protocol["sampling"]["target_cases"] == 600
+        and protocol["sampling"]["target_per_answer_state"] == 300
+        and protocol["sampling"]["maximum_cases_per_source_id"] == 1
+        and protocol["support_transfer"]["locked_threshold_exact"] == 0.974609375
+        and protocol["support_transfer"][
+            "learned_or_adjusted_parameter_count_on_musique"
+        ]
+        == 0
+        and protocol["pre_retrieval_gates"][
+            "all_must_pass_before_query_generation_or_neural_retrieval_scoring"
+        ]
+        is True
+        and protocol["outcomes"]["gate_2"] == "NO-GO/SHADOW"
+        and source["experiment_id"] == experiment_id
+        and source["target"]["content_opened_or_parsed_before_registration"] is False
+        and source["target_jsonl_rows_read"] == 0
+        and source["strict_independent_model_training_confirmation_claimed"] is False
+        and original_implementation["target_jsonl_rows_read_before_registration"] == 0
+        and original_implementation["synthetic_tests"]
+        == {
+            "passed": 9,
+            "failed": 0,
+            "target_source_used": False,
+            "model_files_used": False,
+        }
+        and invalid_execution["gold_joined_for_metrics"] is False
+        and invalid_execution["qa_or_retrieval_started"] is False
+        and invalid_execution["query_or_neural_retrieval_started"] is False
+        and invalid_run["status"] == invalid_status
+        and invalid_run["registered_after_qa_before_gold_join_or_metric_computation"]
+        is True
+        and invalid_run["observed_integrity_counts"]
+        == {
+            "prepared_rows": 600,
+            "unique_prepared_case_ids": 300,
+            "candidate_map_rows": 600,
+            "unique_source_id_commitments": 300,
+            "qa_input_rows": 11998,
+            "raw_paragraph_qa_rows": 11998,
+            "aggregated_case_support_rows": 300,
+        }
+        and invalid_run["information_revealed_before_invalidation"]
+        == {
+            "source_schema_and_exclusion_counts": True,
+            "duplicate_case_and_source_commitment_counts": True,
+            "raw_model_margin_span_or_support_decision_values": False,
+            "gold_answerability_join": False,
+            "aggregate_or_per_stratum_metric": False,
+            "query_generation_or_neural_retrieval_scoring": False,
+        }
+        and invalid_run["disposition"][
+            "invalid_raw_qa_or_case_support_may_be_used_for_tuning_threshold_selection_or_reporting"
+        ]
+        is False
+        and invalid_run["disposition"][
+            "all_300_unique_source_id_commitments_must_be_excluded_from_corrected_run"
+        ]
+        is True
+        and invalid_run["disposition"]["gold_metrics_may_be_computed_for_invalid_run"]
+        is False
+        and implementation_erratum[
+            "registered_after_invalid_run_before_corrected_target_parse"
+        ]
+        is True
+        and implementation_erratum["gold_join_or_metric_computation_before_correction"]
+        is False
+        and implementation_erratum["issue"][
+            "detected_from_integrity_counts_not_prediction_values"
+        ]
+        is True
+        and implementation_erratum["correction"][
+            "model_weights_architecture_threshold_support_formula_or_registered_gate_changed"
+        ]
+        is False
+        and implementation_erratum["correction"][
+            "target_prediction_margin_span_gold_or_metric_used_to_choose_correction"
+        ]
+        is False
+        and implementation_erratum["synthetic_tests"]["passed"] == 10
+        and implementation_erratum["synthetic_tests"]["failed"] == 0
+        and implementation_erratum["hashes"]["invalid_candidate_map"]
+        == invalid_run["hashes"]["candidate_map"]
+        and corrected_execution["prepared_cases"] == 600
+        and corrected_execution["candidate_maps"] == 600
+        and corrected_execution["qa_input_rows"] == 11999
+        and corrected_execution["gold_joined_for_metrics"] is False
+        and corrected_execution["qa_or_retrieval_started"] is False
+        and corrected_execution["query_or_neural_retrieval_started"] is False
+        and corrected_execution["hashes"]["implementation_registration_sha256"]
+        == expected_hashes["implementation_erratum"]
+        and corrected_execution["sampling"]["selected_cases"] == 600
+        and corrected_execution["sampling"]["selected_answer_state_counts"]
+        == {"answerable": 300, "unanswerable": 300}
+        and corrected_execution["sampling"]["invalid_run_source_rows_excluded"] == 600
+        and corrected_execution["sampling"]["selected_invalid_run_source_overlap"] == 0
+        and corrected_execution["sampling"]["selected_squad2_exact_question_overlap"]
+        == 0
+        and corrected_execution["sampling"]["selected_v36_source_id_overlap"] == 0
+        and corrected_execution["structural_census"][
+            "gold_fields_exported_to_blind_caches"
+        ]
+        is False
+        and metadata["cases"] == 600
+        and metadata["answer_state_counts"] == {"answerable": 300, "unanswerable": 300}
+        and metadata["strict_independent_model_training_confirmation"] is False
+        and metadata["official_musique_leaderboard_result"] is False
+        and metadata["source_artifacts"]["gold_joined_after_complete_qa_cache"] is True
+        and metadata["source_artifacts"]["query_or_neural_retrieval_started"] is False
+        and metadata["source_artifacts"]["execution_registration_sha256"]
+        == expected_hashes["corrected_execution"]
+        and sampling["selected_cases"] == 600
+        and sampling["selected_invalid_run_source_overlap"] == 0
+        and sampling["selected_squad2_exact_question_overlap"] == 0
+        and sampling["selected_v36_source_id_overlap"] == 0
+        and verifier
+        == {
+            "answer_bearing_support_pass_rate": 0.63,
+            "balanced_accuracy": 0.563333,
+            "gold_fields_visible_to_verifier": False,
+            "invalid_output_count": 0,
+            "invalid_output_rate": 0.0,
+            "locked_threshold": 0.974609,
+            "no_answer_rejection_rate": 0.496667,
+            "rows": 600,
+        }
+        and analysis["local_span_trap"]
+        == {"cases": 69, "unanswerable_rejection_rate": 0.449275}
+        and analysis["unanswerable_hop_strata"]
+        == {
+            "2": {"cases": 239, "rejection_rate": 0.476987},
+            "3": {"cases": 48, "rejection_rate": 0.5625},
+            "4": {"cases": 13, "rejection_rate": 0.615385},
+        }
+        and analysis["support_checks"]["exact_cases_equals_600"] is True
+        and analysis["support_checks"]["exact_answer_state_balance"] is True
+        and analysis["support_checks"]["selected_invalid_run_source_overlap_equals_0"]
+        is True
+        and analysis["support_checks"]["balanced_accuracy_at_least_0_8"] is False
+        and analysis["support_checks"]["answerable_support_pass_rate_at_least_0_8"]
+        is False
+        and analysis["support_checks"]["unanswerable_rejection_rate_at_least_0_7"]
+        is False
+        and outcome["status"] == failure_status
+        and outcome["support_gate_passed"] is False
+        and outcome["retrieval_scoring_open_authorized"] is False
+        and outcome["reuse_v65_for_tuning_threshold_or_selection"] is False
+        and outcome["strict_independent_model_training_confirmation_claimed"] is False
+        and outcome["selector_adoption_authorized"] is False
+        and outcome["canary_or_default_authorized"] is False
+        and outcome["gate_2"] == "NO-GO/SHADOW"
+        and support_closure["support_result_sha256"]
+        == expected_hashes["support_result"]
+        and support_closure["status"] == failure_status
+        and support_closure["query_generation_started"] is False
+        and support_closure["neural_retrieval_scoring_started"] is False
+        and support_closure["reuse_v65_for_tuning_threshold_or_selection"] is False
+        and support_closure["gate_2"] == "NO-GO/SHADOW"
+        and len(cases) == 600
+        and len({row["case_id"] for row in cases}) == 600
+        and len(answerable_cases) == 300
+        and len(unanswerable_cases) == 300
+        and answerable_pass_rate == verifier["answer_bearing_support_pass_rate"]
+        and no_answer_rejection_rate == verifier["no_answer_rejection_rate"]
+        and balanced_accuracy == verifier["balanced_accuracy"]
+        and len(trap_cases) == analysis["local_span_trap"]["cases"]
+        and trap_rejection_rate
+        == analysis["local_span_trap"]["unanswerable_rejection_rate"]
+        and hop_strata == analysis["unanswerable_hop_strata"]
+        and not forbidden_text_keys & _nested_keys(cases)
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    return _check(
+        "musique_full_v65_roberta_transfer_boundary",
+        (
+            "MuSiQue-Full v65 direct RoBERTa threshold transfer is hash-locked, "
+            "repairs the pre-metric duplicate-source run, stops before retrieval, "
+            "and preserves Gate 2 No-Go"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": experiment_id,
+            "status": outcome["status"],
+            "invalid_run_status": invalid_run["status"],
+            "invalid_run_gold_or_metrics_computed": False,
+            "invalid_run_unique_source_commitments": invalid_run[
+                "observed_integrity_counts"
+            ]["unique_source_id_commitments"],
+            "corrected_cases": metadata["cases"],
+            "corrected_unique_case_ids": len({row["case_id"] for row in cases}),
+            "corrected_invalid_run_source_overlap": sampling[
+                "selected_invalid_run_source_overlap"
+            ],
+            "corrected_squad2_exact_question_overlap": sampling[
+                "selected_squad2_exact_question_overlap"
+            ],
+            "corrected_v36_source_id_overlap": sampling[
+                "selected_v36_source_id_overlap"
+            ],
+            "support_verifier": verifier,
+            "local_span_trap": analysis["local_span_trap"],
+            "unanswerable_hop_strata": analysis["unanswerable_hop_strata"],
+            "query_generation_started": support_closure["query_generation_started"],
+            "neural_retrieval_scoring_started": support_closure[
+                "neural_retrieval_scoring_started"
+            ],
+            "strict_independent_model_training_confirmation_claimed": outcome[
+                "strict_independent_model_training_confirmation_claimed"
+            ],
+            "reuse_v65_for_tuning_threshold_or_selection": outcome[
+                "reuse_v65_for_tuning_threshold_or_selection"
+            ],
+            "selector_adoption_authorized": outcome["selector_adoption_authorized"],
+            "canary_or_default_authorized": outcome["canary_or_default_authorized"],
+            "gate_2": outcome["gate_2"],
+        },
+    )
+
+
+def _check_musique_sequential_chain_support_v66(
+    repo_root: Path,
+) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = (
+        repo_root
+        / "output/rag_evaluation/musique_sequential_chain_support_v66/development"
+    )
+    paths = {
+        "protocol": docs_root / "musique_sequential_chain_support_protocol_v66.json",
+        "source": docs_root
+        / "musique_sequential_chain_support_source_registration_v66.json",
+        "model": docs_root
+        / "quac_roberta_qa_support_transfer_model_registration_v62.json",
+        "implementation": docs_root
+        / "musique_sequential_chain_support_implementation_v66.json",
+        "implementation_erratum": docs_root
+        / "musique_sequential_chain_support_implementation_erratum_v66.json",
+        "execution": docs_root
+        / "musique_sequential_chain_support_development_execution_v66.json",
+        "result": docs_root
+        / "musique_sequential_chain_support_development_result_v66.json",
+        "closure": docs_root
+        / "musique_sequential_chain_support_development_closure_v66.json",
+        "synthesis": docs_root / "musique_sequential_chain_support_synthesis_v66.md",
+        "report": output_root / "report.md",
+        "cases": output_root / "cases.jsonl.gz",
+        "module": repo_root / "research/frc_rag/musique_sequential_chain_support.py",
+        "runner": repo_root / "scripts/run_musique_sequential_chain_support.py",
+        "tests": repo_root / "tests/test_frc_musique_sequential_chain_support.py",
+    }
+    confirmation_open = (
+        docs_root / "musique_sequential_chain_support_confirmation_open_v66.json"
+    )
+    expected_hashes = {
+        "protocol": "518bb128745521677e3e5b33e42cfd7484aab8163c1fb3441fb4192c1aa70456",
+        "source": "0febdc4c8ae7e495c7f79d826444633a154feeac64017d5d22095dbd6494dd3f",
+        "model": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+        "implementation": "d3915aa423472f18197b26e6336e36b41eb89802852d05c511e862f39fb5dd66",
+        "implementation_erratum": "0b4ca1e51a404d9449c9c3f4704fa48eec51ee6b832fcba1905a88a002563cb7",
+        "execution": "ab7c2f394661306cd8e9193c2b9cc44a3b51c86b441eb9f0845bba8ccf1713a6",
+        "result": "2c4833b2b440e776a947786b6e2fe41160124886b31326c18464e21b663b4503",
+        "closure": "82a7aadc9097486ce94d6e153dbcc585b12a0b63065ead5fb63a4ac367b0b796",
+        "synthesis": "19f7ee913c33fe8d2f7244d2d4d2a127ec9151f9acb6b6da5205b85720edb0c2",
+        "report": "7bdedd44fd2fc5a6934bf6fc191d6cc103c02e69357b43cd961180ad44ba41fb",
+        "cases": "07ec69f965ada9c944ba152d0b63ff9c783639a1a2c47cfa993c905bd9ea5fb5",
+        "module": "b437dff0881df1d0a974a5120a7425dc6f8b3348a852f8d195007b9dc8fa5690",
+        "runner": "52e77b01495c9508832eec53038f7160382fe09393bc36ace63706a72c3e47cd",
+        "tests": "e68187e4b9d838a22b120c081632e21bd9f9b11fafe6b3afe6a95fcbc571bf25",
+    }
+    protocol = _load_json(paths["protocol"])
+    source = _load_json(paths["source"])
+    implementation = _load_json(paths["implementation"])
+    erratum = _load_json(paths["implementation_erratum"])
+    execution = _load_json(paths["execution"])
+    result = _load_json(paths["result"])
+    closure = _load_json(paths["closure"])
+    cases = _load_jsonl(paths["cases"])
+
+    experiment_id = "FRC-MUSIQUE-SEQUENTIAL-CHAIN-SUPPORT-V66"
+    failure_status = (
+        "MUSIQUE_V66_SEQUENTIAL_CHAIN_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_"
+        "STOP_BEFORE_CONFIRMATION"
+    )
+    metadata = result["metadata"]
+    analysis = result["analysis"]
+    outcome = analysis["outcome"]
+    artifacts = metadata["source_artifacts"]
+    sampling = artifacts["sampling"]
+    direct = analysis["direct_composed_question"]
+    chain = analysis["oracle_plan_sequential_chain"]
+    comparison = analysis["paired_correctness_delta"]
+    answerable = [row for row in cases if row["answer_state"] == "answerable"]
+    unanswerable = [row for row in cases if row["answer_state"] == "unanswerable"]
+
+    direct_answer_pass = round(
+        sum(bool(row["direct_support_passed"]) for row in answerable) / len(answerable),
+        6,
+    )
+    direct_noanswer_reject = round(
+        sum(not bool(row["direct_support_passed"]) for row in unanswerable)
+        / len(unanswerable),
+        6,
+    )
+    chain_answer_pass = round(
+        sum(bool(row["sequential_chain_support_passed"]) for row in answerable)
+        / len(answerable),
+        6,
+    )
+    chain_noanswer_reject = round(
+        sum(not bool(row["sequential_chain_support_passed"]) for row in unanswerable)
+        / len(unanswerable),
+        6,
+    )
+    traps = [row for row in unanswerable if row["direct_support_passed"]]
+    trap_rejection = round(
+        sum(not bool(row["sequential_chain_support_passed"]) for row in traps)
+        / len(traps),
+        6,
+    )
+    hop_strata = {
+        str(hop): {
+            "cases": len(rows),
+            "rejection_rate": round(
+                sum(not bool(row["sequential_chain_support_passed"]) for row in rows)
+                / len(rows),
+                6,
+            ),
+        }
+        for hop in sorted({int(row["hop_count"]) for row in unanswerable})
+        if (rows := [row for row in unanswerable if int(row["hop_count"]) == hop])
+    }
+    forbidden_text_keys = {
+        "question",
+        "context",
+        "composed_question",
+        "oracle_hop_templates",
+        "answer",
+        "answer_aliases",
+        "paragraph_support_idx",
+        "is_supporting",
+        "predicted_span",
+    }
+
+    passed = (
+        all(
+            _evidence_sha256(paths[key]) == value
+            for key, value in expected_hashes.items()
+        )
+        and protocol["experiment_id"] == experiment_id
+        and protocol["prior_boundary"]["target_file_was_previously_parsed_for_v65"]
+        is True
+        and protocol["prior_boundary"]["v66_case_ids_selected_before_this_protocol"]
+        is False
+        and protocol["sampling"]["expected_v65_source_commitment_union_count"] == 900
+        and protocol["blind_execution"]["locked_threshold_exact"] == 0.974609375
+        and protocol["blind_execution"][
+            "learned_or_adjusted_parameter_count_on_musique_v66"
+        ]
+        == 0
+        and protocol["oracle_plan_boundary"][
+            "official_decomposition_is_available_at_runtime_for_arbitrary_flood_questions"
+        ]
+        is False
+        and protocol["stopping_and_outcomes"]["gate_2"] == "NO-GO/SHADOW"
+        and source["target"]["previously_parsed_for_v65"] is True
+        and source["target"]["v66_source_commitments_selected"] == 0
+        and source["v65_exclusion_sources"]["expected_union_source_commitments"] == 900
+        and source["strict_independent_model_training_confirmation_claimed"] is False
+        and implementation["target_rows_read_for_v66_before_registration"] == 0
+        and implementation["v66_source_commitments_selected_before_registration"] == 0
+        and implementation["synthetic_tests"]
+        == {
+            "passed": 11,
+            "failed": 0,
+            "target_source_used": False,
+            "model_files_used": False,
+        }
+        and implementation[
+            "model_weights_architecture_tokenizer_threshold_rule_or_gate_changed"
+        ]
+        is False
+        and erratum["registered_after_import_failure_before_target_rows_read_for_v66"]
+        is True
+        and erratum["issue"]["failure_stage"]
+        == "module import before argument parsing, source validation, target open or sample selection"
+        and erratum["issue"]["target_rows_read_for_v66"] == 0
+        and erratum["issue"]["v66_source_commitments_selected"] == 0
+        and erratum["issue"]["model_predictions_computed"] == 0
+        and erratum["issue"]["gold_or_metric_seen"] is False
+        and erratum["correction"][
+            "sample_selection_model_tokenizer_threshold_chain_rule_gate_or_stopping_logic_changed"
+        ]
+        is False
+        and erratum["original_implementation_registration_sha256"]
+        == expected_hashes["implementation"]
+        and execution["experiment_id"] == experiment_id
+        and execution["stage"] == "development"
+        and execution["gold_joined_for_metrics"] is False
+        and execution["qa_started"] is False
+        and execution["model_or_threshold_adjusted"] is False
+        and execution["prepared_cases"] == 600
+        and execution["candidate_maps"] == 600
+        and execution["direct_qa_input_rows"] == 12000
+        and execution["hashes"]["implementation_registration_sha256"]
+        == expected_hashes["implementation_erratum"]
+        and execution["hashes"]["confirmation_open_sha256"] is None
+        and execution["sampling"]["selected_cases"] == 600
+        and execution["sampling"]["selected_answer_state_counts"]
+        == {"answerable": 300, "unanswerable": 300}
+        and execution["sampling"]["excluded_source_commitment_rows"] == 1800
+        and execution["sampling"]["selected_excluded_source_commitment_overlap"] == 0
+        and execution["sampling"]["selected_squad2_exact_question_overlap"] == 0
+        and execution["structural_census"]["hop_count_distribution"]
+        == {"2": 460, "3": 114, "4": 26}
+        and execution["structural_census"]["gold_fields_exported_to_blind_caches"]
+        is False
+        and metadata["stage"] == "development"
+        and metadata["cases"] == 600
+        and metadata["answer_state_counts"] == {"answerable": 300, "unanswerable": 300}
+        and metadata["official_musique_leaderboard_result"] is False
+        and metadata["automatic_decomposer_result"] is False
+        and metadata["strict_independent_model_training_confirmation"] is False
+        and artifacts["execution_registration_sha256"] == expected_hashes["execution"]
+        and artifacts["gold_joined_after_complete_direct_and_sequential_qa"] is True
+        and artifacts["retrieval_scoring_started"] is False
+        and sampling["selected_excluded_source_commitment_overlap"] == 0
+        and sampling["selected_squad2_exact_question_overlap"] == 0
+        and direct
+        == {
+            "rows": 600,
+            "answerable_rows": 300,
+            "unanswerable_rows": 300,
+            "answerable_support_pass_rate": 0.61,
+            "unanswerable_rejection_rate": 0.526667,
+            "balanced_accuracy": 0.568333,
+        }
+        and chain
+        == {
+            "rows": 600,
+            "answerable_rows": 300,
+            "unanswerable_rows": 300,
+            "answerable_support_pass_rate": 0.39,
+            "unanswerable_rejection_rate": 0.816667,
+            "balanced_accuracy": 0.603333,
+        }
+        and comparison
+        == {
+            "point": 0.035,
+            "ci_low": -0.015,
+            "ci_high": 0.085,
+            "resamples": 10000,
+            "seed": 20260820,
+        }
+        and analysis["direct_passed_unanswerable_traps"]
+        == {"cases": 142, "sequential_rejection_rate": 0.697183}
+        and analysis["unanswerable_hop_strata"]
+        == {
+            "2": {"cases": 231, "rejection_rate": 0.779221},
+            "3": {"cases": 54, "rejection_rate": 0.944444},
+            "4": {"cases": 15, "rejection_rate": 0.933333},
+        }
+        and analysis["invalid_chain_output_count"] == 0
+        and analysis["support_checks"][
+            "sequential_chain_unanswerable_rejection_rate_at_least_0_80"
+        ]
+        is True
+        and analysis["support_checks"][
+            "sequential_chain_answerable_pass_rate_at_least_0_60"
+        ]
+        is False
+        and analysis["support_checks"][
+            "sequential_chain_balanced_accuracy_at_least_0_72"
+        ]
+        is False
+        and analysis["support_checks"][
+            "sequential_minus_direct_balanced_accuracy_at_least_0_10"
+        ]
+        is False
+        and analysis["support_checks"][
+            "sequential_minus_direct_correctness_ci_low_above_0_05"
+        ]
+        is False
+        and outcome["status"] == failure_status
+        and outcome["stage_gate_passed"] is False
+        and outcome["confirmation_open_authorized"] is False
+        and outcome["reuse_failed_stage_for_tuning_threshold_rule_gate_or_selection"]
+        is False
+        and outcome["selector_or_retrieval_scoring_part_of_v66"] is False
+        and outcome["selector_adoption_authorized"] is False
+        and outcome["canary_or_default_authorized"] is False
+        and outcome["gate_2"] == "NO-GO/SHADOW"
+        and closure["stage_result_sha256"] == expected_hashes["result"]
+        and closure["status"] == failure_status
+        and closure["confirmation_open_authorized"] is False
+        and closure["retrieval_scoring_started"] is False
+        and closure["reuse_failed_stage_for_tuning_threshold_rule_gate_or_selection"]
+        is False
+        and closure["gate_2"] == "NO-GO/SHADOW"
+        and not confirmation_open.exists()
+        and len(cases) == 600
+        and len({row["case_id"] for row in cases}) == 600
+        and len(answerable) == 300
+        and len(unanswerable) == 300
+        and direct_answer_pass == direct["answerable_support_pass_rate"]
+        and direct_noanswer_reject == direct["unanswerable_rejection_rate"]
+        and chain_answer_pass == chain["answerable_support_pass_rate"]
+        and chain_noanswer_reject == chain["unanswerable_rejection_rate"]
+        and len(traps) == analysis["direct_passed_unanswerable_traps"]["cases"]
+        and trap_rejection
+        == analysis["direct_passed_unanswerable_traps"]["sequential_rejection_rate"]
+        and hop_strata == analysis["unanswerable_hop_strata"]
+        and not forbidden_text_keys & _nested_keys(cases)
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    return _check(
+        "musique_v66_sequential_chain_support_boundary",
+        (
+            "MuSiQue v66 oracle-plan sequential chain development is hash-locked, "
+            "case-disjoint from v65, stopped before confirmation, and preserves "
+            "Gate 2 No-Go"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": experiment_id,
+            "status": outcome["status"],
+            "cases": metadata["cases"],
+            "answer_state_counts": metadata["answer_state_counts"],
+            "v65_source_commitment_union": 900,
+            "selected_v65_source_overlap": sampling[
+                "selected_excluded_source_commitment_overlap"
+            ],
+            "selected_squad2_exact_question_overlap": sampling[
+                "selected_squad2_exact_question_overlap"
+            ],
+            "direct_composed_question": direct,
+            "oracle_plan_sequential_chain": chain,
+            "paired_correctness_delta": comparison,
+            "direct_passed_unanswerable_traps": analysis[
+                "direct_passed_unanswerable_traps"
+            ],
+            "unanswerable_hop_strata": analysis["unanswerable_hop_strata"],
+            "confirmation_opened": confirmation_open.exists(),
+            "automatic_decomposer_result": metadata["automatic_decomposer_result"],
+            "strict_independent_model_training_confirmation_claimed": False,
+            "reuse_failed_stage_for_tuning_threshold_rule_gate_or_selection": outcome[
+                "reuse_failed_stage_for_tuning_threshold_rule_gate_or_selection"
+            ],
+            "selector_adoption_authorized": outcome["selector_adoption_authorized"],
+            "canary_or_default_authorized": outcome["canary_or_default_authorized"],
+            "gate_2": outcome["gate_2"],
+        },
+    )
+
+
+def _check_musique_calibrated_chain_support_v67(
+    repo_root: Path,
+) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = (
+        repo_root / "output/rag_evaluation/musique_calibrated_chain_support_v67"
+    )
+    paths = {
+        "protocol": docs_root / "musique_calibrated_chain_support_protocol_v67.json",
+        "source": docs_root
+        / "musique_calibrated_chain_support_source_registration_v67.json",
+        "model": docs_root
+        / "quac_roberta_qa_support_transfer_model_registration_v62.json",
+        "implementation": docs_root
+        / "musique_calibrated_chain_support_implementation_v67.json",
+        "calibration_execution": docs_root
+        / "musique_calibrated_chain_support_calibration_execution_v67.json",
+        "calibration_result": docs_root
+        / "musique_calibrated_chain_support_calibration_result_v67.json",
+        "development_execution": docs_root
+        / "musique_calibrated_chain_support_development_execution_v67.json",
+        "development_result": docs_root
+        / "musique_calibrated_chain_support_development_result_v67.json",
+        "development_closure": docs_root
+        / "musique_calibrated_chain_support_development_closure_v67.json",
+        "synthesis": docs_root / "musique_calibrated_chain_support_synthesis_v67.md",
+        "calibration_report": output_root / "calibration/report.md",
+        "calibration_cases": output_root / "calibration/cases.jsonl.gz",
+        "development_report": output_root / "development/report.md",
+        "development_cases": output_root / "development/cases.jsonl.gz",
+        "module": repo_root / "research/frc_rag/musique_calibrated_chain_support.py",
+        "runner": repo_root / "scripts/run_musique_calibrated_chain_support.py",
+        "tests": repo_root / "tests/test_frc_musique_calibrated_chain_support.py",
+    }
+    confirmation_open = (
+        docs_root / "musique_calibrated_chain_support_confirmation_open_v67.json"
+    )
+    expected_hashes = {
+        "protocol": "e1e89f88daa6f5c213f86d32e3394bd12c5fa62516cf4cf4e107a677219cfa45",
+        "source": "5582a96af68c9aeb65e53ee2b44e9c84b12779d9a56f70b3eb9cac03244c7b77",
+        "model": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+        "implementation": "0ddf775604f4f19fb941859453fd0e135aacf6a8dc561407d188c8d71d33546a",
+        "calibration_execution": "9c48676cdad30999f7d974e3c8bef6cd1f97f644fd8a9d7aa77b17eb23236d3c",
+        "calibration_result": "55f09323e32a81a87563e830aa1027af4b36abca235140f7a24a415a112a54b4",
+        "development_execution": "aad35e844944b216c5cf32f7cd55224301a31bc2a18ac77275518c5f464f7467",
+        "development_result": "58934a3dbd0c48d531e99c04e8cac7a9198bc8756795389664b90c6fc0707521",
+        "development_closure": "56ed70f23699b9bf2666dd31b0de64199b32047ccaf26a9ab918f5d2667d1330",
+        "synthesis": "c19d3f01154fc1d0ff5b09c4f20f8813bef589561090f1542d758b4f30c8b138",
+        "calibration_report": "095b9d82eabdc5815e55f5edc4c35573a61719361c91e5f798c145405950ae3e",
+        "calibration_cases": "18c299e5f7e49d8d9a683672c7efc28c19884f2f3381e525e130b412ce192fd1",
+        "development_report": "fe4fe3cdf45a1d6074b0e77baa085fcd8340ac05a31c49c61b60724b02df11fd",
+        "development_cases": "33a1ec611c9f942573ff3ce07c5ea3ffdae9df58d7c43da3cf3c582c93956d45",
+        "module": "84c09f029ecdd8c8d9511fc1f8c18a1dfdddabc858ff3850aeb196bd6239882d",
+        "runner": "5f6045ce0b1dc75eb82786ae29c774d82d9e7acde214c23d1cef0c3d6db97a6b",
+        "tests": "6dbdb6c8ef4997daf824ea6f08d00ae0db76fc532ce25aba182a7a12bab72ba8",
+    }
+    protocol = _load_json(paths["protocol"])
+    source = _load_json(paths["source"])
+    implementation = _load_json(paths["implementation"])
+    calibration_execution = _load_json(paths["calibration_execution"])
+    calibration_result = _load_json(paths["calibration_result"])
+    development_execution = _load_json(paths["development_execution"])
+    development_result = _load_json(paths["development_result"])
+    closure = _load_json(paths["development_closure"])
+    calibration_cases = _load_jsonl(paths["calibration_cases"])
+    development_cases = _load_jsonl(paths["development_cases"])
+
+    experiment_id = "FRC-MUSIQUE-CALIBRATED-CHAIN-SUPPORT-V67"
+    failure_status = (
+        "MUSIQUE_V67_CALIBRATED_CHAIN_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_"
+        "STOP_BEFORE_CONFIRMATION"
+    )
+    calibration = calibration_result["analysis"]
+    analysis = development_result["analysis"]
+    outcome = analysis["outcome"]
+    metadata = development_result["metadata"]
+    artifacts = metadata["source_artifacts"]
+    sampling = metadata["sampling"]
+    direct_threshold = calibration["direct_composed_question"]["pooled"][
+        "threshold_exact"
+    ]
+    chain_threshold = calibration["oracle_plan_chain_bottleneck"]["pooled"][
+        "threshold_exact"
+    ]
+
+    def _decision(row: dict[str, Any], field: str, threshold: float) -> bool:
+        value = row.get(field)
+        return value is not None and float(value) > threshold
+
+    def _metrics(
+        rows: list[dict[str, Any]], field: str, threshold: float
+    ) -> dict[str, Any]:
+        answerable = [row for row in rows if row["answer_state"] == "answerable"]
+        unanswerable = [row for row in rows if row["answer_state"] == "unanswerable"]
+        answer_pass_raw = sum(
+            _decision(row, field, threshold) for row in answerable
+        ) / len(answerable)
+        noanswer_reject_raw = sum(
+            not _decision(row, field, threshold) for row in unanswerable
+        ) / len(unanswerable)
+        answer_pass = round(answer_pass_raw, 6)
+        noanswer_reject = round(noanswer_reject_raw, 6)
+        return {
+            "rows": len(rows),
+            "answerable_rows": len(answerable),
+            "unanswerable_rows": len(unanswerable),
+            "threshold_exact": threshold,
+            "answerable_pass_rate": answer_pass,
+            "unanswerable_rejection_rate": noanswer_reject,
+            "balanced_accuracy": round(
+                (answer_pass_raw + noanswer_reject_raw) / 2,
+                6,
+            ),
+        }
+
+    calibration_direct = _metrics(
+        calibration_cases,
+        "direct_score_margin",
+        direct_threshold,
+    )
+    calibration_chain = _metrics(
+        calibration_cases,
+        "chain_bottleneck_score",
+        chain_threshold,
+    )
+    development_direct = _metrics(
+        development_cases,
+        "direct_score_margin",
+        direct_threshold,
+    )
+    development_fixed = _metrics(
+        development_cases,
+        "chain_bottleneck_score",
+        0.974609375,
+    )
+    development_chain = _metrics(
+        development_cases,
+        "chain_bottleneck_score",
+        chain_threshold,
+    )
+    development_unanswerable = [
+        row for row in development_cases if row["answer_state"] == "unanswerable"
+    ]
+    hop_strata = {
+        str(hop): {
+            "cases": len(rows),
+            "rejection_rate": round(
+                sum(
+                    not _decision(
+                        row,
+                        "chain_bottleneck_score",
+                        chain_threshold,
+                    )
+                    for row in rows
+                )
+                / len(rows),
+                6,
+            ),
+        }
+        for hop in sorted({int(row["hop_count"]) for row in development_unanswerable})
+        if (
+            rows := [
+                row for row in development_unanswerable if int(row["hop_count"]) == hop
+            ]
+        )
+    }
+    paired_point = round(
+        sum(
+            (
+                _decision(row, "chain_bottleneck_score", chain_threshold)
+                if row["answer_state"] == "answerable"
+                else not _decision(
+                    row,
+                    "chain_bottleneck_score",
+                    chain_threshold,
+                )
+            )
+            - (
+                _decision(row, "chain_bottleneck_score", 0.974609375)
+                if row["answer_state"] == "answerable"
+                else not _decision(
+                    row,
+                    "chain_bottleneck_score",
+                    0.974609375,
+                )
+            )
+            for row in development_cases
+        )
+        / len(development_cases),
+        6,
+    )
+    forbidden_text_keys = {
+        "question",
+        "context",
+        "composed_question",
+        "oracle_hop_templates",
+        "answer",
+        "answer_aliases",
+        "paragraph_support_idx",
+        "is_supporting",
+        "predicted_span",
+        "source_id",
+        "source_id_commitment",
+    }
+
+    passed = (
+        all(
+            _evidence_sha256(paths[key]) == value
+            for key, value in expected_hashes.items()
+        )
+        and protocol["experiment_id"] == experiment_id
+        and protocol["prior_boundary"][
+            "target_train_and_dev_files_were_previously_parsed"
+        ]
+        is True
+        and protocol["prior_boundary"]["v67_case_ids_selected_before_this_protocol"]
+        is False
+        and protocol["sampling"]["expected_prior_source_commitment_union_count"] == 1500
+        and protocol["threshold_selection"]["learned_parameter_count"] == 2
+        and protocol["threshold_selection"][
+            "development_or_confirmation_used_for_threshold_selection"
+        ]
+        is False
+        and protocol["stopping_and_outcomes"]["gate_2"] == "NO-GO/SHADOW"
+        and source["targets"]["v67_source_commitments_selected_before_registration"]
+        == 0
+        and source["targets"][
+            "v67_model_outputs_or_joined_metrics_seen_before_registration"
+        ]
+        is False
+        and source["prior_exclusion_sources"]["expected_union_source_commitments"]
+        == 1500
+        and source["strict_independent_model_training_confirmation_claimed"] is False
+        and implementation["target_rows_read_for_v67_before_registration"] == 0
+        and implementation["v67_source_commitments_selected_before_registration"] == 0
+        and implementation["synthetic_tests"]
+        == {
+            "passed": 12,
+            "failed": 0,
+            "target_source_used": False,
+            "model_files_used": False,
+        }
+        and implementation["learned_parameter_count_on_calibration"] == 2
+        and implementation["development_or_confirmation_used_for_threshold_selection"]
+        is False
+        and calibration_execution["stage"] == "calibration"
+        and calibration_execution["gold_joined_for_metrics"] is False
+        and calibration_execution["qa_started"] is False
+        and calibration_execution["model_score_rule_or_gate_adjusted"] is False
+        and calibration_execution["prepared_cases"] == 1000
+        and calibration_execution["candidate_maps"] == 1000
+        and calibration_execution["direct_qa_input_rows"] == 19998
+        and calibration_execution["sampling"]["selected_answer_state_counts"]
+        == {"answerable": 500, "unanswerable": 500}
+        and calibration_execution["sampling"]["excluded_source_commitment_rows"] == 3000
+        and calibration_execution["sampling"][
+            "selected_excluded_source_commitment_overlap"
+        ]
+        == 0
+        and calibration_execution["sampling"]["selected_squad2_exact_question_overlap"]
+        == 0
+        and calibration_execution["structural_census"]["hop_count_distribution"]
+        == {"2": 742, "3": 220, "4": 38}
+        and calibration_result["metadata"]["cases"] == 1000
+        and calibration_result["metadata"]["answer_state_counts"]
+        == {"answerable": 500, "unanswerable": 500}
+        and calibration_result["metadata"][
+            "gold_joined_after_complete_direct_and_chain_qa"
+        ]
+        is True
+        and calibration_result["metadata"]["learned_parameter_count"] == 2
+        and calibration_result["outcome"]["development_open_authorized"] is True
+        and calibration_result["outcome"]["calibration_alone_authorizes_adoption"]
+        is False
+        and (
+            calibration_direct
+            | {
+                "safety_constraints_met": False,
+                "candidate_threshold_count": 967,
+            }
+        )
+        == calibration["direct_composed_question"]["pooled"]
+        and (
+            calibration_chain
+            | {
+                "safety_constraints_met": False,
+                "candidate_threshold_count": 966,
+            }
+        )
+        == calibration["oracle_plan_chain_bottleneck"]["pooled"]
+        and calibration["direct_composed_question"]["crossfit"]["balanced_accuracy"]
+        == 0.593
+        and calibration["oracle_plan_chain_bottleneck"]["crossfit"]["balanced_accuracy"]
+        == 0.662
+        and development_execution["stage"] == "development"
+        and development_execution["gold_joined_for_metrics"] is False
+        and development_execution["qa_started"] is False
+        and development_execution["model_score_rule_or_gate_adjusted"] is False
+        and development_execution["prepared_cases"] == 600
+        and development_execution["candidate_maps"] == 600
+        and development_execution["direct_qa_input_rows"] == 11999
+        and development_execution["hashes"]["calibration_result_sha256"]
+        == "0653782e6723c775effd4e5f86ff7b5e9f69d037a0af846847733dd66850db93"
+        and development_execution["sampling"]["selected_answer_state_counts"]
+        == {"answerable": 300, "unanswerable": 300}
+        and development_execution["sampling"]["excluded_source_commitment_rows"] == 5000
+        and development_execution["sampling"][
+            "selected_excluded_source_commitment_overlap"
+        ]
+        == 0
+        and development_execution["sampling"]["selected_squad2_exact_question_overlap"]
+        == 0
+        and development_execution["structural_census"]["hop_count_distribution"]
+        == {"2": 465, "3": 106, "4": 29}
+        and metadata["stage"] == "development"
+        and metadata["cases"] == 600
+        and metadata["answer_state_counts"] == {"answerable": 300, "unanswerable": 300}
+        and metadata["official_musique_leaderboard_result"] is False
+        and metadata["automatic_decomposer_result"] is False
+        and metadata["strict_independent_model_training_confirmation"] is False
+        and artifacts["calibration_result_sha256"]
+        == "0653782e6723c775effd4e5f86ff7b5e9f69d037a0af846847733dd66850db93"
+        and artifacts["gold_joined_after_complete_direct_and_chain_qa"] is True
+        and artifacts["retrieval_scoring_started"] is False
+        and sampling["selected_excluded_source_commitment_overlap"] == 0
+        and sampling["selected_squad2_exact_question_overlap"] == 0
+        and development_direct == analysis["calibrated_direct_composed_question"]
+        and development_fixed == analysis["fixed_v66_full_chain"]
+        and development_chain == analysis["calibrated_oracle_plan_chain_bottleneck"]
+        and analysis["strongest_fair_baseline"]
+        == {"name": "fixed_v66_full_chain", **development_fixed}
+        and paired_point == analysis["paired_correctness_delta"]["point"]
+        and analysis["paired_correctness_delta"]
+        == {
+            "point": 0.011667,
+            "ci_low": -0.018333,
+            "ci_high": 0.041667,
+            "resamples": 10000,
+            "seed": 20260823,
+        }
+        and hop_strata == analysis["unanswerable_hop_strata"]
+        and analysis["invalid_chain_output_count"] == 0
+        and outcome["status"] == failure_status
+        and outcome["stage_gate_passed"] is False
+        and outcome["confirmation_open_authorized"] is False
+        and outcome["reuse_failed_stage_for_tuning_threshold_score_gate_or_selection"]
+        is False
+        and outcome["selector_or_retrieval_scoring_part_of_v67"] is False
+        and outcome["selector_adoption_authorized"] is False
+        and outcome["canary_or_default_authorized"] is False
+        and outcome["gate_2"] == "NO-GO/SHADOW"
+        and closure["stage_result_sha256"]
+        == "19389c4857a0504658655fdaefdb18259179187c1d2858b397078e9416d31e7c"
+        and closure["status"] == failure_status
+        and closure["confirmation_open_authorized"] is False
+        and closure["retrieval_scoring_started"] is False
+        and closure["reuse_failed_stage_for_tuning_threshold_score_gate_or_selection"]
+        is False
+        and closure["gate_2"] == "NO-GO/SHADOW"
+        and not confirmation_open.exists()
+        and len(calibration_cases) == 1000
+        and len({row["case_id"] for row in calibration_cases}) == 1000
+        and len(development_cases) == 600
+        and len({row["case_id"] for row in development_cases}) == 600
+        and not forbidden_text_keys
+        & _nested_keys([calibration_cases, development_cases])
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    return _check(
+        "musique_v67_calibrated_chain_support_boundary",
+        (
+            "MuSiQue v67 calibration and disjoint development are hash-locked, "
+            "stopped before confirmation, and preserve Gate 2 No-Go"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": experiment_id,
+            "status": outcome["status"],
+            "prior_source_commitment_union": 1500,
+            "calibration_cases": len(calibration_cases),
+            "development_cases": len(development_cases),
+            "calibration_thresholds": {
+                "direct": direct_threshold,
+                "chain_bottleneck": chain_threshold,
+            },
+            "calibration_crossfit": {
+                "direct": calibration["direct_composed_question"]["crossfit"],
+                "chain_bottleneck": calibration["oracle_plan_chain_bottleneck"][
+                    "crossfit"
+                ],
+            },
+            "development_methods": {
+                "calibrated_direct": development_direct,
+                "fixed_v66_full_chain": development_fixed,
+                "calibrated_chain_bottleneck": development_chain,
+            },
+            "paired_correctness_delta": analysis["paired_correctness_delta"],
+            "unanswerable_hop_strata": hop_strata,
+            "confirmation_opened": confirmation_open.exists(),
+            "automatic_decomposer_result": metadata["automatic_decomposer_result"],
+            "reuse_failed_stage_for_tuning_threshold_score_gate_or_selection": outcome[
+                "reuse_failed_stage_for_tuning_threshold_score_gate_or_selection"
+            ],
+            "selector_adoption_authorized": outcome["selector_adoption_authorized"],
+            "canary_or_default_authorized": outcome["canary_or_default_authorized"],
+            "gate_2": outcome["gate_2"],
+        },
+    )
+
+
+def _check_musique_multisignal_chain_support_v68(
+    repo_root: Path,
+) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = (
+        repo_root / "output/rag_evaluation/musique_multisignal_chain_support_v68"
+    )
+    paths = {
+        "protocol": docs_root / "musique_multisignal_chain_support_protocol_v68.json",
+        "source": docs_root
+        / "musique_multisignal_chain_support_source_registration_v68.json",
+        "model": docs_root
+        / "quac_roberta_qa_support_transfer_model_registration_v62.json",
+        "implementation": docs_root
+        / "musique_multisignal_chain_support_implementation_v68.json",
+        "calibration_execution": docs_root
+        / "musique_multisignal_chain_support_calibration_execution_v68.json",
+        "calibration_result": docs_root
+        / "musique_multisignal_chain_support_calibration_result_v68.json",
+        "development_execution": docs_root
+        / "musique_multisignal_chain_support_development_execution_v68.json",
+        "development_result": docs_root
+        / "musique_multisignal_chain_support_development_result_v68.json",
+        "development_closure": docs_root
+        / "musique_multisignal_chain_support_development_closure_v68.json",
+        "synthesis": docs_root / "musique_multisignal_chain_support_synthesis_v68.md",
+        "calibration_report": output_root / "calibration/report.md",
+        "calibration_cases": output_root / "calibration/cases.jsonl.gz",
+        "development_report": output_root / "development/report.md",
+        "development_cases": output_root / "development/cases.jsonl.gz",
+        "module": repo_root / "research/frc_rag/musique_multisignal_chain_support.py",
+        "runner": repo_root / "scripts/run_musique_multisignal_chain_support.py",
+        "tests": repo_root / "tests/test_frc_musique_multisignal_chain_support.py",
+    }
+    confirmation_open = (
+        docs_root / "musique_multisignal_chain_support_confirmation_open_v68.json"
+    )
+    expected_hashes = {
+        "protocol": "ab149266d74c52c17b4c64784f6ca677f82802a2ec9c60116a4c6d327259b6c9",
+        "source": "9810a70da288046d0735c08f066083307c78b67c8803b60e831afea4c1ef1b1e",
+        "model": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+        "implementation": "897c5a5fe517bd42f5a4cdde0a7aa1c50bbdeb68b35b1d83feab82b8ec359d8b",
+        "calibration_execution": "85f38b7e94196d0ef795fb33d62261396eba431c90099a445d6a1728d3c13cb4",
+        "calibration_result": "23cc9ba57d0433e6e0afbe4226536a6c7b99caeff950cbac8b526716bfbed080",
+        "development_execution": "2415af3619ae643d63f46ce290551e5231229cdb440f4d7e9ffd0f9aa5f169fe",
+        "development_result": "63b7655241f258c4c4bcda34bccff97ea11343889d5d9f8ce9a6e6e31d704022",
+        "development_closure": "17ca223c5b15022696d0197e4d44f102ff394a27e86ec32a4f339847c07725d1",
+        "synthesis": "300c201ac4b003930ffa15a7a50f97692de4ceb2793955252737d8886e223ba3",
+        "calibration_report": "89c49dadb770d4d8c278035d06f9eea2eb282347af50259b76fe6847212e3c98",
+        "calibration_cases": "392919b0519bf66df0d3b7896478ff5a22366a37ed9fd2bf58dff5297fad5c64",
+        "development_report": "17f570307d84cfd3fbf9ad63fa217a8fb6b18ce12699678f89cf127b94481dd1",
+        "development_cases": "9d1320fab683de92496e233dbcfef61e3eaa4487dd937ffe47d41a1fbc81a0ba",
+        "module": "b5bfee71f6c1a64bdff3c7e73a74e722124929b087b45ae245b2eb0d78c33a8f",
+        "runner": "549e408760bba04c0098d6021d1ce11e89c36a8ac9b00b6f246efbb6a0672a76",
+        "tests": "1d4be2c0abb4e42eede734eb9360649b0cd3645cded66745fddd24c477728534",
+    }
+    protocol = _load_json(paths["protocol"])
+    source = _load_json(paths["source"])
+    implementation = _load_json(paths["implementation"])
+    calibration_execution = _load_json(paths["calibration_execution"])
+    calibration_result = _load_json(paths["calibration_result"])
+    development_execution = _load_json(paths["development_execution"])
+    development_result = _load_json(paths["development_result"])
+    closure = _load_json(paths["development_closure"])
+    calibration_cases = _load_jsonl(paths["calibration_cases"])
+    development_cases = _load_jsonl(paths["development_cases"])
+
+    experiment_id = "FRC-MUSIQUE-MULTISIGNAL-CHAIN-SUPPORT-V68"
+    failure_status = (
+        "MUSIQUE_V68_MULTISIGNAL_CHAIN_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_"
+        "STOP_BEFORE_CONFIRMATION"
+    )
+    feature_names = (
+        "direct_margin_scaled",
+        "chain_min_margin_scaled",
+        "chain_mean_margin_scaled",
+        "high_margin_fraction",
+        "transition_entity_match_fraction",
+        "distinct_selected_paragraph_ratio",
+        "direct_final_paragraph_agreement",
+        "hop_count_is_3",
+        "hop_count_is_4",
+    )
+    monotone_names = feature_names[:7]
+    calibration = calibration_result["analysis"]
+    analysis = development_result["analysis"]
+    outcome = analysis["outcome"]
+    metadata = development_result["metadata"]
+    sampling = metadata["sampling"]
+    artifacts = metadata["source_artifacts"]
+    candidate_model = calibration["multisignal_logistic_candidate"]["model"]
+    two_signal_model = calibration["two_signal_logistic_control"]["model"]
+
+    def _model_scores(rows: list[dict[str, Any]], model: dict[str, Any]) -> list[float]:
+        names = model["feature_names"]
+        weights = model["coefficients"]
+        intercept = float(model["intercept"])
+        scores: list[float] = []
+        for row in rows:
+            logit = intercept + sum(
+                float(row["features"][name]) * float(weight)
+                for name, weight in zip(names, weights, strict=True)
+            )
+            scores.append(1.0 / (1.0 + math.exp(-max(-40.0, min(40.0, logit)))))
+        return scores
+
+    def _raw_scores(rows: list[dict[str, Any]], field: str) -> list[float]:
+        return [float(row[field]) for row in rows]
+
+    def _metrics(
+        rows: list[dict[str, Any]], scores: list[float], threshold: float
+    ) -> dict[str, Any]:
+        answer_indices = [
+            index
+            for index, row in enumerate(rows)
+            if row["answer_state"] == "answerable"
+        ]
+        noanswer_indices = [
+            index
+            for index, row in enumerate(rows)
+            if row["answer_state"] == "unanswerable"
+        ]
+        answer_pass = sum(scores[index] > threshold for index in answer_indices)
+        answer_pass /= len(answer_indices)
+        rejection = sum(scores[index] <= threshold for index in noanswer_indices) / len(
+            noanswer_indices
+        )
+        return {
+            "rows": len(rows),
+            "answerable_rows": len(answer_indices),
+            "unanswerable_rows": len(noanswer_indices),
+            "threshold_exact": threshold,
+            "answerable_pass_rate": round(answer_pass, 6),
+            "unanswerable_rejection_rate": round(rejection, 6),
+            "balanced_accuracy": round((answer_pass + rejection) / 2.0, 6),
+        }
+
+    thresholds = {
+        "calibrated_direct_composed_question": float(
+            calibration["calibrated_direct_composed_question"]["pooled"][
+                "threshold_exact"
+            ]
+        ),
+        "fixed_v66_full_chain": 0.974609375,
+        "calibrated_chain_bottleneck": float(
+            calibration["calibrated_chain_bottleneck"]["pooled"]["threshold_exact"]
+        ),
+        "two_signal_logistic_control": float(
+            calibration["two_signal_logistic_control"]["pooled"]["threshold_exact"]
+        ),
+        "multisignal_logistic_candidate": float(
+            calibration["multisignal_logistic_candidate"]["pooled"]["threshold_exact"]
+        ),
+    }
+    development_scores = {
+        "calibrated_direct_composed_question": _raw_scores(
+            development_cases, "direct_score_margin"
+        ),
+        "fixed_v66_full_chain": _raw_scores(
+            development_cases, "chain_bottleneck_score"
+        ),
+        "calibrated_chain_bottleneck": _raw_scores(
+            development_cases, "chain_bottleneck_score"
+        ),
+        "two_signal_logistic_control": _model_scores(
+            development_cases, two_signal_model
+        ),
+        "multisignal_logistic_candidate": _model_scores(
+            development_cases, candidate_model
+        ),
+    }
+    methods = {
+        name: _metrics(development_cases, scores, thresholds[name])
+        for name, scores in development_scores.items()
+    }
+    comparator_order = (
+        "calibrated_direct_composed_question",
+        "fixed_v66_full_chain",
+        "calibrated_chain_bottleneck",
+        "two_signal_logistic_control",
+    )
+    strongest_name = max(
+        comparator_order,
+        key=lambda name: (
+            methods[name]["balanced_accuracy"],
+            -comparator_order.index(name),
+        ),
+    )
+    candidate_decisions = [
+        score > thresholds["multisignal_logistic_candidate"]
+        for score in development_scores["multisignal_logistic_candidate"]
+    ]
+    baseline_decisions = [
+        score > thresholds[strongest_name]
+        for score in development_scores[strongest_name]
+    ]
+    paired_point = round(
+        sum(
+            (candidate if row["answer_state"] == "answerable" else not candidate)
+            - (baseline if row["answer_state"] == "answerable" else not baseline)
+            for row, candidate, baseline in zip(
+                development_cases,
+                candidate_decisions,
+                baseline_decisions,
+                strict=True,
+            )
+        )
+        / len(development_cases),
+        6,
+    )
+    unanswerable = [
+        (row, candidate)
+        for row, candidate in zip(development_cases, candidate_decisions, strict=True)
+        if row["answer_state"] == "unanswerable"
+    ]
+    hop_strata = {
+        str(hop): {
+            "cases": len(values),
+            "rejection_rate": round(
+                sum(not decision for _, decision in values) / len(values), 6
+            ),
+        }
+        for hop in sorted({int(row["hop_count"]) for row, _ in unanswerable})
+        if (
+            values := [
+                (row, decision)
+                for row, decision in unanswerable
+                if int(row["hop_count"]) == hop
+            ]
+        )
+    }
+    all_cases = calibration_cases + development_cases
+    forbidden_text_keys = {
+        "question",
+        "context",
+        "composed_question",
+        "oracle_hop_templates",
+        "answer",
+        "answer_aliases",
+        "paragraph_support_idx",
+        "is_supporting",
+        "predicted_span",
+        "source_id",
+        "source_id_commitment",
+    }
+    vectors_valid = all(
+        set(row["features"]) == set(feature_names)
+        and all(math.isfinite(float(value)) for value in row["features"].values())
+        and row["feature_sha256"] == _canonical_json_sha256(row["features"])
+        for row in all_cases
+    )
+    support_checks = {
+        "exact_cases_equals_600": True,
+        "exact_answer_state_balance": True,
+        "schema_exclusion_rate_at_most_0_01": True,
+        "selected_prior_or_calibration_source_overlap_equals_0": True,
+        "selected_squad2_exact_question_overlap_equals_0": True,
+        "invalid_feature_output_rate_equals_0": True,
+        "multisignal_balanced_accuracy_at_least_0_72": False,
+        "multisignal_answerable_pass_rate_at_least_0_60": False,
+        "multisignal_unanswerable_rejection_rate_at_least_0_80": False,
+        "multisignal_minus_strongest_fair_baseline_at_least_0_05": False,
+        "paired_correctness_ci_low_above_0": True,
+        "every_observed_unanswerable_hop_stratum_rejection_rate_at_least_0_75": True,
+    }
+
+    passed = (
+        all(
+            _evidence_sha256(paths[key]) == value
+            for key, value in expected_hashes.items()
+        )
+        and protocol["experiment_id"] == experiment_id
+        and tuple(protocol["feature_contract"]["fixed_order"]) == feature_names
+        and protocol["sampling"]["expected_prior_source_commitment_union_count"] == 3100
+        and protocol["model_contract"][
+            "total_learned_scalars_across_all_reported_methods"
+        ]
+        == 17
+        and protocol["stopping_and_outcomes"]["gate_2"] == "NO-GO/SHADOW"
+        and source["targets"]["v68_source_commitments_selected_before_registration"]
+        == 0
+        and source["prior_exclusion_sources"]["expected_union_source_commitments"]
+        == 3100
+        and source["strict_independent_model_training_confirmation_claimed"] is False
+        and implementation["target_rows_read_for_v68_before_registration"] == 0
+        and implementation["v68_source_commitments_selected_before_registration"] == 0
+        and implementation["synthetic_tests"]
+        == {
+            "passed": 13,
+            "failed": 0,
+            "target_source_used": False,
+            "model_files_used": False,
+        }
+        and implementation["total_learned_scalars_across_reported_methods"] == 17
+        and calibration_execution["stage"] == "calibration"
+        and calibration_execution["gold_joined_for_metrics"] is False
+        and calibration_execution["qa_started"] is False
+        and calibration_execution["feature_model_threshold_rule_or_gate_adjusted"]
+        is False
+        and calibration_execution["prepared_cases"] == 1200
+        and calibration_execution["candidate_maps"] == 1200
+        and calibration_execution["direct_qa_input_rows"] == 23997
+        and calibration_execution["sampling"]["selected_answer_state_counts"]
+        == {"answerable": 600, "unanswerable": 600}
+        and calibration_execution["sampling"]["excluded_source_commitment_rows"] == 6200
+        and calibration_execution["sampling"][
+            "selected_excluded_source_commitment_overlap"
+        ]
+        == 0
+        and calibration_execution["sampling"]["selected_squad2_exact_question_overlap"]
+        == 0
+        and calibration_execution["structural_census"]["hop_count_distribution"]
+        == {"2": 887, "3": 258, "4": 55}
+        and calibration_result["metadata"]["cases"] == 1200
+        and calibration_result["metadata"]["answer_state_counts"]
+        == {"answerable": 600, "unanswerable": 600}
+        and calibration_result["metadata"][
+            "gold_joined_after_complete_qa_and_feature_extraction"
+        ]
+        is True
+        and calibration_result["metadata"][
+            "total_learned_scalars_across_reported_methods"
+        ]
+        == 17
+        and calibration_result["outcome"]["development_open_authorized"] is True
+        and calibration_result["outcome"]["calibration_alone_authorizes_adoption"]
+        is False
+        and calibration["calibrated_direct_composed_question"]["crossfit"][
+            "balanced_accuracy"
+        ]
+        == 0.611667
+        and calibration["calibrated_chain_bottleneck"]["crossfit"]["balanced_accuracy"]
+        == 0.646667
+        and calibration["two_signal_logistic_control"]["crossfit"]["balanced_accuracy"]
+        == 0.663333
+        and calibration["multisignal_logistic_candidate"]["crossfit"][
+            "balanced_accuracy"
+        ]
+        == 0.691667
+        and tuple(candidate_model["feature_names"]) == feature_names
+        and tuple(candidate_model["monotone_nonnegative_feature_names"])
+        == monotone_names
+        and all(float(value) >= 0.0 for value in candidate_model["coefficients"][:7])
+        and development_execution["stage"] == "development"
+        and development_execution["gold_joined_for_metrics"] is False
+        and development_execution["qa_started"] is False
+        and development_execution["feature_model_threshold_rule_or_gate_adjusted"]
+        is False
+        and development_execution["prepared_cases"] == 600
+        and development_execution["candidate_maps"] == 600
+        and development_execution["direct_qa_input_rows"] == 11994
+        and development_execution["hashes"]["calibration_result_sha256"]
+        == "fa8ec7beae6930a3a1b6ffeeb9c63a42f7edfbc858500faa07612965c9ccffec"
+        and development_execution["sampling"]["selected_answer_state_counts"]
+        == {"answerable": 300, "unanswerable": 300}
+        and development_execution["sampling"]["excluded_source_commitment_rows"] == 8600
+        and development_execution["sampling"][
+            "selected_excluded_source_commitment_overlap"
+        ]
+        == 0
+        and development_execution["sampling"]["selected_squad2_exact_question_overlap"]
+        == 0
+        and development_execution["structural_census"]["hop_count_distribution"]
+        == {"2": 443, "3": 122, "4": 35}
+        and metadata["cases"] == 600
+        and metadata["answer_state_counts"] == {"answerable": 300, "unanswerable": 300}
+        and metadata["automatic_decomposer_result"] is False
+        and metadata["strict_independent_model_training_confirmation"] is False
+        and metadata["official_musique_leaderboard_result"] is False
+        and sampling["selected_excluded_source_commitment_overlap"] == 0
+        and sampling["selected_squad2_exact_question_overlap"] == 0
+        and artifacts["calibration_result_sha256"]
+        == "fa8ec7beae6930a3a1b6ffeeb9c63a42f7edfbc858500faa07612965c9ccffec"
+        and artifacts["gold_joined_after_complete_qa_and_feature_extraction"] is True
+        and artifacts["retrieval_scoring_started"] is False
+        and methods == analysis["methods"]
+        and analysis["strongest_fair_baseline"]
+        == {"name": strongest_name, **methods[strongest_name]}
+        and strongest_name == "calibrated_chain_bottleneck"
+        and paired_point == analysis["paired_correctness_delta"]["point"]
+        and analysis["paired_correctness_delta"]
+        == {
+            "point": 0.036667,
+            "ci_low": 0.01,
+            "ci_high": 0.063333,
+            "resamples": 10000,
+            "seed": 20260826,
+        }
+        and hop_strata == analysis["unanswerable_hop_strata"]
+        and analysis["invalid_feature_output_count"] == 0
+        and analysis["support_checks"] == support_checks
+        and outcome["status"] == failure_status
+        and outcome["stage_gate_passed"] is False
+        and outcome["confirmation_open_authorized"] is False
+        and outcome[
+            "reuse_failed_stage_for_feature_model_threshold_rule_gate_or_selection"
+        ]
+        is False
+        and outcome["selector_or_retrieval_scoring_part_of_v68"] is False
+        and outcome["selector_adoption_authorized"] is False
+        and outcome["canary_or_default_authorized"] is False
+        and outcome["gate_2"] == "NO-GO/SHADOW"
+        and closure["stage_result_sha256"]
+        == "d1b2637e1c2a3569b320a53b09b464dfe03d75a81eab9c5e3dfa29eeca1d4e6c"
+        and closure["status"] == failure_status
+        and closure["confirmation_open_authorized"] is False
+        and closure["retrieval_scoring_started"] is False
+        and closure[
+            "reuse_failed_stage_for_feature_model_threshold_rule_gate_or_selection"
+        ]
+        is False
+        and closure["gate_2"] == "NO-GO/SHADOW"
+        and not confirmation_open.exists()
+        and len(calibration_cases) == 1200
+        and len({row["case_id"] for row in calibration_cases}) == 1200
+        and len(development_cases) == 600
+        and len({row["case_id"] for row in development_cases}) == 600
+        and all(not bool(row["invalid_feature_output"]) for row in all_cases)
+        and vectors_valid
+        and not forbidden_text_keys & _nested_keys(all_cases)
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    return _check(
+        "musique_v68_multisignal_chain_support_boundary",
+        (
+            "MuSiQue v68 multi-signal calibration and disjoint development "
+            "are hash-locked, stopped before confirmation, and preserve "
+            "Gate 2 No-Go"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": experiment_id,
+            "status": outcome["status"],
+            "prior_source_commitment_union": 3100,
+            "calibration_cases": len(calibration_cases),
+            "development_cases": len(development_cases),
+            "feature_names": list(feature_names),
+            "total_learned_scalars": 17,
+            "calibration_crossfit": {
+                name: calibration[name]["crossfit"]
+                for name in (
+                    "calibrated_direct_composed_question",
+                    "calibrated_chain_bottleneck",
+                    "two_signal_logistic_control",
+                    "multisignal_logistic_candidate",
+                )
+            },
+            "development_methods": methods,
+            "strongest_fair_baseline": analysis["strongest_fair_baseline"],
+            "paired_correctness_delta": analysis["paired_correctness_delta"],
+            "unanswerable_hop_strata": hop_strata,
+            "support_checks": support_checks,
+            "confirmation_opened": confirmation_open.exists(),
+            "automatic_decomposer_result": metadata["automatic_decomposer_result"],
+            "reuse_failed_stage_for_feature_model_threshold_rule_gate_or_selection": outcome[
+                "reuse_failed_stage_for_feature_model_threshold_rule_gate_or_selection"
+            ],
+            "selector_adoption_authorized": outcome["selector_adoption_authorized"],
+            "canary_or_default_authorized": outcome["canary_or_default_authorized"],
+            "gate_2": outcome["gate_2"],
+        },
+    )
+
+
+def _check_musique_monotone_interaction_support_v69(
+    repo_root: Path,
+) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = (
+        repo_root / "output/rag_evaluation/musique_monotone_interaction_support_v69"
+    )
+    paths = {
+        "protocol": docs_root
+        / "musique_monotone_interaction_support_protocol_v69.json",
+        "source": docs_root
+        / "musique_monotone_interaction_support_source_registration_v69.json",
+        "model": docs_root
+        / "quac_roberta_qa_support_transfer_model_registration_v62.json",
+        "implementation": docs_root
+        / "musique_monotone_interaction_support_implementation_v69.json",
+        "implementation_erratum": docs_root
+        / "musique_monotone_interaction_support_implementation_erratum_v69.json",
+        "calibration_execution": docs_root
+        / "musique_monotone_interaction_support_calibration_execution_v69.json",
+        "calibration_result": docs_root
+        / "musique_monotone_interaction_support_calibration_result_v69.json",
+        "development_execution": docs_root
+        / "musique_monotone_interaction_support_development_execution_v69.json",
+        "development_result": docs_root
+        / "musique_monotone_interaction_support_development_result_v69.json",
+        "development_closure": docs_root
+        / "musique_monotone_interaction_support_development_closure_v69.json",
+        "synthesis": docs_root
+        / "musique_monotone_interaction_support_synthesis_v69.md",
+        "calibration_report": output_root / "calibration/report.md",
+        "calibration_cases": output_root / "calibration/cases.jsonl.gz",
+        "development_report": output_root / "development/report.md",
+        "development_cases": output_root / "development/cases.jsonl.gz",
+        "module": repo_root
+        / "research/frc_rag/musique_monotone_interaction_support.py",
+        "runner": repo_root / "scripts/run_musique_monotone_interaction_support.py",
+        "tests": repo_root / "tests/test_frc_musique_monotone_interaction_support.py",
+    }
+    confirmation_open = (
+        docs_root / "musique_monotone_interaction_support_confirmation_open_v69.json"
+    )
+    expected_hashes = {
+        "protocol": "8cb244b5d3efeb183fb34532bf21c8e6916d138375ae110ddbbed30383d12e54",
+        "source": "f91690cd7a13f87866973a81429eb192164547ba18d1f44512672cdf32ec3775",
+        "model": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+        "implementation": "30ce7c390bc0e94508aa9ea6a0f3e118dfb90b132ad2b3373084fc7784b8a1ad",
+        "implementation_erratum": "0399bb023b828f64bad840e016d01aec850d4254d637087e32d2028321489e35",
+        "calibration_execution": "9b03fb890235f54f6608947776fc99c0c4035633a7d77e81eed74fcad839cca0",
+        "calibration_result": "15c164eb6c1b520b75fad76395de4e5a5919f64a399edef8ad702d836577deed",
+        "development_execution": "d8bb9737508de729012af23edb2ea8721c439c3df0b6ba21bc86ff82fb962838",
+        "development_result": "ad52364427145de9756b6a368cf921475be7908ba792a221fbc689cbaba9127c",
+        "development_closure": "24930d50a6e1fb8cf242c90077dc23385c9e232b1a1e52df687f68a46b682f04",
+        "synthesis": "454ce24b95870f48675f218f65a1820d7a2c4c154e3e94679c9dfc2645928158",
+        "calibration_report": "1efcfdc857a7b7ff310936ea8dca6eb463e678135551de972200fde72055787b",
+        "calibration_cases": "c61e6134148c86b9b2a21e25ffab40e751ddefa26a6123df05c86322a0aa44b0",
+        "development_report": "f8c7af41822a920984e737f1dd372a13740f5887ea3fbb72175f49c739362fb7",
+        "development_cases": "03e4070ba05a633d83b430b50920b843f54198e5b912a12b0f1143c58344033c",
+        "module": "f128c44fac49eae369730e453423955da4aebb990798744c8877d02027bd7d5d",
+        "runner": "62eb035ef3d10d5b60068854d62d16531b70901085838e4ce7400853c8600676",
+        "tests": "ae87ad7851cb34e30b4d66303fb65ccfce4372124ab2a91204eb93461ec5fbce",
+    }
+    protocol = _load_json(paths["protocol"])
+    source = _load_json(paths["source"])
+    implementation = _load_json(paths["implementation"])
+    erratum = _load_json(paths["implementation_erratum"])
+    calibration_execution = _load_json(paths["calibration_execution"])
+    calibration_result = _load_json(paths["calibration_result"])
+    development_execution = _load_json(paths["development_execution"])
+    development_result = _load_json(paths["development_result"])
+    closure = _load_json(paths["development_closure"])
+    calibration_cases = _load_jsonl(paths["calibration_cases"])
+    development_cases = _load_jsonl(paths["development_cases"])
+
+    experiment_id = "FRC-MUSIQUE-MONOTONE-INTERACTION-SUPPORT-V69"
+    failure_status = (
+        "MUSIQUE_V69_MONOTONE_INTERACTION_DEVELOPMENT_SUPPORT_NOT_"
+        "ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+    )
+    base_names = (
+        "direct_margin_scaled",
+        "chain_min_margin_scaled",
+        "chain_mean_margin_scaled",
+        "high_margin_fraction",
+        "transition_entity_match_fraction",
+        "distinct_selected_paragraph_ratio",
+        "direct_final_paragraph_agreement",
+        "hop_count_is_3",
+        "hop_count_is_4",
+    )
+    hinge_names = tuple(protocol["nonlinear_basis_contract"]["fixed_hinge_order"])
+    interaction_names = tuple(protocol["interaction_contract"]["fixed_order"])
+    additive_names = base_names + hinge_names
+    candidate_names = additive_names + interaction_names
+    calibration = calibration_result["analysis"]
+    analysis = development_result["analysis"]
+    outcome = analysis["outcome"]
+    metadata = development_result["metadata"]
+
+    def _raw_sha256(path: Path) -> str:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    def _model_scores(rows: list[dict[str, Any]], model: dict[str, Any]) -> list[float]:
+        scores: list[float] = []
+        for row in rows:
+            logit = float(model["intercept"]) + sum(
+                float(row["features"][name]) * float(weight)
+                for name, weight in zip(
+                    model["feature_names"],
+                    model["coefficients"],
+                    strict=True,
+                )
+            )
+            clipped = max(-40.0, min(40.0, logit))
+            scores.append(1.0 / (1.0 + math.exp(-clipped)))
+        return scores
+
+    def _metrics(scores: list[float], threshold: float) -> dict[str, Any]:
+        answer = [
+            index
+            for index, row in enumerate(development_cases)
+            if row["answer_state"] == "answerable"
+        ]
+        noanswer = [
+            index
+            for index, row in enumerate(development_cases)
+            if row["answer_state"] == "unanswerable"
+        ]
+        answer_pass = sum(scores[index] > threshold for index in answer)
+        answer_pass /= len(answer)
+        rejection = sum(scores[index] <= threshold for index in noanswer)
+        rejection /= len(noanswer)
+        return {
+            "rows": len(development_cases),
+            "answerable_rows": len(answer),
+            "unanswerable_rows": len(noanswer),
+            "threshold_exact": threshold,
+            "answerable_pass_rate": round(answer_pass, 6),
+            "unanswerable_rejection_rate": round(rejection, 6),
+            "balanced_accuracy": round((answer_pass + rejection) / 2.0, 6),
+        }
+
+    thresholds = {
+        "calibrated_direct_composed_question": float(
+            calibration["calibrated_direct_composed_question"]["pooled"][
+                "threshold_exact"
+            ]
+        ),
+        "fixed_v66_full_chain": 0.974609375,
+        "calibrated_chain_bottleneck": float(
+            calibration["calibrated_chain_bottleneck"]["pooled"]["threshold_exact"]
+        ),
+        "linear_nine_signal_control": float(
+            calibration["linear_nine_signal_control"]["pooled"]["threshold_exact"]
+        ),
+        "monotone_additive_spline_control": float(
+            calibration["monotone_additive_spline_control"]["pooled"]["threshold_exact"]
+        ),
+        "monotone_interaction_candidate": float(
+            calibration["monotone_interaction_candidate"]["pooled"]["threshold_exact"]
+        ),
+    }
+    scores = {
+        "calibrated_direct_composed_question": [
+            float(row["direct_score_margin"]) for row in development_cases
+        ],
+        "fixed_v66_full_chain": [
+            float(row["chain_bottleneck_score"]) for row in development_cases
+        ],
+        "calibrated_chain_bottleneck": [
+            float(row["chain_bottleneck_score"]) for row in development_cases
+        ],
+        "linear_nine_signal_control": _model_scores(
+            development_cases,
+            calibration["linear_nine_signal_control"]["model"],
+        ),
+        "monotone_additive_spline_control": _model_scores(
+            development_cases,
+            calibration["monotone_additive_spline_control"]["model"],
+        ),
+        "monotone_interaction_candidate": _model_scores(
+            development_cases,
+            calibration["monotone_interaction_candidate"]["model"],
+        ),
+    }
+    methods = {
+        name: _metrics(value, thresholds[name]) for name, value in scores.items()
+    }
+    comparator_order = (
+        "calibrated_direct_composed_question",
+        "fixed_v66_full_chain",
+        "calibrated_chain_bottleneck",
+        "linear_nine_signal_control",
+        "monotone_additive_spline_control",
+    )
+    strongest_name = max(
+        comparator_order,
+        key=lambda name: (
+            methods[name]["balanced_accuracy"],
+            -comparator_order.index(name),
+        ),
+    )
+    candidate_decisions = [
+        score > thresholds["monotone_interaction_candidate"]
+        for score in scores["monotone_interaction_candidate"]
+    ]
+    baseline_decisions = [
+        score > thresholds[strongest_name] for score in scores[strongest_name]
+    ]
+
+    def _correct(row: dict[str, Any], decision: bool) -> bool:
+        return decision == (row["answer_state"] == "answerable")
+
+    paired_point = round(
+        sum(
+            int(_correct(row, candidate)) - int(_correct(row, baseline))
+            for row, candidate, baseline in zip(
+                development_cases,
+                candidate_decisions,
+                baseline_decisions,
+                strict=True,
+            )
+        )
+        / len(development_cases),
+        6,
+    )
+    hop_strata = {}
+    for hop in (2, 3, 4):
+        indices = [
+            index
+            for index, row in enumerate(development_cases)
+            if row["answer_state"] == "unanswerable" and int(row["hop_count"]) == hop
+        ]
+        hop_strata[str(hop)] = {
+            "cases": len(indices),
+            "rejection_rate": round(
+                sum(not candidate_decisions[index] for index in indices) / len(indices),
+                6,
+            ),
+        }
+
+    all_cases = calibration_cases + development_cases
+    forbidden_text_keys = {
+        "question",
+        "context",
+        "composed_question",
+        "oracle_hop_templates",
+        "answer",
+        "answer_aliases",
+        "paragraph_support_idx",
+        "is_supporting",
+        "predicted_span",
+        "source_id",
+        "source_id_commitment",
+    }
+    vectors_valid = all(
+        set(row["features"]) == set(candidate_names)
+        and all(math.isfinite(float(value)) for value in row["features"].values())
+        and row["feature_sha256"] == _canonical_json_sha256(row["features"])
+        for row in all_cases
+    )
+    calibration_invalid = [
+        row for row in calibration_cases if row["invalid_feature_output"]
+    ]
+    expected_checks = {
+        "exact_cases_equals_800": True,
+        "exact_answer_state_balance": True,
+        "schema_exclusion_rate_at_most_0_01": True,
+        "selected_prior_or_calibration_source_overlap_equals_0": True,
+        "selected_squad2_exact_question_overlap_equals_0": True,
+        "invalid_feature_output_rate_equals_0": True,
+        "candidate_balanced_accuracy_at_least_0_72": False,
+        "candidate_answerable_pass_rate_at_least_0_60": True,
+        "candidate_unanswerable_rejection_rate_at_least_0_80": False,
+        "candidate_minus_strongest_fair_baseline_at_least_0_05": False,
+        "strongest_baseline_paired_correctness_ci_low_above_0": False,
+        "candidate_minus_additive_control_at_least_0_02": False,
+        "additive_control_paired_correctness_ci_low_above_0": False,
+        "every_observed_unanswerable_hop_stratum_rejection_rate_at_least_0_75": False,
+    }
+    candidate_model = calibration["monotone_interaction_candidate"]["model"]
+    additive_model = calibration["monotone_additive_spline_control"]["model"]
+    linear_model = calibration["linear_nine_signal_control"]["model"]
+    nonnegative_names = set(candidate_names) - {
+        "hop_count_is_3",
+        "hop_count_is_4",
+    }
+    candidate_coefficients = dict(
+        zip(
+            candidate_model["feature_names"],
+            candidate_model["coefficients"],
+            strict=True,
+        )
+    )
+
+    passed = (
+        all(
+            _evidence_sha256(paths[key]) == value
+            for key, value in expected_hashes.items()
+        )
+        and protocol["experiment_id"] == experiment_id
+        and tuple(protocol["base_feature_contract"]["fixed_order"]) == base_names
+        and len(hinge_names) == 18
+        and len(interaction_names) == 5
+        and protocol["nonlinear_basis_contract"][
+            "additive_feature_count_including_nine_base_features"
+        ]
+        == 27
+        and protocol["interaction_contract"]["candidate_feature_count"] == 32
+        and protocol["model_contract"][
+            "total_learned_scalars_across_all_reported_methods"
+        ]
+        == 76
+        and protocol["sampling"]["expected_prior_source_commitment_union_count"] == 4900
+        and protocol["stopping_and_outcomes"]["gate_2"] == "NO-GO/SHADOW"
+        and source["targets"]["v69_source_commitments_selected_before_registration"]
+        == 0
+        and source["prior_exclusion_sources"]["expected_union_source_commitments"]
+        == 4900
+        and implementation["target_rows_read_for_v69_before_registration"] == 0
+        and implementation["synthetic_tests"]["passed"] == 14
+        and implementation["total_learned_scalars_across_reported_methods"] == 76
+        and erratum["original_registration_hashes"] == implementation["hashes"]
+        and erratum["incident"]["calibration_model_fit_completed"] is False
+        and erratum["incident"]["calibration_metric_or_crossfit_report_produced"]
+        is False
+        and erratum["correction"]["invalid_case_removed_or_replaced"] is False
+        and erratum["correction"]["invalid_feature_output_flag_preserved"] is True
+        and erratum["correction"][
+            "sample_basis_interaction_optimizer_threshold_rule_gates_or_comparator_changed"
+        ]
+        is False
+        and erratum["synthetic_tests"]["passed"] == 15
+        and erratum["frozen_invalid_fail_closed_raw_score"] == -1000000.0
+        and calibration_execution["prepared_cases"] == 1600
+        and calibration_execution["candidate_maps"] == 1600
+        and calibration_execution["direct_qa_input_rows"] == 31996
+        and calibration_execution["sampling"]["selected_answer_state_counts"]
+        == {"answerable": 800, "unanswerable": 800}
+        and calibration_execution["sampling"][
+            "selected_excluded_source_commitment_overlap"
+        ]
+        == 0
+        and calibration_execution["sampling"]["selected_squad2_exact_question_overlap"]
+        == 0
+        and calibration_execution["structural_census"]["hop_count_distribution"]
+        == {"2": 1204, "3": 330, "4": 66}
+        and calibration_result["metadata"]["cases"] == 1600
+        and calibration_result["metadata"]["answer_state_counts"]
+        == {"answerable": 800, "unanswerable": 800}
+        and calibration_result["metadata"][
+            "total_learned_scalars_across_reported_methods"
+        ]
+        == 76
+        and calibration_result["outcome"]["development_open_authorized"] is True
+        and calibration["calibrated_direct_composed_question"]["crossfit"][
+            "balanced_accuracy"
+        ]
+        == 0.57125
+        and calibration["calibrated_chain_bottleneck"]["crossfit"]["balanced_accuracy"]
+        == 0.65625
+        and calibration["linear_nine_signal_control"]["crossfit"]["balanced_accuracy"]
+        == 0.708125
+        and calibration["monotone_additive_spline_control"]["crossfit"][
+            "balanced_accuracy"
+        ]
+        == 0.70625
+        and calibration["monotone_interaction_candidate"]["crossfit"][
+            "balanced_accuracy"
+        ]
+        == 0.704375
+        and tuple(linear_model["feature_names"]) == base_names
+        and tuple(additive_model["feature_names"]) == additive_names
+        and tuple(candidate_model["feature_names"]) == candidate_names
+        and all(
+            float(candidate_coefficients[name]) >= 0.0 for name in nonnegative_names
+        )
+        and development_execution["prepared_cases"] == 800
+        and development_execution["candidate_maps"] == 800
+        and development_execution["direct_qa_input_rows"] == 15996
+        and development_execution["hashes"]["calibration_result_sha256"]
+        == _raw_sha256(paths["calibration_result"])
+        and development_execution["hashes"]["implementation_erratum_sha256"]
+        == _raw_sha256(paths["implementation_erratum"])
+        and development_execution["sampling"]["selected_answer_state_counts"]
+        == {"answerable": 400, "unanswerable": 400}
+        and development_execution["sampling"][
+            "selected_excluded_source_commitment_overlap"
+        ]
+        == 0
+        and development_execution["sampling"]["selected_squad2_exact_question_overlap"]
+        == 0
+        and development_execution["structural_census"]["hop_count_distribution"]
+        == {"2": 591, "3": 172, "4": 37}
+        and metadata["cases"] == 800
+        and metadata["answer_state_counts"] == {"answerable": 400, "unanswerable": 400}
+        and metadata["automatic_decomposer_result"] is False
+        and metadata["strict_independent_model_training_confirmation"] is False
+        and metadata["official_musique_leaderboard_result"] is False
+        and methods == analysis["methods"]
+        and strongest_name == "monotone_additive_spline_control"
+        and analysis["strongest_fair_baseline"]
+        == {"name": strongest_name, **methods[strongest_name]}
+        and paired_point == -0.0025
+        and analysis["paired_correctness_delta"]
+        == {
+            "point": -0.0025,
+            "ci_low": -0.01,
+            "ci_high": 0.005,
+            "resamples": 10000,
+            "seed": 20260829,
+        }
+        and analysis["interaction_mechanism_delta_vs_additive"]
+        == {
+            "point": -0.0025,
+            "ci_low": -0.01,
+            "ci_high": 0.005,
+            "resamples": 10000,
+            "seed": 20261829,
+        }
+        and hop_strata == analysis["unanswerable_hop_strata"]
+        and analysis["support_checks"] == expected_checks
+        and outcome["status"] == failure_status
+        and outcome["stage_gate_passed"] is False
+        and outcome["confirmation_open_authorized"] is False
+        and outcome[
+            "reuse_failed_stage_for_basis_interaction_model_threshold_rule_gate_or_selection"
+        ]
+        is False
+        and outcome["selector_or_retrieval_scoring_part_of_v69"] is False
+        and outcome["selector_adoption_authorized"] is False
+        and outcome["canary_or_default_authorized"] is False
+        and outcome["gate_2"] == "NO-GO/SHADOW"
+        and closure["stage_result_sha256"] == _raw_sha256(paths["development_result"])
+        and closure["status"] == failure_status
+        and closure["confirmation_open_authorized"] is False
+        and not confirmation_open.exists()
+        and len(calibration_cases) == 1600
+        and len({row["case_id"] for row in calibration_cases}) == 1600
+        and len(development_cases) == 800
+        and len({row["case_id"] for row in development_cases}) == 800
+        and len(calibration_invalid) == 1
+        and calibration_invalid[0]["direct_score_margin"] == -1000000.0
+        and calibration_invalid[0]["chain_bottleneck_score"] == -1000000.0
+        and calibration_invalid[0]["invalid_fail_closed_raw_score"] == -1000000.0
+        and all(not bool(row["invalid_feature_output"]) for row in development_cases)
+        and vectors_valid
+        and not forbidden_text_keys & _nested_keys(all_cases)
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    return _check(
+        "musique_v69_monotone_interaction_support_boundary",
+        (
+            "MuSiQue v69 monotone interaction calibration and disjoint "
+            "development are hash-locked, stopped before confirmation, "
+            "and preserve Gate 2 No-Go"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": experiment_id,
+            "status": outcome["status"],
+            "prior_source_commitment_union": 4900,
+            "calibration_cases": len(calibration_cases),
+            "development_cases": len(development_cases),
+            "base_feature_count": len(base_names),
+            "hinge_feature_count": len(hinge_names),
+            "interaction_feature_count": len(interaction_names),
+            "candidate_feature_count": len(candidate_names),
+            "total_learned_scalars": 76,
+            "calibration_invalid_fail_closed_count": len(calibration_invalid),
+            "implementation_erratum_disclosed": True,
+            "calibration_crossfit": {
+                name: calibration[name]["crossfit"]
+                for name in (
+                    "calibrated_direct_composed_question",
+                    "calibrated_chain_bottleneck",
+                    "linear_nine_signal_control",
+                    "monotone_additive_spline_control",
+                    "monotone_interaction_candidate",
+                )
+            },
+            "development_methods": methods,
+            "strongest_fair_baseline": analysis["strongest_fair_baseline"],
+            "paired_correctness_delta": analysis["paired_correctness_delta"],
+            "interaction_mechanism_delta_vs_additive": analysis[
+                "interaction_mechanism_delta_vs_additive"
+            ],
+            "unanswerable_hop_strata": hop_strata,
+            "support_checks": expected_checks,
+            "confirmation_opened": confirmation_open.exists(),
+            "automatic_decomposer_result": metadata["automatic_decomposer_result"],
+            "reuse_failed_stage_for_basis_interaction_model_threshold_rule_gate_or_selection": outcome[
+                "reuse_failed_stage_for_basis_interaction_model_threshold_rule_gate_or_selection"
+            ],
+            "selector_adoption_authorized": outcome["selector_adoption_authorized"],
+            "canary_or_default_authorized": outcome["canary_or_default_authorized"],
+            "gate_2": outcome["gate_2"],
+        },
+    )
 
 
 def check_artifact_groups(
@@ -314,6 +4233,6338 @@ def check_gate_one(candidate_report: dict[str, Any]) -> dict[str, Any]:
     )
 
 
+def _check_musique_paragraph_competition_support_v70(
+    repo_root: Path,
+) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = (
+        repo_root / "output/rag_evaluation/musique_paragraph_competition_support_v70"
+    )
+    paths = {
+        "protocol": docs_root
+        / "musique_paragraph_competition_support_protocol_v70.json",
+        "source": docs_root
+        / "musique_paragraph_competition_support_source_registration_v70.json",
+        "model": docs_root
+        / "quac_roberta_qa_support_transfer_model_registration_v62.json",
+        "implementation": docs_root
+        / "musique_paragraph_competition_support_implementation_v70.json",
+        "implementation_erratum": docs_root
+        / "musique_paragraph_competition_support_implementation_erratum_v70.json",
+        "calibration_execution": docs_root
+        / "musique_paragraph_competition_support_calibration_execution_v70.json",
+        "calibration_result": docs_root
+        / "musique_paragraph_competition_support_calibration_result_v70.json",
+        "development_execution": docs_root
+        / "musique_paragraph_competition_support_development_execution_v70.json",
+        "development_result": docs_root
+        / "musique_paragraph_competition_support_development_result_v70.json",
+        "development_closure": docs_root
+        / "musique_paragraph_competition_support_development_closure_v70.json",
+        "synthesis": docs_root
+        / "musique_paragraph_competition_support_synthesis_v70.md",
+        "calibration_report": output_root / "calibration/report.md",
+        "calibration_cases": output_root / "calibration/cases.jsonl.gz",
+        "development_report": output_root / "development/report.md",
+        "development_cases": output_root / "development/cases.jsonl.gz",
+        "module": repo_root
+        / "research/frc_rag/musique_paragraph_competition_support.py",
+        "runner": repo_root / "scripts/run_musique_paragraph_competition_support.py",
+        "tests": repo_root / "tests/test_frc_musique_paragraph_competition_support.py",
+    }
+    confirmation_open = (
+        docs_root / "musique_paragraph_competition_support_confirmation_open_v70.json"
+    )
+    expected_hashes = {
+        "protocol": "9b5324f679afcc41259b533a1bedb861cc447224146b97354792c25456f236c6",
+        "source": "161ae62b7f80b2442757edd5bac9fc38fbf5fbc38b6d2f67f09f3c5933b1f6ae",
+        "model": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+        "implementation": "2910ee6c25297f21c46ca500e336b217b44fc55b939055b5cfbd68cd7435a3eb",
+        "implementation_erratum": "c83c375076964d4b054640794bf3678f38c67af50eca84a23b1cfe09d20ced54",
+        "calibration_execution": "4772bad6a76a56a7a3213757f6d8862dbc292977c8d567069687f10236e52b8a",
+        "calibration_result": "5f395cbc716240fa57ecf3f594691f4004539f313ba5c0a888abfc209dfc2bb0",
+        "development_execution": "cb5c285796abe513f429246c99781a22e6ca8d51bfd0225d730cd92fafd042ca",
+        "development_result": "30ef2ec6b57c43093bb29c240776b037ef3186775d8958fdd60fa9bb40ab58c3",
+        "development_closure": "0d8f1107a684c3e5e934c9ef9bd3fc76e724461b6c1c819136fe971a3a4f5238",
+        "synthesis": "0f798fa6f209661220dbc5c2fbca968a2b97c4897df6744d7a01fc3ad851ddd4",
+        "calibration_report": "d95cfe16757e6029ebfdcb733e00ea0f17ed4b611c7472275133f1ad0dc8b7f1",
+        "calibration_cases": "29eaad728838bf54e071bb8196cb3ca87e6747be8a7cd9188f49ab94fb9aa56d",
+        "development_report": "5d8c12726e5913fd564ca32846fa7925b04525785b0919cca7a5fdf01a9f95ea",
+        "development_cases": "925ea298e3f87f1745421080a2826f0632c339e30ac507a6b260c16cb798d7c4",
+        "module": "a5ccccb60bb2cb91890f32db8b1535682d26ae33bb1cca2ecf411eec4799c7f7",
+        "runner": "5b9b5253425e18c4cc5807bd8093747d0af28fead88f571482e1aa4a9e533c53",
+        "tests": "c41084ce976d522af8077229e916b76612723d18a4719f67b1d6c8621f4ffe5c",
+    }
+    protocol = _load_json(paths["protocol"])
+    source = _load_json(paths["source"])
+    implementation = _load_json(paths["implementation"])
+    erratum = _load_json(paths["implementation_erratum"])
+    calibration_execution = _load_json(paths["calibration_execution"])
+    calibration_result = _load_json(paths["calibration_result"])
+    development_execution = _load_json(paths["development_execution"])
+    development_result = _load_json(paths["development_result"])
+    closure = _load_json(paths["development_closure"])
+    calibration_cases = _load_jsonl(paths["calibration_cases"])
+    development_cases = _load_jsonl(paths["development_cases"])
+
+    experiment_id = "FRC-MUSIQUE-PARAGRAPH-COMPETITION-SUPPORT-V70"
+    failure_status = (
+        "MUSIQUE_V70_PARAGRAPH_COMPETITION_DEVELOPMENT_SUPPORT_NOT_"
+        "ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+    )
+    base_names = tuple(protocol["base_feature_contract"]["fixed_order"])
+    competition_names = tuple(
+        protocol["paragraph_competition_feature_contract"]["fixed_order"]
+    )
+    calibration = calibration_result["analysis"]
+    analysis = development_result["analysis"]
+    outcome = analysis["outcome"]
+    metadata = development_result["metadata"]
+    prior_names = tuple(
+        calibration["monotone_interaction_control"]["model"]["feature_names"]
+    )
+    candidate_names = base_names + competition_names
+    all_names = prior_names + competition_names
+
+    def _raw_sha256(path: Path) -> str:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    def _model_scores(rows: list[dict[str, Any]], model: dict[str, Any]) -> list[float]:
+        scores: list[float] = []
+        for row in rows:
+            logit = float(model["intercept"]) + sum(
+                float(row["features"][name]) * float(weight)
+                for name, weight in zip(
+                    model["feature_names"],
+                    model["coefficients"],
+                    strict=True,
+                )
+            )
+            clipped = max(-40.0, min(40.0, logit))
+            scores.append(1.0 / (1.0 + math.exp(-clipped)))
+        return scores
+
+    def _metrics(scores: list[float], threshold: float) -> dict[str, Any]:
+        answer = [
+            index
+            for index, row in enumerate(development_cases)
+            if row["answer_state"] == "answerable"
+        ]
+        noanswer = [
+            index
+            for index, row in enumerate(development_cases)
+            if row["answer_state"] == "unanswerable"
+        ]
+        answer_pass = sum(scores[index] > threshold for index in answer)
+        answer_pass /= len(answer)
+        rejection = sum(scores[index] <= threshold for index in noanswer)
+        rejection /= len(noanswer)
+        return {
+            "rows": len(development_cases),
+            "answerable_rows": len(answer),
+            "unanswerable_rows": len(noanswer),
+            "threshold_exact": threshold,
+            "answerable_pass_rate": round(answer_pass, 6),
+            "unanswerable_rejection_rate": round(rejection, 6),
+            "balanced_accuracy": round((answer_pass + rejection) / 2.0, 6),
+        }
+
+    learned_methods = (
+        "linear_nine_signal_control",
+        "monotone_additive_spline_control",
+        "monotone_interaction_control",
+        "paragraph_competition_only_control",
+        "paragraph_competition_candidate",
+    )
+    thresholds = {
+        "calibrated_direct_composed_question": float(
+            calibration["calibrated_direct_composed_question"]["pooled"][
+                "threshold_exact"
+            ]
+        ),
+        "fixed_v66_full_chain": 0.974609375,
+        "calibrated_chain_bottleneck": float(
+            calibration["calibrated_chain_bottleneck"]["pooled"]["threshold_exact"]
+        ),
+        **{
+            name: float(calibration[name]["pooled"]["threshold_exact"])
+            for name in learned_methods
+        },
+    }
+    scores = {
+        "calibrated_direct_composed_question": [
+            float(row["direct_score_margin"]) for row in development_cases
+        ],
+        "fixed_v66_full_chain": [
+            float(row["chain_bottleneck_score"]) for row in development_cases
+        ],
+        "calibrated_chain_bottleneck": [
+            float(row["chain_bottleneck_score"]) for row in development_cases
+        ],
+        **{
+            name: _model_scores(
+                development_cases,
+                calibration[name]["model"],
+            )
+            for name in learned_methods
+        },
+    }
+    methods = {
+        name: _metrics(value, thresholds[name]) for name, value in scores.items()
+    }
+    comparator_order = (
+        "calibrated_direct_composed_question",
+        "fixed_v66_full_chain",
+        "calibrated_chain_bottleneck",
+        "linear_nine_signal_control",
+        "monotone_additive_spline_control",
+        "monotone_interaction_control",
+        "paragraph_competition_only_control",
+    )
+    prior_order = (
+        "linear_nine_signal_control",
+        "monotone_additive_spline_control",
+        "monotone_interaction_control",
+    )
+    strongest_name = max(
+        comparator_order,
+        key=lambda name: (
+            methods[name]["balanced_accuracy"],
+            -comparator_order.index(name),
+        ),
+    )
+    prior_name = max(
+        prior_order,
+        key=lambda name: (
+            methods[name]["balanced_accuracy"],
+            -prior_order.index(name),
+        ),
+    )
+    candidate_decisions = [
+        score > thresholds["paragraph_competition_candidate"]
+        for score in scores["paragraph_competition_candidate"]
+    ]
+
+    def _decisions(name: str) -> list[bool]:
+        return [score > thresholds[name] for score in scores[name]]
+
+    def _correct(row: dict[str, Any], decision: bool) -> bool:
+        return decision == (row["answer_state"] == "answerable")
+
+    def _paired_point(control_name: str) -> float:
+        control_decisions = _decisions(control_name)
+        return round(
+            sum(
+                int(_correct(row, candidate)) - int(_correct(row, control))
+                for row, candidate, control in zip(
+                    development_cases,
+                    candidate_decisions,
+                    control_decisions,
+                    strict=True,
+                )
+            )
+            / len(development_cases),
+            6,
+        )
+
+    hop_strata = {}
+    for hop in (2, 3, 4):
+        indices = [
+            index
+            for index, row in enumerate(development_cases)
+            if row["answer_state"] == "unanswerable" and int(row["hop_count"]) == hop
+        ]
+        hop_strata[str(hop)] = {
+            "cases": len(indices),
+            "rejection_rate": round(
+                sum(not candidate_decisions[index] for index in indices) / len(indices),
+                6,
+            ),
+        }
+
+    expected_checks = {
+        "exact_cases_equals_800": True,
+        "exact_answer_state_balance": True,
+        "schema_exclusion_rate_at_most_0_01": True,
+        "selected_prior_or_calibration_source_overlap_equals_0": True,
+        "selected_squad2_exact_question_overlap_equals_0": True,
+        "invalid_feature_output_rate_equals_0": False,
+        "candidate_balanced_accuracy_at_least_0_72": False,
+        "candidate_answerable_pass_rate_at_least_0_60": False,
+        "candidate_unanswerable_rejection_rate_at_least_0_80": False,
+        "candidate_minus_strongest_fair_baseline_at_least_0_05": False,
+        "strongest_baseline_paired_correctness_ci_low_above_0": False,
+        "candidate_minus_strongest_prior_feature_control_at_least_0_02": False,
+        "prior_feature_control_paired_correctness_ci_low_above_0": False,
+        "candidate_minus_competition_only_control_at_least_0_02": True,
+        "competition_only_control_paired_correctness_ci_low_above_0": True,
+        "every_observed_unanswerable_hop_stratum_rejection_rate_at_least_0_75": False,
+    }
+    all_cases = calibration_cases + development_cases
+    invalid_calibration = [
+        row for row in calibration_cases if row["invalid_feature_output"]
+    ]
+    invalid_development = [
+        row for row in development_cases if row["invalid_feature_output"]
+    ]
+    vectors_valid = all(
+        set(row["features"]) == set(all_names)
+        and all(math.isfinite(float(value)) for value in row["features"].values())
+        and row["feature_sha256"] == _canonical_json_sha256(row["features"])
+        for row in all_cases
+    )
+    forbidden_text_keys = {
+        "question",
+        "context",
+        "composed_question",
+        "oracle_hop_templates",
+        "answer",
+        "answer_aliases",
+        "paragraph_support_idx",
+        "is_supporting",
+        "predicted_span",
+        "source_id",
+        "source_id_commitment",
+    }
+    candidate_model = calibration["paragraph_competition_candidate"]["model"]
+    candidate_coefficients = dict(
+        zip(
+            candidate_model["feature_names"],
+            candidate_model["coefficients"],
+            strict=True,
+        )
+    )
+    nonnegative_names = set(candidate_names) - {
+        "hop_count_is_3",
+        "hop_count_is_4",
+    }
+
+    passed = (
+        all(
+            _evidence_sha256(paths[key]) == value
+            for key, value in expected_hashes.items()
+        )
+        and protocol["experiment_id"] == experiment_id
+        and protocol["prior_boundary"][
+            "v69_case_level_features_predictions_errors_raw_qa_or_subgroups_used_to_choose_v70_features_model_optimizer_or_gates"
+        ]
+        is False
+        and protocol["sampling"]["expected_prior_source_commitment_union_count"] == 7300
+        and len(base_names) == 9
+        and len(competition_names) == 6
+        and protocol["paragraph_competition_feature_contract"][
+            "candidate_feature_count"
+        ]
+        == 15
+        and protocol["model_contract"][
+            "total_learned_scalars_across_all_reported_methods"
+        ]
+        == 101
+        and source["targets"]["v70_source_commitments_selected_before_registration"]
+        == 0
+        and source["prior_exclusion_sources"]["expected_union_source_commitments"]
+        == 7300
+        and implementation["target_rows_read_for_v70_before_registration"] == 0
+        and implementation["synthetic_tests"]["passed"] == 16
+        and implementation["total_learned_scalars_across_reported_methods"] == 101
+        and erratum["original_registration_hashes"] == implementation["hashes"]
+        and erratum["failure_boundary"]["target_rows_read"] == 0
+        and erratum["failure_boundary"]["v70_source_commitments_selected"] == 0
+        and erratum["failure_boundary"]["v70_model_outputs_seen"] is False
+        and erratum["failure_boundary"]["v70_joined_metrics_seen"] is False
+        and erratum["failure_boundary"]["v70_cache_or_output_artifacts_created"]
+        is False
+        and erratum["correction"]["synthetic_tests_after_correction"]["passed"] == 17
+        and erratum[
+            "protocol_feature_model_optimizer_threshold_gates_or_stage_sizes_changed"
+        ]
+        is False
+        and calibration_execution["prepared_cases"] == 1600
+        and calibration_execution["candidate_maps"] == 1600
+        and calibration_execution["direct_qa_input_rows"] == 31998
+        and calibration_execution["sampling"]["selected_answer_state_counts"]
+        == {"answerable": 800, "unanswerable": 800}
+        and calibration_execution["sampling"][
+            "selected_excluded_source_commitment_overlap"
+        ]
+        == 0
+        and calibration_execution["sampling"]["selected_squad2_exact_question_overlap"]
+        == 0
+        and calibration_execution["structural_census"]["hop_count_distribution"]
+        == {"2": 1186, "3": 336, "4": 78}
+        and calibration_result["metadata"]["cases"] == 1600
+        and calibration_result["metadata"]["answer_state_counts"]
+        == {"answerable": 800, "unanswerable": 800}
+        and calibration_result["metadata"][
+            "total_learned_scalars_across_reported_methods"
+        ]
+        == 101
+        and calibration_result["outcome"]["development_open_authorized"] is True
+        and calibration["paragraph_competition_candidate"]["crossfit"][
+            "balanced_accuracy"
+        ]
+        == 0.68375
+        and tuple(candidate_model["feature_names"]) == candidate_names
+        and all(
+            float(candidate_coefficients[name]) >= 0.0 for name in nonnegative_names
+        )
+        and development_execution["prepared_cases"] == 800
+        and development_execution["candidate_maps"] == 800
+        and development_execution["direct_qa_input_rows"] == 16000
+        and development_execution["hashes"]["calibration_result_sha256"]
+        == _raw_sha256(paths["calibration_result"])
+        and development_execution["sampling"]["selected_answer_state_counts"]
+        == {"answerable": 400, "unanswerable": 400}
+        and development_execution["sampling"][
+            "selected_excluded_source_commitment_overlap"
+        ]
+        == 0
+        and development_execution["sampling"]["selected_squad2_exact_question_overlap"]
+        == 0
+        and development_execution["structural_census"]["hop_count_distribution"]
+        == {"2": 599, "3": 161, "4": 40}
+        and metadata["cases"] == 800
+        and metadata["answer_state_counts"] == {"answerable": 400, "unanswerable": 400}
+        and metadata["automatic_decomposer_result"] is False
+        and metadata["strict_independent_model_training_confirmation"] is False
+        and metadata["official_musique_leaderboard_result"] is False
+        and methods == analysis["methods"]
+        and strongest_name == "monotone_interaction_control"
+        and prior_name == "monotone_interaction_control"
+        and analysis["strongest_fair_baseline"]
+        == {"name": strongest_name, **methods[strongest_name]}
+        and analysis["strongest_prior_feature_control"]
+        == {"name": prior_name, **methods[prior_name]}
+        and _paired_point(strongest_name) == -0.02625
+        and _paired_point(prior_name) == -0.02625
+        and _paired_point("paragraph_competition_only_control") == 0.09625
+        and analysis["paired_correctness_delta"]
+        == {
+            "point": -0.02625,
+            "ci_low": -0.04875,
+            "ci_high": -0.00375,
+            "resamples": 10000,
+            "seed": 20260831,
+        }
+        and analysis["incremental_delta_vs_strongest_prior_feature_control"]
+        == {
+            "point": -0.02625,
+            "ci_low": -0.04875,
+            "ci_high": -0.004969,
+            "resamples": 10000,
+            "seed": 20261831,
+        }
+        and analysis["incremental_delta_vs_competition_only_control"]
+        == {
+            "point": 0.09625,
+            "ci_low": 0.06,
+            "ci_high": 0.1325,
+            "resamples": 10000,
+            "seed": 20262831,
+        }
+        and hop_strata == analysis["unanswerable_hop_strata"]
+        and analysis["invalid_feature_output_count"] == 2
+        and analysis["support_checks"] == expected_checks
+        and outcome["status"] == failure_status
+        and outcome["stage_gate_passed"] is False
+        and outcome["confirmation_open_authorized"] is False
+        and outcome[
+            "reuse_failed_stage_for_feature_model_threshold_rule_gate_or_selection"
+        ]
+        is False
+        and outcome["selector_or_retrieval_scoring_part_of_v70"] is False
+        and outcome["selector_adoption_authorized"] is False
+        and outcome["canary_or_default_authorized"] is False
+        and outcome["gate_2"] == "NO-GO/SHADOW"
+        and closure["stage_result_sha256"] == _raw_sha256(paths["development_result"])
+        and closure["status"] == failure_status
+        and closure["confirmation_open_authorized"] is False
+        and not confirmation_open.exists()
+        and len(calibration_cases) == 1600
+        and len({row["case_id"] for row in calibration_cases}) == 1600
+        and len(development_cases) == 800
+        and len({row["case_id"] for row in development_cases}) == 800
+        and len(invalid_calibration) == 0
+        and len(invalid_development) == 2
+        and all(
+            row["direct_score_margin"] == -1000000.0
+            and row["chain_bottleneck_score"] == -1000000.0
+            and row["invalid_fail_closed_raw_score"] == -1000000.0
+            for row in invalid_development
+        )
+        and vectors_valid
+        and not forbidden_text_keys & _nested_keys(all_cases)
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    return _check(
+        "musique_v70_paragraph_competition_support_boundary",
+        (
+            "MuSiQue v70 paragraph-competition calibration and disjoint "
+            "development are hash-locked, stopped before confirmation, "
+            "and preserve Gate 2 No-Go"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": experiment_id,
+            "status": outcome["status"],
+            "prior_source_commitment_union": 7300,
+            "calibration_cases": len(calibration_cases),
+            "development_cases": len(development_cases),
+            "base_feature_count": len(base_names),
+            "prior_feature_count": len(prior_names),
+            "competition_feature_count": len(competition_names),
+            "candidate_feature_count": len(candidate_names),
+            "audited_feature_count": len(all_names),
+            "total_learned_scalars": 101,
+            "calibration_invalid_fail_closed_count": len(invalid_calibration),
+            "development_invalid_fail_closed_count": len(invalid_development),
+            "implementation_erratum_disclosed": True,
+            "calibration_crossfit": {
+                name: calibration[name]["crossfit"]
+                for name in (
+                    "calibrated_direct_composed_question",
+                    "calibrated_chain_bottleneck",
+                    *learned_methods,
+                )
+            },
+            "development_methods": methods,
+            "strongest_fair_baseline": analysis["strongest_fair_baseline"],
+            "strongest_prior_feature_control": analysis[
+                "strongest_prior_feature_control"
+            ],
+            "paired_correctness_delta": analysis["paired_correctness_delta"],
+            "incremental_delta_vs_strongest_prior_feature_control": analysis[
+                "incremental_delta_vs_strongest_prior_feature_control"
+            ],
+            "incremental_delta_vs_competition_only_control": analysis[
+                "incremental_delta_vs_competition_only_control"
+            ],
+            "unanswerable_hop_strata": hop_strata,
+            "support_checks": expected_checks,
+            "confirmation_opened": confirmation_open.exists(),
+            "automatic_decomposer_result": metadata["automatic_decomposer_result"],
+            "reuse_failed_stage_for_feature_model_threshold_rule_gate_or_selection": outcome[
+                "reuse_failed_stage_for_feature_model_threshold_rule_gate_or_selection"
+            ],
+            "selector_adoption_authorized": outcome["selector_adoption_authorized"],
+            "canary_or_default_authorized": outcome["canary_or_default_authorized"],
+            "gate_2": outcome["gate_2"],
+        },
+    )
+
+
+def _check_musique_bridge_counterfactual_dependence_v71(
+    repo_root: Path,
+) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = (
+        repo_root / "output/rag_evaluation/musique_bridge_counterfactual_dependence_v71"
+    )
+    paths = {
+        "protocol": docs_root
+        / "musique_bridge_counterfactual_dependence_protocol_v71.json",
+        "source": docs_root
+        / "musique_bridge_counterfactual_dependence_source_registration_v71.json",
+        "model": docs_root
+        / "quac_roberta_qa_support_transfer_model_registration_v62.json",
+        "implementation": docs_root
+        / "musique_bridge_counterfactual_dependence_implementation_v71.json",
+        "implementation_erratum": docs_root
+        / "musique_bridge_counterfactual_dependence_implementation_erratum_v71.json",
+        "calibration_execution": docs_root
+        / "musique_bridge_counterfactual_dependence_calibration_execution_v71.json",
+        "calibration_result": docs_root
+        / "musique_bridge_counterfactual_dependence_calibration_result_v71.json",
+        "development_execution": docs_root
+        / "musique_bridge_counterfactual_dependence_development_execution_v71.json",
+        "development_result": docs_root
+        / "musique_bridge_counterfactual_dependence_development_result_v71.json",
+        "development_closure": docs_root
+        / "musique_bridge_counterfactual_dependence_development_closure_v71.json",
+        "synthesis": docs_root
+        / "musique_bridge_counterfactual_dependence_synthesis_v71.md",
+        "calibration_report": output_root / "calibration/report.md",
+        "calibration_cases": output_root / "calibration/cases.jsonl.gz",
+        "development_report": output_root / "development/report.md",
+        "development_cases": output_root / "development/cases.jsonl.gz",
+        "module": repo_root
+        / "research/frc_rag/musique_bridge_counterfactual_dependence.py",
+        "runner": repo_root / "scripts/run_musique_bridge_counterfactual_dependence.py",
+        "tests": repo_root
+        / "tests/test_frc_musique_bridge_counterfactual_dependence.py",
+    }
+    confirmation_open = (
+        docs_root
+        / "musique_bridge_counterfactual_dependence_confirmation_open_v71.json"
+    )
+    expected_hashes = {
+        "protocol": "2422a11e9eb8247b6e66bc928a5920575f9d752fb04707f0e116598c9c50ef15",
+        "source": "fcafc7a1448e7150afb3090010faba188ee5141bf536966f80dd1608fc54af8f",
+        "model": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+        "implementation": "f6caaa344750cbc6ff2e918f01e40b3fd64e297817da0d5bccb79af71f7517e6",
+        "implementation_erratum": "f816215feb1de62d7d1f9679dfd4d5aa8ce076186a2d2d9ef17f3c85d6b96804",
+        "calibration_execution": "0b4baf14e79c7d0a74ed49e0a045460190d74491bcc62a62bf6bec982dce5569",
+        "calibration_result": "053951ac69ccfebaba4e3d3ca434e7b4799af273281812104b4588059c34f611",
+        "development_execution": "362fcae57ffbec79b82638104ac283115eb4a526f95ced61a1eb39d150c4bc22",
+        "development_result": "bfc6813f01ea1b62fc3727e92c067dd2e7dd08431be94ea83895b8b86819e827",
+        "development_closure": "feae1b935d3c873edf7b6ad70521a1e1ea7c65ddf771e3f6d783e7b43ae005a0",
+        "synthesis": "7c7345d90e84df9a162e4ea9d803907c8adc63060c6f298fd501be17776c9bfb",
+        "calibration_report": "ce1d0dfcd081ec4489fd7450c996ceba86c2e71c8512ce7017000c3c84961001",
+        "calibration_cases": "90c164deb063c9c4141c5e137fb49a060aba7c4d149f14513e5e11dedd33f44d",
+        "development_report": "c821fa6ed83e8196b7a735c1e940b75c9a7f2039859502663aa1488d465a87a8",
+        "development_cases": "7fd8eb0ae68e92922836f90afa8f3ef60f64c9c96980f6e62410846da1f889ec",
+        "module": "8a02a73ebf148ed06cae23687839d3d058b61cd86e929de498a100eff79f5a94",
+        "runner": "44e05ac96186e859594323f6336aa82a673a13d06d10f26d078994067611d709",
+        "tests": "a7410b9749af310fb033ef7c5758ad5cf2b83d92a88b4fa8c072979fc57b1f8d",
+    }
+    protocol = _load_json(paths["protocol"])
+    source = _load_json(paths["source"])
+    implementation = _load_json(paths["implementation"])
+    erratum = _load_json(paths["implementation_erratum"])
+    calibration_execution = _load_json(paths["calibration_execution"])
+    calibration_result = _load_json(paths["calibration_result"])
+    development_execution = _load_json(paths["development_execution"])
+    development_result = _load_json(paths["development_result"])
+    closure = _load_json(paths["development_closure"])
+    calibration_cases = _load_jsonl(paths["calibration_cases"])
+    development_cases = _load_jsonl(paths["development_cases"])
+
+    experiment_id = "FRC-MUSIQUE-BRIDGE-COUNTERFACTUAL-DEPENDENCE-V71"
+    failure_status = (
+        "MUSIQUE_V71_BRIDGE_COUNTERFACTUAL_DEVELOPMENT_SUPPORT_NOT_"
+        "ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+    )
+    calibration = calibration_result["analysis"]
+    analysis = development_result["analysis"]
+    outcome = analysis["outcome"]
+    metadata = development_result["metadata"]
+    base_names = tuple(
+        calibration["linear_nine_signal_control"]["model"]["feature_names"]
+    )
+    prior_names = tuple(
+        calibration["monotone_interaction_control"]["model"]["feature_names"]
+    )
+    paragraph_names = tuple(
+        calibration["paragraph_competition_control"]["model"]["feature_names"]
+    )
+    competition_names = paragraph_names[len(base_names) :]
+    counterfactual_names = tuple(
+        protocol["counterfactual_feature_contract"]["fixed_order"]
+    )
+    candidate_names = base_names + counterfactual_names
+    all_names = prior_names + competition_names + counterfactual_names
+
+    def _raw_sha256(path: Path) -> str:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    def _model_scores(rows: list[dict[str, Any]], model: dict[str, Any]) -> list[float]:
+        scores: list[float] = []
+        for row in rows:
+            logit = float(model["intercept"]) + sum(
+                float(row["features"][name]) * float(weight)
+                for name, weight in zip(
+                    model["feature_names"],
+                    model["coefficients"],
+                    strict=True,
+                )
+            )
+            clipped = max(-40.0, min(40.0, logit))
+            scores.append(1.0 / (1.0 + math.exp(-clipped)))
+        return scores
+
+    def _metrics(scores: list[float], threshold: float) -> dict[str, Any]:
+        answer = [
+            index
+            for index, row in enumerate(development_cases)
+            if row["answer_state"] == "answerable"
+        ]
+        noanswer = [
+            index
+            for index, row in enumerate(development_cases)
+            if row["answer_state"] == "unanswerable"
+        ]
+        answer_pass = sum(scores[index] > threshold for index in answer)
+        answer_pass /= len(answer)
+        rejection = sum(scores[index] <= threshold for index in noanswer)
+        rejection /= len(noanswer)
+        return {
+            "rows": len(development_cases),
+            "answerable_rows": len(answer),
+            "unanswerable_rows": len(noanswer),
+            "threshold_exact": threshold,
+            "answerable_pass_rate": round(answer_pass, 6),
+            "unanswerable_rejection_rate": round(rejection, 6),
+            "balanced_accuracy": round((answer_pass + rejection) / 2.0, 6),
+        }
+
+    learned_methods = (
+        "linear_nine_signal_control",
+        "monotone_additive_spline_control",
+        "monotone_interaction_control",
+        "paragraph_competition_control",
+        "bridge_counterfactual_only_control",
+        "bridge_counterfactual_candidate",
+    )
+    thresholds = {
+        "calibrated_direct_composed_question": float(
+            calibration["calibrated_direct_composed_question"]["pooled"][
+                "threshold_exact"
+            ]
+        ),
+        "fixed_v66_full_chain": 0.974609375,
+        "calibrated_chain_bottleneck": float(
+            calibration["calibrated_chain_bottleneck"]["pooled"]["threshold_exact"]
+        ),
+        **{
+            name: float(calibration[name]["pooled"]["threshold_exact"])
+            for name in learned_methods
+        },
+    }
+    scores = {
+        "calibrated_direct_composed_question": [
+            float(row["direct_score_margin"]) for row in development_cases
+        ],
+        "fixed_v66_full_chain": [
+            float(row["chain_bottleneck_score"]) for row in development_cases
+        ],
+        "calibrated_chain_bottleneck": [
+            float(row["chain_bottleneck_score"]) for row in development_cases
+        ],
+        **{
+            name: _model_scores(development_cases, calibration[name]["model"])
+            for name in learned_methods
+        },
+    }
+    methods = {
+        name: _metrics(value, thresholds[name]) for name, value in scores.items()
+    }
+    comparator_order = (
+        "calibrated_direct_composed_question",
+        "fixed_v66_full_chain",
+        "calibrated_chain_bottleneck",
+        "linear_nine_signal_control",
+        "monotone_additive_spline_control",
+        "monotone_interaction_control",
+        "paragraph_competition_control",
+        "bridge_counterfactual_only_control",
+    )
+    prior_order = (
+        "linear_nine_signal_control",
+        "monotone_additive_spline_control",
+        "monotone_interaction_control",
+        "paragraph_competition_control",
+    )
+    strongest_name = max(
+        comparator_order,
+        key=lambda name: (
+            methods[name]["balanced_accuracy"],
+            -comparator_order.index(name),
+        ),
+    )
+    prior_name = max(
+        prior_order,
+        key=lambda name: (
+            methods[name]["balanced_accuracy"],
+            -prior_order.index(name),
+        ),
+    )
+    candidate_decisions = [
+        score > thresholds["bridge_counterfactual_candidate"]
+        for score in scores["bridge_counterfactual_candidate"]
+    ]
+
+    def _decisions(name: str) -> list[bool]:
+        return [score > thresholds[name] for score in scores[name]]
+
+    def _correct(row: dict[str, Any], decision: bool) -> bool:
+        return decision == (row["answer_state"] == "answerable")
+
+    def _paired_point(control_name: str) -> float:
+        control_decisions = _decisions(control_name)
+        return round(
+            sum(
+                int(_correct(row, candidate)) - int(_correct(row, control))
+                for row, candidate, control in zip(
+                    development_cases,
+                    candidate_decisions,
+                    control_decisions,
+                    strict=True,
+                )
+            )
+            / len(development_cases),
+            6,
+        )
+
+    hop_strata = {}
+    for hop in (2, 3, 4):
+        indices = [
+            index
+            for index, row in enumerate(development_cases)
+            if row["answer_state"] == "unanswerable" and int(row["hop_count"]) == hop
+        ]
+        hop_strata[str(hop)] = {
+            "cases": len(indices),
+            "rejection_rate": round(
+                sum(not candidate_decisions[index] for index in indices) / len(indices),
+                6,
+            ),
+        }
+
+    expected_checks = {
+        "candidate_answerable_pass_rate_at_least_0_60": True,
+        "candidate_balanced_accuracy_at_least_0_72": False,
+        "candidate_minus_counterfactual_only_control_at_least_0_02": True,
+        "candidate_minus_strongest_fair_baseline_at_least_0_05": False,
+        "candidate_minus_strongest_prior_feature_control_at_least_0_02": False,
+        "candidate_unanswerable_rejection_rate_at_least_0_80": False,
+        "counterfactual_only_control_paired_correctness_ci_low_above_0": True,
+        "every_observed_unanswerable_hop_stratum_rejection_rate_at_least_0_75": True,
+        "exact_answer_state_balance": True,
+        "exact_cases_equals_800": True,
+        "invalid_feature_output_rate_equals_0": True,
+        "prior_feature_control_paired_correctness_ci_low_above_0": False,
+        "schema_exclusion_rate_at_most_0_01": True,
+        "selected_prior_or_calibration_source_overlap_equals_0": True,
+        "selected_squad2_exact_question_overlap_equals_0": True,
+        "strongest_baseline_paired_correctness_ci_low_above_0": False,
+    }
+    all_cases = calibration_cases + development_cases
+    invalid_calibration = [
+        row for row in calibration_cases if row["invalid_feature_output"]
+    ]
+    invalid_development = [
+        row for row in development_cases if row["invalid_feature_output"]
+    ]
+    vectors_valid = all(
+        set(row["features"]) == set(all_names)
+        and all(math.isfinite(float(value)) for value in row["features"].values())
+        and row["feature_sha256"] == _canonical_json_sha256(row["features"])
+        and row["feature_complete"] is True
+        for row in all_cases
+    )
+    forbidden_text_keys = {
+        "question",
+        "context",
+        "composed_question",
+        "oracle_hop_templates",
+        "answer",
+        "answer_aliases",
+        "paragraph_support_idx",
+        "is_supporting",
+        "predicted_span",
+        "source_id",
+        "source_id_commitment",
+    }
+    candidate_model = calibration["bridge_counterfactual_candidate"]["model"]
+    candidate_coefficients = dict(
+        zip(
+            candidate_model["feature_names"],
+            candidate_model["coefficients"],
+            strict=True,
+        )
+    )
+    nonnegative_names = set(candidate_names) - {
+        "hop_count_is_3",
+        "hop_count_is_4",
+    }
+
+    passed = (
+        all(
+            _evidence_sha256(paths[key]) == value
+            for key, value in expected_hashes.items()
+        )
+        and protocol["experiment_id"] == experiment_id
+        and protocol["prior_boundary"][
+            "v70_case_level_features_predictions_errors_raw_qa_or_subgroups_used_to_choose_v71_features_model_optimizer_or_gates"
+        ]
+        is False
+        and protocol["sampling"]["expected_prior_source_commitment_union_count"] == 9700
+        and len(base_names) == 9
+        and len(prior_names) == 32
+        and len(competition_names) == 6
+        and tuple(candidate_model["feature_names"]) == candidate_names
+        and protocol["counterfactual_feature_contract"]["feature_count"] == 6
+        and protocol["counterfactual_feature_contract"]["candidate_feature_count"] == 15
+        and protocol["model_contract"][
+            "total_learned_scalars_across_all_reported_methods"
+        ]
+        == 118
+        and source["targets"]["v71_source_commitments_selected_before_registration"]
+        == 0
+        and source["prior_exclusion_sources"]["expected_union_source_commitments"]
+        == 9700
+        and implementation["target_rows_read_for_v71_before_registration"] == 0
+        and implementation["synthetic_tests"]["passed"] == 15
+        and implementation["total_learned_scalars_across_reported_methods"] == 118
+        and erratum["original_registration_hashes"] == implementation["hashes"]
+        and erratum["failure_boundary"]["target_rows_read_for_sampling"] == 39876
+        and erratum["failure_boundary"]["v71_source_commitments_selected"] == 1600
+        and erratum["failure_boundary"]["counterfactual_inputs_created"] is False
+        and erratum["failure_boundary"]["counterfactual_model_outputs_seen"] is False
+        and erratum["failure_boundary"]["feature_decisions_created"] is False
+        and erratum["failure_boundary"]["gold_join_started"] is False
+        and erratum["failure_boundary"]["answer_state_labels_or_metrics_seen"] is False
+        and erratum["correction"]["synthetic_tests_after_correction"]["passed"] == 16
+        and erratum[
+            "protocol_sample_feature_model_optimizer_threshold_gates_or_stage_sizes_changed"
+        ]
+        is False
+        and erratum["corrected_hashes"]["module"] == expected_hashes["module"]
+        and erratum["corrected_hashes"]["runner"] == expected_hashes["runner"]
+        and erratum["corrected_hashes"]["tests"] == expected_hashes["tests"]
+        and calibration_execution["prepared_cases"] == 1600
+        and calibration_execution["candidate_maps"] == 1600
+        and calibration_execution["direct_qa_input_rows"] == 31999
+        and calibration_execution["sampling"]["selected_answer_state_counts"]
+        == {"answerable": 800, "unanswerable": 800}
+        and calibration_execution["sampling"][
+            "selected_excluded_source_commitment_overlap"
+        ]
+        == 0
+        and calibration_execution["sampling"]["selected_squad2_exact_question_overlap"]
+        == 0
+        and calibration_execution["structural_census"]["hop_count_distribution"]
+        == {"2": 1202, "3": 334, "4": 64}
+        and calibration_result["metadata"]["cases"] == 1600
+        and calibration_result["metadata"]["answer_state_counts"]
+        == {"answerable": 800, "unanswerable": 800}
+        and calibration_result["metadata"][
+            "total_learned_scalars_across_reported_methods"
+        ]
+        == 118
+        and calibration_result["outcome"]["development_open_authorized"] is True
+        and calibration["bridge_counterfactual_candidate"]["crossfit"][
+            "balanced_accuracy"
+        ]
+        == 0.689375
+        and all(
+            float(candidate_coefficients[name]) >= 0.0 for name in nonnegative_names
+        )
+        and development_execution["prepared_cases"] == 800
+        and development_execution["candidate_maps"] == 800
+        and development_execution["direct_qa_input_rows"] == 16000
+        and development_execution["hashes"]["calibration_result_sha256"]
+        == _raw_sha256(paths["calibration_result"])
+        and development_execution["sampling"]["selected_answer_state_counts"]
+        == {"answerable": 400, "unanswerable": 400}
+        and development_execution["sampling"][
+            "selected_excluded_source_commitment_overlap"
+        ]
+        == 0
+        and development_execution["sampling"]["selected_squad2_exact_question_overlap"]
+        == 0
+        and development_execution["structural_census"]["hop_count_distribution"]
+        == {"2": 590, "3": 166, "4": 44}
+        and metadata["cases"] == 800
+        and metadata["answer_state_counts"] == {"answerable": 400, "unanswerable": 400}
+        and metadata["automatic_decomposer_result"] is False
+        and metadata["strict_independent_model_training_confirmation"] is False
+        and metadata["official_musique_leaderboard_result"] is False
+        and methods == analysis["methods"]
+        and strongest_name == "monotone_additive_spline_control"
+        and prior_name == "monotone_additive_spline_control"
+        and analysis["strongest_fair_baseline"]
+        == {"name": strongest_name, **methods[strongest_name]}
+        and analysis["strongest_prior_feature_control"]
+        == {"name": prior_name, **methods[prior_name]}
+        and _paired_point(strongest_name) == -0.01625
+        and _paired_point(prior_name) == -0.01625
+        and _paired_point("bridge_counterfactual_only_control") == 0.09125
+        and analysis["paired_correctness_delta"]
+        == {
+            "point": -0.01625,
+            "ci_low": -0.03375,
+            "ci_high": 0.0025,
+            "resamples": 10000,
+            "seed": 20260903,
+        }
+        and analysis["incremental_delta_vs_strongest_prior_feature_control"]
+        == {
+            "point": -0.01625,
+            "ci_low": -0.035,
+            "ci_high": 0.0025,
+            "resamples": 10000,
+            "seed": 20261903,
+        }
+        and analysis["incremental_delta_vs_counterfactual_only_control"]
+        == {
+            "point": 0.09125,
+            "ci_low": 0.05625,
+            "ci_high": 0.12625,
+            "resamples": 10000,
+            "seed": 20262903,
+        }
+        and hop_strata == analysis["unanswerable_hop_strata"]
+        and analysis["invalid_feature_output_count"] == 0
+        and analysis["support_checks"] == expected_checks
+        and outcome["status"] == failure_status
+        and outcome["stage_gate_passed"] is False
+        and outcome["confirmation_open_authorized"] is False
+        and outcome[
+            "reuse_failed_stage_for_feature_model_threshold_rule_gate_or_selection"
+        ]
+        is False
+        and outcome["selector_or_retrieval_scoring_part_of_v71"] is False
+        and outcome["selector_adoption_authorized"] is False
+        and outcome["canary_or_default_authorized"] is False
+        and outcome["gate_2"] == "NO-GO/SHADOW"
+        and closure["stage_result_sha256"] == _raw_sha256(paths["development_result"])
+        and closure["status"] == failure_status
+        and closure["confirmation_open_authorized"] is False
+        and not confirmation_open.exists()
+        and len(calibration_cases) == 1600
+        and len({row["case_id"] for row in calibration_cases}) == 1600
+        and len(development_cases) == 800
+        and len({row["case_id"] for row in development_cases}) == 800
+        and len(invalid_calibration) == 0
+        and len(invalid_development) == 0
+        and vectors_valid
+        and not forbidden_text_keys & _nested_keys(all_cases)
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    return _check(
+        "musique_v71_bridge_counterfactual_dependence_boundary",
+        (
+            "MuSiQue v71 bridge-counterfactual calibration and disjoint "
+            "development are hash-locked, stopped before confirmation, "
+            "and preserve Gate 2 No-Go"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": experiment_id,
+            "status": outcome["status"],
+            "prior_source_commitment_union": 9700,
+            "calibration_cases": len(calibration_cases),
+            "development_cases": len(development_cases),
+            "base_feature_count": len(base_names),
+            "prior_feature_count": len(prior_names),
+            "competition_feature_count": len(competition_names),
+            "counterfactual_feature_count": len(counterfactual_names),
+            "candidate_feature_count": len(candidate_names),
+            "audited_feature_count": len(all_names),
+            "total_learned_scalars": 118,
+            "calibration_invalid_fail_closed_count": len(invalid_calibration),
+            "development_invalid_fail_closed_count": len(invalid_development),
+            "implementation_erratum_disclosed": True,
+            "calibration_crossfit": {
+                name: calibration[name]["crossfit"]
+                for name in (
+                    "calibrated_direct_composed_question",
+                    "calibrated_chain_bottleneck",
+                    *learned_methods,
+                )
+            },
+            "development_methods": methods,
+            "strongest_fair_baseline": analysis["strongest_fair_baseline"],
+            "strongest_prior_feature_control": analysis[
+                "strongest_prior_feature_control"
+            ],
+            "paired_correctness_delta": analysis["paired_correctness_delta"],
+            "incremental_delta_vs_strongest_prior_feature_control": analysis[
+                "incremental_delta_vs_strongest_prior_feature_control"
+            ],
+            "incremental_delta_vs_counterfactual_only_control": analysis[
+                "incremental_delta_vs_counterfactual_only_control"
+            ],
+            "unanswerable_hop_strata": hop_strata,
+            "support_checks": expected_checks,
+            "confirmation_opened": confirmation_open.exists(),
+            "automatic_decomposer_result": metadata["automatic_decomposer_result"],
+            "reuse_failed_stage_for_feature_model_threshold_rule_gate_or_selection": outcome[
+                "reuse_failed_stage_for_feature_model_threshold_rule_gate_or_selection"
+            ],
+            "selector_adoption_authorized": outcome["selector_adoption_authorized"],
+            "canary_or_default_authorized": outcome["canary_or_default_authorized"],
+            "gate_2": outcome["gate_2"],
+        },
+    )
+
+
+def _check_musique_in_domain_rival_bridge_v72(
+    repo_root: Path,
+) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = repo_root / "output/rag_evaluation/musique_in_domain_rival_bridge_v72"
+    paths = {
+        "protocol": docs_root / "musique_in_domain_rival_bridge_protocol_v72.json",
+        "source": docs_root
+        / "musique_in_domain_rival_bridge_source_registration_v72.json",
+        "model": docs_root
+        / "quac_roberta_qa_support_transfer_model_registration_v62.json",
+        "implementation": docs_root
+        / "musique_in_domain_rival_bridge_implementation_v72.json",
+        "implementation_erratum": docs_root
+        / "musique_in_domain_rival_bridge_implementation_erratum_v72.json",
+        "calibration_execution": docs_root
+        / "musique_in_domain_rival_bridge_calibration_execution_v72.json",
+        "calibration_result": docs_root
+        / "musique_in_domain_rival_bridge_calibration_result_v72.json",
+        "development_execution": docs_root
+        / "musique_in_domain_rival_bridge_development_execution_v72.json",
+        "development_result": docs_root
+        / "musique_in_domain_rival_bridge_development_result_v72.json",
+        "development_closure": docs_root
+        / "musique_in_domain_rival_bridge_development_closure_v72.json",
+        "synthesis": docs_root / "musique_in_domain_rival_bridge_synthesis_v72.md",
+        "calibration_report": output_root / "calibration/report.md",
+        "calibration_cases": output_root / "calibration/cases.jsonl.gz",
+        "development_report": output_root / "development/report.md",
+        "development_cases": output_root / "development/cases.jsonl.gz",
+        "module": repo_root / "research/frc_rag/musique_in_domain_rival_bridge.py",
+        "runner": repo_root / "scripts/run_musique_in_domain_rival_bridge.py",
+        "tests": repo_root / "tests/test_frc_musique_in_domain_rival_bridge.py",
+    }
+    confirmation_open = (
+        docs_root / "musique_in_domain_rival_bridge_confirmation_open_v72.json"
+    )
+    expected_hashes = {
+        "protocol": "9a8c2c059d25847d0fe8f87907902d8ece55cb619398bf8f9a6a9e3100bb7322",
+        "source": "b121331cbd31c46252109a6112b3d3c2df6a269ca58feeb6ce2e86dc34fd7b2b",
+        "model": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+        "implementation": "51706e3bcd742c3e46b74f56488d4562024467970eee7aea62bf0da4f9581ab2",
+        "implementation_erratum": "ac9d40dd8353bfb72598ebd1eecefcae6d429f63d4beeec48cffcfa159a7f7dc",
+        "calibration_execution": "bbef6a7c626ad3c489390b5c5cf92878e81a039d495c409135955781beb240b8",
+        "calibration_result": "0c8b92053a994cd559d906e6f7d9731d0179c7556a87e2e30c39a9e2ec7834ec",
+        "development_execution": "9517a14b53b1c489222a2dc501d131eb9ea893a250b727881c47da4e02c93cdb",
+        "development_result": "286bc473ccbc8f5a09c5f4f29a98d02cd0fa4b13acf6f07d561a59a66de89a4c",
+        "development_closure": "0a406c96da50fbdebaae26e06d622acc0165b22deca0d635b5dddc182cae55e2",
+        "synthesis": "8f0bf43c1f7fbbcaaad1fe35b5a09f2a6c64009e1173d72e0fb3f75243666a0a",
+        "calibration_report": "c9ecd360c2de635e081a08c916f75b5fb878d89d7aff55d44cf9262568bacb42",
+        "calibration_cases": "bb7e351cf28a991eea1053c4419887facde402b846e64323b43b8761d9e40f9c",
+        "development_report": "22b6c631358628ccdf025d6aa89bcdc6fb387a7d95b5fe08731c9bd81e58fd5c",
+        "development_cases": "6065daf6f9af1a32ce2ee67e2f7c365310fbfe9e2802b6c28cd8cfafd7c219bb",
+        "module": "1de163a36c3087cdb1e40750d2058c1dac8707c27b8fceac9cf7788a399c0f33",
+        "runner": "6429c2bd1d5808a632e8ec43cef93bad2827165ff28bfeb0f6b5a0e01f2aaba4",
+        "tests": "c25b7778e202b7b65d4452de5c05bfa491f74480d7eca3f5154aff423f9c667a",
+    }
+    protocol = _load_json(paths["protocol"])
+    source = _load_json(paths["source"])
+    implementation = _load_json(paths["implementation"])
+    erratum = _load_json(paths["implementation_erratum"])
+    calibration_execution = _load_json(paths["calibration_execution"])
+    calibration_result = _load_json(paths["calibration_result"])
+    development_execution = _load_json(paths["development_execution"])
+    development_result = _load_json(paths["development_result"])
+    closure = _load_json(paths["development_closure"])
+    calibration_cases = _load_jsonl(paths["calibration_cases"])
+    development_cases = _load_jsonl(paths["development_cases"])
+
+    experiment_id = "FRC-MUSIQUE-IN-DOMAIN-RIVAL-BRIDGE-V72"
+    failure_status = (
+        "MUSIQUE_V72_IN_DOMAIN_RIVAL_DEVELOPMENT_SUPPORT_NOT_"
+        "ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+    )
+    calibration = calibration_result["analysis"]
+    analysis = development_result["analysis"]
+    outcome = analysis["outcome"]
+    metadata = development_result["metadata"]
+    base_names = tuple(
+        calibration["linear_nine_signal_control"]["model"]["feature_names"]
+    )
+    prior_names = tuple(
+        calibration["monotone_interaction_control"]["model"]["feature_names"]
+    )
+    paragraph_names = tuple(
+        calibration["paragraph_competition_control"]["model"]["feature_names"]
+    )
+    competition_names = paragraph_names[len(base_names) :]
+    sentinel_model_names = tuple(
+        calibration["fixed_sentinel_control"]["model"]["feature_names"]
+    )
+    sentinel_names = sentinel_model_names[len(base_names) :]
+    rival_names = tuple(protocol["feature_contract"]["fixed_order"])
+    candidate_names = base_names + rival_names
+    all_names = prior_names + competition_names + sentinel_names + rival_names
+
+    def _raw_sha256(path: Path) -> str:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    def _model_scores(rows: list[dict[str, Any]], model: dict[str, Any]) -> list[float]:
+        result: list[float] = []
+        for row in rows:
+            logit = float(model["intercept"]) + sum(
+                float(row["features"][name]) * float(weight)
+                for name, weight in zip(
+                    model["feature_names"],
+                    model["coefficients"],
+                    strict=True,
+                )
+            )
+            clipped = max(-40.0, min(40.0, logit))
+            result.append(1.0 / (1.0 + math.exp(-clipped)))
+        return result
+
+    def _metrics(scores: list[float], threshold: float) -> dict[str, Any]:
+        answer = [
+            index
+            for index, row in enumerate(development_cases)
+            if row["answer_state"] == "answerable"
+        ]
+        noanswer = [
+            index
+            for index, row in enumerate(development_cases)
+            if row["answer_state"] == "unanswerable"
+        ]
+        answer_pass = sum(scores[index] > threshold for index in answer)
+        answer_pass /= len(answer)
+        rejection = sum(scores[index] <= threshold for index in noanswer)
+        rejection /= len(noanswer)
+        return {
+            "rows": len(development_cases),
+            "answerable_rows": len(answer),
+            "unanswerable_rows": len(noanswer),
+            "threshold_exact": threshold,
+            "answerable_pass_rate": round(answer_pass, 6),
+            "unanswerable_rejection_rate": round(rejection, 6),
+            "balanced_accuracy": round((answer_pass + rejection) / 2.0, 6),
+        }
+
+    learned_methods = (
+        "linear_nine_signal_control",
+        "monotone_additive_spline_control",
+        "monotone_interaction_control",
+        "paragraph_competition_control",
+        "fixed_sentinel_control",
+        "in_domain_rival_only_control",
+        "in_domain_rival_candidate",
+    )
+    thresholds = {
+        "calibrated_direct_composed_question": float(
+            calibration["calibrated_direct_composed_question"]["pooled"][
+                "threshold_exact"
+            ]
+        ),
+        "fixed_v66_full_chain": 0.974609375,
+        "calibrated_chain_bottleneck": float(
+            calibration["calibrated_chain_bottleneck"]["pooled"]["threshold_exact"]
+        ),
+        **{
+            name: float(calibration[name]["pooled"]["threshold_exact"])
+            for name in learned_methods
+        },
+    }
+    scores = {
+        "calibrated_direct_composed_question": [
+            float(row["direct_score_margin"]) for row in development_cases
+        ],
+        "fixed_v66_full_chain": [
+            float(row["chain_bottleneck_score"]) for row in development_cases
+        ],
+        "calibrated_chain_bottleneck": [
+            float(row["chain_bottleneck_score"]) for row in development_cases
+        ],
+        **{
+            name: _model_scores(development_cases, calibration[name]["model"])
+            for name in learned_methods
+        },
+    }
+    methods = {
+        name: _metrics(value, thresholds[name]) for name, value in scores.items()
+    }
+    comparator_order = (
+        "calibrated_direct_composed_question",
+        "fixed_v66_full_chain",
+        "calibrated_chain_bottleneck",
+        "linear_nine_signal_control",
+        "monotone_additive_spline_control",
+        "monotone_interaction_control",
+        "paragraph_competition_control",
+        "fixed_sentinel_control",
+        "in_domain_rival_only_control",
+    )
+    prior_order = (
+        "linear_nine_signal_control",
+        "monotone_additive_spline_control",
+        "monotone_interaction_control",
+        "paragraph_competition_control",
+        "fixed_sentinel_control",
+    )
+    strongest_name = max(
+        comparator_order,
+        key=lambda name: (
+            methods[name]["balanced_accuracy"],
+            -comparator_order.index(name),
+        ),
+    )
+    prior_name = max(
+        prior_order,
+        key=lambda name: (
+            methods[name]["balanced_accuracy"],
+            -prior_order.index(name),
+        ),
+    )
+    candidate_decisions = [
+        score > thresholds["in_domain_rival_candidate"]
+        for score in scores["in_domain_rival_candidate"]
+    ]
+
+    def _decisions(name: str) -> list[bool]:
+        return [score > thresholds[name] for score in scores[name]]
+
+    def _correct(row: dict[str, Any], decision: bool) -> bool:
+        return decision == (row["answer_state"] == "answerable")
+
+    def _paired_point(control_name: str) -> float:
+        control_decisions = _decisions(control_name)
+        return round(
+            sum(
+                int(_correct(row, candidate)) - int(_correct(row, control))
+                for row, candidate, control in zip(
+                    development_cases,
+                    candidate_decisions,
+                    control_decisions,
+                    strict=True,
+                )
+            )
+            / len(development_cases),
+            6,
+        )
+
+    hop_strata = {}
+    for hop in (2, 3, 4):
+        indices = [
+            index
+            for index, row in enumerate(development_cases)
+            if row["answer_state"] == "unanswerable" and int(row["hop_count"]) == hop
+        ]
+        hop_strata[str(hop)] = {
+            "cases": len(indices),
+            "rejection_rate": round(
+                sum(not candidate_decisions[index] for index in indices) / len(indices),
+                6,
+            ),
+        }
+
+    expected_checks = {
+        "candidate_answerable_pass_rate_at_least_0_60": True,
+        "candidate_balanced_accuracy_at_least_0_72": False,
+        "candidate_minus_rival_only_control_at_least_0_02": True,
+        "candidate_minus_strongest_fair_baseline_at_least_0_05": False,
+        "candidate_minus_strongest_prior_feature_control_at_least_0_02": False,
+        "candidate_unanswerable_rejection_rate_at_least_0_80": False,
+        "every_observed_unanswerable_hop_stratum_rejection_rate_at_least_0_75": True,
+        "exact_answer_state_balance": True,
+        "exact_cases_equals_800": True,
+        "invalid_feature_output_rate_equals_0": False,
+        "prior_feature_control_paired_correctness_ci_low_above_0": False,
+        "rival_only_control_paired_correctness_ci_low_above_0": True,
+        "schema_exclusion_rate_at_most_0_01": True,
+        "selected_prior_or_calibration_source_overlap_equals_0": True,
+        "selected_squad2_exact_question_overlap_equals_0": True,
+        "strongest_baseline_paired_correctness_ci_low_above_0": False,
+    }
+    all_cases = calibration_cases + development_cases
+    invalid_calibration = [
+        row for row in calibration_cases if row["invalid_feature_output"]
+    ]
+    invalid_development = [
+        row for row in development_cases if row["invalid_feature_output"]
+    ]
+    vectors_valid = all(
+        set(row["features"]) == set(all_names)
+        and all(math.isfinite(float(value)) for value in row["features"].values())
+        and row["feature_sha256"] == _canonical_json_sha256(row["features"])
+        and row["feature_complete"] is (not row["invalid_feature_output"])
+        for row in all_cases
+    )
+    forbidden_text_keys = {
+        "question",
+        "context",
+        "composed_question",
+        "oracle_hop_templates",
+        "answer",
+        "answer_aliases",
+        "paragraph_support_idx",
+        "is_supporting",
+        "predicted_span",
+        "source_id",
+        "source_id_commitment",
+        "rival_span",
+    }
+    candidate_model = calibration["in_domain_rival_candidate"]["model"]
+    candidate_coefficients = dict(
+        zip(
+            candidate_model["feature_names"],
+            candidate_model["coefficients"],
+            strict=True,
+        )
+    )
+    nonnegative_names = set(candidate_names) - {
+        "hop_count_is_3",
+        "hop_count_is_4",
+    }
+
+    passed = (
+        all(
+            _evidence_sha256(paths[key]) == value
+            for key, value in expected_hashes.items()
+        )
+        and protocol["experiment_id"] == experiment_id
+        and protocol["prior_boundary"][
+            "v71_case_level_features_predictions_errors_raw_qa_or_subgroups_used_to_choose_v72_features_model_optimizer_or_gates"
+        ]
+        is False
+        and protocol["sampling"]["expected_prior_source_commitment_union_count"]
+        == 12100
+        and len(base_names) == 9
+        and len(prior_names) == 32
+        and len(competition_names) == 6
+        and len(sentinel_names) == 6
+        and len(rival_names) == 6
+        and tuple(candidate_model["feature_names"]) == candidate_names
+        and len(all_names) == 50
+        and protocol["feature_contract"]["candidate_feature_count"] == 15
+        and protocol["model_contract"][
+            "total_learned_scalars_across_all_reported_methods"
+        ]
+        == 135
+        and source["targets"]["v72_source_commitments_selected_before_registration"]
+        == 0
+        and source["prior_exclusion_sources"]["expected_union_source_commitments"]
+        == 12100
+        and implementation["target_rows_read_for_v72_before_registration"] == 0
+        and implementation["synthetic_tests"]["passed"] == 16
+        and implementation["total_learned_scalars_across_reported_methods"] == 135
+        and erratum["original_registration_hashes"] == implementation["hashes"]
+        and erratum["failure_boundary"]["target_rows_read_for_sampling"] == 39876
+        and erratum["failure_boundary"]["v72_source_commitments_selected"] == 1600
+        and erratum["failure_boundary"]["rival_catalog_written"] is False
+        and erratum["failure_boundary"]["sentinel_counterfactual_inputs_created"]
+        is False
+        and erratum["failure_boundary"]["rival_counterfactual_inputs_created"] is False
+        and erratum["failure_boundary"]["counterfactual_model_outputs_seen"] is False
+        and erratum["failure_boundary"]["feature_decisions_created"] is False
+        and erratum["failure_boundary"]["gold_join_started"] is False
+        and erratum["failure_boundary"]["answer_state_labels_or_metrics_seen"] is False
+        and erratum["correction"]["synthetic_tests_after_correction"]["passed"] == 17
+        and erratum["correction"]["rival_ranking_or_eligibility_changed"] is False
+        and erratum[
+            "protocol_sample_rival_feature_model_optimizer_threshold_gates_or_stage_sizes_changed"
+        ]
+        is False
+        and erratum["corrected_hashes"]["module"] == expected_hashes["module"]
+        and erratum["corrected_hashes"]["runner"] == expected_hashes["runner"]
+        and erratum["corrected_hashes"]["tests"] == expected_hashes["tests"]
+        and calibration_execution["prepared_cases"] == 1600
+        and calibration_execution["candidate_maps"] == 1600
+        and calibration_execution["direct_qa_input_rows"] == 31998
+        and calibration_execution["sampling"]["selected_answer_state_counts"]
+        == {"answerable": 800, "unanswerable": 800}
+        and calibration_execution["sampling"][
+            "selected_excluded_source_commitment_overlap"
+        ]
+        == 0
+        and calibration_execution["sampling"]["selected_squad2_exact_question_overlap"]
+        == 0
+        and calibration_execution["structural_census"]["hop_count_distribution"]
+        == {"2": 1178, "3": 343, "4": 79}
+        and calibration_result["metadata"]["cases"] == 1600
+        and calibration_result["metadata"]["answer_state_counts"]
+        == {"answerable": 800, "unanswerable": 800}
+        and calibration_result["metadata"][
+            "total_learned_scalars_across_reported_methods"
+        ]
+        == 135
+        and calibration_result["outcome"]["development_open_authorized"] is True
+        and calibration["in_domain_rival_candidate"]["crossfit"]["balanced_accuracy"]
+        == 0.6875
+        and all(
+            float(candidate_coefficients[name]) >= 0.0 for name in nonnegative_names
+        )
+        and development_execution["prepared_cases"] == 800
+        and development_execution["candidate_maps"] == 800
+        and development_execution["direct_qa_input_rows"] == 16000
+        and development_execution["hashes"]["calibration_result_sha256"]
+        == _raw_sha256(paths["calibration_result"])
+        and development_execution["sampling"]["selected_answer_state_counts"]
+        == {"answerable": 400, "unanswerable": 400}
+        and development_execution["sampling"][
+            "selected_excluded_source_commitment_overlap"
+        ]
+        == 0
+        and development_execution["sampling"]["selected_squad2_exact_question_overlap"]
+        == 0
+        and development_execution["structural_census"]["hop_count_distribution"]
+        == {"2": 610, "3": 163, "4": 27}
+        and metadata["cases"] == 800
+        and metadata["answer_state_counts"] == {"answerable": 400, "unanswerable": 400}
+        and metadata["automatic_decomposer_result"] is False
+        and metadata["strict_independent_model_training_confirmation"] is False
+        and metadata["official_musique_leaderboard_result"] is False
+        and methods == analysis["methods"]
+        and strongest_name == "linear_nine_signal_control"
+        and prior_name == "linear_nine_signal_control"
+        and analysis["strongest_fair_baseline"]
+        == {"name": strongest_name, **methods[strongest_name]}
+        and analysis["strongest_prior_feature_control"]
+        == {"name": prior_name, **methods[prior_name]}
+        and _paired_point(strongest_name) == -0.00125
+        and _paired_point(prior_name) == -0.00125
+        and _paired_point("in_domain_rival_only_control") == 0.1125
+        and analysis["paired_correctness_delta"]
+        == {
+            "point": -0.00125,
+            "ci_low": -0.015,
+            "ci_high": 0.0125,
+            "resamples": 10000,
+            "seed": 20260906,
+        }
+        and analysis["incremental_delta_vs_strongest_prior_feature_control"]
+        == {
+            "point": -0.00125,
+            "ci_low": -0.015,
+            "ci_high": 0.0125,
+            "resamples": 10000,
+            "seed": 20261906,
+        }
+        and analysis["incremental_delta_vs_rival_only_control"]
+        == {
+            "point": 0.1125,
+            "ci_low": 0.08,
+            "ci_high": 0.14625,
+            "resamples": 10000,
+            "seed": 20262906,
+        }
+        and hop_strata == analysis["unanswerable_hop_strata"]
+        and analysis["invalid_feature_output_count"] == 1
+        and analysis["support_checks"] == expected_checks
+        and outcome["status"] == failure_status
+        and outcome["stage_gate_passed"] is False
+        and outcome["confirmation_open_authorized"] is False
+        and outcome[
+            "reuse_failed_stage_for_feature_model_threshold_rule_gate_or_selection"
+        ]
+        is False
+        and outcome["selector_or_retrieval_scoring_part_of_v72"] is False
+        and outcome["selector_adoption_authorized"] is False
+        and outcome["canary_or_default_authorized"] is False
+        and outcome["gate_2"] == "NO-GO/SHADOW"
+        and closure["stage_result_sha256"] == _raw_sha256(paths["development_result"])
+        and closure["status"] == failure_status
+        and closure["confirmation_open_authorized"] is False
+        and not confirmation_open.exists()
+        and len(calibration_cases) == 1600
+        and len({row["case_id"] for row in calibration_cases}) == 1600
+        and len(development_cases) == 800
+        and len({row["case_id"] for row in development_cases}) == 800
+        and len(invalid_calibration) == 0
+        and len(invalid_development) == 1
+        and vectors_valid
+        and not forbidden_text_keys & _nested_keys(all_cases)
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    return _check(
+        "musique_v72_in_domain_rival_bridge_boundary",
+        (
+            "MuSiQue v72 in-domain-rival calibration and disjoint development "
+            "are hash-locked, stopped before confirmation, and preserve "
+            "Gate 2 No-Go"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": experiment_id,
+            "status": outcome["status"],
+            "prior_source_commitment_union": 12100,
+            "calibration_cases": len(calibration_cases),
+            "development_cases": len(development_cases),
+            "base_feature_count": len(base_names),
+            "prior_feature_count": len(prior_names),
+            "competition_feature_count": len(competition_names),
+            "sentinel_feature_count": len(sentinel_names),
+            "rival_feature_count": len(rival_names),
+            "candidate_feature_count": len(candidate_names),
+            "audited_feature_count": len(all_names),
+            "total_learned_scalars": 135,
+            "calibration_invalid_fail_closed_count": len(invalid_calibration),
+            "development_invalid_fail_closed_count": len(invalid_development),
+            "implementation_erratum_disclosed": True,
+            "calibration_crossfit": {
+                name: calibration[name]["crossfit"]
+                for name in (
+                    "calibrated_direct_composed_question",
+                    "calibrated_chain_bottleneck",
+                    *learned_methods,
+                )
+            },
+            "development_methods": methods,
+            "strongest_fair_baseline": analysis["strongest_fair_baseline"],
+            "strongest_prior_feature_control": analysis[
+                "strongest_prior_feature_control"
+            ],
+            "paired_correctness_delta": analysis["paired_correctness_delta"],
+            "incremental_delta_vs_strongest_prior_feature_control": analysis[
+                "incremental_delta_vs_strongest_prior_feature_control"
+            ],
+            "incremental_delta_vs_rival_only_control": analysis[
+                "incremental_delta_vs_rival_only_control"
+            ],
+            "unanswerable_hop_strata": hop_strata,
+            "support_checks": expected_checks,
+            "confirmation_opened": confirmation_open.exists(),
+            "automatic_decomposer_result": metadata["automatic_decomposer_result"],
+            "reuse_failed_stage_for_feature_model_threshold_rule_gate_or_selection": outcome[
+                "reuse_failed_stage_for_feature_model_threshold_rule_gate_or_selection"
+            ],
+            "selector_adoption_authorized": outcome["selector_adoption_authorized"],
+            "canary_or_default_authorized": outcome["canary_or_default_authorized"],
+            "gate_2": outcome["gate_2"],
+        },
+    )
+
+
+def _check_musique_context_bridge_erasure_v73(
+    repo_root: Path,
+) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = repo_root / "output/rag_evaluation/musique_context_bridge_erasure_v73"
+    paths = {
+        "protocol": docs_root / "musique_context_bridge_erasure_protocol_v73.json",
+        "source": docs_root
+        / "musique_context_bridge_erasure_source_registration_v73.json",
+        "model": docs_root
+        / "quac_roberta_qa_support_transfer_model_registration_v62.json",
+        "implementation": docs_root
+        / "musique_context_bridge_erasure_implementation_v73.json",
+        "implementation_erratum": docs_root
+        / "musique_context_bridge_erasure_implementation_erratum_v73.json",
+        "calibration_execution": docs_root
+        / "musique_context_bridge_erasure_calibration_execution_v73.json",
+        "calibration_result": docs_root
+        / "musique_context_bridge_erasure_calibration_result_v73.json",
+        "development_execution": docs_root
+        / "musique_context_bridge_erasure_development_execution_v73.json",
+        "development_result": docs_root
+        / "musique_context_bridge_erasure_development_result_v73.json",
+        "development_closure": docs_root
+        / "musique_context_bridge_erasure_development_closure_v73.json",
+        "synthesis": docs_root / "musique_context_bridge_erasure_synthesis_v73.md",
+        "calibration_report": output_root / "calibration/report.md",
+        "calibration_cases": output_root / "calibration/cases.jsonl.gz",
+        "development_report": output_root / "development/report.md",
+        "development_cases": output_root / "development/cases.jsonl.gz",
+        "module": repo_root / "research/frc_rag/musique_context_bridge_erasure.py",
+        "runner": repo_root / "scripts/run_musique_context_bridge_erasure.py",
+        "tests": repo_root / "tests/test_frc_musique_context_bridge_erasure.py",
+    }
+    confirmation_open = (
+        docs_root / "musique_context_bridge_erasure_confirmation_open_v73.json"
+    )
+    expected_hashes = {
+        "protocol": "0f77eb125c2f9a23c279e351c9df79b7b054ad17a40893e7a29736608dcf5fab",
+        "source": "25c6280df30d023d9e22dfd86b95ff0b45bf612493cd5c8e9aa937686527c2b9",
+        "model": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+        "implementation": "358a04d25f1b28f76e71bcf9e0eb9690af520f64e699d2cc7d0fb430b15a0c52",
+        "implementation_erratum": "7d49371658b7f81e532308c8f33d325f1ff0f8e19fa4a1e6cc844a89afa4921a",
+        "calibration_execution": "b82e1d53ad010220655bb0e58874181e4731d5bd2e04e10a3f6fa3653dfeb741",
+        "calibration_result": "e34a850999da4edb213600659f0a5b0f98669b218d16cae3629756d5d86fe2f7",
+        "development_execution": "f690be081f16e7d61f33bfa99429b8a865adefba824283f10c3cb8a5972afb31",
+        "development_result": "82b85b28e5ab63ad9ddd9a7be7bc3400bcc43e207a59d2543e687be46b85e64d",
+        "development_closure": "edd2480f570a2ebfb0cf9c48b4445214c767d286954026dc21f34b305564c212",
+        "synthesis": "223dc4a1f76d933c869d46eb986ea34099099be07302477f573942aa37b784ce",
+        "calibration_report": "1059f6472d0058e1eb831739c9d104e4a938116727dd7f044116a5821e7ddd29",
+        "calibration_cases": "b29cefce84d7d9dd295e63e9aa825780bf6b08c697ae07f36b3297410629d90e",
+        "development_report": "fa0da82ee47a0ee391896d1948f08428174e4993ccbd54dbfdf20e4342a7e323",
+        "development_cases": "b3e55e9f6b6001e5b74b9a991d5374d1bc4a513e36cd7994ee17eba84e1c6c18",
+        "module": "4684c1e13f96afb0cb8b342f4a0ccc82aca930c9f88a82aa136eb5a9349e7b4f",
+        "runner": "57201147b7ba6a54d718c3ef52626af89e5bdbc2a661930eaad8c288e9270a98",
+        "tests": "5bf324233824153506b2ea42384d1d58de4ad009353f7d15812584d7fc59dbdc",
+    }
+    protocol = _load_json(paths["protocol"])
+    source = _load_json(paths["source"])
+    implementation = _load_json(paths["implementation"])
+    erratum = _load_json(paths["implementation_erratum"])
+    calibration_execution = _load_json(paths["calibration_execution"])
+    calibration_result = _load_json(paths["calibration_result"])
+    development_execution = _load_json(paths["development_execution"])
+    development_result = _load_json(paths["development_result"])
+    closure = _load_json(paths["development_closure"])
+    calibration_cases = _load_jsonl(paths["calibration_cases"])
+    development_cases = _load_jsonl(paths["development_cases"])
+
+    experiment_id = "FRC-MUSIQUE-CONTEXT-BRIDGE-ERASURE-V73"
+    failure_status = (
+        "MUSIQUE_V73_CONTEXT_BRIDGE_ERASURE_DEVELOPMENT_SUPPORT_NOT_"
+        "ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+    )
+    calibration = calibration_result["analysis"]
+    analysis = development_result["analysis"]
+    outcome = analysis["outcome"]
+    metadata = development_result["metadata"]
+    base_names = tuple(
+        calibration["linear_nine_signal_control"]["model"]["feature_names"]
+    )
+    prior_names = tuple(
+        calibration["monotone_interaction_control"]["model"]["feature_names"]
+    )
+    paragraph_names = tuple(
+        calibration["paragraph_competition_control"]["model"]["feature_names"]
+    )
+    competition_names = paragraph_names[len(base_names) :]
+    sentinel_model_names = tuple(
+        calibration["fixed_sentinel_control"]["model"]["feature_names"]
+    )
+    sentinel_names = sentinel_model_names[len(base_names) :]
+    rival_model_names = tuple(
+        calibration["in_domain_rival_control"]["model"]["feature_names"]
+    )
+    rival_names = rival_model_names[len(base_names) :]
+    erasure_names = tuple(protocol["feature_contract"]["fixed_order"])
+    candidate_names = base_names + erasure_names
+    all_names = (
+        prior_names + competition_names + sentinel_names + rival_names + erasure_names
+    )
+
+    def _raw_sha256(path: Path) -> str:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    def _model_scores(rows: list[dict[str, Any]], model: dict[str, Any]) -> list[float]:
+        result: list[float] = []
+        for row in rows:
+            logit = float(model["intercept"]) + sum(
+                float(row["features"][name]) * float(weight)
+                for name, weight in zip(
+                    model["feature_names"],
+                    model["coefficients"],
+                    strict=True,
+                )
+            )
+            clipped = max(-40.0, min(40.0, logit))
+            result.append(1.0 / (1.0 + math.exp(-clipped)))
+        return result
+
+    def _metrics(scores: list[float], threshold: float) -> dict[str, Any]:
+        answer = [
+            index
+            for index, row in enumerate(development_cases)
+            if row["answer_state"] == "answerable"
+        ]
+        noanswer = [
+            index
+            for index, row in enumerate(development_cases)
+            if row["answer_state"] == "unanswerable"
+        ]
+        answer_pass = sum(scores[index] > threshold for index in answer)
+        answer_pass /= len(answer)
+        rejection = sum(scores[index] <= threshold for index in noanswer)
+        rejection /= len(noanswer)
+        return {
+            "rows": len(development_cases),
+            "answerable_rows": len(answer),
+            "unanswerable_rows": len(noanswer),
+            "threshold_exact": threshold,
+            "answerable_pass_rate": round(answer_pass, 6),
+            "unanswerable_rejection_rate": round(rejection, 6),
+            "balanced_accuracy": round((answer_pass + rejection) / 2.0, 6),
+        }
+
+    learned_methods = (
+        "linear_nine_signal_control",
+        "monotone_additive_spline_control",
+        "monotone_interaction_control",
+        "paragraph_competition_control",
+        "fixed_sentinel_control",
+        "in_domain_rival_control",
+        "context_erasure_only_control",
+        "context_erasure_candidate",
+    )
+    thresholds = {
+        "calibrated_direct_composed_question": float(
+            calibration["calibrated_direct_composed_question"]["pooled"][
+                "threshold_exact"
+            ]
+        ),
+        "fixed_v66_full_chain": 0.974609375,
+        "calibrated_chain_bottleneck": float(
+            calibration["calibrated_chain_bottleneck"]["pooled"]["threshold_exact"]
+        ),
+        **{
+            name: float(calibration[name]["pooled"]["threshold_exact"])
+            for name in learned_methods
+        },
+    }
+    scores = {
+        "calibrated_direct_composed_question": [
+            float(row["direct_score_margin"]) for row in development_cases
+        ],
+        "fixed_v66_full_chain": [
+            float(row["chain_bottleneck_score"]) for row in development_cases
+        ],
+        "calibrated_chain_bottleneck": [
+            float(row["chain_bottleneck_score"]) for row in development_cases
+        ],
+        **{
+            name: _model_scores(development_cases, calibration[name]["model"])
+            for name in learned_methods
+        },
+    }
+    methods = {
+        name: _metrics(value, thresholds[name]) for name, value in scores.items()
+    }
+    comparator_order = (
+        "calibrated_direct_composed_question",
+        "fixed_v66_full_chain",
+        "calibrated_chain_bottleneck",
+        "linear_nine_signal_control",
+        "monotone_additive_spline_control",
+        "monotone_interaction_control",
+        "paragraph_competition_control",
+        "fixed_sentinel_control",
+        "in_domain_rival_control",
+        "context_erasure_only_control",
+    )
+    prior_order = (
+        "linear_nine_signal_control",
+        "monotone_additive_spline_control",
+        "monotone_interaction_control",
+        "paragraph_competition_control",
+        "fixed_sentinel_control",
+        "in_domain_rival_control",
+    )
+    strongest_name = max(
+        comparator_order,
+        key=lambda name: (
+            methods[name]["balanced_accuracy"],
+            -comparator_order.index(name),
+        ),
+    )
+    prior_name = max(
+        prior_order,
+        key=lambda name: (
+            methods[name]["balanced_accuracy"],
+            -prior_order.index(name),
+        ),
+    )
+    candidate_decisions = [
+        score > thresholds["context_erasure_candidate"]
+        for score in scores["context_erasure_candidate"]
+    ]
+
+    def _decisions(name: str) -> list[bool]:
+        return [score > thresholds[name] for score in scores[name]]
+
+    def _correct(row: dict[str, Any], decision: bool) -> bool:
+        return decision == (row["answer_state"] == "answerable")
+
+    def _paired_point(control_name: str) -> float:
+        control_decisions = _decisions(control_name)
+        return round(
+            sum(
+                int(_correct(row, candidate)) - int(_correct(row, control))
+                for row, candidate, control in zip(
+                    development_cases,
+                    candidate_decisions,
+                    control_decisions,
+                    strict=True,
+                )
+            )
+            / len(development_cases),
+            6,
+        )
+
+    hop_strata = {}
+    for hop in (2, 3, 4):
+        indices = [
+            index
+            for index, row in enumerate(development_cases)
+            if row["answer_state"] == "unanswerable" and int(row["hop_count"]) == hop
+        ]
+        hop_strata[str(hop)] = {
+            "cases": len(indices),
+            "rejection_rate": round(
+                sum(not candidate_decisions[index] for index in indices) / len(indices),
+                6,
+            ),
+        }
+    mean_coverage = round(
+        sum(
+            float(row["features"]["erasure_dependency_coverage_fraction"])
+            for row in development_cases
+        )
+        / len(development_cases),
+        6,
+    )
+    expected_checks = {
+        "candidate_answerable_pass_rate_at_least_0_60": False,
+        "candidate_balanced_accuracy_at_least_0_72": False,
+        "candidate_minus_erasure_only_control_at_least_0_02": True,
+        "candidate_minus_strongest_fair_baseline_at_least_0_05": False,
+        "candidate_minus_strongest_prior_feature_control_at_least_0_02": False,
+        "candidate_unanswerable_rejection_rate_at_least_0_80": True,
+        "erasure_only_control_paired_correctness_ci_low_above_0": True,
+        "every_observed_unanswerable_hop_stratum_rejection_rate_at_least_0_75": True,
+        "exact_answer_state_balance": True,
+        "exact_cases_equals_800": True,
+        "invalid_feature_output_rate_equals_0": True,
+        "mean_erasure_dependency_coverage_fraction_at_least_0_50": True,
+        "prior_feature_control_paired_correctness_ci_low_above_0": False,
+        "schema_exclusion_rate_at_most_0_01": True,
+        "selected_prior_or_calibration_source_overlap_equals_0": True,
+        "selected_squad2_exact_question_overlap_equals_0": True,
+        "strongest_baseline_paired_correctness_ci_low_above_0": False,
+    }
+    all_cases = calibration_cases + development_cases
+    invalid_calibration = [
+        row for row in calibration_cases if row["invalid_feature_output"]
+    ]
+    invalid_development = [
+        row for row in development_cases if row["invalid_feature_output"]
+    ]
+    vectors_valid = all(
+        set(row["features"]) == set(all_names)
+        and all(math.isfinite(float(value)) for value in row["features"].values())
+        and row["feature_sha256"] == _canonical_json_sha256(row["features"])
+        and row["feature_complete"] is (not row["invalid_feature_output"])
+        for row in all_cases
+    )
+    forbidden_text_keys = {
+        "question",
+        "context",
+        "composed_question",
+        "oracle_hop_templates",
+        "answer",
+        "answer_aliases",
+        "paragraph_support_idx",
+        "is_supporting",
+        "predicted_span",
+        "source_id",
+        "source_id_commitment",
+        "rival_span",
+        "bridge_span",
+    }
+    candidate_model = calibration["context_erasure_candidate"]["model"]
+    candidate_coefficients = dict(
+        zip(
+            candidate_model["feature_names"],
+            candidate_model["coefficients"],
+            strict=True,
+        )
+    )
+    nonnegative_names = set(candidate_names) - {
+        "hop_count_is_3",
+        "hop_count_is_4",
+    }
+
+    passed = (
+        all(
+            _evidence_sha256(paths[key]) == value
+            for key, value in expected_hashes.items()
+        )
+        and protocol["experiment_id"] == experiment_id
+        and protocol["prior_boundary"][
+            "v72_case_level_features_predictions_errors_raw_qa_or_subgroups_used_to_choose_v73_features_model_optimizer_or_gates"
+        ]
+        is False
+        and protocol["sampling"]["expected_prior_source_commitment_union_count"]
+        == 14500
+        and len(base_names) == 9
+        and len(prior_names) == 32
+        and len(competition_names) == 6
+        and len(sentinel_names) == 6
+        and len(rival_names) == 6
+        and len(erasure_names) == 6
+        and tuple(candidate_model["feature_names"]) == candidate_names
+        and len(all_names) == 56
+        and protocol["feature_contract"]["candidate_feature_count"] == 15
+        and protocol["model_contract"][
+            "total_learned_scalars_across_all_reported_methods"
+        ]
+        == 152
+        and source["targets"]["v73_source_commitments_selected_before_registration"]
+        == 0
+        and source["prior_exclusion_sources"]["expected_union_source_commitments"]
+        == 14500
+        and implementation["target_rows_read_for_v73_before_registration"] == 0
+        and implementation["synthetic_tests"]["passed"] == 18
+        and implementation["total_learned_scalars_across_reported_methods"] == 152
+        and erratum["original_registration_hashes"] == implementation["hashes"]
+        and erratum["failure_boundary"]["target_rows_read_for_sampling"] == 0
+        and erratum["failure_boundary"]["v73_source_commitments_selected"] == 0
+        and erratum["failure_boundary"]["prepared_blind_rows_written"] == 0
+        and erratum["failure_boundary"]["qa_inputs_created"] is False
+        and erratum["failure_boundary"]["model_outputs_seen"] is False
+        and erratum["failure_boundary"]["feature_decisions_created"] is False
+        and erratum["failure_boundary"]["gold_join_started"] is False
+        and erratum["failure_boundary"]["answer_state_labels_or_metrics_seen"] is False
+        and erratum["correction"]["synthetic_tests_after_correction"]["passed"] == 19
+        and erratum["correction"]["source_hash_or_commitment_expectation_changed"]
+        is False
+        and erratum[
+            "protocol_sample_erasure_feature_model_optimizer_threshold_gates_or_stage_sizes_changed"
+        ]
+        is False
+        and erratum["corrected_hashes"]["module"] == expected_hashes["module"]
+        and erratum["corrected_hashes"]["runner"] == expected_hashes["runner"]
+        and erratum["corrected_hashes"]["tests"] == expected_hashes["tests"]
+        and calibration_execution["prepared_cases"] == 1600
+        and calibration_execution["candidate_maps"] == 1600
+        and calibration_execution["direct_qa_input_rows"] == 31995
+        and calibration_execution["sampling"]["selected_answer_state_counts"]
+        == {"answerable": 800, "unanswerable": 800}
+        and calibration_execution["sampling"][
+            "selected_excluded_source_commitment_overlap"
+        ]
+        == 0
+        and calibration_execution["sampling"]["selected_squad2_exact_question_overlap"]
+        == 0
+        and calibration_execution["structural_census"]["hop_count_distribution"]
+        == {"2": 1198, "3": 315, "4": 87}
+        and calibration_result["metadata"]["cases"] == 1600
+        and calibration_result["metadata"]["answer_state_counts"]
+        == {"answerable": 800, "unanswerable": 800}
+        and calibration_result["metadata"][
+            "total_learned_scalars_across_reported_methods"
+        ]
+        == 152
+        and calibration_result["outcome"]["development_open_authorized"] is True
+        and calibration["context_erasure_candidate"]["crossfit"]["balanced_accuracy"]
+        == 0.71625
+        and all(
+            float(candidate_coefficients[name]) >= 0.0 for name in nonnegative_names
+        )
+        and development_execution["prepared_cases"] == 800
+        and development_execution["candidate_maps"] == 800
+        and development_execution["direct_qa_input_rows"] == 16000
+        and development_execution["hashes"]["calibration_result_sha256"]
+        == _raw_sha256(paths["calibration_result"])
+        and development_execution["sampling"]["selected_answer_state_counts"]
+        == {"answerable": 400, "unanswerable": 400}
+        and development_execution["sampling"][
+            "selected_excluded_source_commitment_overlap"
+        ]
+        == 0
+        and development_execution["sampling"]["selected_squad2_exact_question_overlap"]
+        == 0
+        and development_execution["structural_census"]["hop_count_distribution"]
+        == {"2": 587, "3": 174, "4": 39}
+        and metadata["cases"] == 800
+        and metadata["answer_state_counts"] == {"answerable": 400, "unanswerable": 400}
+        and metadata["automatic_decomposer_result"] is False
+        and metadata["strict_independent_model_training_confirmation"] is False
+        and metadata["official_musique_leaderboard_result"] is False
+        and methods == analysis["methods"]
+        and strongest_name == "in_domain_rival_control"
+        and prior_name == "in_domain_rival_control"
+        and analysis["strongest_fair_baseline"]
+        == {"name": strongest_name, **methods[strongest_name]}
+        and analysis["strongest_prior_feature_control"]
+        == {"name": prior_name, **methods[prior_name]}
+        and _paired_point(strongest_name) == 0.0
+        and _paired_point(prior_name) == 0.0
+        and _paired_point("context_erasure_only_control") == 0.13875
+        and analysis["paired_correctness_delta"]
+        == {
+            "point": 0.0,
+            "ci_low": -0.01375,
+            "ci_high": 0.01375,
+            "resamples": 10000,
+            "seed": 20260909,
+        }
+        and analysis["incremental_delta_vs_strongest_prior_feature_control"]
+        == {
+            "point": 0.0,
+            "ci_low": -0.01375,
+            "ci_high": 0.01375,
+            "resamples": 10000,
+            "seed": 20261909,
+        }
+        and analysis["incremental_delta_vs_erasure_only_control"]
+        == {
+            "point": 0.13875,
+            "ci_low": 0.10375,
+            "ci_high": 0.175,
+            "resamples": 10000,
+            "seed": 20262909,
+        }
+        and mean_coverage == 0.99875
+        and mean_coverage == analysis["mean_erasure_dependency_coverage_fraction"]
+        and hop_strata == analysis["unanswerable_hop_strata"]
+        and analysis["invalid_feature_output_count"] == 0
+        and analysis["support_checks"] == expected_checks
+        and outcome["status"] == failure_status
+        and outcome["stage_gate_passed"] is False
+        and outcome["confirmation_open_authorized"] is False
+        and outcome[
+            "reuse_failed_stage_for_feature_model_threshold_rule_gate_or_selection"
+        ]
+        is False
+        and outcome["selector_or_retrieval_scoring_part_of_v73"] is False
+        and outcome["selector_adoption_authorized"] is False
+        and outcome["canary_or_default_authorized"] is False
+        and outcome["gate_2"] == "NO-GO/SHADOW"
+        and closure["stage_result_sha256"] == _raw_sha256(paths["development_result"])
+        and closure["status"] == failure_status
+        and closure["confirmation_open_authorized"] is False
+        and not confirmation_open.exists()
+        and len(calibration_cases) == 1600
+        and len({row["case_id"] for row in calibration_cases}) == 1600
+        and len(development_cases) == 800
+        and len({row["case_id"] for row in development_cases}) == 800
+        and len(invalid_calibration) == 3
+        and len(invalid_development) == 0
+        and vectors_valid
+        and not forbidden_text_keys & _nested_keys(all_cases)
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    return _check(
+        "musique_v73_context_bridge_erasure_boundary",
+        (
+            "MuSiQue v73 context bridge-erasure calibration and disjoint "
+            "development are hash-locked, stopped before confirmation, "
+            "and preserve Gate 2 No-Go"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": experiment_id,
+            "status": outcome["status"],
+            "prior_source_commitment_union": 14500,
+            "calibration_cases": len(calibration_cases),
+            "development_cases": len(development_cases),
+            "base_feature_count": len(base_names),
+            "prior_feature_count": len(prior_names),
+            "competition_feature_count": len(competition_names),
+            "sentinel_feature_count": len(sentinel_names),
+            "rival_feature_count": len(rival_names),
+            "erasure_feature_count": len(erasure_names),
+            "candidate_feature_count": len(candidate_names),
+            "audited_feature_count": len(all_names),
+            "total_learned_scalars": 152,
+            "calibration_invalid_fail_closed_count": len(invalid_calibration),
+            "development_invalid_fail_closed_count": len(invalid_development),
+            "implementation_erratum_disclosed": True,
+            "calibration_crossfit": {
+                name: calibration[name]["crossfit"]
+                for name in (
+                    "calibrated_direct_composed_question",
+                    "calibrated_chain_bottleneck",
+                    *learned_methods,
+                )
+            },
+            "development_methods": methods,
+            "mean_erasure_dependency_coverage_fraction": mean_coverage,
+            "strongest_fair_baseline": analysis["strongest_fair_baseline"],
+            "strongest_prior_feature_control": analysis[
+                "strongest_prior_feature_control"
+            ],
+            "paired_correctness_delta": analysis["paired_correctness_delta"],
+            "incremental_delta_vs_strongest_prior_feature_control": analysis[
+                "incremental_delta_vs_strongest_prior_feature_control"
+            ],
+            "incremental_delta_vs_erasure_only_control": analysis[
+                "incremental_delta_vs_erasure_only_control"
+            ],
+            "unanswerable_hop_strata": hop_strata,
+            "support_checks": expected_checks,
+            "confirmation_opened": confirmation_open.exists(),
+            "automatic_decomposer_result": metadata["automatic_decomposer_result"],
+            "reuse_failed_stage_for_feature_model_threshold_rule_gate_or_selection": outcome[
+                "reuse_failed_stage_for_feature_model_threshold_rule_gate_or_selection"
+            ],
+            "selector_adoption_authorized": outcome["selector_adoption_authorized"],
+            "canary_or_default_authorized": outcome["canary_or_default_authorized"],
+            "gate_2": outcome["gate_2"],
+        },
+    )
+
+
+def _check_twowiki_support_path_closure_v74(repo_root: Path) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = (
+        repo_root / "output/rag_evaluation/twowiki_support_path_closure_v74/development"
+    )
+    paths = {
+        "mechanism": docs_root
+        / "twowiki_support_path_closure_mechanism_development_v74.json",
+        "source": docs_root
+        / "twowiki_support_path_closure_source_registration_v74.json",
+        "protocol": docs_root / "twowiki_support_path_closure_protocol_v74.json",
+        "implementation": docs_root
+        / "twowiki_support_path_closure_implementation_v74.json",
+        "execution": docs_root
+        / "twowiki_support_path_closure_development_execution_v74.json",
+        "result": docs_root
+        / "twowiki_support_path_closure_development_result_v74.json",
+        "closure": docs_root
+        / "twowiki_support_path_closure_development_closure_v74.json",
+        "synthesis": docs_root / "twowiki_support_path_closure_synthesis_v74.md",
+        "output_result": output_root / "result.json",
+        "report": output_root / "report.md",
+        "cases": output_root / "cases.jsonl.gz",
+        "module": repo_root / "research/frc_rag/twowiki_support_path_closure.py",
+        "runner": repo_root / "scripts/run_twowiki_support_path_closure.py",
+        "tests": repo_root / "tests/test_frc_twowiki_support_path_closure.py",
+    }
+    confirmation_open = (
+        docs_root / "twowiki_support_path_closure_confirmation_open_v74.json"
+    )
+    cache_paths = {
+        "source": repo_root / ".cache/benchmarks/2wikimultihopqa/dev.parquet",
+        "history": repo_root
+        / ".cache/benchmarks/frc_public_reference/candidate_pool_2wikimultihopqa.jsonl",
+        "scored": repo_root
+        / ".cache/benchmarks/twowiki_support_path_closure_v74/development/scored_blind.jsonl",
+        "selection": repo_root
+        / ".cache/benchmarks/twowiki_support_path_closure_v74/development/selection_outputs.jsonl",
+    }
+    expected_hashes = {
+        "mechanism": "6918a76a054151075555c9a4df8b4274914bdcf078e70649db79d036e81c19c1",
+        "source": "a6919e551a0abda7b2d5c5e3038aa67d1822b6ec48d63282ad99e7cdc2411fde",
+        "protocol": "3c5747be9e54442388586219caf39e1ab9688b522dce8e9ce66048218a075698",
+        "implementation": "0a014a6e1275a0483ac8f00a8f0b8b0101026fb5546496138a85e3110f40637f",
+        "execution": "65def253f9435e880a655f9c4ada65e118884fd96c4060abc2380bb1490382da",
+        "result": "cf78b3a6ad70f684263a6dfea92b65df75c879c289dfe6df8090d094f0299ec1",
+        "closure": "6939039c01ace7ab1a8bfd9f16152a9528e85c806b31033de9bbec292c6e3045",
+        "synthesis": "55b8cb6bb6422a48b1889987596f58f51627c41c15bff71f1af933b9c9b691ed",
+        "output_result": "cf78b3a6ad70f684263a6dfea92b65df75c879c289dfe6df8090d094f0299ec1",
+        "report": "d95efa343ccdaed100fe46bd3fff7c860de22474c90f978dbd6edf5000627032",
+        "cases": "5d4d6493ecbeed135dffffdc0bb17ad912d3f2b844e46264269605aa023bc667",
+        "module": "c4ad3ee5b828300d8b9065c4d1a6e93cd02c286a12306fccf9dbbf1822a4f4ea",
+        "runner": "dff3ee4d65a13b05b62e202c2876982528131c75918634aa189fac97668757cb",
+        "tests": "f0e4debeb24e3a9e78a081d9bea9c366a7f8ef852e82a51dae04580c6ac9ca5c",
+    }
+    expected_cache_hashes = {
+        "source": "c0d8b60b9026b728fb07ad74c5252a0f188f6942e8ba5c02df4dfa369502ea8d",
+        "history": "3398c12efbfbddb1ca726edbe317d74846e122e4f97c105c5226f19b7ef3b8a2",
+        "scored": "02d2298af02b41e4bd26b42d2e232137ca9798033e7185693f50b75248fc885a",
+        "selection": "f801a4b2c86384bf98666404b0541d57b3c1ee823c129293ba18608c2c469ce4",
+    }
+
+    def raw_sha256(path: Path) -> str:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    mechanism = _load_json(paths["mechanism"])
+    source = _load_json(paths["source"])
+    protocol = _load_json(paths["protocol"])
+    implementation = _load_json(paths["implementation"])
+    execution = _load_json(paths["execution"])
+    result = _load_json(paths["result"])
+    output_result = _load_json(paths["output_result"])
+    closure = _load_json(paths["closure"])
+    cases = _load_jsonl(paths["cases"])
+    analysis = result["analysis"]
+    metadata = result["metadata"]
+    outcome = analysis["outcome"]
+    methods = tuple(analysis["methods"])
+    candidate_name = "soft_title_link_support_path_closure_v74"
+    controls = (
+        "bm25_topk",
+        "dense_topk",
+        "hybrid_topk",
+        "cross_encoder_topk",
+        "coverage_greedy_proxy",
+        "frc_select",
+        "title_link_only_control",
+        "cross_plus_title_link_without_source_diversity_control",
+        "hard_title_link_chain_control",
+        "alternating_anchor_link_control",
+    )
+    expected_checks = {
+        "candidate_complete_evidence_recall_at_least_0_55": True,
+        "candidate_evidence_macro_f1_at_least_0_50": True,
+        "candidate_evidence_macro_recall_at_least_0_80": True,
+        "candidate_minus_frc_select_ci_low_above_0": True,
+        "candidate_minus_frc_select_f1_at_least_0_03": True,
+        "candidate_minus_strongest_control_ci_low_above_0": False,
+        "candidate_minus_strongest_control_f1_at_least_0_01": False,
+        "every_question_type_delta_at_least_minus_0_02": False,
+        "exact_cases_equals_800": True,
+        "exact_question_type_balance": True,
+        "history_or_stage_overlap_equals_0": True,
+        "invalid_selector_output_rate_equals_0": True,
+        "mean_selected_tokens_within_1_05_of_strongest_control": True,
+    }
+
+    recomputed: dict[str, Any] = {}
+    for method in methods:
+        rows = [case["methods"][method] for case in cases]
+        recomputed[method] = {
+            "cases": len(rows),
+            "evidence_macro_f1": round(
+                sum(float(row["evidence_f1"]) for row in rows) / len(rows), 6
+            ),
+            "evidence_macro_recall": round(
+                sum(float(row["evidence_recall"]) for row in rows) / len(rows),
+                6,
+            ),
+            "complete_evidence_recall": round(
+                sum(float(row["complete_evidence"]) for row in rows) / len(rows),
+                6,
+            ),
+            "mean_selected_tokens": round(
+                sum(float(row["selected_tokens"]) for row in rows) / len(rows),
+                6,
+            ),
+        }
+    strongest_name = max(
+        controls,
+        key=lambda method: (
+            recomputed[method]["evidence_macro_f1"],
+            -controls.index(method),
+        ),
+    )
+
+    def paired_point(control: str) -> float:
+        return round(
+            sum(
+                float(case["methods"][candidate_name]["evidence_f1"])
+                - float(case["methods"][control]["evidence_f1"])
+                for case in cases
+            )
+            / len(cases),
+            6,
+        )
+
+    question_types = (
+        "bridge_comparison",
+        "comparison",
+        "compositional",
+        "inference",
+    )
+    type_deltas: dict[str, Any] = {}
+    for question_type in question_types:
+        subset = [case for case in cases if case["question_type"] == question_type]
+        candidate_value = sum(
+            float(case["methods"][candidate_name]["evidence_f1"]) for case in subset
+        ) / len(subset)
+        control_value = sum(
+            float(case["methods"][strongest_name]["evidence_f1"]) for case in subset
+        ) / len(subset)
+        type_deltas[question_type] = {
+            "cases": len(subset),
+            "candidate_evidence_macro_f1": round(candidate_value, 6),
+            "strongest_control_evidence_macro_f1": round(control_value, 6),
+            "delta": round(candidate_value - control_value, 6),
+        }
+    type_counts = {
+        question_type: sum(case["question_type"] == question_type for case in cases)
+        for question_type in question_types
+    }
+    forbidden_keys = {
+        "question",
+        "answer",
+        "context",
+        "candidate_text",
+        "gold_evidence_ids",
+        "selected_ids",
+        "source",
+        "title",
+    }
+    candidate_metrics = recomputed[candidate_name]
+    strongest_delta = analysis["paired_f1_delta"][strongest_name]
+    frc_delta = analysis["paired_f1_delta"]["frc_select"]
+    failure_status = (
+        "2WIKI_V74_SUPPORT_PATH_CLOSURE_DEVELOPMENT_SUPPORT_NOT_"
+        "ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+    )
+    passed = (
+        all(
+            _evidence_sha256(paths[name]) == expected
+            for name, expected in expected_hashes.items()
+        )
+        and all(
+            path.is_file() and raw_sha256(path) == expected_cache_hashes[name]
+            for name, path in cache_paths.items()
+        )
+        and mechanism["experiment_id"] == "FRC-2WIKI-SUPPORT-PATH-CLOSURE-V74"
+        and mechanism["source"]["sample_size"] == 1000
+        and mechanism["source"]["eligible_for_v74_development_or_confirmation"] is False
+        and mechanism["finite_search_space"]["total_configurations_considered"] == 24
+        and mechanism["selected_mechanism"]["link_bonus"] == 1.0
+        and mechanism["selected_mechanism"]["new_source_bonus"] == 0.1
+        and source["source"]["expected_rows"] == 12576
+        and source["prior_history_exclusion"]["expected_unique_ids"] == 1000
+        and source["pre_registration_access_boundary"][
+            "raw_case_rows_read_for_v74_selection"
+        ]
+        == 0
+        and protocol["stages"]["development"]["cases"] == 800
+        and protocol["stages"]["confirmation"]["cases"] == 800
+        and protocol["candidate"][
+            "gold_answer_or_official_question_type_used_by_selector"
+        ]
+        is False
+        and tuple(protocol["controls"]) == controls
+        and implementation["synthetic_tests"]
+        == {
+            "passed": 18,
+            "failed": 0,
+            "target_rows_used": 0,
+            "command": "D:\\anaconda3\\python.exe -m pytest -p no:cacheprovider tests\\test_frc_twowiki_support_path_closure.py",
+        }
+        and implementation["pre_target_lock_boundary"]["v74_target_rows_read"] == 0
+        and implementation["hashes"]["module"] == expected_hashes["module"]
+        and implementation["hashes"]["runner"] == expected_hashes["runner"]
+        and implementation["hashes"]["tests"] == expected_hashes["tests"]
+        and execution["status"] == "EVALUATED"
+        and execution["preparation"]["selected_cases"] == 800
+        and execution["preparation"]["question_type_counts"]
+        == {question_type: 200 for question_type in question_types}
+        and execution["preparation"]["history_overlap"] == 0
+        and execution["preparation"]["candidate_count"] == 24354
+        and execution["scored_cases"] == 800
+        and execution["scored_blind_sha256"] == expected_cache_hashes["scored"]
+        and execution["selection_output_sha256"] == expected_cache_hashes["selection"]
+        and execution["leakage_boundary"]["selection_outputs_created_before_gold_join"]
+        is True
+        and result == output_result
+        and len(cases) == 800
+        and len({case["case_id"] for case in cases}) == 800
+        and type_counts == {question_type: 200 for question_type in question_types}
+        and set(methods) == {*controls, candidate_name}
+        and recomputed == analysis["methods"]
+        and strongest_name == "alternating_anchor_link_control"
+        and analysis["strongest_same_resource_control"]
+        == {"name": strongest_name, **recomputed[strongest_name]}
+        and paired_point(strongest_name) == 0.001718
+        and paired_point("frc_select") == 0.076095
+        and strongest_delta
+        == {
+            "point": 0.001718,
+            "ci_low": -0.008036,
+            "ci_high": 0.011401,
+            "resamples": 10000,
+            "seed": 20261010,
+        }
+        and frc_delta
+        == {
+            "point": 0.076095,
+            "ci_low": 0.063476,
+            "ci_high": 0.088913,
+            "resamples": 10000,
+            "seed": 20261006,
+        }
+        and candidate_metrics
+        == {
+            "cases": 800,
+            "evidence_macro_f1": 0.518988,
+            "evidence_macro_recall": 0.809375,
+            "complete_evidence_recall": 0.6075,
+            "mean_selected_tokens": 126.10875,
+        }
+        and type_deltas == analysis["per_question_type_delta_vs_strongest_control"]
+        and analysis["support_checks"] == expected_checks
+        and metadata["invalid_selector_output_count"] == 0
+        and metadata["history_overlap"] == 0
+        and metadata["stage_overlap"] == 0
+        and metadata["gold_join_started_after_selection_output_written"] is True
+        and not forbidden_keys & _nested_keys(cases)
+        and outcome["status"] == failure_status
+        and outcome["stage_gate_passed"] is False
+        and outcome["confirmation_open_authorized"] is False
+        and outcome["reuse_target_stage_for_method_weight_gate_or_selection"] is False
+        and outcome["selector_adoption_authorized"] is False
+        and outcome["canary_or_default_authorized"] is False
+        and outcome["gate_2"] == "NO-GO/SHADOW"
+        and closure["development_result_sha256"] == raw_sha256(paths["result"])
+        and closure["status"] == failure_status
+        and closure["confirmation_open_authorized"] is False
+        and not confirmation_open.exists()
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    return _check(
+        "twowiki_v74_support_path_closure_boundary",
+        (
+            "2Wiki v74 case-disjoint title-link support-path development is "
+            "hash-locked, stopped before confirmation, and preserves Gate 2 No-Go"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": "FRC-2WIKI-SUPPORT-PATH-CLOSURE-V74",
+            "status": outcome["status"],
+            "history_cases_excluded": 1000,
+            "development_cases": len(cases),
+            "question_type_counts": type_counts,
+            "candidate_count": execution["preparation"]["candidate_count"],
+            "history_overlap": metadata["history_overlap"],
+            "stage_overlap": metadata["stage_overlap"],
+            "invalid_selector_output_count": metadata["invalid_selector_output_count"],
+            "methods": recomputed,
+            "strongest_same_resource_control": analysis[
+                "strongest_same_resource_control"
+            ],
+            "candidate_minus_strongest_control": strongest_delta,
+            "candidate_minus_frc_select": frc_delta,
+            "per_question_type_delta_vs_strongest_control": type_deltas,
+            "support_checks": expected_checks,
+            "confirmation_opened": confirmation_open.exists(),
+            "official_2wiki_leaderboard_result": metadata[
+                "official_2wiki_leaderboard_result"
+            ],
+            "strict_independent_model_training_confirmation": metadata[
+                "strict_independent_model_training_confirmation"
+            ],
+            "reuse_target_stage_for_method_weight_gate_or_selection": outcome[
+                "reuse_target_stage_for_method_weight_gate_or_selection"
+            ],
+            "selector_adoption_authorized": outcome["selector_adoption_authorized"],
+            "canary_or_default_authorized": outcome["canary_or_default_authorized"],
+            "gate_2": outcome["gate_2"],
+        },
+    )
+
+
+def _check_twowiki_question_router_v75(repo_root: Path) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = repo_root / "output/rag_evaluation/twowiki_question_router_v75"
+    paths = {
+        "model": docs_root / "twowiki_question_router_model_development_v75.json",
+        "source": docs_root / "twowiki_question_router_source_registration_v75.json",
+        "protocol": docs_root / "twowiki_question_router_protocol_v75.json",
+        "implementation": docs_root / "twowiki_question_router_implementation_v75.json",
+        "development_execution": docs_root
+        / "twowiki_question_router_development_execution_v75.json",
+        "development_result": docs_root
+        / "twowiki_question_router_development_result_v75.json",
+        "confirmation_open": docs_root
+        / "twowiki_question_router_confirmation_open_v75.json",
+        "confirmation_execution": docs_root
+        / "twowiki_question_router_confirmation_execution_v75.json",
+        "confirmation_result": docs_root
+        / "twowiki_question_router_confirmation_result_v75.json",
+        "confirmation_closure": docs_root
+        / "twowiki_question_router_confirmation_closure_v75.json",
+        "synthesis": docs_root / "twowiki_question_router_synthesis_v75.md",
+        "development_output_result": output_root / "development/result.json",
+        "development_report": output_root / "development/report.md",
+        "development_cases": output_root / "development/cases.jsonl.gz",
+        "confirmation_output_result": output_root / "confirmation/result.json",
+        "confirmation_report": output_root / "confirmation/report.md",
+        "confirmation_cases": output_root / "confirmation/cases.jsonl.gz",
+        "module": repo_root / "research/frc_rag/twowiki_question_router.py",
+        "runner": repo_root / "scripts/run_twowiki_question_router.py",
+        "tests": repo_root / "tests/test_frc_twowiki_question_router.py",
+    }
+    expected_hashes = {
+        "model": "91674f052f8a68d4635d64122f3a3c34575ac8353a39b01e7f4a803a4af28e9e",
+        "source": "5a9433b69b1436ac2a0e7d853979d527cce8688b1168f084a2d204b58f7f4d3a",
+        "protocol": "70992f064beadea59e020eb8c85844450e2d5ea4435d51b1dc0f052c2de6bdfe",
+        "implementation": "943a3b7033e069537a269b0b6b94a3cae4119588ccc56240e8beff9c16f4dea5",
+        "development_execution": "6d05d7200d11dfd606301ad581dc610587570d83cd8d3af14e5c0a4e458ce4f9",
+        "development_result": "8d6d6de9101e1e665883bcf95de37b91b96f60c8594008ef0a80b4763dcfce2e",
+        "confirmation_open": "db13afa2699d6d6fb8116f6c132cdea3ba72f97eb48749015ec99b42785b2825",
+        "confirmation_execution": "acc5d03c34c55e3f4a89f08ed41c954e72fdd1bc1ce873c5b2d25b67ca781b78",
+        "confirmation_result": "921cc6a01bcfd0dcbf248ecb2682b54b82df68f01a4f877309e13aee1413f4f1",
+        "confirmation_closure": "7d753f75150f0fd68a8e189198961c6b759f62d94195d4f52313a945cf084fb6",
+        "synthesis": "5b8bbdb6729933fa4d5180fef76dce471258ab1258911056de212b96ba393bc7",
+        "development_output_result": "8d6d6de9101e1e665883bcf95de37b91b96f60c8594008ef0a80b4763dcfce2e",
+        "development_report": "622b1a462b459f9acdbe8cb2a0ad1d5c5e59cffa167e5bab4a7ff4c50b0c79ed",
+        "development_cases": "c495d5c19b38528678b20fd4defd3cb438ea93538aefd0a9c0f445a569b9eab8",
+        "confirmation_output_result": "921cc6a01bcfd0dcbf248ecb2682b54b82df68f01a4f877309e13aee1413f4f1",
+        "confirmation_report": "28f1d8d79d526f5eafe25692698dd22962a0f3342322de2f8d096809c313f0d6",
+        "confirmation_cases": "fd9aff231662b171e366a131651f1895d57030226622054f72263139004e7c7e",
+        "module": "baf744b658c676dc26bc37c13ab09f32a7227bc211c8a8d0b88f039dda4b4b65",
+        "runner": "6059a8f4406459aca6a176990e31d784e993c0faf1a902b6d94a3bc7fdd3e04e",
+        "tests": "0f8f8bf38fb86ff67ed7f47f3692b3e1c4fd84360bb4e0e7e2b54a629b29b7b0",
+    }
+    cache_paths = {
+        "development_blind": repo_root
+        / ".cache/benchmarks/twowiki_question_router_v75/development/blind_cases.jsonl",
+        "development_gold": repo_root
+        / ".cache/benchmarks/twowiki_question_router_v75/development/sealed_gold.jsonl",
+        "development_scored": repo_root
+        / ".cache/benchmarks/twowiki_question_router_v75/development/scored_blind.jsonl",
+        "development_selection": repo_root
+        / ".cache/benchmarks/twowiki_question_router_v75/development/selection_outputs.jsonl",
+        "confirmation_blind": repo_root
+        / ".cache/benchmarks/twowiki_question_router_v75/confirmation/blind_cases.jsonl",
+        "confirmation_gold": repo_root
+        / ".cache/benchmarks/twowiki_question_router_v75/confirmation/sealed_gold.jsonl",
+        "confirmation_scored": repo_root
+        / ".cache/benchmarks/twowiki_question_router_v75/confirmation/scored_blind.jsonl",
+        "confirmation_selection": repo_root
+        / ".cache/benchmarks/twowiki_question_router_v75/confirmation/selection_outputs.jsonl",
+    }
+    expected_cache_hashes = {
+        "development_blind": "722965c18be96806c1dac2318fb6b458efee3e533349c929bc63fecfd5f26fd1",
+        "development_gold": "6df25a70bc32985c5c49d714793ca4a0a89c15ca8d99bbd39fe42acc48f73b46",
+        "development_scored": "092bf695c89d4403a0be195ad7bece64aa77814a2dbd877c1e713997af3c2820",
+        "development_selection": "05eca2f47ef534858ce96ebc9f2d1d6c4f63ed0022d87f58c715f31268cd7286",
+        "confirmation_blind": "bc2127f366094383ae9c2644f74b5b43de1feb78f3b3b23664855cc0d13c3668",
+        "confirmation_gold": "f0896cefd1e617326d8de33ff4209f2bf454e78f4ad6a2fb76b311395417b0fd",
+        "confirmation_scored": "0f79d940dc50cc1faa5e0262ccde433d9d20f76eecbef42928ac79c9bdc54914",
+        "confirmation_selection": "d145022bb2e07e9aeb2256a7115f5d046b3ee2384c4e8d930b9b453ad4818b45",
+    }
+
+    def raw_sha256(path: Path) -> str:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    model = _load_json(paths["model"])
+    source = _load_json(paths["source"])
+    protocol = _load_json(paths["protocol"])
+    implementation = _load_json(paths["implementation"])
+    development_execution = _load_json(paths["development_execution"])
+    confirmation_execution = _load_json(paths["confirmation_execution"])
+    development = _load_json(paths["development_result"])
+    confirmation = _load_json(paths["confirmation_result"])
+    development_output = _load_json(paths["development_output_result"])
+    confirmation_output = _load_json(paths["confirmation_output_result"])
+    confirmation_open = _load_json(paths["confirmation_open"])
+    closure = _load_json(paths["confirmation_closure"])
+    development_cases = _load_jsonl(paths["development_cases"])
+    confirmation_cases = _load_jsonl(paths["confirmation_cases"])
+    development_blind = _load_jsonl(cache_paths["development_blind"])
+    confirmation_blind = _load_jsonl(cache_paths["confirmation_blind"])
+    candidate_name = "learned_question_routed_support_path_v75"
+    methods = (
+        "cross_encoder_topk",
+        "frc_select",
+        "soft_title_link_support_path_closure_v74",
+        "alternating_anchor_link_control",
+        "lexical_question_router_control",
+        candidate_name,
+    )
+    question_types = (
+        "bridge_comparison",
+        "comparison",
+        "compositional",
+        "inference",
+    )
+
+    def recompute(cases: list[dict[str, Any]]) -> dict[str, Any]:
+        aggregates: dict[str, Any] = {}
+        for method in methods:
+            rows = [case["methods"][method] for case in cases]
+            aggregates[method] = {
+                "cases": len(rows),
+                "evidence_macro_f1": round(
+                    sum(float(row["evidence_f1"]) for row in rows) / len(rows),
+                    6,
+                ),
+                "evidence_macro_recall": round(
+                    sum(float(row["evidence_recall"]) for row in rows) / len(rows),
+                    6,
+                ),
+                "complete_evidence_recall": round(
+                    sum(float(row["complete_evidence"]) for row in rows) / len(rows),
+                    6,
+                ),
+                "mean_selected_tokens": round(
+                    sum(float(row["selected_tokens"]) for row in rows) / len(rows),
+                    6,
+                ),
+            }
+        return aggregates
+
+    development_methods = recompute(development_cases)
+    confirmation_methods = recompute(confirmation_cases)
+    development_analysis = development["analysis"]
+    confirmation_analysis = confirmation["analysis"]
+    development_outcome = development_analysis["outcome"]
+    confirmation_outcome = confirmation_analysis["outcome"]
+    development_ids = {str(row["id"]) for row in development_blind}
+    confirmation_ids = {str(row["id"]) for row in confirmation_blind}
+    expected_counts = {name: 200 for name in question_types}
+    expected_checks = {name: True for name in development_analysis["support_checks"]}
+    forbidden_keys = {
+        "question",
+        "answer",
+        "context",
+        "candidate_text",
+        "gold_evidence_ids",
+        "selected_ids",
+        "source",
+        "title",
+    }
+    frozen_file_hashes = {
+        contract["path"]: contract["sha256"]
+        for contract in implementation["files"].values()
+    }
+    passed = (
+        all(
+            path.is_file() and _evidence_sha256(path) == expected_hashes[name]
+            for name, path in paths.items()
+        )
+        and all(
+            path.is_file() and raw_sha256(path) == expected_cache_hashes[name]
+            for name, path in cache_paths.items()
+        )
+        and model["history_cases"] == 800
+        and model["selected_crossfit"]["hash_dimension"] == 64
+        and model["selected_crossfit"]["l2"] == 8.0
+        and model["selected_crossfit"]["threshold"] == 0.5
+        and model["selected_crossfit"]["crossfit_router_balanced_accuracy"] == 1.0
+        and model["selected_crossfit"]["crossfit_routed_evidence_macro_f1"] == 0.541198
+        and model["prospective_boundary"]["v75_target_rows_or_metrics_seen"] is False
+        and source["prior_exclusions"]["expected_total_unique_ids"] == 1800
+        and source["prior_exclusions"]["history_v74_overlap"] == 0
+        and source["pre_registration_access_boundary"][
+            "raw_case_rows_read_for_v75_selection"
+        ]
+        == 0
+        and protocol["stages"]["development"]["cases"] == 800
+        and protocol["stages"]["confirmation"]["cases"] == 800
+        and protocol["router"]["runtime_input"] == "question text only"
+        and protocol["router"]["official_question_type_answer_or_gold_used_at_runtime"]
+        is False
+        and implementation["target_boundary_at_lock"]["v75_target_rows_read"] == 0
+        and implementation["verification"]["passed"] == 37
+        and implementation["verification"]["failed"] == 0
+        and frozen_file_hashes
+        == {
+            "research/frc_rag/twowiki_question_router.py": expected_hashes["module"],
+            "scripts/run_twowiki_question_router.py": expected_hashes["runner"],
+            "tests/test_frc_twowiki_question_router.py": expected_hashes["tests"],
+            "docs/progressive_upgrade/twowiki_question_router_model_development_v75.json": raw_sha256(
+                paths["model"]
+            ),
+            "docs/progressive_upgrade/twowiki_question_router_protocol_v75.json": raw_sha256(
+                paths["protocol"]
+            ),
+            "docs/progressive_upgrade/twowiki_question_router_source_registration_v75.json": raw_sha256(
+                paths["source"]
+            ),
+        }
+        and development_execution["status"] == "EVALUATED"
+        and confirmation_execution["status"] == "EVALUATED"
+        and development_execution["preparation"]["selected_cases"] == 800
+        and confirmation_execution["preparation"]["selected_cases"] == 800
+        and development_execution["preparation"]["question_type_counts"]
+        == expected_counts
+        and confirmation_execution["preparation"]["question_type_counts"]
+        == expected_counts
+        and development_execution["preparation"]["candidate_count"] == 24993
+        and confirmation_execution["preparation"]["candidate_count"] == 25096
+        and development_execution["preparation"]["prior_overlap"] == 0
+        and confirmation_execution["preparation"]["prior_overlap"] == 0
+        and development_execution["scored_cases"] == 800
+        and confirmation_execution["scored_cases"] == 800
+        and development_execution["scored_blind_sha256"]
+        == expected_cache_hashes["development_scored"]
+        and confirmation_execution["scored_blind_sha256"]
+        == expected_cache_hashes["confirmation_scored"]
+        and development_execution["selection_output_sha256"]
+        == expected_cache_hashes["development_selection"]
+        and confirmation_execution["selection_output_sha256"]
+        == expected_cache_hashes["confirmation_selection"]
+        and development == development_output
+        and confirmation == confirmation_output
+        and len(development_cases) == len(development_ids) == 800
+        and len(confirmation_cases) == len(confirmation_ids) == 800
+        and not development_ids & confirmation_ids
+        and development_methods == development_analysis["methods"]
+        and confirmation_methods == confirmation_analysis["methods"]
+        and development_methods[candidate_name]
+        == {
+            "cases": 800,
+            "evidence_macro_f1": 0.537489,
+            "evidence_macro_recall": 0.837687,
+            "complete_evidence_recall": 0.635,
+            "mean_selected_tokens": 126.44625,
+        }
+        and confirmation_methods[candidate_name]
+        == {
+            "cases": 800,
+            "evidence_macro_f1": 0.531013,
+            "evidence_macro_recall": 0.8245,
+            "complete_evidence_recall": 0.595,
+            "mean_selected_tokens": 128.12625,
+        }
+        and development_analysis["strongest_static_control"]["name"]
+        == "soft_title_link_support_path_closure_v74"
+        and confirmation_analysis["strongest_static_control"]["name"]
+        == "alternating_anchor_link_control"
+        and development_analysis["paired_f1_delta"][
+            "soft_title_link_support_path_closure_v74"
+        ]
+        == {
+            "point": 0.019575,
+            "ci_low": 0.013056,
+            "ci_high": 0.026464,
+            "resamples": 10000,
+            "seed": 20261013,
+        }
+        and confirmation_analysis["paired_f1_delta"]["alternating_anchor_link_control"]
+        == {
+            "point": 0.013571,
+            "ci_low": 0.008214,
+            "ci_high": 0.018929,
+            "resamples": 10000,
+            "seed": 20261015,
+        }
+        and development_analysis["paired_f1_delta"]["lexical_question_router_control"][
+            "ci_low"
+        ]
+        <= 0.0
+        and confirmation_analysis["paired_f1_delta"]["lexical_question_router_control"]
+        == {
+            "point": 0.0,
+            "ci_low": -0.001071,
+            "ci_high": 0.001071,
+            "resamples": 10000,
+            "seed": 20261016,
+        }
+        and development_analysis["support_checks"] == expected_checks
+        and confirmation_analysis["support_checks"] == expected_checks
+        and development_outcome["stage_gate_passed"] is True
+        and development_outcome["confirmation_open_authorized"] is True
+        and confirmation_outcome["stage_gate_passed"] is True
+        and confirmation_outcome["status"]
+        == "2WIKI_V75_QUESTION_ROUTER_CASE_DISJOINT_SUPPORT_ESTABLISHED"
+        and confirmation_outcome["selector_adoption_authorized"] is False
+        and confirmation_outcome["canary_or_default_authorized"] is False
+        and confirmation_outcome["gate_2"] == "NO-GO/SHADOW"
+        and confirmation_open["confirmation_open_authorized"] is True
+        and confirmation_open["router_model_threshold_or_gates_changed"] is False
+        and closure["development_confirmation_overlap"] == 0
+        and closure["learned_router_superiority_over_lexical_control_established"]
+        is False
+        and closure["selector_adoption_authorized"] is False
+        and closure["gate_2"] == "NO-GO/SHADOW"
+        and not forbidden_keys & _nested_keys(development_cases)
+        and not forbidden_keys & _nested_keys(confirmation_cases)
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    return _check(
+        "twowiki_v75_question_router_boundary",
+        (
+            "2Wiki v75 question-text routing passes disjoint development and "
+            "confirmation while preserving lexical-control and Gate 2 boundaries"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": "FRC-2WIKI-QUESTION-ROUTED-SUPPORT-PATH-V75",
+            "status": confirmation_outcome["status"],
+            "prior_cases_excluded": 1800,
+            "development_cases": len(development_cases),
+            "confirmation_cases": len(confirmation_cases),
+            "development_confirmation_overlap": len(development_ids & confirmation_ids),
+            "development_candidate_count": development_execution["preparation"][
+                "candidate_count"
+            ],
+            "confirmation_candidate_count": confirmation_execution["preparation"][
+                "candidate_count"
+            ],
+            "development_methods": development_methods,
+            "confirmation_methods": confirmation_methods,
+            "development_strongest_static_control": development_analysis[
+                "strongest_static_control"
+            ],
+            "confirmation_strongest_static_control": confirmation_analysis[
+                "strongest_static_control"
+            ],
+            "development_candidate_minus_strongest_static": development_analysis[
+                "paired_f1_delta"
+            ]["soft_title_link_support_path_closure_v74"],
+            "confirmation_candidate_minus_strongest_static": confirmation_analysis[
+                "paired_f1_delta"
+            ]["alternating_anchor_link_control"],
+            "development_candidate_minus_frc_select": development_analysis[
+                "paired_f1_delta"
+            ]["frc_select"],
+            "confirmation_candidate_minus_frc_select": confirmation_analysis[
+                "paired_f1_delta"
+            ]["frc_select"],
+            "development_candidate_minus_lexical_router": development_analysis[
+                "paired_f1_delta"
+            ]["lexical_question_router_control"],
+            "confirmation_candidate_minus_lexical_router": confirmation_analysis[
+                "paired_f1_delta"
+            ]["lexical_question_router_control"],
+            "development_router": development_analysis["router"],
+            "confirmation_router": confirmation_analysis["router"],
+            "development_support_checks": development_analysis["support_checks"],
+            "confirmation_support_checks": confirmation_analysis["support_checks"],
+            "learned_router_superiority_over_lexical_control_established": False,
+            "independent_dataset_confirmation": False,
+            "official_2wiki_leaderboard_result": False,
+            "selector_adoption_authorized": confirmation_outcome[
+                "selector_adoption_authorized"
+            ],
+            "canary_or_default_authorized": confirmation_outcome[
+                "canary_or_default_authorized"
+            ],
+            "gate_2": confirmation_outcome["gate_2"],
+        },
+    )
+
+
+def _check_hotpot_graph_router_v76(repo_root: Path) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = repo_root / "output/rag_evaluation/hotpot_graph_router_v76"
+    paths = {
+        "model": docs_root / "hotpot_graph_router_model_development_v76.json",
+        "source": docs_root / "hotpot_graph_router_source_registration_v76.json",
+        "protocol": docs_root / "hotpot_graph_router_protocol_v76.json",
+        "implementation": docs_root / "hotpot_graph_router_implementation_v76.json",
+        "development_execution": docs_root
+        / "hotpot_graph_router_development_execution_v76.json",
+        "development_result": docs_root
+        / "hotpot_graph_router_development_result_v76.json",
+        "confirmation_open": docs_root
+        / "hotpot_graph_router_confirmation_open_v76.json",
+        "confirmation_execution": docs_root
+        / "hotpot_graph_router_confirmation_execution_v76.json",
+        "confirmation_result": docs_root
+        / "hotpot_graph_router_confirmation_result_v76.json",
+        "confirmation_closure": docs_root
+        / "hotpot_graph_router_confirmation_closure_v76.json",
+        "synthesis": docs_root / "hotpot_graph_router_synthesis_v76.md",
+        "development_output_result": output_root / "development/result.json",
+        "development_report": output_root / "development/report.md",
+        "development_cases": output_root / "development/cases.jsonl.gz",
+        "confirmation_output_result": output_root / "confirmation/result.json",
+        "confirmation_report": output_root / "confirmation/report.md",
+        "confirmation_cases": output_root / "confirmation/cases.jsonl.gz",
+        "module": repo_root / "research/frc_rag/hotpot_graph_router.py",
+        "runner": repo_root / "scripts/run_hotpot_graph_router.py",
+        "tests": repo_root / "tests/test_frc_hotpot_graph_router.py",
+    }
+    expected_hashes = {
+        "model": "8c6ad98fc9f5867a4110ca440077fa8bfd02a634bbfc48f32f248c0fe70bd9da",
+        "source": "8f1cd7f7f406721e4af3e4d5e856cc060a0cef1d395225bc1462be4851141aac",
+        "protocol": "a4299a17594f80158e9eb198ffdb39e29fefb3e4b751f263d0044e05ac77adf4",
+        "implementation": "e0060e7794a60a7d2723095c1561fe4dd6225d8a212ca8b433512efb565170d8",
+        "development_execution": "540e49d418f6f8416b3a5dabbb87365147ec90c1aaa6654bc0aa1f86886088cd",
+        "development_result": "91b855ea7de53c5ae16ccc0f5f900c54c586bc88d80242f5057ed673b32cc0e7",
+        "confirmation_open": "73b79b7733e3349f596ecdde733c8ad17d0f6dd6ef7978d7cc2dd65bf26d1ea2",
+        "confirmation_execution": "524d26c772bd0cdee2cb71e72318df9c8e5335b6f223ac35a18922d5b2b29cd1",
+        "confirmation_result": "c9acd4d4f8aa01f7fdaee9a23dfdd501014407afc8e60184b47fd7c98c26d141",
+        "confirmation_closure": "2ce561618d3bfbb6af416972ecc984a50a530ce5d1fa8f8f01117738ae13821f",
+        "synthesis": "cfef412fcc3b645e5fdc99949ee7fedbb01d46e22444f3314ed2e3f099236128",
+        "development_output_result": "91b855ea7de53c5ae16ccc0f5f900c54c586bc88d80242f5057ed673b32cc0e7",
+        "development_report": "07a48ea86eddad02710f030cb22169cea0d09a0716087136aea6ef381588e5cc",
+        "development_cases": "8ff4506bd76bf099a1be0ffe52e808764972eec315c335006e335402300ef2f6",
+        "confirmation_output_result": "c9acd4d4f8aa01f7fdaee9a23dfdd501014407afc8e60184b47fd7c98c26d141",
+        "confirmation_report": "6bcc772855b2af3237e628268fc93f2dda7abeb340160b05140ba0b140c9bf53",
+        "confirmation_cases": "c64fb4225c2ecfe5f10c94718335321629cced2ac4cea5e9001cc619df5eaafd",
+        "module": "43af0af06f792e82d2643bf00b8e3b4a66513c400df35c4a8f7560d60c521df2",
+        "runner": "d796b8657e92d91a86e9659b880de3f0427fcdb2bfb9f8b56ae04e42b1288b77",
+        "tests": "ad2f5866e5b34b9e43145c36e024d7b12fc90150ea6a4e5a015d56697b9d058e",
+    }
+    cache_paths = {
+        "development_blind": repo_root
+        / ".cache/benchmarks/hotpot_graph_router_v76/development/blind_cases.jsonl",
+        "development_gold": repo_root
+        / ".cache/benchmarks/hotpot_graph_router_v76/development/sealed_gold.jsonl",
+        "development_scored": repo_root
+        / ".cache/benchmarks/hotpot_graph_router_v76/development/scored_blind.jsonl",
+        "development_selection": repo_root
+        / ".cache/benchmarks/hotpot_graph_router_v76/development/selection_outputs.jsonl",
+        "confirmation_blind": repo_root
+        / ".cache/benchmarks/hotpot_graph_router_v76/confirmation/blind_cases.jsonl",
+        "confirmation_gold": repo_root
+        / ".cache/benchmarks/hotpot_graph_router_v76/confirmation/sealed_gold.jsonl",
+        "confirmation_scored": repo_root
+        / ".cache/benchmarks/hotpot_graph_router_v76/confirmation/scored_blind.jsonl",
+        "confirmation_selection": repo_root
+        / ".cache/benchmarks/hotpot_graph_router_v76/confirmation/selection_outputs.jsonl",
+    }
+    expected_cache_hashes = {
+        "development_blind": "f89ba9bfe076018524a1b6cd75d6fe8cb3a48c94b84f4b90fbec223d8d22ca64",
+        "development_gold": "06fc70a29e79546f4596aa2aee1875ffd91718c83b258234637d4f9fc77b6fae",
+        "development_scored": "18e79e83be3413a0be3ecb45adc9e74106f4e69355b6e4ade547574d67b529b4",
+        "development_selection": "8ae3ea79efba8e0351c932a4a3236742358bccb7613a2647d25670a6e610ef72",
+        "confirmation_blind": "aadb5400d36155c2344bd70e54ab5e5798b9ef051e0720aac58dff606b7e7dcc",
+        "confirmation_gold": "eeef5b45b8811d0167ffd0ed134c9235e8530b1fa720b8f20e85d236c49a2754",
+        "confirmation_scored": "2d5994ef61a08fd87792298467941563aefbb5c50ce57b985bfb4a23264373ab",
+        "confirmation_selection": "4a08bcd0c2536257772c075754885a5aeb627c32040a6945fb4cbbb9bde8ce7d",
+    }
+
+    def raw_sha256(path: Path) -> str:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    model = _load_json(paths["model"])
+    source = _load_json(paths["source"])
+    protocol = _load_json(paths["protocol"])
+    implementation = _load_json(paths["implementation"])
+    development_execution = _load_json(paths["development_execution"])
+    confirmation_execution = _load_json(paths["confirmation_execution"])
+    development = _load_json(paths["development_result"])
+    confirmation = _load_json(paths["confirmation_result"])
+    development_output = _load_json(paths["development_output_result"])
+    confirmation_output = _load_json(paths["confirmation_output_result"])
+    confirmation_open = _load_json(paths["confirmation_open"])
+    closure = _load_json(paths["confirmation_closure"])
+    development_cases = _load_jsonl(paths["development_cases"])
+    confirmation_cases = _load_jsonl(paths["confirmation_cases"])
+    development_blind = _load_jsonl(cache_paths["development_blind"])
+    confirmation_blind = _load_jsonl(cache_paths["confirmation_blind"])
+    development_selection = _load_jsonl(cache_paths["development_selection"])
+    confirmation_selection = _load_jsonl(cache_paths["confirmation_selection"])
+    candidate_name = "graph_gbr_soft_override_router_v76"
+    methods = (
+        "cross_encoder_topk",
+        "frc_select",
+        "soft_title_link_support_path_closure_v74",
+        "alternating_anchor_link_control",
+        "lexical_question_router_control",
+        "zero_shot_v75_question_router_control",
+        candidate_name,
+    )
+
+    def recompute(cases: list[dict[str, Any]]) -> dict[str, Any]:
+        aggregates: dict[str, Any] = {}
+        for method in methods:
+            rows = [case["methods"][method] for case in cases]
+            aggregates[method] = {
+                "cases": len(rows),
+                "evidence_macro_f1": round(
+                    sum(float(row["evidence_f1"]) for row in rows) / len(rows), 6
+                ),
+                "evidence_macro_recall": round(
+                    sum(float(row["evidence_recall"]) for row in rows) / len(rows),
+                    6,
+                ),
+                "complete_evidence_recall": round(
+                    sum(float(row["complete_evidence"]) for row in rows) / len(rows),
+                    6,
+                ),
+                "mean_selected_tokens": round(
+                    sum(float(row["selected_tokens"]) for row in rows) / len(rows),
+                    6,
+                ),
+            }
+        return aggregates
+
+    development_methods = recompute(development_cases)
+    confirmation_methods = recompute(confirmation_cases)
+    development_analysis = development["analysis"]
+    confirmation_analysis = confirmation["analysis"]
+    development_outcome = development_analysis["outcome"]
+    confirmation_outcome = confirmation_analysis["outcome"]
+    development_ids = {str(row["id"]) for row in development_blind}
+    confirmation_ids = {str(row["id"]) for row in confirmation_blind}
+    expected_counts = {"bridge": 400, "comparison": 400}
+    frozen_file_hashes = {
+        contract["path"]: contract["sha256"]
+        for contract in implementation["files"].values()
+    }
+    blind_forbidden = {"answer", "gold_evidence_ids", "gold", "gold_roles"}
+    case_forbidden = {
+        "question",
+        "answer",
+        "context",
+        "candidate_ids",
+        "candidate_text",
+        "gold_evidence_ids",
+        "selected_ids",
+        "source",
+        "title",
+        "text",
+    }
+    selection_forbidden = {
+        "question",
+        "question_type",
+        "answer",
+        "context",
+        "text",
+        "source",
+        "gold_evidence_ids",
+        "gold",
+        "gold_roles",
+    }
+    passed = (
+        all(
+            path.is_file() and _evidence_sha256(path) == expected_hashes[name]
+            for name, path in paths.items()
+        )
+        and all(
+            path.is_file() and raw_sha256(path) == expected_cache_hashes[name]
+            for name, path in cache_paths.items()
+        )
+        and model["history"]["cases"] == 1000
+        and model["history"]["eligible_for_v76_target_stages"] is False
+        and model["exploration_disclosure"]["total_historical_configurations"] == 1089
+        and model["selected_configuration"][
+            "official_type_answer_or_gold_used_at_runtime"
+        ]
+        is False
+        and len(model["selected_configuration"]["feature_names"])
+        == len(set(model["selected_configuration"]["feature_names"]))
+        == 71
+        and model["crossfit"]["candidate"]["evidence_macro_f1"] == 0.562448
+        and model["crossfit"]["candidate_minus_cross_encoder"]
+        == {
+            "point": 0.011694,
+            "ci_low": 0.006596,
+            "ci_high": 0.01691,
+            "resamples": 10000,
+            "seed": 20261021,
+        }
+        and model["prospective_boundary"]["v76_target_rows_ids_scores_or_metrics_seen"]
+        is False
+        and source["source"]["expected_rows"] == 7405
+        and source["history_exclusion"]["cases"] == 1000
+        and source["pre_registration_access_boundary"]["v76_target_rows_read"] == 0
+        and source["claims"][
+            "independent_public_dataset_from_v75_2wiki_target_and_history"
+        ]
+        is True
+        and source["claims"][
+            "independent_dataset_from_v76_hotpot_model_development_history"
+        ]
+        is False
+        and protocol["stages"]["development"]["cases"] == 800
+        and protocol["stages"]["confirmation"]["cases"] == 800
+        and protocol["candidate"]["official_type_answer_or_gold_used_at_runtime"]
+        is False
+        and len(protocol["development_gates"]) == 13
+        and implementation["target_boundary_at_lock"]["v76_target_rows_read"] == 0
+        and implementation["verification"]["passed"] == 60
+        and implementation["verification"]["failed"] == 0
+        and frozen_file_hashes
+        == {
+            "research/frc_rag/hotpot_graph_router.py": raw_sha256(paths["module"]),
+            "scripts/run_hotpot_graph_router.py": raw_sha256(paths["runner"]),
+            "tests/test_frc_hotpot_graph_router.py": raw_sha256(paths["tests"]),
+            "docs/progressive_upgrade/hotpot_graph_router_model_development_v76.json": raw_sha256(
+                paths["model"]
+            ),
+            "docs/progressive_upgrade/hotpot_graph_router_protocol_v76.json": raw_sha256(
+                paths["protocol"]
+            ),
+            "docs/progressive_upgrade/hotpot_graph_router_source_registration_v76.json": raw_sha256(
+                paths["source"]
+            ),
+        }
+        and development_execution["status"] == "EVALUATED"
+        and confirmation_execution["status"] == "EVALUATED"
+        and development_execution["preparation"]["selected_cases"] == 800
+        and confirmation_execution["preparation"]["selected_cases"] == 800
+        and development_execution["preparation"]["question_type_counts"]
+        == expected_counts
+        and confirmation_execution["preparation"]["question_type_counts"]
+        == expected_counts
+        and development_execution["preparation"]["candidate_count"] == 32022
+        and confirmation_execution["preparation"]["candidate_count"] == 32407
+        and development_execution["preparation"]["history_overlap"] == 0
+        and confirmation_execution["preparation"]["history_overlap"] == 0
+        and development_execution["scored_cases"] == 800
+        and confirmation_execution["scored_cases"] == 800
+        and development_execution["scored_blind_sha256"]
+        == expected_cache_hashes["development_scored"]
+        and confirmation_execution["scored_blind_sha256"]
+        == expected_cache_hashes["confirmation_scored"]
+        and development_execution["selection_output_sha256"]
+        == expected_cache_hashes["development_selection"]
+        and confirmation_execution["selection_output_sha256"]
+        == expected_cache_hashes["confirmation_selection"]
+        and development == development_output
+        and confirmation == confirmation_output
+        and len(development_cases) == len(development_ids) == 800
+        and len(confirmation_cases) == len(confirmation_ids) == 800
+        and not development_ids & confirmation_ids
+        and development_methods == development_analysis["methods"]
+        and confirmation_methods == confirmation_analysis["methods"]
+        and development_methods[candidate_name]
+        == {
+            "cases": 800,
+            "evidence_macro_f1": 0.568959,
+            "evidence_macro_recall": 0.904979,
+            "complete_evidence_recall": 0.775,
+            "mean_selected_tokens": 131.31875,
+        }
+        and confirmation_methods[candidate_name]
+        == {
+            "cases": 800,
+            "evidence_macro_f1": 0.570916,
+            "evidence_macro_recall": 0.906979,
+            "complete_evidence_recall": 0.7875,
+            "mean_selected_tokens": 130.5875,
+        }
+        and development_analysis["strongest_registered_control"]["name"]
+        == "cross_encoder_topk"
+        and confirmation_analysis["strongest_registered_control"]["name"]
+        == "cross_encoder_topk"
+        and development_analysis["paired_f1_delta"]["cross_encoder_topk"]
+        == {
+            "point": 0.008119,
+            "ci_low": 0.003859,
+            "ci_high": 0.012623,
+            "resamples": 10000,
+            "seed": 20261031,
+        }
+        and confirmation_analysis["paired_f1_delta"]["cross_encoder_topk"]
+        == {
+            "point": 0.00646,
+            "ci_low": 0.002201,
+            "ci_high": 0.010864,
+            "resamples": 10000,
+            "seed": 20261032,
+        }
+        and len(development_analysis["support_checks"]) == 13
+        and len(confirmation_analysis["support_checks"]) == 13
+        and all(development_analysis["support_checks"].values())
+        and all(confirmation_analysis["support_checks"].values())
+        and development_outcome["stage_gate_passed"] is True
+        and development_outcome["confirmation_open_authorized"] is True
+        and confirmation_outcome["stage_gate_passed"] is True
+        and confirmation_outcome["status"]
+        == "HOTPOT_V76_GRAPH_ROUTER_CASE_DISJOINT_SUPPORT_ESTABLISHED"
+        and confirmation_outcome["selector_adoption_authorized"] is False
+        and confirmation_outcome["canary_or_default_authorized"] is False
+        and confirmation_outcome["gate_2"] == "NO-GO/SHADOW"
+        and confirmation_open["confirmation_open_authorized"] is True
+        and confirmation_open["feature_model_threshold_controls_or_gates_changed"]
+        is False
+        and closure["confirmation_gate_passed"] is True
+        and closure["reuse_target_stages_for_feature_model_threshold_gate_or_selection"]
+        is False
+        and closure["selector_adoption_authorized"] is False
+        and closure["gate_2"] == "NO-GO/SHADOW"
+        and not blind_forbidden & _nested_keys(development_blind)
+        and not blind_forbidden & _nested_keys(confirmation_blind)
+        and not case_forbidden & _nested_keys(development_cases)
+        and not case_forbidden & _nested_keys(confirmation_cases)
+        and not selection_forbidden & _nested_keys(development_selection)
+        and not selection_forbidden & _nested_keys(confirmation_selection)
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    return _check(
+        "hotpot_v76_graph_router_boundary",
+        (
+            "HotpotQA v76 graph-score router passes disjoint development and "
+            "confirmation while preserving training-data and Gate 2 boundaries"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": "FRC-HOTPOT-GRAPH-SOFT-OVERRIDE-ROUTER-V76",
+            "status": confirmation_outcome["status"],
+            "history_cases_excluded": 1000,
+            "historical_configurations": 1089,
+            "development_cases": len(development_cases),
+            "confirmation_cases": len(confirmation_cases),
+            "development_confirmation_overlap": len(development_ids & confirmation_ids),
+            "development_candidate_count": development_execution["preparation"][
+                "candidate_count"
+            ],
+            "confirmation_candidate_count": confirmation_execution["preparation"][
+                "candidate_count"
+            ],
+            "development_methods": development_methods,
+            "confirmation_methods": confirmation_methods,
+            "development_strongest_registered_control": development_analysis[
+                "strongest_registered_control"
+            ],
+            "confirmation_strongest_registered_control": confirmation_analysis[
+                "strongest_registered_control"
+            ],
+            "development_candidate_minus_strongest_control": development_analysis[
+                "paired_f1_delta"
+            ]["cross_encoder_topk"],
+            "confirmation_candidate_minus_strongest_control": confirmation_analysis[
+                "paired_f1_delta"
+            ]["cross_encoder_topk"],
+            "development_per_question_type": development_analysis[
+                "per_question_type_delta_vs_best_control"
+            ],
+            "confirmation_per_question_type": confirmation_analysis[
+                "per_question_type_delta_vs_best_control"
+            ],
+            "development_router": development_analysis["router"],
+            "confirmation_router": confirmation_analysis["router"],
+            "development_support_checks": development_analysis["support_checks"],
+            "confirmation_support_checks": confirmation_analysis["support_checks"],
+            "independent_public_dataset_from_v75_2wiki": True,
+            "independent_dataset_from_v76_hotpot_history": False,
+            "strict_independent_model_training_confirmation": False,
+            "official_hotpotqa_leaderboard_result": False,
+            "selector_adoption_authorized": confirmation_outcome[
+                "selector_adoption_authorized"
+            ],
+            "canary_or_default_authorized": confirmation_outcome[
+                "canary_or_default_authorized"
+            ],
+            "gate_2": confirmation_outcome["gate_2"],
+        },
+    )
+
+
+def _check_musique_graph_router_transfer_v77(repo_root: Path) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = repo_root / "output/rag_evaluation/musique_graph_router_transfer_v77"
+    cache_root = repo_root / ".cache/benchmarks/musique_graph_router_transfer_v77"
+    paths = {
+        "protocol": docs_root / "musique_graph_router_transfer_protocol_v77.json",
+        "source": docs_root
+        / "musique_graph_router_transfer_source_registration_v77.json",
+        "implementation": docs_root
+        / "musique_graph_router_transfer_implementation_v77.json",
+        "execution": docs_root
+        / "musique_graph_router_transfer_development_execution_v77.json",
+        "result": docs_root
+        / "musique_graph_router_transfer_development_result_v77.json",
+        "closure": docs_root
+        / "musique_graph_router_transfer_development_closure_v77.json",
+        "synthesis": docs_root / "musique_graph_router_transfer_synthesis_v77.md",
+        "output_result": output_root / "development/result.json",
+        "report": output_root / "development/report.md",
+        "cases": output_root / "development/cases.jsonl.gz",
+        "module": repo_root / "research/frc_rag/musique_graph_router_transfer.py",
+        "runner": repo_root / "scripts/run_musique_graph_router_transfer.py",
+        "tests": repo_root / "tests/test_frc_musique_graph_router_transfer.py",
+        "v76_model": docs_root / "hotpot_graph_router_model_development_v76.json",
+        "v76_lock": docs_root / "hotpot_graph_router_implementation_v76.json",
+    }
+    cache_paths = {
+        "blind": cache_root / "development/blind_cases.jsonl",
+        "gold": cache_root / "development/sealed_gold.jsonl",
+        "scored": cache_root / "development/scored_blind.jsonl",
+        "selection": cache_root / "development/selection_outputs.jsonl",
+    }
+
+    def raw_sha256(path: Path) -> str:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    protocol = _load_json(paths["protocol"])
+    source = _load_json(paths["source"])
+    implementation = _load_json(paths["implementation"])
+    execution = _load_json(paths["execution"])
+    result = _load_json(paths["result"])
+    output_result = _load_json(paths["output_result"])
+    closure = _load_json(paths["closure"])
+    blind = _load_jsonl(cache_paths["blind"])
+    selections = _load_jsonl(cache_paths["selection"])
+    cases = _load_jsonl(paths["cases"])
+    candidate_name = "graph_gbr_soft_override_router_v76"
+    methods = (
+        "cross_encoder_topk",
+        "frc_select",
+        "soft_title_link_support_path_closure_v74",
+        "alternating_anchor_link_control",
+        "lexical_question_router_control",
+        "zero_shot_v75_question_router_control",
+        candidate_name,
+    )
+    aggregates: dict[str, Any] = {}
+    for method in methods:
+        rows = [case["methods"][method] for case in cases]
+        aggregates[method] = {
+            "cases": len(rows),
+            "evidence_macro_f1": round(
+                sum(float(row["evidence_f1"]) for row in rows) / len(rows), 6
+            ),
+            "evidence_macro_recall": round(
+                sum(float(row["evidence_recall"]) for row in rows) / len(rows), 6
+            ),
+            "complete_evidence_recall": round(
+                sum(float(row["complete_evidence"]) for row in rows) / len(rows), 6
+            ),
+            "mean_selected_tokens": round(
+                sum(float(row["selected_tokens"]) for row in rows) / len(rows), 6
+            ),
+        }
+    analysis = result["analysis"]
+    outcome = analysis["outcome"]
+    frozen_hashes = {
+        contract["path"]: contract["sha256"]
+        for contract in implementation["files"].values()
+    }
+    expected_frozen_hashes = {
+        "research/frc_rag/musique_graph_router_transfer.py": raw_sha256(
+            paths["module"]
+        ),
+        "scripts/run_musique_graph_router_transfer.py": raw_sha256(paths["runner"]),
+        "tests/test_frc_musique_graph_router_transfer.py": raw_sha256(paths["tests"]),
+        "docs/progressive_upgrade/musique_graph_router_transfer_protocol_v77.json": raw_sha256(
+            paths["protocol"]
+        ),
+        "docs/progressive_upgrade/musique_graph_router_transfer_source_registration_v77.json": raw_sha256(
+            paths["source"]
+        ),
+        "docs/progressive_upgrade/hotpot_graph_router_model_development_v76.json": raw_sha256(
+            paths["v76_model"]
+        ),
+        "docs/progressive_upgrade/hotpot_graph_router_implementation_v76.json": raw_sha256(
+            paths["v76_lock"]
+        ),
+    }
+    expected_checks = {
+        "exact_cases_equals_800": True,
+        "exact_hop_quota": True,
+        "prior_or_stage_overlap_equals_0": True,
+        "invalid_selector_output_rate_equals_0": True,
+        "candidate_evidence_macro_f1_at_least_0_55": False,
+        "candidate_complete_evidence_recall_at_least_0_55": False,
+        "candidate_minus_strongest_control_f1_at_least_0_005": False,
+        "candidate_minus_strongest_control_ci_low_above_0": False,
+        "candidate_minus_cross_encoder_f1_at_least_0_005": True,
+        "candidate_minus_cross_encoder_ci_low_above_0": True,
+        "every_hop_delta_vs_best_control_at_least_minus_0_005": False,
+        "soft_override_rate_between_0_15_and_0_55": True,
+        "mean_selected_tokens_within_1_05_of_strongest_control": True,
+    }
+    expected_noninferiority = {
+        "candidate_minus_strongest_control_point_at_least_minus_0_005": False,
+        "candidate_minus_strongest_control_ci_low_at_least_minus_0_01": False,
+        "every_hop_delta_vs_best_control_at_least_minus_0_02": True,
+        "invalid_selector_output_rate_equals_0": True,
+    }
+    blind_forbidden = {
+        "answer",
+        "question_decomposition",
+        "is_supporting",
+        "gold_evidence_ids",
+        "gold",
+        "gold_roles",
+    }
+    selection_forbidden = {
+        "question",
+        "hop_count",
+        "answer",
+        "question_decomposition",
+        "is_supporting",
+        "text",
+        "source",
+        "gold_evidence_ids",
+        "gold",
+        "gold_roles",
+    }
+    case_forbidden = {
+        "question",
+        "answer",
+        "paragraphs",
+        "candidate_ids",
+        "candidate_text",
+        "gold_evidence_ids",
+        "selected_ids",
+        "source",
+        "title",
+        "text",
+    }
+    confirmation_paths = (
+        docs_root / "musique_graph_router_transfer_confirmation_open_v77.json",
+        docs_root / "musique_graph_router_transfer_confirmation_execution_v77.json",
+        docs_root / "musique_graph_router_transfer_confirmation_result_v77.json",
+        docs_root / "musique_graph_router_transfer_confirmation_closure_v77.json",
+        cache_root / "confirmation",
+        output_root / "confirmation",
+    )
+    passed = (
+        all(path.is_file() for path in paths.values())
+        and all(path.is_file() for path in cache_paths.values())
+        and protocol["stages"]["development"]["cases"] == 800
+        and protocol["stages"]["development"]["hop_quota"]
+        == {"2": 400, "3": 250, "4": 150}
+        and protocol["candidate"]["target_training_or_tuning_cases"] == 0
+        and protocol["candidate"]["model_artifact_sha256"]
+        == raw_sha256(paths["v76_model"])
+        and source["prior_exclusion_sources"]["expected_union_source_commitments"]
+        == 16900
+        and source["remaining_untouched_answerable_capacity"]
+        == {
+            "total": 3038,
+            "by_id_derived_hop": {"2": 1728, "3": 917, "4": 393},
+            "required_across_two_stages": {"2": 800, "3": 500, "4": 300},
+            "supports_two_disjoint_registered_stages": True,
+        }
+        and source["pre_registration_access_boundary"]["v77_target_ids_selected"] == 0
+        and source["claims"]["zero_musique_target_training_or_tuning"] is True
+        and source["claims"]["broader_research_program_independent_of_musique"] is False
+        and implementation["target_boundary_at_lock"]["v77_development_ids_selected"]
+        == 0
+        and implementation["target_boundary_at_lock"]["v77_target_model_scores_seen"]
+        is False
+        and implementation["verification"]["failed"] == 0
+        and frozen_hashes == expected_frozen_hashes
+        and execution["status"] == "EVALUATED"
+        and execution["preparation"]["selected_cases"] == 800
+        and execution["preparation"]["hop_count_distribution"]
+        == {"2": 400, "3": 250, "4": 150}
+        and execution["preparation"]["candidate_count"] == 15999
+        and execution["preparation"]["prior_excluded_source_commitments"] == 16900
+        and execution["preparation"]["prior_source_overlap"] == 0
+        and execution["scored_cases"] == 800
+        and execution["preparation"]["blind_sha256"] == raw_sha256(cache_paths["blind"])
+        and execution["preparation"]["gold_sha256"] == raw_sha256(cache_paths["gold"])
+        and execution["scored_blind_sha256"] == raw_sha256(cache_paths["scored"])
+        and execution["selection_output_sha256"] == raw_sha256(cache_paths["selection"])
+        and execution["result_sha256"] == raw_sha256(paths["output_result"])
+        and execution["report_sha256"] == raw_sha256(paths["report"])
+        and execution["cases_sha256"] == raw_sha256(paths["cases"])
+        and result == output_result
+        and len(blind) == len(selections) == len(cases) == 800
+        and aggregates == analysis["methods"]
+        and aggregates[candidate_name]
+        == {
+            "cases": 800,
+            "evidence_macro_f1": 0.535779,
+            "evidence_macro_recall": 0.798333,
+            "complete_evidence_recall": 0.5425,
+            "mean_selected_tokens": 542.12125,
+        }
+        and analysis["strongest_registered_control"]["name"]
+        == "alternating_anchor_link_control"
+        and analysis["paired_f1_delta"]["alternating_anchor_link_control"]
+        == {
+            "point": -0.006225,
+            "ci_low": -0.012733,
+            "ci_high": 0.000164,
+            "resamples": 10000,
+            "seed": 20261104,
+        }
+        and analysis["paired_f1_delta"]["cross_encoder_topk"]
+        == {
+            "point": 0.007426,
+            "ci_low": 0.002535,
+            "ci_high": 0.012416,
+            "resamples": 10000,
+            "seed": 20261101,
+        }
+        and analysis["per_hop_delta_vs_best_control"]
+        == {
+            "2": {
+                "cases": 400,
+                "best_control": "alternating_anchor_link_control",
+                "candidate_evidence_macro_f1": 0.513571,
+                "best_control_evidence_macro_f1": 0.514286,
+                "delta": -0.000714,
+            },
+            "3": {
+                "cases": 250,
+                "best_control": "alternating_anchor_link_control",
+                "candidate_evidence_macro_f1": 0.539,
+                "best_control_evidence_macro_f1": 0.548,
+                "delta": -0.009,
+            },
+            "4": {
+                "cases": 150,
+                "best_control": "alternating_anchor_link_control",
+                "candidate_evidence_macro_f1": 0.58963,
+                "best_control_evidence_macro_f1": 0.605926,
+                "delta": -0.016296,
+            },
+        }
+        and analysis["router"]
+        == {
+            "soft_override_rate": 0.4375,
+            "v76_history_crossfit_override_rate": 0.346,
+        }
+        and analysis["support_checks"] == expected_checks
+        and analysis["noninferiority_checks"] == expected_noninferiority
+        and outcome["stage_gate_passed"] is False
+        and outcome["noninferiority_envelope_supported"] is False
+        and outcome["confirmation_open_authorized"] is False
+        and outcome["status"]
+        == "MUSIQUE_V77_FROZEN_V76_ROUTER_TRANSFER_ADVANTAGE_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+        and outcome["selector_adoption_authorized"] is False
+        and outcome["canary_or_default_authorized"] is False
+        and outcome["gate_2"] == "NO-GO/SHADOW"
+        and closure["development_result_sha256"] == raw_sha256(paths["result"])
+        and closure["strict_transfer_gate_passed"] is False
+        and closure["noninferiority_envelope_supported"] is False
+        and closure["confirmation_open_authorized"] is False
+        and closure["feature_model_threshold_controls_gates_or_stage_size_changed"]
+        is False
+        and closure["reuse_development_for_selection_or_tuning"] is False
+        and not any(path.exists() for path in confirmation_paths)
+        and not blind_forbidden & _nested_keys(blind)
+        and not selection_forbidden & _nested_keys(selections)
+        and not case_forbidden & _nested_keys(cases)
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    return _check(
+        "musique_v77_frozen_router_transfer_boundary",
+        (
+            "MuSiQue v77 preserves a zero-tuning, prior-case-disjoint negative "
+            "transfer result and stops before confirmation"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": "FRC-MUSIQUE-FROZEN-HOTPOT-GRAPH-ROUTER-TRANSFER-V77",
+            "status": outcome["status"],
+            "prior_source_commitments_excluded": execution["preparation"][
+                "prior_excluded_source_commitments"
+            ],
+            "development_cases": len(cases),
+            "hop_count_distribution": execution["preparation"][
+                "hop_count_distribution"
+            ],
+            "candidate_count": execution["preparation"]["candidate_count"],
+            "methods": aggregates,
+            "strongest_registered_control": analysis["strongest_registered_control"],
+            "candidate_minus_strongest_control": analysis["paired_f1_delta"][
+                "alternating_anchor_link_control"
+            ],
+            "candidate_minus_cross_encoder": analysis["paired_f1_delta"][
+                "cross_encoder_topk"
+            ],
+            "per_hop": analysis["per_hop_delta_vs_best_control"],
+            "router": analysis["router"],
+            "support_checks": analysis["support_checks"],
+            "noninferiority_checks": analysis["noninferiority_checks"],
+            "confirmation_opened": False,
+            "target_training_or_tuning_cases": 0,
+            "broader_research_program_independent_of_musique": False,
+            "strict_independent_model_training_confirmation": False,
+            "official_musique_leaderboard_result": False,
+            "selector_adoption_authorized": outcome["selector_adoption_authorized"],
+            "canary_or_default_authorized": outcome["canary_or_default_authorized"],
+            "gate_2": outcome["gate_2"],
+        },
+    )
+
+
+def _check_musique_mean_calibrated_three_route_v78(
+    repo_root: Path,
+) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = (
+        repo_root / "output/rag_evaluation/musique_mean_calibrated_three_route_v78"
+    )
+    cache_root = repo_root / ".cache/benchmarks/musique_mean_calibrated_three_route_v78"
+    paths = {
+        "history_model": docs_root
+        / "hotpot_three_route_router_model_development_v78.json",
+        "calibration": docs_root / "musique_three_route_mean_calibration_v78.json",
+        "protocol": docs_root / "musique_mean_calibrated_three_route_protocol_v78.json",
+        "source": docs_root
+        / "musique_mean_calibrated_three_route_source_registration_v78.json",
+        "implementation": docs_root
+        / "musique_mean_calibrated_three_route_implementation_v78.json",
+        "execution": docs_root
+        / "musique_mean_calibrated_three_route_development_execution_v78.json",
+        "result": docs_root
+        / "musique_mean_calibrated_three_route_development_result_v78.json",
+        "closure": docs_root
+        / "musique_mean_calibrated_three_route_development_closure_v78.json",
+        "synthesis": docs_root / "musique_mean_calibrated_three_route_synthesis_v78.md",
+        "output_result": output_root / "development/result.json",
+        "report": output_root / "development/report.md",
+        "cases": output_root / "development/cases.jsonl.gz",
+        "history_module": repo_root / "research/frc_rag/hotpot_three_route_router.py",
+        "transfer_module": repo_root
+        / "research/frc_rag/musique_mean_calibrated_three_route.py",
+        "history_runner": repo_root / "scripts/run_hotpot_three_route_model.py",
+        "transfer_runner": repo_root
+        / "scripts/run_musique_mean_calibrated_three_route.py",
+        "tests": repo_root / "tests/test_frc_musique_mean_calibrated_three_route.py",
+        "lock_tests": repo_root
+        / "tests/test_frc_musique_mean_calibrated_three_route_lock.py",
+    }
+    cache_paths = {
+        "blind": cache_root / "development/blind_cases.jsonl",
+        "gold": cache_root / "development/sealed_gold.jsonl",
+        "scored": cache_root / "development/scored_blind.jsonl",
+        "selection": cache_root / "development/selection_outputs.jsonl",
+    }
+
+    def raw_sha256(path: Path) -> str:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    history_model = _load_json(paths["history_model"])
+    calibration = _load_json(paths["calibration"])
+    protocol = _load_json(paths["protocol"])
+    source = _load_json(paths["source"])
+    implementation = _load_json(paths["implementation"])
+    execution = _load_json(paths["execution"])
+    result = _load_json(paths["result"])
+    output_result = _load_json(paths["output_result"])
+    closure = _load_json(paths["closure"])
+    blind = _load_jsonl(cache_paths["blind"])
+    selections = _load_jsonl(cache_paths["selection"])
+    cases = _load_jsonl(paths["cases"])
+    candidate_name = "mean_calibrated_three_route_router_v78"
+    v76_name = "graph_gbr_soft_override_router_v76"
+    methods = (
+        "cross_encoder_topk",
+        "frc_select",
+        "soft_title_link_support_path_closure_v74",
+        "alternating_anchor_link_control",
+        "lexical_question_router_control",
+        "zero_shot_v75_question_router_control",
+        v76_name,
+        candidate_name,
+    )
+    aggregates: dict[str, Any] = {}
+    for method in methods:
+        rows = [case["methods"][method] for case in cases]
+        aggregates[method] = {
+            "cases": len(rows),
+            "evidence_macro_f1": round(
+                sum(float(row["evidence_f1"]) for row in rows) / len(rows), 6
+            ),
+            "evidence_macro_recall": round(
+                sum(float(row["evidence_recall"]) for row in rows) / len(rows),
+                6,
+            ),
+            "complete_evidence_recall": round(
+                sum(float(row["complete_evidence"]) for row in rows) / len(rows),
+                6,
+            ),
+            "mean_selected_tokens": round(
+                sum(float(row["selected_tokens"]) for row in rows) / len(rows),
+                6,
+            ),
+        }
+    analysis = result["analysis"]
+    outcome = analysis["outcome"]
+    frozen_hashes = {
+        contract["path"]: contract["sha256"]
+        for contract in implementation["files"].values()
+    }
+    expected_frozen_hashes = {
+        "research/frc_rag/hotpot_three_route_router.py": raw_sha256(
+            paths["history_module"]
+        ),
+        "research/frc_rag/musique_mean_calibrated_three_route.py": raw_sha256(
+            paths["transfer_module"]
+        ),
+        "scripts/run_hotpot_three_route_model.py": raw_sha256(paths["history_runner"]),
+        "scripts/run_musique_mean_calibrated_three_route.py": raw_sha256(
+            paths["transfer_runner"]
+        ),
+        "tests/test_frc_musique_mean_calibrated_three_route.py": raw_sha256(
+            paths["tests"]
+        ),
+        "tests/test_frc_musique_mean_calibrated_three_route_lock.py": raw_sha256(
+            paths["lock_tests"]
+        ),
+        "docs/progressive_upgrade/musique_mean_calibrated_three_route_protocol_v78.json": raw_sha256(
+            paths["protocol"]
+        ),
+        "docs/progressive_upgrade/musique_mean_calibrated_three_route_source_registration_v78.json": raw_sha256(
+            paths["source"]
+        ),
+        "docs/progressive_upgrade/hotpot_three_route_router_model_development_v78.json": raw_sha256(
+            paths["history_model"]
+        ),
+        "docs/progressive_upgrade/musique_three_route_mean_calibration_v78.json": raw_sha256(
+            paths["calibration"]
+        ),
+    }
+    expected_checks = {
+        "exact_cases_equals_600": True,
+        "exact_hop_quota": True,
+        "prior_calibration_or_stage_overlap_equals_0": True,
+        "invalid_selector_output_rate_equals_0": True,
+        "candidate_evidence_macro_f1_at_least_0_55": False,
+        "candidate_complete_evidence_recall_at_least_0_55": True,
+        "candidate_minus_strongest_control_f1_at_least_0_005": False,
+        "candidate_minus_strongest_control_ci_low_above_0": False,
+        "candidate_minus_frozen_v76_f1_at_least_0_005": False,
+        "candidate_minus_frozen_v76_ci_low_above_0": False,
+        "every_hop_delta_vs_best_control_at_least_minus_0_005": False,
+        "at_least_two_routes_each_cover_at_least_0_05": True,
+        "largest_route_fraction_at_most_0_9": True,
+        "mean_selected_tokens_within_1_05_of_strongest_control": True,
+    }
+    expected_noninferiority = {
+        "candidate_minus_strongest_control_point_at_least_minus_0_005": True,
+        "candidate_minus_strongest_control_ci_low_at_least_minus_0_01": True,
+        "candidate_minus_frozen_v76_point_at_least_0": True,
+        "every_hop_delta_vs_best_control_at_least_minus_0_02": True,
+        "invalid_selector_output_rate_equals_0": True,
+    }
+    blind_forbidden = {
+        "answer",
+        "question_decomposition",
+        "is_supporting",
+        "gold_evidence_ids",
+        "gold",
+        "gold_roles",
+    }
+    selection_forbidden = {
+        "question",
+        "hop_count",
+        "answer",
+        "question_decomposition",
+        "is_supporting",
+        "text",
+        "source",
+        "gold_evidence_ids",
+        "gold",
+        "gold_roles",
+    }
+    case_forbidden = {
+        "question",
+        "answer",
+        "paragraphs",
+        "candidate_ids",
+        "candidate_text",
+        "gold_evidence_ids",
+        "selected_ids",
+        "source",
+        "title",
+        "text",
+    }
+    confirmation_paths = (
+        docs_root / "musique_mean_calibrated_three_route_confirmation_open_v78.json",
+        docs_root
+        / "musique_mean_calibrated_three_route_confirmation_execution_v78.json",
+        docs_root / "musique_mean_calibrated_three_route_confirmation_result_v78.json",
+        docs_root / "musique_mean_calibrated_three_route_confirmation_closure_v78.json",
+        cache_root / "confirmation",
+        output_root / "confirmation",
+    )
+    passed = (
+        all(path.is_file() for path in paths.values())
+        and all(path.is_file() for path in cache_paths.values())
+        and history_model["search"]["route_policy_configurations"] == 432
+        and history_model["crossfit"]["candidate"]["evidence_macro_f1"] == 0.563008
+        and history_model["crossfit"]["v76_candidate"]["evidence_macro_f1"] == 0.562448
+        and history_model["crossfit"]["candidate_minus_v76"]["point"] == 0.00056
+        and history_model["crossfit"]["route_counts"]
+        == {
+            "cross_encoder_topk": 602,
+            "soft_title_link_support_path_closure_v74": 398,
+        }
+        and calibration["frozen_formula"]["calibration_configuration_count"] == 1
+        and calibration["calibration_source"][
+            "registered_mean_gain_relative_to_cross_encoder"
+        ]
+        == {
+            "soft_title_link_support_path_closure_v74": -0.009434,
+            "alternating_anchor_link_control": 0.013651,
+        }
+        and calibration["prospective_boundary"][
+            "v78_target_ids_selected_before_calibration_lock"
+        ]
+        == 0
+        and protocol["stages"]["development"]["cases"] == 600
+        and protocol["stages"]["development"]["hop_quota"]
+        == {"2": 300, "3": 200, "4": 100}
+        and protocol["candidate"]["v78_target_training_or_tuning_cases"] == 0
+        and protocol["candidate"]["calibration_configuration_count"] == 1
+        and source["prior_exclusion_registry"]["expected_unique_source_commitments"]
+        == 16900
+        and source["v77_target_domain_calibration_ids"]["unique_ids"] == 800
+        and source["remaining_untouched_answerable_capacity_after_v77"]
+        == {
+            "total": 2238,
+            "by_id_derived_hop": {"2": 1328, "3": 667, "4": 243},
+            "required_across_two_stages": {"2": 600, "3": 400, "4": 200},
+            "supports_two_disjoint_registered_stages": True,
+        }
+        and source["pre_registration_access_boundary"]["v78_target_ids_selected"] == 0
+        and source["claims"]["strict_zero_target_tuning"] is False
+        and implementation["pre_target_verification"]["v78_target_ids_selected"] == 0
+        and implementation["pre_target_verification"][
+            "v78_target_questions_paragraphs_scores_gold_or_metrics_seen"
+        ]
+        is False
+        and frozen_hashes == expected_frozen_hashes
+        and execution["status"] == "EVALUATED_GOLD_JOINED"
+        and execution["preparation"]["selected_cases"] == 600
+        and execution["preparation"]["hop_count_distribution"]
+        == {"2": 300, "3": 200, "4": 100}
+        and execution["preparation"]["candidate_count"] == 12000
+        and execution["preparation"]["prior_excluded_source_commitments"] == 16900
+        and execution["preparation"]["v77_calibration_excluded_ids"] == 800
+        and execution["preparation"]["prior_source_overlap"] == 0
+        and execution["preparation"]["v77_calibration_overlap"] == 0
+        and execution["scored_cases"] == 600
+        and execution["preparation"]["blind_sha256"] == raw_sha256(cache_paths["blind"])
+        and execution["preparation"]["gold_sha256"] == raw_sha256(cache_paths["gold"])
+        and execution["scored_blind_sha256"] == raw_sha256(cache_paths["scored"])
+        and execution["selection_output_sha256"] == raw_sha256(cache_paths["selection"])
+        and execution["result_sha256"] == raw_sha256(paths["result"])
+        and result == output_result
+        and len(blind) == len(selections) == len(cases) == 600
+        and aggregates == analysis["methods"]
+        and aggregates[candidate_name]
+        == {
+            "cases": 600,
+            "evidence_macro_f1": 0.546382,
+            "evidence_macro_recall": 0.814444,
+            "complete_evidence_recall": 0.563333,
+            "mean_selected_tokens": 539.298333,
+        }
+        and aggregates[v76_name]["evidence_macro_f1"] == 0.545886
+        and analysis["strongest_registered_control"]["name"]
+        == "alternating_anchor_link_control"
+        and analysis["paired_f1_delta"]["alternating_anchor_link_control"]
+        == {
+            "point": -0.0017,
+            "ci_low": -0.006865,
+            "ci_high": 0.003572,
+            "resamples": 10000,
+            "seed": 20261124,
+        }
+        and analysis["paired_f1_delta"][v76_name]
+        == {
+            "point": 0.000496,
+            "ci_low": -0.006369,
+            "ci_high": 0.007388,
+            "resamples": 10000,
+            "seed": 20261127,
+        }
+        and analysis["per_hop_delta_vs_best_control"]
+        == {
+            "2": {
+                "cases": 300,
+                "best_control": "cross_encoder_topk",
+                "candidate_evidence_macro_f1": 0.509524,
+                "best_control_evidence_macro_f1": 0.510476,
+                "delta": -0.000952,
+            },
+            "3": {
+                "cases": 200,
+                "best_control": "alternating_anchor_link_control",
+                "candidate_evidence_macro_f1": 0.58375,
+                "best_control_evidence_macro_f1": 0.5825,
+                "delta": 0.00125,
+            },
+            "4": {
+                "cases": 100,
+                "best_control": "alternating_anchor_link_control",
+                "candidate_evidence_macro_f1": 0.582222,
+                "best_control_evidence_macro_f1": 0.597778,
+                "delta": -0.015556,
+            },
+        }
+        and analysis["router"]
+        == {
+            "route_counts": {
+                "alternating_anchor_link_control": 316,
+                "soft_title_link_support_path_closure_v74": 284,
+            },
+            "route_fractions": {
+                "cross_encoder_topk": 0.0,
+                "soft_title_link_support_path_closure_v74": 0.473333,
+                "alternating_anchor_link_control": 0.526667,
+            },
+            "material_route_count": 2,
+            "history_candidate_name": "history_three_route_graph_router_v78",
+        }
+        and analysis["support_checks"] == expected_checks
+        and analysis["noninferiority_checks"] == expected_noninferiority
+        and outcome["stage_gate_passed"] is False
+        and outcome["noninferiority_envelope_supported"] is True
+        and outcome["confirmation_open_authorized"] is False
+        and outcome["status"]
+        == "MUSIQUE_V78_MEAN_CALIBRATED_THREE_ROUTE_ADVANTAGE_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+        and outcome["selector_adoption_authorized"] is False
+        and outcome["canary_or_default_authorized"] is False
+        and outcome["gate_2"] == "NO-GO/SHADOW"
+        and closure["development_result_sha256"] == raw_sha256(paths["result"])
+        and closure["strict_gate_passed"] is False
+        and closure["noninferiority_supported"] is True
+        and closure["confirmation_open_authorized"] is False
+        and closure["candidate_feature_model_offset_threshold_or_gate_changed"] is False
+        and not any(path.exists() for path in confirmation_paths)
+        and not blind_forbidden & _nested_keys(blind)
+        and not selection_forbidden & _nested_keys(selections)
+        and not case_forbidden & _nested_keys(cases)
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    return _check(
+        "musique_v78_mean_calibrated_three_route_boundary",
+        (
+            "MuSiQue v78 preserves a target-mean-calibrated, prior-case-disjoint "
+            "noninferiority-only result and stops before confirmation"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": "FRC-MUSIQUE-MEAN-CALIBRATED-THREE-ROUTE-TRANSFER-V78",
+            "status": outcome["status"],
+            "history_route_policy_configurations": history_model["search"][
+                "route_policy_configurations"
+            ],
+            "history_candidate_minus_v76": history_model["crossfit"][
+                "candidate_minus_v76"
+            ],
+            "v77_calibration_cases": calibration["calibration_source"]["cases"],
+            "v77_calibration_configuration_count": calibration["frozen_formula"][
+                "calibration_configuration_count"
+            ],
+            "development_cases": len(cases),
+            "hop_count_distribution": execution["preparation"][
+                "hop_count_distribution"
+            ],
+            "candidate_count": execution["preparation"]["candidate_count"],
+            "methods": aggregates,
+            "strongest_registered_control": analysis["strongest_registered_control"],
+            "candidate_minus_strongest_control": analysis["paired_f1_delta"][
+                "alternating_anchor_link_control"
+            ],
+            "candidate_minus_v76": analysis["paired_f1_delta"][v76_name],
+            "per_hop": analysis["per_hop_delta_vs_best_control"],
+            "router": analysis["router"],
+            "support_checks": analysis["support_checks"],
+            "noninferiority_checks": analysis["noninferiority_checks"],
+            "confirmation_opened": False,
+            "v78_target_training_or_tuning_cases": 0,
+            "strict_zero_target_tuning": False,
+            "strict_independent_model_training_confirmation": False,
+            "official_musique_leaderboard_result": False,
+            "selector_adoption_authorized": outcome["selector_adoption_authorized"],
+            "canary_or_default_authorized": outcome["canary_or_default_authorized"],
+            "gate_2": outcome["gate_2"],
+        },
+    )
+
+
+def _check_musique_target_three_route_v79(repo_root: Path) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = repo_root / "output/rag_evaluation/musique_target_three_route_v79"
+    cache_root = repo_root / ".cache/benchmarks/musique_target_three_route_v79"
+    paths = {
+        "model": docs_root
+        / "musique_target_three_route_router_model_development_v79.json",
+        "protocol": docs_root / "musique_target_three_route_protocol_v79.json",
+        "source": docs_root / "musique_target_three_route_source_registration_v79.json",
+        "implementation": docs_root
+        / "musique_target_three_route_implementation_v79.json",
+        "execution": docs_root
+        / "musique_target_three_route_development_execution_v79.json",
+        "result": docs_root / "musique_target_three_route_development_result_v79.json",
+        "closure": docs_root
+        / "musique_target_three_route_development_closure_v79.json",
+        "synthesis": docs_root / "musique_target_three_route_synthesis_v79.md",
+        "output_result": output_root / "development/result.json",
+        "report": output_root / "development/report.md",
+        "cases": output_root / "development/cases.jsonl.gz",
+        "router_module": repo_root
+        / "research/frc_rag/musique_target_three_route_router.py",
+        "transfer_module": repo_root
+        / "research/frc_rag/musique_target_three_route_transfer.py",
+        "model_runner": repo_root / "scripts/run_musique_target_three_route_model.py",
+        "transfer_runner": repo_root
+        / "scripts/run_musique_target_three_route_transfer.py",
+        "tests": repo_root / "tests/test_frc_musique_target_three_route.py",
+        "lock_tests": repo_root / "tests/test_frc_musique_target_three_route_lock.py",
+    }
+    cache_paths = {
+        "blind": cache_root / "development/blind_cases.jsonl",
+        "gold": cache_root / "development/sealed_gold.jsonl",
+        "scored": cache_root / "development/scored_blind.jsonl",
+        "selection": cache_root / "development/selection_outputs.jsonl",
+    }
+
+    def raw_sha256(path: Path) -> str:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    model = _load_json(paths["model"])
+    protocol = _load_json(paths["protocol"])
+    source = _load_json(paths["source"])
+    implementation = _load_json(paths["implementation"])
+    execution = _load_json(paths["execution"])
+    result = _load_json(paths["result"])
+    output_result = _load_json(paths["output_result"])
+    closure = _load_json(paths["closure"])
+    blind = _load_jsonl(cache_paths["blind"])
+    selections = _load_jsonl(cache_paths["selection"])
+    cases = _load_jsonl(paths["cases"])
+    candidate_name = "musique_target_trained_three_route_router_v79"
+    v78_name = "mean_calibrated_three_route_router_v78"
+    methods = tuple(result["analysis"]["methods"])
+    aggregates: dict[str, Any] = {}
+    for method in methods:
+        rows = [case["methods"][method] for case in cases]
+        aggregates[method] = {
+            "cases": len(rows),
+            "evidence_macro_f1": round(
+                sum(float(row["evidence_f1"]) for row in rows) / len(rows), 6
+            ),
+            "evidence_macro_recall": round(
+                sum(float(row["evidence_recall"]) for row in rows) / len(rows),
+                6,
+            ),
+            "complete_evidence_recall": round(
+                sum(float(row["complete_evidence"]) for row in rows) / len(rows),
+                6,
+            ),
+            "mean_selected_tokens": round(
+                sum(float(row["selected_tokens"]) for row in rows) / len(rows),
+                6,
+            ),
+        }
+    analysis = result["analysis"]
+    outcome = analysis["outcome"]
+    frozen_hashes = {
+        contract["path"]: contract["sha256"]
+        for contract in implementation["files"].values()
+    }
+    expected_frozen_hashes = {
+        "research/frc_rag/musique_target_three_route_router.py": raw_sha256(
+            paths["router_module"]
+        ),
+        "research/frc_rag/musique_target_three_route_transfer.py": raw_sha256(
+            paths["transfer_module"]
+        ),
+        "scripts/run_musique_target_three_route_model.py": raw_sha256(
+            paths["model_runner"]
+        ),
+        "scripts/run_musique_target_three_route_transfer.py": raw_sha256(
+            paths["transfer_runner"]
+        ),
+        "tests/test_frc_musique_target_three_route.py": raw_sha256(paths["tests"]),
+        "docs/progressive_upgrade/musique_target_three_route_protocol_v79.json": raw_sha256(
+            paths["protocol"]
+        ),
+        "docs/progressive_upgrade/musique_target_three_route_source_registration_v79.json": raw_sha256(
+            paths["source"]
+        ),
+        "docs/progressive_upgrade/musique_target_three_route_router_model_development_v79.json": raw_sha256(
+            paths["model"]
+        ),
+    }
+    expected_checks = {
+        "exact_cases_equals_470": True,
+        "exact_hop_quota": True,
+        "prior_training_or_stage_overlap_equals_0": True,
+        "invalid_selector_output_rate_equals_0": True,
+        "candidate_evidence_macro_f1_at_least_0_55": True,
+        "candidate_complete_evidence_recall_at_least_0_55": True,
+        "candidate_minus_strongest_control_f1_at_least_0_005": False,
+        "candidate_minus_strongest_control_ci_low_above_0": False,
+        "candidate_minus_frozen_v78_f1_at_least_0_005": True,
+        "candidate_minus_frozen_v78_ci_low_above_0": False,
+        "every_hop_delta_vs_best_control_at_least_minus_0_005": True,
+        "at_least_two_routes_each_cover_at_least_0_05": True,
+        "largest_route_fraction_at_most_0_9": True,
+        "mean_selected_tokens_within_1_05_of_strongest_control": True,
+    }
+    expected_noninferiority = {
+        "candidate_minus_strongest_control_point_at_least_minus_0_005": True,
+        "candidate_minus_strongest_control_ci_low_at_least_minus_0_01": True,
+        "candidate_minus_frozen_v78_point_at_least_0": True,
+        "every_hop_delta_vs_best_control_at_least_minus_0_02": True,
+        "invalid_selector_output_rate_equals_0": True,
+    }
+    confirmation_paths = (
+        docs_root / "musique_target_three_route_confirmation_open_v79.json",
+        docs_root / "musique_target_three_route_confirmation_execution_v79.json",
+        docs_root / "musique_target_three_route_confirmation_result_v79.json",
+        docs_root / "musique_target_three_route_confirmation_closure_v79.json",
+        cache_root / "confirmation",
+        output_root / "confirmation",
+    )
+    blind_forbidden = {
+        "answer",
+        "question_decomposition",
+        "is_supporting",
+        "gold_evidence_ids",
+        "gold",
+        "gold_roles",
+    }
+    selection_forbidden = blind_forbidden | {
+        "question",
+        "hop_count",
+        "text",
+        "source",
+    }
+    case_forbidden = (selection_forbidden - {"hop_count"}) | {
+        "candidate_ids",
+        "selected_ids",
+        "paragraphs",
+        "title",
+    }
+    diagnostic = model["crossfit_model_selection_diagnostic"]
+    passed = (
+        all(path.is_file() for path in paths.values())
+        and all(path.is_file() for path in cache_paths.values())
+        and model["search"]["route_policy_configurations"] == 432
+        and model["selected_configuration"]["model_configuration_index"] == 95
+        and model["selected_configuration"]["threshold"] == 0.005
+        and diagnostic["candidate"]["evidence_macro_f1"] == 0.551733
+        and diagnostic["candidate_minus_v78"]
+        == {
+            "point": 0.005351,
+            "ci_low": -0.000833,
+            "ci_high": 0.011607,
+            "resamples": 10000,
+            "seed": 20261132,
+        }
+        and diagnostic["route_counts"]
+        == {
+            "alternating_anchor_link_control": 215,
+            "cross_encoder_topk": 215,
+            "soft_title_link_support_path_closure_v74": 170,
+        }
+        and protocol["stages"]["development"]["cases"] == 470
+        and protocol["stages"]["development"]["hop_quota"]
+        == {"2": 250, "3": 150, "4": 70}
+        and protocol["candidate"]["v78_target_domain_training_cases"] == 600
+        and protocol["candidate"]["v79_target_training_or_tuning_cases"] == 0
+        and protocol["candidate"]["route_policy_configurations"] == 432
+        and source["prior_exclusion_registry"]["expected_unique_source_commitments"]
+        == 16900
+        and source["v77_target_domain_calibration_ids"]["unique_ids"] == 800
+        and source["v78_target_domain_training_ids"]["unique_ids"] == 600
+        and source["remaining_untouched_answerable_capacity_after_v78"]
+        == {
+            "total": 1638,
+            "by_id_derived_hop": {"2": 1028, "3": 467, "4": 143},
+            "required_across_two_stages": {"2": 500, "3": 300, "4": 140},
+            "supports_two_disjoint_registered_stages": True,
+        }
+        and source["pre_registration_access_boundary"]["v79_target_ids_selected"] == 0
+        and source["claims"]["strict_zero_target_tuning"] is False
+        and implementation["pre_target_verification"]["v79_target_ids_selected"] == 0
+        and implementation["pre_target_verification"][
+            "v79_target_questions_paragraphs_scores_gold_or_metrics_seen"
+        ]
+        is False
+        and frozen_hashes == expected_frozen_hashes
+        and execution["status"] == "EVALUATED_GOLD_JOINED"
+        and execution["preparation"]["selected_cases"] == 470
+        and execution["preparation"]["hop_count_distribution"]
+        == {"2": 250, "3": 150, "4": 70}
+        and execution["preparation"]["candidate_count"] == 9400
+        and execution["preparation"]["prior_excluded_source_commitments"] == 16900
+        and execution["preparation"]["v77_calibration_excluded_ids"] == 800
+        and execution["preparation"]["v78_training_excluded_ids"] == 600
+        and execution["preparation"]["prior_source_overlap"] == 0
+        and execution["preparation"]["v77_calibration_overlap"] == 0
+        and execution["preparation"]["v78_training_overlap"] == 0
+        and execution["scored_cases"] == 470
+        and execution["preparation"]["blind_sha256"] == raw_sha256(cache_paths["blind"])
+        and execution["preparation"]["gold_sha256"] == raw_sha256(cache_paths["gold"])
+        and execution["scored_blind_sha256"] == raw_sha256(cache_paths["scored"])
+        and execution["selection_output_sha256"] == raw_sha256(cache_paths["selection"])
+        and execution["result_sha256"] == raw_sha256(paths["result"])
+        and result == output_result
+        and len(blind) == len(selections) == len(cases) == 470
+        and aggregates == analysis["methods"]
+        and aggregates[candidate_name]
+        == {
+            "cases": 470,
+            "evidence_macro_f1": 0.553723,
+            "evidence_macro_recall": 0.831383,
+            "complete_evidence_recall": 0.597872,
+            "mean_selected_tokens": 534.485106,
+        }
+        and aggregates[v78_name]["evidence_macro_f1"] == 0.547763
+        and analysis["strongest_registered_control"]["name"]
+        == "alternating_anchor_link_control"
+        and analysis["paired_f1_delta"]["alternating_anchor_link_control"]
+        == {
+            "point": 0.002871,
+            "ci_low": -0.002187,
+            "ci_high": 0.007844,
+            "resamples": 10000,
+            "seed": 20261144,
+        }
+        and analysis["paired_f1_delta"][v78_name]
+        == {
+            "point": 0.005961,
+            "ci_low": -0.00038,
+            "ci_high": 0.012606,
+            "resamples": 10000,
+            "seed": 20261148,
+        }
+        and analysis["per_hop_delta_vs_best_control"]
+        == {
+            "2": {
+                "cases": 250,
+                "best_control": "graph_gbr_soft_override_router_v76",
+                "candidate_evidence_macro_f1": 0.512,
+                "best_control_evidence_macro_f1": 0.510857,
+                "delta": 0.001143,
+            },
+            "3": {
+                "cases": 150,
+                "best_control": "alternating_anchor_link_control",
+                "candidate_evidence_macro_f1": 0.575,
+                "best_control_evidence_macro_f1": 0.568333,
+                "delta": 0.006667,
+            },
+            "4": {
+                "cases": 70,
+                "best_control": "alternating_anchor_link_control",
+                "candidate_evidence_macro_f1": 0.657143,
+                "best_control_evidence_macro_f1": 0.660317,
+                "delta": -0.003175,
+            },
+        }
+        and analysis["router"]
+        == {
+            "route_counts": {
+                "alternating_anchor_link_control": 164,
+                "cross_encoder_topk": 193,
+                "soft_title_link_support_path_closure_v74": 113,
+            },
+            "route_fractions": {
+                "cross_encoder_topk": 0.410638,
+                "soft_title_link_support_path_closure_v74": 0.240426,
+                "alternating_anchor_link_control": 0.348936,
+            },
+            "material_route_count": 3,
+        }
+        and analysis["support_checks"] == expected_checks
+        and analysis["noninferiority_checks"] == expected_noninferiority
+        and outcome["stage_gate_passed"] is False
+        and outcome["noninferiority_envelope_supported"] is True
+        and outcome["confirmation_open_authorized"] is False
+        and outcome["status"]
+        == "MUSIQUE_V79_TARGET_THREE_ROUTE_ADVANTAGE_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+        and outcome["selector_adoption_authorized"] is False
+        and outcome["canary_or_default_authorized"] is False
+        and outcome["gate_2"] == "NO-GO/SHADOW"
+        and closure["development_result_sha256"] == raw_sha256(paths["result"])
+        and closure["strict_gate_passed"] is False
+        and closure["noninferiority_supported"] is True
+        and closure["confirmation_open_authorized"] is False
+        and closure["candidate_model_threshold_or_gate_changed"] is False
+        and not any(path.exists() for path in confirmation_paths)
+        and not blind_forbidden & _nested_keys(blind)
+        and not selection_forbidden & _nested_keys(selections)
+        and not case_forbidden & _nested_keys(cases)
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    return _check(
+        "musique_v79_target_three_route_boundary",
+        (
+            "MuSiQue v79 preserves a target-trained, prior-case-disjoint "
+            "noninferiority-only result and stops before confirmation"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": ("FRC-MUSIQUE-TARGET-TRAINED-THREE-ROUTE-TRANSFER-V79"),
+            "status": outcome["status"],
+            "route_policy_configurations": model["search"][
+                "route_policy_configurations"
+            ],
+            "v78_training_cases": model["training"]["cases"],
+            "oof_model_selection_diagnostic": diagnostic["candidate"],
+            "development_cases": len(cases),
+            "hop_count_distribution": execution["preparation"][
+                "hop_count_distribution"
+            ],
+            "candidate_count": execution["preparation"]["candidate_count"],
+            "methods": aggregates,
+            "strongest_registered_control": analysis["strongest_registered_control"],
+            "candidate_minus_strongest_control": analysis["paired_f1_delta"][
+                "alternating_anchor_link_control"
+            ],
+            "candidate_minus_v78": analysis["paired_f1_delta"][v78_name],
+            "per_hop": analysis["per_hop_delta_vs_best_control"],
+            "router": analysis["router"],
+            "support_checks": analysis["support_checks"],
+            "noninferiority_checks": analysis["noninferiority_checks"],
+            "confirmation_opened": False,
+            "v79_target_training_or_tuning_cases": 0,
+            "strict_zero_target_tuning": False,
+            "strict_independent_model_training_confirmation": False,
+            "official_musique_leaderboard_result": False,
+            "selector_adoption_authorized": outcome["selector_adoption_authorized"],
+            "canary_or_default_authorized": outcome["canary_or_default_authorized"],
+            "gate_2": outcome["gate_2"],
+        },
+    )
+
+
+def _check_musique_anchor_default_terminal_v80(repo_root: Path) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = repo_root / "output/rag_evaluation/musique_anchor_default_v80"
+    cache_root = repo_root / ".cache/benchmarks/musique_anchor_default_v80"
+    paths = {
+        "model": docs_root / "musique_anchor_default_router_model_development_v80.json",
+        "protocol": docs_root
+        / "musique_anchor_default_terminal_holdout_protocol_v80.json",
+        "source": docs_root
+        / "musique_anchor_default_terminal_holdout_source_registration_v80.json",
+        "implementation": docs_root
+        / "musique_anchor_default_terminal_holdout_implementation_v80.json",
+        "execution": docs_root
+        / "musique_anchor_default_terminal_holdout_execution_v80.json",
+        "result": docs_root / "musique_anchor_default_terminal_holdout_result_v80.json",
+        "closure": docs_root
+        / "musique_anchor_default_terminal_holdout_closure_v80.json",
+        "synthesis": docs_root
+        / "musique_anchor_default_terminal_holdout_synthesis_v80.md",
+        "output_result": output_root / "terminal_holdout/result.json",
+        "report": output_root / "terminal_holdout/report.md",
+        "cases": output_root / "terminal_holdout/cases.jsonl.gz",
+        "router_module": repo_root
+        / "research/frc_rag/musique_anchor_default_router.py",
+        "transfer_module": repo_root
+        / "research/frc_rag/musique_anchor_default_transfer.py",
+        "model_runner": repo_root
+        / "scripts/run_musique_anchor_default_router_model.py",
+        "transfer_runner": repo_root / "scripts/run_musique_anchor_default_transfer.py",
+        "tests": repo_root / "tests/test_frc_musique_anchor_default_transfer.py",
+        "lock_tests": repo_root
+        / "tests/test_frc_musique_anchor_default_transfer_lock.py",
+    }
+    cache_paths = {
+        "blind": cache_root / "terminal_holdout/blind_cases.jsonl",
+        "gold": cache_root / "terminal_holdout/sealed_gold.jsonl",
+        "scored": cache_root / "terminal_holdout/scored_blind.jsonl",
+        "selection": cache_root / "terminal_holdout/selection_outputs.jsonl",
+    }
+
+    def raw_sha256(path: Path) -> str:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    model = _load_json(paths["model"])
+    protocol = _load_json(paths["protocol"])
+    source = _load_json(paths["source"])
+    implementation = _load_json(paths["implementation"])
+    execution = _load_json(paths["execution"])
+    result = _load_json(paths["result"])
+    output_result = _load_json(paths["output_result"])
+    closure = _load_json(paths["closure"])
+    blind = _load_jsonl(cache_paths["blind"])
+    gold = _load_jsonl(cache_paths["gold"])
+    selections = _load_jsonl(cache_paths["selection"])
+    cases = _load_jsonl(paths["cases"])
+    candidate_name = "musique_anchor_default_three_route_router_v80"
+    v79_name = "musique_target_trained_three_route_router_v79"
+    methods = tuple(result["analysis"]["methods"])
+    aggregates: dict[str, Any] = {}
+    for method in methods:
+        rows = [case["methods"][method] for case in cases]
+        aggregates[method] = {
+            "cases": len(rows),
+            "evidence_macro_f1": round(
+                sum(float(row["evidence_f1"]) for row in rows) / len(rows), 6
+            ),
+            "evidence_macro_recall": round(
+                sum(float(row["evidence_recall"]) for row in rows) / len(rows),
+                6,
+            ),
+            "complete_evidence_recall": round(
+                sum(float(row["complete_evidence"]) for row in rows) / len(rows),
+                6,
+            ),
+            "mean_selected_tokens": round(
+                sum(float(row["selected_tokens"]) for row in rows) / len(rows),
+                6,
+            ),
+        }
+    analysis = result["analysis"]
+    outcome = analysis["outcome"]
+    frozen_hashes = {
+        contract["path"]: contract["sha256"]
+        for contract in implementation["files"].values()
+    }
+    expected_frozen_hashes = {
+        "research/frc_rag/musique_anchor_default_router.py": raw_sha256(
+            paths["router_module"]
+        ),
+        "research/frc_rag/musique_anchor_default_transfer.py": raw_sha256(
+            paths["transfer_module"]
+        ),
+        "scripts/run_musique_anchor_default_router_model.py": raw_sha256(
+            paths["model_runner"]
+        ),
+        "scripts/run_musique_anchor_default_transfer.py": raw_sha256(
+            paths["transfer_runner"]
+        ),
+        "tests/test_frc_musique_anchor_default_transfer.py": raw_sha256(paths["tests"]),
+        "docs/progressive_upgrade/musique_anchor_default_terminal_holdout_protocol_v80.json": raw_sha256(
+            paths["protocol"]
+        ),
+        "docs/progressive_upgrade/musique_anchor_default_terminal_holdout_source_registration_v80.json": raw_sha256(
+            paths["source"]
+        ),
+        "docs/progressive_upgrade/musique_anchor_default_router_model_development_v80.json": raw_sha256(
+            paths["model"]
+        ),
+    }
+    expected_checks = {
+        "exact_cases_equals_600": True,
+        "exact_hop_quota": True,
+        "prior_training_overlap_equals_0": True,
+        "invalid_selector_output_rate_equals_0": True,
+        "candidate_evidence_macro_f1_at_least_0_55": False,
+        "candidate_complete_evidence_recall_at_least_0_55": True,
+        "candidate_minus_strongest_control_f1_at_least_0_005": False,
+        "candidate_minus_strongest_control_ci_low_above_0": False,
+        "candidate_minus_frozen_v79_f1_at_least_0_005": False,
+        "candidate_minus_frozen_v79_ci_low_above_0": False,
+        "every_hop_delta_vs_best_control_at_least_minus_0_005": False,
+        "at_least_two_routes_each_cover_at_least_0_05": True,
+        "largest_route_fraction_at_most_0_9": True,
+        "mean_selected_tokens_within_1_05_of_strongest_control": True,
+    }
+    expected_noninferiority = {
+        "candidate_minus_strongest_control_point_at_least_minus_0_005": True,
+        "candidate_minus_strongest_control_ci_low_at_least_minus_0_01": True,
+        "candidate_minus_frozen_v79_point_at_least_0": True,
+        "every_hop_delta_vs_best_control_at_least_minus_0_02": True,
+        "invalid_selector_output_rate_equals_0": True,
+    }
+    blind_forbidden = {
+        "answer",
+        "question_decomposition",
+        "is_supporting",
+        "gold_evidence_ids",
+        "gold",
+        "gold_roles",
+    }
+    selection_forbidden = blind_forbidden | {
+        "question",
+        "hop_count",
+        "text",
+        "source",
+    }
+    case_forbidden = (selection_forbidden - {"hop_count"}) | {
+        "candidate_ids",
+        "selected_ids",
+        "paragraphs",
+        "title",
+    }
+    diagnostic = model["crossfit_model_selection_diagnostic"]
+    passed = (
+        all(path.is_file() for path in paths.values())
+        and all(path.is_file() for path in cache_paths.values())
+        and model["training"]["cases"] == 1070
+        and model["search"]["model_configurations"] == 216
+        and model["search"]["route_policy_configurations"] == 1512
+        and model["selected_configuration"]["model_configuration_index"] == 131
+        and model["selected_configuration"]["threshold"] == 0.0025
+        and model["selected_configuration"]["default_route"]
+        == "alternating_anchor_link_control"
+        and diagnostic["candidate"]["evidence_macro_f1"] == 0.554843
+        and diagnostic["candidate_minus_anchor"]
+        == {
+            "point": 0.005544,
+            "ci_low": 0.002129,
+            "ci_high": 0.009068,
+            "resamples": 10000,
+            "seed": 20261151,
+        }
+        and diagnostic["route_counts"]
+        == {
+            "alternating_anchor_link_control": 525,
+            "cross_encoder_topk": 288,
+            "soft_title_link_support_path_closure_v74": 257,
+        }
+        and protocol["stage"]["cases"] == 600
+        and protocol["stage"]["hop_quota"] == {"2": 400, "3": 150, "4": 50}
+        and protocol["stage"]["further_same_source_confirmation_authorized"] is False
+        and protocol["candidate"]["target_domain_training_cases"] == 1070
+        and protocol["candidate"]["v80_target_training_or_tuning_cases"] == 0
+        and protocol["candidate"]["route_policy_configurations"] == 1512
+        and source["prior_exclusion_registry"]["expected_unique_source_commitments"]
+        == 16900
+        and source["v77_target_domain_calibration_ids"]["unique_ids"] == 800
+        and source["v78_target_domain_training_ids"]["unique_ids"] == 600
+        and source["v79_target_domain_training_ids"]["unique_ids"] == 470
+        and source["remaining_untouched_answerable_capacity_after_v79"]
+        == {
+            "total": 1168,
+            "by_id_derived_hop": {"2": 778, "3": 317, "4": 73},
+            "terminal_holdout_required": {"2": 400, "3": 150, "4": 50},
+            "remaining_after_terminal_holdout": {
+                "total": 568,
+                "by_id_derived_hop": {"2": 378, "3": 167, "4": 23},
+            },
+            "supports_a_second_comparable_disjoint_stage": False,
+        }
+        and source["pre_registration_access_boundary"]["v80_target_ids_selected"] == 0
+        and source["claims"]["strict_zero_target_tuning"] is False
+        and implementation["pre_target_verification"]["v80_target_ids_selected"] == 0
+        and implementation["pre_target_verification"][
+            "v80_target_questions_paragraphs_scores_gold_or_metrics_seen"
+        ]
+        is False
+        and implementation["frozen_boundaries"][
+            "further_same_source_confirmation_authorized_under_any_outcome"
+        ]
+        is False
+        and frozen_hashes == expected_frozen_hashes
+        and execution["status"] == "EVALUATED_GOLD_JOINED"
+        and execution["preparation"]["selected_cases"] == 600
+        and execution["preparation"]["hop_count_distribution"]
+        == {"2": 400, "3": 150, "4": 50}
+        and execution["preparation"]["candidate_count"] == 11998
+        and execution["preparation"]["prior_excluded_source_commitments"] == 16900
+        and execution["preparation"]["v77_excluded_ids"] == 800
+        and execution["preparation"]["v78_excluded_ids"] == 600
+        and execution["preparation"]["v79_excluded_ids"] == 470
+        and execution["preparation"]["prior_source_overlap"] == 0
+        and execution["preparation"]["v77_overlap"] == 0
+        and execution["preparation"]["v78_overlap"] == 0
+        and execution["preparation"]["v79_overlap"] == 0
+        and execution["scored_cases"] == 600
+        and execution["preparation"]["blind_sha256"] == raw_sha256(cache_paths["blind"])
+        and execution["preparation"]["gold_sha256"] == raw_sha256(cache_paths["gold"])
+        and execution["scored_blind_sha256"] == raw_sha256(cache_paths["scored"])
+        and execution["selection_output_sha256"] == raw_sha256(cache_paths["selection"])
+        and execution["result_sha256"] == raw_sha256(paths["result"])
+        and result == output_result
+        and len(blind) == len(gold) == len(selections) == len(cases) == 600
+        and aggregates == analysis["methods"]
+        and aggregates[candidate_name]
+        == {
+            "cases": 600,
+            "evidence_macro_f1": 0.527817,
+            "evidence_macro_recall": 0.835833,
+            "complete_evidence_recall": 0.643333,
+            "mean_selected_tokens": 551.835,
+        }
+        and aggregates[v79_name]
+        == {
+            "cases": 600,
+            "evidence_macro_f1": 0.526257,
+            "evidence_macro_recall": 0.832639,
+            "complete_evidence_recall": 0.63,
+            "mean_selected_tokens": 552.86,
+        }
+        and analysis["strongest_registered_control"]["name"] == v79_name
+        and analysis["paired_f1_delta"][v79_name]
+        == {
+            "point": 0.001561,
+            "ci_low": -0.002533,
+            "ci_high": 0.005774,
+            "resamples": 10000,
+            "seed": 20261169,
+        }
+        and analysis["per_hop_delta_vs_best_control"]
+        == {
+            "2": {
+                "cases": 400,
+                "best_control": "graph_gbr_soft_override_router_v76",
+                "candidate_evidence_macro_f1": 0.512143,
+                "best_control_evidence_macro_f1": 0.508571,
+                "delta": 0.003571,
+            },
+            "3": {
+                "cases": 150,
+                "best_control": v79_name,
+                "candidate_evidence_macro_f1": 0.55,
+                "best_control_evidence_macro_f1": 0.556667,
+                "delta": -0.006667,
+            },
+            "4": {
+                "cases": 50,
+                "best_control": "alternating_anchor_link_control",
+                "candidate_evidence_macro_f1": 0.586667,
+                "best_control_evidence_macro_f1": 0.582222,
+                "delta": 0.004444,
+            },
+        }
+        and analysis["router"]
+        == {
+            "route_counts": {
+                "alternating_anchor_link_control": 273,
+                "cross_encoder_topk": 186,
+                "soft_title_link_support_path_closure_v74": 141,
+            },
+            "route_fractions": {
+                "cross_encoder_topk": 0.31,
+                "soft_title_link_support_path_closure_v74": 0.235,
+                "alternating_anchor_link_control": 0.455,
+            },
+            "material_route_count": 3,
+        }
+        and analysis["support_checks"] == expected_checks
+        and analysis["noninferiority_checks"] == expected_noninferiority
+        and outcome["holdout_gate_passed"] is False
+        and outcome["noninferiority_envelope_supported"] is True
+        and outcome["further_same_source_confirmation_authorized"] is False
+        and outcome["reuse_v80_holdout_for_model_threshold_gate_or_selection"] is False
+        and outcome["status"]
+        == "MUSIQUE_V80_ANCHOR_DEFAULT_TERMINAL_HOLDOUT_ADVANTAGE_NOT_ESTABLISHED"
+        and outcome["selector_adoption_authorized"] is False
+        and outcome["canary_or_default_authorized"] is False
+        and outcome["gate_2"] == "NO-GO/SHADOW"
+        and closure["terminal_result_sha256"] == raw_sha256(paths["result"])
+        and closure["strict_gate_passed"] is False
+        and closure["noninferiority_supported"] is True
+        and closure["further_same_source_confirmation_authorized"] is False
+        and closure["reuse_v80_holdout_for_model_threshold_gate_or_selection"] is False
+        and closure["gate_2"] == "NO-GO/SHADOW"
+        and not blind_forbidden & _nested_keys(blind)
+        and not selection_forbidden & _nested_keys(selections)
+        and not case_forbidden & _nested_keys(cases)
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    return _check(
+        "musique_v80_anchor_default_terminal_boundary",
+        (
+            "MuSiQue v80 preserves a locked anchor-default, prior-case-disjoint "
+            "terminal noninferiority-only result and prohibits holdout reuse"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": "FRC-MUSIQUE-ANCHOR-DEFAULT-TERMINAL-HOLDOUT-V80",
+            "status": outcome["status"],
+            "route_policy_configurations": model["search"][
+                "route_policy_configurations"
+            ],
+            "target_domain_training_cases": model["training"]["cases"],
+            "oof_model_selection_diagnostic": diagnostic["candidate"],
+            "terminal_holdout_cases": len(cases),
+            "hop_count_distribution": execution["preparation"][
+                "hop_count_distribution"
+            ],
+            "candidate_count": execution["preparation"]["candidate_count"],
+            "methods": aggregates,
+            "strongest_registered_control": analysis["strongest_registered_control"],
+            "candidate_minus_v79": analysis["paired_f1_delta"][v79_name],
+            "per_hop": analysis["per_hop_delta_vs_best_control"],
+            "router": analysis["router"],
+            "support_checks": analysis["support_checks"],
+            "noninferiority_checks": analysis["noninferiority_checks"],
+            "further_same_source_confirmation_authorized": False,
+            "holdout_reuse_for_tuning_or_selection": False,
+            "v80_target_training_or_tuning_cases": 0,
+            "strict_zero_target_tuning": False,
+            "strict_independent_model_training_confirmation": False,
+            "official_musique_leaderboard_result": False,
+            "selector_adoption_authorized": outcome["selector_adoption_authorized"],
+            "canary_or_default_authorized": outcome["canary_or_default_authorized"],
+            "gate_2": outcome["gate_2"],
+        },
+    )
+
+
+def _check_twowiki_residual_three_route_v81(repo_root: Path) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = repo_root / "output/rag_evaluation/twowiki_residual_router_v81"
+    cache_root = repo_root / ".cache/benchmarks/twowiki_residual_router_v81"
+    paths = {
+        "model": docs_root
+        / "twowiki_residual_three_route_router_model_development_v81.json",
+        "protocol": docs_root / "twowiki_residual_three_route_protocol_v81.json",
+        "source": docs_root
+        / "twowiki_residual_three_route_source_registration_v81.json",
+        "implementation": docs_root
+        / "twowiki_residual_three_route_implementation_v81.json",
+        "execution": docs_root
+        / "twowiki_residual_three_route_development_execution_v81.json",
+        "result": docs_root
+        / "twowiki_residual_three_route_development_result_v81.json",
+        "closure": docs_root
+        / "twowiki_residual_three_route_development_closure_v81.json",
+        "synthesis": docs_root / "twowiki_residual_three_route_synthesis_v81.md",
+        "output_result": output_root / "development/result.json",
+        "report": output_root / "development/report.md",
+        "cases": output_root / "development/cases.jsonl.gz",
+        "router_module": repo_root
+        / "research/frc_rag/twowiki_residual_three_route_router.py",
+        "transfer_module": repo_root
+        / "research/frc_rag/twowiki_residual_three_route_transfer.py",
+        "model_runner": repo_root / "scripts/run_twowiki_residual_three_route_model.py",
+        "transfer_runner": repo_root
+        / "scripts/run_twowiki_residual_three_route_transfer.py",
+        "tests": repo_root / "tests/test_frc_twowiki_residual_three_route_transfer.py",
+        "lock_tests": repo_root
+        / "tests/test_frc_twowiki_residual_three_route_transfer_lock.py",
+    }
+    cache_paths = {
+        "blind": cache_root / "development/blind_cases.jsonl",
+        "gold": cache_root / "development/sealed_gold.jsonl",
+        "scored": cache_root / "development/scored_blind.jsonl",
+        "selection": cache_root / "development/selection_outputs.jsonl",
+    }
+
+    def raw_sha256(path: Path) -> str:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    model = _load_json(paths["model"])
+    protocol = _load_json(paths["protocol"])
+    source = _load_json(paths["source"])
+    implementation = _load_json(paths["implementation"])
+    execution = _load_json(paths["execution"])
+    result = _load_json(paths["result"])
+    output_result = _load_json(paths["output_result"])
+    closure = _load_json(paths["closure"])
+    blind = _load_jsonl(cache_paths["blind"])
+    gold = _load_jsonl(cache_paths["gold"])
+    selections = _load_jsonl(cache_paths["selection"])
+    cases = _load_jsonl(paths["cases"])
+    candidate_name = "twowiki_residual_three_route_router_v81"
+    v75_name = "learned_question_routed_support_path_v75"
+    analysis = result["analysis"]
+    outcome = analysis["outcome"]
+    methods = tuple(analysis["methods"])
+    aggregates: dict[str, Any] = {}
+    for method in methods:
+        rows = [case["methods"][method] for case in cases]
+        aggregates[method] = {
+            "cases": len(rows),
+            "evidence_macro_f1": round(
+                sum(float(row["evidence_f1"]) for row in rows) / len(rows), 6
+            ),
+            "evidence_macro_recall": round(
+                sum(float(row["evidence_recall"]) for row in rows) / len(rows),
+                6,
+            ),
+            "complete_evidence_recall": round(
+                sum(float(row["complete_evidence"]) for row in rows) / len(rows),
+                6,
+            ),
+            "mean_selected_tokens": round(
+                sum(float(row["selected_tokens"]) for row in rows) / len(rows),
+                6,
+            ),
+        }
+    frozen_hashes = {
+        contract["path"]: contract["sha256"]
+        for contract in implementation["files"].values()
+    }
+    expected_frozen_hashes = {
+        "research/frc_rag/twowiki_residual_three_route_router.py": raw_sha256(
+            paths["router_module"]
+        ),
+        "research/frc_rag/twowiki_residual_three_route_transfer.py": raw_sha256(
+            paths["transfer_module"]
+        ),
+        "scripts/run_twowiki_residual_three_route_model.py": raw_sha256(
+            paths["model_runner"]
+        ),
+        "scripts/run_twowiki_residual_three_route_transfer.py": raw_sha256(
+            paths["transfer_runner"]
+        ),
+        "tests/test_frc_twowiki_residual_three_route_transfer.py": raw_sha256(
+            paths["tests"]
+        ),
+        "docs/progressive_upgrade/twowiki_residual_three_route_protocol_v81.json": raw_sha256(
+            paths["protocol"]
+        ),
+        "docs/progressive_upgrade/twowiki_residual_three_route_source_registration_v81.json": raw_sha256(
+            paths["source"]
+        ),
+        "docs/progressive_upgrade/twowiki_residual_three_route_router_model_development_v81.json": raw_sha256(
+            paths["model"]
+        ),
+    }
+    expected_checks = {
+        "exact_cases_equals_800": True,
+        "exact_question_type_quota": True,
+        "prior_or_stage_overlap_equals_0": True,
+        "invalid_selector_output_rate_equals_0": True,
+        "candidate_evidence_macro_f1_at_least_0_535": True,
+        "candidate_complete_evidence_recall_at_least_0_58": True,
+        "candidate_minus_strongest_control_f1_at_least_0_005": False,
+        "candidate_minus_strongest_control_ci_low_above_0": True,
+        "candidate_minus_frozen_v75_f1_at_least_0_005": False,
+        "candidate_minus_frozen_v75_ci_low_above_0": True,
+        "every_question_type_delta_vs_best_control_at_least_minus_0_005": False,
+        "override_action_fraction_at_least_0_05": True,
+        "at_least_two_routes_each_cover_at_least_0_05": True,
+        "largest_route_fraction_at_most_0_9": True,
+        "mean_selected_tokens_within_1_05_of_strongest_control": True,
+    }
+    expected_noninferiority = {
+        "candidate_minus_strongest_control_point_at_least_minus_0_005": True,
+        "candidate_minus_strongest_control_ci_low_at_least_minus_0_01": True,
+        "candidate_minus_frozen_v75_point_at_least_0": True,
+        "every_question_type_delta_vs_best_control_at_least_minus_0_02": True,
+        "invalid_selector_output_rate_equals_0": True,
+    }
+    blind_forbidden = {
+        "answer",
+        "supporting_facts",
+        "gold_evidence_ids",
+        "gold",
+        "gold_roles",
+    }
+    selection_forbidden = blind_forbidden | {"question", "text", "context"}
+    case_forbidden = selection_forbidden | {
+        "candidate_ids",
+        "selected_ids",
+        "paragraphs",
+        "title",
+    }
+    diagnostic = model["crossfit_model_selection_diagnostic"]
+    confirmation_open_path = (
+        docs_root / "twowiki_residual_three_route_confirmation_open_v81.json"
+    )
+    passed = (
+        all(path.is_file() for path in paths.values())
+        and all(path.is_file() for path in cache_paths.values())
+        and not confirmation_open_path.exists()
+        and model["training"]["cases"] == 1600
+        and model["search"]["model_configurations"] == 216
+        and model["search"]["route_policy_configurations"] == 1512
+        and model["selected_configuration"]["model_configuration_index"] == 188
+        and model["selected_configuration"]["threshold"] == 0.0025
+        and model["selected_configuration"]["default_action"] == "v75_default"
+        and diagnostic["candidate"]["evidence_macro_f1"] == 0.540164
+        and diagnostic["candidate_minus_v75"]
+        == {
+            "point": 0.005913,
+            "ci_low": 0.004067,
+            "ci_high": 0.007857,
+            "resamples": 10000,
+            "seed": 20261171,
+        }
+        and diagnostic["action_counts"]
+        == {
+            "cross_override": 134,
+            "soft_anchor_flip_override": 376,
+            "v75_default": 1090,
+        }
+        and tuple(protocol["stages"]) == ("development", "confirmation")
+        and protocol["stages"]["development"]["cases"] == 800
+        and protocol["stages"]["confirmation"]["cases"] == 800
+        and len(protocol["controls"]) == 10
+        and protocol["candidate"]["target_stage_training_or_tuning_cases"] == 0
+        and source["prior_exclusions"]["expected_disjoint_union"] == 3400
+        and source["pre_registration_access_boundary"]["v81_target_ids_selected"] == 0
+        and source["pre_registration_access_boundary"][
+            "v81_target_question_context_candidate_rows_read"
+        ]
+        == 0
+        and implementation["invariants"]["target_ids_selected_before_lock"] == 0
+        and implementation["invariants"]["target_rows_read_before_lock"] == 0
+        and implementation["invariants"][
+            "target_scores_or_gold_metrics_seen_before_lock"
+        ]
+        is False
+        and frozen_hashes == expected_frozen_hashes
+        and execution["status"] == "EVALUATED"
+        and execution["preparation"]["selected_cases"] == 800
+        and execution["preparation"]["question_type_counts"]
+        == {
+            "bridge_comparison": 200,
+            "comparison": 200,
+            "compositional": 200,
+            "inference": 200,
+        }
+        and execution["preparation"]["candidate_count"] == 25875
+        and execution["preparation"]["prior_excluded_ids"] == 3400
+        and execution["preparation"]["prior_overlap"] == 0
+        and execution["scored_cases"] == 800
+        and execution["preparation"]["blind_sha256"] == raw_sha256(cache_paths["blind"])
+        and execution["preparation"]["gold_sha256"] == raw_sha256(cache_paths["gold"])
+        and execution["scored_blind_sha256"] == raw_sha256(cache_paths["scored"])
+        and execution["selection_output_sha256"] == raw_sha256(cache_paths["selection"])
+        and execution["result_sha256"] == raw_sha256(paths["result"])
+        and result == output_result
+        and len(blind) == len(gold) == len(selections) == len(cases) == 800
+        and aggregates == analysis["methods"]
+        and aggregates[candidate_name]
+        == {
+            "cases": 800,
+            "evidence_macro_f1": 0.547195,
+            "evidence_macro_recall": 0.851,
+            "complete_evidence_recall": 0.65875,
+            "mean_selected_tokens": 126.43125,
+        }
+        and aggregates[v75_name]
+        == {
+            "cases": 800,
+            "evidence_macro_f1": 0.542751,
+            "evidence_macro_recall": 0.846,
+            "complete_evidence_recall": 0.645,
+            "mean_selected_tokens": 126.41,
+        }
+        and analysis["strongest_registered_control"]["name"] == v75_name
+        and analysis["paired_f1_delta"][v75_name]
+        == {
+            "point": 0.004444,
+            "ci_low": 0.001706,
+            "ci_high": 0.007381,
+            "resamples": 10000,
+            "seed": 20261186,
+        }
+        and analysis["per_question_type_delta_vs_best_control"]["comparison"]["delta"]
+        == -0.008571
+        and analysis["router"]
+        == {
+            "action_counts": {
+                "cross_override": 80,
+                "soft_anchor_flip_override": 202,
+                "v75_default": 518,
+            },
+            "route_counts": {
+                "alternating_anchor_link_control": 201,
+                "cross_encoder_topk": 80,
+                "soft_title_link_support_path_closure_v74": 519,
+            },
+            "route_fractions": {
+                "cross_encoder_topk": 0.1,
+                "soft_title_link_support_path_closure_v74": 0.64875,
+                "alternating_anchor_link_control": 0.25125,
+            },
+            "override_action_fraction": 0.3525,
+            "default_action_fraction": 0.6475,
+            "material_route_count": 3,
+        }
+        and analysis["strict_gate_checks"] == expected_checks
+        and analysis["noninferiority_checks"] == expected_noninferiority
+        and outcome["strict_gate_passed"] is False
+        and outcome["noninferiority_envelope_supported"] is True
+        and outcome["confirmation_open_authorized"] is False
+        and outcome["status"]
+        == "2WIKI_V81_RESIDUAL_ROUTER_DEVELOPMENT_ADVANTAGE_NOT_ESTABLISHED_STOP"
+        and outcome["reuse_stage_for_model_feature_threshold_gate_or_selection"]
+        is False
+        and outcome["selector_adoption_authorized"] is False
+        and outcome["canary_or_default_authorized"] is False
+        and outcome["gate_2"] == "NO-GO/SHADOW"
+        and closure["result_sha256"] == raw_sha256(paths["result"])
+        and closure["confirmation_open_authorized"] is False
+        and closure["further_same_source_confirmation_authorized"] is False
+        and closure["reuse_stage_for_model_feature_threshold_gate_or_selection"]
+        is False
+        and closure["gate_2"] == "NO-GO/SHADOW"
+        and not blind_forbidden & _nested_keys(blind)
+        and not selection_forbidden & _nested_keys(selections)
+        and not case_forbidden & _nested_keys(cases)
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    return _check(
+        "twowiki_v81_residual_three_route_boundary",
+        (
+            "2Wiki v81 preserves a pre-target locked, prior-case-disjoint residual "
+            "router development result and closes confirmation on strict-gate failure"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": "FRC-2WIKI-RESIDUAL-THREE-ROUTE-PROSPECTIVE-V81",
+            "status": outcome["status"],
+            "route_policy_configurations": model["search"][
+                "route_policy_configurations"
+            ],
+            "training_cases": model["training"]["cases"],
+            "oof_model_selection_diagnostic": diagnostic["candidate"],
+            "development_cases": len(cases),
+            "question_type_distribution": execution["preparation"][
+                "question_type_counts"
+            ],
+            "candidate_count": execution["preparation"]["candidate_count"],
+            "methods": aggregates,
+            "strongest_registered_control": analysis["strongest_registered_control"],
+            "candidate_minus_v75": analysis["paired_f1_delta"][v75_name],
+            "per_question_type": analysis["per_question_type_delta_vs_best_control"],
+            "router": analysis["router"],
+            "strict_gate_checks": analysis["strict_gate_checks"],
+            "noninferiority_checks": analysis["noninferiority_checks"],
+            "confirmation_opened": False,
+            "target_training_or_tuning_cases": 0,
+            "strict_independent_dataset_confirmation": False,
+            "official_2wiki_leaderboard_result": False,
+            "selector_adoption_authorized": False,
+            "canary_or_default_authorized": False,
+            "gate_2": outcome["gate_2"],
+        },
+    )
+
+
+def _check_twowiki_cascaded_style_residual_v82(
+    repo_root: Path,
+) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = repo_root / "output/rag_evaluation/twowiki_cascaded_router_v82"
+    cache_root = repo_root / ".cache/benchmarks/twowiki_cascaded_router_v82"
+    paths = {
+        "model": docs_root
+        / "twowiki_cascaded_style_residual_router_model_development_v82.json",
+        "protocol": docs_root / "twowiki_cascaded_style_residual_protocol_v82.json",
+        "source": docs_root
+        / "twowiki_cascaded_style_residual_source_registration_v82.json",
+        "implementation": docs_root
+        / "twowiki_cascaded_style_residual_implementation_v82.json",
+        "execution": docs_root
+        / "twowiki_cascaded_style_residual_development_execution_v82.json",
+        "result": docs_root
+        / "twowiki_cascaded_style_residual_development_result_v82.json",
+        "closure": docs_root
+        / "twowiki_cascaded_style_residual_development_closure_v82.json",
+        "synthesis": docs_root / "twowiki_cascaded_style_residual_synthesis_v82.md",
+        "output_result": output_root / "development/result.json",
+        "report": output_root / "development/report.md",
+        "cases": output_root / "development/cases.jsonl.gz",
+        "router_module": repo_root
+        / "research/frc_rag/twowiki_cascaded_style_residual_router.py",
+        "transfer_module": repo_root
+        / "research/frc_rag/twowiki_cascaded_style_residual_transfer.py",
+        "model_runner": repo_root
+        / "scripts/run_twowiki_cascaded_style_residual_model.py",
+        "transfer_runner": repo_root
+        / "scripts/run_twowiki_cascaded_style_residual_transfer.py",
+        "router_tests": repo_root
+        / "tests/test_frc_twowiki_cascaded_style_residual_router.py",
+        "transfer_tests": repo_root
+        / "tests/test_frc_twowiki_cascaded_style_residual_transfer.py",
+        "lock_tests": repo_root
+        / "tests/test_frc_twowiki_cascaded_style_residual_lock.py",
+    }
+    cache_paths = {
+        "blind": cache_root / "development/blind_cases.jsonl",
+        "gold": cache_root / "development/sealed_gold.jsonl",
+        "scored": cache_root / "development/scored_blind.jsonl",
+        "selection": cache_root / "development/selection_outputs.jsonl",
+    }
+
+    def raw_sha256(path: Path) -> str:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    model = _load_json(paths["model"])
+    protocol = _load_json(paths["protocol"])
+    source = _load_json(paths["source"])
+    implementation = _load_json(paths["implementation"])
+    execution = _load_json(paths["execution"])
+    result = _load_json(paths["result"])
+    output_result = _load_json(paths["output_result"])
+    closure = _load_json(paths["closure"])
+    blind = _load_jsonl(cache_paths["blind"])
+    gold = _load_jsonl(cache_paths["gold"])
+    selections = _load_jsonl(cache_paths["selection"])
+    cases = _load_jsonl(paths["cases"])
+    candidate_name = "twowiki_cascaded_style_residual_router_v82"
+    v81_name = "twowiki_residual_three_route_router_v81"
+    v75_name = "learned_question_routed_support_path_v75"
+    analysis = result["analysis"]
+    outcome = analysis["outcome"]
+    methods = tuple(analysis["methods"])
+    aggregates: dict[str, Any] = {}
+    for method in methods:
+        rows = [case["methods"][method] for case in cases]
+        aggregates[method] = {
+            "cases": len(rows),
+            "evidence_macro_f1": round(
+                sum(float(row["evidence_f1"]) for row in rows) / len(rows), 6
+            ),
+            "evidence_macro_recall": round(
+                sum(float(row["evidence_recall"]) for row in rows) / len(rows),
+                6,
+            ),
+            "complete_evidence_recall": round(
+                sum(float(row["complete_evidence"]) for row in rows) / len(rows),
+                6,
+            ),
+            "mean_selected_tokens": round(
+                sum(float(row["selected_tokens"]) for row in rows) / len(rows),
+                6,
+            ),
+        }
+    frozen_hashes = {
+        contract["path"]: contract["sha256"]
+        for contract in implementation["files"].values()
+    }
+    expected_frozen_hashes = {
+        "research/frc_rag/twowiki_cascaded_style_residual_router.py": raw_sha256(
+            paths["router_module"]
+        ),
+        "research/frc_rag/twowiki_cascaded_style_residual_transfer.py": raw_sha256(
+            paths["transfer_module"]
+        ),
+        "scripts/run_twowiki_cascaded_style_residual_model.py": raw_sha256(
+            paths["model_runner"]
+        ),
+        "scripts/run_twowiki_cascaded_style_residual_transfer.py": raw_sha256(
+            paths["transfer_runner"]
+        ),
+        "tests/test_frc_twowiki_cascaded_style_residual_router.py": raw_sha256(
+            paths["router_tests"]
+        ),
+        "tests/test_frc_twowiki_cascaded_style_residual_transfer.py": raw_sha256(
+            paths["transfer_tests"]
+        ),
+        "docs/progressive_upgrade/twowiki_cascaded_style_residual_protocol_v82.json": raw_sha256(
+            paths["protocol"]
+        ),
+        "docs/progressive_upgrade/twowiki_cascaded_style_residual_source_registration_v82.json": raw_sha256(
+            paths["source"]
+        ),
+        "docs/progressive_upgrade/twowiki_cascaded_style_residual_router_model_development_v82.json": raw_sha256(
+            paths["model"]
+        ),
+    }
+    expected_checks = {
+        "exact_cases_equals_800": True,
+        "exact_question_type_quota": True,
+        "prior_or_stage_overlap_equals_0": True,
+        "invalid_selector_output_rate_equals_0": True,
+        "candidate_evidence_macro_f1_at_least_0_535": True,
+        "candidate_complete_evidence_recall_at_least_0_58": True,
+        "candidate_minus_strongest_control_f1_at_least_0_005": False,
+        "candidate_minus_strongest_control_ci_low_above_0": True,
+        "candidate_minus_frozen_v75_f1_at_least_0_005": True,
+        "candidate_minus_frozen_v75_ci_low_above_0": True,
+        "every_question_type_delta_vs_best_control_at_least_minus_0_005": True,
+        "direct_comparison_balanced_accuracy_at_least_0_90": True,
+        "override_action_fraction_at_least_0_05": True,
+        "at_least_two_routes_each_cover_at_least_0_05": True,
+        "largest_route_fraction_at_most_0_9": True,
+        "mean_selected_tokens_within_1_05_of_strongest_control": True,
+    }
+    expected_noninferiority = {
+        "candidate_minus_strongest_control_point_at_least_minus_0_005": True,
+        "candidate_minus_strongest_control_ci_low_at_least_minus_0_01": True,
+        "candidate_minus_frozen_v75_point_at_least_0": True,
+        "every_question_type_delta_vs_best_control_at_least_minus_0_02": True,
+        "invalid_selector_output_rate_equals_0": True,
+    }
+    expected_per_type = {
+        "bridge_comparison": {
+            "best_control": v81_name,
+            "best_control_evidence_macro_f1": 0.696667,
+            "candidate_evidence_macro_f1": 0.696667,
+            "cases": 200,
+            "delta": 0.0,
+        },
+        "comparison": {
+            "best_control": "cross_encoder_topk",
+            "best_control_evidence_macro_f1": 0.556786,
+            "candidate_evidence_macro_f1": 0.556786,
+            "cases": 200,
+            "delta": 0.0,
+        },
+        "compositional": {
+            "best_control": "soft_title_link_support_path_closure_v74",
+            "best_control_evidence_macro_f1": 0.485714,
+            "candidate_evidence_macro_f1": 0.484286,
+            "cases": 200,
+            "delta": -0.001429,
+        },
+        "inference": {
+            "best_control": "soft_title_link_support_path_closure_v74",
+            "best_control_evidence_macro_f1": 0.444286,
+            "candidate_evidence_macro_f1": 0.441429,
+            "cases": 200,
+            "delta": -0.002857,
+        },
+    }
+    expected_router = {
+        "action_counts": {
+            "direct_comparison_cross_override": 168,
+            "v75_default": 478,
+            "v81_safe_flip_override": 154,
+        },
+        "default_action_fraction": 0.5975,
+        "direct_comparison_balanced_accuracy": 0.92,
+        "material_route_count": 3,
+        "override_action_fraction": 0.4025,
+        "route_counts": {
+            "alternating_anchor_link_control": 155,
+            "cross_encoder_topk": 168,
+            "soft_title_link_support_path_closure_v74": 477,
+        },
+        "route_fractions": {
+            "alternating_anchor_link_control": 0.19375,
+            "cross_encoder_topk": 0.21,
+            "soft_title_link_support_path_closure_v74": 0.59625,
+        },
+    }
+    blind_forbidden = {
+        "answer",
+        "supporting_facts",
+        "gold_evidence_ids",
+        "gold",
+        "gold_roles",
+    }
+    selection_forbidden = blind_forbidden | {"question", "text", "context"}
+    case_forbidden = selection_forbidden | {
+        "candidate_ids",
+        "selected_ids",
+        "paragraphs",
+        "title",
+    }
+    diagnostic = model["crossfit_model_selection_diagnostic"]
+    confirmation_open_path = (
+        docs_root / "twowiki_cascaded_style_residual_confirmation_open_v82.json"
+    )
+    passed = (
+        all(path.is_file() for path in paths.values())
+        and all(path.is_file() for path in cache_paths.values())
+        and not confirmation_open_path.exists()
+        and model["training"]["cases"] == 2400
+        and model["search"]["classifier_configurations"] == 16
+        and model["search"]["route_policy_configurations"] == 560
+        and model["selected_configuration"]["classifier_configuration_index"] == 11
+        and model["selected_configuration"]["hash_dimension"] == 256
+        and model["selected_configuration"]["l2"] == 32.0
+        and model["selected_configuration"]["direct_threshold"] == 0.8
+        and model["selected_configuration"]["flip_threshold"] == 0.015
+        and diagnostic["candidate"]
+        == {
+            "complete_evidence_recall": 0.645417,
+            "evidence_macro_f1": 0.543817,
+            "evidence_macro_recall": 0.844604,
+            "mean_selected_tokens": 127.240833,
+        }
+        and diagnostic["candidate_minus_v75"]
+        == {
+            "point": 0.006733,
+            "ci_low": 0.005079,
+            "ci_high": 0.008505,
+            "resamples": 10000,
+            "seed": 20261191,
+        }
+        and diagnostic["direct_comparison_balanced_accuracy"] == 0.916667
+        and diagnostic["action_counts"]
+        == {
+            "direct_comparison_cross_override": 500,
+            "v75_default": 1454,
+            "v81_safe_flip_override": 446,
+        }
+        and tuple(protocol["stages"]) == ("development", "confirmation")
+        and protocol["stages"]["development"]["cases"] == 800
+        and protocol["stages"]["confirmation"]["cases"] == 800
+        and len(protocol["controls"]) == 11
+        and source["prior_exclusions"]["expected_disjoint_union"] == 4200
+        and source["pre_registration_access_boundary"]["v82_target_ids_selected"] == 0
+        and source["pre_registration_access_boundary"][
+            "v82_target_question_context_candidate_rows_read"
+        ]
+        == 0
+        and implementation["invariants"]["target_ids_selected_before_lock"] == 0
+        and implementation["invariants"]["target_rows_read_before_lock"] == 0
+        and implementation["invariants"][
+            "target_scores_or_gold_metrics_seen_before_lock"
+        ]
+        is False
+        and frozen_hashes == expected_frozen_hashes
+        and execution["status"] == "EVALUATED"
+        and execution["preparation"]["selected_cases"] == 800
+        and execution["preparation"]["question_type_counts"]
+        == {
+            "bridge_comparison": 200,
+            "comparison": 200,
+            "compositional": 200,
+            "inference": 200,
+        }
+        and execution["preparation"]["candidate_count"] == 25305
+        and execution["preparation"]["prior_excluded_ids"] == 4200
+        and execution["preparation"]["prior_overlap"] == 0
+        and execution["preparation"]["selected_ids_sha256"]
+        == "8630681d2d45c975c27bf51a38df0533c59b68131688dd34b1d4901d08d40d76"
+        and execution["scored_cases"] == 800
+        and execution["preparation"]["blind_sha256"] == raw_sha256(cache_paths["blind"])
+        and execution["preparation"]["gold_sha256"] == raw_sha256(cache_paths["gold"])
+        and execution["scored_blind_sha256"] == raw_sha256(cache_paths["scored"])
+        and execution["selection_output_sha256"] == raw_sha256(cache_paths["selection"])
+        and execution["result_sha256"] == raw_sha256(paths["result"])
+        and result == output_result
+        and len(blind) == len(gold) == len(selections) == len(cases) == 800
+        and aggregates == analysis["methods"]
+        and aggregates[candidate_name]
+        == {
+            "cases": 800,
+            "evidence_macro_f1": 0.544792,
+            "evidence_macro_recall": 0.844271,
+            "complete_evidence_recall": 0.64375,
+            "mean_selected_tokens": 124.53,
+        }
+        and aggregates[v81_name]
+        == {
+            "cases": 800,
+            "evidence_macro_f1": 0.542649,
+            "evidence_macro_recall": 0.840521,
+            "complete_evidence_recall": 0.63625,
+            "mean_selected_tokens": 124.5775,
+        }
+        and aggregates[v75_name]
+        == {
+            "cases": 800,
+            "evidence_macro_f1": 0.538284,
+            "evidence_macro_recall": 0.835833,
+            "complete_evidence_recall": 0.62,
+            "mean_selected_tokens": 124.30625,
+        }
+        and analysis["strongest_registered_control"]["name"] == v81_name
+        and analysis["paired_f1_delta"][v81_name]
+        == {
+            "point": 0.002143,
+            "ci_low": 0.000357,
+            "ci_high": 0.004286,
+            "resamples": 10000,
+            "seed": 20261202,
+        }
+        and analysis["paired_f1_delta"][v75_name]
+        == {
+            "point": 0.006508,
+            "ci_low": 0.003373,
+            "ci_high": 0.009762,
+            "resamples": 10000,
+            "seed": 20261197,
+        }
+        and analysis["per_question_type_delta_vs_best_control"] == expected_per_type
+        and analysis["router"] == expected_router
+        and analysis["strict_gate_checks"] == expected_checks
+        and analysis["noninferiority_checks"] == expected_noninferiority
+        and outcome["strict_gate_passed"] is False
+        and outcome["noninferiority_envelope_supported"] is True
+        and outcome["confirmation_open_authorized"] is False
+        and outcome["status"]
+        == "2WIKI_V82_CASCADED_ROUTER_DEVELOPMENT_ADVANTAGE_NOT_ESTABLISHED_STOP"
+        and outcome["reuse_stage_for_model_feature_threshold_gate_or_selection"]
+        is False
+        and outcome["selector_adoption_authorized"] is False
+        and outcome["canary_or_default_authorized"] is False
+        and outcome["gate_2"] == "NO-GO/SHADOW"
+        and closure["result_sha256"] == raw_sha256(paths["result"])
+        and closure["status"] == outcome["status"]
+        and closure["confirmation_open_authorized"] is False
+        and closure["further_same_source_confirmation_authorized"] is False
+        and closure["reuse_stage_for_model_feature_threshold_gate_or_selection"]
+        is False
+        and closure["gate_2"] == "NO-GO/SHADOW"
+        and not blind_forbidden & _nested_keys(blind)
+        and not selection_forbidden & _nested_keys(selections)
+        and not case_forbidden & _nested_keys(cases)
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    return _check(
+        "twowiki_v82_cascaded_style_residual_boundary",
+        (
+            "2Wiki v82 preserves a pre-target nine-file lock, excludes all 4,200 "
+            "prior cases, and closes confirmation when its sole strict advantage "
+            "gate fails"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": ("FRC-2WIKI-CASCADED-STYLE-RESIDUAL-PROSPECTIVE-V82"),
+            "status": outcome["status"],
+            "route_policy_configurations": model["search"][
+                "route_policy_configurations"
+            ],
+            "training_cases": model["training"]["cases"],
+            "selected_configuration": model["selected_configuration"],
+            "oof_model_selection_diagnostic": diagnostic["candidate"],
+            "development_cases": len(cases),
+            "question_type_distribution": execution["preparation"][
+                "question_type_counts"
+            ],
+            "candidate_count": execution["preparation"]["candidate_count"],
+            "methods": aggregates,
+            "strongest_registered_control": analysis["strongest_registered_control"],
+            "candidate_minus_v81": analysis["paired_f1_delta"][v81_name],
+            "candidate_minus_v75": analysis["paired_f1_delta"][v75_name],
+            "per_question_type": analysis["per_question_type_delta_vs_best_control"],
+            "router": analysis["router"],
+            "strict_gate_checks": analysis["strict_gate_checks"],
+            "noninferiority_checks": analysis["noninferiority_checks"],
+            "confirmation_opened": False,
+            "target_training_or_tuning_cases": 0,
+            "strict_independent_dataset_confirmation": False,
+            "official_2wiki_leaderboard_result": False,
+            "selector_adoption_authorized": False,
+            "canary_or_default_authorized": False,
+            "gate_2": outcome["gate_2"],
+        },
+    )
+
+
+def _check_twowiki_bridge_aware_precision_trim_v83(
+    repo_root: Path,
+) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = repo_root / "output/rag_evaluation/twowiki_precision_trim_v83"
+    cache_root = repo_root / ".cache/benchmarks/twowiki_precision_trim_v83"
+    paths = {
+        "model": docs_root
+        / "twowiki_bridge_aware_precision_trim_router_model_development_v83.json",
+        "protocol": docs_root
+        / "twowiki_bridge_aware_precision_trim_protocol_v83.json",
+        "source": docs_root
+        / "twowiki_bridge_aware_precision_trim_source_registration_v83.json",
+        "implementation": docs_root
+        / "twowiki_bridge_aware_precision_trim_implementation_v83.json",
+        "development_execution": docs_root
+        / "twowiki_bridge_aware_precision_trim_development_execution_v83.json",
+        "development_result": docs_root
+        / "twowiki_bridge_aware_precision_trim_development_result_v83.json",
+        "confirmation_open": docs_root
+        / "twowiki_bridge_aware_precision_trim_confirmation_open_v83.json",
+        "confirmation_execution": docs_root
+        / "twowiki_bridge_aware_precision_trim_confirmation_execution_v83.json",
+        "confirmation_result": docs_root
+        / "twowiki_bridge_aware_precision_trim_confirmation_result_v83.json",
+        "confirmation_closure": docs_root
+        / "twowiki_bridge_aware_precision_trim_confirmation_closure_v83.json",
+        "synthesis": docs_root
+        / "twowiki_bridge_aware_precision_trim_synthesis_v83.md",
+        "router_module": repo_root
+        / "research/frc_rag/twowiki_bridge_aware_precision_trim_router.py",
+        "transfer_module": repo_root
+        / "research/frc_rag/twowiki_bridge_aware_precision_trim_transfer.py",
+        "model_runner": repo_root
+        / "scripts/run_twowiki_bridge_aware_precision_trim_model.py",
+        "transfer_runner": repo_root
+        / "scripts/run_twowiki_bridge_aware_precision_trim_transfer.py",
+        "router_tests": repo_root
+        / "tests/test_frc_twowiki_bridge_aware_precision_trim_router.py",
+        "transfer_tests": repo_root
+        / "tests/test_frc_twowiki_bridge_aware_precision_trim_transfer.py",
+        "lock_tests": repo_root
+        / "tests/test_frc_twowiki_bridge_aware_precision_trim_lock.py",
+    }
+    stage_paths: dict[str, dict[str, Path]] = {}
+    for stage in ("development", "confirmation"):
+        stage_paths[stage] = {
+            "blind": cache_root / stage / "blind_cases.jsonl",
+            "gold": cache_root / stage / "sealed_gold.jsonl",
+            "scored": cache_root / stage / "scored_blind.jsonl",
+            "selection": cache_root / stage / "selection_outputs.jsonl",
+            "output_result": output_root / stage / "result.json",
+            "report": output_root / stage / "report.md",
+            "cases": output_root / stage / "cases.jsonl.gz",
+        }
+
+    def raw_sha256(path: Path) -> str:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    model = _load_json(paths["model"])
+    protocol = _load_json(paths["protocol"])
+    source = _load_json(paths["source"])
+    implementation = _load_json(paths["implementation"])
+    development_open = _load_json(paths["confirmation_open"])
+    confirmation_closure = _load_json(paths["confirmation_closure"])
+    candidate_name = "twowiki_bridge_aware_precision_trim_v83"
+    v81_name = "twowiki_residual_three_route_router_v81"
+    v82_name = "twowiki_cascaded_style_residual_router_v82"
+    stages: dict[str, dict[str, Any]] = {}
+    for stage in ("development", "confirmation"):
+        execution = _load_json(paths[f"{stage}_execution"])
+        result = _load_json(paths[f"{stage}_result"])
+        output_result = _load_json(stage_paths[stage]["output_result"])
+        blind = _load_jsonl(stage_paths[stage]["blind"])
+        gold = _load_jsonl(stage_paths[stage]["gold"])
+        selections = _load_jsonl(stage_paths[stage]["selection"])
+        cases = _load_jsonl(stage_paths[stage]["cases"])
+        aggregates: dict[str, Any] = {}
+        for method in result["analysis"]["methods"]:
+            rows = [case["methods"][method] for case in cases]
+            aggregates[method] = {
+                "cases": len(rows),
+                "evidence_macro_f1": round(
+                    sum(float(row["evidence_f1"]) for row in rows) / len(rows), 6
+                ),
+                "evidence_macro_recall": round(
+                    sum(float(row["evidence_recall"]) for row in rows) / len(rows),
+                    6,
+                ),
+                "complete_evidence_recall": round(
+                    sum(float(row["complete_evidence"]) for row in rows) / len(rows),
+                    6,
+                ),
+                "mean_selected_tokens": round(
+                    sum(float(row["selected_tokens"]) for row in rows) / len(rows),
+                    6,
+                ),
+            }
+        stages[stage] = {
+            "execution": execution,
+            "result": result,
+            "output_result": output_result,
+            "blind": blind,
+            "gold": gold,
+            "selections": selections,
+            "cases": cases,
+            "aggregates": aggregates,
+        }
+
+    frozen_hashes = {
+        contract["path"]: contract["sha256"]
+        for contract in implementation["files"].values()
+    }
+    frozen_paths = {
+        "research/frc_rag/twowiki_bridge_aware_precision_trim_router.py": paths[
+            "router_module"
+        ],
+        "research/frc_rag/twowiki_bridge_aware_precision_trim_transfer.py": paths[
+            "transfer_module"
+        ],
+        "scripts/run_twowiki_bridge_aware_precision_trim_model.py": paths[
+            "model_runner"
+        ],
+        "scripts/run_twowiki_bridge_aware_precision_trim_transfer.py": paths[
+            "transfer_runner"
+        ],
+        "tests/test_frc_twowiki_bridge_aware_precision_trim_router.py": paths[
+            "router_tests"
+        ],
+        "tests/test_frc_twowiki_bridge_aware_precision_trim_transfer.py": paths[
+            "transfer_tests"
+        ],
+        "docs/progressive_upgrade/twowiki_bridge_aware_precision_trim_protocol_v83.json": paths[
+            "protocol"
+        ],
+        "docs/progressive_upgrade/twowiki_bridge_aware_precision_trim_source_registration_v83.json": paths[
+            "source"
+        ],
+        "docs/progressive_upgrade/twowiki_bridge_aware_precision_trim_router_model_development_v83.json": paths[
+            "model"
+        ],
+    }
+    expected_frozen_hashes = {
+        relative: raw_sha256(path) for relative, path in frozen_paths.items()
+    }
+    expected_metrics = {
+        "development": {
+            candidate_name: {
+                "cases": 800,
+                "evidence_macro_f1": 0.556329,
+                "evidence_macro_recall": 0.836437,
+                "complete_evidence_recall": 0.6325,
+                "mean_selected_tokens": 119.7375,
+            },
+            v81_name: {
+                "cases": 800,
+                "evidence_macro_f1": 0.544956,
+                "evidence_macro_recall": 0.846688,
+                "complete_evidence_recall": 0.6475,
+                "mean_selected_tokens": 125.33125,
+            },
+            v82_name: {
+                "cases": 800,
+                "evidence_macro_f1": 0.544679,
+                "evidence_macro_recall": 0.846375,
+                "complete_evidence_recall": 0.6475,
+                "mean_selected_tokens": 125.73875,
+            },
+        },
+        "confirmation": {
+            candidate_name: {
+                "cases": 800,
+                "evidence_macro_f1": 0.54942,
+                "evidence_macro_recall": 0.828125,
+                "complete_evidence_recall": 0.61625,
+                "mean_selected_tokens": 118.68875,
+            },
+            v81_name: {
+                "cases": 800,
+                "evidence_macro_f1": 0.542158,
+                "evidence_macro_recall": 0.842396,
+                "complete_evidence_recall": 0.63625,
+                "mean_selected_tokens": 124.60375,
+            },
+            v82_name: {
+                "cases": 800,
+                "evidence_macro_f1": 0.542986,
+                "evidence_macro_recall": 0.844063,
+                "complete_evidence_recall": 0.64125,
+                "mean_selected_tokens": 124.45875,
+            },
+        },
+    }
+    expected_selected = {
+        "classifier_configuration_index": 3,
+        "hash_dimension": 64,
+        "l2": 32.0,
+        "bridge_threshold": 0.3,
+        "base_retained_count": 5,
+        "trimmed_retained_count": 4,
+    }
+    expected_statuses = {
+        "development": (
+            "2WIKI_V83_PRECISION_TRIM_DEVELOPMENT_ADVANTAGE_ESTABLISHED_OPEN_CONFIRMATION"
+        ),
+        "confirmation": (
+            "2WIKI_V83_PRECISION_TRIM_CONFIRMATION_ADVANTAGE_NOT_ESTABLISHED"
+        ),
+    }
+    forbidden_blind = {
+        "answer",
+        "supporting_facts",
+        "gold_evidence_ids",
+        "gold",
+        "gold_roles",
+    }
+    forbidden_selection = forbidden_blind | {"question", "text", "context"}
+    forbidden_cases = forbidden_selection | {
+        "candidate_ids",
+        "selected_ids",
+        "paragraphs",
+        "title",
+    }
+    stage_checks: list[bool] = []
+    for stage in ("development", "confirmation"):
+        payload = stages[stage]
+        execution = payload["execution"]
+        result = payload["result"]
+        analysis = result["analysis"]
+        outcome = analysis["outcome"]
+        strict_checks = analysis["strict_gate_checks"]
+        failed_strict = [name for name, value in strict_checks.items() if not value]
+        expected_failed = (
+            []
+            if stage == "development"
+            else ["candidate_evidence_macro_f1_at_least_0_55"]
+        )
+        stage_checks.append(
+            execution["status"] == "EVALUATED"
+            and execution["preparation"]["selected_cases"] == 800
+            and execution["preparation"]["question_type_counts"]
+            == {
+                "bridge_comparison": 200,
+                "comparison": 200,
+                "compositional": 200,
+                "inference": 200,
+            }
+            and execution["preparation"]["prior_excluded_ids"] == 5000
+            and execution["preparation"]["prior_overlap"] == 0
+            and execution["scored_cases"] == 800
+            and execution["preparation"]["blind_sha256"]
+            == raw_sha256(stage_paths[stage]["blind"])
+            and execution["preparation"]["gold_sha256"]
+            == raw_sha256(stage_paths[stage]["gold"])
+            and execution["scored_blind_sha256"]
+            == raw_sha256(stage_paths[stage]["scored"])
+            and execution["selection_output_sha256"]
+            == raw_sha256(stage_paths[stage]["selection"])
+            and execution["result_sha256"] == raw_sha256(paths[f"{stage}_result"])
+            and execution["cases_sha256"] == raw_sha256(stage_paths[stage]["cases"])
+            and execution["report_sha256"] == raw_sha256(stage_paths[stage]["report"])
+            and result == payload["output_result"]
+            and len(payload["blind"])
+            == len(payload["gold"])
+            == len(payload["selections"])
+            == len(payload["cases"])
+            == 800
+            and payload["aggregates"] == analysis["methods"]
+            and all(
+                payload["aggregates"][method] == metrics
+                for method, metrics in expected_metrics[stage].items()
+            )
+            and failed_strict == expected_failed
+            and all(analysis["noninferiority_checks"].values())
+            and outcome["strict_gate_passed"] == (stage == "development")
+            and outcome["noninferiority_envelope_supported"] is True
+            and outcome["status"] == expected_statuses[stage]
+            and outcome["selector_adoption_authorized"] is False
+            and outcome["canary_or_default_authorized"] is False
+            and outcome["gate_2"] == "NO-GO/SHADOW"
+            and not forbidden_blind & _nested_keys(payload["blind"])
+            and not forbidden_selection & _nested_keys(payload["selections"])
+            and not forbidden_cases & _nested_keys(payload["cases"])
+        )
+
+    development = stages["development"]
+    confirmation = stages["confirmation"]
+    development_analysis = development["result"]["analysis"]
+    confirmation_analysis = confirmation["result"]["analysis"]
+    development_gold_ids = {row["id"] for row in development["gold"]}
+    confirmation_gold_ids = {row["id"] for row in confirmation["gold"]}
+    diagnostic = model["crossfit_model_selection_diagnostic"]
+    passed = (
+        all(path.is_file() for path in paths.values())
+        and all(
+            path.is_file()
+            for stage in stage_paths.values()
+            for path in stage.values()
+        )
+        and model["experiment_id"]
+        == "FRC-2WIKI-BRIDGE-AWARE-PRECISION-TRIM-ROUTER-V83"
+        and model["training"]["cases"] == 3200
+        and model["search"]["classifier_configurations"] == 16
+        and model["search"]["policy_configurations"] == 112
+        and all(
+            model["selected_configuration"][key] == value
+            for key, value in expected_selected.items()
+        )
+        and diagnostic["candidate"]
+        == {
+            "complete_evidence_recall": 0.6225,
+            "evidence_macro_f1": 0.554477,
+            "evidence_macro_recall": 0.83313,
+            "mean_selected_tokens": 120.461875,
+        }
+        and diagnostic["candidate_minus_v82"]
+        == {
+            "point": 0.009652,
+            "ci_low": 0.007831,
+            "ci_high": 0.011496,
+            "resamples": 10000,
+            "seed": 20261203,
+        }
+        and diagnostic["bridge_balanced_accuracy"] == 0.989583
+        and diagnostic["action_counts"]
+        == {
+            "bridge_aware_trim_to_four": 826,
+            "keep_frozen_v82_selection": 2374,
+        }
+        and len(protocol["controls"]) == 12
+        and tuple(protocol["stages"]) == ("development", "confirmation")
+        and protocol["stages"]["development"]["cases"] == 800
+        and protocol["stages"]["confirmation"]["cases"] == 800
+        and len(protocol["strict_gates"]) == 18
+        and source["prior_exclusions"]["expected_disjoint_union"] == 5000
+        and source["pre_registration_access_boundary"]["v83_target_ids_selected"]
+        == 0
+        and source["pre_registration_access_boundary"][
+            "v83_target_question_context_candidate_rows_read"
+        ]
+        == 0
+        and implementation["invariants"]["target_ids_selected_before_lock"] == 0
+        and implementation["invariants"]["target_rows_read_before_lock"] == 0
+        and implementation["invariants"][
+            "target_scores_or_gold_metrics_seen_before_lock"
+        ]
+        is False
+        and raw_sha256(paths["implementation"])
+        == "3c0eea0c1dfd960139332a7461522a76b8036a6ef6cd01503ff0d69bb7271bc9"
+        and frozen_hashes == expected_frozen_hashes
+        and all(stage_checks)
+        and not development_gold_ids & confirmation_gold_ids
+        and development["result"]["metadata"]["stage_overlap"] == 0
+        and confirmation["result"]["metadata"]["stage_overlap"] == 0
+        and development_analysis["strongest_registered_control"]["name"]
+        == v81_name
+        and development_analysis["paired_f1_delta"][v81_name]
+        == {
+            "point": 0.011373,
+            "ci_low": 0.007802,
+            "ci_high": 0.014985,
+            "resamples": 10000,
+            "seed": 20261214,
+        }
+        and development_analysis["paired_f1_delta"][v82_name]
+        == {
+            "point": 0.011651,
+            "ci_low": 0.008184,
+            "ci_high": 0.015118,
+            "resamples": 10000,
+            "seed": 20261215,
+        }
+        and confirmation_analysis["strongest_registered_control"]["name"]
+        == v82_name
+        and confirmation_analysis["paired_f1_delta"][v82_name]
+        == {
+            "point": 0.006434,
+            "ci_low": 0.002465,
+            "ci_high": 0.010253,
+            "resamples": 10000,
+            "seed": 20261216,
+        }
+        and confirmation_analysis["paired_f1_delta"][v81_name]
+        == {
+            "point": 0.007262,
+            "ci_low": 0.003179,
+            "ci_high": 0.011295,
+            "resamples": 10000,
+            "seed": 20261215,
+        }
+        and development_open["development_result_sha256"]
+        == raw_sha256(paths["development_result"])
+        and development_open["confirmation_open_authorized"] is True
+        and development_open["gate_2"] == "NO-GO/SHADOW"
+        and confirmation_closure["result_sha256"]
+        == raw_sha256(paths["confirmation_result"])
+        and confirmation_closure["status"] == expected_statuses["confirmation"]
+        and confirmation_closure["confirmation_open_authorized"] is False
+        and confirmation_closure["further_same_source_confirmation_authorized"]
+        is False
+        and confirmation_closure[
+            "reuse_stage_for_model_feature_threshold_gate_or_selection"
+        ]
+        is False
+        and confirmation_closure["selector_adoption_authorized"] is False
+        and confirmation_closure["gate_2"] == "NO-GO/SHADOW"
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    evidence.extend(
+        path.relative_to(repo_root).as_posix()
+        for stage in stage_paths.values()
+        for key, path in stage.items()
+        if key in {"output_result", "report", "cases"}
+    )
+    return _check(
+        "twowiki_v83_bridge_aware_precision_trim_boundary",
+        (
+            "2Wiki v83 preserves a pre-target nine-file lock, excludes all 5,000 "
+            "prior cases, opens confirmation only after all development gates, and "
+            "closes honestly when confirmation misses the absolute F1 gate"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": (
+                "FRC-2WIKI-BRIDGE-AWARE-PRECISION-TRIM-PROSPECTIVE-V83"
+            ),
+            "status": confirmation_analysis["outcome"]["status"],
+            "training_cases": model["training"]["cases"],
+            "classifier_configurations": model["search"][
+                "classifier_configurations"
+            ],
+            "policy_configurations": model["search"]["policy_configurations"],
+            "selected_configuration": model["selected_configuration"],
+            "oof_model_selection_diagnostic": diagnostic,
+            "development_cases": len(development["cases"]),
+            "confirmation_cases": len(confirmation["cases"]),
+            "development": {
+                "candidate_count": development["execution"]["preparation"][
+                    "candidate_count"
+                ],
+                "methods": development["aggregates"],
+                "strongest_registered_control": development_analysis[
+                    "strongest_registered_control"
+                ],
+                "candidate_minus_v81": development_analysis["paired_f1_delta"][
+                    v81_name
+                ],
+                "candidate_minus_v82": development_analysis["paired_f1_delta"][
+                    v82_name
+                ],
+                "per_question_type": development_analysis[
+                    "per_question_type_delta_vs_best_control"
+                ],
+                "precision_trim": development_analysis["precision_trim"],
+                "strict_gate_checks": development_analysis["strict_gate_checks"],
+                "noninferiority_checks": development_analysis[
+                    "noninferiority_checks"
+                ],
+                "confirmation_opened": True,
+            },
+            "confirmation": {
+                "candidate_count": confirmation["execution"]["preparation"][
+                    "candidate_count"
+                ],
+                "methods": confirmation["aggregates"],
+                "strongest_registered_control": confirmation_analysis[
+                    "strongest_registered_control"
+                ],
+                "candidate_minus_v81": confirmation_analysis["paired_f1_delta"][
+                    v81_name
+                ],
+                "candidate_minus_v82": confirmation_analysis["paired_f1_delta"][
+                    v82_name
+                ],
+                "per_question_type": confirmation_analysis[
+                    "per_question_type_delta_vs_best_control"
+                ],
+                "precision_trim": confirmation_analysis["precision_trim"],
+                "strict_gate_checks": confirmation_analysis["strict_gate_checks"],
+                "noninferiority_checks": confirmation_analysis[
+                    "noninferiority_checks"
+                ],
+            },
+            "stage_overlap": len(development_gold_ids & confirmation_gold_ids),
+            "target_training_or_tuning_cases": 0,
+            "strict_independent_dataset_confirmation": False,
+            "official_2wiki_leaderboard_result": False,
+            "selector_adoption_authorized": False,
+            "canary_or_default_authorized": False,
+            "gate_2": confirmation_analysis["outcome"]["gate_2"],
+        },
+    )
+
+
+def _check_hotpot_question_type_cardinality_v84(repo_root: Path) -> dict[str, Any]:
+    docs_root = repo_root / "docs/progressive_upgrade"
+    output_root = repo_root / "output/rag_evaluation/hotpot_cardinality_v84"
+    cache_root = repo_root / ".cache/benchmarks/hotpot_cardinality_v84"
+    paths = {
+        "model": docs_root
+        / "hotpot_question_type_cardinality_router_model_development_v84.json",
+        "protocol": docs_root
+        / "hotpot_question_type_cardinality_protocol_v84.json",
+        "source": docs_root
+        / "hotpot_question_type_cardinality_source_registration_v84.json",
+        "implementation": docs_root
+        / "hotpot_question_type_cardinality_implementation_v84.json",
+        "development_execution": docs_root
+        / "hotpot_question_type_cardinality_development_execution_v84.json",
+        "development_result": docs_root
+        / "hotpot_question_type_cardinality_development_result_v84.json",
+        "confirmation_open": docs_root
+        / "hotpot_question_type_cardinality_confirmation_open_v84.json",
+        "confirmation_execution": docs_root
+        / "hotpot_question_type_cardinality_confirmation_execution_v84.json",
+        "confirmation_result": docs_root
+        / "hotpot_question_type_cardinality_confirmation_result_v84.json",
+        "confirmation_closure": docs_root
+        / "hotpot_question_type_cardinality_confirmation_closure_v84.json",
+        "synthesis": docs_root
+        / "hotpot_question_type_cardinality_synthesis_v84.md",
+        "router_module": repo_root
+        / "research/frc_rag/hotpot_question_type_cardinality_router.py",
+        "transfer_module": repo_root
+        / "research/frc_rag/hotpot_question_type_cardinality_transfer.py",
+        "model_runner": repo_root
+        / "scripts/run_hotpot_question_type_cardinality_model.py",
+        "transfer_runner": repo_root
+        / "scripts/run_hotpot_question_type_cardinality_transfer.py",
+        "router_tests": repo_root
+        / "tests/test_frc_hotpot_question_type_cardinality_router.py",
+        "transfer_tests": repo_root
+        / "tests/test_frc_hotpot_question_type_cardinality_transfer.py",
+        "lock_tests": repo_root
+        / "tests/test_frc_hotpot_question_type_cardinality_lock.py",
+    }
+    stage_paths = {
+        stage: {
+            "blind": cache_root / stage / "blind_cases.jsonl",
+            "gold": cache_root / stage / "sealed_gold.jsonl",
+            "scored": cache_root / stage / "scored_blind.jsonl",
+            "selection": cache_root / stage / "selection_outputs.jsonl",
+            "output_result": output_root / stage / "result.json",
+            "report": output_root / stage / "report.md",
+            "cases": output_root / stage / "cases.jsonl.gz",
+        }
+        for stage in ("development", "confirmation")
+    }
+
+    def raw_sha256(path: Path) -> str:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    model = _load_json(paths["model"])
+    protocol = _load_json(paths["protocol"])
+    source = _load_json(paths["source"])
+    implementation = _load_json(paths["implementation"])
+    development_open = _load_json(paths["confirmation_open"])
+    confirmation_closure = _load_json(paths["confirmation_closure"])
+    candidate_name = "hotpot_question_type_cardinality_router_v84"
+    prefix3_name = "frozen_v76_prefix3_cardinality_control"
+    prefix4_name = "frozen_v76_prefix4_cardinality_control"
+    expected_statuses = {
+        "development": (
+            "HOTPOT_V84_CARDINALITY_DEVELOPMENT_CONSTRAINED_ADVANTAGE_ESTABLISHED_OPEN_CONFIRMATION"
+        ),
+        "confirmation": (
+            "HOTPOT_V84_CARDINALITY_CASE_DISJOINT_CONSTRAINED_ADVANTAGE_ESTABLISHED"
+        ),
+    }
+    expected_metrics = {
+        "development": {
+            candidate_name: {
+                "evidence_macro_f1": 0.644873,
+                "evidence_macro_recall": 0.832607,
+                "complete_evidence_recall": 0.643333,
+                "mean_selected_tokens": 97.513333,
+            },
+            prefix3_name: {
+                "evidence_macro_f1": 0.679231,
+                "evidence_macro_recall": 0.793802,
+                "complete_evidence_recall": 0.571667,
+                "mean_selected_tokens": 81.091667,
+            },
+            prefix4_name: {
+                "evidence_macro_f1": 0.615834,
+                "evidence_macro_recall": 0.850837,
+                "complete_evidence_recall": 0.676667,
+                "mean_selected_tokens": 106.071667,
+            },
+        },
+        "confirmation": {
+            candidate_name: {
+                "evidence_macro_f1": 0.639898,
+                "evidence_macro_recall": 0.82452,
+                "complete_evidence_recall": 0.625,
+                "mean_selected_tokens": 96.92,
+            },
+            prefix3_name: {
+                "evidence_macro_f1": 0.675968,
+                "evidence_macro_recall": 0.788714,
+                "complete_evidence_recall": 0.571667,
+                "mean_selected_tokens": 80.101667,
+            },
+            prefix4_name: {
+                "evidence_macro_f1": 0.613406,
+                "evidence_macro_recall": 0.844381,
+                "complete_evidence_recall": 0.663333,
+                "mean_selected_tokens": 106.275,
+            },
+        },
+    }
+    expected_deltas = {
+        "development": {
+            "point": 0.029039,
+            "ci_low": 0.022617,
+            "ci_high": 0.035716,
+            "resamples": 10000,
+            "seed": 20261215,
+        },
+        "confirmation": {
+            "point": 0.026492,
+            "ci_low": 0.019841,
+            "ci_high": 0.033051,
+            "resamples": 10000,
+            "seed": 20261216,
+        },
+    }
+    expected_classifier_accuracy = {
+        "development": 0.94,
+        "confirmation": 0.91625,
+    }
+    expected_action_counts = {
+        "development": {
+            "predicted_bridge_retain_four": 373,
+            "predicted_comparison_retain_three": 227,
+        },
+        "confirmation": {
+            "predicted_bridge_retain_four": 378,
+            "predicted_comparison_retain_three": 222,
+        },
+    }
+    forbidden_blind = {
+        "answer",
+        "supporting_facts",
+        "gold_evidence_ids",
+        "gold",
+        "gold_roles",
+    }
+    forbidden_selection = forbidden_blind | {"question", "text", "context"}
+    forbidden_cases = forbidden_selection | {
+        "candidate_ids",
+        "selected_ids",
+        "paragraphs",
+        "title",
+    }
+    stages: dict[str, dict[str, Any]] = {}
+    stage_checks: list[bool] = []
+    for stage in ("development", "confirmation"):
+        execution = _load_json(paths[f"{stage}_execution"])
+        result = _load_json(paths[f"{stage}_result"])
+        output_result = _load_json(stage_paths[stage]["output_result"])
+        blind = _load_jsonl(stage_paths[stage]["blind"])
+        gold = _load_jsonl(stage_paths[stage]["gold"])
+        selections = _load_jsonl(stage_paths[stage]["selection"])
+        cases = _load_jsonl(stage_paths[stage]["cases"])
+        aggregates = {
+            method: {
+                "evidence_macro_f1": round(
+                    sum(float(case["methods"][method]["evidence_f1"]) for case in cases)
+                    / len(cases),
+                    6,
+                ),
+                "evidence_macro_recall": round(
+                    sum(
+                        float(case["methods"][method]["evidence_recall"])
+                        for case in cases
+                    )
+                    / len(cases),
+                    6,
+                ),
+                "complete_evidence_recall": round(
+                    sum(
+                        float(case["methods"][method]["complete_evidence"])
+                        for case in cases
+                    )
+                    / len(cases),
+                    6,
+                ),
+                "mean_selected_tokens": round(
+                    sum(
+                        float(case["methods"][method]["selected_tokens"])
+                        for case in cases
+                    )
+                    / len(cases),
+                    6,
+                ),
+            }
+            for method in result["analysis"]["methods"]
+        }
+        analysis = result["analysis"]
+        outcome = analysis["outcome"]
+        cardinality = analysis["cardinality_control"]
+        stages[stage] = {
+            "execution": execution,
+            "result": result,
+            "blind": blind,
+            "gold": gold,
+            "selections": selections,
+            "cases": cases,
+            "aggregates": aggregates,
+        }
+        stage_checks.append(
+            execution["status"] == "EVALUATED"
+            and execution["preparation"]["selected_cases"] == 600
+            and execution["preparation"]["question_type_counts"]
+            == {"bridge": 400, "comparison": 200}
+            and execution["preparation"]["prior_excluded_ids"] == 2600
+            and execution["preparation"]["prior_overlap"] == 0
+            and execution["scored_cases"] == 600
+            and execution["preparation"]["blind_sha256"]
+            == raw_sha256(stage_paths[stage]["blind"])
+            and execution["preparation"]["gold_sha256"]
+            == raw_sha256(stage_paths[stage]["gold"])
+            and execution["scored_blind_sha256"]
+            == raw_sha256(stage_paths[stage]["scored"])
+            and execution["selection_output_sha256"]
+            == raw_sha256(stage_paths[stage]["selection"])
+            and execution["result_sha256"] == raw_sha256(paths[f"{stage}_result"])
+            and execution["cases_sha256"] == raw_sha256(stage_paths[stage]["cases"])
+            and execution["report_sha256"] == raw_sha256(stage_paths[stage]["report"])
+            and result == output_result
+            and len(blind) == len(gold) == len(selections) == len(cases) == 600
+            and aggregates == analysis["methods"]
+            and all(
+                aggregates[method] == metrics
+                for method, metrics in expected_metrics[stage].items()
+            )
+            and all(analysis["strict_gate_checks"].values())
+            and len(analysis["strict_gate_checks"]) == 18
+            and all(analysis["noninferiority_checks"].values())
+            and outcome["strict_gate_passed"] is True
+            and outcome["noninferiority_envelope_supported"] is True
+            and outcome["status"] == expected_statuses[stage]
+            and outcome["raw_f1_superiority_over_every_registered_control_established"]
+            is False
+            and outcome["selector_adoption_authorized"] is False
+            and outcome["canary_or_default_authorized"] is False
+            and outcome["gate_2"] == "NO-GO/SHADOW"
+            and analysis["raw_strongest_registered_control"]["name"]
+            == prefix3_name
+            and analysis["raw_strongest_registered_control"]["safety_eligible"]
+            is False
+            and analysis["strongest_safety_eligible_control"]["name"]
+            == prefix4_name
+            and analysis["paired_f1_delta"][prefix4_name]
+            == expected_deltas[stage]
+            and cardinality["comparison_classifier_balanced_accuracy"]
+            == expected_classifier_accuracy[stage]
+            and cardinality["action_counts"] == expected_action_counts[stage]
+            and not forbidden_blind & _nested_keys(blind)
+            and not forbidden_selection & _nested_keys(selections)
+            and not forbidden_cases & _nested_keys(cases)
+        )
+
+    frozen_hashes = {
+        contract["path"]: contract["sha256"]
+        for contract in implementation["files"].values()
+    }
+    expected_frozen_hashes = {
+        contract["path"]: raw_sha256(repo_root / contract["path"])
+        for contract in implementation["files"].values()
+    }
+    development = stages["development"]
+    confirmation = stages["confirmation"]
+    development_ids = {str(row["id"]) for row in development["gold"]}
+    confirmation_ids = {str(row["id"]) for row in confirmation["gold"]}
+    diagnostic = model["crossfit_model_selection_diagnostic"]
+    passed = (
+        all(path.is_file() for path in paths.values())
+        and all(
+            path.is_file()
+            for stage in stage_paths.values()
+            for path in stage.values()
+        )
+        and model["experiment_id"]
+        == "FRC-HOTPOT-QUESTION-TYPE-CARDINALITY-ROUTER-V84"
+        and model["training"]["cases"] == 2600
+        and model["search"]["classifier_configurations"] == 16
+        and model["search"]["policy_configurations"] == 112
+        and model["selected_configuration"]["hash_dimension"] == 512
+        and model["selected_configuration"]["l2"] == 32.0
+        and model["selected_configuration"]["comparison_threshold"] == 0.3
+        and model["selected_configuration"]["comparison_retained_count"] == 3
+        and model["selected_configuration"]["bridge_retained_count"] == 4
+        and diagnostic["candidate"]
+        == {
+            "complete_evidence_recall": 0.645385,
+            "evidence_macro_f1": 0.657218,
+            "evidence_macro_recall": 0.837299,
+            "mean_selected_tokens": 95.645,
+        }
+        and diagnostic["candidate_minus_fixed_prefix4"]
+        == {
+            "point": 0.027613,
+            "ci_low": 0.024012,
+            "ci_high": 0.031077,
+            "resamples": 10000,
+            "seed": 20261206,
+        }
+        and diagnostic["comparison_balanced_accuracy"] == 0.911056
+        and len(protocol["controls"]) == 9
+        and len(protocol["strict_gates"]) == 18
+        and protocol["safety_eligibility"]
+        == {"complete_evidence_recall_at_least": 0.62}
+        and source["prior_exclusion_union"]["cases"] == 2600
+        and source["remaining_capacity_before_target_selection"]
+        == {
+            "cases": 4805,
+            "bridge": 4315,
+            "comparison": 490,
+            "registered_development_quota": {"bridge": 400, "comparison": 200},
+            "registered_confirmation_quota": {"bridge": 400, "comparison": 200},
+            "remaining_after_both_registered_stages": {
+                "bridge": 3515,
+                "comparison": 90,
+            },
+        }
+        and source["pre_registration_access_boundary"]["v84_development_ids_selected"]
+        == 0
+        and source["pre_registration_access_boundary"]["v84_confirmation_ids_selected"]
+        == 0
+        and source["pre_registration_access_boundary"]["v84_target_rows_read"] == 0
+        and implementation["frozen_before_v84_target_id_selection"] is True
+        and len(implementation["files"]) == 9
+        and raw_sha256(paths["implementation"])
+        == "cf44da9ef774a3b01b4018a0033237e49e7210764a37d5a680defcfa1ea76e4f"
+        and frozen_hashes == expected_frozen_hashes
+        and all(stage_checks)
+        and not development_ids & confirmation_ids
+        and development["result"]["metadata"]["stage_overlap"] == 0
+        and confirmation["result"]["metadata"]["stage_overlap"] == 0
+        and development_open["development_result_sha256"]
+        == raw_sha256(paths["development_result"])
+        and development_open["confirmation_open_authorized"] is True
+        and confirmation_closure["result_sha256"]
+        == raw_sha256(paths["confirmation_result"])
+        and confirmation_closure["status"] == expected_statuses["confirmation"]
+        and confirmation_closure["confirmation_open_authorized"] is False
+        and confirmation_closure["further_same_source_confirmation_authorized"]
+        is False
+        and confirmation_closure["selector_adoption_authorized"] is False
+        and confirmation_closure["gate_2"] == "NO-GO/SHADOW"
+    )
+    evidence = [path.relative_to(repo_root).as_posix() for path in paths.values()]
+    evidence.extend(
+        path.relative_to(repo_root).as_posix()
+        for stage in stage_paths.values()
+        for key, path in stage.items()
+        if key in {"output_result", "report", "cases"}
+    )
+    development_analysis = development["result"]["analysis"]
+    confirmation_analysis = confirmation["result"]["analysis"]
+    return _check(
+        "hotpot_v84_question_type_cardinality_boundary",
+        (
+            "HotpotQA v84 preserves a pre-target nine-file lock, excludes all "
+            "2,600 exposed cases, and confirms only safety-constrained F1 advantage"
+        ),
+        passed,
+        evidence,
+        {
+            "experiment_id": (
+                "FRC-HOTPOT-QUESTION-TYPE-CARDINALITY-PROSPECTIVE-V84"
+            ),
+            "status": confirmation_analysis["outcome"]["status"],
+            "training_cases": model["training"]["cases"],
+            "classifier_configurations": model["search"][
+                "classifier_configurations"
+            ],
+            "policy_configurations": model["search"]["policy_configurations"],
+            "selected_configuration": model["selected_configuration"],
+            "oof_model_selection_diagnostic": diagnostic,
+            "development_cases": len(development["cases"]),
+            "confirmation_cases": len(confirmation["cases"]),
+            "development": {
+                "candidate_count": development["execution"]["preparation"][
+                    "candidate_count"
+                ],
+                "methods": development["aggregates"],
+                "raw_strongest_registered_control": development_analysis[
+                    "raw_strongest_registered_control"
+                ],
+                "strongest_safety_eligible_control": development_analysis[
+                    "strongest_safety_eligible_control"
+                ],
+                "candidate_minus_prefix4": development_analysis[
+                    "paired_f1_delta"
+                ][prefix4_name],
+                "cardinality_control": development_analysis[
+                    "cardinality_control"
+                ],
+                "strict_gate_checks": development_analysis["strict_gate_checks"],
+            },
+            "confirmation": {
+                "candidate_count": confirmation["execution"]["preparation"][
+                    "candidate_count"
+                ],
+                "methods": confirmation["aggregates"],
+                "raw_strongest_registered_control": confirmation_analysis[
+                    "raw_strongest_registered_control"
+                ],
+                "strongest_safety_eligible_control": confirmation_analysis[
+                    "strongest_safety_eligible_control"
+                ],
+                "candidate_minus_prefix4": confirmation_analysis[
+                    "paired_f1_delta"
+                ][prefix4_name],
+                "cardinality_control": confirmation_analysis[
+                    "cardinality_control"
+                ],
+                "strict_gate_checks": confirmation_analysis["strict_gate_checks"],
+            },
+            "stage_overlap": len(development_ids & confirmation_ids),
+            "target_training_or_tuning_cases": 0,
+            "strict_independent_dataset_confirmation": False,
+            "official_hotpotqa_leaderboard_result": False,
+            "raw_f1_superiority_over_every_registered_control_established": False,
+            "selector_adoption_authorized": False,
+            "canary_or_default_authorized": False,
+            "gate_2": confirmation_analysis["outcome"]["gate_2"],
+        },
+    )
+
+
 def _compose_services(compose_text: str) -> set[str]:
     services_block = compose_text.split("services:", 1)[1].split("\nvolumes:", 1)[0]
     return set(re.findall(r"(?m)^  ([a-zA-Z0-9_-]+):\s*$", services_block))
@@ -325,6 +10576,984 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
     candidate_report = _load_json(repo_root / EVIDENCE_FILES[1])
     performance_report = _load_json(repo_root / EVIDENCE_FILES[2])
     rag_report = _load_json(repo_root / EVIDENCE_FILES[3])
+    conformal_report = _load_json(
+        repo_root
+        / "output/rag_evaluation/conformal_sufficiency/conformal_sufficiency.json"
+    )
+    conformal_robustness = _load_json(
+        repo_root
+        / "output/rag_evaluation/conformal_robustness/conformal_robustness.json"
+    )
+    conformal_model_selection = _load_json(
+        repo_root
+        / "output/rag_evaluation/conformal_model_selection/conformal_model_selection.json"
+    )
+    conformal_hotpotqa = _load_json(
+        repo_root
+        / "output/rag_evaluation/conformal_cross_dataset/hotpotqa_confirmation.json"
+    )
+    conformal_multihoprag = _load_json(
+        repo_root
+        / "output/rag_evaluation/conformal_cross_dataset/multihoprag_confirmation.json"
+    )
+    conformal_twowiki = _load_json(
+        repo_root
+        / "output/rag_evaluation/conformal_cross_dataset/2wikimultihopqa_confirmation.json"
+    )
+    conformal_cross_dataset_series = _load_json(
+        repo_root
+        / "output/rag_evaluation/conformal_cross_dataset/cross_dataset_confirmation_series.json"
+    )
+    conformal_cross_dataset_protocol = _load_json(
+        repo_root / "docs/progressive_upgrade/conformal_cross_dataset_protocol.json"
+    )
+    conformal_third_confirmation_protocol = _load_json(
+        repo_root
+        / "docs/progressive_upgrade/conformal_third_confirmation_protocol.json"
+    )
+    conformal_source_preparation_benchmark = _load_json(
+        repo_root
+        / "output/rag_evaluation/conformal_cross_dataset/source_preparation_benchmark.json"
+    )
+    conformal_subgroup_audit = _load_json(
+        repo_root
+        / "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_audit.json"
+    )
+    conformal_subgroup_protocol = _load_json(
+        repo_root / "docs/progressive_upgrade/conformal_subgroup_protocol.json"
+    )
+    conformal_subgroup_cases_path = (
+        repo_root
+        / "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_cases.jsonl.gz"
+    )
+    conformal_mondrian = _load_json(
+        repo_root / "output/rag_evaluation/conformal_mondrian/conformal_mondrian.json"
+    )
+    conformal_mondrian_protocol = _load_json(
+        repo_root / "docs/progressive_upgrade/conformal_mondrian_protocol.json"
+    )
+    conformal_mondrian_cases_path = (
+        repo_root
+        / "output/rag_evaluation/conformal_mondrian/conformal_mondrian_cases.jsonl.gz"
+    )
+    conformal_multi_axis_mondrian = _load_json(
+        repo_root
+        / "output/rag_evaluation/conformal_multi_axis_mondrian/conformal_multi_axis_mondrian.json"
+    )
+    conformal_multi_axis_mondrian_protocol = _load_json(
+        repo_root
+        / "docs/progressive_upgrade/conformal_multi_axis_mondrian_protocol.json"
+    )
+    conformal_multi_axis_mondrian_cases_path = (
+        repo_root
+        / "output/rag_evaluation/conformal_multi_axis_mondrian/conformal_multi_axis_mondrian_cases.jsonl.gz"
+    )
+    conformal_head_transfer = _load_json(
+        repo_root
+        / "output/rag_evaluation/conformal_head_transfer/conformal_head_transfer.json"
+    )
+    conformal_head_transfer_protocol = _load_json(
+        repo_root
+        / "docs/progressive_upgrade/conformal_cross_dataset_head_transfer_protocol.json"
+    )
+    conformal_head_transfer_cases_path = (
+        repo_root
+        / "output/rag_evaluation/conformal_head_transfer/conformal_head_transfer_cases.jsonl.gz"
+    )
+    conformal_transfer_admission = _load_json(
+        repo_root
+        / "output/rag_evaluation/conformal_transfer_admission/conformal_transfer_admission.json"
+    )
+    conformal_transfer_admission_protocol = _load_json(
+        repo_root
+        / "docs/progressive_upgrade/conformal_transfer_admission_protocol.json"
+    )
+    conformal_transfer_admission_evidence_path = (
+        repo_root
+        / "output/rag_evaluation/conformal_transfer_admission/conformal_transfer_admission_evidence.jsonl.gz"
+    )
+    conformal_contextual = _load_json(
+        repo_root
+        / "output/rag_evaluation/conformal_contextual/conformal_contextual.json"
+    )
+    conformal_contextual_protocol = _load_json(
+        repo_root / "docs/progressive_upgrade/conformal_contextual_protocol.json"
+    )
+    conformal_contextual_cases_path = (
+        repo_root
+        / "output/rag_evaluation/conformal_contextual/conformal_contextual_cases.jsonl.gz"
+    )
+    conformal_score_stability = _load_json(
+        repo_root
+        / "output/rag_evaluation/conformal_score_stability/conformal_score_stability.json"
+    )
+    conformal_score_stability_protocol = _load_json(
+        repo_root / "docs/progressive_upgrade/conformal_score_stability_protocol.json"
+    )
+    conformal_score_stability_cases_path = (
+        repo_root
+        / "output/rag_evaluation/conformal_score_stability/conformal_score_stability_cases.jsonl.gz"
+    )
+    conformal_review_ranking = _load_json(
+        repo_root
+        / "output/rag_evaluation/conformal_review_ranking/conformal_review_ranking.json"
+    )
+    conformal_review_ranking_protocol = _load_json(
+        repo_root / "docs/progressive_upgrade/conformal_review_ranking_protocol.json"
+    )
+    conformal_review_ranking_evidence_path = (
+        repo_root
+        / "output/rag_evaluation/conformal_review_ranking/conformal_review_ranking_evidence.jsonl.gz"
+    )
+    qasc_protocol_path = (
+        repo_root / "docs/progressive_upgrade/conformal_qasc_confirmation_protocol.json"
+    )
+    qasc_confirmation_path = (
+        repo_root
+        / "output/rag_evaluation/conformal_cross_dataset/qasc_confirmation.json"
+    )
+    qasc_audit_path = (
+        repo_root
+        / "output/rag_evaluation/conformal_qasc_confirmation/conformal_qasc_confirmation.json"
+    )
+    qasc_confirmation = _load_json(qasc_confirmation_path)
+    qasc_confirmation_audit = _load_json(qasc_audit_path)
+    qasc_subgroup_protocol = _load_json(
+        repo_root
+        / "docs/progressive_upgrade/conformal_qasc_subgroup_diagnostic_protocol.json"
+    )
+    qasc_subgroup_cases_path = (
+        repo_root
+        / "output/rag_evaluation/conformal_qasc_subgroup_diagnostic/conformal_qasc_subgroup_cases.jsonl.gz"
+    )
+    qasc_subgroup_diagnostic_path = (
+        repo_root
+        / "output/rag_evaluation/conformal_qasc_subgroup_diagnostic/conformal_qasc_subgroup_diagnostic.json"
+    )
+    qasc_subgroup_diagnostic = _load_json(qasc_subgroup_diagnostic_path)
+    qasc_scoring_optimization_protocol_path = (
+        repo_root / "docs/progressive_upgrade/qasc_scoring_optimization_protocol.json"
+    )
+    qasc_scoring_optimization_path = (
+        repo_root
+        / "output/rag_evaluation/qasc_scoring_optimization/qasc_scoring_optimization.json"
+    )
+    qasc_scoring_optimization_protocol = _load_json(
+        qasc_scoring_optimization_protocol_path
+    )
+    qasc_scoring_optimization = _load_json(qasc_scoring_optimization_path)
+    conflicts_behavior_protocol_path = (
+        repo_root / "docs/progressive_upgrade/conflicts_expected_behavior_protocol.json"
+    )
+    conflicts_behavior_manifest_path = (
+        repo_root / "output/rag_evaluation/conflicts_expected_behavior/manifest.json"
+    )
+    conflicts_behavior_package_path = (
+        repo_root / "output/rag_evaluation/conflicts_expected_behavior/package.jsonl.gz"
+    )
+    conflicts_behavior_protocol = _load_json(conflicts_behavior_protocol_path)
+    conflicts_behavior_manifest = _load_json(conflicts_behavior_manifest_path)
+    conflicts_behavior_package = _load_jsonl(conflicts_behavior_package_path)
+    conflicts_behavior_annotator_template = _load_json(
+        repo_root
+        / "output/rag_evaluation/conflicts_expected_behavior/annotator-template.json"
+    )
+    conflicts_behavior_adjudicator_template = _load_json(
+        repo_root
+        / "output/rag_evaluation/conflicts_expected_behavior/adjudicator-template.json"
+    )
+    conflicts_operations_protocol_path = (
+        repo_root
+        / "docs/progressive_upgrade/conflicts_annotation_operations_protocol.json"
+    )
+    conflicts_operations_manifest_path = (
+        repo_root
+        / "output/rag_evaluation/conflicts_annotation_operations/manifest.json"
+    )
+    conflicts_operations_output_dir = conflicts_operations_manifest_path.parent
+    conflicts_operations_protocol = _load_json(conflicts_operations_protocol_path)
+    conflicts_operations_manifest = _load_json(conflicts_operations_manifest_path)
+    conflicts_workstation_contract_path = (
+        repo_root
+        / "docs/progressive_upgrade/conflicts_annotation_workstation_contract.json"
+    )
+    conflicts_workstation_contract = _load_json(conflicts_workstation_contract_path)
+    conflicts_collection_contract_path = (
+        repo_root
+        / "docs/progressive_upgrade/conflicts_annotation_collection_contract.json"
+    )
+    conflicts_collection_contract = _load_json(conflicts_collection_contract_path)
+    conflicts_router_protocol_path = (
+        repo_root / "docs/progressive_upgrade/conflicts_selector_router_protocol.json"
+    )
+    conflicts_router_report_path = (
+        repo_root
+        / "output/rag_evaluation/conflicts_selector_router/conflicts_selector_router.json"
+    )
+    conflicts_router_cases_path = (
+        repo_root
+        / "output/rag_evaluation/conflicts_selector_router/conflicts_selector_router_cases.jsonl.gz"
+    )
+    conflicts_router_protocol = _load_json(conflicts_router_protocol_path)
+    conflicts_router_report = _load_json(conflicts_router_report_path)
+    conflicts_router_cases = _load_jsonl(conflicts_router_cases_path)
+    whoqa_protocol_path = (
+        repo_root / "docs/progressive_upgrade/whoqa_conflict_coverage_protocol.json"
+    )
+    whoqa_registration_paths = {
+        "protocol": whoqa_protocol_path,
+        "execution": repo_root
+        / "docs/progressive_upgrade/whoqa_conflict_coverage_execution.json",
+        "execution_erratum": repo_root
+        / "docs/progressive_upgrade/whoqa_conflict_coverage_execution_erratum.json",
+        "execution_erratum2": repo_root
+        / "docs/progressive_upgrade/whoqa_conflict_coverage_execution_erratum2.json",
+        "execution_erratum3": repo_root
+        / "docs/progressive_upgrade/whoqa_conflict_coverage_execution_erratum3.json",
+        "execution_erratum4": repo_root
+        / "docs/progressive_upgrade/whoqa_conflict_coverage_execution_erratum4.json",
+        "execution_erratum5": repo_root
+        / "docs/progressive_upgrade/whoqa_conflict_coverage_execution_erratum5.json",
+        "post_result_correction": repo_root
+        / "docs/progressive_upgrade/whoqa_conflict_coverage_post_result_correction.json",
+    }
+    whoqa_report_path = (
+        repo_root
+        / "output/rag_evaluation/whoqa_conflict_coverage/whoqa_conflict_coverage.json"
+    )
+    whoqa_cases_path = (
+        repo_root
+        / "output/rag_evaluation/whoqa_conflict_coverage/whoqa_conflict_coverage_cases.jsonl.gz"
+    )
+    whoqa_protocol = _load_json(whoqa_protocol_path)
+    whoqa_registrations = {
+        name: _load_json(path)
+        for name, path in whoqa_registration_paths.items()
+        if name != "protocol"
+    }
+    whoqa_report = _load_json(whoqa_report_path)
+    whoqa_cases = _load_jsonl(whoqa_cases_path)
+    whoqa_stress_protocol_path = (
+        repo_root / "docs/progressive_upgrade/whoqa_budget_stress_protocol.json"
+    )
+    whoqa_stress_report_path = (
+        repo_root / "output/rag_evaluation/whoqa_budget_stress/whoqa_budget_stress.json"
+    )
+    whoqa_stress_cases_path = (
+        repo_root
+        / "output/rag_evaluation/whoqa_budget_stress/whoqa_budget_stress_cases.jsonl.gz"
+    )
+    whoqa_stress_protocol = _load_json(whoqa_stress_protocol_path)
+    whoqa_stress_report = _load_json(whoqa_stress_report_path)
+    whoqa_stress_cases = _load_jsonl(whoqa_stress_cases_path)
+    rgb_protocol_path = (
+        repo_root / "docs/progressive_upgrade/rgb_cost_aware_frc_protocol.json"
+    )
+    rgb_execution_path = (
+        repo_root / "docs/progressive_upgrade/rgb_cost_aware_frc_execution.json"
+    )
+    rgb_correction_path = (
+        repo_root
+        / "docs/progressive_upgrade/rgb_cost_aware_frc_post_result_correction.json"
+    )
+    rgb_report_path = (
+        repo_root / "output/rag_evaluation/rgb_cost_aware_frc/rgb_cost_aware_frc.json"
+    )
+    rgb_cases_path = (
+        repo_root
+        / "output/rag_evaluation/rgb_cost_aware_frc/rgb_cost_aware_frc_cases.jsonl.gz"
+    )
+    rgb_protocol = _load_json(rgb_protocol_path)
+    rgb_execution = _load_json(rgb_execution_path)
+    rgb_correction = _load_json(rgb_correction_path)
+    rgb_report = _load_json(rgb_report_path)
+    rgb_cases = _load_jsonl(rgb_cases_path)
+    musique_protocol_path = (
+        repo_root / "docs/progressive_upgrade/musique_dual_resource_protocol.json"
+    )
+    musique_execution_path = (
+        repo_root / "docs/progressive_upgrade/musique_dual_resource_execution.json"
+    )
+    musique_report_path = (
+        repo_root
+        / "output/rag_evaluation/musique_dual_resource/musique_dual_resource.json"
+    )
+    musique_cases_path = (
+        repo_root
+        / "output/rag_evaluation/musique_dual_resource/musique_dual_resource_cases.jsonl.gz"
+    )
+    musique_protocol = _load_json(musique_protocol_path)
+    musique_execution = _load_json(musique_execution_path)
+    musique_report = _load_json(musique_report_path)
+    musique_cases = _load_jsonl(musique_cases_path)
+    musique_gap_protocol_path = (
+        repo_root
+        / "docs/progressive_upgrade/musique_objective_gap_diagnostic_protocol.json"
+    )
+    musique_gap_report_path = (
+        repo_root
+        / "output/rag_evaluation/musique_objective_gap/musique_objective_gap.json"
+    )
+    musique_gap_cases_path = (
+        repo_root
+        / "output/rag_evaluation/musique_objective_gap/musique_objective_gap_cases.jsonl.gz"
+    )
+    musique_gap_protocol = _load_json(musique_gap_protocol_path)
+    musique_gap_report = _load_json(musique_gap_report_path)
+    musique_gap_cases = _load_jsonl(musique_gap_cases_path)
+    musique_crossfit_protocol_path = (
+        repo_root / "docs/progressive_upgrade/musique_crossfit_support_protocol.json"
+    )
+    musique_crossfit_report_path = (
+        repo_root
+        / "output/rag_evaluation/musique_crossfit_support/musique_crossfit_support.json"
+    )
+    musique_crossfit_cases_path = (
+        repo_root
+        / "output/rag_evaluation/musique_crossfit_support/musique_crossfit_support_cases.jsonl.gz"
+    )
+    musique_crossfit_protocol = _load_json(musique_crossfit_protocol_path)
+    musique_crossfit_report = _load_json(musique_crossfit_report_path)
+    musique_crossfit_cases = _load_jsonl(musique_crossfit_cases_path)
+    hover_protocol_path = (
+        repo_root / "docs/progressive_upgrade/hover_verification_roles_protocol.json"
+    )
+    hover_execution_path = (
+        repo_root / "docs/progressive_upgrade/hover_verification_roles_execution.json"
+    )
+    hover_report_path = (
+        repo_root
+        / "output/rag_evaluation/hover_verification_roles/hover_verification_roles.json"
+    )
+    hover_cases_path = (
+        repo_root
+        / "output/rag_evaluation/hover_verification_roles/hover_verification_roles_cases.jsonl.gz"
+    )
+    hover_protocol = _load_json(hover_protocol_path)
+    hover_execution = _load_json(hover_execution_path)
+    hover_report = _load_json(hover_report_path)
+    hover_cases = _load_jsonl(hover_cases_path)
+    hover_mechanism_diagnostic_path = (
+        repo_root
+        / "output/rag_evaluation/hover_verification_roles/hover_role_mechanism_diagnostic.json"
+    )
+    hover_mechanism_diagnostic = _load_json(hover_mechanism_diagnostic_path)
+    hover_dynamic_v40_protocol_path = (
+        repo_root / "docs/progressive_upgrade/hover_dynamic_atomic_roles_protocol.json"
+    )
+    hover_dynamic_v40_closure_path = (
+        repo_root
+        / "docs/progressive_upgrade/hover_dynamic_atomic_roles_v40_closure.json"
+    )
+    hover_dynamic_protocol_path = (
+        repo_root
+        / "docs/progressive_upgrade/hover_dynamic_atomic_roles_protocol_v41.json"
+    )
+    hover_dynamic_pilot_start_path = (
+        repo_root
+        / "docs/progressive_upgrade/hover_dynamic_atomic_roles_pilot_start_v41.json"
+    )
+    hover_dynamic_confirmation_open_v1_path = (
+        repo_root
+        / "docs/progressive_upgrade/hover_dynamic_atomic_roles_confirmation_open_v41.json"
+    )
+    hover_dynamic_confirmation_open_path = (
+        repo_root
+        / "docs/progressive_upgrade/hover_dynamic_atomic_roles_confirmation_open_v41_v2.json"
+    )
+    hover_dynamic_execution_path = (
+        repo_root
+        / "docs/progressive_upgrade/hover_dynamic_atomic_roles_execution_v41.json"
+    )
+    hover_dynamic_result_record_path = (
+        repo_root
+        / "docs/progressive_upgrade/hover_dynamic_atomic_roles_result_v41.json"
+    )
+    hover_dynamic_pilot_report_path = (
+        repo_root
+        / "output/rag_evaluation/hover_dynamic_atomic_roles/hover_dynamic_atomic_roles_pilot.json"
+    )
+    hover_dynamic_report_path = (
+        repo_root
+        / "output/rag_evaluation/hover_dynamic_atomic_roles/hover_dynamic_atomic_roles.json"
+    )
+    hover_dynamic_cases_path = (
+        repo_root
+        / "output/rag_evaluation/hover_dynamic_atomic_roles/hover_dynamic_atomic_roles_cases.jsonl.gz"
+    )
+    hover_dynamic_v40_protocol = _load_json(hover_dynamic_v40_protocol_path)
+    hover_dynamic_v40_closure = _load_json(hover_dynamic_v40_closure_path)
+    hover_dynamic_protocol = _load_json(hover_dynamic_protocol_path)
+    hover_dynamic_pilot_start = _load_json(hover_dynamic_pilot_start_path)
+    hover_dynamic_confirmation_open = _load_json(hover_dynamic_confirmation_open_path)
+    hover_dynamic_execution = _load_json(hover_dynamic_execution_path)
+    hover_dynamic_result_record = _load_json(hover_dynamic_result_record_path)
+    hover_dynamic_pilot_report = _load_json(hover_dynamic_pilot_report_path)
+    hover_dynamic_report = _load_json(hover_dynamic_report_path)
+    hover_dynamic_cases = _load_jsonl(hover_dynamic_cases_path)
+    scifact_protocol_path = (
+        repo_root
+        / "docs/progressive_upgrade/scifact_dynamic_atomic_roles_protocol_v42.json"
+    )
+    scifact_implementation_path = (
+        repo_root
+        / "docs/progressive_upgrade/scifact_dynamic_atomic_roles_implementation_v42.json"
+    )
+    scifact_execution_path = (
+        repo_root
+        / "docs/progressive_upgrade/scifact_dynamic_atomic_roles_execution_v42.json"
+    )
+    scifact_result_record_path = (
+        repo_root
+        / "docs/progressive_upgrade/scifact_dynamic_atomic_roles_result_v42.json"
+    )
+    scifact_report_path = (
+        repo_root
+        / "output/rag_evaluation/scifact_dynamic_atomic_roles/scifact_dynamic_atomic_roles.json"
+    )
+    scifact_markdown_path = (
+        repo_root
+        / "output/rag_evaluation/scifact_dynamic_atomic_roles/scifact_dynamic_atomic_roles.md"
+    )
+    scifact_cases_path = (
+        repo_root
+        / "output/rag_evaluation/scifact_dynamic_atomic_roles/scifact_dynamic_atomic_roles_cases.jsonl.gz"
+    )
+    scifact_protocol = _load_json(scifact_protocol_path)
+    scifact_implementation = _load_json(scifact_implementation_path)
+    scifact_execution = _load_json(scifact_execution_path)
+    scifact_result_record = _load_json(scifact_result_record_path)
+    scifact_report = _load_json(scifact_report_path)
+    scifact_cases = _load_jsonl(scifact_cases_path)
+    feverous_protocol_path = (
+        repo_root
+        / "docs/progressive_upgrade/feverous_adaptive_atomic_roles_protocol_v43.json"
+    )
+    feverous_protocol_erratum_path = (
+        repo_root
+        / "docs/progressive_upgrade/feverous_adaptive_atomic_roles_protocol_erratum_v43.json"
+    )
+    feverous_implementation_path = (
+        repo_root
+        / "docs/progressive_upgrade/feverous_adaptive_atomic_roles_implementation_v43.json"
+    )
+    feverous_implementation_erratum4_path = (
+        repo_root
+        / "docs/progressive_upgrade/feverous_adaptive_atomic_roles_implementation_erratum4_v43.json"
+    )
+    feverous_execution_path = (
+        repo_root
+        / "docs/progressive_upgrade/feverous_adaptive_atomic_roles_execution_v43.json"
+    )
+    feverous_execution_erratum_path = (
+        repo_root
+        / "docs/progressive_upgrade/feverous_adaptive_atomic_roles_execution_erratum_v43.json"
+    )
+    feverous_result_record_path = (
+        repo_root
+        / "docs/progressive_upgrade/feverous_adaptive_atomic_roles_result_v43.json"
+    )
+    feverous_report_path = (
+        repo_root
+        / "output/rag_evaluation/feverous_adaptive_atomic_roles/feverous_adaptive_atomic_roles.json"
+    )
+    feverous_markdown_path = (
+        repo_root
+        / "output/rag_evaluation/feverous_adaptive_atomic_roles/feverous_adaptive_atomic_roles.md"
+    )
+    feverous_cases_path = (
+        repo_root
+        / "output/rag_evaluation/feverous_adaptive_atomic_roles/feverous_adaptive_atomic_roles_cases.jsonl.gz"
+    )
+    feverous_protocol = _load_json(feverous_protocol_path)
+    feverous_protocol_erratum = _load_json(feverous_protocol_erratum_path)
+    feverous_implementation = _load_json(feverous_implementation_path)
+    feverous_implementation_erratum4 = _load_json(feverous_implementation_erratum4_path)
+    feverous_execution = _load_json(feverous_execution_path)
+    feverous_execution_erratum = _load_json(feverous_execution_erratum_path)
+    feverous_result_record = _load_json(feverous_result_record_path)
+    feverous_report = _load_json(feverous_report_path)
+    feverous_cases = _load_jsonl(feverous_cases_path)
+    ottqa_protocol_path = (
+        repo_root
+        / "docs/progressive_upgrade/ottqa_guarded_adaptive_atomic_roles_protocol_v44.json"
+    )
+    ottqa_implementation_path = (
+        repo_root
+        / "docs/progressive_upgrade/ottqa_guarded_adaptive_atomic_roles_implementation_v44.json"
+    )
+    ottqa_execution_path = (
+        repo_root
+        / "docs/progressive_upgrade/ottqa_guarded_adaptive_atomic_roles_execution_v44.json"
+    )
+    ottqa_result_record_path = (
+        repo_root
+        / "docs/progressive_upgrade/ottqa_guarded_adaptive_atomic_roles_result_v44.json"
+    )
+    ottqa_report_path = (
+        repo_root
+        / "output/rag_evaluation/ottqa_guarded_adaptive_atomic_roles/ottqa_guarded_adaptive_atomic_roles.json"
+    )
+    ottqa_markdown_path = (
+        repo_root
+        / "output/rag_evaluation/ottqa_guarded_adaptive_atomic_roles/ottqa_guarded_adaptive_atomic_roles.md"
+    )
+    ottqa_cases_path = (
+        repo_root
+        / "output/rag_evaluation/ottqa_guarded_adaptive_atomic_roles/ottqa_guarded_adaptive_atomic_roles_cases.jsonl.gz"
+    )
+    ottqa_protocol = _load_json(ottqa_protocol_path)
+    ottqa_implementation = _load_json(ottqa_implementation_path)
+    ottqa_execution = _load_json(ottqa_execution_path)
+    ottqa_result_record = _load_json(ottqa_result_record_path)
+    ottqa_report = _load_json(ottqa_report_path)
+    ottqa_cases = _load_jsonl(ottqa_cases_path)
+    finqa_protocol_path = (
+        repo_root
+        / "docs/progressive_upgrade/finqa_anchor_guarded_atomic_roles_protocol_v45.json"
+    )
+    finqa_implementation_path = (
+        repo_root
+        / "docs/progressive_upgrade/finqa_anchor_guarded_atomic_roles_implementation_v45.json"
+    )
+    finqa_execution_path = (
+        repo_root
+        / "docs/progressive_upgrade/finqa_anchor_guarded_atomic_roles_execution_v45.json"
+    )
+    finqa_result_path = (
+        repo_root
+        / "docs/progressive_upgrade/finqa_anchor_guarded_atomic_roles_result_v45.json"
+    )
+    finqa_strata_path = (
+        repo_root
+        / "docs/progressive_upgrade/finqa_anchor_guarded_atomic_roles_mandatory_strata_v45.json"
+    )
+    finqa_markdown_path = (
+        repo_root / "output/rag_evaluation/finqa_anchor_guarded_atomic_roles/report.md"
+    )
+    finqa_cases_path = (
+        repo_root
+        / "output/rag_evaluation/finqa_anchor_guarded_atomic_roles/cases.jsonl.gz"
+    )
+    finqa_diagnostic_protocol_path = (
+        repo_root
+        / "docs/progressive_upgrade/finqa_anchor_equivalence_diagnostic_protocol_v45.json"
+    )
+    finqa_diagnostic_result_path = (
+        repo_root
+        / "docs/progressive_upgrade/finqa_anchor_equivalence_diagnostic_result_v45.json"
+    )
+    finqa_diagnostic_markdown_path = (
+        repo_root
+        / "output/rag_evaluation/finqa_anchor_guarded_atomic_roles/anchor_equivalence_diagnostic.md"
+    )
+    finqa_diagnostic_cases_path = (
+        repo_root
+        / "output/rag_evaluation/finqa_anchor_guarded_atomic_roles/anchor_equivalence_cases.jsonl.gz"
+    )
+    finqa_protocol = _load_json(finqa_protocol_path)
+    finqa_implementation = _load_json(finqa_implementation_path)
+    finqa_execution = _load_json(finqa_execution_path)
+    finqa_result = _load_json(finqa_result_path)
+    finqa_strata = _load_json(finqa_strata_path)
+    finqa_cases = _load_jsonl(finqa_cases_path)
+    finqa_diagnostic_protocol = _load_json(finqa_diagnostic_protocol_path)
+    finqa_diagnostic_result = _load_json(finqa_diagnostic_result_path)
+    finqa_diagnostic_cases = _load_jsonl(finqa_diagnostic_cases_path)
+    tatqa_protocol_path = (
+        repo_root
+        / "docs/progressive_upgrade/tatqa_consensus_guarded_atomic_roles_protocol_v46.json"
+    )
+    tatqa_implementation_path = (
+        repo_root
+        / "docs/progressive_upgrade/tatqa_consensus_guarded_atomic_roles_implementation_v46.json"
+    )
+    tatqa_result_path = (
+        repo_root
+        / "docs/progressive_upgrade/tatqa_consensus_guarded_atomic_roles_result_v46.json"
+    )
+    tatqa_markdown_path = (
+        repo_root
+        / "output/rag_evaluation/tatqa_consensus_guarded_atomic_roles/report.md"
+    )
+    tatqa_protocol = _load_json(tatqa_protocol_path)
+    tatqa_implementation = _load_json(tatqa_implementation_path)
+    tatqa_result = _load_json(tatqa_result_path)
+    fetaqa_protocol_path = (
+        repo_root
+        / "docs/progressive_upgrade/fetaqa_consensus_guarded_atomic_roles_protocol_v47.json"
+    )
+    fetaqa_implementation_path = (
+        repo_root
+        / "docs/progressive_upgrade/fetaqa_consensus_guarded_atomic_roles_implementation_v47.json"
+    )
+    fetaqa_execution_path = (
+        repo_root
+        / "docs/progressive_upgrade/fetaqa_consensus_guarded_atomic_roles_execution_v47.json"
+    )
+    fetaqa_execution_erratum_path = (
+        repo_root
+        / "docs/progressive_upgrade/fetaqa_consensus_guarded_atomic_roles_execution_erratum_v47.json"
+    )
+    fetaqa_result_path = (
+        repo_root
+        / "docs/progressive_upgrade/fetaqa_consensus_guarded_atomic_roles_result_v47.json"
+    )
+    fetaqa_markdown_path = (
+        repo_root
+        / "output/rag_evaluation/fetaqa_consensus_guarded_atomic_roles/report.md"
+    )
+    fetaqa_cases_path = (
+        repo_root
+        / "output/rag_evaluation/fetaqa_consensus_guarded_atomic_roles/cases.jsonl.gz"
+    )
+    fetaqa_protocol = _load_json(fetaqa_protocol_path)
+    fetaqa_implementation = _load_json(fetaqa_implementation_path)
+    fetaqa_execution = _load_json(fetaqa_execution_path)
+    fetaqa_execution_erratum = _load_json(fetaqa_execution_erratum_path)
+    fetaqa_result = _load_json(fetaqa_result_path)
+    fetaqa_cases = _load_jsonl(fetaqa_cases_path)
+    qasper_protocol_path = (
+        repo_root
+        / "docs/progressive_upgrade/qasper_top2_proposal_guarded_atomic_roles_protocol_v48.json"
+    )
+    qasper_implementation_path = (
+        repo_root
+        / "docs/progressive_upgrade/qasper_top2_proposal_guarded_atomic_roles_implementation_v48.json"
+    )
+    qasper_execution_path = (
+        repo_root
+        / "docs/progressive_upgrade/qasper_top2_proposal_guarded_atomic_roles_execution_v48.json"
+    )
+    qasper_execution_erratum_path = (
+        repo_root
+        / "docs/progressive_upgrade/qasper_top2_proposal_guarded_atomic_roles_execution_erratum_v48.json"
+    )
+    qasper_result_path = (
+        repo_root
+        / "docs/progressive_upgrade/qasper_top2_proposal_guarded_atomic_roles_result_v48.json"
+    )
+    qasper_markdown_path = (
+        repo_root
+        / "output/rag_evaluation/qasper_top2_proposal_guarded_atomic_roles/report.md"
+    )
+    qasper_cases_path = (
+        repo_root
+        / "output/rag_evaluation/qasper_top2_proposal_guarded_atomic_roles/cases.jsonl.gz"
+    )
+    qasper_protocol = _load_json(qasper_protocol_path)
+    qasper_implementation = _load_json(qasper_implementation_path)
+    qasper_execution = _load_json(qasper_execution_path)
+    qasper_execution_erratum = _load_json(qasper_execution_erratum_path)
+    qasper_result = _load_json(qasper_result_path)
+    qasper_cases = _load_jsonl(qasper_cases_path)
+    evidence_inference_protocol_path = (
+        repo_root
+        / "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_protocol_v49.json"
+    )
+    evidence_inference_implementation_path = (
+        repo_root
+        / "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_implementation_v49.json"
+    )
+    evidence_inference_execution_path = (
+        repo_root
+        / "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_execution_v49.json"
+    )
+    evidence_inference_execution_erratum_path = (
+        repo_root
+        / "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_execution_erratum_v49.json"
+    )
+    evidence_inference_result_path = (
+        repo_root
+        / "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_result_v49.json"
+    )
+    evidence_inference_markdown_path = (
+        repo_root
+        / "output/rag_evaluation/evidence_inference_low_core_divergence_atomic_roles/report.md"
+    )
+    evidence_inference_cases_path = (
+        repo_root
+        / "output/rag_evaluation/evidence_inference_low_core_divergence_atomic_roles/cases.jsonl.gz"
+    )
+    evidence_inference_protocol = _load_json(evidence_inference_protocol_path)
+    evidence_inference_implementation = _load_json(
+        evidence_inference_implementation_path
+    )
+    evidence_inference_execution = _load_json(evidence_inference_execution_path)
+    evidence_inference_execution_erratum = _load_json(
+        evidence_inference_execution_erratum_path
+    )
+    evidence_inference_result = _load_json(evidence_inference_result_path)
+    evidence_inference_cases = _load_jsonl(evidence_inference_cases_path)
+    contractnli_protocol_path = (
+        repo_root
+        / "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_protocol_v50.json"
+    )
+    contractnli_protocol_erratum_path = (
+        repo_root
+        / "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_protocol_erratum_v50.json"
+    )
+    contractnli_implementation_erratum_path = (
+        repo_root
+        / "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_implementation_erratum_v50.json"
+    )
+    contractnli_execution_path = (
+        repo_root
+        / "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_execution_v50.json"
+    )
+    contractnli_result_path = (
+        repo_root
+        / "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_result_v50.json"
+    )
+    contractnli_markdown_path = (
+        repo_root
+        / "output/rag_evaluation/contractnli_native_zero_consensus_abstention/report.md"
+    )
+    contractnli_cases_path = (
+        repo_root
+        / "output/rag_evaluation/contractnli_native_zero_consensus_abstention/cases.jsonl.gz"
+    )
+    contractnli_protocol = _load_json(contractnli_protocol_path)
+    contractnli_protocol_erratum = _load_json(contractnli_protocol_erratum_path)
+    contractnli_implementation_erratum = _load_json(
+        contractnli_implementation_erratum_path
+    )
+    contractnli_execution = _load_json(contractnli_execution_path)
+    contractnli_result = _load_json(contractnli_result_path)
+    contractnli_cases = _load_jsonl(contractnli_cases_path)
+    contractnli_v51_protocol_path = (
+        repo_root
+        / "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_protocol_v51.json"
+    )
+    contractnli_v51_implementation_path = (
+        repo_root
+        / "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_implementation_v51.json"
+    )
+    contractnli_v51_implementation_erratum_path = (
+        repo_root
+        / "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_implementation_erratum_v51.json"
+    )
+    contractnli_v51_execution_path = (
+        repo_root
+        / "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_development_execution_v51.json"
+    )
+    contractnli_v51_result_path = (
+        repo_root
+        / "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_development_result_v51.json"
+    )
+    contractnli_v51_closure_path = (
+        repo_root
+        / "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_closure_v51.json"
+    )
+    contractnli_v51_markdown_path = (
+        repo_root
+        / "output/rag_evaluation/contractnli_dev_calibrated_robust_consensus/development.md"
+    )
+    contractnli_v51_cases_path = (
+        repo_root
+        / "output/rag_evaluation/contractnli_dev_calibrated_robust_consensus/development_cases.jsonl.gz"
+    )
+    contractnli_v51_protocol = _load_json(contractnli_v51_protocol_path)
+    contractnli_v51_implementation = _load_json(contractnli_v51_implementation_path)
+    contractnli_v51_implementation_erratum = _load_json(
+        contractnli_v51_implementation_erratum_path
+    )
+    contractnli_v51_execution = _load_json(contractnli_v51_execution_path)
+    contractnli_v51_result = _load_json(contractnli_v51_result_path)
+    contractnli_v51_closure = _load_json(contractnli_v51_closure_path)
+    contractnli_v51_cases = _load_jsonl(contractnli_v51_cases_path)
+    contractnli_v52_protocol_path = (
+        repo_root
+        / "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_protocol_v52.json"
+    )
+    contractnli_v52_implementation_path = (
+        repo_root
+        / "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_implementation_v52.json"
+    )
+    contractnli_v52_execution_path = (
+        repo_root
+        / "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_execution_v52.json"
+    )
+    contractnli_v52_result_path = (
+        repo_root
+        / "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_result_v52.json"
+    )
+    contractnli_v52_closure_path = (
+        repo_root
+        / "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_closure_v52.json"
+    )
+    contractnli_v52_markdown_path = (
+        repo_root
+        / "output/rag_evaluation/contractnli_rank_concurrence_confirmation/report.md"
+    )
+    contractnli_v52_cases_path = (
+        repo_root
+        / "output/rag_evaluation/contractnli_rank_concurrence_confirmation/cases.jsonl.gz"
+    )
+    contractnli_v52_protocol = _load_json(contractnli_v52_protocol_path)
+    contractnli_v52_implementation = _load_json(contractnli_v52_implementation_path)
+    contractnli_v52_execution = _load_json(contractnli_v52_execution_path)
+    contractnli_v52_result = _load_json(contractnli_v52_result_path)
+    contractnli_v52_closure = _load_json(contractnli_v52_closure_path)
+    contractnli_v52_cases = _load_jsonl(contractnli_v52_cases_path)
+    cuad_v53_protocol_path = (
+        repo_root
+        / "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_protocol_v53.json"
+    )
+    cuad_v53_source_path = (
+        repo_root / "docs/progressive_upgrade/cuad_source_registration_v53.json"
+    )
+    cuad_v53_implementation_path = (
+        repo_root
+        / "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_implementation_v53.json"
+    )
+    cuad_v53_execution_path = (
+        repo_root
+        / "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_execution_v53.json"
+    )
+    cuad_v53_result_path = (
+        repo_root
+        / "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_result_v53.json"
+    )
+    cuad_v53_closure_path = (
+        repo_root
+        / "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_closure_v53.json"
+    )
+    cuad_v53_formatting_erratum_path = (
+        repo_root
+        / "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_post_result_formatting_erratum_v53.json"
+    )
+    cuad_v53_markdown_path = (
+        repo_root
+        / "output/rag_evaluation/cuad_top3_rank_concurrence_role_closure/development/report.md"
+    )
+    cuad_v53_cases_path = (
+        repo_root
+        / "output/rag_evaluation/cuad_top3_rank_concurrence_role_closure/development/cases.jsonl.gz"
+    )
+    cuad_v53_protocol = _load_json(cuad_v53_protocol_path)
+    cuad_v53_source = _load_json(cuad_v53_source_path)
+    cuad_v53_implementation = _load_json(cuad_v53_implementation_path)
+    cuad_v53_execution = _load_json(cuad_v53_execution_path)
+    cuad_v53_result = _load_json(cuad_v53_result_path)
+    cuad_v53_closure = _load_json(cuad_v53_closure_path)
+    cuad_v53_formatting_erratum = _load_json(cuad_v53_formatting_erratum_path)
+    cuad_v53_cases = _load_jsonl(cuad_v53_cases_path)
+    doc2dial_v54_protocol_path = (
+        repo_root
+        / "docs/progressive_upgrade/doc2dial_document_contrastive_role_closure_protocol_v54.json"
+    )
+    doc2dial_v54_source_path = (
+        repo_root / "docs/progressive_upgrade/doc2dial_source_registration_v54.json"
+    )
+    doc2dial_v54_implementation_path = (
+        repo_root
+        / "docs/progressive_upgrade/doc2dial_document_contrastive_role_closure_implementation_v54.json"
+    )
+    doc2dial_v54_result_path = (
+        repo_root
+        / "docs/progressive_upgrade/doc2dial_document_contrastive_role_closure_development_result_v54.json"
+    )
+    doc2dial_v54_markdown_path = (
+        repo_root
+        / "output/rag_evaluation/doc2dial_document_contrastive_role_closure/development/report.md"
+    )
+    doc2dial_v54_result = _load_json(doc2dial_v54_result_path)
+    doc2dial_v55_protocol_path = (
+        repo_root
+        / "docs/progressive_upgrade/doc2dial_wood_document_contrastive_transfer_protocol_v55.json"
+    )
+    doc2dial_v55_source_path = (
+        repo_root
+        / "docs/progressive_upgrade/doc2dial_wood_source_registration_v55.json"
+    )
+    doc2dial_v55_implementation_path = (
+        repo_root
+        / "docs/progressive_upgrade/doc2dial_wood_document_contrastive_transfer_implementation_v55.json"
+    )
+    doc2dial_v55_result_path = (
+        repo_root
+        / "docs/progressive_upgrade/doc2dial_wood_document_contrastive_transfer_development_result_v55.json"
+    )
+    doc2dial_v55_markdown_path = (
+        repo_root
+        / "output/rag_evaluation/doc2dial_wood_document_contrastive_transfer/development/report.md"
+    )
+    doc2dial_v55_result = _load_json(doc2dial_v55_result_path)
+    doc2dial_v56_protocol_path = (
+        repo_root
+        / "docs/progressive_upgrade/doc2dial_wood_schema_corrected_transfer_protocol_v56.json"
+    )
+    doc2dial_v56_source_path = (
+        repo_root
+        / "docs/progressive_upgrade/doc2dial_wood_source_registration_v56.json"
+    )
+    doc2dial_v56_implementation_path = (
+        repo_root
+        / "docs/progressive_upgrade/doc2dial_wood_schema_corrected_transfer_implementation_v56.json"
+    )
+    doc2dial_v56_execution_path = (
+        repo_root
+        / "docs/progressive_upgrade/doc2dial_wood_schema_corrected_transfer_development_execution_v56.json"
+    )
+    doc2dial_v56_result_path = (
+        repo_root
+        / "docs/progressive_upgrade/doc2dial_wood_schema_corrected_transfer_development_result_v56.json"
+    )
+    doc2dial_v56_closure_path = (
+        repo_root
+        / "docs/progressive_upgrade/doc2dial_wood_schema_corrected_transfer_development_closure_v56.json"
+    )
+    doc2dial_v56_markdown_path = (
+        repo_root
+        / "output/rag_evaluation/doc2dial_wood_schema_corrected_transfer/development/report.md"
+    )
+    doc2dial_v56_cases_path = (
+        repo_root
+        / "output/rag_evaluation/doc2dial_wood_schema_corrected_transfer/development/cases.jsonl.gz"
+    )
+    doc2dial_v56_implementation = _load_json(doc2dial_v56_implementation_path)
+    doc2dial_v56_execution = _load_json(doc2dial_v56_execution_path)
+    doc2dial_v56_result = _load_json(doc2dial_v56_result_path)
+    doc2dial_v56_closure = _load_json(doc2dial_v56_closure_path)
+    doc2dial_v56_cases = _load_jsonl(doc2dial_v56_cases_path)
+    quac_v57_protocol_path = (
+        repo_root
+        / "docs/progressive_upgrade/quac_anchor_safe_consensus_slot_protocol_v57.json"
+    )
+    quac_v57_source_path = (
+        repo_root / "docs/progressive_upgrade/quac_source_registration_v57.json"
+    )
+    quac_v57_implementation_path = (
+        repo_root
+        / "docs/progressive_upgrade/quac_anchor_safe_consensus_slot_implementation_v57.json"
+    )
+    quac_v57_execution_path = (
+        repo_root
+        / "docs/progressive_upgrade/quac_anchor_safe_consensus_slot_development_execution_v57.json"
+    )
+    quac_v57_result_path = (
+        repo_root
+        / "docs/progressive_upgrade/quac_anchor_safe_consensus_slot_development_result_v57.json"
+    )
+    quac_v57_closure_path = (
+        repo_root
+        / "docs/progressive_upgrade/quac_anchor_safe_consensus_slot_development_closure_v57.json"
+    )
+    quac_v57_markdown_path = (
+        repo_root
+        / "output/rag_evaluation/quac_anchor_safe_consensus_slot/development/report.md"
+    )
+    quac_v57_cases_path = (
+        repo_root
+        / "output/rag_evaluation/quac_anchor_safe_consensus_slot/development/cases.jsonl.gz"
+    )
+    quac_v57_source = _load_json(quac_v57_source_path)
+    quac_v57_implementation = _load_json(quac_v57_implementation_path)
+    quac_v57_execution = _load_json(quac_v57_execution_path)
+    quac_v57_result = _load_json(quac_v57_result_path)
+    quac_v57_closure = _load_json(quac_v57_closure_path)
+    quac_v57_cases = _load_jsonl(quac_v57_cases_path)
     openapi = _load_json(repo_root / EVIDENCE_FILES[4])
     compose_text = (repo_root / EVIDENCE_FILES[5]).read_text(encoding="utf-8-sig")
     committed_design_audit = _load_json(
@@ -373,8 +11602,5265 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
     housing_weights = experiment_audit["housing_public_weight_sensitivity"]
     lawshift_ablation = experiment_audit["lawshift_temporal_ablation"]
     eurlex_ablation = experiment_audit["eurlex_temporal_ablation"]
+    subgroup_by_dataset = {
+        item["dataset"]: item for item in conformal_subgroup_audit["datasets"]
+    }
+    mondrian_by_dataset = {
+        item["dataset"]: item for item in conformal_mondrian["datasets"]
+    }
+    multi_axis_mondrian_by_dataset = {
+        item["dataset"]: item for item in conformal_multi_axis_mondrian["datasets"]
+    }
+    head_transfer_by_dataset = {
+        item["dataset"]: item for item in conformal_head_transfer["datasets"]
+    }
+    contextual_by_dataset = {
+        item["dataset"]: item for item in conformal_contextual["datasets"]
+    }
+    score_stability_by_dataset = {
+        item["dataset"]: item for item in conformal_score_stability["datasets"]
+    }
+    review_ranking_by_dataset = {
+        item["dataset"]: item for item in conformal_review_ranking["datasets"]
+    }
+    score_stability_provenance = {
+        item["dataset"]: item for item in conformal_score_stability["provenance"]
+    }
+    score_stability_protocol_inputs = {
+        item["dataset"]: item
+        for item in conformal_score_stability_protocol["frozen_inputs"]
+    }
+    score_stability_baseline_paths = {
+        "2WikiMultiHopQA": repo_root
+        / "output/rag_evaluation/conformal_cross_dataset/2wikimultihopqa_confirmation.json",
+        "ConditionalQA": repo_root
+        / "output/rag_evaluation/conformal_robustness/conformal_robustness.json",
+        "HotpotQA": repo_root
+        / "output/rag_evaluation/conformal_cross_dataset/hotpotqa_confirmation.json",
+        "MultiHop-RAG": repo_root
+        / "output/rag_evaluation/conformal_cross_dataset/multihoprag_confirmation.json",
+    }
+    score_stability_report_path = (
+        repo_root
+        / "output/rag_evaluation/conformal_score_stability/conformal_score_stability.json"
+    )
+    review_source_artifact = conformal_review_ranking["metadata"]["source_artifact"]
+    review_protocol_input = conformal_review_ranking_protocol["frozen_input"]
+    review_checks = conformal_review_ranking["outcome"]["checks"]
+    review_ranking_passed = (
+        conformal_review_ranking["metadata"]["schema_version"]
+        == "frc-conformal-review-ranking-v1"
+        and conformal_review_ranking["metadata"]["datasets"]
+        == ["2WikiMultiHopQA", "ConditionalQA", "HotpotQA", "MultiHop-RAG"]
+        and conformal_review_ranking["metadata"]["repeat_count_per_dataset"] == 10
+        and conformal_review_ranking["metadata"]["review_budget_fractions"]
+        == [0.05, 0.1, 0.2]
+        and conformal_review_ranking["metadata"]["evidence_artifact"]["record_count"]
+        == 53776
+        and conformal_review_ranking["metadata"]["evidence_artifact"]["sha256"]
+        == _evidence_sha256(conformal_review_ranking_evidence_path)
+        and review_source_artifact["report_sha256"]
+        == review_protocol_input["source_report_sha256"]
+        == hashlib.sha256(score_stability_report_path.read_bytes()).hexdigest()
+        and review_source_artifact["cases_sha256"]
+        == review_protocol_input["source_cases_sha256"]
+        == _evidence_sha256(conformal_score_stability_cases_path)
+        and review_source_artifact["case_record_count"]
+        == review_protocol_input["source_case_record_count"]
+        == 53776
+        and conformal_review_ranking["development_protocol"]["post_hoc"] is True
+        and conformal_review_ranking["development_protocol"]["independent_confirmation"]
+        is False
+        and conformal_review_ranking["development_protocol"]["review_only"] is True
+        and conformal_review_ranking["development_protocol"][
+            "automatic_decisions_or_thresholds_modified"
+        ]
+        is False
+        and conformal_review_ranking["development_protocol"][
+            "ranking_or_budget_selection_on_evaluation"
+        ]
+        is False
+        and conformal_review_ranking["outcome"]["status"] == "KEEP_BASE_REVIEW_ORDER"
+        and conformal_review_ranking["outcome"][
+            "all_pre_registered_adoption_checks_passed"
+        ]
+        is False
+        and conformal_review_ranking["outcome"]["automatic_decisions_changed"] is False
+        and conformal_review_ranking["outcome"]["gate_2"] == "NO-GO/SHADOW"
+        and all(
+            review_checks[key]["passed"] is True
+            for key in review_checks
+            if key != "maximum_dataset_worst_eligible_subgroup_capture_decrease_at_0_10"
+        )
+        and review_checks[
+            "maximum_dataset_worst_eligible_subgroup_capture_decrease_at_0_10"
+        ]["passed"]
+        is False
+        and review_checks["minimum_cross_dataset_mean_average_precision_gain"][
+            "measured"
+        ]
+        == 0.053574
+        and review_checks["minimum_cross_dataset_mean_complete_capture_gain_at_0_05"][
+            "measured"
+        ]
+        == 0.036405
+        and review_checks["minimum_cross_dataset_mean_complete_capture_gain_at_0_10"][
+            "measured"
+        ]
+        == 0.049725
+        and review_checks["minimum_cross_dataset_mean_complete_capture_gain_at_0_20"][
+            "measured"
+        ]
+        == 0.026372
+        and review_checks[
+            "maximum_dataset_worst_eligible_subgroup_capture_decrease_at_0_10"
+        ]["measured"]
+        == {
+            "2WikiMultiHopQA": 0.048916,
+            "ConditionalQA": 0.0,
+            "HotpotQA": 0.055752,
+            "MultiHop-RAG": 0.0,
+        }
+        and review_ranking_by_dataset["HotpotQA"]["aggregate"]["subgroups_at_0_10"][
+            "worst_eligible_subgroup"
+        ]["dimension"]
+        == "question_type"
+        and conformal_review_ranking_protocol["development_boundary"][
+            "automatic_decisions_may_change"
+        ]
+        is False
+        and conformal_review_ranking_protocol["development_boundary"][
+            "automatic_thresholds_may_change"
+        ]
+        is False
+        and conformal_review_ranking_protocol["development_boundary"][
+            "evaluation_used_to_choose_ranking_or_budget"
+        ]
+        is False
+        and conformal_review_ranking_protocol["pre_registered_adoption_checks"][
+            "maximum_dataset_worst_eligible_subgroup_capture_decrease_at_0_10"
+        ]
+        == 0.05
+        and conformal_review_ranking["decision"]["next_step"]
+        == "STOP_REVIEW_RANKER_DEVELOPMENT_ON_REVEALED_EVALUATIONS"
+        and conformal_review_ranking["decision"]["production_policy"]
+        == "HUMAN_REVIEW_ONLY_NO_AUTOMATIC_BOUNDARY_CHANGE"
+    )
+    qasc_optimization_candidates = {
+        int(candidate["rerank_batch_size"]): candidate
+        for candidate in qasc_scoring_optimization["candidates"]
+    }
+    qasc_optimization_tolerance = float(
+        qasc_scoring_optimization_protocol["equivalence"]["absolute_tolerance"]
+    )
+    qasc_optimization_minimum_speedup = float(
+        qasc_scoring_optimization_protocol["adoption_rule"]["minimum_speedup"]
+    )
+    qasc_scoring_optimization_passed = (
+        qasc_scoring_optimization_protocol["schema_version"]
+        == "frc-qasc-scoring-optimization-protocol-v1"
+        and qasc_scoring_optimization_protocol["development_boundary"][
+            "performance_optimization_only"
+        ]
+        is True
+        and qasc_scoring_optimization_protocol["development_boundary"][
+            "may_rewrite_reference_scores"
+        ]
+        is False
+        and qasc_scoring_optimization_protocol["development_boundary"][
+            "may_change_qasc_confirmation"
+        ]
+        is False
+        and qasc_scoring_optimization_protocol["development_boundary"][
+            "may_change_gate_2"
+        ]
+        is False
+        and qasc_scoring_optimization_protocol["development_boundary"][
+            "musique_access_allowed"
+        ]
+        is False
+        and qasc_scoring_optimization_protocol["frozen_inputs"][
+            "confirmation_protocol_sha256"
+        ]
+        == hashlib.sha256(qasc_protocol_path.read_bytes()).hexdigest()
+        and qasc_scoring_optimization_protocol["implementation"]["module_sha256"]
+        == hashlib.sha256(
+            (
+                repo_root
+                / qasc_scoring_optimization_protocol["implementation"]["module_path"]
+            ).read_bytes()
+        ).hexdigest()
+        and qasc_scoring_optimization_protocol["implementation"]["runner_sha256"]
+        == hashlib.sha256(
+            (
+                repo_root
+                / qasc_scoring_optimization_protocol["implementation"]["runner_path"]
+            ).read_bytes()
+        ).hexdigest()
+        and qasc_scoring_optimization["metadata"]["schema_version"]
+        == "frc-qasc-global-batch-scoring-benchmark-v1"
+        and qasc_scoring_optimization["metadata"]["status"]
+        == "RUN_REAL_MODEL_QASC_GLOBAL_BATCH_SCORING_BENCHMARK"
+        and qasc_scoring_optimization["metadata"]["benchmark_case_count"] == 32
+        and qasc_scoring_optimization["metadata"]["benchmark_candidate_count"] == 1280
+        and qasc_scoring_optimization["metadata"]["selected_case_ids_sha256"]
+        == qasc_scoring_optimization_protocol["benchmark"]["selected_case_ids_sha256"]
+        and qasc_scoring_optimization["metadata"]["device"] == "cuda"
+        and qasc_scoring_optimization["metadata"]["cuda_available"] is True
+        and qasc_scoring_optimization["provenance"]["protocol_sha256"]
+        == hashlib.sha256(
+            qasc_scoring_optimization_protocol_path.read_bytes()
+        ).hexdigest()
+        and qasc_scoring_optimization["provenance"]["prepared_source_sha256"]
+        == qasc_scoring_optimization_protocol["frozen_inputs"]["prepared_source_sha256"]
+        and qasc_scoring_optimization["provenance"]["reference_scores_sha256"]
+        == qasc_scoring_optimization_protocol["frozen_inputs"][
+            "reference_scores_sha256"
+        ]
+        and qasc_scoring_optimization["provenance"]["reference_case_count"] == 926
+        and qasc_scoring_optimization["baseline"]["pipeline"] == "frozen_per_case"
+        and qasc_scoring_optimization["baseline"]["rerank_batch_size"] == 8
+        and qasc_scoring_optimization["baseline"]["equivalence"]["passed"] is True
+        and qasc_scoring_optimization["baseline"]["equivalence"]["tolerance"]
+        == qasc_optimization_tolerance
+        and qasc_scoring_optimization["baseline"]["equivalence"]["candidate_count"]
+        == 1280
+        and set(qasc_optimization_candidates) == {8, 16, 32}
+        and all(
+            candidate["equivalence"]["score_ranking_mismatches"] == 0
+            and candidate["equivalence"]["role_ranking_mismatches"] == 0
+            and candidate["equivalence"]["frc_selection_mismatches"] == 0
+            for candidate in qasc_optimization_candidates.values()
+        )
+        and qasc_optimization_candidates[8]["equivalence"]["passed"] is True
+        and qasc_optimization_candidates[8]["speedup_vs_per_case"]
+        < qasc_optimization_minimum_speedup
+        and qasc_optimization_candidates[16]["equivalence"]["passed"] is False
+        and qasc_optimization_candidates[16]["equivalence"]["max_absolute_score_delta"]
+        > qasc_optimization_tolerance
+        and qasc_optimization_candidates[32]["equivalence"]["passed"] is False
+        and qasc_optimization_candidates[32]["equivalence"]["max_absolute_score_delta"]
+        > qasc_optimization_tolerance
+        and not any(
+            candidate["equivalence"]["passed"]
+            and candidate["speedup_vs_per_case"] >= qasc_optimization_minimum_speedup
+            for candidate in qasc_optimization_candidates.values()
+        )
+        and qasc_scoring_optimization["decision"]["status"]
+        == "KEEP_FROZEN_PER_CASE_SCORING_ENTRYPOINT"
+        and qasc_scoring_optimization["decision"]["selected_rerank_batch_size"] is None
+        and qasc_scoring_optimization["decision"]["minimum_speedup"]
+        == qasc_optimization_minimum_speedup
+        and qasc_scoring_optimization["decision"]["frozen_confirmation_changed"]
+        is False
+        and qasc_scoring_optimization["decision"]["existing_reference_scores_rewritten"]
+        is False
+        and qasc_scoring_optimization["decision"]["gate_2"] == "NO-GO/SHADOW"
+        and qasc_scoring_optimization["decision"]["musique_downloaded_or_inspected"]
+        is False
+    )
+    qasc_supplemental_passed = (
+        qasc_confirmation_audit["inputs"]["protocol"]["sha256"]
+        == hashlib.sha256(qasc_protocol_path.read_bytes()).hexdigest()
+        and qasc_confirmation_audit["inputs"]["confirmation_report"]["sha256"]
+        == hashlib.sha256(qasc_confirmation_path.read_bytes()).hexdigest()
+        and qasc_confirmation_audit["confirmation"] == qasc_confirmation
+        and qasc_confirmation_audit["metadata"]["dataset"] == "QASC"
+        and qasc_confirmation_audit["outcome"]["strict_confirmation_status"]
+        == "NOT_CONFIRMED"
+        and qasc_confirmation_audit["outcome"]["safety_reduction_repeats"] == 10
+        and qasc_confirmation_audit["outcome"][
+            "case_family_rate_at_or_below_alpha_repeats"
+        ]
+        == 4
+        and qasc_confirmation_audit["outcome"][
+            "conformal_case_family_false_complete_mean"
+        ]
+        == 0.101786
+        and qasc_confirmation_audit["protocol_deviation"]["present"] is True
+        and qasc_confirmation_audit["protocol_deviation"]["written_protocol_status"]
+        == "PARTIAL_CONFIRMATION"
+        and qasc_confirmation_audit["protocol_deviation"]["frozen_evaluator_status"]
+        == "NOT_CONFIRMED"
+        and qasc_confirmation_audit["decision"]["review_ranking_run_on_qasc"] is False
+        and qasc_confirmation_audit["decision"]["musique_downloaded_or_inspected"]
+        is False
+        and qasc_confirmation_audit["decision"]["gate_2"] == "NO-GO/SHADOW"
+        and qasc_subgroup_diagnostic["analysis"]["outcome"]["status"]
+        == "DESCRIPTIVE_HETEROGENEITY_DETECTED"
+        and qasc_subgroup_diagnostic["metadata"]["case_artifact"]["sha256"]
+        == _evidence_sha256(qasc_subgroup_cases_path)
+        and qasc_subgroup_diagnostic["provenance"]["protocol_sha256"]
+        == hashlib.sha256(
+            (
+                repo_root
+                / "docs/progressive_upgrade/conformal_qasc_subgroup_diagnostic_protocol.json"
+            ).read_bytes()
+        ).hexdigest()
+        and qasc_subgroup_diagnostic["provenance"]["confirmation_report_sha256"]
+        == hashlib.sha256(qasc_confirmation_path.read_bytes()).hexdigest()
+        and qasc_subgroup_diagnostic["analysis"]["outcome"][
+            "eligible_question_type_count"
+        ]
+        == 2
+        and qasc_subgroup_diagnostic["analysis"]["outcome"][
+            "all_eligible_mean_risks_at_or_below_alpha"
+        ]
+        is True
+        and qasc_subgroup_diagnostic["analysis"]["outcome"][
+            "all_eligible_repeat_consistency_targets_met"
+        ]
+        is False
+        and qasc_subgroup_diagnostic["decision"]["confirmation_status_changed"] is False
+        and qasc_subgroup_diagnostic["decision"][
+            "method_or_threshold_selection_allowed"
+        ]
+        is False
+        and qasc_subgroup_diagnostic["decision"]["review_ranking_run"] is False
+        and qasc_subgroup_diagnostic["decision"]["gate_2"] == "NO-GO/SHADOW"
+        and qasc_subgroup_protocol["decision_rules"][
+            "may_change_qasc_confirmation_status"
+        ]
+        is False
+        and qasc_subgroup_protocol["decision_rules"]["may_change_gate_2"] is False
+        and qasc_scoring_optimization_passed
+    )
+    conflicts_behavior_label_counts: dict[str, int] = {}
+    for item in conflicts_behavior_package:
+        label = str(item.get("conflict_type", ""))
+        conflicts_behavior_label_counts[label] = (
+            conflicts_behavior_label_counts.get(label, 0) + 1
+        )
+    conflicts_behavior_package_text = json.dumps(
+        conflicts_behavior_package,
+        ensure_ascii=False,
+        sort_keys=True,
+    )
+    conflicts_behavior_package_keys = _nested_keys(conflicts_behavior_package)
+    conflicts_behavior_templates = (
+        conflicts_behavior_annotator_template,
+        conflicts_behavior_adjudicator_template,
+    )
+    conflicts_behavior_response_diagnostics = {
+        "responses_without_inline_citations": 0,
+        "responses_with_out_of_range_citations": 0,
+        "responses_over_requested_160_words": 0,
+        "maximum_response_word_count": 0,
+        "cases_with_identical_a_b_sources": 0,
+        "cases_with_identical_a_b_responses": 0,
+    }
+    for item in conflicts_behavior_package:
+        responses = item.get("responses", [])
+        if len(responses) == 2 and responses[0].get("sources") == responses[1].get(
+            "sources"
+        ):
+            conflicts_behavior_response_diagnostics[
+                "cases_with_identical_a_b_sources"
+            ] += 1
+        if len(responses) == 2 and responses[0].get("response") == responses[1].get(
+            "response"
+        ):
+            conflicts_behavior_response_diagnostics[
+                "cases_with_identical_a_b_responses"
+            ] += 1
+        for response in responses:
+            text = str(response.get("response", ""))
+            citations = [int(value) for value in re.findall(r"\[(\d+)\]", text)]
+            source_count = len(response.get("sources", []))
+            word_count = len(text.split())
+            conflicts_behavior_response_diagnostics["maximum_response_word_count"] = (
+                max(
+                    conflicts_behavior_response_diagnostics[
+                        "maximum_response_word_count"
+                    ],
+                    word_count,
+                )
+            )
+            if not citations:
+                conflicts_behavior_response_diagnostics[
+                    "responses_without_inline_citations"
+                ] += 1
+            if any(index < 1 or index > source_count for index in citations):
+                conflicts_behavior_response_diagnostics[
+                    "responses_with_out_of_range_citations"
+                ] += 1
+            if word_count > 160:
+                conflicts_behavior_response_diagnostics[
+                    "responses_over_requested_160_words"
+                ] += 1
+    conflicts_behavior_generation_passed = (
+        conflicts_behavior_protocol["schema_version"]
+        == "frc-conflicts-expected-behavior-protocol-v1"
+        and conflicts_behavior_protocol["status"]
+        == "REGISTERED_BEFORE_RESPONSE_GENERATION"
+        and conflicts_behavior_protocol["development_boundary"][
+            "gold_conflict_type_visible_to_generator"
+        ]
+        is False
+        and conflicts_behavior_protocol["development_boundary"][
+            "correct_answer_visible_to_generator"
+        ]
+        is False
+        and conflicts_behavior_protocol["development_boundary"][
+            "retrieval_scores_visible_to_generator"
+        ]
+        is False
+        and conflicts_behavior_protocol["development_boundary"][
+            "method_identity_visible_to_reviewers"
+        ]
+        is False
+        and conflicts_behavior_protocol["development_boundary"][
+            "empty_templates_count_as_human_evidence"
+        ]
+        is False
+        and conflicts_behavior_protocol["development_boundary"][
+            "automatic_judging_allowed"
+        ]
+        is False
+        and conflicts_behavior_protocol["development_boundary"]["may_change_gate_2"]
+        is False
+        and conflicts_behavior_protocol["development_boundary"][
+            "may_claim_setr_reproduction"
+        ]
+        is False
+        and conflicts_behavior_protocol["generation"]["do_sample"] is False
+        and conflicts_behavior_protocol["generation"][
+            "same_prompt_and_model_for_both_methods"
+        ]
+        is True
+        and conflicts_behavior_protocol["generation"][
+            "identical_selected_id_order_reuses_one_generation"
+        ]
+        is True
+        and conflicts_behavior_protocol["human_evaluation"][
+            "independent_annotator_count"
+        ]
+        == 2
+        and conflicts_behavior_protocol["human_evaluation"][
+            "independent_adjudicator_count"
+        ]
+        == 1
+        and conflicts_behavior_protocol["human_evaluation"][
+            "same_person_may_hold_multiple_roles"
+        ]
+        is False
+        and conflicts_behavior_protocol["decision_policy"][
+            "gate_2_during_and_after_this_workflow"
+        ]
+        == "NO-GO/SHADOW"
+        and conflicts_behavior_protocol["decision_policy"][
+            "blank_templates_are_results"
+        ]
+        is False
+        and conflicts_behavior_protocol["decision_policy"]["before_human_completion"]
+        == conflicts_behavior_manifest["status"]
+        and conflicts_behavior_protocol["implementation"]["module_sha256"]
+        == hashlib.sha256(
+            (
+                repo_root / conflicts_behavior_protocol["implementation"]["module_path"]
+            ).read_bytes()
+        ).hexdigest()
+        and conflicts_behavior_protocol["implementation"]["runner_sha256"]
+        == hashlib.sha256(
+            (
+                repo_root / conflicts_behavior_protocol["implementation"]["runner_path"]
+            ).read_bytes()
+        ).hexdigest()
+        and conflicts_behavior_protocol["frozen_inputs"]["classification_report_sha256"]
+        == hashlib.sha256(
+            (
+                repo_root
+                / "output/rag_evaluation/conflicts_frc/conflicts_frc_report.json"
+            ).read_bytes()
+        ).hexdigest()
+        and conflicts_behavior_manifest["schema_version"]
+        == "frc-conflicts-expected-behavior-manifest-v1"
+        and conflicts_behavior_manifest["status"]
+        == "GENERATED_AWAITING_INDEPENDENT_HUMAN_ANNOTATION"
+        and conflicts_behavior_manifest["case_count"]
+        == conflicts_behavior_protocol["frozen_inputs"]["case_count"]
+        == len(conflicts_behavior_package)
+        == 458
+        and conflicts_behavior_manifest["response_count"]
+        == conflicts_behavior_protocol["frozen_inputs"]["comparison_row_count"]
+        == sum(len(item.get("responses", [])) for item in conflicts_behavior_package)
+        == 916
+        and conflicts_behavior_manifest["methods_hidden_from_reviewers"] is True
+        and conflicts_behavior_manifest["methods"]
+        == conflicts_behavior_protocol["frozen_inputs"]["comparison_methods"]
+        == ["coverage_greedy_proxy", "frc_select"]
+        and conflicts_behavior_manifest["conflict_type_counts"]
+        == conflicts_behavior_label_counts
+        and conflicts_behavior_manifest["protocol_sha256"]
+        == hashlib.sha256(conflicts_behavior_protocol_path.read_bytes()).hexdigest()
+        and conflicts_behavior_manifest["dataset_sha256"]
+        == conflicts_behavior_protocol["frozen_inputs"]["dataset_sha256"]
+        and conflicts_behavior_manifest["selected_evidence_sha256"]
+        == conflicts_behavior_protocol["frozen_inputs"]["selected_evidence_sha256"]
+        and conflicts_behavior_manifest["package_file_sha256"]
+        == _evidence_sha256(conflicts_behavior_package_path)
+        and re.fullmatch(
+            r"[0-9a-f]{64}", conflicts_behavior_manifest["generation_cache_sha256"]
+        )
+        is not None
+        and conflicts_behavior_manifest["package_items_sha256"]
+        == _canonical_json_sha256(conflicts_behavior_package)
+        and conflicts_behavior_manifest["package_id"]
+        == (
+            "CONFLICTS-BEHAVIOR-"
+            + conflicts_behavior_manifest["package_items_sha256"][:16].upper()
+        )
+        and conflicts_behavior_response_diagnostics["cases_with_identical_a_b_sources"]
+        == conflicts_behavior_protocol["frozen_inputs"]["equal_selection_case_count"]
+        == 19
+        and conflicts_behavior_response_diagnostics[
+            "cases_with_identical_a_b_responses"
+        ]
+        >= conflicts_behavior_response_diagnostics["cases_with_identical_a_b_sources"]
+        and re.fullmatch(
+            r"[0-9a-f]{64}", conflicts_behavior_manifest["blind_mapping_sha256"]
+        )
+        is not None
+        and conflicts_behavior_manifest["blind_mapping_path_label"]
+        == "blind_mapping.json"
+        and not (
+            conflicts_behavior_manifest_path.parent / "blind_mapping.json"
+        ).exists()
+        and conflicts_behavior_manifest["human_evidence_complete"] is False
+        and conflicts_behavior_manifest["gate_2"] == "NO-GO/SHADOW"
+        and "coverage_greedy_proxy is not a SetR reproduction."
+        in conflicts_behavior_manifest["limitations"]
+        and len({str(item.get("item_id", "")) for item in conflicts_behavior_package})
+        == 458
+        and all(
+            item.get("schema_version") == "frc-conflicts-expected-behavior-package-v1"
+            and bool(item.get("question"))
+            and bool(item.get("expected_behavior"))
+            and [response.get("response_id") for response in item.get("responses", [])]
+            == ["A", "B"]
+            and all(
+                bool(response.get("response")) and bool(response.get("sources"))
+                for response in item.get("responses", [])
+            )
+            for item in conflicts_behavior_package
+        )
+        and not {
+            "method",
+            "methods",
+            "score",
+            "scores",
+            "role_score",
+            "role_scores",
+            "selected_ids",
+            "selection_explanation",
+            "prompt_sha256",
+        }
+        & conflicts_behavior_package_keys
+        and "coverage_greedy_proxy" not in conflicts_behavior_package_text
+        and "frc_select" not in conflicts_behavior_package_text
+        and all(
+            marker
+            in (
+                repo_root
+                / "output/rag_evaluation/conflicts_expected_behavior/PROTOCOL.md"
+            ).read_text(encoding="utf-8-sig")
+            for marker in (
+                conflicts_behavior_manifest["status"],
+                conflicts_behavior_manifest["package_id"],
+                conflicts_behavior_manifest["blind_mapping_sha256"],
+            )
+        )
+        and all(
+            template["schema_version"] == "frc-conflicts-behavior-submission-v1"
+            and template["package_id"] == conflicts_behavior_manifest["package_id"]
+            and str(template["annotator_id"]).startswith("REPLACE_WITH_")
+            and len(template["decisions"]) == 458
+            and [decision.get("item_id") for decision in template["decisions"]]
+            == [item.get("item_id") for item in conflicts_behavior_package]
+            and all(
+                decision["preference"] == "REQUIRED"
+                and set(decision["ratings"]) == {"A", "B"}
+                and all(
+                    rating["expected_behavior_adherence"] == "REQUIRED"
+                    and rating["factual_grounding"] == "REQUIRED"
+                    and rating["citation_correctness"] == "REQUIRED"
+                    and rating["answer_correctness"] == "REQUIRED"
+                    and str(rating["rationale"]).startswith("REQUIRED")
+                    for rating in decision["ratings"].values()
+                )
+                for decision in template["decisions"]
+            )
+            for template in conflicts_behavior_templates
+        )
+    )
+    conflicts_operations_public_entries = conflicts_operations_manifest.get(
+        "public_files", []
+    )
+    conflicts_operations_public_payloads: dict[str, dict[str, Any]] = {}
+    conflicts_operations_public_files_valid = True
+    conflicts_operations_public_paths: set[str] = set()
+    for entry in conflicts_operations_public_entries:
+        relative_label = str(entry.get("path", ""))
+        relative_path = Path(relative_label)
+        path_is_safe = (
+            bool(relative_label)
+            and not relative_path.is_absolute()
+            and not relative_path.drive
+            and ".." not in relative_path.parts
+            and relative_path.as_posix() == relative_label
+        )
+        public_path = conflicts_operations_output_dir / relative_path
+        file_is_valid = (
+            path_is_safe
+            and relative_label not in conflicts_operations_public_paths
+            and public_path.is_file()
+            and re.fullmatch(r"[0-9a-f]{64}", str(entry.get("sha256", ""))) is not None
+            and hashlib.sha256(public_path.read_bytes()).hexdigest()
+            == entry.get("sha256")
+        )
+        conflicts_operations_public_files_valid = (
+            conflicts_operations_public_files_valid and file_is_valid
+        )
+        if not file_is_valid:
+            continue
+        conflicts_operations_public_paths.add(relative_label)
+        conflicts_operations_public_payloads[relative_label] = _load_json(public_path)
+
+    conflicts_operations_batches = {
+        str(entry["batch_id"]): conflicts_operations_public_payloads[str(entry["path"])]
+        for entry in conflicts_operations_public_entries
+        if entry.get("kind") == "batch"
+        and str(entry.get("path")) in conflicts_operations_public_payloads
+    }
+    conflicts_operations_templates = {
+        str(entry["batch_id"]): conflicts_operations_public_payloads[str(entry["path"])]
+        for entry in conflicts_operations_public_entries
+        if entry.get("kind") == "submission_template"
+        and str(entry.get("path")) in conflicts_operations_public_payloads
+    }
+    conflicts_operations_all_payloads = list(
+        conflicts_operations_public_payloads.values()
+    )
+    conflicts_operations_public_text = json.dumps(
+        conflicts_operations_all_payloads,
+        ensure_ascii=False,
+        sort_keys=True,
+    )
+    conflicts_operations_public_keys = _nested_keys(conflicts_operations_all_payloads)
+    conflicts_operations_batch_task_ids: list[str] = []
+    conflicts_operations_batch_templates_match = True
+    conflicts_operations_templates_blank = True
+    for batch_id, batch in conflicts_operations_batches.items():
+        template = conflicts_operations_templates.get(batch_id, {})
+        tasks = batch.get("tasks", [])
+        decisions = template.get("decisions", [])
+        task_ids = [str(task.get("review_task_id", "")) for task in tasks]
+        decision_ids = [
+            str(decision.get("review_task_id", "")) for decision in decisions
+        ]
+        conflicts_operations_batch_task_ids.extend(task_ids)
+        conflicts_operations_batch_templates_match = (
+            conflicts_operations_batch_templates_match
+            and batch.get("schema_version") == "frc-conflicts-annotation-batch-v1"
+            and template.get("schema_version")
+            == "frc-conflicts-annotation-batch-submission-v1"
+            and batch.get("operations_id")
+            == template.get("operations_id")
+            == conflicts_operations_manifest.get("operations_id")
+            and batch.get("package_id")
+            == template.get("package_id")
+            == conflicts_operations_manifest.get("package_id")
+            and batch.get("reviewer_slot") == template.get("reviewer_slot")
+            and batch.get("batch_id") == template.get("batch_id") == batch_id
+            and batch.get("task_count") == len(tasks)
+            and task_ids == decision_ids
+            and all(
+                task.get("schema_version") == "frc-conflicts-annotation-batch-v1"
+                and bool(task.get("question"))
+                and bool(task.get("expected_behavior"))
+                and [
+                    response.get("response_id")
+                    for response in task.get("responses", [])
+                ]
+                == ["A", "B"]
+                for task in tasks
+            )
+        )
+        task_by_id = {str(task.get("review_task_id", "")): task for task in tasks}
+        conflicts_operations_templates_blank = (
+            conflicts_operations_templates_blank
+            and str(template.get("annotator_id", "")).startswith("REPLACE_WITH_")
+            and all(
+                decision.get("preference") == "REQUIRED"
+                and set(decision.get("ratings", {})) == {"A", "B"}
+                and all(
+                    rating.get("expected_behavior_adherence") == "REQUIRED"
+                    and rating.get("factual_grounding") == "REQUIRED"
+                    and rating.get("citation_correctness") == "REQUIRED"
+                    and rating.get("answer_correctness")
+                    == (
+                        "NOT_APPLICABLE"
+                        if task_by_id.get(
+                            str(decision.get("review_task_id", "")), {}
+                        ).get("correct_answer")
+                        is None
+                        else "REQUIRED"
+                    )
+                    and str(rating.get("rationale", "")).startswith("REQUIRED")
+                    for rating in decision.get("ratings", {}).values()
+                )
+                for decision in decisions
+            )
+        )
+
+    conflicts_operations_expected_output_paths = conflicts_operations_public_paths | {
+        "manifest.json",
+        "PROTOCOL.md",
+    }
+    conflicts_operations_actual_output_paths = {
+        path.relative_to(conflicts_operations_output_dir).as_posix()
+        for path in conflicts_operations_output_dir.rglob("*")
+        if path.is_file()
+    }
+    conflicts_operations_counts_by_kind = {
+        kind: sum(
+            entry.get("kind") == kind for entry in conflicts_operations_public_entries
+        )
+        for kind in ("batch", "submission_template")
+    }
+    conflicts_operations_counts_by_slot = {
+        slot: {
+            kind: sum(
+                entry.get("reviewer_slot") == slot and entry.get("kind") == kind
+                for entry in conflicts_operations_public_entries
+            )
+            for kind in ("batch", "submission_template")
+        }
+        for slot in conflicts_operations_protocol["batching"]["reviewer_slots"]
+    }
+    conflicts_operations_preparation_passed = (
+        conflicts_operations_protocol["schema_version"]
+        == "frc-conflicts-annotation-operations-protocol-v1"
+        and conflicts_operations_protocol["status"]
+        == "REGISTERED_BEFORE_HUMAN_ANNOTATION"
+        and conflicts_operations_protocol["registration_state"][
+            "human_decisions_observed"
+        ]
+        is False
+        and conflicts_operations_protocol["registration_state"][
+            "intrarater_quality_results_observed"
+        ]
+        is False
+        and conflicts_operations_protocol["registration_state"][
+            "inter_annotator_results_observed"
+        ]
+        is False
+        and conflicts_operations_protocol["registration_state"]["method_mapping_opened"]
+        is False
+        and conflicts_operations_protocol["human_execution"][
+            "same_person_may_hold_multiple_slots"
+        ]
+        is False
+        and conflicts_operations_protocol["decision_boundary"][
+            "prepared_batches_are_human_results"
+        ]
+        is False
+        and conflicts_operations_protocol["decision_boundary"][
+            "blank_templates_are_human_results"
+        ]
+        is False
+        and conflicts_operations_protocol["decision_boundary"][
+            "automatic_or_model_filled_templates_allowed"
+        ]
+        is False
+        and conflicts_operations_protocol["decision_boundary"][
+            "may_open_blind_method_mapping"
+        ]
+        is False
+        and conflicts_operations_protocol["decision_boundary"]["may_change_gate_2"]
+        is False
+        and conflicts_operations_protocol["decision_boundary"]["gate_2"]
+        == "NO-GO/SHADOW"
+        and conflicts_operations_protocol["decision_boundary"][
+            "may_claim_setr_reproduction"
+        ]
+        is False
+        and conflicts_operations_protocol["implementation"]["module_sha256"]
+        == hashlib.sha256(
+            (
+                repo_root
+                / conflicts_operations_protocol["implementation"]["module_path"]
+            ).read_bytes()
+        ).hexdigest()
+        and conflicts_operations_protocol["implementation"]["runner_sha256"]
+        == hashlib.sha256(
+            (
+                repo_root
+                / conflicts_operations_protocol["implementation"]["runner_path"]
+            ).read_bytes()
+        ).hexdigest()
+        and conflicts_operations_protocol["frozen_inputs"][
+            "source_manifest_file_sha256"
+        ]
+        == hashlib.sha256(conflicts_behavior_manifest_path.read_bytes()).hexdigest()
+        and conflicts_operations_protocol["frozen_inputs"]["package_file_sha256"]
+        == _evidence_sha256(conflicts_behavior_package_path)
+        and conflicts_operations_protocol["frozen_inputs"]["package_items_sha256"]
+        == _canonical_json_sha256(conflicts_behavior_package)
+        and conflicts_operations_protocol["frozen_inputs"]["package_id"]
+        == conflicts_behavior_manifest["package_id"]
+        and conflicts_operations_protocol["frozen_inputs"]["case_count"]
+        == len(conflicts_behavior_package)
+        == 458
+        and conflicts_operations_protocol["frozen_inputs"]["response_count"]
+        == sum(len(item.get("responses", [])) for item in conflicts_behavior_package)
+        == 916
+        and conflicts_operations_protocol["frozen_inputs"][
+            "core_expected_behavior_protocol_sha256"
+        ]
+        == hashlib.sha256(conflicts_behavior_protocol_path.read_bytes()).hexdigest()
+        and conflicts_operations_manifest["schema_version"]
+        == "frc-conflicts-annotation-operations-manifest-v1"
+        and conflicts_operations_manifest["status"]
+        == "PREPARED_AWAITING_INDEPENDENT_HUMAN_REVIEW"
+        and conflicts_operations_manifest["operations_id"]
+        == conflicts_operations_protocol["expected_operations_id"]
+        and conflicts_operations_manifest["routing_sha256"]
+        == conflicts_operations_protocol["expected_routing_sha256"]
+        and conflicts_operations_manifest["protocol_sha256"]
+        == hashlib.sha256(conflicts_operations_protocol_path.read_bytes()).hexdigest()
+        and conflicts_operations_manifest["source_manifest_file_sha256"]
+        == conflicts_operations_protocol["frozen_inputs"]["source_manifest_file_sha256"]
+        and conflicts_operations_manifest["package_file_sha256"]
+        == conflicts_operations_protocol["frozen_inputs"]["package_file_sha256"]
+        and conflicts_operations_manifest["package_items_sha256"]
+        == conflicts_operations_protocol["frozen_inputs"]["package_items_sha256"]
+        and conflicts_operations_manifest["seed"]
+        == conflicts_operations_protocol["batching"]["seed"]
+        and conflicts_operations_manifest["reviewer_slots"]
+        == conflicts_operations_protocol["batching"]["reviewer_slots"]
+        and conflicts_operations_manifest["batch_count"] == 8
+        and conflicts_operations_manifest["primary_task_count_per_slot"] == 458
+        and conflicts_operations_manifest["repeat_task_count_per_slot"] == 23
+        and conflicts_operations_manifest["total_task_count_per_slot"] == 481
+        and conflicts_operations_manifest["total_public_batch_count"] == 24
+        and conflicts_operations_manifest["total_submission_template_count"] == 24
+        and sum(
+            conflicts_operations_manifest["repeat_counts_by_conflict_type"].values()
+        )
+        == 23
+        and len(conflicts_operations_manifest["repeat_counts_by_conflict_type"]) == 5
+        and all(
+            count > 0
+            for count in conflicts_operations_manifest[
+                "repeat_counts_by_conflict_type"
+            ].values()
+        )
+        and all(
+            len(counts) == 8 and sum(counts) == 481
+            for counts in conflicts_operations_manifest["batch_task_counts"].values()
+        )
+        and all(
+            balance["range"] <= 1
+            for slot_balances in conflicts_operations_manifest[
+                "primary_stratum_balance"
+            ].values()
+            for balance in slot_balances.values()
+        )
+        and conflicts_operations_manifest["quality_control"]
+        == conflicts_operations_protocol["quality_control"]
+        and conflicts_operations_manifest["routing_published"] is False
+        and conflicts_operations_manifest["method_identity_present_in_public_files"]
+        is False
+        and conflicts_operations_manifest["original_item_id_present_in_public_files"]
+        is False
+        and conflicts_operations_manifest["human_evidence_complete"] is False
+        and conflicts_operations_manifest["gate_2"] == "NO-GO/SHADOW"
+        and conflicts_operations_counts_by_kind
+        == {"batch": 24, "submission_template": 24}
+        and all(
+            counts == {"batch": 8, "submission_template": 8}
+            for counts in conflicts_operations_counts_by_slot.values()
+        )
+        and len(conflicts_operations_batches) == 24
+        and len(conflicts_operations_templates) == 24
+        and conflicts_operations_public_files_valid
+        and len(conflicts_operations_public_paths) == 48
+        and conflicts_operations_expected_output_paths
+        == conflicts_operations_actual_output_paths
+        and conflicts_operations_batch_templates_match
+        and conflicts_operations_templates_blank
+        and len(conflicts_operations_batch_task_ids) == 3 * 481
+        and len(set(conflicts_operations_batch_task_ids)) == 3 * 481
+        and not {
+            "item_id",
+            "occurrence",
+            "paired_primary_task_id",
+            "method",
+            "methods",
+            "score",
+            "scores",
+            "role_score",
+            "role_scores",
+            "routing",
+        }
+        & conflicts_operations_public_keys
+        and "coverage_greedy_proxy" not in conflicts_operations_public_text
+        and "frc_select" not in conflicts_operations_public_text
+        and all(
+            marker
+            in (conflicts_operations_output_dir / "PROTOCOL.md").read_text(
+                encoding="utf-8-sig"
+            )
+            for marker in (
+                conflicts_operations_manifest["status"],
+                conflicts_operations_manifest["operations_id"],
+                conflicts_operations_manifest["routing_sha256"],
+                "空模板和质控工具不是人工结果",
+            )
+        )
+    )
+    conflicts_workstation_expected_paths = {
+        "research/frc_rag/conflicts_annotation_workstation.py",
+        "scripts/run_conflicts_annotation_workstation.py",
+        "research/frc_rag/annotation_workstation/index.html",
+        "research/frc_rag/annotation_workstation/styles.css",
+        "research/frc_rag/annotation_workstation/app.js",
+        "tests/test_frc_conflicts_annotation_workstation.py",
+    }
+    conflicts_workstation_entries = conflicts_workstation_contract["implementation"][
+        "files"
+    ]
+    conflicts_workstation_paths = {
+        str(entry.get("path", "")) for entry in conflicts_workstation_entries
+    }
+    conflicts_workstation_files_valid = all(
+        bool(relative_label := str(entry.get("path", "")))
+        and not Path(relative_label).is_absolute()
+        and not Path(relative_label).drive
+        and ".." not in Path(relative_label).parts
+        and (repo_root / relative_label).is_file()
+        and re.fullmatch(r"[0-9a-f]{64}", str(entry.get("sha256", ""))) is not None
+        and hashlib.sha256((repo_root / relative_label).read_bytes()).hexdigest()
+        == entry.get("sha256")
+        for entry in conflicts_workstation_entries
+    )
+    conflicts_workstation_static_text = "\n".join(
+        (repo_root / relative).read_text(encoding="utf-8-sig")
+        for relative in (
+            "research/frc_rag/annotation_workstation/index.html",
+            "research/frc_rag/annotation_workstation/styles.css",
+            "research/frc_rag/annotation_workstation/app.js",
+        )
+    ).lower()
+    conflicts_workstation_backend_text = (
+        repo_root / "research/frc_rag/conflicts_annotation_workstation.py"
+    ).read_text(encoding="utf-8-sig")
+    conflicts_workstation_privacy = conflicts_workstation_contract[
+        "privacy_and_security"
+    ]
+    conflicts_workstation_boundary = conflicts_workstation_contract["decision_boundary"]
+    conflicts_workstation_readiness_passed = (
+        conflicts_workstation_contract["schema_version"]
+        == "frc-conflicts-annotation-workstation-contract-v1"
+        and conflicts_workstation_contract["status"]
+        == "LOCAL_REVIEW_UI_READY_AWAITING_HUMANS"
+        and conflicts_workstation_contract["frozen_inputs"][
+            "operations_manifest_file_sha256"
+        ]
+        == hashlib.sha256(conflicts_operations_manifest_path.read_bytes()).hexdigest()
+        and conflicts_workstation_contract["frozen_inputs"]["operations_id"]
+        == conflicts_operations_manifest["operations_id"]
+        and conflicts_workstation_contract["frozen_inputs"]["package_id"]
+        == conflicts_operations_manifest["package_id"]
+        and conflicts_workstation_contract["frozen_inputs"]["routing_sha256"]
+        == conflicts_operations_manifest["routing_sha256"]
+        and conflicts_workstation_contract["frozen_inputs"]["reviewer_slots"]
+        == conflicts_operations_manifest["reviewer_slots"]
+        and conflicts_workstation_contract["frozen_inputs"]["batch_count_per_slot"]
+        == conflicts_operations_manifest["batch_count"]
+        and conflicts_workstation_contract["frozen_inputs"]["task_count_per_slot"]
+        == conflicts_operations_manifest["total_task_count_per_slot"]
+        and conflicts_workstation_contract["frozen_inputs"]["public_file_count"]
+        == len(conflicts_operations_public_paths)
+        and conflicts_workstation_contract["frozen_inputs"][
+            "protocol_or_public_batch_rewritten"
+        ]
+        is False
+        and conflicts_workstation_paths == conflicts_workstation_expected_paths
+        and len(conflicts_workstation_entries)
+        == len(conflicts_workstation_expected_paths)
+        and conflicts_workstation_files_valid
+        and conflicts_workstation_contract["review_workflow"][
+            "automatic_or_model_filling_allowed"
+        ]
+        is False
+        and all(
+            conflicts_workstation_privacy[key] is True
+            for key in (
+                "loopback_only",
+                "non_loopback_bind_rejected",
+                "host_and_origin_validation",
+                "content_security_policy",
+                "draft_storage_git_ignored",
+                "operations_manifest_hash_pinned_in_runtime",
+                "public_file_hashes_verified_before_session",
+                "atomic_private_writes",
+            )
+        )
+        and conflicts_workstation_privacy["private_routing_loaded"] is False
+        and conflicts_workstation_privacy["method_identity_loaded"] is False
+        and ".cache/" in (repo_root / ".gitignore").read_text(encoding="utf-8-sig")
+        and "coverage_greedy_proxy" not in conflicts_workstation_static_text
+        and "frc_select" not in conflicts_workstation_static_text
+        and "127.0.0.1" in conflicts_workstation_backend_text
+        and "X-Review-Token" in conflicts_workstation_backend_text
+        and "FRCReviewSession" in conflicts_workstation_backend_text
+        and "Content-Security-Policy" in conflicts_workstation_backend_text
+        and conflicts_workstation_contract["verification"]["automated_test_count"] == 5
+        and conflicts_workstation_contract["verification"]["automated_test_status"]
+        == "PASS"
+        and conflicts_workstation_contract["verification"]["browser_probe_status"]
+        == "PASS_PRIVATE_NON_HUMAN_PROBE_REMOVED"
+        and conflicts_workstation_contract["verification"][
+            "browser_probe_published_as_human_evidence"
+        ]
+        is False
+        and conflicts_workstation_boundary["tool_readiness_is_human_evidence"] is False
+        and conflicts_workstation_boundary["human_decisions_complete"] is False
+        and conflicts_workstation_boundary["human_evidence_complete"] is False
+        and conflicts_workstation_boundary["may_open_blind_mapping"] is False
+        and conflicts_workstation_boundary["may_change_gate_2"] is False
+        and conflicts_workstation_boundary["gate_2"] == "NO-GO/SHADOW"
+        and conflicts_workstation_boundary["may_claim_setr_reproduction"] is False
+        and conflicts_workstation_boundary["production_readiness"] == "NO-GO_EXTERNAL"
+    )
+    conflicts_collection_expected_paths = {
+        "research/frc_rag/conflicts_annotation_collection.py",
+        "scripts/run_conflicts_annotation_collection.py",
+        "tests/test_frc_conflicts_annotation_collection.py",
+    }
+    conflicts_collection_entries = conflicts_collection_contract["implementation"][
+        "files"
+    ]
+    conflicts_collection_paths = {
+        str(entry.get("path", "")) for entry in conflicts_collection_entries
+    }
+    conflicts_collection_files_valid = all(
+        bool(relative_label := str(entry.get("path", "")))
+        and not Path(relative_label).is_absolute()
+        and not Path(relative_label).drive
+        and ".." not in Path(relative_label).parts
+        and (repo_root / relative_label).is_file()
+        and re.fullmatch(r"[0-9a-f]{64}", str(entry.get("sha256", ""))) is not None
+        and hashlib.sha256((repo_root / relative_label).read_bytes()).hexdigest()
+        == entry.get("sha256")
+        for entry in conflicts_collection_entries
+    )
+    conflicts_collection_backend_text = (
+        repo_root / "research/frc_rag/conflicts_annotation_collection.py"
+    ).read_text(encoding="utf-8-sig")
+    conflicts_collection_privacy = conflicts_collection_contract["privacy_and_security"]
+    conflicts_collection_boundary = conflicts_collection_contract["decision_boundary"]
+    conflicts_collection_readiness_passed = (
+        conflicts_collection_contract["schema_version"]
+        == "frc-conflicts-annotation-collection-contract-v1"
+        and conflicts_collection_contract["status"]
+        == "PRIVATE_COLLECTION_ORCHESTRATION_READY_AWAITING_HUMANS"
+        and conflicts_collection_contract["frozen_inputs"][
+            "operations_manifest_file_sha256"
+        ]
+        == hashlib.sha256(conflicts_operations_manifest_path.read_bytes()).hexdigest()
+        and conflicts_collection_contract["frozen_inputs"]["operations_id"]
+        == conflicts_operations_manifest["operations_id"]
+        and conflicts_collection_contract["frozen_inputs"]["package_file_sha256"]
+        == conflicts_operations_manifest["package_file_sha256"]
+        and conflicts_collection_contract["frozen_inputs"]["routing_sha256"]
+        == conflicts_operations_manifest["routing_sha256"]
+        and conflicts_collection_contract["frozen_inputs"]["reviewer_slots"]
+        == conflicts_operations_manifest["reviewer_slots"]
+        and conflicts_collection_contract["frozen_inputs"]["batch_count_per_slot"]
+        == conflicts_operations_manifest["batch_count"]
+        and conflicts_collection_contract["frozen_inputs"][
+            "expected_finalized_batch_count"
+        ]
+        == conflicts_operations_manifest["total_public_batch_count"]
+        and conflicts_collection_contract["frozen_inputs"][
+            "minimum_exact_agreement_each_dimension"
+        ]
+        == conflicts_operations_protocol["quality_control"][
+            "minimum_exact_agreement_each_dimension"
+        ]
+        and conflicts_collection_contract["frozen_inputs"][
+            "protocol_or_public_inputs_rewritten"
+        ]
+        is False
+        and conflicts_collection_paths == conflicts_collection_expected_paths
+        and len(conflicts_collection_entries)
+        == len(conflicts_collection_expected_paths)
+        and conflicts_collection_files_valid
+        and conflicts_collection_contract["collection_audit"][
+            "same_private_identity_required_across_slot_batches"
+        ]
+        is True
+        and conflicts_collection_contract["collection_audit"][
+            "different_private_identity_required_across_roles"
+        ]
+        is True
+        and conflicts_collection_contract["collection_audit"][
+            "raw_private_identity_emitted_in_status"
+        ]
+        is False
+        and conflicts_collection_contract["private_merge"][
+            "all_three_roles_validated_before_writes"
+        ]
+        is True
+        and conflicts_collection_contract["private_merge"][
+            "old_manifest_invalidated_before_private_file_writes"
+        ]
+        is True
+        and conflicts_collection_contract["private_merge"][
+            "new_manifest_published_last_atomically"
+        ]
+        is True
+        and conflicts_collection_contract["private_merge"]["qc_failure_status"]
+        == "REVIEW_REQUIRED"
+        and all(
+            conflicts_collection_privacy[key] is True
+            for key in (
+                "draft_root_git_ignored",
+                "routing_root_git_ignored",
+                "merge_output_root_git_ignored",
+                "resolved_paths_must_remain_inside_repository_cache",
+                "status_exposes_only_truncated_identity_hashes",
+            )
+        )
+        and conflicts_collection_privacy["blind_mapping_loaded"] is False
+        and conflicts_collection_privacy["method_identity_loaded"] is False
+        and conflicts_collection_privacy["private_merge_manifest_exposes_raw_identity"]
+        is False
+        and conflicts_collection_privacy["ci_requires_private_cache"] is False
+        and "READY_FOR_PRIVATE_MERGE" in conflicts_collection_backend_text
+        and "ROLE_IDENTITY_COLLISION" in conflicts_collection_backend_text
+        and "REVIEW_REQUIRED" in conflicts_collection_backend_text
+        and "blind_mapping_opened" in conflicts_collection_backend_text
+        and conflicts_collection_contract["verification"]["automated_test_count"] == 5
+        and conflicts_collection_contract["verification"]["automated_test_status"]
+        == "PASS"
+        and conflicts_collection_contract["verification"][
+            "synthetic_test_data_is_human_evidence"
+        ]
+        is False
+        and conflicts_collection_contract["verification"][
+            "real_private_status_observed"
+        ]
+        == "AWAITING_INDEPENDENT_HUMAN_BATCHES"
+        and conflicts_collection_contract["verification"][
+            "real_present_batch_count_observed"
+        ]
+        == 0
+        and conflicts_collection_contract["verification"][
+            "real_finalized_batch_count_observed"
+        ]
+        == 0
+        and conflicts_collection_contract["verification"][
+            "real_status_written_to_public_output"
+        ]
+        is False
+        and conflicts_collection_boundary["collection_tool_ready"] is True
+        and conflicts_collection_boundary["real_human_batches_started"] is False
+        and conflicts_collection_boundary["independent_batch_collection_complete"]
+        is False
+        and conflicts_collection_boundary["intrarater_qc_complete"] is False
+        and conflicts_collection_boundary["inter_annotator_comparison_complete"]
+        is False
+        and conflicts_collection_boundary["final_adjudication_complete"] is False
+        and conflicts_collection_boundary["human_evidence_complete"] is False
+        and conflicts_collection_boundary["may_open_blind_mapping"] is False
+        and conflicts_collection_boundary["may_change_gate_2"] is False
+        and conflicts_collection_boundary["gate_2"] == "NO-GO/SHADOW"
+        and conflicts_collection_boundary["production_readiness"] == "NO-GO_EXTERNAL"
+    )
+    conflicts_router_expected_paths = {
+        "research/frc_rag/conflicts_selector_router.py",
+        "scripts/run_conflicts_selector_router.py",
+        "tests/test_frc_conflicts_selector_router.py",
+    }
+    conflicts_router_entries = conflicts_router_protocol["implementation"]["files"]
+    conflicts_router_paths = {
+        str(entry.get("path", "")) for entry in conflicts_router_entries
+    }
+    conflicts_router_files_valid = all(
+        bool(relative_label := str(entry.get("path", "")))
+        and not Path(relative_label).is_absolute()
+        and not Path(relative_label).drive
+        and ".." not in Path(relative_label).parts
+        and (repo_root / relative_label).is_file()
+        and re.fullmatch(r"[0-9a-f]{64}", str(entry.get("sha256", ""))) is not None
+        and hashlib.sha256((repo_root / relative_label).read_bytes()).hexdigest()
+        == entry.get("sha256")
+        for entry in conflicts_router_entries
+    )
+    conflicts_router_metadata = conflicts_router_report["metadata"]
+    conflicts_router_analysis = conflicts_router_report["analysis"]
+    conflicts_router_classification = conflicts_router_analysis["classification"]
+    conflicts_router_paired = conflicts_router_analysis[
+        "paired_all_router_minus_static"
+    ]
+    conflicts_router_frc_contribution = conflicts_router_analysis[
+        "paired_all_router_minus_without_frc"
+    ]
+    conflicts_router_safety = conflicts_router_analysis["safety_and_stability"]
+    conflicts_router_outcome = conflicts_router_analysis["outcome"]
+    conflicts_router_source_matches_protocol = all(
+        conflicts_router_metadata["source_artifacts"][key]["path_label"]
+        == conflicts_router_protocol["frozen_inputs"][key]["path_label"]
+        and conflicts_router_metadata["source_artifacts"][key]["sha256"]
+        == conflicts_router_protocol["frozen_inputs"][key]["sha256"]
+        and conflicts_router_metadata["source_artifacts"][key]["record_count"]
+        == conflicts_router_protocol["frozen_inputs"][key]["record_count"]
+        for key in ("scored_cases", "selected_evidence", "conflict_predictions")
+    )
+    conflicts_router_readiness_passed = (
+        conflicts_router_protocol["schema_version"]
+        == "frc-conflicts-selector-routing-protocol-v1"
+        and conflicts_router_protocol["development_boundary"]["retrospective_discovery"]
+        is True
+        and conflicts_router_protocol["development_boundary"][
+            "pre_registered_confirmation"
+        ]
+        is False
+        and conflicts_router_protocol["development_boundary"]["gate_evidence"] is False
+        and conflicts_router_protocol["development_boundary"][
+            "production_authorization"
+        ]
+        is False
+        and conflicts_router_protocol["feature_contract"][
+            "strict_without_frc_reads_frc_prediction_or_selection"
+        ]
+        is False
+        and conflicts_router_protocol["feature_contract"]["all_method_feature_count"]
+        == 47
+        and conflicts_router_protocol["feature_contract"][
+            "strict_without_frc_feature_count"
+        ]
+        == 45
+        and conflicts_router_paths == conflicts_router_expected_paths
+        and len(conflicts_router_entries) == len(conflicts_router_expected_paths)
+        and conflicts_router_files_valid
+        and conflicts_router_protocol["implementation"]["automated_test_count"] == 4
+        and conflicts_router_protocol["implementation"]["automated_test_status"]
+        == "PASS"
+        and conflicts_router_protocol["implementation"]["deterministic_output_rerun"]
+        == "3/3 byte-identical"
+        and conflicts_router_metadata["schema_version"]
+        == "frc-conflicts-selector-routing-discovery-v1"
+        and conflicts_router_metadata["status"]
+        == "RUN_PUBLIC_RETROSPECTIVE_CROSSFIT_DISCOVERY"
+        and conflicts_router_metadata["cases"] == 458
+        and conflicts_router_metadata["methods"]
+        == conflicts_router_protocol["frozen_router"]["methods"]
+        and conflicts_router_metadata["fold_namespace"] == "frc-router-v1"
+        and conflicts_router_metadata["fold_count"] == 5
+        and conflicts_router_metadata["logistic_l2"] == 1.0
+        and conflicts_router_metadata["bootstrap_resamples"] == 10_000
+        and conflicts_router_source_matches_protocol
+        and conflicts_router_metadata["evidence_artifact"]["path_label"]
+        == conflicts_router_cases_path.name
+        and conflicts_router_metadata["evidence_artifact"]["sha256"]
+        == _evidence_sha256(conflicts_router_cases_path)
+        and conflicts_router_metadata["evidence_artifact"]["record_count"] == 458
+        and len(conflicts_router_cases) == 458
+        and len({row["case_id"] for row in conflicts_router_cases}) == 458
+        and {int(row["fold"]) for row in conflicts_router_cases} == {0, 1, 2, 3, 4}
+        and all(
+            row["feature_inputs_include_gold"] is False
+            and len(row["features"]["all_methods"]) == 6
+            and len(row["features"]["without_frc"]) == 5
+            and all(
+                len(vector) == 47 for vector in row["features"]["all_methods"].values()
+            )
+            and all(
+                len(vector) == 45 for vector in row["features"]["without_frc"].values()
+            )
+            for row in conflicts_router_cases
+        )
+        and not ({"question", "correct_answer"} & _nested_keys(conflicts_router_cases))
+        and conflicts_router_report["development_boundary"]["retrospective_discovery"]
+        is True
+        and conflicts_router_report["development_boundary"][
+            "pre_registered_confirmation"
+        ]
+        is False
+        and conflicts_router_report["development_boundary"]["prior_exposure"]
+        == conflicts_router_protocol["prior_exposure"]
+        and conflicts_router_classification["coverage_greedy_proxy"]["correct"] == 158
+        and conflicts_router_classification["coverage_greedy_proxy"]["accuracy"]
+        == 0.344978
+        and conflicts_router_classification["all_methods"]["correct"] == 181
+        and conflicts_router_classification["all_methods"]["accuracy"] == 0.395197
+        and conflicts_router_classification["without_frc"]["correct"] == 180
+        and conflicts_router_classification["without_frc"]["accuracy"] == 0.393013
+        and conflicts_router_paired["mean_difference"] == 0.050218
+        and conflicts_router_paired["ci_low"] == 0.008734
+        and conflicts_router_paired["ci_high"] == 0.091703
+        and conflicts_router_paired["wins"] == 61
+        and conflicts_router_paired["losses"] == 38
+        and conflicts_router_frc_contribution["mean_difference"] == 0.002183
+        and conflicts_router_frc_contribution["ci_low"] == -0.00655
+        and conflicts_router_frc_contribution["ci_high"] == 0.010917
+        and conflicts_router_analysis["oracle"]["frc_unique_correct_cases"] == 2
+        and conflicts_router_analysis["oracle"]["frc_unique_accuracy_gain"] == 0.004367
+        and conflicts_router_safety["per_label_recall_delta_all_router_minus_static"][
+            "Conflict due to outdated information"
+        ]
+        == -0.435483
+        and conflicts_router_safety["folds_with_nonnegative_accuracy_gain"] == 3
+        and conflicts_router_analysis["execution_cost"][
+            "requires_all_method_predictions_at_inference"
+        ]
+        is True
+        and conflicts_router_outcome["status"]
+        == ("DISCOVERY_ROUTING_SIGNAL_NOT_ADOPTED_FRC_CONTRIBUTION_NOT_ESTABLISHED")
+        and conflicts_router_outcome["checks"]["all_router_point_gain_at_least_0_05"]
+        is True
+        and conflicts_router_outcome["checks"]["all_router_paired_ci_low_above_zero"]
+        is True
+        and conflicts_router_outcome["checks"]["all_router_paired_ci_low_at_least_0_05"]
+        is False
+        and conflicts_router_outcome["checks"][
+            "frc_crossfit_contribution_at_least_0_01"
+        ]
+        is False
+        and conflicts_router_outcome["checks"]["all_folds_nonnegative_accuracy_gain"]
+        is False
+        and conflicts_router_outcome["checks"][
+            "outdated_conflict_recall_not_lower_than_static"
+        ]
+        is False
+        and conflicts_router_outcome["replace_frc_selector"] is False
+        and conflicts_router_outcome["router_adopted"] is False
+        and conflicts_router_outcome["independent_confirmation_required"] is True
+        and conflicts_router_outcome["gate_2"] == "NO-GO/SHADOW"
+    )
+    whoqa_metadata = whoqa_report["metadata"]
+    whoqa_analysis = whoqa_report["analysis"]
+    whoqa_aggregates = whoqa_analysis["aggregates"]
+    whoqa_comparisons = whoqa_analysis["comparisons"]
+    whoqa_outcome = whoqa_analysis["outcome"]
+    whoqa_registration_artifacts_match = all(
+        whoqa_metadata["source_artifacts"][name]["path_label"] == path.name
+        and whoqa_metadata["source_artifacts"][name]["sha256"]
+        == hashlib.sha256(path.read_bytes()).hexdigest()
+        for name, path in whoqa_registration_paths.items()
+    )
+    whoqa_implementation_paths = (
+        "research/frc_rag/whoqa_conflict_coverage.py",
+        "scripts/run_whoqa_conflict_coverage.py",
+        "tests/test_frc_whoqa_conflict_coverage.py",
+    )
+    whoqa_readiness_passed = (
+        whoqa_protocol["schema_version"] == "frc-whoqa-conflict-coverage-protocol-v1"
+        and whoqa_protocol["registration_boundary"]["pre_download_registration"] is True
+        and whoqa_protocol["registration_boundary"]["prior_frc_results_on_whoqa_known"]
+        is False
+        and whoqa_protocol["registration_boundary"]["gate_evidence"] is False
+        and whoqa_protocol["registration_boundary"]["production_authorization"] is False
+        and whoqa_protocol["frozen_source"]["revision"]
+        == "02c2b24004fc334c4bf6c9391285eb55e652a86a"
+        and whoqa_protocol["frozen_source"]["license"] == "BSD-3-Clause"
+        and whoqa_protocol["frozen_source"]["expected_evaluation_question_count"]
+        == 5152
+        and whoqa_protocol["frozen_scoring"]["gold_fields_visible_to_scorer"] is False
+        and whoqa_protocol["frozen_selection"]["gold_fields_visible_to_selector"]
+        is False
+        and whoqa_protocol["frozen_selection"]["methods"]
+        == [
+            "bm25_topk",
+            "dense_topk",
+            "hybrid_topk",
+            "cross_encoder_topk",
+            "coverage_greedy_proxy",
+            "frc_select",
+        ]
+        and whoqa_protocol["frozen_selection"]["top_k"] == 4
+        and whoqa_protocol["frozen_selection"]["token_budget"] == 1500
+        and whoqa_protocol["frozen_metrics"]["paired_bootstrap"]["resamples"] == 10_000
+        and whoqa_protocol["frozen_metrics"]["paired_bootstrap"]["seed"] == 20260801
+        and whoqa_registrations["execution"]["registered_before_model_scoring"] is True
+        and whoqa_registrations["execution_erratum5"]["final_frozen_runtime"]
+        == {
+            "device": "cuda",
+            "floating_point_dtype": "float16",
+            "q_id_batch_size": 32,
+            "embedding_batch_size": 64,
+            "reranker_batch_size": 256,
+            "oom_policy": "fail and report; do not silently change batch size or dtype",
+            "discard_existing_partial_before_restart": True,
+            "further_runtime_tuning_after_restart": False,
+        }
+        and whoqa_registrations["post_result_correction"]["initial_result_disclosed"][
+            "status"
+        ]
+        == "WHOQA_SELECTION_SUPPORT_NOT_ESTABLISHED"
+        and whoqa_registrations["post_result_correction"][
+            "frozen_correction_before_recalculation"
+        ]["primary_metric_or_threshold_changed"]
+        is False
+        and whoqa_registration_artifacts_match
+        and all((repo_root / path).is_file() for path in whoqa_implementation_paths)
+        and whoqa_metadata["schema_version"] == "frc-whoqa-conflict-coverage-v1"
+        and whoqa_metadata["dataset"] == "WhoQA"
+        and whoqa_metadata["cases"] == 5152
+        and whoqa_metadata["template_count_distribution"] == {"5": 4753, "8": 399}
+        and whoqa_metadata["selection_runs"] == 161742
+        and whoqa_metadata["methods"] == whoqa_protocol["frozen_selection"]["methods"]
+        and whoqa_metadata["top_k"] == 4
+        and whoqa_metadata["token_budget"] == 1500
+        and whoqa_metadata["deterministic_output_rerun"] == "2/2 byte-identical"
+        and whoqa_metadata["source_artifacts"]["raw_source"]["sha256"]
+        == "030dfa5781d15795846f3d1f89fdc76253debb7c67d93a4b516cb9a53d11c211"
+        and whoqa_metadata["source_artifacts"]["prepared_blind"]["sha256"]
+        == "73db96be7ace983387e5139994ee9f489a4a2f3f9014f0703cd5daa44c602f78"
+        and whoqa_metadata["source_artifacts"]["scored_blind"]["sha256"]
+        == "d9dacf56fa011726728811123af113b852c079e40d3a136301d1d024f8873a4b"
+        and whoqa_metadata["evidence_artifact"]["path_label"] == whoqa_cases_path.name
+        and whoqa_metadata["evidence_artifact"]["sha256"]
+        == _evidence_sha256(whoqa_cases_path)
+        and whoqa_metadata["evidence_artifact"]["record_count"] == 5152
+        and len(whoqa_cases) == 5152
+        and len({row["case_id"] for row in whoqa_cases}) == 5152
+        and all(
+            row["raw_question_or_answer_exported"] is False and len(row["methods"]) == 6
+            for row in whoqa_cases
+        )
+        and not (
+            {
+                "question",
+                "questions",
+                "context",
+                "contexts",
+                "answer_by_context",
+                "main_ent",
+            }
+            & _nested_keys(whoqa_cases)
+        )
+        and whoqa_report["development_boundary"]["independent_public_dataset"] is True
+        and whoqa_report["development_boundary"]["no_fitting"] is True
+        and whoqa_report["development_boundary"]["gold_used_only_after_selection"]
+        is True
+        and whoqa_report["development_boundary"]["gate_evidence"] is False
+        and whoqa_report["data_audit"][
+            "public_num_distinct_answer_mismatches_against_canonical_viewpoints"
+        ]
+        == 0
+        and whoqa_report["data_audit"]["raw_questions_or_answers_in_evidence"] is False
+        and whoqa_aggregates["bm25_topk"]["metrics"][
+            "oracle_normalized_distinct_viewpoint_coverage"
+        ]
+        == 0.995203
+        and whoqa_aggregates["frc_select"]["metrics"][
+            "oracle_normalized_distinct_viewpoint_coverage"
+        ]
+        == 0.994919
+        and whoqa_comparisons["observed_strongest_baseline"] == "bm25_topk"
+        and whoqa_comparisons["frc_minus_observed_strongest_point"] == -0.000283
+        and whoqa_comparisons["frc_minus_bootstrap_strongest_simultaneous"]["ci_low"]
+        == -0.0011
+        and whoqa_comparisons["frc_minus_bootstrap_strongest_simultaneous"]["ci_high"]
+        == 0.000039
+        and whoqa_comparisons["frc_minus_reference"]["point"] == -0.00011
+        and whoqa_comparisons["frc_minus_reference"]["ci_low"] == -0.000524
+        and whoqa_comparisons["frc_minus_reference"]["ci_high"] == 0.000298
+        and [row["stratum"] for row in whoqa_analysis["viewpoint_count_strata"]]
+        == [
+            "2 viewpoints",
+            "3 viewpoints",
+            "4 viewpoints",
+            "5-8 viewpoints",
+            "9+ viewpoints",
+        ]
+        and whoqa_analysis["safety"]["worst_viewpoint_count_delta"] == -0.002485
+        and whoqa_analysis["safety"]["worst_property_delta"] == -0.002156
+        and whoqa_outcome["status"] == "WHOQA_SELECTION_SUPPORT_NOT_ESTABLISHED"
+        and whoqa_outcome["checks"]
+        == {
+            "frc_minus_strongest_point_gain_at_least_0_05": False,
+            "frc_minus_strongest_simultaneous_ci_low_above_zero": False,
+            "frc_minus_reference_ci_low_above_zero": False,
+            "no_viewpoint_count_stratum_delta_below_minus_0_05": True,
+            "no_property_stratum_delta_below_minus_0_05": True,
+            "frc_budget_shortfall_not_above_strongest_baseline": True,
+            "all_cases_scored": True,
+            "gold_leakage_checks_pass": True,
+            "official_viewpoint_count_alignment_pass": True,
+        }
+        and whoqa_outcome["gate_2"] == "NO-GO/SHADOW"
+        and whoqa_outcome["canary_or_default_authorized"] is False
+    )
+    whoqa_stress_metadata = whoqa_stress_report["metadata"]
+    whoqa_stress_analysis = whoqa_stress_report["analysis"]
+    whoqa_stress_family = whoqa_stress_analysis["family_comparison"]
+    whoqa_stress_outcome = whoqa_stress_analysis["outcome"]
+    whoqa_stress_repo_sources = {
+        "protocol": whoqa_stress_protocol_path,
+        "parent_protocol": whoqa_protocol_path,
+        "post_result_alias_correction": whoqa_registration_paths[
+            "post_result_correction"
+        ],
+        "frozen_selector_implementation": (
+            repo_root / "research/frc_rag/whoqa_conflict_coverage.py"
+        ),
+    }
+    whoqa_stress_source_artifacts_match = all(
+        whoqa_stress_metadata["source_artifacts"][name]["path_label"] == path.name
+        and whoqa_stress_metadata["source_artifacts"][name]["sha256"]
+        == hashlib.sha256(path.read_bytes()).hexdigest()
+        for name, path in whoqa_stress_repo_sources.items()
+    )
+    whoqa_stress_config_points = {
+        config_id: comparison["frc_minus_observed_strongest_point"]
+        for config_id, comparison in whoqa_stress_analysis[
+            "configuration_comparisons"
+        ].items()
+    }
+    whoqa_stress_strata = whoqa_stress_analysis["predeclared_strata"]
+    whoqa_stress_readiness_passed = (
+        whoqa_stress_protocol["schema_version"] == "frc-whoqa-budget-stress-protocol-v1"
+        and whoqa_stress_protocol["experiment_id"] == "FRC-WHOQA-BUDGET-STRESS-V34"
+        and whoqa_stress_protocol["development_boundary"]["v33_outcome_known"] is True
+        and whoqa_stress_protocol["development_boundary"][
+            "v34_stress_results_known_at_registration"
+        ]
+        is False
+        and whoqa_stress_protocol["development_boundary"][
+            "post_result_method_development"
+        ]
+        is True
+        and whoqa_stress_protocol["development_boundary"]["new_model_scoring"] is False
+        and whoqa_stress_protocol["development_boundary"]["selector_parameters_changed"]
+        is False
+        and whoqa_stress_protocol["development_boundary"]["independent_confirmation"]
+        is False
+        and whoqa_stress_protocol["development_boundary"]["gate_evidence"] is False
+        and whoqa_stress_protocol["frozen_grid"]
+        == [
+            {"config_id": "k2_b1500", "top_k": 2, "token_budget": 1500},
+            {"config_id": "k3_b1500", "top_k": 3, "token_budget": 1500},
+            {"config_id": "k4_b256", "top_k": 4, "token_budget": 256},
+            {"config_id": "k4_b512", "top_k": 4, "token_budget": 512},
+            {"config_id": "k4_b1024", "top_k": 4, "token_budget": 1024},
+            {"config_id": "k4_b1500", "top_k": 4, "token_budget": 1500},
+        ]
+        and whoqa_stress_protocol["frozen_evaluation"]["primary_metric"]["name"]
+        == "fixed_capacity_distinct_viewpoint_coverage"
+        and whoqa_stress_protocol["frozen_evaluation"]["paired_bootstrap"]["resamples"]
+        == 10_000
+        and whoqa_stress_protocol["frozen_evaluation"]["paired_bootstrap"]["seed"]
+        == 20260801
+        and whoqa_stress_protocol["frozen_outcome_rules"]["support_established"][
+            "family_point_gain_at_least"
+        ]
+        == 0.01
+        and whoqa_stress_protocol["frozen_outcome_rules"]["support_established"][
+            "every_config_frc_minus_observed_strongest_at_least"
+        ]
+        == -0.02
+        and hashlib.sha256(whoqa_stress_protocol_path.read_bytes()).hexdigest()
+        == "2c120be37eac8c5955c8170d828dfbf0638325b37fee51ae42494c4b08a6fbec"
+        and whoqa_stress_source_artifacts_match
+        and whoqa_stress_metadata["source_artifacts"]["raw_source"]["sha256"]
+        == whoqa_stress_protocol["frozen_inputs"]["raw_source"]["sha256"]
+        and whoqa_stress_metadata["source_artifacts"]["scored_blind"]["sha256"]
+        == whoqa_stress_protocol["frozen_inputs"]["blind_score_cache"]["sha256"]
+        and all(
+            (repo_root / path).is_file()
+            for path in (
+                "research/frc_rag/whoqa_budget_stress.py",
+                "scripts/run_whoqa_budget_stress.py",
+                "tests/test_frc_whoqa_budget_stress.py",
+            )
+        )
+        and whoqa_stress_metadata["schema_version"] == "frc-whoqa-budget-stress-v1"
+        and whoqa_stress_metadata["cases"] == 5152
+        and whoqa_stress_metadata["template_count"] == 26957
+        and whoqa_stress_metadata["selection_runs"] == 970452
+        and whoqa_stress_metadata["methods"] == whoqa_stress_protocol["frozen_methods"]
+        and whoqa_stress_metadata["configurations"]
+        == whoqa_stress_protocol["frozen_grid"]
+        and whoqa_stress_metadata["deterministic_output_rerun"] == "2/2 byte-identical"
+        and whoqa_stress_metadata["evidence_artifact"]["path_label"]
+        == whoqa_stress_cases_path.name
+        and whoqa_stress_metadata["evidence_artifact"]["sha256"]
+        == _evidence_sha256(whoqa_stress_cases_path)
+        and whoqa_stress_metadata["evidence_artifact"]["record_count"] == 5152
+        and len(whoqa_stress_cases) == 5152
+        and len({row["case_id"] for row in whoqa_stress_cases}) == 5152
+        and all(
+            row["raw_question_or_answer_exported"] is False
+            and len(row["configurations"]) == 6
+            and len(row["family_primary"]) == 6
+            for row in whoqa_stress_cases
+        )
+        and not (
+            {
+                "question",
+                "questions",
+                "context",
+                "contexts",
+                "answer_by_context",
+                "main_ent",
+            }
+            & _nested_keys(whoqa_stress_cases)
+        )
+        and whoqa_stress_report["development_boundary"]["new_model_scoring"] is False
+        and whoqa_stress_report["development_boundary"]["selector_parameters_changed"]
+        is False
+        and whoqa_stress_report["development_boundary"]["independent_confirmation"]
+        is False
+        and whoqa_stress_report["development_boundary"]["gate_evidence"] is False
+        and whoqa_stress_family["observed_strongest_baseline"] == "dense_topk"
+        and whoqa_stress_family["method_primary_means"]["dense_topk"] == 0.890719
+        and whoqa_stress_family["method_primary_means"]["frc_select"] == 0.887793
+        and whoqa_stress_family["frc_minus_observed_strongest_point"] == -0.002926
+        and whoqa_stress_family["frc_minus_bootstrap_strongest_simultaneous"]["ci_low"]
+        == -0.003858
+        and whoqa_stress_family["frc_minus_bootstrap_strongest_simultaneous"]["ci_high"]
+        == -0.002025
+        and whoqa_stress_family["frc_minus_reference"]["point"] == -0.000329
+        and whoqa_stress_family["frc_minus_reference"]["ci_low"] == -0.000685
+        and whoqa_stress_family["frc_minus_reference"]["ci_high"] == 0.000023
+        and whoqa_stress_config_points
+        == {
+            "k2_b1500": -0.000633,
+            "k3_b1500": -0.00016,
+            "k4_b256": -0.016657,
+            "k4_b512": -0.004657,
+            "k4_b1024": -0.000341,
+            "k4_b1500": -0.000283,
+        }
+        and [row["stratum"] for row in whoqa_stress_strata]
+        == [
+            "2 viewpoints",
+            "3 viewpoints",
+            "4 viewpoints",
+            "5-8 viewpoints",
+            "9+ viewpoints",
+            "slot_constrained",
+            "token_constrained",
+        ]
+        and [row["cases"] for row in whoqa_stress_strata]
+        == [2450, 919, 664, 1086, 33, 1119, 4604]
+        and whoqa_stress_analysis["safety"]["worst_configuration_delta"] == -0.016657
+        and whoqa_stress_analysis["safety"]["worst_stratum_delta"] == -0.012057
+        and whoqa_stress_outcome["status"] == "WHOQA_STRESS_SUPPORT_NOT_ESTABLISHED"
+        and whoqa_stress_outcome["checks"]
+        == {
+            "family_point_gain_at_least_0_01": False,
+            "family_simultaneous_ci_low_above_zero": False,
+            "family_reference_ci_low_above_zero": False,
+            "every_config_delta_at_least_minus_0_02": True,
+        }
+        and whoqa_stress_outcome["selector_changed"] is False
+        and whoqa_stress_outcome["gate_2"] == "NO-GO/SHADOW"
+        and whoqa_stress_outcome["canary_or_default_authorized"] is False
+        and whoqa_stress_outcome["independent_confirmation"] is False
+    )
+    rgb_metadata = rgb_report["metadata"]
+    rgb_analysis = rgb_report["analysis"]
+    rgb_family = rgb_analysis["family_comparison"]
+    rgb_outcome = rgb_analysis["outcome"]
+    rgb_family_means = rgb_report["aggregates"]["family_equal_dataset_budget_weight"]
+    rgb_repo_sources = {
+        "protocol": rgb_protocol_path,
+        "execution": rgb_execution_path,
+        "post_result_correction": rgb_correction_path,
+        "implementation": repo_root / "research/frc_rag/rgb_cost_aware_frc.py",
+    }
+    rgb_repo_source_artifacts_match = all(
+        rgb_metadata["source_artifacts"][name]["path_label"] == path.name
+        and rgb_metadata["source_artifacts"][name]["sha256"]
+        == hashlib.sha256(path.read_bytes()).hexdigest()
+        for name, path in rgb_repo_sources.items()
+    )
+    rgb_dataset_budget_deltas = rgb_analysis["dataset_budget_deltas"]
+    rgb_cost_aware_readiness_passed = (
+        rgb_protocol["schema_version"] == "frc-rgb-cost-aware-protocol-v1"
+        and rgb_protocol["experiment_id"] == "FRC-RGB-COST-AWARE-V35"
+        and rgb_protocol["hypothesis_origin"]["v34_result_known"] is True
+        and rgb_protocol["hypothesis_origin"][
+            "rgb_selection_results_known_at_registration"
+        ]
+        is False
+        and rgb_protocol["hypothesis_origin"]["method_parameters_tuned_on_rgb"] is False
+        and rgb_protocol["source"]["revision"]
+        == "65ec39e40e7dc9abb50e9bf1b4f32be3f6f16615"
+        and rgb_protocol["source"]["license"] == "CC-BY-NC-SA-4.0"
+        and rgb_protocol["source"]["content_accessed_before_registration"] is False
+        and rgb_protocol["frozen_methods"]
+        == [
+            "bm25_topk",
+            "dense_topk",
+            "hybrid_topk",
+            "cross_encoder_topk",
+            "cross_encoder_density",
+            "cross_encoder_knapsack",
+            "coverage_greedy_proxy",
+            "frc_select_v34",
+            "frc_cost_aware_v35",
+        ]
+        and rgb_protocol["frozen_cost_aware_selector"]["top_k"] == 5
+        and rgb_protocol["frozen_cost_aware_selector"]["budgets"] == [512, 1024, 1500]
+        and rgb_protocol["frozen_cost_aware_selector"]["score_or_weight_tuning"]
+        is False
+        and rgb_protocol["frozen_metrics"]["primary"] == "evidence_f1"
+        and rgb_protocol["frozen_metrics"]["paired_bootstrap"]["resamples"] == 10_000
+        and rgb_protocol["frozen_metrics"]["paired_bootstrap"]["seed"] == 20260801
+        and rgb_protocol["stopping_rule"][
+            "no_rgb_weight_or_formula_tuning_after_scores_or_labels_are_joined"
+        ]
+        is True
+        and hashlib.sha256(rgb_protocol_path.read_bytes()).hexdigest()
+        == "c370f83ada7df1c16b8249e05aad929d0a0dc439efa48594ca03ec04e7e420a4"
+        and rgb_execution["schema_version"] == "frc-rgb-cost-aware-execution-v1"
+        and rgb_execution["registration_boundary"]["protocol_sha256"]
+        == "c370f83ada7df1c16b8249e05aad929d0a0dc439efa48594ca03ec04e7e420a4"
+        and rgb_execution["registration_boundary"][
+            "rgb_neural_scores_generated_before_registration"
+        ]
+        is False
+        and rgb_execution["registration_boundary"][
+            "rgb_selection_metrics_known_before_registration"
+        ]
+        is False
+        and rgb_execution["structural_census"]["total_source_rows"] == 500
+        and rgb_execution["structural_census"]["total_valid_rows"] == 498
+        and rgb_execution["structural_census"]["total_excluded_rows"] == 2
+        and rgb_execution["structural_census"]["exclusions"]
+        == {
+            "rgb_en_refine": {},
+            "rgb_en_int": {},
+            "rgb_en_fact": {"cross_label_duplicate_conflict": 2},
+        }
+        and "SHA-256" in rgb_execution["structural_census"]["source_order"]
+        and rgb_execution["frozen_scoring_execution"]["embedding_revision"]
+        == "d4aa6901d3a41ba39fb536a557fa166f842b0e09"
+        and rgb_execution["frozen_scoring_execution"]["reranker_revision"]
+        == "55611d7bca2a7133960a6d3b71e083071bbfc312"
+        and rgb_execution["frozen_scoring_execution"]["case_batch_size"] == 8
+        and rgb_execution["stopping_and_output"][
+            "no_formula_threshold_weight_or_prompt_tuning_after_registration"
+        ]
+        is True
+        and hashlib.sha256(rgb_execution_path.read_bytes()).hexdigest()
+        == "f22441b13950b033e0f2d029887f77df5be9e3cabd5a1506ef8ee8e9eee50e71"
+        and rgb_correction["schema_version"]
+        == "frc-rgb-cost-aware-post-result-correction-v1"
+        and rgb_correction["initial_result_disclosed"]["status"]
+        == "RGB_COST_AWARE_FRC_SAFETY_REGRESSION"
+        and rgb_correction["initial_result_disclosed"]["cost_aware_minus_strongest"]
+        == -0.048719
+        and rgb_correction["initial_result_disclosed"]["worst_dataset_budget_delta"]
+        == -0.127688
+        and rgb_correction["issue"]["primary_metric_affected"] is False
+        and rgb_correction["issue"]["status_or_safety_regression_affected"] is False
+        and rgb_correction["frozen_correction_before_recalculation"][
+            "positive_wrong_population"
+        ]
+        == "rgb_en_fact valid rows only"
+        and rgb_correction["frozen_correction_before_recalculation"][
+            "no_neural_rescoring"
+        ]
+        is True
+        and rgb_correction["development_boundary"]["rgb_formula_or_weight_tuning"]
+        is False
+        and hashlib.sha256(rgb_correction_path.read_bytes()).hexdigest()
+        == "10b85a8077dd4613dab091998116520aa5bdf5b2dfcc5229e182486280216772"
+        and all(
+            (repo_root / path).is_file()
+            for path in (
+                "research/frc_rag/rgb_cost_aware_frc.py",
+                "scripts/run_rgb_cost_aware_frc.py",
+                "tests/test_frc_rgb_cost_aware.py",
+            )
+        )
+        and rgb_repo_source_artifacts_match
+        and rgb_report["schema_version"] == "frc-rgb-cost-aware-v1"
+        and rgb_metadata["cases"] == 498
+        and rgb_metadata["candidate_chunks"] == 14580
+        and rgb_metadata["selection_runs"] == 13446
+        and rgb_metadata["methods"] == rgb_protocol["frozen_methods"]
+        and rgb_metadata["budgets"] == [512, 1024, 1500]
+        and rgb_metadata["deterministic_output_rerun"] == "2/2 byte-identical"
+        and rgb_metadata["gold_visible_to_scorer"] is False
+        and rgb_metadata["raw_text_committed"] is False
+        and rgb_metadata["source_artifacts"]["prepared_blind"]["sha256"]
+        == "b006801f0d6737f67d8a9070db679b9469d220db052021302ad1ed625a2da81e"
+        and rgb_metadata["source_artifacts"]["scored_blind"]["sha256"]
+        == "32f5f1efa4b6df8c21b973b39742067856d12faf9e1300554f067d4227901a2d"
+        and rgb_metadata["source_artifacts"]["rgb_en_refine"]["sha256"]
+        == "ad6468eb2d14496a6a2d9961d35b60924739e21a0c6e7811552f1ac31e3423f3"
+        and rgb_metadata["source_artifacts"]["rgb_en_int"]["sha256"]
+        == "797a6fc39a75d0cfb88d9c1b57f27277a959870eba3d56f26cf2dad482cd7725"
+        and rgb_metadata["source_artifacts"]["rgb_en_fact"]["sha256"]
+        == "27b5a3ae2d3cd0c5c12282b3bbab659708dbd46c58e5890fd787f86f5530c28e"
+        and rgb_metadata["evidence_artifact"]["path"] == rgb_cases_path.name
+        and rgb_metadata["evidence_artifact"]["sha256"]
+        == _evidence_sha256(rgb_cases_path)
+        and rgb_metadata["evidence_artifact"]["rows"] == 498
+        and len(rgb_cases) == 498
+        and len({row["case_id"] for row in rgb_cases}) == 498
+        and all(
+            row["raw_question_answer_or_candidate_text_exported"] is False
+            and len(row["configurations"]) == 3
+            and all(
+                len(configuration["methods"]) == 9
+                for configuration in row["configurations"].values()
+            )
+            for row in rgb_cases
+        )
+        and not (
+            {
+                "query",
+                "question",
+                "answer",
+                "answers",
+                "text",
+                "candidate_text",
+                "contexts",
+                "positive",
+                "negative",
+                "positive_wrong",
+                "source_label",
+            }
+            & _nested_keys(rgb_cases)
+        )
+        and rgb_family["observed_strongest_baseline"] == "coverage_greedy_proxy"
+        and rgb_family["method_primary_means"]
+        == {
+            "bm25_topk": 0.397261,
+            "coverage_greedy_proxy": 0.556141,
+            "cross_encoder_density": 0.501741,
+            "cross_encoder_knapsack": 0.549726,
+            "cross_encoder_topk": 0.545701,
+            "dense_topk": 0.498857,
+            "frc_cost_aware_v35": 0.507421,
+            "frc_select_v34": 0.551199,
+            "hybrid_topk": 0.480014,
+        }
+        and rgb_family["cost_aware_minus_old_frc"]["point"] == -0.043778
+        and rgb_family["cost_aware_minus_old_frc"]["ci_low"] == -0.061536
+        and rgb_family["cost_aware_minus_old_frc"]["ci_high"] == -0.026205
+        and rgb_family["cost_aware_minus_observed_strongest"]["point"] == -0.048719
+        and rgb_family["cost_aware_minus_bootstrap_strongest_simultaneous"]["ci_low"]
+        == -0.066307
+        and rgb_family["cost_aware_minus_bootstrap_strongest_simultaneous"]["ci_high"]
+        == -0.032655
+        and rgb_dataset_budget_deltas
+        == {
+            "rgb_en_refine::512": -0.055548,
+            "rgb_en_refine::1024": -0.113992,
+            "rgb_en_refine::1500": -0.127688,
+            "rgb_en_int::512": -0.052037,
+            "rgb_en_int::1024": -0.060013,
+            "rgb_en_int::1500": -0.044418,
+            "rgb_en_fact::512": 0.000382,
+            "rgb_en_fact::1024": 0.000382,
+            "rgb_en_fact::1500": 0.000382,
+        }
+        and rgb_analysis["positive_wrong_rate_increase_over_old_frc"] == -0.022449
+        and rgb_analysis["positive_wrong_rate_population"]
+        == "rgb_en_fact valid rows, equal weight across three budgets"
+        and rgb_analysis["support_checks"]
+        == {
+            "old_frc_point_at_least_0_01": False,
+            "old_frc_ci_low_above_0": False,
+            "strongest_point_at_least_0_01": False,
+            "strongest_simultaneous_ci_low_above_0": False,
+            "every_dataset_budget_delta_at_least_minus_0_02": False,
+            "positive_wrong_rate_increase_at_most_0_02": True,
+        }
+        and rgb_outcome["status"] == "RGB_COST_AWARE_FRC_SAFETY_REGRESSION"
+        and rgb_outcome["selector_changed"] is False
+        and rgb_outcome["gate_2"] == "NO-GO/SHADOW"
+        and rgb_outcome["canary_or_default_authorized"] is False
+        and rgb_report["development_boundary"]["independent_confirmation"] is True
+        and rgb_report["development_boundary"]["gate_evidence"] is False
+        and rgb_report["development_boundary"][
+            "raw_question_answer_or_candidate_text_exported"
+        ]
+        is False
+        and rgb_family_means["frc_cost_aware_v35"]["selected_token_cost"]
+        < rgb_family_means["frc_select_v34"]["selected_token_cost"]
+    )
+    musique_metadata = musique_report["metadata"]
+    musique_analysis = musique_report["analysis"]
+    musique_family = musique_analysis["family_comparison"]
+    musique_outcome = musique_analysis["outcome"]
+    musique_repo_sources = {
+        "protocol": musique_protocol_path,
+        "execution": musique_execution_path,
+        "implementation": repo_root / "research/frc_rag/musique_dual_resource.py",
+    }
+    musique_repo_source_artifacts_match = all(
+        musique_metadata["source_artifacts"][name]["path_label"] == path.name
+        and musique_metadata["source_artifacts"][name]["sha256"]
+        == hashlib.sha256(path.read_bytes()).hexdigest()
+        for name, path in musique_repo_sources.items()
+    )
+    musique_dual_resource_readiness_passed = (
+        musique_protocol["schema_version"] == "frc-musique-dual-resource-protocol-v1"
+        and musique_protocol["experiment_id"] == "FRC-MUSIQUE-DUAL-RESOURCE-V36"
+        and musique_protocol["hypothesis_origin"]["v35_result_known"] is True
+        and musique_protocol["hypothesis_origin"][
+            "musique_dataset_content_accessed_before_registration"
+        ]
+        is False
+        and musique_protocol["hypothesis_origin"]["method_parameters_tuned_on_musique"]
+        is False
+        and musique_protocol["source"]["repository_revision"]
+        == "922ac98f19a201998dbdae6d7f2887a5258dbdeb"
+        and musique_protocol["source"]["license"] == "CC-BY-4.0"
+        and musique_protocol["frozen_dual_resource_selector"]["top_k"] == 5
+        and musique_protocol["frozen_dual_resource_selector"]["budgets"]
+        == [512, 1024, 1500]
+        and musique_protocol["frozen_dual_resource_selector"][
+            "normalized_resource_cost"
+        ]
+        == "token_count / token_budget + 1 / top_k"
+        and musique_protocol["frozen_dual_resource_selector"][
+            "score_threshold_prompt_or_weight_tuning"
+        ]
+        is False
+        and musique_protocol["frozen_metrics"]["primary"] == "support_evidence_f1"
+        and musique_protocol["frozen_metrics"]["paired_bootstrap"]["resamples"]
+        == 10_000
+        and musique_protocol["frozen_metrics"]["paired_bootstrap"]["seed"] == 20260801
+        and musique_protocol["stopping_rule"][
+            "no_musique_formula_threshold_prompt_or_weight_tuning_after_scores_or_labels_are_joined"
+        ]
+        is True
+        and hashlib.sha256(musique_protocol_path.read_bytes()).hexdigest()
+        == "812cf844b1650713220f89f534bf45227f229b3fa767cdc1ff87cffc5ba505d4"
+        and musique_execution["schema_version"]
+        == "frc-musique-dual-resource-execution-v1"
+        and musique_execution["registration_boundary"]["protocol_sha256"]
+        == "812cf844b1650713220f89f534bf45227f229b3fa767cdc1ff87cffc5ba505d4"
+        and musique_execution["registration_boundary"][
+            "musique_neural_scores_generated_before_registration"
+        ]
+        is False
+        and musique_execution["registration_boundary"][
+            "musique_selection_metrics_known_before_registration"
+        ]
+        is False
+        and musique_execution["source"]["archive_sha256"]
+        == "98f839bf2fd5319f5c688aed77901a6d5c30b3b9f9f691ab9a8ecafb045ee0cd"
+        and musique_execution["source"]["dataset_sha256"]
+        == "15fa63794d18a94ce12411aca6e2327e65b6e83b0b1490efab3f1962e48abf3b"
+        and musique_execution["source"]["raw_source_committed"] is False
+        and musique_execution["structural_census"]["source_rows"] == 2417
+        and musique_execution["structural_census"]["valid_rows"] == 2417
+        and musique_execution["structural_census"]["excluded_rows"] == 0
+        and musique_execution["structural_census"]["exclusions"] == {}
+        and musique_execution["structural_census"]["hop_distribution"]
+        == {"2": 1252, "3": 760, "4": 405}
+        and musique_execution["structural_census"]["candidate_chunks"]["total"] == 48656
+        and musique_execution["frozen_scoring_execution"]["case_batch_size"] == 16
+        and musique_execution["stopping_and_output"][
+            "no_formula_threshold_prompt_or_weight_tuning_after_registration"
+        ]
+        is True
+        and hashlib.sha256(musique_execution_path.read_bytes()).hexdigest()
+        == "b5dbc90be69c0341a95a5b1b2c81b440fe6e33d9507c1ec0bac89b83d6f199c8"
+        and all(
+            (repo_root / path).is_file()
+            for path in (
+                "research/frc_rag/musique_dual_resource.py",
+                "scripts/run_musique_dual_resource.py",
+                "tests/test_frc_musique_dual_resource.py",
+            )
+        )
+        and musique_repo_source_artifacts_match
+        and musique_report["schema_version"] == "frc-musique-dual-resource-v1"
+        and musique_metadata["cases"] == 2417
+        and musique_metadata["candidate_chunks"] == 48656
+        and musique_metadata["selection_runs"] == 72510
+        and musique_metadata["methods"] == musique_protocol["frozen_methods"]
+        and musique_metadata["budgets"] == [512, 1024, 1500]
+        and musique_metadata["hop_distribution"] == {"2": 1252, "3": 760, "4": 405}
+        and musique_metadata["deterministic_output_rerun"] == "2/2 byte-identical"
+        and musique_metadata["gold_visible_to_scorer"] is False
+        and musique_metadata["raw_text_committed"] is False
+        and musique_metadata["source_artifacts"]["prepared_blind"]["sha256"]
+        == "b9a987875dbc7aeaef4720c6df02265d0368b49f344b8a24b933a10ca0cfc28b"
+        and musique_metadata["source_artifacts"]["scored_blind"]["sha256"]
+        == "e2c688063e694ef0df7df7f6052cb5e68c9739f26a59db8a24c1a54413ce9242"
+        and musique_metadata["evidence_artifact"]["path"] == musique_cases_path.name
+        and musique_metadata["evidence_artifact"]["sha256"]
+        == _evidence_sha256(musique_cases_path)
+        and musique_metadata["evidence_artifact"]["rows"] == 2417
+        and len(musique_cases) == 2417
+        and len({row["case_id"] for row in musique_cases}) == 2417
+        and all(
+            row["raw_question_answer_or_candidate_text_exported"] is False
+            and row["hop_count"] in {2, 3, 4}
+            and len(row["configurations"]) == 3
+            and all(
+                len(configuration["methods"]) == 10
+                for configuration in row["configurations"].values()
+            )
+            for row in musique_cases
+        )
+        and not (
+            {
+                "query",
+                "question",
+                "answer",
+                "text",
+                "candidate_text",
+                "paragraph_text",
+                "is_supporting",
+                "gold_unit_ids",
+                "candidate_gold",
+            }
+            & _nested_keys(musique_cases)
+        )
+        and musique_family["observed_strongest_baseline"] == "cross_encoder_topk"
+        and musique_family["method_primary_means"]
+        == {
+            "bm25_topk": 0.361082,
+            "coverage_greedy_proxy": 0.528341,
+            "cross_encoder_density": 0.523163,
+            "cross_encoder_knapsack": 0.529318,
+            "cross_encoder_topk": 0.530399,
+            "dense_topk": 0.494453,
+            "frc_cost_aware_v35": 0.524143,
+            "frc_dual_resource_v36": 0.528545,
+            "frc_select_v34": 0.530801,
+            "hybrid_topk": 0.448289,
+        }
+        and musique_family["dual_minus_v35"]["point"] == 0.004402
+        and musique_family["dual_minus_v35"]["ci_low"] == 0.002244
+        and musique_family["dual_minus_v35"]["ci_high"] == 0.006613
+        and musique_family["dual_minus_old_frc"]["point"] == -0.002256
+        and musique_family["dual_minus_old_frc"]["ci_low"] == -0.004128
+        and musique_family["dual_minus_old_frc"]["ci_high"] == -0.000403
+        and musique_family["dual_minus_observed_strongest"]["point"] == -0.001854
+        and musique_family["dual_minus_bootstrap_strongest_simultaneous"]["ci_low"]
+        == -0.003784
+        and musique_family["dual_minus_bootstrap_strongest_simultaneous"]["ci_high"]
+        == -0.00002
+        and musique_analysis["budget_deltas"]
+        == {"512": -0.00457, "1024": -0.00092, "1500": -0.000194}
+        and musique_analysis["hop_deltas"]
+        == {"2-hop": -0.004806, "3-hop": 0.003234, "4-hop": -0.002514}
+        and musique_analysis["support_checks"]
+        == {
+            "dual_minus_v35_point_at_least_0_01": False,
+            "dual_minus_v35_ci_low_above_0": True,
+            "dual_minus_old_frc_point_at_least_0_01": False,
+            "dual_minus_old_frc_ci_low_above_0": False,
+            "dual_minus_strongest_point_at_least_0_01": False,
+            "dual_minus_strongest_simultaneous_ci_low_above_0": False,
+            "every_budget_delta_at_least_minus_0_02": True,
+            "every_hop_delta_at_least_minus_0_02": True,
+        }
+        and musique_outcome["status"]
+        == "MUSIQUE_DUAL_RESOURCE_FRC_SUPPORT_NOT_ESTABLISHED"
+        and musique_outcome["selector_changed"] is False
+        and musique_outcome["gate_2"] == "NO-GO/SHADOW"
+        and musique_outcome["canary_or_default_authorized"] is False
+        and musique_outcome["setr_reproduced"] is False
+        and musique_outcome["flood_domain_effectiveness_established"] is False
+        and musique_report["development_boundary"]["no_musique_tuning"] is True
+        and musique_report["development_boundary"]["gate_evidence"] is False
+        and musique_report["development_boundary"][
+            "raw_question_answer_or_candidate_text_exported"
+        ]
+        is False
+    )
+    musique_gap_metadata = musique_gap_report["metadata"]
+    musique_gap_analysis = musique_gap_report["analysis"]
+    musique_gap_outcome = musique_gap_analysis["outcome"]
+    musique_gap_sources = {
+        "protocol": musique_gap_protocol_path,
+        "implementation": repo_root / "research/frc_rag/musique_objective_gap.py",
+        "v36_report": musique_report_path,
+    }
+    musique_gap_sources_match = all(
+        musique_gap_metadata["source_artifacts"][name]["path_label"] == path.name
+        and musique_gap_metadata["source_artifacts"][name]["sha256"]
+        == hashlib.sha256(path.read_bytes()).hexdigest()
+        for name, path in musique_gap_sources.items()
+    )
+    musique_objective_gap_readiness_passed = (
+        musique_gap_protocol["schema_version"]
+        == "frc-musique-objective-gap-diagnostic-protocol-v1"
+        and musique_gap_protocol["experiment_id"]
+        == "FRC-MUSIQUE-OBJECTIVE-GAP-DIAGNOSTIC-V37"
+        and musique_gap_protocol["registration_boundary"]["post_result_diagnostic"]
+        is True
+        and musique_gap_protocol["registration_boundary"]["v36_result_known"] is True
+        and musique_gap_protocol["registration_boundary"][
+            "exact_objective_results_known_before_registration"
+        ]
+        is False
+        and musique_gap_protocol["registration_boundary"]["adoption_eligible"] is False
+        and musique_gap_protocol["frozen_inputs"]["neural_rescoring"] is False
+        and musique_gap_protocol["frozen_exact_algorithm"]["gold_visible_during_search"]
+        is False
+        and musique_gap_protocol["frozen_exact_algorithm"][
+            "approximation_or_pruning_that_can_change_optimum"
+        ]
+        is False
+        and musique_gap_protocol["publication_boundary"][
+            "no_formula_score_threshold_prompt_or_weight_tuning"
+        ]
+        is True
+        and hashlib.sha256(musique_gap_protocol_path.read_bytes()).hexdigest()
+        == "dd617c7aa5c22db359fc8944363389438d53ca04704a26a28a0f209eb71254f4"
+        and all(
+            (repo_root / path).is_file()
+            for path in (
+                "research/frc_rag/musique_objective_gap.py",
+                "scripts/run_musique_objective_gap.py",
+                "tests/test_frc_musique_objective_gap.py",
+            )
+        )
+        and musique_gap_sources_match
+        and musique_gap_report["schema_version"]
+        == "frc-musique-objective-gap-diagnostic-v1"
+        and musique_gap_metadata["cases"] == 2417
+        and musique_gap_metadata["candidate_chunks"] == 48656
+        and musique_gap_metadata["selection_runs"] == 36255
+        and musique_gap_metadata["neural_rescoring"] is False
+        and musique_gap_metadata["gold_visible_during_selection"] is False
+        and musique_gap_metadata["deterministic_output_rerun"] == "2/2 byte-identical"
+        and musique_gap_metadata["evidence_artifact"]["path"]
+        == musique_gap_cases_path.name
+        and musique_gap_metadata["evidence_artifact"]["sha256"]
+        == _evidence_sha256(musique_gap_cases_path)
+        and musique_gap_metadata["evidence_artifact"]["rows"] == 2417
+        and len(musique_gap_cases) == 2417
+        and len({row["case_id"] for row in musique_gap_cases}) == 2417
+        and not (
+            {
+                "query",
+                "question",
+                "answer",
+                "text",
+                "candidate_text",
+                "paragraph_text",
+                "is_supporting",
+                "gold_unit_ids",
+                "candidate_gold",
+            }
+            & _nested_keys(musique_gap_cases)
+        )
+        and musique_gap_report["aggregates"]["objective_gap"]
+        == {
+            "mean_absolute_regret": 0.004074,
+            "mean_normalized_regret": 0.000809,
+            "near_zero_regret_rate_at_1e_9": 0.8494,
+            "regret_above_0_01_rate": 0.019859,
+            "selection_disagreement_rate": 0.155565,
+        }
+        and musique_gap_report["aggregates"]["method_means"]["frc_exact_objective_v37"][
+            "support_evidence_f1"
+        ]
+        == 0.529945
+        and musique_gap_analysis["exact_minus_v36_support_f1"]["point"] == 0.001399
+        and musique_gap_analysis["exact_minus_v36_support_f1"]["ci_low"] == -0.000208
+        and musique_gap_analysis["exact_minus_v36_support_f1"]["ci_high"] == 0.003008
+        and musique_gap_analysis["exact_minus_cross_encoder_topk_support_f1"]["point"]
+        == -0.000455
+        and musique_gap_analysis["budget_deltas"]
+        == {"512": 0.002998, "1024": 0.000799, "1500": 0.000401}
+        and musique_gap_analysis["hop_deltas"]
+        == {"2-hop": 0.003568, "3-hop": -0.002072, "4-hop": 0.00121}
+        and musique_gap_outcome["status"]
+        == "MIXED_OPTIMIZATION_AND_ALIGNMENT_DIAGNOSTIC"
+        and musique_gap_outcome["next_action"] == "REQUIRE_SEPARATELY_FROZEN_STUDY"
+        and musique_gap_outcome["post_result_diagnostic"] is True
+        and musique_gap_outcome["adoption_eligible"] is False
+        and musique_gap_outcome["selector_changed"] is False
+        and musique_gap_outcome["gate_2"] == "NO-GO/SHADOW"
+        and musique_gap_report["development_boundary"][
+            "no_formula_score_threshold_prompt_or_weight_tuning"
+        ]
+        is True
+    )
+    musique_crossfit_metadata = musique_crossfit_report["metadata"]
+    musique_crossfit_analysis = musique_crossfit_report["analysis"]
+    musique_crossfit_outcome = musique_crossfit_analysis["outcome"]
+    musique_crossfit_sources = {
+        "protocol": musique_crossfit_protocol_path,
+        "implementation": repo_root / "research/frc_rag/musique_crossfit_support.py",
+        "v37_report": musique_gap_report_path,
+    }
+    musique_crossfit_sources_match = all(
+        musique_crossfit_metadata["source_artifacts"][name]["path_label"] == path.name
+        and musique_crossfit_metadata["source_artifacts"][name]["sha256"]
+        == hashlib.sha256(path.read_bytes()).hexdigest()
+        for name, path in musique_crossfit_sources.items()
+    )
+    musique_crossfit_support_readiness_passed = (
+        musique_crossfit_protocol["schema_version"]
+        == "frc-musique-crossfit-support-protocol-v1"
+        and musique_crossfit_protocol["experiment_id"]
+        == "FRC-MUSIQUE-CROSSFIT-SUPPORT-V38"
+        and musique_crossfit_protocol["registration_boundary"]["post_result_discovery"]
+        is True
+        and musique_crossfit_protocol["registration_boundary"][
+            "crossfit_predictions_or_metrics_known_before_registration"
+        ]
+        is False
+        and musique_crossfit_protocol["registration_boundary"]["adoption_eligible"]
+        is False
+        and musique_crossfit_protocol["frozen_crossfit"]["outer_folds"] == 5
+        and musique_crossfit_protocol["frozen_crossfit"]["l2"] == 4.0
+        and musique_crossfit_protocol["frozen_crossfit"]["hyperparameter_selection"]
+        is False
+        and musique_crossfit_protocol["frozen_features"]["gold_or_answer_features"]
+        is False
+        and len(musique_crossfit_protocol["frozen_features"]["base"]) == 6
+        and len(musique_crossfit_protocol["frozen_features"]["full_additions"]) == 6
+        and musique_crossfit_protocol["publication_boundary"][
+            "no_musique_fold_feature_weight_l2_or_threshold_tuning"
+        ]
+        is True
+        and hashlib.sha256(musique_crossfit_protocol_path.read_bytes()).hexdigest()
+        == "957b7590c46d0a3875ff56c486c637b0ecf0925117993658902c384081eb62bc"
+        and all(
+            (repo_root / path).is_file()
+            for path in (
+                "research/frc_rag/musique_crossfit_support.py",
+                "scripts/run_musique_crossfit_support.py",
+                "tests/test_frc_musique_crossfit_support.py",
+            )
+        )
+        and musique_crossfit_sources_match
+        and musique_crossfit_report["schema_version"]
+        == "frc-musique-crossfit-support-v1"
+        and musique_crossfit_metadata["cases"] == 2417
+        and musique_crossfit_metadata["candidate_chunks"] == 48656
+        and musique_crossfit_metadata["selection_runs"] == 36255
+        and musique_crossfit_metadata["folds"] == 5
+        and musique_crossfit_metadata["fold_distribution"]
+        == {"0": 501, "1": 486, "2": 478, "3": 460, "4": 492}
+        and musique_crossfit_metadata["neural_rescoring"] is False
+        and musique_crossfit_metadata["gold_visible_to_held_out_model"] is False
+        and musique_crossfit_metadata["deterministic_output_rerun"]
+        == "2/2 byte-identical"
+        and musique_crossfit_metadata["evidence_artifact"]["path"]
+        == musique_crossfit_cases_path.name
+        and musique_crossfit_metadata["evidence_artifact"]["sha256"]
+        == _evidence_sha256(musique_crossfit_cases_path)
+        and musique_crossfit_metadata["evidence_artifact"]["rows"] == 2417
+        and len(musique_crossfit_cases) == 2417
+        and len({row["case_id"] for row in musique_crossfit_cases}) == 2417
+        and not (
+            {
+                "query",
+                "question",
+                "answer",
+                "text",
+                "candidate_text",
+                "paragraph_text",
+                "is_supporting",
+                "gold_unit_ids",
+                "candidate_gold",
+            }
+            & _nested_keys(musique_crossfit_cases)
+        )
+        and all(
+            fold["converged"] is True
+            and fold["iterations"] <= 7
+            and fold["evaluation_labels_visible_to_fit"] is False
+            for family in ("base", "full")
+            for fold in musique_crossfit_report["aggregates"]["model_audit"][family]
+        )
+        and musique_crossfit_report["aggregates"]["model_audit"]["candidate_metrics"]
+        == {
+            "base": {
+                "held_out_average_precision": 0.645178,
+                "held_out_brier_score": 0.124061,
+                "held_out_roc_auc": 0.880769,
+            },
+            "full": {
+                "held_out_average_precision": 0.6515,
+                "held_out_brier_score": 0.123131,
+                "held_out_roc_auc": 0.881182,
+            },
+        }
+        and musique_crossfit_report["aggregates"]["method_means"][
+            "crossfit_base_support_topk_v38"
+        ]["support_evidence_f1"]
+        == 0.537234
+        and musique_crossfit_report["aggregates"]["method_means"][
+            "crossfit_full_support_topk_v38"
+        ]["support_evidence_f1"]
+        == 0.537782
+        and musique_crossfit_analysis["full_minus_cross_encoder_topk"]["point"]
+        == 0.007383
+        and musique_crossfit_analysis["full_minus_cross_encoder_topk"]["ci_low"]
+        == 0.003425
+        and musique_crossfit_analysis["full_minus_cross_encoder_topk"]["ci_high"]
+        == 0.011259
+        and musique_crossfit_analysis["full_minus_base"]["point"] == 0.000548
+        and musique_crossfit_analysis["full_minus_base"]["ci_low"] == -0.000744
+        and musique_crossfit_analysis["full_minus_base"]["ci_high"] == 0.001834
+        and musique_crossfit_analysis["budget_deltas"]
+        == {"512": 0.005594, "1024": 0.008082, "1500": 0.008473}
+        and musique_crossfit_analysis["hop_deltas"]
+        == {"2-hop": 0.007371, "3-hop": 0.000525, "4-hop": 0.020289}
+        and musique_crossfit_outcome["status"]
+        == "CROSSFIT_SUPPORT_SIGNAL_NOT_ESTABLISHED"
+        and musique_crossfit_outcome["next_action"]
+        == "STOP_THIS_CALIBRATION_FAMILY_ON_MUSIQUE"
+        and musique_crossfit_outcome["post_result_discovery"] is True
+        and musique_crossfit_outcome["adoption_eligible"] is False
+        and musique_crossfit_outcome["independent_confirmation"] is False
+        and musique_crossfit_outcome["selector_changed"] is False
+        and musique_crossfit_outcome["gate_2"] == "NO-GO/SHADOW"
+        and musique_crossfit_report["development_boundary"][
+            "no_musique_fold_feature_weight_l2_or_threshold_tuning"
+        ]
+        is True
+    )
+    hover_metadata = hover_report["metadata"]
+    hover_analysis = hover_report["analysis"]
+    hover_outcome = hover_analysis["outcome"]
+    hover_family = hover_analysis["family_comparison"]
+    hover_sources = {
+        "protocol": hover_protocol_path,
+        "execution": hover_execution_path,
+        "implementation": repo_root / "research/frc_rag/hover_verification_roles.py",
+    }
+    hover_sources_match = all(
+        hover_metadata["source_artifacts"][name]["path_label"] == path.name
+        and hover_metadata["source_artifacts"][name]["sha256"] == _evidence_sha256(path)
+        for name, path in hover_sources.items()
+    )
+    hover_verification_roles_readiness_passed = (
+        hover_protocol["schema_version"] == "frc-hover-verification-roles-protocol-v1"
+        and hover_protocol["experiment_id"] == "FRC-HOVER-VERIFICATION-ROLES-V39"
+        and hover_protocol["hypothesis_origin"][
+            "hover_dataset_content_accessed_before_registration"
+        ]
+        is False
+        and hover_protocol["hypothesis_origin"][
+            "hover_tfidf_candidate_content_accessed_before_registration"
+        ]
+        is False
+        and hover_protocol["hypothesis_origin"][
+            "hover_wikipedia_database_content_accessed_before_registration"
+        ]
+        is False
+        and hover_protocol["hypothesis_origin"]["method_parameters_tuned_on_hover"]
+        is False
+        and hover_protocol["source"]["repository_revision"]
+        == "39b84697f196308f398a251a7aea9b82ae0f0562"
+        and hover_protocol["frozen_methods"]
+        == [
+            "bm25_topk",
+            "dense_topk",
+            "hybrid_topk",
+            "cross_encoder_topk",
+            "cross_encoder_knapsack",
+            "frc_generic_roles_v39",
+            "frc_verification_roles_v39",
+        ]
+        and hover_protocol["frozen_adapter"]["chunking"]["content_tokens"] == 384
+        and hover_protocol["frozen_adapter"]["chunking"]["overlap_tokens"] == 64
+        and hover_protocol["frozen_scoring"]["role_relevance_mix"] == 0.0
+        and len(hover_protocol["frozen_scoring"]["generic_role_prompts"]) == 4
+        and len(hover_protocol["frozen_scoring"]["verification_role_prompts"]) == 4
+        and hover_protocol["frozen_selector"]["top_k"] == 5
+        and hover_protocol["frozen_selector"]["token_budgets"] == [512, 1024, 1500]
+        and hover_protocol["frozen_metrics"]["paired_bootstrap"]["resamples"] == 10000
+        and hover_protocol["frozen_metrics"]["paired_bootstrap"]["seed"] == 20260801
+        and hover_protocol["stopping_rule"][
+            "no_hover_candidate_depth_chunk_prompt_formula_threshold_or_weight_tuning"
+        ]
+        is True
+        and hashlib.sha256(hover_protocol_path.read_bytes()).hexdigest()
+        == "82ec16abcde6b28a86a9dd6f2fe3da26496cf14d718dcb1e388fb9341e1c8e82"
+        and hover_execution["schema_version"]
+        == "frc-hover-verification-roles-execution-v1"
+        and hover_execution["experiment_id"] == "FRC-HOVER-VERIFICATION-ROLES-V39"
+        and hover_execution["registration_boundary"]["protocol_sha256"]
+        == "82ec16abcde6b28a86a9dd6f2fe3da26496cf14d718dcb1e388fb9341e1c8e82"
+        and hover_execution["registration_boundary"][
+            "hover_neural_scores_generated_before_execution_registration"
+        ]
+        is False
+        and hover_execution["registration_boundary"][
+            "hover_selection_metrics_known_before_execution_registration"
+        ]
+        is False
+        and hashlib.sha256(hover_execution_path.read_bytes()).hexdigest()
+        == "8fc6390e275189041bf48f151f6b36c71cfb42fb69cd95f80c1e41ca002e82d7"
+        and hover_execution["source_hashes"]
+        == {
+            "dataset": "67c14858f2d7fcdb96b6fe3d538ffcd6f76e3ba594aa2c0cd4359f601101e89d",
+            "official_tfidf_candidates": "b50a961f63a95ff184986af766b15ff6b1d6c98f7e86b39355b64b1a85fb3745",
+            "official_wikipedia_database": "c37ee397916ec0bffacfe8902db454a5cda88a7a188409217b2e15231fe5ee2f",
+        }
+        and hover_execution["database_registration"]["schema"]["quick_check"] == "ok"
+        and hover_execution["database_registration"]["requested_top20_unique_titles"]
+        == 42260
+        and hover_execution["database_registration"]["resolved_requested_titles"]
+        == 42260
+        and hover_execution["structural_census"]["source_rows"] == 4000
+        and hover_execution["structural_census"]["valid_rows"] == 4000
+        and hover_execution["structural_census"]["exclusions"] == {}
+        and hover_execution["structural_census"]["candidate_chunks"]["total"] == 81224
+        and hover_execution["structural_census"]["resolved_candidate_documents"][
+            "total"
+        ]
+        == 80000
+        and hover_execution["structural_census"]["candidate_ceiling"]
+        == {
+            "mean": 0.6085,
+            "complete_cases": 1060,
+            "incomplete_cases": 2940,
+        }
+        and hover_execution["prepared_blind_sha256"]
+        == "321a5a677217ad88eb6385624ba25e43e63687e35d275d1e51f62a4cdd5d5063"
+        and hover_execution["stopping_and_output"][
+            "no_hover_candidate_depth_chunk_prompt_formula_threshold_or_weight_tuning"
+        ]
+        is True
+        and all(
+            (repo_root / path).is_file()
+            for path in (
+                "research/frc_rag/hover_verification_roles.py",
+                "scripts/run_hover_verification_roles.py",
+                "tests/test_frc_hover_verification_roles.py",
+            )
+        )
+        and hover_sources_match
+        and hover_report["schema_version"] == "frc-hover-verification-roles-v1"
+        and hover_metadata["cases"] == 4000
+        and hover_metadata["candidate_documents"] == 80000
+        and hover_metadata["candidate_chunks"] == 81224
+        and hover_metadata["selection_runs"] == 84000
+        and hover_metadata["methods"] == hover_protocol["frozen_methods"]
+        and hover_metadata["deterministic_output_rerun"] == "2/2 byte-identical"
+        and hover_metadata["gold_visible_to_scorer"] is False
+        and hover_metadata["evidence_artifact"]["path"] == hover_cases_path.name
+        and hover_metadata["evidence_artifact"]["sha256"]
+        == _evidence_sha256(hover_cases_path)
+        and hover_metadata["evidence_artifact"]["rows"] == 4000
+        and len(hover_cases) == 4000
+        and len({row["case_id"] for row in hover_cases}) == 4000
+        and not (
+            {
+                "claim",
+                "title",
+                "article",
+                "text",
+                "supporting_facts",
+                "gold_unit_ids",
+                "candidate_gold",
+            }
+            & _nested_keys(hover_cases)
+        )
+        and hover_family["observed_strongest_non_frc"] == "cross_encoder_topk"
+        and hover_family["method_primary_means"]
+        == {
+            "bm25_topk": 0.373073,
+            "cross_encoder_knapsack": 0.429862,
+            "cross_encoder_topk": 0.433019,
+            "dense_topk": 0.404287,
+            "frc_generic_roles_v39": 0.433321,
+            "frc_verification_roles_v39": 0.433286,
+            "hybrid_topk": 0.414258,
+        }
+        and hover_family["verification_minus_generic"]
+        == {
+            "point": -0.000035,
+            "ci_low": -0.000187,
+            "ci_high": 0.000092,
+            "resamples": 10000,
+            "seed": 20260801,
+        }
+        and hover_family["verification_minus_observed_strongest"]
+        == {"baseline": "cross_encoder_topk", "point": 0.000267}
+        and hover_family["verification_minus_bootstrap_strongest_simultaneous"][
+            "ci_low"
+        ]
+        == 0.000001
+        and hover_family["verification_minus_bootstrap_strongest_simultaneous"][
+            "ci_high"
+        ]
+        == 0.000578
+        and hover_analysis["budget_deltas"]
+        == {"512": 0.000232, "1024": 0.000051, "1500": 0.000201}
+        and hover_analysis["worst_supported_stratum_delta"] == -0.000129
+        and hover_analysis["support_checks"][
+            "verification_minus_generic_point_at_least_0_01"
+        ]
+        is False
+        and hover_analysis["support_checks"][
+            "verification_minus_generic_ci_low_above_0"
+        ]
+        is False
+        and hover_analysis["support_checks"][
+            "verification_minus_strongest_point_at_least_0_01"
+        ]
+        is False
+        and hover_analysis["support_checks"]["every_budget_delta_at_least_minus_0_02"]
+        is True
+        and hover_analysis["support_checks"][
+            "every_supported_stratum_delta_at_least_minus_0_02"
+        ]
+        is True
+        and hover_outcome["status"] == "HOVER_VERIFICATION_ROLE_SUPPORT_NOT_ESTABLISHED"
+        and hover_outcome["selector_changed"] is False
+        and hover_outcome["gate_2"] == "NO-GO/SHADOW"
+        and hover_outcome["canary_or_default_authorized"] is False
+        and hover_outcome["setr_reproduced"] is False
+        and hover_outcome["flood_domain_effectiveness_established"] is False
+        and hover_report["development_boundary"]["no_hover_tuning"] is True
+    )
+    hover_role_mechanism_readiness_passed = (
+        hover_mechanism_diagnostic["schema_version"]
+        == "frc-hover-role-mechanism-diagnostic-v1"
+        and hover_mechanism_diagnostic["metadata"]["cases"] == 4000
+        and hover_mechanism_diagnostic["metadata"]["post_result_diagnostic"] is True
+        and hover_mechanism_diagnostic["metadata"][
+            "gold_used_for_role_or_selection_diagnostic"
+        ]
+        is False
+        and hover_mechanism_diagnostic["metadata"]["raw_text_exported"] is False
+        and hover_mechanism_diagnostic["role_signal"]["rank_correlations"]["generic"][
+            "mean"
+        ]
+        == 0.947723
+        and hover_mechanism_diagnostic["role_signal"]["rank_correlations"][
+            "verification"
+        ]["mean"]
+        == 0.946191
+        and hover_mechanism_diagnostic["role_signal"]["rank_correlations"][
+            "matched_cross_family"
+        ]["mean"]
+        == 0.951934
+        and hover_mechanism_diagnostic["role_signal"]["generic"][
+            "all_roles_share_argmax_rate"
+        ]
+        == 0.858
+        and hover_mechanism_diagnostic["role_signal"]["verification"][
+            "all_roles_share_argmax_rate"
+        ]
+        == 0.8425
+        and all(
+            hover_mechanism_diagnostic["selection_collapse"][str(budget)][
+                "generic_verification_ordered_identity"
+            ]
+            >= 0.96
+            and hover_mechanism_diagnostic["selection_collapse"][str(budget)][
+                "verification_cross_set_jaccard"
+            ]
+            >= 0.995
+            for budget in (512, 1024, 1500)
+        )
+        and hover_mechanism_diagnostic["interpretation"]["status"]
+        == "STATIC_ROLE_SIGNAL_COLLAPSE_OBSERVED"
+        and hover_mechanism_diagnostic["interpretation"]["causal_claim"] is False
+        and hover_mechanism_diagnostic["interpretation"]["gate_2"] == "NO-GO/SHADOW"
+        and _evidence_sha256(hover_mechanism_diagnostic_path)
+        == "36f8f503d32a4ec23571383b94d6b5e11abb5376604e29ebec1faf0d039464d6"
+    )
+    hover_dynamic_metadata = hover_dynamic_report["metadata"]
+    hover_dynamic_analysis = hover_dynamic_report["analysis"]
+    hover_dynamic_family = hover_dynamic_analysis["family_comparison"]
+    hover_dynamic_outcome = hover_dynamic_analysis["outcome"]
+    hover_dynamic_result_integrity = hover_dynamic_result_record["integrity"]
+    hover_dynamic_published = hover_dynamic_result_record["published_outputs"]
+    hover_dynamic_atomic_roles_readiness_passed = (
+        _evidence_sha256(hover_dynamic_v40_protocol_path)
+        == "0a3b4302d50dd1d83ff97689e69968effc28abd8ac1c29e682fc4eee6bdbc4f3"
+        and hover_dynamic_v40_protocol["schema_version"]
+        == "frc-hover-dynamic-atomic-roles-protocol-v1"
+        and hover_dynamic_v40_protocol["experiment_id"]
+        == "FRC-HOVER-DYNAMIC-ATOMIC-ROLES-V40"
+        and _evidence_sha256(hover_dynamic_v40_closure_path)
+        == "ec98358d72453f85014f8f87e4712e06fc4a1cb8ea63415160e9c27f3cbfac73"
+        and hover_dynamic_v40_closure["status"]
+        == "REGISTRATION_BOUNDARY_VIOLATED_BEFORE_SCORING"
+        and hover_dynamic_v40_closure["mandatory_action"][
+            "v40_pilot_or_confirmation_may_be_scored"
+        ]
+        is False
+        and hover_dynamic_v40_closure["mandatory_action"][
+            "v40_may_support_any_performance_or_mechanism_claim"
+        ]
+        is False
+        and hover_dynamic_v40_closure["mandatory_action"][
+            "v40_partition_ids_permanently_excluded_from_recovery"
+        ]
+        is True
+        and hover_dynamic_v40_closure["mandatory_action"][
+            "algorithm_parameters_changed_after_violation"
+        ]
+        is False
+        and _evidence_sha256(hover_dynamic_protocol_path)
+        == "42486a98c01fd0b9663d3eb9bd0de63634d91605eed06060ac1236ad26997e86"
+        and hover_dynamic_protocol["schema_version"]
+        == "frc-hover-dynamic-atomic-roles-protocol-v2"
+        and hover_dynamic_protocol["experiment_id"]
+        == "FRC-HOVER-DYNAMIC-ATOMIC-ROLES-V41"
+        and hover_dynamic_protocol["integrity_lineage"][
+            "v40_algorithm_inherited_without_change"
+        ]
+        is True
+        and hover_dynamic_protocol["integrity_lineage"]["v40_excluded_id_count"] == 2512
+        and hover_dynamic_protocol["integrity_lineage"][
+            "v41_pool_label_hop_claim_supporting_fact_or_candidate_statistics_known_before_registration"
+        ]
+        is False
+        and hover_dynamic_protocol["frozen_partition"][
+            "content_balancing_or_case_replacement"
+        ]
+        is False
+        and hover_dynamic_protocol["frozen_dynamic_query_generator"]["revision"]
+        == "e9c932ac1893a49ae0fc497ad6e1e86e2e39af20"
+        and hover_dynamic_protocol["frozen_dynamic_query_generator"]["input"]
+        == "Normalized claim only."
+        and hover_dynamic_protocol["frozen_scoring"]["runtime"]["device"] == "cuda"
+        and hover_dynamic_protocol["frozen_selector"]["post_registration_tuning"]
+        is False
+        and hover_dynamic_protocol["confirmation_evaluation"]["support_requirements"][
+            "dynamic_minus_static_rank_coverage_point_at_least"
+        ]
+        == 0.005
+        and hover_dynamic_protocol["confirmation_evaluation"]["support_requirements"][
+            "dynamic_minus_bootstrap_strongest_non_frc_point_at_least"
+        ]
+        == 0.01
+        and hover_dynamic_protocol["boundaries"]["gate_2_change"] is False
+        and _evidence_sha256(hover_dynamic_pilot_start_path)
+        == "97dfd7061115d9c411c29ad7a9b4c66c9ba443ef25354de0d3fffdd6ad278d8e"
+        and hover_dynamic_pilot_start["boundary"][
+            "pilot_gold_fields_accessed_by_generation"
+        ]
+        is False
+        and hover_dynamic_pilot_start["boundary"]["confirmation_content_accessed"]
+        is False
+        and hover_dynamic_pilot_start["runtime_observation_before_generation"][
+            "implementation_sha256"
+        ]
+        == "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621"
+        and _evidence_sha256(hover_dynamic_confirmation_open_v1_path)
+        == "a5c90b464c081990238dc93fd404ab3fdfe15e218b31c3f3aa55a962f3ab851d"
+        and _evidence_sha256(hover_dynamic_confirmation_open_path)
+        == "1002b70cb3d827c705894ee9ff4b6128dbd3f5d69a15e2896f37b9c22fadc57e"
+        and hover_dynamic_confirmation_open["supersession"]["status"]
+        == "SUPERSEDED_BEFORE_CONFIRMATION_ACCESS"
+        and hover_dynamic_confirmation_open["supersession"][
+            "confirmation_content_accessed_before_supersession"
+        ]
+        is False
+        and hover_dynamic_confirmation_open["partition_commitments"]["confirmation"][
+            "count"
+        ]
+        == 2000
+        and hover_dynamic_confirmation_open["pilot_mechanism_result"]["status"]
+        == "MECHANISM_ESTABLISHED_OPEN_CONFIRMATION"
+        and _evidence_sha256(hover_dynamic_execution_path)
+        == "bbad5dab2f06e663ba2d5227e161f290d3c6d4929f9d75e1bf10ca35e186b29f"
+        and hover_dynamic_execution["registration_boundary"][
+            "confirmation_dynamic_queries_generated_before_registration"
+        ]
+        is False
+        and hover_dynamic_execution["registration_boundary"][
+            "confirmation_neural_scores_generated_before_registration"
+        ]
+        is False
+        and hover_dynamic_execution["registration_boundary"][
+            "confirmation_labels_hops_supporting_facts_or_candidate_ceiling_accessed_before_registration"
+        ]
+        is False
+        and hover_dynamic_execution["confirmation_blind_census"]["valid_rows"] == 2000
+        and hover_dynamic_execution["confirmation_blind_census"]["requested_documents"]
+        == 40000
+        and hover_dynamic_execution["confirmation_blind_census"]["resolved_documents"]
+        == 40000
+        and hover_dynamic_execution["confirmation_blind_census"]["candidate_chunks"][
+            "total"
+        ]
+        == 40616
+        and hover_dynamic_execution["artifact_sha256"]["implementation"]
+        == _evidence_sha256(
+            repo_root / "research/frc_rag/hover_dynamic_atomic_roles.py"
+        )
+        and hover_dynamic_execution["artifact_sha256"]["runner"]
+        == _evidence_sha256(repo_root / "scripts/run_hover_dynamic_atomic_roles.py")
+        and _evidence_sha256(hover_dynamic_pilot_report_path)
+        == "9229f6c0e643655fd97b830b13e0195f48ea997d8204021209ff6e2917feb668"
+        and hover_dynamic_pilot_report["metadata"]["cases"] == 512
+        and hover_dynamic_pilot_report["metadata"]["gold_fields_joined"] is False
+        and hover_dynamic_pilot_report["query_generation"]["fallback_rate"] == 0.003906
+        and hover_dynamic_pilot_report["mechanism"]["spearman_reduction"] == 0.424158
+        and hover_dynamic_pilot_report["mechanism"]["distinct_argmax_gain"] == 1.076172
+        and hover_dynamic_pilot_report["mechanism"][
+            "static_dynamic_ordered_selection_identity"
+        ]
+        == 0.432292
+        and all(hover_dynamic_pilot_report["checks"].values())
+        and hover_dynamic_pilot_report["outcome"]["status"]
+        == "MECHANISM_ESTABLISHED_OPEN_CONFIRMATION"
+        and hover_dynamic_report["schema_version"]
+        == "frc-hover-dynamic-atomic-confirmation-report-v1"
+        and hover_dynamic_metadata["cases"] == 2000
+        and hover_dynamic_metadata["protocol_sha256"]
+        == _evidence_sha256(hover_dynamic_protocol_path)
+        and hover_dynamic_metadata["source_artifacts"]["confirmation_queries_sha256"]
+        == "26928272846b734e3a74ad953c12f8961802dd97b0221f15980ac870abdd99a3"
+        and hover_dynamic_metadata["source_artifacts"]["confirmation_scored_sha256"]
+        == "46f7d4cdd9dd61f9fa82a1cf524ccc3c2f91ca792dd6accc3898b88ec5fda278"
+        and hover_dynamic_metadata["source_artifacts"]["implementation_sha256"]
+        == _evidence_sha256(
+            repo_root / "research/frc_rag/hover_dynamic_atomic_roles.py"
+        )
+        and hover_dynamic_family["observed_strongest_non_frc"] == "cross_encoder_topk"
+        and hover_dynamic_family["method_primary_means"]
+        == {
+            "bm25_topk": 0.373976,
+            "cross_encoder_knapsack": 0.423923,
+            "cross_encoder_topk": 0.427388,
+            "dense_topk": 0.406294,
+            "dynamic_rank_coverage_frc_v41": 0.428851,
+            "hybrid_topk": 0.412885,
+            "static_rank_coverage_frc_v41": 0.427258,
+            "static_threshold_frc_v39_replay": 0.427499,
+        }
+        and hover_dynamic_family["dynamic_minus_static_rank"]
+        == {
+            "point": 0.001593,
+            "ci_low": 0.000453,
+            "ci_high": 0.002762,
+            "resamples": 10000,
+            "seed": 20260801,
+        }
+        and hover_dynamic_family["dynamic_minus_bootstrap_strongest_non_frc"]
+        == {
+            "point": 0.001463,
+            "ci_low": 0.000308,
+            "ci_high": 0.002688,
+            "resamples": 10000,
+            "seed": 20260801,
+        }
+        and hover_dynamic_analysis["budget_deltas"]
+        == {"512": 0.002687, "1024": 0.000948, "1500": 0.000754}
+        and hover_dynamic_analysis["stratum_deltas"]
+        == {
+            "label=SUPPORTED": 0.000508,
+            "label=NOT_SUPPORTED": 0.002972,
+            "2-hop": 0.000248,
+            "3-hop": 0.001364,
+            "4-hop": 0.005259,
+            "candidate_ceiling_complete": 0.00133,
+            "candidate_ceiling_incomplete": 0.001535,
+        }
+        and hover_dynamic_analysis["support_checks"]
+        == {
+            "dynamic_minus_static_point_at_least_0_005": False,
+            "dynamic_minus_static_ci_low_above_0": True,
+            "dynamic_minus_strongest_point_at_least_0_01": False,
+            "dynamic_minus_strongest_ci_low_above_0": True,
+            "every_budget_and_stratum_delta_at_least_minus_0_02": True,
+        }
+        and hover_dynamic_outcome["status"]
+        == "DYNAMIC_ATOMIC_ROLE_SUPPORT_NOT_ESTABLISHED"
+        and hover_dynamic_outcome["support_established"] is False
+        and hover_dynamic_outcome["selector_adoption_authorized"] is False
+        and hover_dynamic_outcome["gate_2"] == "NO-GO/SHADOW"
+        and hover_dynamic_outcome["canary_or_default_authorized"] is False
+        and len(hover_dynamic_cases) == 2000
+        and len({row["case_id"] for row in hover_dynamic_cases}) == 2000
+        and not (
+            {
+                "claim",
+                "title",
+                "article",
+                "text",
+                "supporting_facts",
+                "gold_document_ids",
+                "candidate_gold",
+            }
+            & _nested_keys(hover_dynamic_cases)
+        )
+        and hover_dynamic_result_record["schema_version"]
+        == "frc-hover-dynamic-atomic-result-record-v1"
+        and hover_dynamic_result_integrity["confirmation_queries_rows"] == 2000
+        and hover_dynamic_result_integrity["confirmation_queries_unique_ids"] == 2000
+        and hover_dynamic_result_integrity["generation_fallback_count"] == 29
+        and hover_dynamic_result_integrity["generation_fallback_rate"] == 0.0145
+        and hover_dynamic_result_integrity["generation_gold_fields_visible"] is False
+        and hover_dynamic_result_integrity["confirmation_scored_rows"] == 2000
+        and hover_dynamic_result_integrity["scoring_gold_fields_visible"] is False
+        and hover_dynamic_result_integrity[
+            "gold_join_started_after_complete_score_cache"
+        ]
+        is True
+        and hover_dynamic_result_integrity["evaluate_rerun"] == "2/2 byte-identical"
+        and all(
+            _evidence_sha256(repo_root / artifact["path"]) == artifact["sha256"]
+            for artifact in hover_dynamic_published.values()
+        )
+        and hover_dynamic_result_record["decision"]["mechanism_improvement_reproduced"]
+        is True
+        and hover_dynamic_result_record["decision"][
+            "preregistered_practical_support_established"
+        ]
+        is False
+        and hover_dynamic_result_record["decision"]["gate_2"] == "NO-GO/SHADOW"
+    )
+    scifact_metadata = scifact_report["metadata"]
+    scifact_analysis = scifact_report["analysis"]
+    scifact_family = scifact_analysis["family_comparison"]
+    scifact_outcome = scifact_analysis["outcome"]
+    scifact_boundary = scifact_result_record["boundary_verification"]
+    scifact_dynamic_atomic_roles_readiness_passed = (
+        _evidence_sha256(scifact_protocol_path)
+        == "62987d6430cef9ef91c0de1f15f8f192749f5ab6b5341117da99933d3b7892ab"
+        and scifact_protocol["schema_version"]
+        == "frc-scifact-dynamic-atomic-roles-protocol-v1"
+        and scifact_protocol["experiment_id"] == "FRC-SCIFACT-DYNAMIC-ATOMIC-ROLES-V42"
+        and scifact_protocol["research_boundary"][
+            "scifact_data_downloaded_before_registration"
+        ]
+        is False
+        and scifact_protocol["research_boundary"][
+            "scifact_claim_corpus_or_gold_content_accessed_before_registration"
+        ]
+        is False
+        and scifact_protocol["frozen_partition"]["exclude_claim_ids"] == [3, 123, 263]
+        and scifact_protocol["frozen_candidate_retrieval"]["candidate_depth_documents"]
+        == 20
+        and scifact_protocol["frozen_candidate_retrieval"]["gold_document_injection"]
+        is False
+        and scifact_protocol["frozen_selector"]["token_budgets"] == [512, 1024, 1500]
+        and scifact_protocol["decision_and_stopping_rule"][
+            "no_scifact_tuning_after_any_result"
+        ]
+        is True
+        and _evidence_sha256(scifact_implementation_path)
+        == "1cc0a7cbe572b3332c2a9f879495ca939aa019928cb64ede6d7cb9905b459a62"
+        and scifact_implementation["registration_boundary"]["scifact_data_downloaded"]
+        is False
+        and scifact_implementation["registration_boundary"]["scifact_content_accessed"]
+        is False
+        and scifact_implementation["verification_before_registration"][
+            "synthetic_tests"
+        ]
+        == "7 passed"
+        and scifact_implementation["artifact_sha256"]["module"]
+        == _evidence_sha256(
+            repo_root / "research/frc_rag/scifact_dynamic_atomic_roles.py"
+        )
+        and scifact_implementation["artifact_sha256"]["runner"]
+        == _evidence_sha256(repo_root / "scripts/run_scifact_dynamic_atomic_roles.py")
+        and scifact_implementation["artifact_sha256"]["test"]
+        == _evidence_sha256(
+            repo_root / "tests/test_frc_scifact_dynamic_atomic_roles.py"
+        )
+        and scifact_implementation["artifact_sha256"]["inherited_v41_module"]
+        == _evidence_sha256(
+            repo_root / "research/frc_rag/hover_dynamic_atomic_roles.py"
+        )
+        and _evidence_sha256(scifact_execution_path)
+        == "81664c78d757154cdfe1a1f87dd2c0d5c9d948721b4c081aad5dfe5b106827a8"
+        and scifact_execution["implementation_registration_sha256"]
+        == _evidence_sha256(scifact_implementation_path)
+        and scifact_execution["source_and_blind_census"][
+            "train_test_or_cross_validation_files_extracted"
+        ]
+        is False
+        and scifact_execution["source_and_blind_census"]["corpus_rows"] == 5183
+        and scifact_execution["source_and_blind_census"]["claims_dev_rows"] == 300
+        and scifact_execution["source_and_blind_census"]["primary_eligible_cases"]
+        == 187
+        and scifact_execution["source_and_blind_census"]["candidate_documents_per_case"]
+        == 20
+        and scifact_execution["source_and_blind_census"]["candidate_chunks"] == 5701
+        and scifact_execution["source_and_blind_census"]["forbidden_cache_rows"] == 0
+        and scifact_execution["source_and_blind_census"][
+            "prepared_and_census_second_run_byte_deterministic"
+        ]
+        is True
+        and scifact_execution["registration_boundary"]["query_generation_started"]
+        is False
+        and scifact_execution["registration_boundary"]["neural_scoring_started"]
+        is False
+        and scifact_execution["registration_boundary"]["effect_metrics_computed"]
+        is False
+        and scifact_execution["runtime"]["cuda_available"] is True
+        and scifact_execution["runtime"]["torch"] == "2.4.1+cu124"
+        and scifact_execution["runtime_parameters"]["bootstrap_seed"] == 20260802
+        and scifact_execution["scores_or_metrics_computed_before_registration"] is False
+        and scifact_execution["scifact_tuning_authorized_after_result"] is False
+        and scifact_report["schema_version"] == "frc-scifact-dynamic-atomic-report-v1"
+        and _evidence_sha256(scifact_report_path)
+        == "f003a63d335d7ce026a7cb9bbffeb326af73aad9c2007b60b088ee91baac7865"
+        and scifact_metadata["cases"] == 187
+        and scifact_metadata["gold_joined_only_after_complete_blind_score_cache"]
+        is True
+        and scifact_metadata["raw_text_committed"] is False
+        and scifact_metadata["source_artifacts"]["execution_registration_sha256"]
+        == _evidence_sha256(scifact_execution_path)
+        and scifact_metadata["source_artifacts"]["execution_registration"]
+        == scifact_execution
+        and scifact_metadata["source_artifacts"]["queries_sha256"]
+        == "326166e8fa6ff1cd96bdb9bcbd8f35a0a46fbfda3e77222963f9a096b5fd2325"
+        and scifact_metadata["source_artifacts"]["scored_sha256"]
+        == "f97d8482f2b730ff3f1dc7cdf4f38773a20030e4366a531d798857c3b15ff529"
+        and scifact_family["observed_strongest_non_frc"] == "dense_topk"
+        and scifact_family["method_primary_means"]
+        == {
+            "bm25_topk": 0.373394,
+            "cross_encoder_knapsack": 0.435839,
+            "cross_encoder_topk": 0.442744,
+            "dense_topk": 0.460616,
+            "dynamic_rank_coverage_frc_v41": 0.403909,
+            "hybrid_topk": 0.437297,
+            "static_rank_coverage_frc_v41": 0.401088,
+            "static_threshold_frc_v39_replay": 0.441734,
+        }
+        and scifact_family["dynamic_minus_static_rank"]
+        == {
+            "point": 0.002821,
+            "ci_low": -0.007003,
+            "ci_high": 0.012092,
+            "resamples": 10000,
+            "seed": 20260802,
+        }
+        and scifact_family["dynamic_minus_bootstrap_strongest_non_frc"]
+        == {
+            "point": -0.056707,
+            "ci_low": -0.078099,
+            "ci_high": -0.036516,
+            "resamples": 10000,
+            "seed": 20260802,
+        }
+        and scifact_analysis["budget_deltas"]
+        == {"512": -0.025847, "1024": -0.074217, "1500": -0.072248}
+        and scifact_analysis["query_generation"]["fallback_count"] == 1
+        and scifact_analysis["query_generation"]["fallback_rate"] == 0.005348
+        and scifact_analysis["query_generation"]["gold_fields_visible_to_generator"]
+        is False
+        and scifact_analysis["support_checks"]
+        == {
+            "dynamic_minus_static_ci_low_above_0": False,
+            "dynamic_minus_static_point_at_least_0_005": False,
+            "dynamic_minus_strongest_ci_low_above_0": False,
+            "dynamic_minus_strongest_point_at_least_0_01": False,
+            "every_budget_and_supported_stratum_at_least_minus_0_02": False,
+            "generation_fallback_rate_at_most_0_05": True,
+            "no_forbidden_field_leak": True,
+        }
+        and scifact_outcome["status"]
+        == "SCIFACT_DYNAMIC_ATOMIC_ROLE_SUPPORT_NOT_ESTABLISHED"
+        and scifact_outcome["support_established"] is False
+        and scifact_outcome["selector_adoption_authorized"] is False
+        and scifact_outcome["gate_2"] == "NO-GO/SHADOW"
+        and scifact_outcome["scifact_reuse_for_tuning_authorized"] is False
+        and len(scifact_cases) == 187
+        and len({row["case_id"] for row in scifact_cases}) == 187
+        and sum(row["label"] == "SUPPORT" for row in scifact_cases) == 123
+        and sum(row["label"] == "CONTRADICT" for row in scifact_cases) == 64
+        and sum(row["gold_document_count"] == 1 for row in scifact_cases) == 177
+        and all(
+            row["raw_claim_title_abstract_or_evidence_text_exported"] is False
+            and row["raw_document_ids_exported"] is False
+            for row in scifact_cases
+        )
+        and not (
+            {
+                "claim",
+                "title",
+                "abstract",
+                "text",
+                "evidence",
+                "doc_id",
+                "document_id",
+            }
+            & _nested_keys(scifact_cases)
+        )
+        and _evidence_sha256(scifact_result_record_path)
+        == "fe324ed45fdfef9268c1f5f2c6e26a11a60d0ab4a7cbfd4b682f23803b47f1f8"
+        and scifact_result_record["status"]
+        == "SCIFACT_DYNAMIC_ATOMIC_ROLE_SUPPORT_NOT_ESTABLISHED"
+        and scifact_boundary["prepared_rows"] == 187
+        and scifact_boundary["query_rows"] == 187
+        and scifact_boundary["score_rows"] == 187
+        and scifact_boundary["forbidden_query_or_score_cache_rows"] == 0
+        and scifact_boundary["gold_joined_only_after_complete_blind_score_cache"]
+        is True
+        and scifact_result_record["gold_free_mechanism_diagnostic"][
+            "all_v41_mechanism_checks_passed"
+        ]
+        is True
+        and scifact_result_record["support_checks"]["all_required"] is False
+        and scifact_result_record["diagnostic_interpretation"][
+            "causal_claim_authorized"
+        ]
+        is False
+        and scifact_result_record["decision"]["scifact_reuse_for_tuning_or_selection"]
+        is False
+        and scifact_result_record["decision"]["gate_2"] == "NO-GO/SHADOW"
+        and scifact_result_record["artifact_sha256"]["report_json"]
+        == _evidence_sha256(scifact_report_path)
+        and scifact_result_record["artifact_sha256"]["report_markdown"]
+        == _evidence_sha256(scifact_markdown_path)
+        and scifact_result_record["artifact_sha256"]["public_case_evidence"]
+        == _evidence_sha256(scifact_cases_path)
+    )
+    feverous_metadata = feverous_report["metadata"]
+    feverous_analysis = feverous_report["analysis"]
+    feverous_aggregates = feverous_analysis["aggregates"]
+    feverous_outcome = feverous_analysis["outcome"]
+    feverous_boundary = feverous_result_record["boundary_verification"]
+    feverous_adaptive_atomic_roles_readiness_passed = (
+        _evidence_sha256(feverous_protocol_path)
+        == "2591f23a9edc498c800a4dfcad680c5e2df36e8178cb30df7214ac7ed7264b57"
+        and feverous_protocol["schema_version"]
+        == "frc-feverous-adaptive-atomic-roles-protocol-v43"
+        and feverous_protocol["experiment_id"]
+        == "FRC-FEVEROUS-ADAPTIVE-ATOMIC-ROLES-V43"
+        and feverous_protocol["methods"]["candidate_method"]
+        == "adaptive_argmax_cardinality_frc_v43"
+        and feverous_protocol["methods"]["token_budgets"] == [512, 1024, 1500]
+        and feverous_protocol["decision_rules"]["gate_2"].startswith(
+            "Always remains NO-GO/SHADOW"
+        )
+        and _evidence_sha256(feverous_protocol_erratum_path)
+        == "aec7c5658ee1574a0f8c44a36eb92109cdbfbda6d3cdf4d037257a479191f4db"
+        and feverous_protocol_erratum["base_protocol_sha256"]
+        == _evidence_sha256(feverous_protocol_path)
+        and feverous_protocol_erratum["correction"]["original"] == 110
+        and feverous_protocol_erratum["correction"]["effective"] == 189
+        and feverous_protocol_erratum["correction"]["selection_rule_changed"] is False
+        and feverous_protocol_erratum["method_or_threshold_changed"] is False
+        and _evidence_sha256(feverous_implementation_path)
+        == "50887b302cea7e707a1e3339abac1b16145d30c80eeac701aa05d3148ce51b9c"
+        and feverous_implementation["data_content_accessed_before_registration"]
+        is False
+        and feverous_implementation["synthetic_test_result"]["passed"] == 5
+        and _evidence_sha256(feverous_implementation_erratum4_path)
+        == "a459b66f93ef83db19f7dfaccf6a70f7c2ab1662723599da3634cb473c817f65"
+        and feverous_implementation_erratum4["superseded_erratum_sha256"]
+        == "d00877e6d344ee0b2c12eeadbb38b706b43d69779887a49faa0bb71c1a5a80cd"
+        and feverous_implementation_erratum4["trigger"][
+            "gold_metrics_computed_in_memory"
+        ]
+        is True
+        and feverous_implementation_erratum4["trigger"][
+            "metric_values_emitted_or_observed"
+        ]
+        is False
+        and feverous_implementation_erratum4["trigger"][
+            "report_or_result_artifact_written"
+        ]
+        is False
+        and feverous_implementation_erratum4["method_or_threshold_changed"] is False
+        and feverous_implementation_erratum4["effective_hashes"]["module_sha256"]
+        == _evidence_sha256(
+            repo_root / "research/frc_rag/feverous_adaptive_atomic_roles.py"
+        )
+        and feverous_implementation_erratum4["effective_hashes"]["runner_sha256"]
+        == _evidence_sha256(repo_root / "scripts/run_feverous_adaptive_atomic_roles.py")
+        and feverous_implementation_erratum4["effective_hashes"]["test_sha256"]
+        == _evidence_sha256(
+            repo_root / "tests/test_frc_feverous_adaptive_atomic_roles.py"
+        )
+        and _evidence_sha256(feverous_execution_path)
+        == "887f955c848a8522262654c28fe28072837c044b2e3d893d588117816cde5647"
+        and feverous_execution["blind_structural_census"]["selected_rows"] == 240
+        and feverous_execution["blind_structural_census"]["cases_per_challenge"] == 40
+        and feverous_execution["blind_structural_census"]["candidate_pool_maximum"]
+        == 146
+        and feverous_execution["blind_structural_census"][
+            "forbidden_exact_keys_in_prepared_cache"
+        ]
+        == []
+        and feverous_execution["blind_structural_census"][
+            "second_prepare_run_byte_deterministic"
+        ]
+        is True
+        and feverous_execution["query_generation_started_before_registration"] is False
+        and feverous_execution["runtime_parameters"]["maximum_pool_size"] == 189
+        and feverous_execution["runtime_parameters"]["bootstrap_seed"] == 20260803
+        and feverous_execution["selector_adoption_authorized"] is False
+        and feverous_execution["gate_2_status"] == "NO-GO/SHADOW"
+        and _evidence_sha256(feverous_execution_erratum_path)
+        == "1a3bc129eb6a2f1f126700b0555c8d0006d643da884f749b7c5d58c11bac430a"
+        and feverous_execution_erratum["base_execution_sha256"]
+        == _evidence_sha256(feverous_execution_path)
+        and feverous_execution_erratum["previous_execution_hashes"]
+        == feverous_execution["hashes"]
+        and feverous_execution_erratum["effective_hashes"]
+        == {
+            "implementation_erratum4_sha256": (
+                "a459b66f93ef83db19f7dfaccf6a70f7c2ab1662723599da3634cb473c817f65"
+            ),
+            "queries_sha256": (
+                "b794514da8b9ddeb7c32dda4da83a836f6c505d1a4a0c6f33e5dcd700762fd9e"
+            ),
+            "scored_sha256": (
+                "a62b24ec609194f9b9d89a4a54c7359475757d8a8972f11a177fc581068a38f9"
+            ),
+        }
+        and feverous_execution_erratum["method_or_threshold_changed"] is False
+        and feverous_report["schema_version"]
+        == "frc-feverous-adaptive-atomic-report-v1"
+        and _evidence_sha256(feverous_report_path)
+        == "d57fb87ad4362f31be01412c176bf6910cb2a6b295798d00eb845dfec9516205"
+        and feverous_metadata["cases"] == 240
+        and feverous_metadata["official_leaderboard_result"] is False
+        and feverous_metadata["gold_joined_after_complete_score_cache"] is True
+        and feverous_metadata["source_artifacts"]["execution_erratum_sha256"]
+        == _evidence_sha256(feverous_execution_erratum_path)
+        and feverous_metadata["source_artifacts"]["queries_sha256"]
+        == feverous_execution_erratum["effective_hashes"]["queries_sha256"]
+        and feverous_metadata["source_artifacts"]["scored_sha256"]
+        == feverous_execution_erratum["effective_hashes"]["scored_sha256"]
+        and feverous_aggregates["adaptive_argmax_cardinality_frc_v43"]
+        == {
+            "complete_evidence_recall": 0.120833,
+            "evidence_macro_f1": 0.172505,
+            "macro_precision": 0.301389,
+            "mean_selected_token_cost": 163.345833,
+            "mean_selected_unit_count": 2.770833,
+        }
+        and feverous_aggregates["dynamic_rank_coverage_frc_v41"]
+        == {
+            "complete_evidence_recall": 0.208333,
+            "evidence_macro_f1": 0.218379,
+            "macro_precision": 0.229444,
+            "mean_selected_token_cost": 303.823611,
+            "mean_selected_unit_count": 4.998611,
+        }
+        and feverous_aggregates["cross_encoder_topk"]["evidence_macro_f1"] == 0.209285
+        and feverous_analysis["strongest_non_frc"] == "cross_encoder_topk"
+        and feverous_analysis["candidate_ceiling_complete_rate"] == 0.4625
+        and feverous_analysis["mean_selected_unit_reduction_vs_dynamic"] == 2.227778
+        and feverous_analysis["complete_evidence_recall_drop_vs_dynamic"] == 0.0875
+        and feverous_analysis["family_comparison"]
+        == {
+            "adaptive_minus_bootstrap_strongest_non_frc": {
+                "ci_high": -0.005646,
+                "ci_low": -0.073102,
+                "point": -0.03678,
+            },
+            "adaptive_minus_dynamic": {
+                "ci_high": -0.016021,
+                "ci_low": -0.079872,
+                "point": -0.045874,
+            },
+        }
+        and feverous_analysis["budget_deltas"]
+        == {"1024": -0.0369, "1500": -0.0369, "512": -0.036539}
+        and feverous_analysis["query_cache"]["fallback_count"] == 7
+        and feverous_analysis["query_cache"]["fallback_rate"] == 0.029167
+        and feverous_analysis["query_cache"]["gold_fields_visible_to_generator"]
+        is False
+        and feverous_analysis["target_cardinality_distribution"]
+        == {"1": 12, "2": 75, "3": 109, "4": 44}
+        and feverous_analysis["support_checks"]
+        == {
+            "adaptive_minus_dynamic_ci_low_above_0": False,
+            "adaptive_minus_dynamic_point_at_least_0_01": False,
+            "adaptive_minus_strongest_ci_low_above_0": False,
+            "adaptive_minus_strongest_point_at_least_0_01": False,
+            "candidate_ceiling_complete_rate_at_least_0_60": False,
+            "complete_evidence_recall_drop_at_most_0_02": False,
+            "every_budget_and_supported_challenge_delta_at_least_minus_0_02": False,
+            "mean_selected_unit_reduction_at_least_0_50": True,
+            "minimum_total_cases_met": True,
+            "query_parser_fallback_rate_at_most_0_05": True,
+        }
+        and feverous_outcome["status"] == "FEVEROUS_BOUNDED_POOL_INCONCLUSIVE"
+        and feverous_outcome["selector_adoption_authorized"] is False
+        and feverous_outcome["canary_or_default_authorized"] is False
+        and feverous_outcome["gate_2"] == "NO-GO/SHADOW"
+        and len(feverous_cases) == 240
+        and len({row["case_id"] for row in feverous_cases}) == 240
+        and all(
+            sum(row["challenge"] == challenge for row in feverous_cases) == 40
+            for challenge in (
+                "Numerical Reasoning",
+                "Multi-hop Reasoning",
+                "Entity Disambiguation",
+                "Combining Tables and Text",
+                "Search terms not in claim",
+                "Other",
+            )
+        )
+        and not (
+            {
+                "claim",
+                "text",
+                "evidence_id",
+                "page",
+                "title",
+                "sentence",
+                "cell",
+            }
+            & _nested_keys(feverous_cases)
+        )
+        and _evidence_sha256(feverous_result_record_path)
+        == "1ea84cd043ddde97187581f0ac9d1ce0bd14a6c691fef8209e2289f2849385e7"
+        and feverous_result_record["status"] == "FEVEROUS_BOUNDED_POOL_INCONCLUSIVE"
+        and feverous_boundary["prepared_rows"] == 240
+        and feverous_boundary["query_rows"] == 240
+        and feverous_boundary["score_rows"] == 240
+        and feverous_boundary["ordered_alignment"] is True
+        and feverous_boundary["schema_fix_changed_method_or_threshold"] is False
+        and feverous_result_record["support_checks"]["all_required"] is False
+        and feverous_result_record["diagnostic_interpretation"][
+            "causal_claim_authorized"
+        ]
+        is False
+        and feverous_result_record["decision"][
+            "feverous_v43_reuse_for_tuning_or_selection"
+        ]
+        is False
+        and feverous_result_record["decision"]["gate_2"] == "NO-GO/SHADOW"
+        and feverous_result_record["artifact_sha256"]["report_json"]
+        == _evidence_sha256(feverous_report_path)
+        and feverous_result_record["artifact_sha256"]["report_markdown"]
+        == _evidence_sha256(feverous_markdown_path)
+        and feverous_result_record["artifact_sha256"]["public_case_evidence"]
+        == _evidence_sha256(feverous_cases_path)
+    )
+    ottqa_metadata = ottqa_report["metadata"]
+    ottqa_analysis = ottqa_report["analysis"]
+    ottqa_aggregates = ottqa_analysis["aggregates"]
+    ottqa_outcome = ottqa_analysis["outcome"]
+    ottqa_integrity = ottqa_result_record["integrity"]
+    ottqa_guarded_adaptive_atomic_roles_readiness_passed = (
+        _evidence_sha256(ottqa_protocol_path)
+        == "95116d2af455d1f8792e81cc1ed1f0f48db5fd7ef1274d257f73cec8e5c1e072"
+        and ottqa_protocol["schema_version"]
+        == "frc-ottqa-guarded-adaptive-atomic-roles-protocol-v44"
+        and ottqa_protocol["experiment_id"]
+        == "FRC-OTTQA-GUARDED-ADAPTIVE-ATOMIC-ROLES-V44"
+        and ottqa_protocol["methods"]["candidate_method"]
+        == "guarded_adaptive_cardinality_frc_v44"
+        and ottqa_protocol["methods"]["token_budgets"] == [512, 1024, 1500]
+        and ottqa_protocol["decision_rules"]["gate_2"].startswith(
+            "Always remains NO-GO/SHADOW"
+        )
+        and _evidence_sha256(ottqa_implementation_path)
+        == "797aeb50d6fabaf931ba41325c9f9723d44bc6b5b3e66aca04cb5b73aba3df87"
+        and ottqa_implementation["data_content_accessed_before_registration"] is False
+        and ottqa_implementation["frozen_formula"]
+        == "target_cardinality = min(5, max(3, distinct_role_argmax + 1))"
+        and all(ottqa_implementation["synthetic_invariants_verified"].values())
+        and _evidence_sha256(ottqa_execution_path)
+        == "e9bc5d20eb00786f054fd318714ee2448338f140f0f64c16031c62a7351b25f4"
+        and ottqa_execution["candidate_coverage_registration"]["cases"] == 240
+        and ottqa_execution["candidate_coverage_registration"]["source_modes"]
+        == {"passage": 120, "table": 120}
+        and ottqa_execution["candidate_coverage_registration"][
+            "minimum_cases_and_ceiling_checks_passed"
+        ]
+        is True
+        and ottqa_execution["query_generation_started"] is False
+        and ottqa_execution["neural_scoring_started"] is False
+        and ottqa_execution["metrics_computed"] is False
+        and _evidence_sha256(ottqa_result_record_path)
+        == "d6560ffb5017735a32ed9d13b549f235c08c25431baf180a72c8085f0df19c1b"
+        and ottqa_result_record["status"]
+        == "OTTQA_GUARDED_ADAPTIVE_SUPPORT_NOT_ESTABLISHED"
+        and ottqa_result_record["dataset"]["cases"] == 240
+        and ottqa_result_record["dataset"]["source_modes"]
+        == {"passage": 120, "table": 120}
+        and ottqa_result_record["dataset"]["official_leaderboard_result"] is False
+        and ottqa_result_record["dataset"]["open_domain_table_retrieval_evaluated"]
+        is False
+        and ottqa_integrity["protocol_sha256"] == _evidence_sha256(ottqa_protocol_path)
+        and ottqa_integrity["implementation_registration_sha256"]
+        == _evidence_sha256(ottqa_implementation_path)
+        and ottqa_integrity["execution_registration_sha256"]
+        == _evidence_sha256(ottqa_execution_path)
+        and ottqa_integrity["module_sha256"]
+        == _evidence_sha256(
+            repo_root / "research/frc_rag/ottqa_guarded_adaptive_atomic_roles.py"
+        )
+        and ottqa_integrity["runner_sha256"]
+        == _evidence_sha256(
+            repo_root / "scripts/run_ottqa_guarded_adaptive_atomic_roles.py"
+        )
+        and ottqa_integrity["test_sha256"]
+        == _evidence_sha256(
+            repo_root / "tests/test_frc_ottqa_guarded_adaptive_atomic_roles.py"
+        )
+        and ottqa_integrity["report_json_sha256"] == _evidence_sha256(ottqa_report_path)
+        and ottqa_integrity["report_markdown_sha256"]
+        == _evidence_sha256(ottqa_markdown_path)
+        and ottqa_integrity["case_evidence_gzip_sha256"]
+        == _evidence_sha256(ottqa_cases_path)
+        and ottqa_report["schema_version"] == "frc-ottqa-guarded-adaptive-report-v1"
+        and ottqa_metadata["cases"] == 240
+        and ottqa_metadata["official_leaderboard_result"] is False
+        and ottqa_metadata["gold_joined_after_complete_score_cache"] is True
+        and ottqa_analysis["candidate_ceiling_complete_rate"] == 0.995833
+        and ottqa_analysis["query_cache"]["fallback_count"] == 7
+        and ottqa_analysis["query_cache"]["fallback_rate"] == 0.029167
+        and ottqa_analysis["query_cache"]["gold_fields_visible_to_generator"] is False
+        and ottqa_analysis["strongest_non_frc"] == "official_anchor_topk"
+        and ottqa_aggregates["guarded_adaptive_cardinality_frc_v44"]
+        == {
+            "answer_evidence_macro_f1": 0.18996,
+            "answer_evidence_recall": 0.408333,
+            "macro_precision": 0.123773,
+            "mean_selected_token_cost": 424.659722,
+            "mean_selected_unit_count": 3.723611,
+        }
+        and ottqa_analysis["family_comparison"]["guarded_minus_dynamic"]
+        == {"ci_high": 0.029713, "ci_low": 0.001488, "point": 0.016093}
+        and ottqa_analysis["family_comparison"][
+            "guarded_minus_bootstrap_strongest_non_frc"
+        ]
+        == {"ci_high": 0.01418, "ci_low": -0.058018, "point": -0.015061}
+        and ottqa_analysis["answer_evidence_recall_drop_vs_dynamic"] == 0.066667
+        and ottqa_analysis["answer_evidence_recall_gain_vs_v43"] == 0.116666
+        and ottqa_analysis["mean_selected_unit_reduction_vs_dynamic"] == 1.125
+        and ottqa_analysis["supported_source_mode_deltas"]["passage"]["delta"]
+        == 0.029029
+        and ottqa_analysis["supported_source_mode_deltas"]["table"]["delta"]
+        == -0.158409
+        and ottqa_result_record["support_checks"] == ottqa_analysis["support_checks"]
+        and ottqa_outcome["status"] == "OTTQA_GUARDED_ADAPTIVE_SUPPORT_NOT_ESTABLISHED"
+        and ottqa_outcome["selector_adoption_authorized"] is False
+        and ottqa_outcome["canary_or_default_authorized"] is False
+        and ottqa_outcome["gate_2"] == "NO-GO/SHADOW"
+        and ottqa_result_record["decision"]["selector_adoption_authorized"] is False
+        and ottqa_result_record["decision"]["reuse_v44_cases_for_tuning_or_selection"]
+        is False
+        and ottqa_result_record["decision"]["gate_2"] == "NO-GO/SHADOW"
+        and len(ottqa_cases) == 240
+        and len({row["case_id"] for row in ottqa_cases}) == 240
+        and sum(row["source_mode"] == "passage" for row in ottqa_cases) == 120
+        and sum(row["source_mode"] == "table" for row in ottqa_cases) == 120
+        and not (
+            {"question", "answer", "candidate_text", "gold"} & _nested_keys(ottqa_cases)
+        )
+    )
+    finqa_metadata = finqa_result["metadata"]
+    finqa_analysis = finqa_result["analysis"]
+    finqa_aggregates = finqa_analysis["aggregates"]
+    finqa_outcome = finqa_analysis["outcome"]
+    finqa_source_artifacts = finqa_metadata["source_artifacts"]
+    finqa_single = finqa_strata["strata"]["single_gold_fact"]
+    finqa_multiple = finqa_strata["strata"]["multiple_gold_facts"]
+    finqa_diagnostic_analysis = finqa_diagnostic_result["analysis"]
+    finqa_diagnostic_overall = finqa_diagnostic_analysis["overall"]
+    finqa_diagnostic_outcome = finqa_diagnostic_analysis["outcome"]
+    finqa_anchor_guarded_atomic_roles_readiness_passed = (
+        _evidence_sha256(finqa_protocol_path)
+        == "17aeb0865234a644640f2672c9f1dc420fe9f1fbd477548ff8e54618755a1c25"
+        and finqa_protocol["schema_version"]
+        == "frc-finqa-anchor-guarded-atomic-roles-protocol-v45"
+        and finqa_protocol["experiment_id"]
+        == "FRC-FINQA-ANCHOR-GUARDED-ATOMIC-ROLES-V45"
+        and finqa_protocol["methods"]["candidate_method"]
+        == "anchor_guarded_adaptive_cardinality_frc_v45"
+        and finqa_protocol["methods"]["token_budgets"] == [512, 1024, 1500]
+        and finqa_protocol["decision_rules"]["gate_2"].startswith(
+            "Always remains NO-GO/SHADOW"
+        )
+        and _evidence_sha256(finqa_implementation_path)
+        == "321f163fdad5e7d95be7e5b57d4636b3815b62989328bd12c6c9592682ae00ad"
+        and finqa_implementation["data_json_downloaded_or_opened_before_registration"]
+        is False
+        and all(finqa_implementation["synthetic_invariants_verified"].values())
+        and finqa_implementation[
+            "method_or_threshold_change_after_registration_forbidden"
+        ]
+        is True
+        and _evidence_sha256(finqa_execution_path)
+        == "4bf1d7d5d6647aa0e27b89386728c2faae3a9486a3001037724a335d11d5057b"
+        and finqa_execution["hashes"]["implementation_registration_sha256"]
+        == _evidence_sha256(finqa_implementation_path)
+        and finqa_execution["runtime"]["cuda_available"] is True
+        and finqa_execution["runtime"]["gpu"] == "NVIDIA GeForce RTX 4060 Ti"
+        and finqa_execution["query_generation_started"] is False
+        and finqa_execution["neural_scoring_started"] is False
+        and finqa_execution["metrics_computed"] is False
+        and _evidence_sha256(finqa_result_path)
+        == "53f2e6ca555184bb0d5e473f7c4d4df19e102a9bceed42f930ae85ee20a6ed84"
+        and finqa_result["schema_version"] == "frc-finqa-anchor-guarded-report-v1"
+        and finqa_metadata["cases"] == 360
+        and finqa_metadata["official_leaderboard_result"] is False
+        and finqa_metadata["full_context_bounded_pool"] is True
+        and finqa_metadata["gold_joined_after_complete_score_cache"] is True
+        and finqa_source_artifacts["execution_registration_sha256"]
+        == _evidence_sha256(finqa_execution_path)
+        and finqa_source_artifacts["module_sha256"]
+        == _evidence_sha256(
+            repo_root / "research/frc_rag/finqa_anchor_guarded_atomic_roles.py"
+        )
+        and finqa_source_artifacts["runner_sha256"]
+        == _evidence_sha256(
+            repo_root / "scripts/run_finqa_anchor_guarded_atomic_roles.py"
+        )
+        and finqa_source_artifacts["test_sha256"]
+        == _evidence_sha256(
+            repo_root / "tests/test_frc_finqa_anchor_guarded_atomic_roles.py"
+        )
+        and finqa_source_artifacts["queries_sha256"]
+        == "0435e41bee21bbebfb2ed724015e25110fa6612f7cf0e7d3a28b48b283ccd5e4"
+        and finqa_source_artifacts["scored_sha256"]
+        == "7ecba0f941c26f332caf042a692f4370012b77d60a0fa623aae8895b7b5136dc"
+        and finqa_analysis["candidate_ceiling_complete_rate"] == 1.0
+        and finqa_analysis["query_cache"]["fallback_count"] == 12
+        and finqa_analysis["query_cache"]["fallback_rate"] == 0.033333
+        and finqa_analysis["query_cache"]["gold_fields_visible_to_generator"] is False
+        and finqa_analysis["strongest_non_frc"] == "cross_encoder_knapsack"
+        and finqa_aggregates["anchor_guarded_adaptive_cardinality_frc_v45"]
+        == {
+            "complete_recall": 0.602778,
+            "macro_precision": 0.412176,
+            "macro_recall": 0.77047,
+            "mean_selected_token_cost": 152.644444,
+            "mean_selected_unit_count": 3.236111,
+            "supporting_fact_macro_f1": 0.510429,
+        }
+        and finqa_aggregates["anchor_guarded_adaptive_cardinality_frc_v45"]
+        == finqa_aggregates["guarded_adaptive_cardinality_frc_v44"]
+        and finqa_aggregates["adaptive_argmax_cardinality_frc_v43"][
+            "supporting_fact_macro_f1"
+        ]
+        == 0.623946
+        and finqa_analysis["family_comparison"]["v45_minus_v44"]
+        == {"ci_high": 0.0, "ci_low": 0.0, "point": 0.0}
+        and finqa_analysis["family_comparison"]["v45_minus_dynamic"]
+        == {"ci_high": 0.111273, "ci_low": 0.084628, "point": 0.098177}
+        and finqa_analysis["family_comparison"]["v45_minus_bootstrap_strongest_non_frc"]
+        == {"ci_high": 0.113962, "ci_low": 0.085851, "point": 0.100927}
+        and finqa_analysis["mean_selected_unit_reduction_vs_dynamic"] == 1.762037
+        and finqa_analysis["supporting_fact_recall_drop_vs_dynamic"] == 0.059937
+        and finqa_analysis["supported_source_mode_deltas"]["hybrid"]["delta"]
+        == 0.033388
+        and finqa_analysis["supported_source_mode_deltas"]["table_only"]["delta"]
+        == 0.117937
+        and finqa_analysis["supported_source_mode_deltas"]["text_only"]["delta"]
+        == 0.133585
+        and finqa_analysis["support_checks"]["v45_minus_v44_point_at_least_0_005"]
+        is False
+        and finqa_analysis["support_checks"]["supporting_fact_recall_drop_at_most_0_02"]
+        is False
+        and finqa_outcome["status"] == "FINQA_ANCHOR_GUARDED_SUPPORT_NOT_ESTABLISHED"
+        and finqa_outcome["selector_adoption_authorized"] is False
+        and finqa_outcome["canary_or_default_authorized"] is False
+        and finqa_outcome["gate_2"] == "NO-GO/SHADOW"
+        and _evidence_sha256(finqa_markdown_path)
+        == "df06a66ec98fbab87b10c9664fe3fd37fa66835029c8a99ad8509437bd05fddd"
+        and _evidence_sha256(finqa_cases_path)
+        == "8dfd79ceb72998243aec549d004a9e48e8263b45529c33fb6a5c96242f0648bf"
+        and _evidence_sha256(finqa_strata_path)
+        == "391e6895f4bbf6b86ac13a7da48f386e439ecf6f83876077174ffd879247dd71"
+        and finqa_single["cases"] == 151
+        and finqa_multiple["cases"] == 209
+        and finqa_single["v45_minus_guarded_v44"] == 0.0
+        and finqa_multiple["v45_minus_guarded_v44"] == 0.0
+        and finqa_strata["interpretation"]["new_support_check_added"] is False
+        and finqa_strata["interpretation"]["locked_outcome_changed"] is False
+        and finqa_strata["reporting_replay"][
+            "first_attempt_metric_values_printed_or_inspected_before_retry"
+        ]
+        is False
+        and finqa_strata["reporting_replay"][
+            "sample_method_threshold_metric_or_seed_changed"
+        ]
+        is False
+        and finqa_strata["reporting_replay"][
+            "final_report_written_twice_with_identical_hashes"
+        ]
+        is True
+        and finqa_strata["decision"]["selector_adoption_authorized"] is False
+        and finqa_strata["decision"]["reuse_v45_cases_for_tuning_or_selection"] is False
+        and finqa_strata["decision"]["gate_2"] == "NO-GO/SHADOW"
+        and len(finqa_cases) == 360
+        and len({row["case_id"] for row in finqa_cases}) == 360
+        and sum(row["source_mode"] == "hybrid" for row in finqa_cases) == 120
+        and sum(row["source_mode"] == "table_only" for row in finqa_cases) == 120
+        and sum(row["source_mode"] == "text_only" for row in finqa_cases) == 120
+        and not (
+            {
+                "question",
+                "answer",
+                "program",
+                "candidate_text",
+                "gold_candidate_ids",
+            }
+            & _nested_keys(finqa_cases)
+        )
+        and _evidence_sha256(finqa_diagnostic_protocol_path)
+        == "2364924ba8210d4d818d6493cb1a02c021bf472a7c4595ed6ec8ecfa2fce29a3"
+        and finqa_diagnostic_protocol["timing_and_scope"]["diagnostic_only"] is True
+        and finqa_diagnostic_protocol["timing_and_scope"][
+            "confirmatory_or_causal_claim_authorized"
+        ]
+        is False
+        and _evidence_sha256(finqa_diagnostic_result_path)
+        == "edec98c60d2560015be6de163f11ff17765c37b8141458263398b579257df6c7"
+        and _evidence_sha256(finqa_diagnostic_markdown_path)
+        == "f8f7ab5a7928cda090247fec1584aa4b8c73ca7897b9f23fe6a0e35fa1e4f3ab"
+        and _evidence_sha256(finqa_diagnostic_cases_path)
+        == "64b84d5d27bd137ea8748da2be7a51200a38ca7663455ba5c106fd5913347c6d"
+        and finqa_diagnostic_result["metadata"]["cases"] == 360
+        and finqa_diagnostic_result["metadata"]["case_budget_configurations"] == 1080
+        and finqa_diagnostic_result["metadata"]["gold_joined"] is False
+        and finqa_diagnostic_result["metadata"]["question_or_candidate_text_used"]
+        is False
+        and finqa_diagnostic_result["metadata"]["integrity"][
+            "scored_blind_cache_sha256"
+        ]
+        == finqa_source_artifacts["scored_sha256"]
+        and finqa_diagnostic_result["metadata"]["integrity"]["locked_result_sha256"]
+        == _evidence_sha256(finqa_result_path)
+        and finqa_diagnostic_result["metadata"]["integrity"]["diagnostic_module_sha256"]
+        == _evidence_sha256(
+            repo_root / "research/frc_rag/finqa_anchor_equivalence_diagnostic.py"
+        )
+        and finqa_diagnostic_result["metadata"]["integrity"]["diagnostic_runner_sha256"]
+        == _evidence_sha256(
+            repo_root / "scripts/run_finqa_anchor_equivalence_diagnostic.py"
+        )
+        and finqa_diagnostic_result["metadata"]["integrity"]["diagnostic_test_sha256"]
+        == _evidence_sha256(
+            repo_root / "tests/test_frc_finqa_anchor_equivalence_diagnostic.py"
+        )
+        and finqa_diagnostic_overall["configurations"] == 1080
+        and finqa_diagnostic_overall["target_cardinality_equality_rate"] == 1.0
+        and finqa_diagnostic_overall["ordered_selection_equality_rate"] == 0.866667
+        and finqa_diagnostic_overall["unordered_selection_equality_rate"] == 1.0
+        and finqa_diagnostic_overall["v44_anchor_retention_rate_when_feasible"] == 1.0
+        and finqa_diagnostic_overall[
+            "v44_first_selection_equals_anchor_rate_when_feasible"
+        ]
+        == 0.866667
+        and finqa_diagnostic_analysis["by_target_cardinality"]["3"]["configurations"]
+        == 861
+        and finqa_diagnostic_analysis["by_target_cardinality"]["4"]["configurations"]
+        == 183
+        and finqa_diagnostic_analysis["by_target_cardinality"]["5"]["configurations"]
+        == 36
+        and finqa_diagnostic_outcome["status"]
+        == "FINQA_V45_V44_SET_EQUIVALENT_ORDER_DIFFERENT_ON_FROZEN_SCORES"
+        and finqa_diagnostic_outcome["v45_locked_outcome_changed"] is False
+        and finqa_diagnostic_outcome["selector_adoption_authorized"] is False
+        and finqa_diagnostic_outcome["reuse_v45_for_tuning_or_selection"] is False
+        and finqa_diagnostic_outcome["gate_2"] == "NO-GO/SHADOW"
+        and len(finqa_diagnostic_cases) == 1080
+        and len(
+            {(row["case_id"], int(row["budget"])) for row in finqa_diagnostic_cases}
+        )
+        == 1080
+        and not (
+            {
+                "question",
+                "answer",
+                "program",
+                "candidate_text",
+                "gold_candidate_ids",
+                "source_mode",
+                "gold_count",
+            }
+            & _nested_keys(finqa_diagnostic_cases)
+        )
+    )
+    tatqa_consensus_guarded_atomic_roles_readiness_passed = (
+        _evidence_sha256(tatqa_protocol_path)
+        == "107ceca66c00bb70e424923c7ea879f16a24004debfe90f738ee7d89d8903ce8"
+        and tatqa_protocol["schema_version"]
+        == "frc-tatqa-consensus-guarded-atomic-roles-protocol-v46"
+        and tatqa_protocol["experiment_id"]
+        == "FRC-TATQA-CONSENSUS-GUARDED-ATOMIC-ROLES-V46"
+        and tatqa_protocol["methods"]["candidate_method"]
+        == "consensus_guarded_adaptive_cardinality_frc_v46"
+        and tatqa_protocol["methods"]["token_budgets"] == [256, 512, 1024]
+        and tatqa_protocol["pre_registration_access_disclosure"][
+            "dev_json_downloaded_or_opened_before_protocol_hash"
+        ]
+        is False
+        and _evidence_sha256(tatqa_implementation_path)
+        == "2a2cfda4ffbe93d40b58aa8c3e80eed2d8409ae216f50e222723cd9868276d25"
+        and tatqa_implementation["data_json_downloaded_or_opened_before_registration"]
+        is False
+        and all(tatqa_implementation["synthetic_invariants_verified"].values())
+        and tatqa_implementation["synthetic_test_result"]
+        == {
+            "command": "python -m pytest tests/test_frc_tatqa_consensus_guarded_atomic_roles.py -q -p no:cacheprovider",
+            "passed": 6,
+            "failed": 0,
+        }
+        and _evidence_sha256(tatqa_result_path)
+        == "99045399167177f8559594356b70d20001402da87796d82106b7cf7b16853a45"
+        and tatqa_result["status"] == "TATQA_FULL_CONTEXT_POOL_INCONCLUSIVE"
+        and tatqa_result["stage_reached"] == "POST_ACCESS_STRUCTURAL_CENSUS_PRE_QUERY"
+        and tatqa_result["structural_census"]["questions"] == 1668
+        and tatqa_result["structural_census"]["raw_dev_mapping_field_present_questions"]
+        == 0
+        and tatqa_result["structural_census"][
+            "tagop_dev_mapping_field_present_questions"
+        ]
+        == 0
+        and tatqa_result["structural_census"][
+            "eligible_questions_with_exact_official_table_cell_or_paragraph_mapping"
+        ]
+        == 0
+        and tatqa_result["stop_rule"]["answer_or_derivation_based_pseudo_gold_created"]
+        is False
+        and tatqa_result["stop_rule"]["rel_paragraphs_only_used_as_partial_gold"]
+        is False
+        and tatqa_result["stop_rule"][
+            "schema_adapter_or_gold_definition_changed_after_access"
+        ]
+        is False
+        and all(
+            tatqa_result["execution_boundary"][key] is False
+            for key in (
+                "execution_registration_written",
+                "query_generation_started",
+                "neural_scoring_started",
+                "gold_join_started",
+                "metrics_computed",
+                "bootstrap_started",
+            )
+        )
+        and tatqa_result["decision"]["method_support_established"] is False
+        and tatqa_result["decision"]["selector_adoption_authorized"] is False
+        and tatqa_result["decision"]["reuse_v46_cases_for_tuning_or_selection"] is False
+        and tatqa_result["decision"]["gate_2"] == "NO-GO/SHADOW"
+        and _evidence_sha256(tatqa_markdown_path)
+        == "8c31c0e7bca264bce924daa04567a885541c62bd235118433ee04d6ab7d7b604"
+    )
+    fetaqa_metadata = fetaqa_result["metadata"]
+    fetaqa_analysis = fetaqa_result["analysis"]
+    fetaqa_aggregates = fetaqa_analysis["aggregates"]
+    fetaqa_outcome = fetaqa_analysis["outcome"]
+    fetaqa_source_artifacts = fetaqa_metadata["source_artifacts"]
+    fetaqa_consensus_guarded_atomic_roles_readiness_passed = (
+        _evidence_sha256(fetaqa_protocol_path)
+        == "29e10028399535034b5384186565660ac4d051d2cd37d4990b7bdcc175540a7d"
+        and fetaqa_protocol["schema_version"]
+        == "frc-fetaqa-consensus-guarded-atomic-roles-protocol-v47"
+        and fetaqa_protocol["experiment_id"]
+        == "FRC-FETAQA-CONSENSUS-GUARDED-ATOMIC-ROLES-V47"
+        and fetaqa_protocol["methods"]["candidate_method"]
+        == "consensus_guarded_adaptive_cardinality_frc_v46"
+        and fetaqa_protocol["methods"]["token_budgets"] == [256, 512, 1024]
+        and fetaqa_protocol["methods"]["synthetic_invariants_inherited_from_v46"][
+            "protocol_sha256"
+        ]
+        == _evidence_sha256(tatqa_protocol_path)
+        and fetaqa_protocol["development_boundary"][
+            "candidate_formula_changed_after_tatqa_access"
+        ]
+        is False
+        and _evidence_sha256(fetaqa_implementation_path)
+        == "3f89607c7f9e1f3e06e26d0aeea1fcf7b8e8552da55a0549355efa6df84bb686"
+        and fetaqa_implementation["data_jsonl_downloaded_or_opened_before_registration"]
+        is False
+        and fetaqa_implementation["v46_selector_replayed_without_change"] is True
+        and all(fetaqa_implementation["synthetic_invariants_verified"].values())
+        and _evidence_sha256(fetaqa_execution_path)
+        == "8a90760341d384cc260d165c8354f731475d78ee2fe79dc162fc4ce1adc373cd"
+        and fetaqa_execution["hashes"]["implementation_registration_sha256"]
+        == _evidence_sha256(fetaqa_implementation_path)
+        and fetaqa_execution["runtime"]["cuda_available"] is True
+        and fetaqa_execution["runtime"]["gpu"] == "NVIDIA GeForce RTX 4060 Ti"
+        and fetaqa_execution["query_generation_started"] is False
+        and fetaqa_execution["neural_scoring_started"] is False
+        and fetaqa_execution["metrics_computed"] is False
+        and _evidence_sha256(fetaqa_execution_erratum_path)
+        == "dca0ed0277999f377aeecde574fda1c215a37b0c69ad1de085e4613846176a6c"
+        and fetaqa_execution_erratum["effective_execution_sha256"]
+        == _evidence_sha256(fetaqa_execution_path)
+        and fetaqa_execution_erratum["method_threshold_sample_metric_or_seed_changed"]
+        is False
+        and fetaqa_execution_erratum["queries_generated_before_correction"] is False
+        and fetaqa_execution_erratum["neural_scores_generated_before_correction"]
+        is False
+        and fetaqa_execution_erratum["metrics_seen_before_correction"] is False
+        and _evidence_sha256(fetaqa_result_path)
+        == "a0c2f4041564aaac8435554473b0c3f0c419d96b8564586c4b2521c2923c4e12"
+        and fetaqa_result["schema_version"] == "frc-fetaqa-consensus-guarded-report-v1"
+        and fetaqa_metadata["cases"] == 600
+        and fetaqa_metadata["official_leaderboard_result"] is False
+        and fetaqa_metadata["full_table_bounded_pool"] is True
+        and fetaqa_metadata["gold_joined_after_complete_score_cache"] is True
+        and fetaqa_source_artifacts["execution_registration_sha256"]
+        == _evidence_sha256(fetaqa_execution_path)
+        and fetaqa_source_artifacts["module_sha256"]
+        == _evidence_sha256(
+            repo_root / "research/frc_rag/fetaqa_consensus_guarded_atomic_roles.py"
+        )
+        and fetaqa_source_artifacts["runner_sha256"]
+        == _evidence_sha256(
+            repo_root / "scripts/run_fetaqa_consensus_guarded_atomic_roles.py"
+        )
+        and fetaqa_source_artifacts["test_sha256"]
+        == _evidence_sha256(
+            repo_root / "tests/test_frc_fetaqa_consensus_guarded_atomic_roles.py"
+        )
+        and fetaqa_source_artifacts["queries_sha256"]
+        == "19bed89f902b967f31a10d463c2bc33fde456e08006bdb4075f4dc0d894c2020"
+        and fetaqa_source_artifacts["scored_sha256"]
+        == "e634f84e7deadc1eb67fe4511c377763a4a4c04e379031885230890ae88cfc8c"
+        and fetaqa_analysis["candidate_ceiling_complete_rate"] == 1.0
+        and fetaqa_analysis["query_cache"]["fallback_count"] == 7
+        and fetaqa_analysis["query_cache"]["fallback_rate"] == 0.011667
+        and fetaqa_analysis["query_cache"]["gold_fields_visible_to_generator"] is False
+        and fetaqa_analysis["strongest_frozen_frc_control"]
+        == "guarded_adaptive_cardinality_frc_v44"
+        and fetaqa_analysis["strongest_non_frc"] == "cross_encoder_knapsack"
+        and fetaqa_aggregates["consensus_guarded_adaptive_cardinality_frc_v46"][
+            "supporting_cell_macro_f1"
+        ]
+        == 0.358926
+        and fetaqa_aggregates["guarded_adaptive_cardinality_frc_v44"][
+            "supporting_cell_macro_f1"
+        ]
+        == 0.375153
+        and fetaqa_aggregates["cross_encoder_knapsack"]["supporting_cell_macro_f1"]
+        == 0.366367
+        and fetaqa_analysis["family_comparison"][
+            "v47_minus_strongest_frozen_frc_control"
+        ]
+        == {"ci_high": -0.010334, "ci_low": -0.022628, "point": -0.016227}
+        and fetaqa_analysis["family_comparison"]["v47_minus_strongest_non_frc"]
+        == {"ci_high": 0.00067, "ci_low": -0.025087, "point": -0.007441}
+        and fetaqa_analysis["mean_selected_unit_reduction_vs_dynamic"] == 1.843333
+        and fetaqa_analysis["supporting_cell_recall_drop_vs_dynamic"] == 0.085533
+        and fetaqa_analysis["consensus_trigger_rate"] == 0.496667
+        and fetaqa_analysis["selection_set_difference_rate_vs_v43"] == 0.496667
+        and fetaqa_analysis["selection_set_difference_rate_vs_v44"] == 0.591667
+        and fetaqa_analysis["target_cardinality_distribution"]
+        == {"1": 2, "2": 123, "3": 276, "4": 179, "5": 20}
+        and fetaqa_analysis["support_checks"][
+            "mean_selected_unit_reduction_at_least_0_50"
+        ]
+        is True
+        and fetaqa_analysis["support_checks"][
+            "supporting_cell_recall_drop_at_most_0_02"
+        ]
+        is False
+        and fetaqa_analysis["support_checks"][
+            "v47_minus_strongest_frc_point_at_least_0_005"
+        ]
+        is False
+        and fetaqa_analysis["support_checks"][
+            "every_budget_and_supported_stratum_delta_at_least_minus_0_02"
+        ]
+        is False
+        and fetaqa_outcome["status"]
+        == "FETAQA_CONSENSUS_GUARDED_SUPPORT_NOT_ESTABLISHED"
+        and fetaqa_outcome["selector_adoption_authorized"] is False
+        and fetaqa_outcome["canary_or_default_authorized"] is False
+        and fetaqa_outcome["reuse_v47_cases_for_tuning_or_selection"] is False
+        and fetaqa_outcome["gate_2"] == "NO-GO/SHADOW"
+        and _evidence_sha256(fetaqa_markdown_path)
+        == "06c72bbf48dddb733304747f88d577aa840ec1ce5aeada9e6e92fc698630ec52"
+        and _evidence_sha256(fetaqa_cases_path)
+        == "88b1effecdbd1b8dbc80837be4af75a2b3565d753ae15623211012ff03b35375"
+        and len(fetaqa_cases) == 600
+        and len({row["case_id"] for row in fetaqa_cases}) == 600
+        and all(row["candidate_ceiling_complete"] is True for row in fetaqa_cases)
+        and not (
+            {
+                "question",
+                "answer",
+                "candidate_text",
+                "gold_candidate_ids",
+                "highlighted_cell_ids",
+            }
+            & _nested_keys(fetaqa_cases)
+        )
+    )
+    qasper_metadata = qasper_result["metadata"]
+    qasper_analysis = qasper_result["analysis"]
+    qasper_aggregates = qasper_analysis["aggregates"]
+    qasper_outcome = qasper_analysis["outcome"]
+    qasper_source_artifacts = qasper_metadata["source_artifacts"]
+    qasper_top2_proposal_guarded_atomic_roles_readiness_passed = (
+        _evidence_sha256(qasper_protocol_path)
+        == "34c96fda996ab635911a3736b6d0df56598b79f87ed671c1f0050a366f475501"
+        and qasper_protocol["schema_version"]
+        == "frc-qasper-top2-proposal-guarded-atomic-roles-protocol-v48"
+        and qasper_protocol["experiment_id"]
+        == "FRC-QASPER-TOP2-PROPOSAL-GUARDED-ATOMIC-ROLES-V48"
+        and qasper_protocol["development_boundary"][
+            "qasper_train_split_permanently_excluded"
+        ]
+        is True
+        and qasper_protocol["methods"]["candidate_method"]
+        == "top2_proposal_guarded_frc_v48"
+        and qasper_protocol["methods"]["token_budgets"] == [256, 512, 1024]
+        and _evidence_sha256(qasper_implementation_path)
+        == "051895e3ae32b5b1a679220b939447150bda955cee087216dd4d16ac98045006"
+        and qasper_implementation[
+            "initial_implementation_registered_before_archive_download"
+        ]
+        is True
+        and qasper_implementation["validation_member_opened_before_registration"]
+        is False
+        and qasper_implementation[
+            "license_parser_failure_occurred_before_dev_member_open"
+        ]
+        is True
+        and qasper_implementation["license_parser_amendment_only"] is True
+        and all(qasper_implementation["synthetic_invariants_verified"].values())
+        and _evidence_sha256(qasper_execution_path)
+        == "007ce9a2b44f6ebc42e2e108ed793df84f5ba72518e71f540a83bc48b3311e76"
+        and qasper_execution["hashes"]["implementation_registration_sha256"]
+        == _evidence_sha256(qasper_implementation_path)
+        and qasper_execution["runtime"]["cuda_available"] is True
+        and qasper_execution["runtime"]["gpu"] == "NVIDIA GeForce RTX 4060 Ti"
+        and qasper_execution["query_generation_started"] is False
+        and qasper_execution["neural_scoring_started"] is False
+        and qasper_execution["metrics_computed"] is False
+        and qasper_execution["source_artifacts"]["train_member_opened"] is False
+        and _evidence_sha256(qasper_execution_erratum_path)
+        == "58c947e15ea7e5542b4b82c18bd3b6e1f19ca510947af4b48e31134f156979b7"
+        and qasper_execution_erratum["effective_execution_sha256"]
+        == _evidence_sha256(qasper_execution_path)
+        and qasper_execution_erratum["method_threshold_sample_metric_or_seed_changed"]
+        is False
+        and qasper_execution_erratum["queries_generated_before_correction"] is False
+        and qasper_execution_erratum["neural_scores_generated_before_correction"]
+        is False
+        and qasper_execution_erratum["metrics_seen_before_correction"] is False
+        and _evidence_sha256(qasper_result_path)
+        == "d066df517eb627484068a2dcf5bdc782915ebbee66471e3f95e02a73854bf099"
+        and qasper_result["schema_version"]
+        == "frc-qasper-top2-proposal-guarded-report-v1"
+        and qasper_metadata["cases"] == 600
+        and qasper_metadata["official_leaderboard_result"] is False
+        and qasper_metadata["full_paper_bounded_pool"] is True
+        and qasper_metadata["multi_reference_gold_not_unioned"] is True
+        and qasper_metadata["gold_joined_after_complete_score_cache"] is True
+        and qasper_source_artifacts["execution_registration_sha256"]
+        == _evidence_sha256(qasper_execution_path)
+        and qasper_source_artifacts["module_sha256"]
+        == _evidence_sha256(
+            repo_root / "research/frc_rag/qasper_top2_proposal_guarded_atomic_roles.py"
+        )
+        and qasper_source_artifacts["runner_sha256"]
+        == _evidence_sha256(
+            repo_root / "scripts/run_qasper_top2_proposal_guarded_atomic_roles.py"
+        )
+        and qasper_source_artifacts["test_sha256"]
+        == _evidence_sha256(
+            repo_root / "tests/test_frc_qasper_top2_proposal_guarded_atomic_roles.py"
+        )
+        and qasper_source_artifacts["queries_sha256"]
+        == "333067e79997c20ea46d56d7367ec53bddcf37596c957bbae299a51aab2c0b03"
+        and qasper_source_artifacts["scored_sha256"]
+        == "2ac92e9461f6acf213194de6355237975fe60374324693364731fde4169537de"
+        and qasper_analysis["candidate_ceiling_complete_rate"] == 1.0
+        and qasper_analysis["query_cache"]["fallback_count"] == 3
+        and qasper_analysis["query_cache"]["fallback_rate"] == 0.005
+        and qasper_analysis["query_cache"]["gold_fields_visible_to_generator"] is False
+        and qasper_analysis["strongest_frozen_frc_control"]
+        == "adaptive_argmax_cardinality_frc_v43"
+        and qasper_analysis["strongest_non_frc"] == "cross_encoder_topk"
+        and qasper_aggregates["top2_proposal_guarded_frc_v48"]["evidence_macro_f1"]
+        == 0.296239
+        and qasper_aggregates["adaptive_argmax_cardinality_frc_v43"][
+            "evidence_macro_f1"
+        ]
+        == 0.316885
+        and qasper_aggregates["cross_encoder_topk"]["evidence_macro_f1"] == 0.247513
+        and qasper_analysis["family_comparison"][
+            "v48_minus_strongest_frozen_frc_control"
+        ]
+        == {"ci_high": -0.006266, "ci_low": -0.034871, "point": -0.020645}
+        and qasper_analysis["family_comparison"]["v48_minus_strongest_non_frc"]
+        == {"ci_high": 0.062649, "ci_low": 0.034631, "point": 0.048726}
+        and qasper_analysis["adaptive_target_below_five_rate"] == 0.613333
+        and qasper_analysis["selection_set_difference_rate_vs_dynamic"] == 0.903889
+        and qasper_analysis["selection_set_difference_rate_vs_v46"] == 0.777222
+        and qasper_analysis["mean_selected_unit_reduction_vs_dynamic"] == 1.263333
+        and qasper_analysis["evidence_recall_drop_vs_dynamic"] == 0.043625
+        and qasper_analysis["proposal_union_size_distribution"]
+        == {"2": 42, "3": 134, "4": 192, "5": 121, "6": 85, "7": 22, "8": 4}
+        and qasper_analysis["target_cardinality_distribution"]
+        == {"2": 42, "3": 134, "4": 192, "5": 232}
+        and qasper_analysis["supported_stratum_deltas"][
+            "evidence_source_mode:includes_float"
+        ]["delta"]
+        == -0.023157
+        and qasper_analysis["support_checks"][
+            "v48_minus_strongest_non_frc_ci_low_above_0"
+        ]
+        is True
+        and qasper_analysis["support_checks"][
+            "v48_minus_strongest_frc_point_at_least_0_005"
+        ]
+        is False
+        and qasper_analysis["support_checks"]["evidence_recall_drop_at_most_0_01"]
+        is False
+        and qasper_analysis["support_checks"][
+            "every_budget_and_supported_stratum_delta_at_least_minus_0_02"
+        ]
+        is False
+        and qasper_outcome["status"]
+        == "QASPER_TOP2_PROPOSAL_GUARDED_SUPPORT_NOT_ESTABLISHED"
+        and qasper_outcome["selector_adoption_authorized"] is False
+        and qasper_outcome["canary_or_default_authorized"] is False
+        and qasper_outcome["reuse_v48_cases_for_tuning_or_selection"] is False
+        and qasper_outcome["gate_2"] == "NO-GO/SHADOW"
+        and _evidence_sha256(qasper_markdown_path)
+        == "a0a7aff773c898545e36e3c05be7ae7daad8641ff3e2609cae88c81c8f55f80b"
+        and _evidence_sha256(qasper_cases_path)
+        == "0d2c9f068c02d5ac50e54a06f4a796b8a6818e9a7b22d37093d0c23638de514a"
+        and len(qasper_cases) == 600
+        and len({row["case_id"] for row in qasper_cases}) == 600
+        and all(row["candidate_ceiling_complete"] is True for row in qasper_cases)
+        and not (
+            {
+                "question",
+                "answers",
+                "annotation_id",
+                "worker_id",
+                "paper_id",
+                "question_id",
+                "candidate_text",
+            }
+            & _nested_keys(qasper_cases)
+        )
+    )
+    evidence_inference_metadata = evidence_inference_result["metadata"]
+    evidence_inference_analysis = evidence_inference_result["analysis"]
+    evidence_inference_aggregates = evidence_inference_analysis["aggregates"]
+    evidence_inference_outcome = evidence_inference_analysis["outcome"]
+    evidence_inference_source_artifacts = evidence_inference_metadata[
+        "source_artifacts"
+    ]
+    evidence_inference_low_core_divergence_readiness_passed = (
+        _evidence_sha256(evidence_inference_protocol_path)
+        == "e937f230bbb4a359cc2787edd6f33e90e5e6b084c5b7f14a8ca9f4f58c3d5d0c"
+        and evidence_inference_protocol["schema_version"]
+        == "frc-evidence-inference-low-core-divergence-atomic-roles-protocol-v49"
+        and evidence_inference_protocol["experiment_id"]
+        == "FRC-EVIDENCE-INFERENCE-LOW-CORE-DIVERGENCE-GUARDED-ATOMIC-ROLES-V49"
+        and evidence_inference_protocol["development_boundary"][
+            "evidence_inference_train_split_permanently_excluded"
+        ]
+        is True
+        and evidence_inference_protocol["development_boundary"][
+            "evidence_inference_test_split_permanently_excluded"
+        ]
+        is True
+        and evidence_inference_protocol["development_boundary"][
+            "qasper_v48_case_level_artifact_used_for_v49_design"
+        ]
+        is False
+        and evidence_inference_protocol["methods"]["candidate_method"]
+        == "low_core_divergence_guarded_frc_v49"
+        and evidence_inference_protocol["methods"]["token_budgets"] == [256, 512, 1024]
+        and _evidence_sha256(evidence_inference_implementation_path)
+        == "f7c7331321e94040067c9734abcc4adbc87e77db83242843d9cb9441a2a3be4b"
+        and evidence_inference_implementation[
+            "validation_archive_downloaded_before_registration"
+        ]
+        is False
+        and evidence_inference_implementation[
+            "validation_archive_listed_or_opened_before_registration"
+        ]
+        is False
+        and evidence_inference_implementation["train_or_test_content_used"] is False
+        and all(
+            evidence_inference_implementation["synthetic_invariants_verified"].values()
+        )
+        and _evidence_sha256(evidence_inference_execution_path)
+        == "294e7a63298fc4fba1e2e6d487f00029da999a1be72087b04af8033ef8284b8e"
+        and evidence_inference_execution["hashes"]["implementation_registration_sha256"]
+        == _evidence_sha256(evidence_inference_implementation_path)
+        and evidence_inference_execution["runtime"]["cuda_available"] is True
+        and evidence_inference_execution["runtime"]["gpu"]
+        == "NVIDIA GeForce RTX 4060 Ti"
+        and evidence_inference_execution["query_generation_started"] is False
+        and evidence_inference_execution["neural_scoring_started"] is False
+        and evidence_inference_execution["metrics_computed"] is False
+        and evidence_inference_execution["source_artifacts"][
+            "train_article_id_member_opened"
+        ]
+        is False
+        and evidence_inference_execution["source_artifacts"][
+            "test_article_id_member_opened"
+        ]
+        is False
+        and evidence_inference_execution["source_artifacts"][
+            "train_or_test_article_text_opened"
+        ]
+        is False
+        and _evidence_sha256(evidence_inference_execution_erratum_path)
+        == "382481955ad4f71d7b1bfd04cd872ce8cd9a50cc8864a40fb975fece603f0d72"
+        and evidence_inference_execution_erratum["effective_execution_sha256"]
+        == _evidence_sha256(evidence_inference_execution_path)
+        and evidence_inference_execution_erratum["completed_cache"]["rows"] == 600
+        and evidence_inference_execution_erratum["completed_cache"]["queries_sha256"]
+        == "2f5f3458766d5a75d9e35cb4ee150b7f576422b70ae7b0e1c55ce9fe4b11b516"
+        and evidence_inference_execution_erratum["completed_cache"][
+            "independent_validation_passed"
+        ]
+        is True
+        and evidence_inference_execution_erratum[
+            "method_threshold_sample_metric_or_seed_changed"
+        ]
+        is False
+        and evidence_inference_execution_erratum[
+            "query_cache_regenerated_after_timeout"
+        ]
+        is False
+        and evidence_inference_execution_erratum[
+            "gold_joined_before_independent_cache_validation"
+        ]
+        is False
+        and evidence_inference_execution_erratum[
+            "neural_scores_generated_before_independent_cache_validation"
+        ]
+        is False
+        and evidence_inference_execution_erratum[
+            "metrics_seen_before_independent_cache_validation"
+        ]
+        is False
+        and _evidence_sha256(evidence_inference_result_path)
+        == "ff27e0acb17a4b9e6da0a82f6c58df73da8840e1ee24d910a9d6d90e483576a7"
+        and evidence_inference_result["schema_version"]
+        == "frc-evidence-inference-low-core-divergence-report-v1"
+        and evidence_inference_metadata["cases"] == 600
+        and evidence_inference_metadata["official_leaderboard_result"] is False
+        and evidence_inference_metadata["eraser_result"] is False
+        and evidence_inference_metadata["full_article_bounded_pool"] is True
+        and evidence_inference_metadata["multi_reference_gold_not_unioned"] is True
+        and evidence_inference_metadata["gold_joined_after_complete_score_cache"]
+        is True
+        and evidence_inference_source_artifacts["execution_registration_sha256"]
+        == _evidence_sha256(evidence_inference_execution_path)
+        and evidence_inference_source_artifacts["module_sha256"]
+        == _evidence_sha256(
+            repo_root
+            / "research/frc_rag/evidence_inference_low_core_divergence_atomic_roles.py"
+        )
+        and evidence_inference_source_artifacts["runner_sha256"]
+        == _evidence_sha256(
+            repo_root
+            / "scripts/run_evidence_inference_low_core_divergence_atomic_roles.py"
+        )
+        and evidence_inference_source_artifacts["test_sha256"]
+        == _evidence_sha256(
+            repo_root
+            / "tests/test_frc_evidence_inference_low_core_divergence_atomic_roles.py"
+        )
+        and evidence_inference_source_artifacts["queries_sha256"]
+        == "2f5f3458766d5a75d9e35cb4ee150b7f576422b70ae7b0e1c55ce9fe4b11b516"
+        and evidence_inference_source_artifacts["scored_sha256"]
+        == "1206974f2d2fc26acfae64faa86f9a890dc478f4bb063ec0c2c89dd21cd99b72"
+        and evidence_inference_analysis["candidate_ceiling_complete_rate"] == 1.0
+        and evidence_inference_analysis["query_cache"]["fallback_count"] == 16
+        and evidence_inference_analysis["query_cache"]["fallback_rate"] == 0.026667
+        and evidence_inference_analysis["query_cache"][
+            "gold_fields_visible_to_generator"
+        ]
+        is False
+        and evidence_inference_analysis["strongest_frozen_frc_control"]
+        == "adaptive_argmax_cardinality_frc_v43"
+        and evidence_inference_analysis["strongest_non_frc"] == "cross_encoder_topk"
+        and evidence_inference_aggregates["low_core_divergence_guarded_frc_v49"][
+            "evidence_macro_f1"
+        ]
+        == 0.220684
+        and evidence_inference_aggregates["adaptive_argmax_cardinality_frc_v43"][
+            "evidence_macro_f1"
+        ]
+        == 0.223942
+        and evidence_inference_aggregates["cross_encoder_topk"]["evidence_macro_f1"]
+        == 0.186549
+        and evidence_inference_analysis["family_comparison"][
+            "v49_minus_strongest_frozen_frc_control"
+        ]
+        == {"ci_high": 0.001747, "ci_low": -0.008086, "point": -0.003258}
+        and evidence_inference_analysis["family_comparison"][
+            "v49_minus_strongest_non_frc"
+        ]
+        == {"ci_high": 0.04682, "ci_low": 0.021521, "point": 0.034135}
+        and evidence_inference_analysis["expansion_trigger_rate"] == 0.15
+        and evidence_inference_analysis["selection_set_difference_rate_vs_v43"]
+        == 0.149444
+        and evidence_inference_analysis["mean_selected_unit_reduction_vs_dynamic"]
+        == 1.952222
+        and evidence_inference_analysis["macro_recall_improvement_vs_v43"] == 0.00871
+        and evidence_inference_analysis["target_cardinality_distribution"]
+        == {"1": 36, "2": 96, "3": 302, "4": 166}
+        and evidence_inference_analysis["support_checks"][
+            "v49_minus_strongest_non_frc_ci_low_above_0"
+        ]
+        is True
+        and evidence_inference_analysis["support_checks"][
+            "v49_minus_strongest_frc_ci_low_above_0"
+        ]
+        is False
+        and evidence_inference_analysis["support_checks"][
+            "macro_recall_improvement_vs_v43_at_least_0_01"
+        ]
+        is False
+        and evidence_inference_analysis["support_checks"][
+            "every_budget_and_supported_stratum_delta_at_least_minus_0_02"
+        ]
+        is True
+        and evidence_inference_outcome["status"]
+        == "EVIDENCE_INFERENCE_LOW_CORE_DIVERGENCE_SUPPORT_NOT_ESTABLISHED"
+        and evidence_inference_outcome["selector_adoption_authorized"] is False
+        and evidence_inference_outcome["canary_or_default_authorized"] is False
+        and evidence_inference_outcome["reuse_v49_cases_for_tuning_or_selection"]
+        is False
+        and evidence_inference_outcome["gate_2"] == "NO-GO/SHADOW"
+        and _evidence_sha256(evidence_inference_markdown_path)
+        == "d6e0e2b096305f86d9f417925f699becc5ea63255fe1d09fb35d5d96d578eb82"
+        and _evidence_sha256(evidence_inference_cases_path)
+        == "08120e02475274150d7e34b9cac84d462a00d6270a4d32b26cc3b32403280b3d"
+        and len(evidence_inference_cases) == 600
+        and len({row["case_id"] for row in evidence_inference_cases}) == 600
+        and all(
+            row["candidate_ceiling_complete"] is True
+            for row in evidence_inference_cases
+        )
+        and not (
+            {
+                "prompt",
+                "question",
+                "candidate_text",
+                "article_text",
+                "pmcid",
+                "user_id",
+                "evidence_start",
+                "evidence_end",
+                "intervention",
+                "comparator",
+                "outcome",
+            }
+            & _nested_keys(evidence_inference_cases)
+        )
+    )
+    contractnli_metadata = contractnli_result["metadata"]
+    contractnli_analysis = contractnli_result["analysis"]
+    contractnli_aggregates = contractnli_analysis["aggregates"]
+    contractnli_outcome = contractnli_analysis["outcome"]
+    contractnli_source_artifacts = contractnli_metadata["source_artifacts"]
+    contractnli_native_zero_consensus_readiness_passed = (
+        _evidence_sha256(contractnli_protocol_path)
+        == "519b6105cade0869dde3a5b0805bb06022319ab0b8234ade6e8e77f28efebc86"
+        and contractnli_protocol["development_boundary"][
+            "contractnli_train_split_permanently_excluded"
+        ]
+        is True
+        and contractnli_protocol["development_boundary"][
+            "contractnli_dev_split_permanently_excluded"
+        ]
+        is True
+        and contractnli_protocol["methods"]["candidate_method"]
+        == "native_zero_consensus_adaptive_frc_v50"
+        and contractnli_protocol["methods"]["token_budgets"] == [256, 512, 1024]
+        and _evidence_sha256(contractnli_protocol_erratum_path)
+        == "02b229b4d3258c2448be299c6c105c1b9de1e04e0fe348c2843eac0bfb9c038d"
+        and contractnli_protocol_erratum["trigger"]["prepared_cache_written"] is False
+        and contractnli_protocol_erratum["trigger"]["query_generation_started"] is False
+        and contractnli_protocol_erratum["trigger"]["neural_scoring_started"] is False
+        and contractnli_protocol_erratum["correction"][
+            "empirical_score_threshold_or_selector_changed"
+        ]
+        is False
+        and _evidence_sha256(contractnli_implementation_erratum_path)
+        == "79709ade1c1b31865d392821c0b2c3b81d5930904816a3f503d7889478265b9f"
+        and contractnli_implementation_erratum["archive_downloaded_before_erratum"]
+        is True
+        and contractnli_implementation_erratum[
+            "case_level_sample_membership_score_selection_or_metric_seen_before_erratum"
+        ]
+        is False
+        and contractnli_implementation_erratum["train_or_dev_content_used"] is False
+        and all(
+            contractnli_implementation_erratum["synthetic_invariants_verified"].values()
+        )
+        and _evidence_sha256(contractnli_execution_path)
+        == "1720fd7ac45b615099c7c7f5956c7b5a2a53f0037fe8b1a92c2e7b348bc2ff3a"
+        and contractnli_execution["hashes"]["implementation_registration_sha256"]
+        == _evidence_sha256(contractnli_implementation_erratum_path)
+        and contractnli_execution["runtime"]["cuda_available"] is True
+        and contractnli_execution["runtime"]["gpu"] == "NVIDIA GeForce RTX 4060 Ti"
+        and contractnli_execution["query_generation_started"] is False
+        and contractnli_execution["neural_scoring_started"] is False
+        and contractnli_execution["metrics_computed"] is False
+        and contractnli_execution["source_artifacts"]["train_member_opened"] is False
+        and contractnli_execution["source_artifacts"]["dev_member_opened"] is False
+        and _evidence_sha256(contractnli_result_path)
+        == "33289babad9f6871aebbc32853a8512e5f45fe2d992c2885759493f89b3a9af8"
+        and contractnli_result["schema_version"]
+        == "frc-contractnli-native-zero-consensus-report-v1"
+        and contractnli_metadata["cases"] == 600
+        and contractnli_metadata["official_leaderboard_result"] is False
+        and contractnli_metadata["full_contract_bounded_pool"] is True
+        and contractnli_metadata["balanced_mechanism_sample_not_natural_prevalence"]
+        is True
+        and contractnli_metadata["gold_joined_after_complete_score_cache"] is True
+        and contractnli_source_artifacts["execution_registration_sha256"]
+        == _evidence_sha256(contractnli_execution_path)
+        and contractnli_source_artifacts["queries_sha256"]
+        == "464cf64980182db5e2b23fed377b2affb302a42454cfe3d586a202da2ef4acfe"
+        and contractnli_source_artifacts["scored_sha256"]
+        == "8ce63b0586725d513b93b69d452af579c4449c29578ae7a159b73f86d348dc00"
+        and contractnli_source_artifacts["module_sha256"]
+        == _evidence_sha256(
+            repo_root
+            / "research/frc_rag/contractnli_native_zero_consensus_abstention.py"
+        )
+        and contractnli_source_artifacts["runner_sha256"]
+        == _evidence_sha256(
+            repo_root / "scripts/run_contractnli_native_zero_consensus_abstention.py"
+        )
+        and contractnli_source_artifacts["test_sha256"]
+        == _evidence_sha256(
+            repo_root / "tests/test_frc_contractnli_native_zero_consensus_abstention.py"
+        )
+        and contractnli_analysis["strongest_shared_gate_non_frc"]
+        == "native_zero_consensus_cross_encoder_topk_v50"
+        and contractnli_analysis["strongest_ungated_frozen_frc"]
+        == "low_core_divergence_guarded_frc_v49"
+        and contractnli_aggregates["native_zero_consensus_adaptive_frc_v50"][
+            "evidence_or_abstention_macro_f1"
+        ]
+        == 0.165173
+        and contractnli_aggregates["native_zero_consensus_adaptive_frc_v50"][
+            "evidence_bearing_macro_f1"
+        ]
+        == 0.24776
+        and contractnli_aggregates["native_zero_consensus_adaptive_frc_v50"][
+            "not_mentioned_abstention_accuracy"
+        ]
+        == 0.0
+        and contractnli_aggregates["native_zero_consensus_adaptive_frc_v50"][
+            "abstention_rate"
+        ]
+        == 0.0
+        and contractnli_analysis["family_comparison"][
+            "candidate_minus_strongest_shared_gate_non_frc"
+        ]
+        == {
+            "ci_high": 0.023482,
+            "ci_low": -0.015105,
+            "clusters": 123,
+            "point": 0.00443,
+            "resamples": 10000,
+            "seed": 20260810,
+        }
+        and contractnli_analysis["family_comparison"][
+            "candidate_minus_strongest_ungated_frozen_frc"
+        ]
+        == {
+            "ci_high": 0.005032,
+            "ci_low": -0.008765,
+            "clusters": 123,
+            "point": -0.001423,
+            "resamples": 10000,
+            "seed": 20260810,
+        }
+        and contractnli_analysis["family_comparison"]["candidate_minus_anchor_gate_frc"]
+        == {
+            "ci_high": 0.0,
+            "ci_low": 0.0,
+            "clusters": 123,
+            "point": 0.0,
+            "resamples": 10000,
+            "seed": 20260810,
+        }
+        and contractnli_analysis["minimum_budget_or_supported_stratum_delta"]
+        == -0.056798
+        and contractnli_analysis["support_checks"][
+            "candidate_abstention_rate_at_least_0_05"
+        ]
+        is False
+        and contractnli_analysis["support_checks"][
+            "candidate_minus_strongest_shared_gate_non_frc_ci_low_above_0"
+        ]
+        is False
+        and contractnli_outcome["status"]
+        == "CONTRACTNLI_NATIVE_ZERO_CONSENSUS_SUPPORT_NOT_ESTABLISHED"
+        and contractnli_outcome["selector_adoption_authorized"] is False
+        and contractnli_outcome["canary_or_default_authorized"] is False
+        and contractnli_outcome["reuse_v50_cases_for_tuning_or_selection"] is False
+        and contractnli_outcome["gate_2"] == "NO-GO/SHADOW"
+        and _evidence_sha256(contractnli_markdown_path)
+        == "cb78d33798a5cd4f74acadbb390287851aad4abb9851fda1a0968c2957fcfceb"
+        and _evidence_sha256(contractnli_cases_path)
+        == "d36cf2e53e20a877fdc15da8d2bd6343d686cc71748a45b95ce16ace534f289d"
+        and len(contractnli_cases) == 600
+        and len({row["case_id"] for row in contractnli_cases}) == 600
+        and all(row["candidate_ceiling_complete"] is True for row in contractnli_cases)
+        and all(row["gate"]["anchor_gate_passed"] is True for row in contractnli_cases)
+        and all(
+            row["gate"]["consensus_gate_passed"] is True for row in contractnli_cases
+        )
+        and {
+            label: sum(row["label_group"] == label for row in contractnli_cases)
+            for label in ("Entailment", "Contradiction", "NotMentioned")
+        }
+        == {"Entailment": 200, "Contradiction": 200, "NotMentioned": 200}
+        and not (
+            {
+                "query",
+                "hypothesis",
+                "candidate_text",
+                "gold_candidate_ids",
+                "document_id",
+                "document_url",
+                "offsets",
+            }
+            & _nested_keys(contractnli_cases)
+        )
+    )
+    contractnli_v51_metadata = contractnli_v51_result["metadata"]
+    contractnli_v51_analysis = contractnli_v51_result["analysis"]
+    contractnli_v51_outcome = contractnli_v51_analysis["outcome"]
+    contractnli_v51_checks = contractnli_v51_analysis["development_checks"]
+    contractnli_v51_baseline = contractnli_v51_analysis["ungated_v49_aggregate"]
+    contractnli_v51_oof = contractnli_v51_analysis["oof_candidate_aggregate"]
+    contractnli_v51_source_artifacts = contractnli_v51_metadata["source_artifacts"]
+    contractnli_v51_readiness_passed = (
+        _evidence_sha256(contractnli_v51_protocol_path)
+        == "0904a59ace997919a06fe32a4e839bf1fce5158cb7f4c663567506660421a18b"
+        and contractnli_v51_protocol["development_boundary"][
+            "official_dev_member_content_opened_before_v51_registration"
+        ]
+        is False
+        and contractnli_v51_protocol["development_boundary"][
+            "official_train_member_content_opened_before_v51_registration"
+        ]
+        is False
+        and contractnli_v51_protocol["development_boundary"][
+            "official_test_split_permanently_excluded_from_v51"
+        ]
+        is True
+        and contractnli_v51_protocol["development_scope"]["target_cases"] == 240
+        and contractnli_v51_protocol["development_scope"]["target_per_label"] == 80
+        and contractnli_v51_protocol["development_scope"]["document_group_folds"] == 5
+        and _evidence_sha256(contractnli_v51_implementation_path)
+        == "eb55837d9d2c66fe43b64b45d2c19f58f2f9010f307cb37255b66b324f2fcac8"
+        and contractnli_v51_implementation[
+            "dev_or_train_content_opened_before_registration"
+        ]
+        is False
+        and all(
+            contractnli_v51_implementation["synthetic_invariants_verified"].values()
+        )
+        and _evidence_sha256(contractnli_v51_implementation_erratum_path)
+        == "1ce8f5cd0ca75f214f9df88873a97c04335b829e5b5d76c608f115c347cec7ec"
+        and contractnli_v51_implementation_erratum["boundary_at_erratum_registration"]
+        == {
+            "dev_opened_only_for_registered_sampling_and_blind_preparation": True,
+            "dev_gold_joined_for_coverage_or_metrics": False,
+            "dev_queries_generated": False,
+            "dev_neural_scoring_started": False,
+            "train_member_opened": False,
+            "test_member_opened_by_v51": False,
+        }
+        and contractnli_v51_implementation_erratum["unchanged"]["protocol"] is True
+        and contractnli_v51_implementation_erratum["unchanged"][
+            "threshold_candidates_constraints_tie_order_and_oof_gates"
+        ]
+        is True
+        and contractnli_v51_implementation_erratum["unchanged"][
+            "confirmation_open_rule"
+        ]
+        is True
+        and contractnli_v51_implementation_erratum["corrected_hashes"]
+        == {
+            "protocol_sha256": _evidence_sha256(contractnli_v51_protocol_path),
+            "module_sha256": _evidence_sha256(
+                repo_root
+                / "research/frc_rag/contractnli_dev_calibrated_robust_consensus.py"
+            ),
+            "runner_sha256": _evidence_sha256(
+                repo_root / "scripts/run_contractnli_dev_calibrated_robust_consensus.py"
+            ),
+            "test_sha256": _evidence_sha256(
+                repo_root
+                / "tests/test_frc_contractnli_dev_calibrated_robust_consensus.py"
+            ),
+        }
+        and _evidence_sha256(contractnli_v51_execution_path)
+        == "636ebeb4b63ea9c58ed48ddd1c69bed8614f0852900cf653564cd89db2d7a18a"
+        and contractnli_v51_execution["runtime"]["cuda_available"] is True
+        and contractnli_v51_execution["runtime"]["gpu"] == "NVIDIA GeForce RTX 4060 Ti"
+        and contractnli_v51_execution[
+            "candidate_coverage_pending_until_after_complete_scoring"
+        ]
+        is True
+        and contractnli_v51_execution["gold_joined_for_coverage_or_metrics"] is False
+        and contractnli_v51_execution["train_member_opened"] is False
+        and contractnli_v51_execution["test_member_opened_by_v51"] is False
+        and _evidence_sha256(contractnli_v51_result_path)
+        == "307ab4c4c659748e6c3e79447a785a4ff1985fee532eee62ed9fc15e6e1d7ec2"
+        and contractnli_v51_result["schema_version"]
+        == "frc-contractnli-v51-development-calibration-report-v1"
+        and contractnli_v51_metadata["cases"] == 240
+        and contractnli_v51_metadata["documents"] == 60
+        and contractnli_v51_metadata["label_counts"]
+        == {"Entailment": 80, "Contradiction": 80, "NotMentioned": 80}
+        and contractnli_v51_metadata["development_only"] is True
+        and contractnli_v51_metadata["official_leaderboard_result"] is False
+        and contractnli_v51_metadata["gold_joined_after_complete_dev_score_cache"]
+        is True
+        and contractnli_v51_metadata["test_split_used"] is False
+        and contractnli_v51_metadata["train_split_opened"] is False
+        and contractnli_v51_source_artifacts["development_execution_sha256"]
+        == _evidence_sha256(contractnli_v51_execution_path)
+        and contractnli_v51_source_artifacts["queries_sha256"]
+        == "16316fa331a847d3b95bc7cd83c26a3ce9d091bfb48ae91118fea5ee972db489"
+        and contractnli_v51_source_artifacts["scored_sha256"]
+        == "e802cf128200918d5cf3a477d3bdcc0ad9e3c748ecd67a4783bc1925446edbc6"
+        and contractnli_v51_source_artifacts["candidate_coverage_sha256"]
+        == "80731c1d9a8984a25c613979263499a843fc794d09b8242180130ed4b0187dc9"
+        and contractnli_v51_analysis["robust_score_formula"]
+        == "max_i min(z_anchor_i, max(z_support_i, z_contradiction_i))"
+        and contractnli_v51_baseline
+        == {
+            "evidence_or_abstention_macro_f1": 0.154504,
+            "evidence_bearing_macro_f1": 0.231756,
+            "not_mentioned_abstention_accuracy": 0.0,
+            "abstention_rate": 0.0,
+            "mean_selected_unit_count": 2.0,
+            "mean_selected_token_cost": 85.163889,
+        }
+        and contractnli_v51_oof
+        == {
+            "evidence_or_abstention_macro_f1": 0.191845,
+            "evidence_bearing_macro_f1": 0.194018,
+            "not_mentioned_abstention_accuracy": 0.1875,
+            "abstention_rate": 0.141667,
+            "mean_selected_unit_count": 1.645833,
+            "mean_selected_token_cost": 71.620833,
+        }
+        and contractnli_v51_analysis["oof_utility_gain_vs_ungated_v49"] == 0.037341
+        and contractnli_v51_analysis["oof_evidence_f1_drop_vs_ungated_v49"] == 0.037738
+        and contractnli_v51_checks[
+            "oof_candidate_minus_ungated_v49_utility_at_least_0_02"
+        ]
+        is True
+        and contractnli_v51_checks["oof_evidence_bearing_f1_drop_at_most_0_03"] is False
+        and contractnli_v51_checks["oof_not_mentioned_abstention_accuracy_at_least_0_2"]
+        is False
+        and contractnli_v51_checks["oof_candidate_abstention_rate_at_least_0_05"]
+        is True
+        and contractnli_v51_checks["oof_candidate_abstention_rate_at_most_0_8"] is True
+        and contractnli_v51_outcome["status"]
+        == "CONTRACTNLI_V51_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_TRAIN"
+        and contractnli_v51_outcome["train_open_authorized"] is False
+        and contractnli_v51_outcome["selector_adoption_authorized"] is False
+        and contractnli_v51_outcome["canary_or_default_authorized"] is False
+        and contractnli_v51_outcome["reuse_dev_for_confirmation_metrics"] is False
+        and contractnli_v51_outcome["reuse_v50_test_for_v51"] is False
+        and contractnli_v51_outcome["gate_2"] == "NO-GO/SHADOW"
+        and _evidence_sha256(contractnli_v51_markdown_path)
+        == "413ba0cf3997f131bda028862b35480cb5ede7d52597ad8e5c2a0abc0d8ede14"
+        and _evidence_sha256(contractnli_v51_cases_path)
+        == "5d1dab9b44a9c50d315be86a6a2727a92de6228aed196efa532188d71868aceb"
+        and len(contractnli_v51_cases) == 240
+        and len({row["case_id"] for row in contractnli_v51_cases}) == 240
+        and {
+            label: sum(row["label_group"] == label for row in contractnli_v51_cases)
+            for label in ("Entailment", "Contradiction", "NotMentioned")
+        }
+        == {"Entailment": 80, "Contradiction": 80, "NotMentioned": 80}
+        and not (
+            {
+                "query",
+                "hypothesis",
+                "candidate_text",
+                "gold_candidate_ids",
+                "document_id",
+                "document_url",
+                "offsets",
+            }
+            & _nested_keys(contractnli_v51_cases)
+        )
+        and _evidence_sha256(contractnli_v51_closure_path)
+        == "037cac6daac494fb4d9240e0eee641a161b4c92d0f0e53d64fa72fc3948e3d2f"
+        and contractnli_v51_closure["status"] == contractnli_v51_outcome["status"]
+        and contractnli_v51_closure["execution_order_erratum_disclosed"] is True
+        and contractnli_v51_closure["train_member_opened"] is False
+        and contractnli_v51_closure["train_confirmation_started"] is False
+        and contractnli_v51_closure["official_test_reused_by_v51"] is False
+        and contractnli_v51_closure["final_threshold_authorizes_train_open"] is False
+        and contractnli_v51_closure["selector_adoption_authorized"] is False
+        and contractnli_v51_closure["gate_2"] == "NO-GO/SHADOW"
+    )
+    contractnli_v52_metadata = contractnli_v52_result["metadata"]
+    contractnli_v52_analysis = contractnli_v52_result["analysis"]
+    contractnli_v52_outcome = contractnli_v52_analysis["outcome"]
+    contractnli_v52_checks = contractnli_v52_analysis["support_checks"]
+    contractnli_v52_aggregates = contractnli_v52_analysis["aggregates"]
+    contractnli_v52_candidate = contractnli_v52_aggregates[
+        "rank_concurrence_low_core_divergence_frc_v52"
+    ]
+    contractnli_v52_source_artifacts = contractnli_v52_metadata["source_artifacts"]
+    contractnli_v52_readiness_passed = (
+        _evidence_sha256(contractnli_v52_protocol_path)
+        == "048fe13d87a58e8b6630387c9c0cc8e7c1e72119a54ed8719498d32ef6bc9251"
+        and contractnli_v52_protocol["development_history_boundary"][
+            "official_train_member_content_opened_before_v52_registration"
+        ]
+        is False
+        and contractnli_v52_protocol["development_history_boundary"][
+            "v50_test_and_v51_dev_permanently_excluded_from_v52_fitting_selection_and_evaluation"
+        ]
+        is True
+        and contractnli_v52_protocol["development_history_boundary"][
+            "v52_has_no_learned_threshold_or_dataset_fitted_parameter"
+        ]
+        is True
+        and contractnli_v52_protocol["confirmation_scope"]["target_cases"] == 600
+        and contractnli_v52_protocol["confirmation_scope"]["target_per_label"] == 200
+        and contractnli_v52_protocol["confirmation_scope"]["minimum_documents"] == 80
+        and contractnli_v52_protocol["rank_concurrence_gate"]["pass_rule"]
+        == (
+            "Pass if and only if the anchor winner id equals the first_fact "
+            "winner id or equals the second_fact_or_bridge winner id."
+        )
+        and contractnli_v52_protocol["rank_concurrence_gate"][
+            "learned_threshold_temperature_margin_prior_or_candidate_count_feature"
+        ]
+        is False
+        and _evidence_sha256(contractnli_v52_implementation_path)
+        == "90bc2a52b5feaf4fd20198e0a9f21ea8da5a71f5e5924fe941c33b215465cb8b"
+        and contractnli_v52_implementation["train_content_opened_before_registration"]
+        is False
+        and contractnli_v52_implementation["learned_or_dataset_fitted_parameter"]
+        is False
+        and all(
+            contractnli_v52_implementation["synthetic_invariants_verified"].values()
+        )
+        and _evidence_sha256(contractnli_v52_execution_path)
+        == "73ff52938f6b86f9844216330875c385af700b5798aa2bce130e82ec15873801"
+        and contractnli_v52_execution["runtime"]["cuda_available"] is True
+        and contractnli_v52_execution["runtime"]["gpu"] == "NVIDIA GeForce RTX 4060 Ti"
+        and contractnli_v52_execution["gold_joined_for_coverage_or_metrics"] is False
+        and contractnli_v52_execution["metrics_computed"] is False
+        and contractnli_v52_execution["confirmation_reuse_forbidden"] is True
+        and _evidence_sha256(contractnli_v52_result_path)
+        == "c95d3f271de34387553d19a87469f7cb54281d890fa97b5b84bd9b7c3d9742c2"
+        and contractnli_v52_result["schema_version"]
+        == "frc-contractnli-rank-concurrence-report-v52"
+        and contractnli_v52_metadata["cases"] == 600
+        and contractnli_v52_metadata["documents"] == 319
+        and contractnli_v52_metadata["label_counts"]
+        == {"Entailment": 200, "Contradiction": 200, "NotMentioned": 200}
+        and contractnli_v52_metadata["gold_joined_after_complete_score_cache"] is True
+        and contractnli_v52_metadata["official_leaderboard_result"] is False
+        and contractnli_v52_metadata["v50_test_or_v51_dev_reused"] is False
+        and contractnli_v52_source_artifacts["execution_registration_sha256"]
+        == _evidence_sha256(contractnli_v52_execution_path)
+        and contractnli_v52_source_artifacts["queries_sha256"]
+        == "ccc92eae1a7e459bc8bed475911516f1ff98b2c7923235713b3ce93914af4be6"
+        and contractnli_v52_source_artifacts["scored_sha256"]
+        == "120055e204035c60800844993db2f22d399ac32011c7a3d0ee27fb44fc353175"
+        and contractnli_v52_source_artifacts["candidate_coverage_sha256"]
+        == "852f0ac5593dda9466cc946d56a0b3e64ef29ce905e513d9455fd52cf522b42b"
+        and contractnli_v52_analysis["gate_formula"]
+        == (
+            "anchor_argmax_id == support_argmax_id or anchor_argmax_id == "
+            "contradiction_argmax_id"
+        )
+        and contractnli_v52_candidate["evidence_or_abstention_macro_f1"] == 0.250304
+        and contractnli_v52_candidate["evidence_bearing_macro_f1"] == 0.170455
+        and contractnli_v52_candidate["not_mentioned_abstention_accuracy"] == 0.41
+        and contractnli_v52_candidate["abstention_rate"] == 0.373333
+        and contractnli_v52_analysis["strongest_shared_gate_non_frc"]
+        == "rank_concurrence_hybrid_topk_v52"
+        and contractnli_v52_analysis["family_comparison"][
+            "candidate_minus_strongest_shared_gate_non_frc"
+        ]
+        == {
+            "point": 0.009038,
+            "ci_low": -0.006814,
+            "ci_high": 0.024925,
+            "clusters": 319,
+            "resamples": 10000,
+            "seed": 20260812,
+        }
+        and contractnli_v52_analysis["evidence_bearing_macro_f1_drop_vs_ungated_v49"]
+        == 0.082325
+        and contractnli_v52_analysis["minimum_budget_or_supported_stratum_delta"]
+        == -0.027922
+        and contractnli_v52_checks[
+            "candidate_minus_strongest_shared_gate_non_frc_point_at_least_0_01"
+        ]
+        is False
+        and contractnli_v52_checks[
+            "candidate_minus_strongest_shared_gate_non_frc_ci_low_above_0"
+        ]
+        is False
+        and contractnli_v52_checks[
+            "evidence_bearing_macro_f1_drop_vs_ungated_v49_at_most_0_03"
+        ]
+        is False
+        and contractnli_v52_checks["candidate_minus_ungated_v49_ci_low_above_0"] is True
+        and contractnli_v52_checks["not_mentioned_abstention_accuracy_at_least_0_2"]
+        is True
+        and contractnli_v52_outcome["status"]
+        == "CONTRACTNLI_V52_RANK_CONCURRENCE_SUPPORT_NOT_ESTABLISHED"
+        and contractnli_v52_outcome["support_established"] is False
+        and contractnli_v52_outcome["selector_adoption_authorized"] is False
+        and contractnli_v52_outcome["canary_or_default_authorized"] is False
+        and contractnli_v52_outcome["reuse_train_for_tuning_or_selection"] is False
+        and contractnli_v52_outcome["reuse_v50_test_or_v51_dev"] is False
+        and contractnli_v52_outcome["gate_2"] == "NO-GO/SHADOW"
+        and _evidence_sha256(contractnli_v52_markdown_path)
+        == "de07d9833f72d938fb972ae86ac4a3aa367656af6740232648c027d31e64d1be"
+        and _evidence_sha256(contractnli_v52_cases_path)
+        == "a5b2ce3ed48836f7de0e22038a5bf733931492ce3125e46adf6b66ddb3fb6996"
+        and len(contractnli_v52_cases) == 600
+        and len({row["case_id"] for row in contractnli_v52_cases}) == 600
+        and {
+            label: sum(row["label_group"] == label for row in contractnli_v52_cases)
+            for label in ("Entailment", "Contradiction", "NotMentioned")
+        }
+        == {"Entailment": 200, "Contradiction": 200, "NotMentioned": 200}
+        and not (
+            {
+                "query",
+                "hypothesis",
+                "candidate_text",
+                "gold_candidate_ids",
+                "document_id",
+                "document_url",
+                "offsets",
+            }
+            & _nested_keys(contractnli_v52_cases)
+        )
+        and _evidence_sha256(contractnli_v52_closure_path)
+        == "9748f052fb4e240671bbc003f85c06938ca5e70e2ab2d7917d9e2624c8d94e1c"
+        and contractnli_v52_closure["status"] == contractnli_v52_outcome["status"]
+        and contractnli_v52_closure["confirmation_train_reuse_for_tuning_or_selection"]
+        is False
+        and contractnli_v52_closure["selector_adoption_authorized"] is False
+        and contractnli_v52_closure["canary_or_default_authorized"] is False
+        and contractnli_v52_closure["gate_2"] == "NO-GO/SHADOW"
+    )
+    cuad_v53_metadata = cuad_v53_result["metadata"]
+    cuad_v53_analysis = cuad_v53_result["analysis"]
+    cuad_v53_outcome = cuad_v53_analysis["outcome"]
+    cuad_v53_checks = cuad_v53_analysis["support_checks"]
+    cuad_v53_candidate = cuad_v53_analysis["aggregates"][
+        "top3_rank_concurrence_role_closure_low_core_frc_v53"
+    ]
+    cuad_v53_source_artifacts = cuad_v53_metadata["source_artifacts"]
+    cuad_v53_readiness_passed = (
+        _evidence_sha256(cuad_v53_protocol_path)
+        == "9390f8f5642fa7be0de265b59e9aef03d76e303e2fa615bd498a93c5a3e6544c"
+        and cuad_v53_protocol["source_access_boundary_at_registration"][
+            "cuad_data_archive_downloaded_locally"
+        ]
+        is False
+        and cuad_v53_protocol["source_access_boundary_at_registration"][
+            "cuad_train_content_opened"
+        ]
+        is False
+        and cuad_v53_protocol["source_access_boundary_at_registration"][
+            "cuad_test_content_opened"
+        ]
+        is False
+        and cuad_v53_protocol["development_and_confirmation_scope"][
+            "development_target_cases"
+        ]
+        == 400
+        and cuad_v53_protocol["confirmation_rule"][
+            "test_content_open_authorized_only_if_every_development_gate_passes"
+        ]
+        is True
+        and _evidence_sha256(cuad_v53_source_path)
+        == "4949e1e00ef3176fdaae778da9a77053358efe8b88d52c2d72d2920b190f8bc0"
+        and cuad_v53_source["data_archive"]["sha256"]
+        == "f8161d18bea4e9c05e78fa6dda61c19c846fb8087ea969c172753bc2f45b999a"
+        and cuad_v53_source["sample_distribution_or_gold_read_before_registration"]
+        is False
+        and cuad_v53_source["data_archive"]["train_content_opened"] is False
+        and cuad_v53_source["data_archive"]["test_content_opened"] is False
+        and _evidence_sha256(cuad_v53_implementation_path)
+        == "680e3ae97a156b153f01e3c2f53463e4b0b9adea1234b1bf0f8841aec9e81e43"
+        and cuad_v53_implementation["train_or_test_content_opened_before_registration"]
+        is False
+        and cuad_v53_implementation["learned_or_dataset_fitted_parameter"] is False
+        and all(cuad_v53_implementation["synthetic_invariants_verified"].values())
+        and _evidence_sha256(cuad_v53_execution_path)
+        == "5f53c09c476e6167faeb2eab8360dc249e74e60b7408f2fadaf6fa445d87f3df"
+        and cuad_v53_execution["stage"] == "development"
+        and cuad_v53_execution["runtime"]["cuda_available"] is True
+        and cuad_v53_execution["runtime"]["gpu"] == "NVIDIA GeForce RTX 4060 Ti"
+        and cuad_v53_execution["gold_joined_for_coverage_or_metrics"] is False
+        and cuad_v53_execution["metrics_computed"] is False
+        and cuad_v53_execution["stage_reuse_for_tuning_or_selection_forbidden"] is True
+        and _evidence_sha256(cuad_v53_result_path)
+        == "ff6b44a1cc71655a5c955767c49a4e2c7adae948ccb3e56a826574b2c645a8ef"
+        and cuad_v53_result["schema_version"] == "frc-cuad-top3-role-closure-report-v53"
+        and cuad_v53_metadata["cases"] == 400
+        and cuad_v53_metadata["contracts"] == 259
+        and cuad_v53_metadata["answer_state_counts"]
+        == {"answer_bearing": 200, "no_answer": 200}
+        and cuad_v53_metadata["gold_joined_after_complete_score_cache"] is True
+        and cuad_v53_metadata["official_leaderboard_result"] is False
+        and cuad_v53_metadata["contractnli_case_level_artifact_reused"] is False
+        and cuad_v53_source_artifacts["execution_registration_sha256"]
+        == _evidence_sha256(cuad_v53_execution_path)
+        and cuad_v53_source_artifacts["candidate_coverage_sha256"]
+        == "29aac67b3ab7a1841e69c36352d85f157463f2a9acd1c98a54c924bdf0c0d370"
+        and cuad_v53_source_artifacts["queries_sha256"]
+        == "8118410fcb3883d9fcf218721ed8eb12601e2e2ca1358f90a84ec08ad0fc766b"
+        and cuad_v53_source_artifacts["scored_sha256"]
+        == "1109b2d564e7ba7a3dd39d265c1a7b951457f96e0c89a1350fe2e39a7841aeb4"
+        and cuad_v53_source_artifacts["score_fallback_rate"] == 0.0
+        and cuad_v53_analysis["gate_formula"]
+        == (
+            "top3(anchor) intersect (top3(first_fact) union "
+            "top3(second_fact_or_bridge)) is nonempty"
+        )
+        and cuad_v53_candidate["answer_or_abstention_macro_f1"] == 0.046032
+        and cuad_v53_candidate["answer_bearing_macro_f1"] == 0.087063
+        and cuad_v53_candidate["no_answer_abstention_accuracy"] == 0.005
+        and cuad_v53_candidate["abstention_rate"] == 0.0075
+        and cuad_v53_analysis["candidate_ceiling_complete_rate"] == 0.635
+        and cuad_v53_analysis["strongest_shared_gate_non_frc"]
+        == "top3_rank_concurrence_hybrid_topk_v53"
+        and cuad_v53_analysis["family_comparison"][
+            "candidate_minus_strongest_shared_gate_non_frc"
+        ]
+        == {
+            "point": -0.023731,
+            "ci_low": -0.040711,
+            "ci_high": -0.006903,
+            "clusters": 259,
+            "resamples": 10000,
+            "seed": 20260813,
+        }
+        and cuad_v53_analysis["family_comparison"][
+            "candidate_minus_same_gate_frc_ablation"
+        ]["point"]
+        == 0.004032
+        and cuad_v53_analysis["minimum_budget_or_supported_stratum_delta"] == -0.050796
+        and cuad_v53_checks["candidate_ceiling_complete_rate_at_least_0_9"] is False
+        and cuad_v53_checks[
+            "candidate_minus_strongest_shared_gate_non_frc_ci_low_above_0"
+        ]
+        is False
+        and cuad_v53_checks["no_answer_abstention_accuracy_at_least_0_2"] is False
+        and cuad_v53_checks["candidate_abstention_rate_at_least_0_05"] is False
+        and cuad_v53_outcome["status"]
+        == "CUAD_V53_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_TEST"
+        and cuad_v53_outcome["support_established"] is False
+        and cuad_v53_outcome["test_open_authorized"] is False
+        and cuad_v53_outcome["selector_adoption_authorized"] is False
+        and cuad_v53_outcome["canary_or_default_authorized"] is False
+        and cuad_v53_outcome["reuse_stage_for_tuning_or_selection"] is False
+        and cuad_v53_outcome["gate_2"] == "NO-GO/SHADOW"
+        and _evidence_sha256(cuad_v53_markdown_path)
+        == "ea00d6f677bf03681484431f1f08c235ed69495ca18b907aa406f503573509f1"
+        and _evidence_sha256(cuad_v53_cases_path)
+        == "9d78bd8f5216c4038053a860b5b076e602022a3164ebd2766be37c44be68880f"
+        and len(cuad_v53_cases) == 400
+        and len({row["case_id"] for row in cuad_v53_cases}) == 400
+        and sum(row["answer_state"] == "answer_bearing" for row in cuad_v53_cases)
+        == 200
+        and sum(row["answer_state"] == "no_answer" for row in cuad_v53_cases) == 200
+        and sum(
+            row["top3_gate"]["top3_rank_concurrence_passed"] for row in cuad_v53_cases
+        )
+        == 397
+        and not (
+            {
+                "query",
+                "question",
+                "context",
+                "answer_groups",
+                "answer_start",
+                "gold_candidate_ids",
+                "candidate_text",
+                "offsets",
+            }
+            & _nested_keys(cuad_v53_cases)
+        )
+        and _evidence_sha256(cuad_v53_closure_path)
+        == "f80f9d5d7b73453bda6c8f57b74a24535a7bb8a521302c898019fc2b43987628"
+        and cuad_v53_closure["status"] == cuad_v53_outcome["status"]
+        and cuad_v53_closure["post_result_formatting_erratum"]["sha256"]
+        == _evidence_sha256(cuad_v53_formatting_erratum_path)
+        and _evidence_sha256(cuad_v53_formatting_erratum_path)
+        == "4d08d98cf10b1f65540a5f02733a85c806d597c128411c96bdc481767c26329f"
+        and cuad_v53_formatting_erratum["timing"][
+            "formatting_occurred_after_all_outcome_bearing_work"
+        ]
+        is True
+        and cuad_v53_formatting_erratum["cause"][
+            "formula_threshold_sample_score_or_result_changed"
+        ]
+        is False
+        and cuad_v53_formatting_erratum["integrity_boundary"][
+            "original_execution_and_result_remain_bound_to_registered_hashes"
+        ]
+        is True
+        and cuad_v53_formatting_erratum["integrity_boundary"][
+            "current_formatted_files_must_not_be_used_to_rerun_v53_on_cuad_train_or_open_test_under_the_same_protocol"
+        ]
+        is True
+        and _evidence_sha256(
+            repo_root / "research/frc_rag/cuad_top3_rank_concurrence_role_closure.py"
+        )
+        == cuad_v53_formatting_erratum["current_post_result_presentation_hashes"][
+            "module_sha256"
+        ]
+        and _evidence_sha256(
+            repo_root / "scripts/run_cuad_top3_rank_concurrence_role_closure.py"
+        )
+        == cuad_v53_formatting_erratum["current_post_result_presentation_hashes"][
+            "runner_sha256"
+        ]
+        and _evidence_sha256(
+            repo_root / "tests/test_frc_cuad_top3_rank_concurrence_role_closure.py"
+        )
+        == cuad_v53_formatting_erratum["current_post_result_presentation_hashes"][
+            "test_sha256"
+        ]
+        and cuad_v53_closure["test_content_opened"] is False
+        and cuad_v53_closure["test_open_authorized"] is False
+        and cuad_v53_closure["train_reuse_for_tuning_selection_or_reevaluation"]
+        is False
+        and cuad_v53_closure["selector_adoption_authorized"] is False
+        and cuad_v53_closure["canary_or_default_authorized"] is False
+        and cuad_v53_closure["gate_2"] == "NO-GO/SHADOW"
+        and not (
+            repo_root
+            / "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_confirmation_result_v53.json"
+        ).exists()
+    )
+    doc2dial_v54_outcome = doc2dial_v54_result["analysis"]["outcome"]
+    doc2dial_v54_census = doc2dial_v54_result["aggregate_eligibility_census"]
+    doc2dial_v54_boundary = doc2dial_v54_result["access_and_execution_boundary"]
+    doc2dial_v54_readiness_passed = (
+        _evidence_sha256(doc2dial_v54_protocol_path)
+        == "4e5b348ab823d16f60e2d92b4dcf92dcca02e3eb9d11ffba3e8228138d68e23c"
+        and _evidence_sha256(doc2dial_v54_source_path)
+        == "51249c4fdcd1483c4048d1ae3e2a051c39e06c9e6343a8bb68c7e146f678e407"
+        and _evidence_sha256(doc2dial_v54_implementation_path)
+        == "f1ed52ed43a018a7a0f06115c6787e1c94ceac571f966f3638c7ea9e8ffbf858"
+        and _evidence_sha256(doc2dial_v54_result_path)
+        == "422078ad6350c3714a81fdc3da38acf08a575ca42fb4c05de51c9a27dae75e8d"
+        and _evidence_sha256(doc2dial_v54_markdown_path)
+        == "051f40b1a85cc03eca9480eb838cb1bfdcc60af840a2a382b76a49b85803ed8e"
+        and doc2dial_v54_result["schema_version"]
+        == "frc-doc2dial-document-contrastive-pre-scoring-result-v54"
+        and doc2dial_v54_result["phase_reached"] == "pre_scoring_data_eligibility_check"
+        and doc2dial_v54_census["candidate_agent_turns"] == 20431
+        and doc2dial_v54_census["answer_state_counts"]
+        == {"answer_bearing": 20431, "no_answer": 0}
+        and doc2dial_v54_census["schema_exclusion_rate"] == 0.0
+        and doc2dial_v54_result["registered_quota"]
+        == {"answer_bearing": 200, "no_answer": 200}
+        and doc2dial_v54_boundary["confirmation_dialogue_json_opened_or_parsed"]
+        is False
+        and doc2dial_v54_boundary["blind_cache_written"] is False
+        and doc2dial_v54_boundary["query_generation_started"] is False
+        and doc2dial_v54_boundary["neural_scoring_started"] is False
+        and doc2dial_v54_boundary["metrics_computed"] is False
+        and doc2dial_v54_outcome["status"] == "DOC2DIAL_V54_SCHEMA_INCONCLUSIVE_STOP"
+        and doc2dial_v54_outcome["support_established"] is False
+        and doc2dial_v54_outcome["validation_open_authorized"] is False
+        and doc2dial_v54_outcome["selector_adoption_authorized"] is False
+        and doc2dial_v54_outcome["gate_2"] == "NO-GO/SHADOW"
+    )
+    doc2dial_v55_outcome = doc2dial_v55_result["analysis"]["outcome"]
+    doc2dial_v55_census = doc2dial_v55_result["schema_only_census_after_failure"]
+    doc2dial_v55_boundary = doc2dial_v55_result["access_and_execution_boundary"]
+    doc2dial_v55_readiness_passed = (
+        _evidence_sha256(doc2dial_v55_protocol_path)
+        == "6765c57d535968272fc5b06d75295f876d9eb7e9d202fa884d0e22452e2d9fc5"
+        and _evidence_sha256(doc2dial_v55_source_path)
+        == "cceb996cf715c8dd611f817280141e6764148a2ebaef9450feabf8fd67ea4a04"
+        and _evidence_sha256(doc2dial_v55_implementation_path)
+        == "1d8b8cc4c3be037cfcdc6d110f0e7603617d4faebcca46e2118c71d9895e3f9b"
+        and _evidence_sha256(doc2dial_v55_result_path)
+        == "ab067fbf409bf4419ec1c3b8315b32196696c4b089ea191adc6284f36455b7be"
+        and _evidence_sha256(doc2dial_v55_markdown_path)
+        == "9c4d7a0ac4d9ce6f8f74786e7264f5eb290185d3cc8b88d90806fa73723fbdbb"
+        and doc2dial_v55_result["schema_version"]
+        == "frc-doc2dial-wood-v55-pre-scoring-schema-result-v1"
+        and doc2dial_v55_result["phase_reached"] == "pre_scoring_schema_adaptation"
+        and doc2dial_v55_census["dialogues"] == 3471
+        and doc2dial_v55_census["turn_container_shapes"] == {"list": 3459, "dict": 12}
+        and doc2dial_v55_census["candidate_user_to_agent_turns"] == 23149
+        and doc2dial_v55_census["answer_bearing_nonempty_reference"] == 19946
+        and doc2dial_v55_census["empty_reference_with_adjacent_ood_act"] == 2772
+        and doc2dial_v55_census["empty_reference_without_adjacent_ood_act"] == 431
+        and doc2dial_v55_census[
+            "strict_v55_schema_exclusion_rate_if_dict_containers_were_supported"
+        ]
+        == 0.018618
+        and doc2dial_v55_boundary["wood_confirmation_member_opened_or_parsed"] is False
+        and doc2dial_v55_boundary["woood_sibling_member_opened_or_parsed"] is False
+        and doc2dial_v55_boundary["blind_cache_written"] is False
+        and doc2dial_v55_boundary["query_generation_started"] is False
+        and doc2dial_v55_boundary["neural_scoring_started"] is False
+        and doc2dial_v55_boundary["metrics_computed"] is False
+        and doc2dial_v55_outcome["status"]
+        == "DOC2DIAL_WOOD_V55_SCHEMA_INCONCLUSIVE_STOP"
+        and doc2dial_v55_outcome["support_established"] is False
+        and doc2dial_v55_outcome["confirmation_open_authorized"] is False
+        and doc2dial_v55_outcome["selector_adoption_authorized"] is False
+        and doc2dial_v55_outcome["gate_2"] == "NO-GO/SHADOW"
+    )
+    doc2dial_v56_metadata = doc2dial_v56_result["metadata"]
+    doc2dial_v56_analysis = doc2dial_v56_result["analysis"]
+    doc2dial_v56_outcome = doc2dial_v56_analysis["outcome"]
+    doc2dial_v56_checks = doc2dial_v56_analysis["support_checks"]
+    doc2dial_v56_candidate = doc2dial_v56_analysis["aggregates"][
+        "document_contrastive_rank_concurrent_atomic_role_closure_frc_v54_transferred_v55"
+    ]
+    doc2dial_v56_source_artifacts = doc2dial_v56_metadata["source_artifacts"]
+    doc2dial_v56_readiness_passed = (
+        _evidence_sha256(doc2dial_v56_protocol_path)
+        == "f3a5282189b5a8bc4e730d880dd17fb9f296bde21ddfa8e0fea0c85e7fa27c90"
+        and _evidence_sha256(doc2dial_v56_source_path)
+        == "4f231951d9e2769b292ad6557a3abcbe6794990bbc1a55c3a3bc5b6ebf448669"
+        and _evidence_sha256(doc2dial_v56_implementation_path)
+        == "01e8178e75f1af32619b96cc3aeb03fefdca9a7a65a8f07967ce11f3f998a447"
+        and _evidence_sha256(doc2dial_v56_execution_path)
+        == "a9f4e60a2000b8a669b4c5187f00d4ba4b017c43f881f1dfa7a64f34e8a2f035"
+        and _evidence_sha256(doc2dial_v56_result_path)
+        == "3375b8895db827d39dc3a64316306c26daa9efec4b59eae62e57927c78a206c6"
+        and _evidence_sha256(doc2dial_v56_closure_path)
+        == "0a8203737816c83d02d0505e725a647147111781f3aa5f13440bb09b6c482cec"
+        and _evidence_sha256(doc2dial_v56_markdown_path)
+        == "d0084c2d5d3245c93dbde1bb72b43a9147b2581b635687e47299c256cedec52e"
+        and _evidence_sha256(doc2dial_v56_cases_path)
+        == "1885287c082820bfe1189f40f901ecc09a90bd7fe0b1de37ac2be07781cdb045"
+        and doc2dial_v56_result["schema_version"]
+        == "frc-doc2dial-wood-schema-corrected-report-v56"
+        and doc2dial_v56_implementation[
+            "implementation_frozen_before_outcome_bearing_development_preparation"
+        ]
+        is True
+        and doc2dial_v56_implementation["pre_outcome_schema_access_disclosed"] is True
+        and doc2dial_v56_implementation[
+            "confirmation_member_opened_before_registration"
+        ]
+        is False
+        and doc2dial_v56_implementation["selector_adoption_authorized"] is False
+        and all(doc2dial_v56_implementation["synthetic_invariants_verified"].values())
+        and doc2dial_v56_execution["stage"] == "development"
+        and doc2dial_v56_execution["runtime"]["cuda_available"] is True
+        and doc2dial_v56_execution["runtime"]["gpu"] == "NVIDIA GeForce RTX 4060 Ti"
+        and doc2dial_v56_execution["gold_joined_for_coverage_or_metrics"] is False
+        and doc2dial_v56_execution["metrics_computed"] is False
+        and doc2dial_v56_execution["source_artifacts"]["confirmation_opened"] is False
+        and doc2dial_v56_metadata["cases"] == 400
+        and doc2dial_v56_metadata["documents"] == 261
+        and doc2dial_v56_metadata["dialogues"] == 386
+        and doc2dial_v56_metadata["answer_state_counts"]
+        == {"answer_bearing": 200, "no_answer": 200}
+        and doc2dial_v56_metadata["no_answer_subtypes"]
+        == {"ood_act": 176, "other_empty": 24}
+        and doc2dial_v56_metadata["gold_joined_after_complete_score_cache"] is True
+        and doc2dial_v56_metadata["official_shared_task_result"] is False
+        and doc2dial_v56_source_artifacts["score_fallback_rate"] == 0.0
+        and doc2dial_v56_source_artifacts["queries_sha256"]
+        == "82c3ca7e981117043aa0c0dbbec6fac8a5341a6874ac1ccabaa03756956844c5"
+        and doc2dial_v56_source_artifacts["scored_sha256"]
+        == "d1861b563b9fa266777dc1eb577e39998e80f93a7bd3744087f00e8bab91e200"
+        and doc2dial_v56_candidate["answer_or_abstention_macro_f1"] == 0.517417
+        and doc2dial_v56_candidate["answer_bearing_macro_f1"] == 0.159833
+        and doc2dial_v56_candidate["answer_macro_recall"] == 0.12375
+        and doc2dial_v56_candidate["no_answer_abstention_accuracy"] == 0.875
+        and doc2dial_v56_candidate["abstention_rate"] == 0.6125
+        and doc2dial_v56_analysis["candidate_ceiling_complete_rate"] == 0.805
+        and doc2dial_v56_analysis["strongest_shared_gate_non_frc"]
+        == "document_contrastive_dense_topk_v55"
+        and doc2dial_v56_analysis["family_comparison"][
+            "candidate_minus_strongest_shared_gate_non_frc"
+        ]
+        == {
+            "point": -0.008827,
+            "ci_low": -0.021324,
+            "ci_high": 0.003586,
+            "clusters": 261,
+            "resamples": 10000,
+            "seed": 20260816,
+        }
+        and doc2dial_v56_analysis["family_comparison"][
+            "candidate_minus_same_gate_frc_ablation"
+        ]["point"]
+        == -0.000381
+        and doc2dial_v56_analysis["answer_macro_recall_drop_vs_ungated_v49"] == 0.049167
+        and doc2dial_v56_analysis["minimum_budget_or_supported_stratum_delta"]
+        == -0.038932
+        and doc2dial_v56_checks["candidate_ceiling_complete_rate_at_least_0_99"]
+        is False
+        and doc2dial_v56_checks[
+            "candidate_minus_strongest_shared_gate_non_frc_ci_low_above_0"
+        ]
+        is False
+        and doc2dial_v56_checks["no_answer_abstention_accuracy_at_least_0_5"] is True
+        and doc2dial_v56_checks[
+            "every_budget_and_supported_stratum_delta_at_least_minus_0_03"
+        ]
+        is False
+        and doc2dial_v56_outcome["status"]
+        == "DOC2DIAL_WOOD_V56_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+        and doc2dial_v56_outcome["support_established"] is False
+        and doc2dial_v56_outcome["confirmation_open_authorized"] is False
+        and doc2dial_v56_outcome["selector_adoption_authorized"] is False
+        and doc2dial_v56_outcome["canary_or_default_authorized"] is False
+        and doc2dial_v56_outcome["gate_2"] == "NO-GO/SHADOW"
+        and len(doc2dial_v56_cases) == 400
+        and len({row["case_id"] for row in doc2dial_v56_cases}) == 400
+        and sum(row["answer_state"] == "answer_bearing" for row in doc2dial_v56_cases)
+        == 200
+        and sum(row["answer_state"] == "no_answer" for row in doc2dial_v56_cases) == 200
+        and not (
+            {
+                "query",
+                "utterance",
+                "candidate_text",
+                "reference",
+                "gold_candidate_ids",
+                "raw_dialogue_id",
+                "raw_document_id",
+            }
+            & _nested_keys(doc2dial_v56_cases)
+        )
+        and doc2dial_v56_closure["status"] == doc2dial_v56_outcome["status"]
+        and doc2dial_v56_closure["integrity_boundary"][
+            "confirmation_member_opened_or_parsed"
+        ]
+        is False
+        and doc2dial_v56_closure["integrity_boundary"]["confirmation_open_authorized"]
+        is False
+        and doc2dial_v56_closure["integrity_boundary"][
+            "development_reuse_for_tuning_selection_or_reevaluation"
+        ]
+        is False
+        and doc2dial_v56_closure["integrity_boundary"]["selector_adoption_authorized"]
+        is False
+        and doc2dial_v56_closure["integrity_boundary"]["gate_2"] == "NO-GO/SHADOW"
+        and not (
+            repo_root
+            / "docs/progressive_upgrade/doc2dial_wood_schema_corrected_transfer_confirmation_result_v56.json"
+        ).exists()
+    )
+    quac_v57_metadata = quac_v57_result["metadata"]
+    quac_v57_analysis = quac_v57_result["analysis"]
+    quac_v57_outcome = quac_v57_analysis["outcome"]
+    quac_v57_checks = quac_v57_analysis["support_checks"]
+    quac_v57_candidate = quac_v57_analysis["aggregates"][
+        "anchor_safe_single_slot_consensus_frc_v57"
+    ]
+    quac_v57_source_artifacts = quac_v57_metadata["source_artifacts"]
+    quac_v57_readiness_passed = (
+        _evidence_sha256(quac_v57_protocol_path)
+        == "bd5dab2f9166cfc2ac9e256ee772ec13d87a29ed00093adcec91f491ab44f810"
+        and _evidence_sha256(quac_v57_source_path)
+        == "8ccd3f1bffb8292c114d17e0d734f2651122906f33b2a101f801d0b0bde702c9"
+        and _evidence_sha256(quac_v57_implementation_path)
+        == "1a7b55f24861c2d26877a6bd7abc0f25b94f51b5bddf43eb30e37739c0883574"
+        and _evidence_sha256(quac_v57_execution_path)
+        == "63dff48119ee2ad89473f2cfc58eac7045b812763147df9ce57d668595e49408"
+        and _evidence_sha256(quac_v57_result_path)
+        == "f9c14f8fee6402d09f9d7fd04e5255a0fb56fb95e533927b9090cae27588995a"
+        and _evidence_sha256(quac_v57_closure_path)
+        == "7b8b0175fd8377150f5ad0ee97bfa91a9c9e501078339f8156e6e10c2cf6130a"
+        and _evidence_sha256(quac_v57_markdown_path)
+        == "227983098c4e08b1a3a14f597dae9f4e4a2f24b6ee7c5cfeb325a2ae60845b80"
+        and _evidence_sha256(quac_v57_cases_path)
+        == "99255c4ec7b4529105b8792449a7d3edc9f337f7e98604e8766ca134f7172e07"
+        and quac_v57_result["schema_version"]
+        == "frc-quac-anchor-safe-consensus-report-v57"
+        and quac_v57_source["protocol_sha256_before_download"]
+        == "bd5dab2f9166cfc2ac9e256ee772ec13d87a29ed00093adcec91f491ab44f810"
+        and quac_v57_source["json_content_parsed_before_registration"] is False
+        and quac_v57_source["train_content_read_before_registration"] is False
+        and quac_v57_source["validation_content_read"] is False
+        and quac_v57_source["validation_open_authorized"] is False
+        and all(row["content_length_matched"] for row in quac_v57_source["files"])
+        and quac_v57_source["transport_audit"]["first_train_download_incomplete"]
+        is True
+        and quac_v57_source["transport_audit"]["incomplete_file_removed_before_retry"]
+        is True
+        and quac_v57_implementation[
+            "quac_json_opened_before_implementation_registration"
+        ]
+        is False
+        and quac_v57_implementation[
+            "validation_json_opened_before_implementation_registration"
+        ]
+        is False
+        and all(quac_v57_implementation["synthetic_invariants_verified"].values())
+        and quac_v57_implementation[
+            "method_formula_change_after_registration_forbidden"
+        ]
+        is True
+        and quac_v57_execution["stage"] == "development"
+        and quac_v57_execution["runtime"]["cuda_available"] is True
+        and quac_v57_execution["runtime"]["gpu"] == "NVIDIA GeForce RTX 4060 Ti"
+        and quac_v57_execution["gold_joined_for_coverage_or_metrics"] is False
+        and quac_v57_execution["metrics_computed"] is False
+        and quac_v57_metadata["cases"] == 600
+        and quac_v57_metadata["documents"] == 554
+        and quac_v57_metadata["dialogues"] == 578
+        and quac_v57_metadata["answer_state_counts"]
+        == {"answer_bearing": 300, "no_answer": 300}
+        and quac_v57_metadata["gold_joined_after_complete_score_cache"] is True
+        and quac_v57_metadata["official_quac_answer_result"] is False
+        and quac_v57_metadata["v56_case_level_artifact_reused"] is False
+        and quac_v57_source_artifacts["sampling"]["schema_exclusion_rate"] == 0.0
+        and quac_v57_source_artifacts["structural_census"]["decoy_fallback_rate"] == 0.0
+        and quac_v57_source_artifacts["score_fallback_rate"] == 0.0
+        and quac_v57_source_artifacts["queries_sha256"]
+        == "32866cdcb27cb98d99f7a4419f8e7f3e5b585f05da1357a4124ef3e4f57623a7"
+        and quac_v57_source_artifacts["scored_sha256"]
+        == "031e669a1abd633afb2a48c0d0b7c04a77e56d72509efc4e24690ca597abeedf"
+        and quac_v57_candidate["answer_or_abstention_macro_f1"] == 0.114109
+        and quac_v57_candidate["answer_bearing_macro_f1"] == 0.161552
+        and quac_v57_candidate["answer_macro_recall"] == 0.424537
+        and quac_v57_candidate["no_answer_abstention_accuracy"] == 0.066667
+        and quac_v57_candidate["abstention_rate"] == 0.075
+        and quac_v57_analysis["candidate_ceiling_complete_rate"] == 1.0
+        and quac_v57_analysis["single_slot_trigger_rate"] == 0.085
+        and quac_v57_analysis["strongest_shared_gate_non_frc"]
+        == "document_contrastive_cross_encoder_knapsack_v57"
+        and quac_v57_analysis["strongest_same_gate_frc"]
+        == "document_contrastive_low_core_divergence_frc_v49_transferred_v57"
+        and quac_v57_analysis["family_comparison"][
+            "candidate_minus_exact_anchor_ablation"
+        ]
+        == {
+            "point": 0.000317,
+            "ci_low": -0.001667,
+            "ci_high": 0.002381,
+            "clusters": 554,
+            "resamples": 10000,
+            "seed": 20260817,
+        }
+        and quac_v57_analysis["family_comparison"][
+            "candidate_minus_strongest_shared_gate_non_frc"
+        ]["point"]
+        == 0.000159
+        and quac_v57_analysis["family_comparison"][
+            "candidate_minus_strongest_same_gate_frc"
+        ]["point"]
+        == 0.014943
+        and quac_v57_analysis["answer_recall_drop_vs_exact_anchor_ablation"]
+        == -0.001111
+        and quac_v57_analysis["minimum_budget_or_supported_stratum_delta"] == -0.012086
+        and quac_v57_checks["candidate_ceiling_complete_rate_at_least_0_99"] is True
+        and quac_v57_checks["single_slot_trigger_rate_at_least_0_1"] is False
+        and quac_v57_checks["candidate_minus_exact_anchor_ablation_ci_low_above_0"]
+        is False
+        and quac_v57_checks[
+            "candidate_minus_strongest_shared_gate_non_frc_ci_low_above_0"
+        ]
+        is False
+        and quac_v57_checks["no_answer_abstention_accuracy_at_least_0_5"] is False
+        and quac_v57_checks["candidate_abstention_rate_at_least_0_1"] is False
+        and quac_v57_outcome["status"]
+        == "QUAC_V57_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_VALIDATION"
+        and quac_v57_outcome["support_established"] is False
+        and quac_v57_outcome["validation_open_authorized"] is False
+        and quac_v57_outcome["selector_adoption_authorized"] is False
+        and quac_v57_outcome["canary_or_default_authorized"] is False
+        and quac_v57_outcome["gate_2"] == "NO-GO/SHADOW"
+        and len(quac_v57_cases) == 600
+        and len({row["case_id"] for row in quac_v57_cases}) == 600
+        and sum(row["answer_state"] == "answer_bearing" for row in quac_v57_cases)
+        == 300
+        and sum(row["answer_state"] == "no_answer" for row in quac_v57_cases) == 300
+        and not (
+            {
+                "query",
+                "question",
+                "answer_text",
+                "candidate_text",
+                "gold_candidate_ids",
+                "raw_dialogue_id",
+                "raw_document_id",
+            }
+            & _nested_keys(quac_v57_cases)
+        )
+        and quac_v57_closure["status"] == quac_v57_outcome["status"]
+        and quac_v57_closure["integrity_boundary"]["validation_member_opened_or_parsed"]
+        is False
+        and quac_v57_closure["integrity_boundary"]["validation_open_authorized"]
+        is False
+        and quac_v57_closure["integrity_boundary"][
+            "development_reuse_for_tuning_selection_or_reevaluation"
+        ]
+        is False
+        and quac_v57_closure["integrity_boundary"]["selector_adoption_authorized"]
+        is False
+        and quac_v57_closure["integrity_boundary"]["gate_2"] == "NO-GO/SHADOW"
+        and not (
+            repo_root
+            / "docs/progressive_upgrade/quac_anchor_safe_consensus_slot_confirmation_result_v57.json"
+        ).exists()
+        and not (
+            repo_root
+            / "docs/progressive_upgrade/quac_anchor_safe_consensus_slot_confirmation_execution_v57.json"
+        ).exists()
+        and not (
+            repo_root
+            / "output/rag_evaluation/quac_anchor_safe_consensus_slot/confirmation"
+        ).exists()
+    )
     gate_two_is_safely_held = (
         rag_decision["gate_2"] == "NO-GO"
+        and qasc_supplemental_passed
+        and conflicts_behavior_generation_passed
+        and conflicts_operations_preparation_passed
+        and conflicts_workstation_readiness_passed
+        and conflicts_collection_readiness_passed
+        and conflicts_router_readiness_passed
+        and whoqa_readiness_passed
+        and whoqa_stress_readiness_passed
+        and rgb_cost_aware_readiness_passed
+        and musique_dual_resource_readiness_passed
+        and musique_objective_gap_readiness_passed
+        and musique_crossfit_support_readiness_passed
+        and hover_verification_roles_readiness_passed
+        and hover_role_mechanism_readiness_passed
+        and hover_dynamic_atomic_roles_readiness_passed
+        and scifact_dynamic_atomic_roles_readiness_passed
+        and feverous_adaptive_atomic_roles_readiness_passed
+        and ottqa_guarded_adaptive_atomic_roles_readiness_passed
+        and finqa_anchor_guarded_atomic_roles_readiness_passed
+        and tatqa_consensus_guarded_atomic_roles_readiness_passed
+        and fetaqa_consensus_guarded_atomic_roles_readiness_passed
+        and qasper_top2_proposal_guarded_atomic_roles_readiness_passed
+        and evidence_inference_low_core_divergence_readiness_passed
+        and contractnli_native_zero_consensus_readiness_passed
+        and contractnli_v51_readiness_passed
+        and contractnli_v52_readiness_passed
+        and cuad_v53_readiness_passed
+        and doc2dial_v54_readiness_passed
+        and doc2dial_v55_readiness_passed
+        and doc2dial_v56_readiness_passed
+        and quac_v57_readiness_passed
         and rag_decision["pipeline_feasible"] is True
         and rag_decision["evidence_f1_superiority_on_all_primary_datasets"] is False
         and conflict_slice["status"] == "RUN"
@@ -438,10 +16924,927 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
         and int(experiment_audit["combined_ablation_coverage"]["run_count"]) == 9
         and experiment_audit["combined_ablation_coverage"]["missing_variants"] == []
         and rag_decision["design_16_2_experiment_coverage_complete"] is False
+        and conformal_report["metadata"]["status"]
+        == "RUN_PUBLIC_REAL_MODEL_SPLIT_CONFORMAL_ABSTENTION"
+        and "log-sum-exp" in conformal_report["metadata"]["paired_test_implementation"]
+        and conformal_report["decision"]["gate_2"] == "NO-GO/SHADOW"
+        and conformal_report["evaluation"]["split_conformal"][
+            "false_complete_case_family_rate"
+        ]
+        < conformal_report["evaluation"]["baseline_role_coverage_heuristic"][
+            "false_complete_case_family_rate"
+        ]
+        and conformal_robustness["metadata"]["status"]
+        == "RUN_PUBLIC_REAL_MODEL_REPEATED_GROUP_SPLIT_ROBUSTNESS"
+        and int(conformal_robustness["metadata"]["repeat_count"]) == 10
+        and conformal_robustness["metadata"]["source_preparation"]["jsonl_parse_passes"]
+        == 1
+        and conformal_robustness["metadata"]["source_preparation"][
+            "split_independent_features_reused"
+        ]
+        is True
+        and conformal_robustness["decision"]["gate_2"] == "NO-GO/SHADOW"
+        and conformal_robustness["decision"][
+            "safety_reduction_replicated_in_every_split"
+        ]
+        is True
+        and conformal_robustness["decision"][
+            "three_state_triage_preserves_primary_auto_boundary"
+        ]
+        is True
+        and conformal_robustness["decision"][
+            "primary_alpha_case_family_rate_at_or_below_alpha_in_every_split"
+        ]
+        is False
+        and conformal_model_selection["metadata"]["status"]
+        == "RUN_PUBLIC_REAL_MODEL_NESTED_GROUP_SELECTION"
+        and int(conformal_model_selection["metadata"]["outer_repeat_count"]) == 10
+        and int(conformal_model_selection["metadata"]["inner_repeats"]) == 3
+        and conformal_model_selection["decision"]["gate_2"] == "NO-GO/SHADOW"
+        and conformal_model_selection["decision"][
+            "adopt_nested_selected_experimental_default"
+        ]
+        is False
+        and conformal_model_selection["decision"]["adoption_checks"][
+            "evaluation_does_not_select_candidate"
+        ]
+        is True
+        and conformal_model_selection["decision"]["adoption_checks"][
+            "mean_abstention_reduction_at_least_0_05"
+        ]
+        is False
+        and conformal_model_selection["decision"]["adoption_checks"][
+            "mean_case_family_false_complete_increase_at_most_0_02"
+        ]
+        is False
+        and conformal_hotpotqa["metadata"]["status"]
+        == "RUN_PUBLIC_REAL_MODEL_HOTPOTQA_CONFIRMATION"
+        and conformal_hotpotqa["metadata"]["reference_dataset"] == "ConditionalQA"
+        and conformal_hotpotqa["metadata"]["confirmation_dataset"] == "HotpotQA"
+        and conformal_hotpotqa["pre_registered_hypotheses"][
+            "no_confirmation_feature_or_model_selection"
+        ]
+        is True
+        and conformal_hotpotqa["outcome"]["confirmation_status"]
+        == "PARTIAL_CONFIRMATION"
+        and conformal_hotpotqa["outcome"]["cross_dataset_safety_signal_confirmed"]
+        is False
+        and conformal_hotpotqa["outcome"]["checks"][
+            "safety_reduction_repeats_meet_pre_registered_minimum"
+        ]
+        is True
+        and conformal_hotpotqa["outcome"]["checks"][
+            "alpha_control_repeats_meet_pre_registered_minimum"
+        ]
+        is False
+        and conformal_hotpotqa["outcome"]["checks"][
+            "mean_case_family_false_complete_rate_at_or_below_alpha"
+        ]
+        is True
+        and conformal_hotpotqa["decision"]["gate_2"] == "NO-GO/SHADOW"
+        and conformal_multihoprag["metadata"]["status"]
+        == "RUN_PUBLIC_REAL_MODEL_MULTIHOPRAG_CONFIRMATION"
+        and conformal_multihoprag["metadata"]["reference_dataset"] == "ConditionalQA"
+        and conformal_multihoprag["metadata"]["confirmation_dataset"] == "MultiHop-RAG"
+        and conformal_multihoprag["pre_registered_hypotheses"][
+            "no_confirmation_feature_or_model_selection"
+        ]
+        is True
+        and conformal_multihoprag["outcome"]["confirmation_status"]
+        == "FULL_CONFIRMATION"
+        and conformal_multihoprag["outcome"]["cross_dataset_safety_signal_confirmed"]
+        is True
+        and conformal_multihoprag["outcome"]["checks"][
+            "safety_reduction_repeats_meet_pre_registered_minimum"
+        ]
+        is True
+        and conformal_multihoprag["outcome"]["checks"][
+            "alpha_control_repeats_meet_pre_registered_minimum"
+        ]
+        is True
+        and conformal_multihoprag["outcome"]["checks"][
+            "mean_case_family_false_complete_rate_at_or_below_alpha"
+        ]
+        is True
+        and conformal_multihoprag["decision"]["gate_2"] == "NO-GO/SHADOW"
+        and conformal_twowiki["metadata"]["status"]
+        == "RUN_PUBLIC_REAL_MODEL_2WIKIMULTIHOPQA_CONFIRMATION"
+        and conformal_twowiki["metadata"]["reference_dataset"] == "ConditionalQA"
+        and conformal_twowiki["metadata"]["confirmation_dataset"] == "2WikiMultiHopQA"
+        and conformal_twowiki["metadata"]["confirmation_source_sha256"]
+        == "7add5a5ec5206a33848de0eecc76a8697dc321e03946fcfefee20df0525a6104"
+        and conformal_twowiki["pre_registered_hypotheses"][
+            "no_confirmation_feature_or_model_selection"
+        ]
+        is True
+        and conformal_twowiki["outcome"]["confirmation_status"] == "FULL_CONFIRMATION"
+        and conformal_twowiki["outcome"]["cross_dataset_safety_signal_confirmed"]
+        is True
+        and conformal_twowiki["outcome"]["confirmation_metrics"][
+            "conformal_case_family_false_complete_mean"
+        ]
+        == 0.090575
+        and conformal_twowiki["outcome"]["confirmation_metrics"][
+            "conformal_complete_recall_mean"
+        ]
+        == 0.162305
+        and conformal_twowiki["outcome"]["confirmation_metrics"][
+            "safety_reduction_repeats"
+        ]
+        == 10
+        and conformal_twowiki["outcome"]["confirmation_metrics"][
+            "case_family_rate_at_or_below_alpha_repeats"
+        ]
+        == 7
+        and conformal_twowiki["decision"]["gate_2"] == "NO-GO/SHADOW"
+        and conformal_cross_dataset_series["metadata"]["status"]
+        == "AGGREGATE_PUBLIC_REAL_MODEL_CROSS_DATASET_CONFIRMATIONS"
+        and conformal_cross_dataset_series["metadata"]["confirmation_dataset_count"]
+        == 3
+        and conformal_cross_dataset_series["outcome"]["confirmation_status"]
+        == "PARTIAL_CONFIRMATION"
+        and conformal_cross_dataset_series["outcome"]["full_confirmation_count"] == 2
+        and conformal_cross_dataset_series["outcome"]["partial_confirmation_count"] == 1
+        and conformal_cross_dataset_series["outcome"]["not_confirmed_count"] == 0
+        and conformal_cross_dataset_series["outcome"]["all_confirmation_datasets_full"]
+        is False
+        and conformal_cross_dataset_series["outcome"][
+            "all_mean_safety_signals_generalized"
+        ]
+        is True
+        and conformal_cross_dataset_series["decision"]["gate_2"] == "NO-GO/SHADOW"
+        and conformal_cross_dataset_protocol["frozen_protocol"][
+            "confirmation_feature_or_model_selection"
+        ]
+        is False
+        and conformal_third_confirmation_protocol["registration_state"][
+            "confirmation_result_observed"
+        ]
+        is False
+        and conformal_third_confirmation_protocol["dataset"]["expected_sha256"]
+        == "c0d8b60b9026b728fb07ad74c5252a0f188f6942e8ba5c02df4dfa369502ea8d"
+        and conformal_third_confirmation_protocol["frozen_sampling"]["sample_size"]
+        == 1000
+        and conformal_third_confirmation_protocol["frozen_scoring"][
+            "embedding_revision"
+        ]
+        == "d4aa6901d3a41ba39fb536a557fa166f842b0e09"
+        and conformal_third_confirmation_protocol["frozen_scoring"]["reranker_revision"]
+        == "55611d7bca2a7133960a6d3b71e083071bbfc312"
+        and conformal_third_confirmation_protocol["frozen_confirmation"][
+            "confirmation_feature_or_model_selection"
+        ]
+        is False
+        and conformal_cross_dataset_protocol["confirmation_sequence"][1]["dataset"]
+        == "MultiHop-RAG"
+        and conformal_cross_dataset_protocol["confirmation_sequence"][1][
+            "source_sha256"
+        ]
+        == conformal_multihoprag["metadata"]["confirmation_source_sha256"]
+        and conformal_source_preparation_benchmark["metadata"]["status"]
+        == "RUN_LOCAL_CONFORMAL_SOURCE_PREPARATION_BENCHMARK"
+        and conformal_source_preparation_benchmark["metadata"]["source_sha256"]
+        == conformal_multihoprag["metadata"]["confirmation_source_sha256"]
+        and conformal_source_preparation_benchmark["comparison"]["results_identical"]
+        is True
+        and conformal_source_preparation_benchmark["comparison"]["legacy"][
+            "jsonl_parse_passes"
+        ]
+        == 10
+        and conformal_source_preparation_benchmark["comparison"]["single_parse"][
+            "jsonl_parse_passes"
+        ]
+        == 1
+        and conformal_source_preparation_benchmark["comparison"]["legacy"][
+            "canonical_repeat_sha256"
+        ]
+        == conformal_source_preparation_benchmark["comparison"]["single_parse"][
+            "canonical_repeat_sha256"
+        ]
+        and conformal_source_preparation_benchmark["comparison"]["speedup"] > 1.0
+        and conformal_subgroup_audit["metadata"]["status"]
+        == "RUN_PUBLIC_REAL_MODEL_OBSERVABLE_SUBGROUP_STRESS_AUDIT"
+        and conformal_subgroup_audit["metadata"]["datasets"]
+        == ["2WikiMultiHopQA", "ConditionalQA", "HotpotQA", "MultiHop-RAG"]
+        and conformal_subgroup_audit["metadata"][
+            "no_subgroup_threshold_or_model_selection"
+        ]
+        is True
+        and conformal_subgroup_audit["theoretical_scope"][
+            "gold_fields_used_for_subgroup_assignment"
+        ]
+        is False
+        and conformal_subgroup_audit["outcome"]["status"]
+        == "SUBGROUP_INSTABILITY_DETECTED"
+        and conformal_subgroup_audit["outcome"][
+            "all_global_finite_sample_nominal_bounds_at_or_below_alpha"
+        ]
+        is True
+        and conformal_subgroup_audit["outcome"][
+            "all_eligible_subgroup_mean_risks_at_or_below_alpha"
+        ]
+        is False
+        and conformal_subgroup_audit["outcome"][
+            "all_eligible_subgroup_repeat_consistency_targets_met"
+        ]
+        is False
+        and conformal_subgroup_audit["outcome"][
+            "conditional_subgroup_guarantee_claimed"
+        ]
+        is False
+        and conformal_subgroup_audit["outcome"]["gate_2"] == "NO-GO/SHADOW"
+        and conformal_subgroup_audit["metadata"]["case_artifact"]["sha256"]
+        == _evidence_sha256(conformal_subgroup_cases_path)
+        and subgroup_by_dataset["HotpotQA"]["aggregate"]["worst_eligible_subgroup"][
+            "dimension"
+        ]
+        == "question_type"
+        and subgroup_by_dataset["HotpotQA"]["aggregate"]["worst_eligible_subgroup"][
+            "value"
+        ]
+        == "comparison"
+        and subgroup_by_dataset["MultiHop-RAG"]["aggregate"]["worst_eligible_subgroup"][
+            "dimension"
+        ]
+        == "required_role_count"
+        and subgroup_by_dataset["MultiHop-RAG"]["aggregate"]["worst_eligible_subgroup"][
+            "value"
+        ]
+        == "2"
+        and subgroup_by_dataset["2WikiMultiHopQA"]["aggregate"][
+            "worst_eligible_subgroup"
+        ]["dimension"]
+        == "candidate_count_bucket"
+        and subgroup_by_dataset["2WikiMultiHopQA"]["aggregate"][
+            "worst_eligible_subgroup"
+        ]["value"]
+        == "lt_20"
+        and subgroup_by_dataset["2WikiMultiHopQA"]["aggregate"][
+            "worst_eligible_subgroup"
+        ]["mean_false_complete_case_family_rate"]
+        == 0.189738
+        and conformal_subgroup_protocol["frozen_model_protocol"][
+            "subgroup_threshold_or_model_selection"
+        ]
+        is False
+        and conformal_subgroup_protocol["support_rule"][
+            "min_incomplete_case_families_per_repeat"
+        ]
+        == 30
+        and conformal_subgroup_protocol["support_rule"]["min_eligible_repeats"] == 7
+        and conformal_mondrian["metadata"]["status"]
+        == "RUN_PUBLIC_REAL_MODEL_POST_HOC_MONDRIAN_DEVELOPMENT"
+        and conformal_mondrian["metadata"]["datasets"]
+        == ["ConditionalQA", "HotpotQA", "MultiHop-RAG"]
+        and conformal_mondrian["development_protocol"]["post_hoc"] is True
+        and conformal_mondrian["development_protocol"]["independent_confirmation"]
+        is False
+        and conformal_mondrian["development_protocol"][
+            "thresholds_use_calibration_only"
+        ]
+        is True
+        and conformal_mondrian["development_protocol"][
+            "evaluation_used_for_threshold_or_fallback_selection"
+        ]
+        is False
+        and conformal_mondrian["outcome"]["status"] == "DO_NOT_ADOPT"
+        and conformal_mondrian["outcome"]["all_pre_registered_adoption_checks_passed"]
+        is False
+        and conformal_mondrian["outcome"]["checks"][
+            "mean_worst_eligible_subgroup_risk_reduction"
+        ]["passed"]
+        is True
+        and conformal_mondrian["outcome"]["checks"][
+            "maximum_dataset_complete_recall_decrease"
+        ]["passed"]
+        is False
+        and conformal_mondrian["outcome"]["checks"][
+            "all_eligible_subgroup_repeat_consistency_targets_met"
+        ]["passed"]
+        is False
+        and conformal_mondrian["outcome"]["conditional_subgroup_guarantee_claimed"]
+        is False
+        and conformal_mondrian["outcome"]["gate_2"] == "NO-GO/SHADOW"
+        and conformal_mondrian["metadata"]["case_artifact"]["sha256"]
+        == _evidence_sha256(conformal_mondrian_cases_path)
+        and mondrian_by_dataset["MultiHop-RAG"]["aggregate"][
+            "delta_mondrian_minus_global"
+        ]["true_complete_declaration_rate"]["mean"]
+        == -0.066904
+        and conformal_mondrian_protocol["development_boundary"]["post_hoc"] is True
+        and conformal_mondrian_protocol["development_boundary"][
+            "independent_confirmation"
+        ]
+        is False
+        and conformal_mondrian_protocol["mondrian_calibration"]["fallback_order"][0][
+            "source"
+        ]
+        == "joint"
+        and conformal_mondrian_protocol["mondrian_calibration"][
+            "minimum_calibration_case_families"
+        ]
+        == 30
+        and conformal_multi_axis_mondrian["metadata"]["status"]
+        == "RUN_PUBLIC_REAL_MODEL_POST_HOC_MULTI_AXIS_MONDRIAN_DEVELOPMENT"
+        and conformal_multi_axis_mondrian["metadata"]["datasets"]
+        == ["2WikiMultiHopQA", "ConditionalQA", "HotpotQA", "MultiHop-RAG"]
+        and conformal_multi_axis_mondrian["metadata"]["fallback_order"]
+        == [
+            "question_type_candidate_count_bucket_required_role_count",
+            "question_type_candidate_count_bucket",
+            "candidate_count_bucket_required_role_count",
+            "question_type_required_role_count",
+            "candidate_count_bucket",
+            "question_type",
+            "required_role_count",
+            "global",
+        ]
+        and conformal_multi_axis_mondrian["metadata"]["group_fields"][
+            "question_type_candidate_count_bucket_required_role_count"
+        ]
+        == ["question_type", "candidate_count_bucket", "required_role_count"]
+        and conformal_multi_axis_mondrian["development_protocol"]["post_hoc"] is True
+        and conformal_multi_axis_mondrian["development_protocol"][
+            "independent_confirmation"
+        ]
+        is False
+        and conformal_multi_axis_mondrian["development_protocol"][
+            "candidate_size_aware"
+        ]
+        is True
+        and conformal_multi_axis_mondrian["development_protocol"][
+            "thresholds_use_calibration_only"
+        ]
+        is True
+        and conformal_multi_axis_mondrian["development_protocol"][
+            "evaluation_used_for_threshold_or_fallback_selection"
+        ]
+        is False
+        and conformal_multi_axis_mondrian["outcome"]["status"] == "DO_NOT_ADOPT"
+        and conformal_multi_axis_mondrian["outcome"][
+            "all_pre_registered_adoption_checks_passed"
+        ]
+        is False
+        and conformal_multi_axis_mondrian["outcome"]["checks"][
+            "mean_worst_eligible_subgroup_risk_reduction"
+        ]["measured"]
+        == 0.055714
+        and conformal_multi_axis_mondrian["outcome"]["checks"][
+            "mean_worst_eligible_subgroup_risk_reduction"
+        ]["passed"]
+        is True
+        and conformal_multi_axis_mondrian["outcome"]["checks"][
+            "maximum_dataset_overall_case_risk_increase"
+        ]["passed"]
+        is True
+        and conformal_multi_axis_mondrian["outcome"]["checks"][
+            "maximum_dataset_complete_recall_decrease"
+        ]["passed"]
+        is False
+        and conformal_multi_axis_mondrian["outcome"]["checks"][
+            "maximum_dataset_complete_recall_decrease"
+        ]["measured"]["MultiHop-RAG"]
+        == 0.066904
+        and conformal_multi_axis_mondrian["outcome"]["checks"][
+            "all_eligible_subgroup_mean_risks_at_or_below_alpha"
+        ]["passed"]
+        is False
+        and conformal_multi_axis_mondrian["outcome"]["checks"][
+            "all_eligible_subgroup_repeat_consistency_targets_met"
+        ]["passed"]
+        is False
+        and conformal_multi_axis_mondrian["outcome"][
+            "conditional_subgroup_guarantee_claimed"
+        ]
+        is False
+        and conformal_multi_axis_mondrian["outcome"]["gate_2"] == "NO-GO/SHADOW"
+        and conformal_multi_axis_mondrian["metadata"]["case_artifact"]["sha256"]
+        == _evidence_sha256(conformal_multi_axis_mondrian_cases_path)
+        and conformal_multi_axis_mondrian["decision"]["next_step"]
+        == "STOP_WITHOUT_MUSIQUE_DOWNLOAD"
+        and multi_axis_mondrian_by_dataset["HotpotQA"]["aggregate"][
+            "mondrian_subgroups"
+        ]["worst_eligible_subgroup"]["dimension"]
+        == "candidate_count_bucket"
+        and multi_axis_mondrian_by_dataset["HotpotQA"]["aggregate"][
+            "mondrian_subgroups"
+        ]["worst_eligible_subgroup"]["value"]
+        == "40_to_59"
+        and multi_axis_mondrian_by_dataset["HotpotQA"]["aggregate"][
+            "mondrian_subgroups"
+        ]["worst_eligible_subgroup"]["mean_false_complete_case_family_rate"]
+        == 0.119606
+        and conformal_multi_axis_mondrian_protocol["development_boundary"]["post_hoc"]
+        is True
+        and conformal_multi_axis_mondrian_protocol["development_boundary"][
+            "independent_confirmation"
+        ]
+        is False
+        and conformal_multi_axis_mondrian_protocol["multi_axis_mondrian_calibration"][
+            "fallback_order"
+        ][0]["source"]
+        == "question_type_candidate_count_bucket_required_role_count"
+        and conformal_multi_axis_mondrian_protocol["multi_axis_mondrian_calibration"][
+            "minimum_calibration_case_families"
+        ]
+        == 30
+        and "do not download"
+        in conformal_multi_axis_mondrian_protocol["execution_policy"][
+            "if_any_check_fails"
+        ].lower()
+        and conformal_head_transfer["metadata"]["status"]
+        == "RUN_PUBLIC_REAL_MODEL_POST_HOC_CROSS_DATASET_HEAD_TRANSFER"
+        and conformal_head_transfer["metadata"]["datasets"]
+        == ["2WikiMultiHopQA", "ConditionalQA", "HotpotQA", "MultiHop-RAG"]
+        and conformal_head_transfer["metadata"]["feature_count"] == 37
+        and conformal_head_transfer["development_protocol"]["post_hoc"] is True
+        and conformal_head_transfer["development_protocol"]["independent_confirmation"]
+        is False
+        and conformal_head_transfer["development_protocol"][
+            "target_train_labels_or_features_used_for_transferred_head"
+        ]
+        is False
+        and conformal_head_transfer["development_protocol"][
+            "source_training_uses_train_splits_only"
+        ]
+        is True
+        and conformal_head_transfer["development_protocol"][
+            "target_threshold_uses_calibration_only"
+        ]
+        is True
+        and conformal_head_transfer["development_protocol"][
+            "evaluation_used_for_model_threshold_or_selection"
+        ]
+        is False
+        and conformal_head_transfer["outcome"]["status"] == "DO_NOT_ADOPT"
+        and conformal_head_transfer["outcome"][
+            "all_pre_registered_adoption_checks_passed"
+        ]
+        is False
+        and conformal_head_transfer["outcome"][
+            "target_train_labels_used_for_transferred_head"
+        ]
+        is False
+        and conformal_head_transfer["outcome"]["checks"][
+            "target_train_exclusion_and_source_train_only"
+        ]["passed"]
+        is True
+        and conformal_head_transfer["outcome"]["checks"][
+            "maximum_mean_case_family_false_complete_rate_each_dataset"
+        ]["passed"]
+        is False
+        and conformal_head_transfer["outcome"]["checks"][
+            "maximum_dataset_case_family_risk_increase_vs_target_fitted"
+        ]["passed"]
+        is False
+        and conformal_head_transfer["outcome"]["checks"][
+            "maximum_dataset_complete_recall_decrease_vs_target_fitted"
+        ]["passed"]
+        is False
+        and conformal_head_transfer["outcome"]["checks"][
+            "cross_dataset_mean_evaluation_auc_decrease_vs_target_fitted"
+        ]["measured"]
+        == 0.115104
+        and conformal_head_transfer["outcome"]["checks"][
+            "cross_dataset_mean_evaluation_auc_decrease_vs_target_fitted"
+        ]["passed"]
+        is False
+        and conformal_head_transfer["outcome"]["checks"][
+            "datasets_with_at_least_7_of_10_alpha_control_repeats"
+        ]["measured"]["count"]
+        == 1
+        and conformal_head_transfer["outcome"]["checks"][
+            "all_finite_sample_nominal_bounds_at_or_below_alpha"
+        ]["passed"]
+        is True
+        and conformal_head_transfer["outcome"]["zero_shot_claimed"] is False
+        and conformal_head_transfer["outcome"]["gate_2"] == "NO-GO/SHADOW"
+        and conformal_head_transfer["metadata"]["case_artifact"]["sha256"]
+        == _evidence_sha256(conformal_head_transfer_cases_path)
+        and conformal_head_transfer["decision"]["next_step"]
+        == "STOP_TRANSFER_METHOD_SELECTION_WITHOUT_NEW_DATA"
+        and head_transfer_by_dataset["MultiHop-RAG"]["aggregate"]["transferred"][
+            "true_complete_declaration_rate"
+        ]["mean"]
+        == 0.064046
+        and conformal_head_transfer_protocol["development_boundary"]["post_hoc"] is True
+        and conformal_head_transfer_protocol["development_boundary"][
+            "independent_confirmation"
+        ]
+        is False
+        and conformal_head_transfer_protocol["frozen_transfer_head"][
+            "target_train_variants_used"
+        ]
+        is False
+        and conformal_head_transfer_protocol["frozen_target_calibration"][
+            "target_evaluation_used_for_threshold_or_selection"
+        ]
+        is False
+        and conformal_head_transfer_protocol["pre_registered_adoption_checks"][
+            "minimum_source_dataset_count_per_target"
+        ]
+        == 3
+        and "do not use a new dataset"
+        in conformal_head_transfer_protocol["execution_policy"][
+            "if_any_check_fails"
+        ].lower()
+        and conformal_transfer_admission["metadata"]["status"]
+        == "RUN_PUBLIC_REAL_MODEL_POST_HOC_TRANSFER_ADMISSION_GUARD"
+        and conformal_transfer_admission["metadata"]["datasets"]
+        == ["2WikiMultiHopQA", "ConditionalQA", "HotpotQA", "MultiHop-RAG"]
+        and conformal_transfer_admission["development_protocol"]["post_hoc"] is True
+        and conformal_transfer_admission["development_protocol"][
+            "independent_confirmation"
+        ]
+        is False
+        and conformal_transfer_admission["development_protocol"][
+            "admission_only_no_score_threshold_or_declaration_change"
+        ]
+        is True
+        and conformal_transfer_admission["development_protocol"][
+            "certificate_uses_calibration_only"
+        ]
+        is True
+        and conformal_transfer_admission["development_protocol"][
+            "evaluation_used_to_issue_certificate"
+        ]
+        is False
+        and conformal_transfer_admission["development_protocol"][
+            "target_train_used_to_issue_certificate"
+        ]
+        is False
+        and conformal_transfer_admission["outcome"]["status"] == "DO_NOT_ADOPT"
+        and conformal_transfer_admission["outcome"]["certificate_count"] == 3
+        and conformal_transfer_admission["outcome"]["certificate_count_by_dataset"]
+        == {
+            "2WikiMultiHopQA": 0,
+            "ConditionalQA": 2,
+            "HotpotQA": 1,
+            "MultiHop-RAG": 0,
+        }
+        and conformal_transfer_admission["outcome"]["unsafe_certificate_count"] == 3
+        and conformal_transfer_admission["outcome"]["low_utility_certificate_count"]
+        == 0
+        and conformal_transfer_admission["outcome"][
+            "safe_and_useful_certificate_precision"
+        ]
+        == 0.0
+        and conformal_transfer_admission["outcome"]["checks"][
+            "certificate_uses_calibration_only"
+        ]["passed"]
+        is True
+        and conformal_transfer_admission["outcome"]["checks"][
+            "minimum_total_certified_repeats"
+        ]["passed"]
+        is False
+        and conformal_transfer_admission["outcome"]["checks"][
+            "minimum_datasets_with_at_least_one_certificate"
+        ]["passed"]
+        is True
+        and conformal_transfer_admission["outcome"]["checks"][
+            "maximum_unsafe_certificate_count"
+        ]["passed"]
+        is False
+        and conformal_transfer_admission["outcome"]["checks"][
+            "maximum_low_utility_certificate_count"
+        ]["passed"]
+        is True
+        and conformal_transfer_admission["outcome"]["checks"][
+            "minimum_safe_and_useful_certificate_precision"
+        ]["passed"]
+        is False
+        and conformal_transfer_admission["metadata"]["evidence_artifact"]["sha256"]
+        == _evidence_sha256(conformal_transfer_admission_evidence_path)
+        and conformal_transfer_admission["decision"]["next_step"]
+        == "REQUIRE_TARGET_FITTED_HEAD_STOP_GUARD_TUNING"
+        and conformal_transfer_admission["decision"]["production_policy"]
+        == "REQUIRE_TARGET_FITTED_HEAD"
+        and conformal_transfer_admission_protocol["development_boundary"]["post_hoc"]
+        is True
+        and conformal_transfer_admission_protocol["development_boundary"][
+            "independent_confirmation"
+        ]
+        is False
+        and conformal_transfer_admission_protocol["frozen_input"][
+            "transfer_report_sha256"
+        ]
+        == hashlib.sha256(
+            (
+                repo_root
+                / "output/rag_evaluation/conformal_head_transfer/conformal_head_transfer.json"
+            ).read_bytes()
+        ).hexdigest()
+        and conformal_transfer_admission_protocol["frozen_input"][
+            "case_artifact_sha256"
+        ]
+        == _evidence_sha256(conformal_head_transfer_cases_path)
+        and conformal_transfer_admission_protocol["frozen_input"]["case_record_count"]
+        == 179880
+        and conformal_transfer_admission_protocol["calibration_certificate"][
+            "evaluation_fields_available_to_decision"
+        ]
+        is False
+        and conformal_transfer_admission_protocol["calibration_certificate"][
+            "target_train_fields_available_to_decision"
+        ]
+        is False
+        and conformal_transfer_admission_protocol["calibration_certificate"][
+            "minimum_incomplete_calibration_case_families"
+        ]
+        == 30
+        and conformal_transfer_admission_protocol["calibration_certificate"][
+            "minimum_complete_calibration_variants"
+        ]
+        == 30
+        and conformal_transfer_admission_protocol["calibration_certificate"][
+            "minimum_calibration_auc"
+        ]
+        == 0.75
+        and conformal_transfer_admission_protocol["calibration_certificate"][
+            "minimum_calibration_complete_recall_at_frozen_threshold"
+        ]
+        == 0.15
+        and "require a target-fitted head"
+        in conformal_transfer_admission_protocol["execution_policy"][
+            "if_any_check_fails"
+        ].lower()
+        and "do not use new data"
+        in conformal_transfer_admission_protocol["execution_policy"][
+            "if_any_check_fails"
+        ].lower()
+        and conformal_contextual["metadata"]["status"]
+        == "RUN_PUBLIC_REAL_MODEL_POST_HOC_CONTEXTUAL_HEAD_DEVELOPMENT"
+        and conformal_contextual["metadata"]["datasets"]
+        == ["ConditionalQA", "HotpotQA", "MultiHop-RAG"]
+        and conformal_contextual["development_protocol"]["post_hoc"] is True
+        and conformal_contextual["development_protocol"]["independent_confirmation"]
+        is False
+        and conformal_contextual["development_protocol"]["context_vocabulary_source"]
+        == "train_case_families_only"
+        and conformal_contextual["development_protocol"][
+            "context_feature_or_model_selection_on_evaluation"
+        ]
+        is False
+        and conformal_contextual["development_protocol"][
+            "global_threshold_uses_calibration_only"
+        ]
+        is True
+        and conformal_contextual["development_protocol"]["group_specific_thresholds"]
+        is False
+        and conformal_contextual["outcome"]["status"] == "DO_NOT_ADOPT"
+        and conformal_contextual["outcome"]["all_pre_registered_adoption_checks_passed"]
+        is False
+        and conformal_contextual["outcome"]["checks"]["mean_complete_recall_gain"][
+            "passed"
+        ]
+        is False
+        and conformal_contextual["outcome"]["checks"][
+            "maximum_dataset_overall_case_risk_increase"
+        ]["passed"]
+        is False
+        and conformal_contextual["outcome"]["checks"][
+            "mean_worst_eligible_subgroup_risk_reduction"
+        ]["passed"]
+        is False
+        and conformal_contextual["outcome"]["checks"][
+            "all_eligible_subgroup_repeat_consistency_targets_met"
+        ]["passed"]
+        is False
+        and conformal_contextual["outcome"]["conditional_subgroup_guarantee_claimed"]
+        is False
+        and conformal_contextual["outcome"]["gate_2"] == "NO-GO/SHADOW"
+        and conformal_contextual["metadata"]["case_artifact"]["sha256"]
+        == _evidence_sha256(conformal_contextual_cases_path)
+        and contextual_by_dataset["ConditionalQA"]["aggregate"][
+            "delta_contextual_minus_baseline"
+        ]["false_complete_case_family_rate"]["mean"]
+        == 0.011292
+        and conformal_contextual_protocol["development_boundary"]["post_hoc"] is True
+        and conformal_contextual_protocol["development_boundary"][
+            "independent_confirmation"
+        ]
+        is False
+        and conformal_contextual_protocol["frozen_model_protocol"][
+            "minimum_train_case_families_per_category"
+        ]
+        == 10
+        and conformal_contextual_protocol["calibration"]["group_specific_thresholds"]
+        is False
+        and conformal_score_stability["metadata"]["status"]
+        == "RUN_PUBLIC_REAL_MODEL_POST_HOC_SCORE_STABILITY_HEAD_DEVELOPMENT"
+        and conformal_score_stability["metadata"]["datasets"]
+        == ["2WikiMultiHopQA", "ConditionalQA", "HotpotQA", "MultiHop-RAG"]
+        and conformal_score_stability["metadata"]["base_feature_count"] == 37
+        and conformal_score_stability["metadata"]["score_stability_feature_count"] == 27
+        and conformal_score_stability["metadata"]["augmented_feature_count"] == 64
+        and conformal_score_stability["metadata"]["retrieval_stages"]
+        == ["bm25", "dense", "hybrid", "cross_encoder"]
+        and conformal_score_stability["metadata"]["case_artifact"]["record_count"]
+        == 53776
+        and conformal_score_stability["metadata"]["case_artifact"]["sha256"]
+        == _evidence_sha256(conformal_score_stability_cases_path)
+        and conformal_score_stability["development_protocol"]["post_hoc"] is True
+        and conformal_score_stability["development_protocol"][
+            "independent_confirmation"
+        ]
+        is False
+        and conformal_score_stability["development_protocol"][
+            "target_fitted_head_required"
+        ]
+        is True
+        and conformal_score_stability["development_protocol"][
+            "feature_schema_frozen_before_run"
+        ]
+        is True
+        and conformal_score_stability["development_protocol"][
+            "inference_features_use_gold_fields"
+        ]
+        is False
+        and conformal_score_stability["development_protocol"][
+            "feature_or_hyperparameter_selection_on_evaluation"
+        ]
+        is False
+        and conformal_score_stability["development_protocol"][
+            "feature_standardization_source"
+        ]
+        == "target train split only"
+        and conformal_score_stability["development_protocol"][
+            "global_threshold_uses_calibration_only"
+        ]
+        is True
+        and conformal_score_stability["outcome"]["status"] == "DO_NOT_ADOPT"
+        and conformal_score_stability["outcome"][
+            "all_pre_registered_adoption_checks_passed"
+        ]
+        is False
+        and conformal_score_stability["outcome"]["checks"][
+            "minimum_mean_complete_recall_gain"
+        ]["measured"]
+        == 0.090658
+        and conformal_score_stability["outcome"]["checks"][
+            "minimum_mean_complete_recall_gain"
+        ]["passed"]
+        is True
+        and conformal_score_stability["outcome"]["checks"][
+            "maximum_dataset_case_risk_increase"
+        ]["measured"]
+        == {
+            "2WikiMultiHopQA": 0.014174,
+            "ConditionalQA": 0.030392,
+            "HotpotQA": 0.01012,
+            "MultiHop-RAG": 0.005795,
+        }
+        and conformal_score_stability["outcome"]["checks"][
+            "maximum_dataset_case_risk_increase"
+        ]["passed"]
+        is False
+        and conformal_score_stability["outcome"]["checks"][
+            "maximum_each_dataset_mean_case_risk"
+        ]["measured"]
+        == {
+            "2WikiMultiHopQA": 0.10475,
+            "ConditionalQA": 0.110814,
+            "HotpotQA": 0.106772,
+            "MultiHop-RAG": 0.093685,
+        }
+        and conformal_score_stability["outcome"]["checks"][
+            "maximum_each_dataset_mean_case_risk"
+        ]["passed"]
+        is False
+        and conformal_score_stability["outcome"]["checks"][
+            "minimum_mean_evaluation_auc_gain"
+        ]["measured"]
+        == 0.014709
+        and conformal_score_stability["outcome"]["checks"][
+            "minimum_mean_evaluation_auc_gain"
+        ]["passed"]
+        is True
+        and conformal_score_stability["outcome"]["checks"][
+            "minimum_datasets_with_positive_auc_gain"
+        ]["measured"]["count"]
+        == 4
+        and conformal_score_stability["outcome"]["checks"][
+            "minimum_datasets_with_positive_auc_gain"
+        ]["passed"]
+        is True
+        and conformal_score_stability["outcome"]["checks"][
+            "minimum_datasets_with_at_least_7_of_10_alpha_control_repeats"
+        ]["measured"]
+        == {
+            "count": 0,
+            "per_dataset": {
+                "2WikiMultiHopQA": 6,
+                "ConditionalQA": 3,
+                "HotpotQA": 6,
+                "MultiHop-RAG": 6,
+            },
+        }
+        and conformal_score_stability["outcome"]["checks"][
+            "minimum_datasets_with_at_least_7_of_10_alpha_control_repeats"
+        ]["passed"]
+        is False
+        and conformal_score_stability["outcome"]["checks"][
+            "minimum_mean_worst_eligible_subgroup_risk_reduction"
+        ]["measured"]["mean"]
+        == 0.010481
+        and conformal_score_stability["outcome"]["checks"][
+            "maximum_dataset_worst_eligible_subgroup_risk_increase"
+        ]["measured"]["ConditionalQA"]
+        == 0.029127
+        and conformal_score_stability["outcome"]["checks"][
+            "maximum_dataset_worst_eligible_subgroup_risk_increase"
+        ]["passed"]
+        is False
+        and conformal_score_stability["outcome"]["checks"][
+            "all_finite_sample_nominal_bounds_at_or_below_alpha"
+        ]["measured"]
+        == {"count": 40, "maximum": 0.1}
+        and conformal_score_stability["outcome"]["checks"][
+            "all_finite_sample_nominal_bounds_at_or_below_alpha"
+        ]["passed"]
+        is True
+        and conformal_score_stability["outcome"]["gate_2"] == "NO-GO/SHADOW"
+        and conformal_score_stability["decision"]["next_step"]
+        == "STOP_SCORE_STABILITY_EXPANSION_ON_REVEALED_EVALUATIONS"
+        and conformal_score_stability["decision"]["production_policy"]
+        == "KEEP_FROZEN_37_FEATURE_TARGET_FITTED_HEAD_IN_SHADOW"
+        and score_stability_by_dataset["ConditionalQA"]["aggregate"]["score_stability"][
+            "true_complete_declaration_rate"
+        ]["mean"]
+        == 0.472047
+        and conformal_score_stability_protocol["development_boundary"]["post_hoc"]
+        is True
+        and conformal_score_stability_protocol["development_boundary"][
+            "target_fitted_head_required"
+        ]
+        is True
+        and conformal_score_stability_protocol["development_boundary"][
+            "evaluation_used_for_feature_model_or_threshold_selection"
+        ]
+        is False
+        and conformal_score_stability_protocol["frozen_model_protocol"][
+            "base_feature_count"
+        ]
+        == 37
+        and conformal_score_stability_protocol["frozen_model_protocol"][
+            "additional_feature_count"
+        ]
+        == 27
+        and conformal_score_stability_protocol["frozen_model_protocol"][
+            "augmented_feature_count"
+        ]
+        == 64
+        and conformal_score_stability_protocol["frozen_model_protocol"][
+            "feature_or_hyperparameter_search"
+        ]
+        is False
+        and conformal_score_stability_protocol["frozen_splits_and_calibration"][
+            "evaluation_used_for_threshold"
+        ]
+        is False
+        and conformal_score_stability_protocol["pre_registered_adoption_checks"][
+            "minimum_mean_complete_recall_gain"
+        ]
+        == 0.02
+        and conformal_score_stability_protocol["pre_registered_adoption_checks"][
+            "maximum_dataset_case_risk_increase"
+        ]
+        == 0.01
+        and conformal_score_stability_protocol["pre_registered_adoption_checks"][
+            "minimum_mean_evaluation_auc_gain"
+        ]
+        == 0.01
+        and "stop score-stability feature expansion"
+        in conformal_score_stability_protocol["execution_policy"][
+            "if_any_check_fails"
+        ].lower()
+        and set(score_stability_provenance)
+        == {"2WikiMultiHopQA", "ConditionalQA", "HotpotQA", "MultiHop-RAG"}
+        and all(
+            score_stability_provenance[dataset]["source_sha256"]
+            == score_stability_protocol_inputs[dataset]["source_sha256"]
+            and score_stability_provenance[dataset]["source_record_count"]
+            == score_stability_protocol_inputs[dataset]["record_count"]
+            and score_stability_provenance[dataset]["baseline_report_sha256"]
+            == score_stability_protocol_inputs[dataset]["baseline_report_sha256"]
+            and score_stability_provenance[dataset][
+                "baseline_robustness_repeats_exactly_reproduced"
+            ]
+            is True
+            and score_stability_protocol_inputs[dataset]["baseline_report_sha256"]
+            == hashlib.sha256(
+                score_stability_baseline_paths[dataset].read_bytes()
+            ).hexdigest()
+            for dataset in score_stability_provenance
+        )
+        and review_ranking_passed
     )
-    service_source = (
-        repo_root / "flood_system/response_workflow/service.py"
-    ).read_text(encoding="utf-8")
+    service_source = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in sorted(
+            (repo_root / "flood_system/response_workflow").glob("service*.py")
+        )
+    )
     gate_two_is_safely_held = gate_two_is_safely_held and all(
         marker in service_source
         for marker in (
@@ -552,7 +17955,78 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
                 "benchmarks/eurlex_temporal_selection.json",
                 "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation.json",
                 "output/rag_evaluation/eurlex_temporal_ablation/eurlex_temporal_ablation_cases.jsonl.gz",
-                "flood_system/response_workflow/service.py",
+                "output/rag_evaluation/conformal_sufficiency/conformal_sufficiency.json",
+                "output/rag_evaluation/conformal_sufficiency/conformal_sufficiency_cases.jsonl.gz",
+                "output/rag_evaluation/conformal_robustness/conformal_robustness.json",
+                "output/rag_evaluation/conformal_model_selection/conformal_model_selection.json",
+                "output/rag_evaluation/conformal_cross_dataset/hotpotqa_confirmation.json",
+                "output/rag_evaluation/conformal_cross_dataset/multihoprag_confirmation.json",
+                "output/rag_evaluation/conformal_cross_dataset/2wikimultihopqa_confirmation.json",
+                "output/rag_evaluation/conformal_cross_dataset/cross_dataset_confirmation_series.json",
+                "output/rag_evaluation/conformal_cross_dataset/source_preparation_benchmark.json",
+                "docs/progressive_upgrade/conformal_cross_dataset_protocol.json",
+                "docs/progressive_upgrade/conformal_third_confirmation_protocol.json",
+                "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_audit.json",
+                "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_cases.jsonl.gz",
+                "docs/progressive_upgrade/conformal_subgroup_protocol.json",
+                "output/rag_evaluation/conformal_mondrian/conformal_mondrian.json",
+                "output/rag_evaluation/conformal_mondrian/conformal_mondrian_cases.jsonl.gz",
+                "docs/progressive_upgrade/conformal_mondrian_protocol.json",
+                "output/rag_evaluation/conformal_multi_axis_mondrian/conformal_multi_axis_mondrian.json",
+                "output/rag_evaluation/conformal_multi_axis_mondrian/conformal_multi_axis_mondrian_cases.jsonl.gz",
+                "docs/progressive_upgrade/conformal_multi_axis_mondrian_protocol.json",
+                "output/rag_evaluation/conformal_head_transfer/conformal_head_transfer.json",
+                "output/rag_evaluation/conformal_head_transfer/conformal_head_transfer_cases.jsonl.gz",
+                "docs/progressive_upgrade/conformal_cross_dataset_head_transfer_protocol.json",
+                "output/rag_evaluation/conformal_transfer_admission/conformal_transfer_admission.json",
+                "output/rag_evaluation/conformal_transfer_admission/conformal_transfer_admission_evidence.jsonl.gz",
+                "docs/progressive_upgrade/conformal_transfer_admission_protocol.json",
+                "output/rag_evaluation/conformal_contextual/conformal_contextual.json",
+                "output/rag_evaluation/conformal_contextual/conformal_contextual_cases.jsonl.gz",
+                "docs/progressive_upgrade/conformal_contextual_protocol.json",
+                "output/rag_evaluation/conformal_score_stability/conformal_score_stability.json",
+                "output/rag_evaluation/conformal_score_stability/conformal_score_stability_cases.jsonl.gz",
+                "docs/progressive_upgrade/conformal_score_stability_protocol.json",
+                "output/rag_evaluation/conformal_review_ranking/conformal_review_ranking.json",
+                "output/rag_evaluation/conformal_review_ranking/conformal_review_ranking_evidence.jsonl.gz",
+                "docs/progressive_upgrade/conformal_review_ranking_protocol.json",
+                "output/rag_evaluation/conformal_cross_dataset/qasc_confirmation.json",
+                "docs/progressive_upgrade/conformal_qasc_confirmation_protocol.json",
+                "output/rag_evaluation/conformal_qasc_confirmation/conformal_qasc_confirmation.json",
+                "output/rag_evaluation/conformal_qasc_subgroup_diagnostic/conformal_qasc_subgroup_diagnostic.json",
+                "output/rag_evaluation/conformal_qasc_subgroup_diagnostic/conformal_qasc_subgroup_cases.jsonl.gz",
+                "docs/progressive_upgrade/conformal_qasc_subgroup_diagnostic_protocol.json",
+                "output/rag_evaluation/qasc_scoring_optimization/qasc_scoring_optimization.json",
+                "output/rag_evaluation/qasc_scoring_optimization/qasc_scoring_optimization.md",
+                "docs/progressive_upgrade/qasc_scoring_optimization_protocol.json",
+                "research/frc_rag/qasc_scoring_optimization.py",
+                "scripts/benchmark_qasc_scoring_optimization.py",
+                "tests/test_frc_qasc_scoring_optimization.py",
+                "docs/progressive_upgrade/conflicts_expected_behavior_protocol.json",
+                "output/rag_evaluation/conflicts_expected_behavior/manifest.json",
+                "output/rag_evaluation/conflicts_expected_behavior/package.jsonl.gz",
+                "research/frc_rag/conflicts_expected_behavior.py",
+                "scripts/run_conflicts_expected_behavior_workflow.py",
+                "tests/test_frc_conflicts_expected_behavior.py",
+                "docs/progressive_upgrade/conflicts_annotation_operations_protocol.json",
+                "output/rag_evaluation/conflicts_annotation_operations/manifest.json",
+                "output/rag_evaluation/conflicts_annotation_operations/PROTOCOL.md",
+                "research/frc_rag/conflicts_annotation_operations.py",
+                "scripts/run_conflicts_annotation_operations.py",
+                "tests/test_frc_conflicts_annotation_operations.py",
+                "docs/progressive_upgrade/conflicts_annotation_workstation_contract.json",
+                "research/frc_rag/conflicts_annotation_workstation.py",
+                "scripts/run_conflicts_annotation_workstation.py",
+                "research/frc_rag/annotation_workstation/index.html",
+                "research/frc_rag/annotation_workstation/styles.css",
+                "research/frc_rag/annotation_workstation/app.js",
+                "tests/test_frc_conflicts_annotation_workstation.py",
+                "docs/progressive_upgrade/conflicts_annotation_collection_contract.json",
+                "research/frc_rag/conflicts_annotation_collection.py",
+                "scripts/run_conflicts_annotation_collection.py",
+                "tests/test_frc_conflicts_annotation_collection.py",
+                "flood_system/response_workflow/service_evidence.py",
+                "flood_system/response_workflow/service_tasks.py",
             ],
             {
                 "gate_2": rag_decision["gate_2"],
@@ -622,8 +18096,2138 @@ def build_progressive_completion_audit(repo_root: Path) -> dict[str, Any]:
                 "ablation_variants_run": experiment_audit["combined_ablation_coverage"][
                     "run_count"
                 ],
+                "conformal_sufficiency": conformal_report["metadata"]["status"],
+                "conformal_primary_alpha": conformal_report["metadata"][
+                    "primary_alpha"
+                ],
+                "conformal_false_complete_case_family_rate": conformal_report[
+                    "evaluation"
+                ]["split_conformal"]["false_complete_case_family_rate"],
+                "baseline_false_complete_case_family_rate": conformal_report[
+                    "evaluation"
+                ]["baseline_role_coverage_heuristic"][
+                    "false_complete_case_family_rate"
+                ],
+                "conformal_gate_2": conformal_report["decision"]["gate_2"],
+                "conformal_robustness": conformal_robustness["metadata"]["status"],
+                "conformal_robustness_repeat_count": conformal_robustness["metadata"][
+                    "repeat_count"
+                ],
+                "conformal_robustness_jsonl_parse_passes": conformal_robustness[
+                    "metadata"
+                ]["source_preparation"]["jsonl_parse_passes"],
+                "conformal_paired_test_implementation": conformal_report["metadata"][
+                    "paired_test_implementation"
+                ],
+                "conformal_repeated_mean_case_family_false_complete_rate": (
+                    conformal_robustness["aggregate"]["alphas"]["0.1"]["metrics"][
+                        "false_complete_case_family_rate"
+                    ]["mean"]
+                ),
+                "conformal_repeated_mean_abstention_rate": conformal_robustness[
+                    "decision"
+                ]["primary_alpha_mean_abstention_rate"],
+                "conformal_repeated_safety_reduction_all_splits": (
+                    conformal_robustness["decision"][
+                        "safety_reduction_replicated_in_every_split"
+                    ]
+                ),
+                "conformal_three_state_complete_coverage": conformal_robustness[
+                    "decision"
+                ]["three_state_mean_complete_auto_or_review_coverage"],
+                "conformal_nested_model_selection": conformal_model_selection[
+                    "metadata"
+                ]["status"],
+                "conformal_nested_complete_recall_gain": (
+                    conformal_model_selection["aggregate"]["paired_differences"][
+                        "complete_recall_gain"
+                    ]["mean"]
+                ),
+                "conformal_nested_abstention_reduction": (
+                    conformal_model_selection["aggregate"]["paired_differences"][
+                        "abstention_reduction"
+                    ]["mean"]
+                ),
+                "conformal_nested_case_family_risk_change": (
+                    conformal_model_selection["aggregate"]["paired_differences"][
+                        "case_family_false_complete_change"
+                    ]["mean"]
+                ),
+                "conformal_nested_model_adopted": conformal_model_selection["decision"][
+                    "adopt_nested_selected_experimental_default"
+                ],
+                "conformal_hotpotqa_confirmation": conformal_hotpotqa["metadata"][
+                    "status"
+                ],
+                "conformal_hotpotqa_confirmation_status": conformal_hotpotqa["outcome"][
+                    "confirmation_status"
+                ],
+                "conformal_hotpotqa_case_family_false_complete_mean": (
+                    conformal_hotpotqa["outcome"]["confirmation_metrics"][
+                        "conformal_case_family_false_complete_mean"
+                    ]
+                ),
+                "conformal_hotpotqa_safety_reduction_repeats": (
+                    conformal_hotpotqa["outcome"]["confirmation_metrics"][
+                        "safety_reduction_repeats"
+                    ]
+                ),
+                "conformal_hotpotqa_alpha_control_repeats": (
+                    conformal_hotpotqa["outcome"]["confirmation_metrics"][
+                        "case_family_rate_at_or_below_alpha_repeats"
+                    ]
+                ),
+                "conformal_multihoprag_confirmation": conformal_multihoprag["metadata"][
+                    "status"
+                ],
+                "conformal_multihoprag_confirmation_status": (
+                    conformal_multihoprag["outcome"]["confirmation_status"]
+                ),
+                "conformal_multihoprag_case_family_false_complete_mean": (
+                    conformal_multihoprag["outcome"]["confirmation_metrics"][
+                        "conformal_case_family_false_complete_mean"
+                    ]
+                ),
+                "conformal_multihoprag_safety_reduction_repeats": (
+                    conformal_multihoprag["outcome"]["confirmation_metrics"][
+                        "safety_reduction_repeats"
+                    ]
+                ),
+                "conformal_multihoprag_alpha_control_repeats": (
+                    conformal_multihoprag["outcome"]["confirmation_metrics"][
+                        "case_family_rate_at_or_below_alpha_repeats"
+                    ]
+                ),
+                "conformal_twowiki_confirmation": conformal_twowiki["metadata"][
+                    "status"
+                ],
+                "conformal_twowiki_confirmation_status": conformal_twowiki["outcome"][
+                    "confirmation_status"
+                ],
+                "conformal_twowiki_source_sha256": conformal_twowiki["metadata"][
+                    "confirmation_source_sha256"
+                ],
+                "conformal_twowiki_case_family_false_complete_mean": (
+                    conformal_twowiki["outcome"]["confirmation_metrics"][
+                        "conformal_case_family_false_complete_mean"
+                    ]
+                ),
+                "conformal_twowiki_complete_recall_mean": conformal_twowiki["outcome"][
+                    "confirmation_metrics"
+                ]["conformal_complete_recall_mean"],
+                "conformal_twowiki_safety_reduction_repeats": conformal_twowiki[
+                    "outcome"
+                ]["confirmation_metrics"]["safety_reduction_repeats"],
+                "conformal_twowiki_alpha_control_repeats": conformal_twowiki["outcome"][
+                    "confirmation_metrics"
+                ]["case_family_rate_at_or_below_alpha_repeats"],
+                "conformal_cross_dataset_series_status": (
+                    conformal_cross_dataset_series["outcome"]["confirmation_status"]
+                ),
+                "conformal_cross_dataset_full_confirmation_count": (
+                    conformal_cross_dataset_series["outcome"]["full_confirmation_count"]
+                ),
+                "conformal_cross_dataset_confirmation_count": (
+                    conformal_cross_dataset_series["metadata"][
+                        "confirmation_dataset_count"
+                    ]
+                ),
+                "conformal_source_preparation_results_identical": (
+                    conformal_source_preparation_benchmark["comparison"][
+                        "results_identical"
+                    ]
+                ),
+                "conformal_source_preparation_speedup": (
+                    conformal_source_preparation_benchmark["comparison"]["speedup"]
+                ),
+                "conformal_source_preparation_legacy_seconds": (
+                    conformal_source_preparation_benchmark["comparison"]["legacy"][
+                        "elapsed_seconds"
+                    ]
+                ),
+                "conformal_source_preparation_single_parse_seconds": (
+                    conformal_source_preparation_benchmark["comparison"][
+                        "single_parse"
+                    ]["elapsed_seconds"]
+                ),
+                "conformal_subgroup_audit_status": conformal_subgroup_audit["outcome"][
+                    "status"
+                ],
+                "conformal_subgroup_eligible_count": conformal_subgroup_audit[
+                    "outcome"
+                ]["eligible_subgroup_count"],
+                "conformal_global_nominal_bounds_within_alpha": (
+                    conformal_subgroup_audit["outcome"][
+                        "all_global_finite_sample_nominal_bounds_at_or_below_alpha"
+                    ]
+                ),
+                "conformal_hotpotqa_worst_subgroup": subgroup_by_dataset["HotpotQA"][
+                    "aggregate"
+                ]["worst_eligible_subgroup"],
+                "conformal_multihoprag_worst_subgroup": subgroup_by_dataset[
+                    "MultiHop-RAG"
+                ]["aggregate"]["worst_eligible_subgroup"],
+                "conformal_twowiki_worst_subgroup": subgroup_by_dataset[
+                    "2WikiMultiHopQA"
+                ]["aggregate"]["worst_eligible_subgroup"],
+                "conformal_mondrian_status": conformal_mondrian["outcome"]["status"],
+                "conformal_mondrian_post_hoc": conformal_mondrian[
+                    "development_protocol"
+                ]["post_hoc"],
+                "conformal_mondrian_mean_worst_subgroup_risk_reduction": (
+                    conformal_mondrian["outcome"]["checks"][
+                        "mean_worst_eligible_subgroup_risk_reduction"
+                    ]["measured"]
+                ),
+                "conformal_mondrian_multihoprag_complete_recall_change": (
+                    mondrian_by_dataset["MultiHop-RAG"]["aggregate"][
+                        "delta_mondrian_minus_global"
+                    ]["true_complete_declaration_rate"]["mean"]
+                ),
+                "conformal_mondrian_repeat_consistency_passed": (
+                    conformal_mondrian["outcome"]["checks"][
+                        "all_eligible_subgroup_repeat_consistency_targets_met"
+                    ]["passed"]
+                ),
+                "conformal_multi_axis_mondrian_status": (
+                    conformal_multi_axis_mondrian["outcome"]["status"]
+                ),
+                "conformal_multi_axis_mondrian_post_hoc": (
+                    conformal_multi_axis_mondrian["development_protocol"]["post_hoc"]
+                ),
+                "conformal_multi_axis_mean_worst_subgroup_risk_reduction": (
+                    conformal_multi_axis_mondrian["outcome"]["checks"][
+                        "mean_worst_eligible_subgroup_risk_reduction"
+                    ]["measured"]
+                ),
+                "conformal_multi_axis_multihoprag_complete_recall_decrease": (
+                    conformal_multi_axis_mondrian["outcome"]["checks"][
+                        "maximum_dataset_complete_recall_decrease"
+                    ]["measured"]["MultiHop-RAG"]
+                ),
+                "conformal_multi_axis_all_subgroup_means_passed": (
+                    conformal_multi_axis_mondrian["outcome"]["checks"][
+                        "all_eligible_subgroup_mean_risks_at_or_below_alpha"
+                    ]["passed"]
+                ),
+                "conformal_multi_axis_repeat_consistency_passed": (
+                    conformal_multi_axis_mondrian["outcome"]["checks"][
+                        "all_eligible_subgroup_repeat_consistency_targets_met"
+                    ]["passed"]
+                ),
+                "conformal_multi_axis_next_step": conformal_multi_axis_mondrian[
+                    "decision"
+                ]["next_step"],
+                "conformal_head_transfer_status": conformal_head_transfer["outcome"][
+                    "status"
+                ],
+                "conformal_head_transfer_target_train_used": (
+                    conformal_head_transfer["outcome"][
+                        "target_train_labels_used_for_transferred_head"
+                    ]
+                ),
+                "conformal_head_transfer_mean_auc_decrease": (
+                    conformal_head_transfer["outcome"]["checks"][
+                        "cross_dataset_mean_evaluation_auc_decrease_vs_target_fitted"
+                    ]["measured"]
+                ),
+                "conformal_head_transfer_multihoprag_recall_decrease": (
+                    conformal_head_transfer["outcome"]["checks"][
+                        "maximum_dataset_complete_recall_decrease_vs_target_fitted"
+                    ]["measured"]["MultiHop-RAG"]
+                ),
+                "conformal_head_transfer_alpha_control_dataset_count": (
+                    conformal_head_transfer["outcome"]["checks"][
+                        "datasets_with_at_least_7_of_10_alpha_control_repeats"
+                    ]["measured"]["count"]
+                ),
+                "conformal_head_transfer_next_step": conformal_head_transfer[
+                    "decision"
+                ]["next_step"],
+                "conformal_transfer_admission_status": (
+                    conformal_transfer_admission["outcome"]["status"]
+                ),
+                "conformal_transfer_admission_certificate_count": (
+                    conformal_transfer_admission["outcome"]["certificate_count"]
+                ),
+                "conformal_transfer_admission_certificate_count_by_dataset": (
+                    conformal_transfer_admission["outcome"][
+                        "certificate_count_by_dataset"
+                    ]
+                ),
+                "conformal_transfer_admission_unsafe_count": (
+                    conformal_transfer_admission["outcome"]["unsafe_certificate_count"]
+                ),
+                "conformal_transfer_admission_safe_useful_precision": (
+                    conformal_transfer_admission["outcome"][
+                        "safe_and_useful_certificate_precision"
+                    ]
+                ),
+                "conformal_transfer_admission_production_policy": (
+                    conformal_transfer_admission["decision"]["production_policy"]
+                ),
+                "conformal_transfer_admission_next_step": (
+                    conformal_transfer_admission["decision"]["next_step"]
+                ),
+                "conformal_contextual_status": conformal_contextual["outcome"][
+                    "status"
+                ],
+                "conformal_contextual_post_hoc": conformal_contextual[
+                    "development_protocol"
+                ]["post_hoc"],
+                "conformal_contextual_mean_complete_recall_gain": (
+                    conformal_contextual["outcome"]["checks"][
+                        "mean_complete_recall_gain"
+                    ]["measured"]
+                ),
+                "conformal_contextual_conditionalqa_case_risk_change": (
+                    contextual_by_dataset["ConditionalQA"]["aggregate"][
+                        "delta_contextual_minus_baseline"
+                    ]["false_complete_case_family_rate"]["mean"]
+                ),
+                "conformal_contextual_mean_worst_subgroup_risk_reduction": (
+                    conformal_contextual["outcome"]["checks"][
+                        "mean_worst_eligible_subgroup_risk_reduction"
+                    ]["measured"]
+                ),
+                "conformal_score_stability_status": conformal_score_stability[
+                    "outcome"
+                ]["status"],
+                "conformal_score_stability_feature_count": (
+                    conformal_score_stability["metadata"][
+                        "score_stability_feature_count"
+                    ]
+                ),
+                "conformal_score_stability_mean_complete_recall_gain": (
+                    conformal_score_stability["outcome"]["checks"][
+                        "minimum_mean_complete_recall_gain"
+                    ]["measured"]
+                ),
+                "conformal_score_stability_mean_auc_gain": (
+                    conformal_score_stability["outcome"]["checks"][
+                        "minimum_mean_evaluation_auc_gain"
+                    ]["measured"]
+                ),
+                "conformal_score_stability_dataset_risks": (
+                    conformal_score_stability["outcome"]["checks"][
+                        "maximum_each_dataset_mean_case_risk"
+                    ]["measured"]
+                ),
+                "conformal_score_stability_alpha_control_repeats": (
+                    conformal_score_stability["outcome"]["checks"][
+                        "minimum_datasets_with_at_least_7_of_10_alpha_control_repeats"
+                    ]["measured"]["per_dataset"]
+                ),
+                "conformal_score_stability_next_step": (
+                    conformal_score_stability["decision"]["next_step"]
+                ),
+                "conformal_review_ranking_status": conformal_review_ranking["outcome"][
+                    "status"
+                ],
+                "conformal_review_ranking_mean_average_precision_gain": (
+                    review_checks["minimum_cross_dataset_mean_average_precision_gain"][
+                        "measured"
+                    ]
+                ),
+                "conformal_review_ranking_capture_gains": {
+                    "0.05": review_checks[
+                        "minimum_cross_dataset_mean_complete_capture_gain_at_0_05"
+                    ]["measured"],
+                    "0.1": review_checks[
+                        "minimum_cross_dataset_mean_complete_capture_gain_at_0_10"
+                    ]["measured"],
+                    "0.2": review_checks[
+                        "minimum_cross_dataset_mean_complete_capture_gain_at_0_20"
+                    ]["measured"],
+                },
+                "conformal_review_ranking_worst_subgroup_decreases": (
+                    review_checks[
+                        "maximum_dataset_worst_eligible_subgroup_capture_decrease_at_0_10"
+                    ]["measured"]
+                ),
+                "conformal_review_ranking_next_step": conformal_review_ranking[
+                    "decision"
+                ]["next_step"],
+                "qasc_strict_confirmation_status": qasc_confirmation_audit["outcome"][
+                    "strict_confirmation_status"
+                ],
+                "qasc_case_family_false_complete_mean": qasc_confirmation_audit[
+                    "outcome"
+                ]["conformal_case_family_false_complete_mean"],
+                "qasc_alpha_control_repeats": qasc_confirmation_audit["outcome"][
+                    "case_family_rate_at_or_below_alpha_repeats"
+                ],
+                "qasc_protocol_deviation": qasc_confirmation_audit[
+                    "protocol_deviation"
+                ],
+                "qasc_question_type_diagnostic_status": qasc_subgroup_diagnostic[
+                    "analysis"
+                ]["outcome"]["status"],
+                "qasc_question_type_repeat_consistency": {
+                    item["question_type"]: item.get("risk_at_or_below_alpha_repeats")
+                    for item in qasc_subgroup_diagnostic["analysis"]["question_types"]
+                    if item["eligible_for_conclusion"]
+                },
+                "qasc_confirmation_status_changed_by_diagnostic": (
+                    qasc_subgroup_diagnostic["decision"]["confirmation_status_changed"]
+                ),
+                "qasc_scoring_optimization_status": qasc_scoring_optimization[
+                    "decision"
+                ]["status"],
+                "qasc_scoring_optimization_minimum_speedup": (
+                    qasc_optimization_minimum_speedup
+                ),
+                "qasc_scoring_optimization_speedups": {
+                    str(batch_size): candidate["speedup_vs_per_case"]
+                    for batch_size, candidate in sorted(
+                        qasc_optimization_candidates.items()
+                    )
+                },
+                "qasc_scoring_optimization_equivalence": {
+                    str(batch_size): candidate["equivalence"]["passed"]
+                    for batch_size, candidate in sorted(
+                        qasc_optimization_candidates.items()
+                    )
+                },
+                "qasc_scoring_reference_rewritten": qasc_scoring_optimization[
+                    "decision"
+                ]["existing_reference_scores_rewritten"],
+                "conflicts_expected_behavior_status": (
+                    conflicts_behavior_manifest["status"]
+                ),
+                "conflicts_expected_behavior_case_count": (
+                    conflicts_behavior_manifest["case_count"]
+                ),
+                "conflicts_expected_behavior_response_count": (
+                    conflicts_behavior_manifest["response_count"]
+                ),
+                "conflicts_expected_behavior_human_evidence_complete": (
+                    conflicts_behavior_manifest["human_evidence_complete"]
+                ),
+                "conflicts_annotation_operations_status": (
+                    conflicts_operations_manifest["status"]
+                ),
+                "conflicts_annotation_operations_batch_count": (
+                    conflicts_operations_manifest["total_public_batch_count"]
+                ),
+                "conflicts_annotation_operations_tasks_per_slot": (
+                    conflicts_operations_manifest["total_task_count_per_slot"]
+                ),
+                "conflicts_annotation_operations_human_evidence_complete": (
+                    conflicts_operations_manifest["human_evidence_complete"]
+                ),
+                "conflicts_annotation_workstation_status": (
+                    conflicts_workstation_contract["status"]
+                ),
+                "conflicts_annotation_workstation_browser_probe_status": (
+                    conflicts_workstation_contract["verification"][
+                        "browser_probe_status"
+                    ]
+                ),
+                "conflicts_annotation_workstation_human_evidence_complete": (
+                    conflicts_workstation_boundary["human_evidence_complete"]
+                ),
+                "conflicts_annotation_collection_status": (
+                    conflicts_collection_contract["status"]
+                ),
+                "conflicts_annotation_collection_real_status": (
+                    conflicts_collection_contract["verification"][
+                        "real_private_status_observed"
+                    ]
+                ),
+                "conflicts_annotation_collection_finalized_batches": (
+                    conflicts_collection_contract["verification"][
+                        "real_finalized_batch_count_observed"
+                    ]
+                ),
+                "conflicts_annotation_collection_human_evidence_complete": (
+                    conflicts_collection_boundary["human_evidence_complete"]
+                ),
+                "conflicts_selector_router_status": conflicts_router_outcome["status"],
+                "conflicts_selector_router_static_accuracy": (
+                    conflicts_router_classification["coverage_greedy_proxy"]["accuracy"]
+                ),
+                "conflicts_selector_router_all_methods_accuracy": (
+                    conflicts_router_classification["all_methods"]["accuracy"]
+                ),
+                "conflicts_selector_router_point_gain": conflicts_router_paired[
+                    "mean_difference"
+                ],
+                "conflicts_selector_router_paired_ci": [
+                    conflicts_router_paired["ci_low"],
+                    conflicts_router_paired["ci_high"],
+                ],
+                "conflicts_selector_router_without_frc_accuracy": (
+                    conflicts_router_classification["without_frc"]["accuracy"]
+                ),
+                "conflicts_selector_router_frc_contribution": (
+                    conflicts_router_frc_contribution["mean_difference"]
+                ),
+                "conflicts_selector_router_outdated_recall_delta": (
+                    conflicts_router_safety[
+                        "per_label_recall_delta_all_router_minus_static"
+                    ]["Conflict due to outdated information"]
+                ),
+                "conflicts_selector_router_nonnegative_folds": (
+                    conflicts_router_safety["folds_with_nonnegative_accuracy_gain"]
+                ),
+                "conflicts_selector_router_adopted": conflicts_router_outcome[
+                    "router_adopted"
+                ],
             },
         ),
+        _check(
+            "conflicts_expected_behavior_generation",
+            "CONFLICTS 鍥炵瓟鐢熸垚涓庣嫭绔嬬洸璇勫寘鍏锋湁鍙噸寤鸿瘉鎹笖涓嶅啋鍏呬汉宸ョ粨鏋?",
+            conflicts_behavior_generation_passed,
+            [
+                "docs/progressive_upgrade/conflicts_expected_behavior_protocol.json",
+                "output/rag_evaluation/conflicts_expected_behavior/manifest.json",
+                "output/rag_evaluation/conflicts_expected_behavior/package.jsonl.gz",
+                "output/rag_evaluation/conflicts_expected_behavior/annotator-template.json",
+                "output/rag_evaluation/conflicts_expected_behavior/adjudicator-template.json",
+                "output/rag_evaluation/conflicts_expected_behavior/PROTOCOL.md",
+                "research/frc_rag/conflicts_expected_behavior.py",
+                "scripts/run_conflicts_expected_behavior_workflow.py",
+                "tests/test_frc_conflicts_expected_behavior.py",
+            ],
+            {
+                "status": conflicts_behavior_manifest["status"],
+                "case_count": conflicts_behavior_manifest["case_count"],
+                "response_count": conflicts_behavior_manifest["response_count"],
+                "package_id": conflicts_behavior_manifest["package_id"],
+                "methods_hidden_from_reviewers": conflicts_behavior_manifest[
+                    "methods_hidden_from_reviewers"
+                ],
+                "human_evidence_complete": conflicts_behavior_manifest[
+                    "human_evidence_complete"
+                ],
+                "gate_2": conflicts_behavior_manifest["gate_2"],
+                "blind_mapping_committed_sha256": conflicts_behavior_manifest[
+                    "blind_mapping_sha256"
+                ],
+                "blind_mapping_published_with_package": (
+                    conflicts_behavior_manifest_path.parent / "blind_mapping.json"
+                ).exists(),
+                "generation_quality_diagnostics_not_used_for_post_hoc_rewrite": (
+                    conflicts_behavior_response_diagnostics
+                ),
+            },
+        ),
+        _check(
+            "conflicts_annotation_operations_preparation",
+            "CONFLICTS 独立盲评已分批、隐藏复测并冻结质控，且空模板不冒充人工结果",
+            conflicts_operations_preparation_passed,
+            [
+                "docs/progressive_upgrade/conflicts_annotation_operations_protocol.json",
+                "output/rag_evaluation/conflicts_annotation_operations/manifest.json",
+                "output/rag_evaluation/conflicts_annotation_operations/PROTOCOL.md",
+                "research/frc_rag/conflicts_annotation_operations.py",
+                "scripts/run_conflicts_annotation_operations.py",
+                "tests/test_frc_conflicts_annotation_operations.py",
+            ],
+            {
+                "status": conflicts_operations_manifest["status"],
+                "operations_id": conflicts_operations_manifest["operations_id"],
+                "reviewer_slots": conflicts_operations_manifest["reviewer_slots"],
+                "batch_count_per_slot": conflicts_operations_manifest["batch_count"],
+                "primary_task_count_per_slot": conflicts_operations_manifest[
+                    "primary_task_count_per_slot"
+                ],
+                "repeat_task_count_per_slot": conflicts_operations_manifest[
+                    "repeat_task_count_per_slot"
+                ],
+                "total_task_count_per_slot": conflicts_operations_manifest[
+                    "total_task_count_per_slot"
+                ],
+                "public_file_count": len(conflicts_operations_public_paths),
+                "routing_committed_sha256": conflicts_operations_manifest[
+                    "routing_sha256"
+                ],
+                "routing_published": conflicts_operations_manifest["routing_published"],
+                "method_identity_present_in_public_files": (
+                    conflicts_operations_manifest[
+                        "method_identity_present_in_public_files"
+                    ]
+                ),
+                "human_evidence_complete": conflicts_operations_manifest[
+                    "human_evidence_complete"
+                ],
+                "gate_2": conflicts_operations_manifest["gate_2"],
+            },
+        ),
+        _check(
+            "conflicts_annotation_workstation_readiness",
+            "CONFLICTS 本机盲评工作台可安全恢复、导出和完成批次，且工具就绪不冒充人工结果",
+            conflicts_workstation_readiness_passed,
+            [
+                "docs/progressive_upgrade/conflicts_annotation_workstation_contract.json",
+                "research/frc_rag/conflicts_annotation_workstation.py",
+                "scripts/run_conflicts_annotation_workstation.py",
+                "research/frc_rag/annotation_workstation/index.html",
+                "research/frc_rag/annotation_workstation/styles.css",
+                "research/frc_rag/annotation_workstation/app.js",
+                "tests/test_frc_conflicts_annotation_workstation.py",
+            ],
+            {
+                "status": conflicts_workstation_contract["status"],
+                "operations_id": conflicts_workstation_contract["frozen_inputs"][
+                    "operations_id"
+                ],
+                "reviewer_slots": conflicts_workstation_contract["frozen_inputs"][
+                    "reviewer_slots"
+                ],
+                "batch_count_per_slot": conflicts_workstation_contract["frozen_inputs"][
+                    "batch_count_per_slot"
+                ],
+                "task_count_per_slot": conflicts_workstation_contract["frozen_inputs"][
+                    "task_count_per_slot"
+                ],
+                "implementation_file_count": len(conflicts_workstation_entries),
+                "loopback_only": conflicts_workstation_privacy["loopback_only"],
+                "draft_storage_git_ignored": conflicts_workstation_privacy[
+                    "draft_storage_git_ignored"
+                ],
+                "private_routing_loaded": conflicts_workstation_privacy[
+                    "private_routing_loaded"
+                ],
+                "method_identity_loaded": conflicts_workstation_privacy[
+                    "method_identity_loaded"
+                ],
+                "browser_probe_status": conflicts_workstation_contract["verification"][
+                    "browser_probe_status"
+                ],
+                "human_evidence_complete": conflicts_workstation_boundary[
+                    "human_evidence_complete"
+                ],
+                "gate_2": conflicts_workstation_boundary["gate_2"],
+            },
+        ),
+        _check(
+            "conflicts_annotation_collection_readiness",
+            "CONFLICTS 三角色私有批次可审计、失败关闭并在不解盲时安全合并",
+            conflicts_collection_readiness_passed,
+            [
+                "docs/progressive_upgrade/conflicts_annotation_collection_contract.json",
+                "research/frc_rag/conflicts_annotation_collection.py",
+                "scripts/run_conflicts_annotation_collection.py",
+                "tests/test_frc_conflicts_annotation_collection.py",
+            ],
+            {
+                "status": conflicts_collection_contract["status"],
+                "operations_id": conflicts_collection_contract["frozen_inputs"][
+                    "operations_id"
+                ],
+                "reviewer_slots": conflicts_collection_contract["frozen_inputs"][
+                    "reviewer_slots"
+                ],
+                "expected_finalized_batch_count": conflicts_collection_contract[
+                    "frozen_inputs"
+                ]["expected_finalized_batch_count"],
+                "minimum_exact_agreement": conflicts_collection_contract[
+                    "frozen_inputs"
+                ]["minimum_exact_agreement_each_dimension"],
+                "implementation_file_count": len(conflicts_collection_entries),
+                "real_private_status": conflicts_collection_contract["verification"][
+                    "real_private_status_observed"
+                ],
+                "real_present_batch_count": conflicts_collection_contract[
+                    "verification"
+                ]["real_present_batch_count_observed"],
+                "real_finalized_batch_count": conflicts_collection_contract[
+                    "verification"
+                ]["real_finalized_batch_count_observed"],
+                "blind_mapping_loaded": conflicts_collection_privacy[
+                    "blind_mapping_loaded"
+                ],
+                "synthetic_test_data_is_human_evidence": (
+                    conflicts_collection_contract["verification"][
+                        "synthetic_test_data_is_human_evidence"
+                    ]
+                ),
+                "human_evidence_complete": conflicts_collection_boundary[
+                    "human_evidence_complete"
+                ],
+                "gate_2": conflicts_collection_boundary["gate_2"],
+            },
+        ),
+        _check(
+            "conflicts_selector_router_discovery_boundary",
+            "CONFLICTS 跨折选择器路由可重算并因安全退化、跨折不稳和 FRC 边际不足而失败关闭",
+            conflicts_router_readiness_passed,
+            [
+                "docs/progressive_upgrade/conflicts_selector_router_protocol.json",
+                "output/rag_evaluation/conflicts_selector_router/conflicts_selector_router.json",
+                "output/rag_evaluation/conflicts_selector_router/conflicts_selector_router.md",
+                "output/rag_evaluation/conflicts_selector_router/conflicts_selector_router_cases.jsonl.gz",
+                "research/frc_rag/conflicts_selector_router.py",
+                "scripts/run_conflicts_selector_router.py",
+                "tests/test_frc_conflicts_selector_router.py",
+            ],
+            {
+                "status": conflicts_router_outcome["status"],
+                "retrospective_discovery": conflicts_router_report[
+                    "development_boundary"
+                ]["retrospective_discovery"],
+                "pre_registered_confirmation": conflicts_router_report[
+                    "development_boundary"
+                ]["pre_registered_confirmation"],
+                "case_count": conflicts_router_metadata["cases"],
+                "feature_counts": {
+                    "all_methods": 47,
+                    "without_frc": 45,
+                },
+                "static_accuracy": conflicts_router_classification[
+                    "coverage_greedy_proxy"
+                ]["accuracy"],
+                "all_methods_accuracy": conflicts_router_classification["all_methods"][
+                    "accuracy"
+                ],
+                "without_frc_accuracy": conflicts_router_classification["without_frc"][
+                    "accuracy"
+                ],
+                "all_minus_static": conflicts_router_paired,
+                "all_minus_without_frc": conflicts_router_frc_contribution,
+                "frc_unique_oracle_correct_cases": conflicts_router_analysis["oracle"][
+                    "frc_unique_correct_cases"
+                ],
+                "outdated_conflict_recall_delta": conflicts_router_safety[
+                    "per_label_recall_delta_all_router_minus_static"
+                ]["Conflict due to outdated information"],
+                "folds_with_nonnegative_accuracy_gain": conflicts_router_safety[
+                    "folds_with_nonnegative_accuracy_gain"
+                ],
+                "requires_all_method_predictions_at_inference": (
+                    conflicts_router_analysis["execution_cost"][
+                        "requires_all_method_predictions_at_inference"
+                    ]
+                ),
+                "router_adopted": conflicts_router_outcome["router_adopted"],
+                "frc_selector_replaced": conflicts_router_outcome[
+                    "replace_frc_selector"
+                ],
+                "independent_confirmation_required": conflicts_router_outcome[
+                    "independent_confirmation_required"
+                ],
+                "gate_2": conflicts_router_outcome["gate_2"],
+            },
+        ),
+        _check(
+            "whoqa_independent_selection_boundary",
+            "WhoQA 独立公开数据选择实验可复现，并以负结果维持 Gate 2 安全边界",
+            whoqa_readiness_passed,
+            [
+                "docs/progressive_upgrade/whoqa_conflict_coverage_protocol.json",
+                "docs/progressive_upgrade/whoqa_conflict_coverage_execution.json",
+                "docs/progressive_upgrade/whoqa_conflict_coverage_execution_erratum.json",
+                "docs/progressive_upgrade/whoqa_conflict_coverage_execution_erratum2.json",
+                "docs/progressive_upgrade/whoqa_conflict_coverage_execution_erratum3.json",
+                "docs/progressive_upgrade/whoqa_conflict_coverage_execution_erratum4.json",
+                "docs/progressive_upgrade/whoqa_conflict_coverage_execution_erratum5.json",
+                "docs/progressive_upgrade/whoqa_conflict_coverage_post_result_correction.json",
+                "output/rag_evaluation/whoqa_conflict_coverage/whoqa_conflict_coverage.json",
+                "output/rag_evaluation/whoqa_conflict_coverage/whoqa_conflict_coverage.md",
+                "output/rag_evaluation/whoqa_conflict_coverage/whoqa_conflict_coverage_cases.jsonl.gz",
+                "research/frc_rag/whoqa_conflict_coverage.py",
+                "scripts/run_whoqa_conflict_coverage.py",
+                "tests/test_frc_whoqa_conflict_coverage.py",
+            ],
+            {
+                "status": whoqa_outcome["status"],
+                "case_count": whoqa_metadata["cases"],
+                "template_count_distribution": whoqa_metadata[
+                    "template_count_distribution"
+                ],
+                "selection_runs": whoqa_metadata["selection_runs"],
+                "strongest_baseline": whoqa_comparisons["observed_strongest_baseline"],
+                "bm25_primary_coverage": whoqa_aggregates["bm25_topk"]["metrics"][
+                    "oracle_normalized_distinct_viewpoint_coverage"
+                ],
+                "frc_primary_coverage": whoqa_aggregates["frc_select"]["metrics"][
+                    "oracle_normalized_distinct_viewpoint_coverage"
+                ],
+                "frc_minus_strongest": whoqa_comparisons[
+                    "frc_minus_observed_strongest_point"
+                ],
+                "frc_minus_strongest_simultaneous_ci": whoqa_comparisons[
+                    "frc_minus_bootstrap_strongest_simultaneous"
+                ],
+                "frc_minus_coverage_proxy": whoqa_comparisons["frc_minus_reference"],
+                "official_viewpoint_count_mismatches": whoqa_report["data_audit"][
+                    "public_num_distinct_answer_mismatches_against_canonical_viewpoints"
+                ],
+                "worst_viewpoint_count_delta": whoqa_analysis["safety"][
+                    "worst_viewpoint_count_delta"
+                ],
+                "worst_property_delta": whoqa_analysis["safety"][
+                    "worst_property_delta"
+                ],
+                "deterministic_output_rerun": whoqa_metadata[
+                    "deterministic_output_rerun"
+                ],
+                "gate_2": whoqa_outcome["gate_2"],
+                "canary_or_default_authorized": whoqa_outcome[
+                    "canary_or_default_authorized"
+                ],
+            },
+        ),
+        _check(
+            "whoqa_budget_stress_boundary",
+            "WhoQA 冻结预算压力诊断复用盲评分并原样保留显著负结果",
+            whoqa_stress_readiness_passed,
+            [
+                "docs/progressive_upgrade/whoqa_budget_stress_protocol.json",
+                "output/rag_evaluation/whoqa_budget_stress/whoqa_budget_stress.json",
+                "output/rag_evaluation/whoqa_budget_stress/whoqa_budget_stress.md",
+                "output/rag_evaluation/whoqa_budget_stress/whoqa_budget_stress_cases.jsonl.gz",
+                "research/frc_rag/whoqa_budget_stress.py",
+                "scripts/run_whoqa_budget_stress.py",
+                "tests/test_frc_whoqa_budget_stress.py",
+            ],
+            {
+                "status": whoqa_stress_outcome["status"],
+                "case_count": whoqa_stress_metadata["cases"],
+                "template_count": whoqa_stress_metadata["template_count"],
+                "selection_runs": whoqa_stress_metadata["selection_runs"],
+                "configuration_count": len(whoqa_stress_metadata["configurations"]),
+                "strongest_baseline": whoqa_stress_family[
+                    "observed_strongest_baseline"
+                ],
+                "dense_family_primary": whoqa_stress_family["method_primary_means"][
+                    "dense_topk"
+                ],
+                "frc_family_primary": whoqa_stress_family["method_primary_means"][
+                    "frc_select"
+                ],
+                "frc_minus_strongest": whoqa_stress_family[
+                    "frc_minus_observed_strongest_point"
+                ],
+                "frc_minus_strongest_simultaneous_ci": whoqa_stress_family[
+                    "frc_minus_bootstrap_strongest_simultaneous"
+                ],
+                "frc_minus_coverage_proxy": whoqa_stress_family["frc_minus_reference"],
+                "configuration_deltas": whoqa_stress_config_points,
+                "worst_configuration_delta": whoqa_stress_analysis["safety"][
+                    "worst_configuration_delta"
+                ],
+                "worst_stratum_delta": whoqa_stress_analysis["safety"][
+                    "worst_stratum_delta"
+                ],
+                "selector_changed": whoqa_stress_outcome["selector_changed"],
+                "independent_confirmation": whoqa_stress_outcome[
+                    "independent_confirmation"
+                ],
+                "deterministic_output_rerun": whoqa_stress_metadata[
+                    "deterministic_output_rerun"
+                ],
+                "gate_2": whoqa_stress_outcome["gate_2"],
+                "canary_or_default_authorized": whoqa_stress_outcome[
+                    "canary_or_default_authorized"
+                ],
+            },
+        ),
+        _check(
+            "rgb_cost_aware_frc_boundary",
+            "RGB 独立盲评保留成本感知 FRC 安全回归并禁止在已揭示数据上调参",
+            rgb_cost_aware_readiness_passed,
+            [
+                "docs/progressive_upgrade/rgb_cost_aware_frc_protocol.json",
+                "docs/progressive_upgrade/rgb_cost_aware_frc_execution.json",
+                "docs/progressive_upgrade/rgb_cost_aware_frc_post_result_correction.json",
+                "output/rag_evaluation/rgb_cost_aware_frc/rgb_cost_aware_frc.json",
+                "output/rag_evaluation/rgb_cost_aware_frc/rgb_cost_aware_frc.md",
+                "output/rag_evaluation/rgb_cost_aware_frc/rgb_cost_aware_frc_cases.jsonl.gz",
+                "research/frc_rag/rgb_cost_aware_frc.py",
+                "scripts/run_rgb_cost_aware_frc.py",
+                "tests/test_frc_rgb_cost_aware.py",
+            ],
+            {
+                "status": rgb_outcome["status"],
+                "case_count": rgb_metadata["cases"],
+                "candidate_chunks": rgb_metadata["candidate_chunks"],
+                "selection_runs": rgb_metadata["selection_runs"],
+                "strongest_baseline": rgb_family["observed_strongest_baseline"],
+                "cost_aware_primary": rgb_family["method_primary_means"][
+                    "frc_cost_aware_v35"
+                ],
+                "old_frc_primary": rgb_family["method_primary_means"]["frc_select_v34"],
+                "cost_aware_minus_old_frc": rgb_family["cost_aware_minus_old_frc"],
+                "cost_aware_minus_strongest": rgb_family[
+                    "cost_aware_minus_observed_strongest"
+                ],
+                "cost_aware_minus_strongest_simultaneous_ci": rgb_family[
+                    "cost_aware_minus_bootstrap_strongest_simultaneous"
+                ],
+                "worst_dataset_budget_delta": rgb_analysis[
+                    "worst_dataset_budget_delta"
+                ],
+                "positive_wrong_rate_delta": rgb_analysis[
+                    "positive_wrong_rate_increase_over_old_frc"
+                ],
+                "support_checks": rgb_analysis["support_checks"],
+                "selector_changed": rgb_outcome["selector_changed"],
+                "deterministic_output_rerun": rgb_metadata[
+                    "deterministic_output_rerun"
+                ],
+                "gate_2": rgb_outcome["gate_2"],
+                "canary_or_default_authorized": rgb_outcome[
+                    "canary_or_default_authorized"
+                ],
+            },
+        ),
+        _check(
+            "musique_dual_resource_frc_boundary",
+            "MuSiQue 独立盲评保留双资源 FRC 未建立支持的负结果并禁止后验调参",
+            musique_dual_resource_readiness_passed,
+            [
+                "docs/progressive_upgrade/musique_dual_resource_protocol.json",
+                "docs/progressive_upgrade/musique_dual_resource_execution.json",
+                "output/rag_evaluation/musique_dual_resource/musique_dual_resource.json",
+                "output/rag_evaluation/musique_dual_resource/musique_dual_resource.md",
+                "output/rag_evaluation/musique_dual_resource/musique_dual_resource_cases.jsonl.gz",
+                "research/frc_rag/musique_dual_resource.py",
+                "scripts/run_musique_dual_resource.py",
+                "tests/test_frc_musique_dual_resource.py",
+            ],
+            {
+                "status": musique_outcome["status"],
+                "case_count": musique_metadata["cases"],
+                "candidate_chunks": musique_metadata["candidate_chunks"],
+                "selection_runs": musique_metadata["selection_runs"],
+                "hop_distribution": musique_metadata["hop_distribution"],
+                "strongest_baseline": musique_family["observed_strongest_baseline"],
+                "dual_resource_primary": musique_family["method_primary_means"][
+                    "frc_dual_resource_v36"
+                ],
+                "old_frc_primary": musique_family["method_primary_means"][
+                    "frc_select_v34"
+                ],
+                "dual_minus_v35": musique_family["dual_minus_v35"],
+                "dual_minus_old_frc": musique_family["dual_minus_old_frc"],
+                "dual_minus_strongest": musique_family["dual_minus_observed_strongest"],
+                "dual_minus_strongest_simultaneous_ci": musique_family[
+                    "dual_minus_bootstrap_strongest_simultaneous"
+                ],
+                "budget_deltas": musique_analysis["budget_deltas"],
+                "hop_deltas": musique_analysis["hop_deltas"],
+                "support_checks": musique_analysis["support_checks"],
+                "selector_changed": musique_outcome["selector_changed"],
+                "deterministic_output_rerun": musique_metadata[
+                    "deterministic_output_rerun"
+                ],
+                "gate_2": musique_outcome["gate_2"],
+                "canary_or_default_authorized": musique_outcome[
+                    "canary_or_default_authorized"
+                ],
+            },
+        ),
+        _check(
+            "musique_objective_gap_boundary",
+            "MuSiQue 结果后精确目标诊断证明优化误差不足以解释 v36 差距且不采用",
+            musique_objective_gap_readiness_passed,
+            [
+                "docs/progressive_upgrade/musique_objective_gap_diagnostic_protocol.json",
+                "output/rag_evaluation/musique_objective_gap/musique_objective_gap.json",
+                "output/rag_evaluation/musique_objective_gap/musique_objective_gap.md",
+                "output/rag_evaluation/musique_objective_gap/musique_objective_gap_cases.jsonl.gz",
+                "research/frc_rag/musique_objective_gap.py",
+                "scripts/run_musique_objective_gap.py",
+                "tests/test_frc_musique_objective_gap.py",
+            ],
+            {
+                "status": musique_gap_outcome["status"],
+                "next_action": musique_gap_outcome["next_action"],
+                "case_count": musique_gap_metadata["cases"],
+                "selection_runs": musique_gap_metadata["selection_runs"],
+                "objective_gap": musique_gap_report["aggregates"]["objective_gap"],
+                "exact_primary": musique_gap_report["aggregates"]["method_means"][
+                    "frc_exact_objective_v37"
+                ]["support_evidence_f1"],
+                "exact_minus_v36": musique_gap_analysis["exact_minus_v36_support_f1"],
+                "exact_minus_cross_encoder_topk": musique_gap_analysis[
+                    "exact_minus_cross_encoder_topk_support_f1"
+                ],
+                "budget_deltas": musique_gap_analysis["budget_deltas"],
+                "hop_deltas": musique_gap_analysis["hop_deltas"],
+                "adoption_eligible": musique_gap_outcome["adoption_eligible"],
+                "selector_changed": musique_gap_outcome["selector_changed"],
+                "gate_2": musique_gap_outcome["gate_2"],
+                "deterministic_output_rerun": musique_gap_metadata[
+                    "deterministic_output_rerun"
+                ],
+            },
+        ),
+        _check(
+            "musique_crossfit_support_boundary",
+            "MuSiQue case 隔离校准保留通用小幅收益但 FRC 角色增量未建立的停止结论",
+            musique_crossfit_support_readiness_passed,
+            [
+                "docs/progressive_upgrade/musique_crossfit_support_protocol.json",
+                "output/rag_evaluation/musique_crossfit_support/musique_crossfit_support.json",
+                "output/rag_evaluation/musique_crossfit_support/musique_crossfit_support.md",
+                "output/rag_evaluation/musique_crossfit_support/musique_crossfit_support_cases.jsonl.gz",
+                "research/frc_rag/musique_crossfit_support.py",
+                "scripts/run_musique_crossfit_support.py",
+                "tests/test_frc_musique_crossfit_support.py",
+            ],
+            {
+                "status": musique_crossfit_outcome["status"],
+                "next_action": musique_crossfit_outcome["next_action"],
+                "case_count": musique_crossfit_metadata["cases"],
+                "selection_runs": musique_crossfit_metadata["selection_runs"],
+                "fold_distribution": musique_crossfit_metadata["fold_distribution"],
+                "candidate_metrics": musique_crossfit_report["aggregates"][
+                    "model_audit"
+                ]["candidate_metrics"],
+                "base_primary": musique_crossfit_report["aggregates"]["method_means"][
+                    "crossfit_base_support_topk_v38"
+                ]["support_evidence_f1"],
+                "full_primary": musique_crossfit_report["aggregates"]["method_means"][
+                    "crossfit_full_support_topk_v38"
+                ]["support_evidence_f1"],
+                "full_minus_cross_encoder_topk": musique_crossfit_analysis[
+                    "full_minus_cross_encoder_topk"
+                ],
+                "full_minus_base": musique_crossfit_analysis["full_minus_base"],
+                "budget_deltas": musique_crossfit_analysis["budget_deltas"],
+                "hop_deltas": musique_crossfit_analysis["hop_deltas"],
+                "adoption_eligible": musique_crossfit_outcome["adoption_eligible"],
+                "independent_confirmation": musique_crossfit_outcome[
+                    "independent_confirmation"
+                ],
+                "selector_changed": musique_crossfit_outcome["selector_changed"],
+                "gate_2": musique_crossfit_outcome["gate_2"],
+                "deterministic_output_rerun": musique_crossfit_metadata[
+                    "deterministic_output_rerun"
+                ],
+            },
+        ),
+        _check(
+            "hover_verification_roles_boundary",
+            "HoVer 独立盲评保留任务特定核验角色增量未建立的负结果并禁止后验调参",
+            hover_verification_roles_readiness_passed,
+            [
+                "docs/progressive_upgrade/hover_verification_roles_protocol.json",
+                "docs/progressive_upgrade/hover_verification_roles_execution.json",
+                "output/rag_evaluation/hover_verification_roles/hover_verification_roles.json",
+                "output/rag_evaluation/hover_verification_roles/hover_verification_roles.md",
+                "output/rag_evaluation/hover_verification_roles/hover_verification_roles_cases.jsonl.gz",
+                "research/frc_rag/hover_verification_roles.py",
+                "scripts/run_hover_verification_roles.py",
+                "tests/test_frc_hover_verification_roles.py",
+            ],
+            {
+                "status": hover_outcome["status"],
+                "case_count": hover_metadata["cases"],
+                "candidate_documents": hover_metadata["candidate_documents"],
+                "candidate_chunks": hover_metadata["candidate_chunks"],
+                "selection_runs": hover_metadata["selection_runs"],
+                "candidate_ceiling": hover_execution["structural_census"][
+                    "candidate_ceiling"
+                ],
+                "strongest_non_frc": hover_family["observed_strongest_non_frc"],
+                "generic_roles_primary": hover_family["method_primary_means"][
+                    "frc_generic_roles_v39"
+                ],
+                "verification_roles_primary": hover_family["method_primary_means"][
+                    "frc_verification_roles_v39"
+                ],
+                "verification_minus_generic": hover_family[
+                    "verification_minus_generic"
+                ],
+                "verification_minus_strongest": hover_family[
+                    "verification_minus_observed_strongest"
+                ],
+                "verification_minus_strongest_simultaneous_ci": hover_family[
+                    "verification_minus_bootstrap_strongest_simultaneous"
+                ],
+                "budget_deltas": hover_analysis["budget_deltas"],
+                "stratum_deltas": hover_analysis["stratum_deltas"],
+                "support_checks": hover_analysis["support_checks"],
+                "selector_changed": hover_outcome["selector_changed"],
+                "deterministic_output_rerun": hover_metadata[
+                    "deterministic_output_rerun"
+                ],
+                "gate_2": hover_outcome["gate_2"],
+                "canary_or_default_authorized": hover_outcome[
+                    "canary_or_default_authorized"
+                ],
+            },
+        ),
+        _check(
+            "hover_static_role_mechanism_diagnostic",
+            "HoVer v39 事后机制审计固定静态角色信号近共线与选择坍缩诊断且不作因果声称",
+            hover_role_mechanism_readiness_passed,
+            [
+                "output/rag_evaluation/hover_verification_roles/hover_role_mechanism_diagnostic.json",
+                "output/rag_evaluation/hover_verification_roles/hover_role_mechanism_diagnostic.md",
+                "scripts/run_hover_role_mechanism_diagnostic.py",
+            ],
+            {
+                "status": hover_mechanism_diagnostic["interpretation"]["status"],
+                "post_result_diagnostic": hover_mechanism_diagnostic["metadata"][
+                    "post_result_diagnostic"
+                ],
+                "gold_used": hover_mechanism_diagnostic["metadata"][
+                    "gold_used_for_role_or_selection_diagnostic"
+                ],
+                "generic_mean_spearman": hover_mechanism_diagnostic["role_signal"][
+                    "rank_correlations"
+                ]["generic"]["mean"],
+                "verification_mean_spearman": hover_mechanism_diagnostic["role_signal"][
+                    "rank_correlations"
+                ]["verification"]["mean"],
+                "selection_collapse": hover_mechanism_diagnostic["selection_collapse"],
+                "causal_claim": hover_mechanism_diagnostic["interpretation"][
+                    "causal_claim"
+                ],
+                "gate_2": hover_mechanism_diagnostic["interpretation"]["gate_2"],
+            },
+        ),
+        _check(
+            "hover_dynamic_atomic_roles_boundary",
+            "HoVer v40 污染分区关闭、v41 动态原子角色盲确认与未达实质门槛的负结论均被固定",
+            hover_dynamic_atomic_roles_readiness_passed,
+            [
+                "docs/progressive_upgrade/hover_dynamic_atomic_roles_protocol.json",
+                "docs/progressive_upgrade/hover_dynamic_atomic_roles_v40_closure.json",
+                "docs/progressive_upgrade/hover_dynamic_atomic_roles_protocol_v41.json",
+                "docs/progressive_upgrade/hover_dynamic_atomic_roles_pilot_start_v41.json",
+                "docs/progressive_upgrade/hover_dynamic_atomic_roles_confirmation_open_v41.json",
+                "docs/progressive_upgrade/hover_dynamic_atomic_roles_confirmation_open_v41_v2.json",
+                "docs/progressive_upgrade/hover_dynamic_atomic_roles_execution_v41.json",
+                "docs/progressive_upgrade/hover_dynamic_atomic_roles_result_v41.json",
+                "output/rag_evaluation/hover_dynamic_atomic_roles/hover_dynamic_atomic_roles_pilot.json",
+                "output/rag_evaluation/hover_dynamic_atomic_roles/hover_dynamic_atomic_roles_pilot.md",
+                "output/rag_evaluation/hover_dynamic_atomic_roles/hover_dynamic_atomic_roles.json",
+                "output/rag_evaluation/hover_dynamic_atomic_roles/hover_dynamic_atomic_roles.md",
+                "output/rag_evaluation/hover_dynamic_atomic_roles/hover_dynamic_atomic_roles_cases.jsonl.gz",
+                "research/frc_rag/hover_dynamic_atomic_roles.py",
+                "scripts/run_hover_dynamic_atomic_roles.py",
+                "tests/test_frc_hover_dynamic_atomic_roles.py",
+            ],
+            {
+                "v40_status": hover_dynamic_v40_closure["status"],
+                "v40_excluded_ids": hover_dynamic_protocol["integrity_lineage"][
+                    "v40_excluded_id_count"
+                ],
+                "pilot_status": hover_dynamic_pilot_report["outcome"]["status"],
+                "pilot_mechanism": hover_dynamic_pilot_report["mechanism"],
+                "confirmation_status": hover_dynamic_outcome["status"],
+                "confirmation_cases": hover_dynamic_metadata["cases"],
+                "generation_fallback_rate": hover_dynamic_result_integrity[
+                    "generation_fallback_rate"
+                ],
+                "strongest_non_frc": hover_dynamic_family["observed_strongest_non_frc"],
+                "method_primary_means": hover_dynamic_family["method_primary_means"],
+                "dynamic_minus_static": hover_dynamic_family[
+                    "dynamic_minus_static_rank"
+                ],
+                "dynamic_minus_strongest_non_frc": hover_dynamic_family[
+                    "dynamic_minus_bootstrap_strongest_non_frc"
+                ],
+                "budget_deltas": hover_dynamic_analysis["budget_deltas"],
+                "stratum_deltas": hover_dynamic_analysis["stratum_deltas"],
+                "support_checks": hover_dynamic_analysis["support_checks"],
+                "deterministic_output_rerun": hover_dynamic_result_integrity[
+                    "evaluate_rerun"
+                ],
+                "selector_adoption_authorized": hover_dynamic_outcome[
+                    "selector_adoption_authorized"
+                ],
+                "gate_2": hover_dynamic_outcome["gate_2"],
+            },
+        ),
+        _check(
+            "scifact_dynamic_atomic_roles_external_boundary",
+            "SciFact v42 下载前登记、盲准备/评分、外部负结果与禁止复用调参边界均被固定",
+            scifact_dynamic_atomic_roles_readiness_passed,
+            [
+                "docs/progressive_upgrade/scifact_dynamic_atomic_roles_protocol_v42.json",
+                "docs/progressive_upgrade/scifact_dynamic_atomic_roles_implementation_v42.json",
+                "docs/progressive_upgrade/scifact_dynamic_atomic_roles_execution_v42.json",
+                "docs/progressive_upgrade/scifact_dynamic_atomic_roles_result_v42.json",
+                "output/rag_evaluation/scifact_dynamic_atomic_roles/scifact_dynamic_atomic_roles.json",
+                "output/rag_evaluation/scifact_dynamic_atomic_roles/scifact_dynamic_atomic_roles.md",
+                "output/rag_evaluation/scifact_dynamic_atomic_roles/scifact_dynamic_atomic_roles_cases.jsonl.gz",
+                "research/frc_rag/scifact_dynamic_atomic_roles.py",
+                "scripts/run_scifact_dynamic_atomic_roles.py",
+                "tests/test_frc_scifact_dynamic_atomic_roles.py",
+            ],
+            {
+                "status": scifact_outcome["status"],
+                "cases": scifact_metadata["cases"],
+                "source_census": scifact_result_record["source_census"],
+                "generation_fallback_rate": scifact_analysis["query_generation"][
+                    "fallback_rate"
+                ],
+                "gold_free_mechanism": scifact_result_record[
+                    "gold_free_mechanism_diagnostic"
+                ],
+                "strongest_non_frc": scifact_family["observed_strongest_non_frc"],
+                "method_primary_means": scifact_family["method_primary_means"],
+                "dynamic_minus_static": scifact_family["dynamic_minus_static_rank"],
+                "dynamic_minus_strongest_non_frc": scifact_family[
+                    "dynamic_minus_bootstrap_strongest_non_frc"
+                ],
+                "budget_deltas": scifact_analysis["budget_deltas"],
+                "strata": scifact_analysis["strata"],
+                "support_checks": scifact_analysis["support_checks"],
+                "selector_adoption_authorized": scifact_outcome[
+                    "selector_adoption_authorized"
+                ],
+                "scifact_reuse_for_tuning_authorized": scifact_outcome[
+                    "scifact_reuse_for_tuning_authorized"
+                ],
+                "gate_2": scifact_outcome["gate_2"],
+            },
+        ),
+        _check(
+            "feverous_adaptive_atomic_roles_external_boundary",
+            "FEVEROUS v43 下载前登记、盲准备/生成/评分、容量与锁后字段勘误、负面且候选覆盖不足的结论及禁调边界均被固定",
+            feverous_adaptive_atomic_roles_readiness_passed,
+            [
+                "docs/progressive_upgrade/feverous_adaptive_atomic_roles_protocol_v43.json",
+                "docs/progressive_upgrade/feverous_adaptive_atomic_roles_protocol_erratum_v43.json",
+                "docs/progressive_upgrade/feverous_adaptive_atomic_roles_implementation_v43.json",
+                "docs/progressive_upgrade/feverous_adaptive_atomic_roles_implementation_erratum_v43.json",
+                "docs/progressive_upgrade/feverous_adaptive_atomic_roles_implementation_erratum2_v43.json",
+                "docs/progressive_upgrade/feverous_adaptive_atomic_roles_implementation_erratum3_v43.json",
+                "docs/progressive_upgrade/feverous_adaptive_atomic_roles_implementation_erratum4_v43.json",
+                "docs/progressive_upgrade/feverous_adaptive_atomic_roles_execution_v43.json",
+                "docs/progressive_upgrade/feverous_adaptive_atomic_roles_execution_erratum_v43.json",
+                "docs/progressive_upgrade/feverous_adaptive_atomic_roles_result_v43.json",
+                "output/rag_evaluation/feverous_adaptive_atomic_roles/feverous_adaptive_atomic_roles.json",
+                "output/rag_evaluation/feverous_adaptive_atomic_roles/feverous_adaptive_atomic_roles.md",
+                "output/rag_evaluation/feverous_adaptive_atomic_roles/feverous_adaptive_atomic_roles_cases.jsonl.gz",
+                "research/frc_rag/feverous_adaptive_atomic_roles.py",
+                "scripts/run_feverous_adaptive_atomic_roles.py",
+                "tests/test_frc_feverous_adaptive_atomic_roles.py",
+            ],
+            {
+                "status": feverous_outcome["status"],
+                "cases": feverous_metadata["cases"],
+                "source_and_blind_census": feverous_result_record[
+                    "source_and_blind_census"
+                ],
+                "generation_fallback_rate": feverous_analysis["query_cache"][
+                    "fallback_rate"
+                ],
+                "candidate_ceiling_complete_rate": feverous_analysis[
+                    "candidate_ceiling_complete_rate"
+                ],
+                "strongest_non_frc": feverous_analysis["strongest_non_frc"],
+                "method_aggregates": feverous_aggregates,
+                "adaptive_minus_dynamic": feverous_analysis["family_comparison"][
+                    "adaptive_minus_dynamic"
+                ],
+                "adaptive_minus_strongest_non_frc": feverous_analysis[
+                    "family_comparison"
+                ]["adaptive_minus_bootstrap_strongest_non_frc"],
+                "budget_deltas": feverous_analysis["budget_deltas"],
+                "challenge_deltas": feverous_analysis["supported_challenge_deltas"],
+                "mean_selected_unit_reduction": feverous_analysis[
+                    "mean_selected_unit_reduction_vs_dynamic"
+                ],
+                "complete_evidence_recall_drop": feverous_analysis[
+                    "complete_evidence_recall_drop_vs_dynamic"
+                ],
+                "support_checks": feverous_analysis["support_checks"],
+                "locked_evaluation_schema_fix": {
+                    "gold_metrics_computed_before_fix": (
+                        feverous_implementation_erratum4["trigger"][
+                            "gold_metrics_computed_in_memory"
+                        ]
+                    ),
+                    "metric_values_observed_before_fix": (
+                        feverous_implementation_erratum4["trigger"][
+                            "metric_values_emitted_or_observed"
+                        ]
+                    ),
+                    "method_or_threshold_changed": (
+                        feverous_implementation_erratum4["method_or_threshold_changed"]
+                    ),
+                },
+                "selector_adoption_authorized": feverous_outcome[
+                    "selector_adoption_authorized"
+                ],
+                "feverous_v43_reuse_for_tuning_authorized": (
+                    feverous_result_record["decision"][
+                        "feverous_v43_reuse_for_tuning_or_selection"
+                    ]
+                ),
+                "gate_2": feverous_outcome["gate_2"],
+            },
+        ),
+        _check(
+            "ottqa_guarded_adaptive_atomic_roles_external_boundary",
+            "OTT-QA v44 数据访问前登记、盲缓存、GPU 评分、锁定结果、来源异质性与禁止复用调参边界均被固定",
+            ottqa_guarded_adaptive_atomic_roles_readiness_passed,
+            [
+                "docs/progressive_upgrade/ottqa_guarded_adaptive_atomic_roles_protocol_v44.json",
+                "docs/progressive_upgrade/ottqa_guarded_adaptive_atomic_roles_protocol_erratum_v44.json",
+                "docs/progressive_upgrade/ottqa_guarded_adaptive_atomic_roles_protocol_erratum2_v44.json",
+                "docs/progressive_upgrade/ottqa_guarded_adaptive_atomic_roles_protocol_erratum3_v44.json",
+                "docs/progressive_upgrade/ottqa_guarded_adaptive_atomic_roles_implementation_v44.json",
+                "docs/progressive_upgrade/ottqa_guarded_adaptive_atomic_roles_implementation_erratum_v44.json",
+                "docs/progressive_upgrade/ottqa_guarded_adaptive_atomic_roles_implementation_erratum2_v44.json",
+                "docs/progressive_upgrade/ottqa_guarded_adaptive_atomic_roles_execution_v44.json",
+                "docs/progressive_upgrade/ottqa_guarded_adaptive_atomic_roles_result_v44.json",
+                "docs/progressive_upgrade/ottqa_source_archive_builder_registration_v44.json",
+                "output/rag_evaluation/ottqa_guarded_adaptive_atomic_roles/ottqa_guarded_adaptive_atomic_roles.json",
+                "output/rag_evaluation/ottqa_guarded_adaptive_atomic_roles/ottqa_guarded_adaptive_atomic_roles.md",
+                "output/rag_evaluation/ottqa_guarded_adaptive_atomic_roles/ottqa_guarded_adaptive_atomic_roles_cases.jsonl.gz",
+                "research/frc_rag/ottqa_guarded_adaptive_atomic_roles.py",
+                "scripts/run_ottqa_guarded_adaptive_atomic_roles.py",
+                "scripts/build_ottqa_source_archive.py",
+                "tests/test_frc_ottqa_guarded_adaptive_atomic_roles.py",
+                "tests/test_build_ottqa_source_archive.py",
+            ],
+            {
+                "status": ottqa_outcome["status"],
+                "cases": ottqa_metadata["cases"],
+                "source_modes": ottqa_result_record["dataset"]["source_modes"],
+                "generation_fallback_rate": ottqa_analysis["query_cache"][
+                    "fallback_rate"
+                ],
+                "candidate_ceiling_complete_rate": ottqa_analysis[
+                    "candidate_ceiling_complete_rate"
+                ],
+                "strongest_non_frc": ottqa_analysis["strongest_non_frc"],
+                "method_aggregates": ottqa_aggregates,
+                "guarded_minus_dynamic": ottqa_analysis["family_comparison"][
+                    "guarded_minus_dynamic"
+                ],
+                "guarded_minus_strongest_non_frc": ottqa_analysis["family_comparison"][
+                    "guarded_minus_bootstrap_strongest_non_frc"
+                ],
+                "guarded_minus_v43": ottqa_analysis["family_comparison"][
+                    "guarded_minus_v43"
+                ],
+                "budget_deltas": ottqa_analysis["budget_deltas"],
+                "source_mode_deltas": ottqa_analysis["supported_source_mode_deltas"],
+                "mean_selected_unit_reduction": ottqa_analysis[
+                    "mean_selected_unit_reduction_vs_dynamic"
+                ],
+                "answer_evidence_recall_drop": ottqa_analysis[
+                    "answer_evidence_recall_drop_vs_dynamic"
+                ],
+                "support_checks": ottqa_analysis["support_checks"],
+                "selector_adoption_authorized": ottqa_outcome[
+                    "selector_adoption_authorized"
+                ],
+                "ottqa_v44_reuse_for_tuning_authorized": (
+                    ottqa_result_record["decision"][
+                        "reuse_v44_cases_for_tuning_or_selection"
+                    ]
+                ),
+                "official_leaderboard_result": ottqa_metadata[
+                    "official_leaderboard_result"
+                ],
+                "gate_2": ottqa_outcome["gate_2"],
+            },
+        ),
+        _check(
+            "finqa_anchor_guarded_atomic_roles_external_boundary",
+            "FinQA v45 数据访问前冻结、盲查询与评分、锁定负结果、强制分层和禁止复用调参边界均被固定",
+            finqa_anchor_guarded_atomic_roles_readiness_passed,
+            [
+                "docs/progressive_upgrade/finqa_anchor_guarded_atomic_roles_protocol_v45.json",
+                "docs/progressive_upgrade/finqa_anchor_guarded_atomic_roles_protocol_erratum_v45.json",
+                "docs/progressive_upgrade/finqa_anchor_guarded_atomic_roles_implementation_v45.json",
+                "docs/progressive_upgrade/finqa_anchor_guarded_atomic_roles_execution_v45.json",
+                "docs/progressive_upgrade/finqa_anchor_guarded_atomic_roles_result_v45.json",
+                "docs/progressive_upgrade/finqa_anchor_guarded_atomic_roles_mandatory_strata_v45.json",
+                "docs/progressive_upgrade/finqa_anchor_equivalence_diagnostic_protocol_v45.json",
+                "docs/progressive_upgrade/finqa_anchor_equivalence_diagnostic_result_v45.json",
+                "output/rag_evaluation/finqa_anchor_guarded_atomic_roles/report.md",
+                "output/rag_evaluation/finqa_anchor_guarded_atomic_roles/cases.jsonl.gz",
+                "output/rag_evaluation/finqa_anchor_guarded_atomic_roles/anchor_equivalence_diagnostic.md",
+                "output/rag_evaluation/finqa_anchor_guarded_atomic_roles/anchor_equivalence_cases.jsonl.gz",
+                "research/frc_rag/finqa_anchor_guarded_atomic_roles.py",
+                "research/frc_rag/finqa_anchor_equivalence_diagnostic.py",
+                "scripts/run_finqa_anchor_guarded_atomic_roles.py",
+                "scripts/run_finqa_anchor_equivalence_diagnostic.py",
+                "tests/test_frc_finqa_anchor_guarded_atomic_roles.py",
+                "tests/test_frc_finqa_anchor_equivalence_diagnostic.py",
+            ],
+            {
+                "status": finqa_outcome["status"],
+                "cases": finqa_metadata["cases"],
+                "source_modes": {
+                    mode: finqa_analysis["supported_source_mode_deltas"][mode]["cases"]
+                    for mode in ("table_only", "text_only", "hybrid")
+                },
+                "gold_count_strata": {
+                    "single_gold_fact": finqa_single["cases"],
+                    "multiple_gold_facts": finqa_multiple["cases"],
+                },
+                "generation_fallback_rate": finqa_analysis["query_cache"][
+                    "fallback_rate"
+                ],
+                "candidate_ceiling_complete_rate": finqa_analysis[
+                    "candidate_ceiling_complete_rate"
+                ],
+                "strongest_non_frc": finqa_analysis["strongest_non_frc"],
+                "method_aggregates": finqa_aggregates,
+                "v45_minus_v44": finqa_analysis["family_comparison"]["v45_minus_v44"],
+                "v45_minus_dynamic": finqa_analysis["family_comparison"][
+                    "v45_minus_dynamic"
+                ],
+                "v45_minus_strongest_non_frc": finqa_analysis["family_comparison"][
+                    "v45_minus_bootstrap_strongest_non_frc"
+                ],
+                "budget_deltas": finqa_analysis["budget_deltas"],
+                "source_mode_deltas": finqa_analysis["supported_source_mode_deltas"],
+                "mean_selected_unit_reduction": finqa_analysis[
+                    "mean_selected_unit_reduction_vs_dynamic"
+                ],
+                "supporting_fact_recall_drop": finqa_analysis[
+                    "supporting_fact_recall_drop_vs_dynamic"
+                ],
+                "support_checks": finqa_analysis["support_checks"],
+                "selector_adoption_authorized": finqa_outcome[
+                    "selector_adoption_authorized"
+                ],
+                "finqa_v45_reuse_for_tuning_authorized": finqa_strata["decision"][
+                    "reuse_v45_cases_for_tuning_or_selection"
+                ],
+                "anchor_equivalence_diagnostic": {
+                    "status": finqa_diagnostic_outcome["status"],
+                    "configurations": finqa_diagnostic_overall["configurations"],
+                    "target_cardinality_equality_rate": finqa_diagnostic_overall[
+                        "target_cardinality_equality_rate"
+                    ],
+                    "ordered_selection_equality_rate": finqa_diagnostic_overall[
+                        "ordered_selection_equality_rate"
+                    ],
+                    "unordered_selection_equality_rate": finqa_diagnostic_overall[
+                        "unordered_selection_equality_rate"
+                    ],
+                    "v44_anchor_retention_rate_when_feasible": (
+                        finqa_diagnostic_overall[
+                            "v44_anchor_retention_rate_when_feasible"
+                        ]
+                    ),
+                    "v44_first_selection_equals_anchor_rate_when_feasible": (
+                        finqa_diagnostic_overall[
+                            "v44_first_selection_equals_anchor_rate_when_feasible"
+                        ]
+                    ),
+                    "by_target_cardinality": finqa_diagnostic_analysis[
+                        "by_target_cardinality"
+                    ],
+                    "v45_locked_outcome_changed": finqa_diagnostic_outcome[
+                        "v45_locked_outcome_changed"
+                    ],
+                    "selector_adoption_authorized": finqa_diagnostic_outcome[
+                        "selector_adoption_authorized"
+                    ],
+                    "reuse_v45_for_tuning_or_selection": finqa_diagnostic_outcome[
+                        "reuse_v45_for_tuning_or_selection"
+                    ],
+                    "gate_2": finqa_diagnostic_outcome["gate_2"],
+                },
+                "official_leaderboard_result": finqa_metadata[
+                    "official_leaderboard_result"
+                ],
+                "gate_2": finqa_outcome["gate_2"],
+            },
+        ),
+        _check(
+            "tatqa_fetaqa_qasper_adaptive_atomic_roles_external_boundary",
+            "TAT-QA v46 schema-inconclusive closure, FeTaQA v47 negative confirmation, and QASPER v48 prospective negative confirmation are reproducible without pseudo-gold, post-result tuning, selector adoption, or Gate 2 promotion",
+            tatqa_consensus_guarded_atomic_roles_readiness_passed
+            and fetaqa_consensus_guarded_atomic_roles_readiness_passed
+            and qasper_top2_proposal_guarded_atomic_roles_readiness_passed,
+            [
+                "docs/progressive_upgrade/tatqa_consensus_guarded_atomic_roles_protocol_v46.json",
+                "docs/progressive_upgrade/tatqa_consensus_guarded_atomic_roles_implementation_v46.json",
+                "docs/progressive_upgrade/tatqa_consensus_guarded_atomic_roles_result_v46.json",
+                "output/rag_evaluation/tatqa_consensus_guarded_atomic_roles/report.md",
+                "research/frc_rag/tatqa_consensus_guarded_atomic_roles.py",
+                "scripts/run_tatqa_consensus_guarded_atomic_roles.py",
+                "tests/test_frc_tatqa_consensus_guarded_atomic_roles.py",
+                "docs/progressive_upgrade/fetaqa_consensus_guarded_atomic_roles_protocol_v47.json",
+                "docs/progressive_upgrade/fetaqa_consensus_guarded_atomic_roles_implementation_v47.json",
+                "docs/progressive_upgrade/fetaqa_consensus_guarded_atomic_roles_execution_v47.json",
+                "docs/progressive_upgrade/fetaqa_consensus_guarded_atomic_roles_execution_erratum_v47.json",
+                "docs/progressive_upgrade/fetaqa_consensus_guarded_atomic_roles_result_v47.json",
+                "output/rag_evaluation/fetaqa_consensus_guarded_atomic_roles/report.md",
+                "output/rag_evaluation/fetaqa_consensus_guarded_atomic_roles/cases.jsonl.gz",
+                "research/frc_rag/fetaqa_consensus_guarded_atomic_roles.py",
+                "scripts/run_fetaqa_consensus_guarded_atomic_roles.py",
+                "tests/test_frc_fetaqa_consensus_guarded_atomic_roles.py",
+                "docs/progressive_upgrade/qasper_top2_proposal_guarded_atomic_roles_protocol_v48.json",
+                "docs/progressive_upgrade/qasper_top2_proposal_guarded_atomic_roles_implementation_v48.json",
+                "docs/progressive_upgrade/qasper_top2_proposal_guarded_atomic_roles_execution_v48.json",
+                "docs/progressive_upgrade/qasper_top2_proposal_guarded_atomic_roles_execution_erratum_v48.json",
+                "docs/progressive_upgrade/qasper_top2_proposal_guarded_atomic_roles_result_v48.json",
+                "output/rag_evaluation/qasper_top2_proposal_guarded_atomic_roles/report.md",
+                "output/rag_evaluation/qasper_top2_proposal_guarded_atomic_roles/cases.jsonl.gz",
+                "research/frc_rag/qasper_top2_proposal_guarded_atomic_roles.py",
+                "scripts/run_qasper_top2_proposal_guarded_atomic_roles.py",
+                "tests/test_frc_qasper_top2_proposal_guarded_atomic_roles.py",
+            ],
+            {
+                "tatqa": {
+                    "status": tatqa_result["status"],
+                    "stage_reached": tatqa_result["stage_reached"],
+                    "official_questions": tatqa_result["structural_census"][
+                        "questions"
+                    ],
+                    "exact_mapping_eligible_questions": tatqa_result[
+                        "structural_census"
+                    ][
+                        "eligible_questions_with_exact_official_table_cell_or_paragraph_mapping"
+                    ],
+                    "pseudo_gold_created": tatqa_result["stop_rule"][
+                        "answer_or_derivation_based_pseudo_gold_created"
+                    ],
+                    "metrics_computed": tatqa_result["execution_boundary"][
+                        "metrics_computed"
+                    ],
+                    "selector_adoption_authorized": tatqa_result["decision"][
+                        "selector_adoption_authorized"
+                    ],
+                    "reuse_v46_for_tuning_or_selection": tatqa_result["decision"][
+                        "reuse_v46_cases_for_tuning_or_selection"
+                    ],
+                    "gate_2": tatqa_result["decision"]["gate_2"],
+                },
+                "fetaqa": {
+                    "status": fetaqa_outcome["status"],
+                    "cases": fetaqa_metadata["cases"],
+                    "generation_fallback_rate": fetaqa_analysis["query_cache"][
+                        "fallback_rate"
+                    ],
+                    "candidate_ceiling_complete_rate": fetaqa_analysis[
+                        "candidate_ceiling_complete_rate"
+                    ],
+                    "strongest_frozen_frc_control": fetaqa_analysis[
+                        "strongest_frozen_frc_control"
+                    ],
+                    "strongest_non_frc": fetaqa_analysis["strongest_non_frc"],
+                    "method_aggregates": fetaqa_aggregates,
+                    "v47_minus_strongest_frozen_frc_control": fetaqa_analysis[
+                        "family_comparison"
+                    ]["v47_minus_strongest_frozen_frc_control"],
+                    "v47_minus_strongest_non_frc": fetaqa_analysis["family_comparison"][
+                        "v47_minus_strongest_non_frc"
+                    ],
+                    "budget_deltas": fetaqa_analysis["budget_deltas"],
+                    "supported_stratum_deltas": fetaqa_analysis[
+                        "supported_stratum_deltas"
+                    ],
+                    "mean_selected_unit_reduction": fetaqa_analysis[
+                        "mean_selected_unit_reduction_vs_dynamic"
+                    ],
+                    "supporting_cell_recall_drop": fetaqa_analysis[
+                        "supporting_cell_recall_drop_vs_dynamic"
+                    ],
+                    "consensus_trigger_rate": fetaqa_analysis["consensus_trigger_rate"],
+                    "target_cardinality_distribution": fetaqa_analysis[
+                        "target_cardinality_distribution"
+                    ],
+                    "support_checks": fetaqa_analysis["support_checks"],
+                    "selector_adoption_authorized": fetaqa_outcome[
+                        "selector_adoption_authorized"
+                    ],
+                    "reuse_v47_for_tuning_or_selection": fetaqa_outcome[
+                        "reuse_v47_cases_for_tuning_or_selection"
+                    ],
+                    "official_leaderboard_result": fetaqa_metadata[
+                        "official_leaderboard_result"
+                    ],
+                    "gate_2": fetaqa_outcome["gate_2"],
+                },
+                "qasper": {
+                    "status": qasper_outcome["status"],
+                    "cases": qasper_metadata["cases"],
+                    "generation_fallback_rate": qasper_analysis["query_cache"][
+                        "fallback_rate"
+                    ],
+                    "candidate_ceiling_complete_rate": qasper_analysis[
+                        "candidate_ceiling_complete_rate"
+                    ],
+                    "strongest_frozen_frc_control": qasper_analysis[
+                        "strongest_frozen_frc_control"
+                    ],
+                    "strongest_non_frc": qasper_analysis["strongest_non_frc"],
+                    "method_aggregates": qasper_aggregates,
+                    "v48_minus_strongest_frozen_frc_control": qasper_analysis[
+                        "family_comparison"
+                    ]["v48_minus_strongest_frozen_frc_control"],
+                    "v48_minus_strongest_non_frc": qasper_analysis["family_comparison"][
+                        "v48_minus_strongest_non_frc"
+                    ],
+                    "budget_deltas": qasper_analysis["budget_deltas"],
+                    "supported_stratum_deltas": qasper_analysis[
+                        "supported_stratum_deltas"
+                    ],
+                    "mean_selected_unit_reduction": qasper_analysis[
+                        "mean_selected_unit_reduction_vs_dynamic"
+                    ],
+                    "evidence_recall_drop": qasper_analysis[
+                        "evidence_recall_drop_vs_dynamic"
+                    ],
+                    "adaptive_target_below_five_rate": qasper_analysis[
+                        "adaptive_target_below_five_rate"
+                    ],
+                    "proposal_union_size_distribution": qasper_analysis[
+                        "proposal_union_size_distribution"
+                    ],
+                    "target_cardinality_distribution": qasper_analysis[
+                        "target_cardinality_distribution"
+                    ],
+                    "support_checks": qasper_analysis["support_checks"],
+                    "selector_adoption_authorized": qasper_outcome[
+                        "selector_adoption_authorized"
+                    ],
+                    "reuse_v48_for_tuning_or_selection": qasper_outcome[
+                        "reuse_v48_cases_for_tuning_or_selection"
+                    ],
+                    "official_leaderboard_result": qasper_metadata[
+                        "official_leaderboard_result"
+                    ],
+                    "gate_2": qasper_outcome["gate_2"],
+                },
+            },
+        ),
+        _check(
+            "evidence_inference_low_core_divergence_external_boundary",
+            "Evidence Inference 2.0 v49 prospective low-core-divergence confirmation is reproducible without train/test access, post-result tuning, selector adoption, or Gate 2 promotion",
+            evidence_inference_low_core_divergence_readiness_passed,
+            [
+                "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_protocol_v49.json",
+                "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_implementation_v49.json",
+                "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_execution_v49.json",
+                "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_execution_erratum_v49.json",
+                "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_result_v49.json",
+                "output/rag_evaluation/evidence_inference_low_core_divergence_atomic_roles/report.md",
+                "output/rag_evaluation/evidence_inference_low_core_divergence_atomic_roles/cases.jsonl.gz",
+                "research/frc_rag/evidence_inference_low_core_divergence_atomic_roles.py",
+                "scripts/run_evidence_inference_low_core_divergence_atomic_roles.py",
+                "tests/test_frc_evidence_inference_low_core_divergence_atomic_roles.py",
+            ],
+            {
+                "status": evidence_inference_outcome["status"],
+                "cases": evidence_inference_metadata["cases"],
+                "generation_fallback_rate": evidence_inference_analysis["query_cache"][
+                    "fallback_rate"
+                ],
+                "candidate_ceiling_complete_rate": evidence_inference_analysis[
+                    "candidate_ceiling_complete_rate"
+                ],
+                "strongest_frozen_frc_control": evidence_inference_analysis[
+                    "strongest_frozen_frc_control"
+                ],
+                "strongest_non_frc": evidence_inference_analysis["strongest_non_frc"],
+                "method_aggregates": evidence_inference_aggregates,
+                "v49_minus_strongest_frozen_frc_control": (
+                    evidence_inference_analysis["family_comparison"][
+                        "v49_minus_strongest_frozen_frc_control"
+                    ]
+                ),
+                "v49_minus_strongest_non_frc": evidence_inference_analysis[
+                    "family_comparison"
+                ]["v49_minus_strongest_non_frc"],
+                "budget_deltas": evidence_inference_analysis["budget_deltas"],
+                "supported_stratum_deltas": evidence_inference_analysis[
+                    "supported_stratum_deltas"
+                ],
+                "mean_selected_unit_reduction": evidence_inference_analysis[
+                    "mean_selected_unit_reduction_vs_dynamic"
+                ],
+                "macro_recall_improvement_vs_v43": evidence_inference_analysis[
+                    "macro_recall_improvement_vs_v43"
+                ],
+                "expansion_trigger_rate": evidence_inference_analysis[
+                    "expansion_trigger_rate"
+                ],
+                "selection_set_difference_rate_vs_v43": evidence_inference_analysis[
+                    "selection_set_difference_rate_vs_v43"
+                ],
+                "argmax_core_size_distribution": evidence_inference_analysis[
+                    "argmax_core_size_distribution"
+                ],
+                "runner_up_surplus_distribution": evidence_inference_analysis[
+                    "runner_up_surplus_distribution"
+                ],
+                "target_cardinality_distribution": evidence_inference_analysis[
+                    "target_cardinality_distribution"
+                ],
+                "support_checks": evidence_inference_analysis["support_checks"],
+                "selector_adoption_authorized": evidence_inference_outcome[
+                    "selector_adoption_authorized"
+                ],
+                "reuse_v49_for_tuning_or_selection": evidence_inference_outcome[
+                    "reuse_v49_cases_for_tuning_or_selection"
+                ],
+                "official_leaderboard_result": evidence_inference_metadata[
+                    "official_leaderboard_result"
+                ],
+                "eraser_result": evidence_inference_metadata["eraser_result"],
+                "gate_2": evidence_inference_outcome["gate_2"],
+            },
+        ),
+        _check(
+            "contractnli_native_zero_consensus_external_boundary",
+            "ContractNLI v50 native-zero same-span abstention confirmation is reproducible with the schema erratum, complete blind scores, locked negative result, no test reuse, no selector adoption, and no Gate 2 promotion",
+            contractnli_native_zero_consensus_readiness_passed,
+            [
+                "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_protocol_v50.json",
+                "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_protocol_erratum_v50.json",
+                "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_implementation_erratum_v50.json",
+                "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_execution_v50.json",
+                "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_result_v50.json",
+                "output/rag_evaluation/contractnli_native_zero_consensus_abstention/report.md",
+                "output/rag_evaluation/contractnli_native_zero_consensus_abstention/cases.jsonl.gz",
+                "research/frc_rag/contractnli_native_zero_consensus_abstention.py",
+                "scripts/run_contractnli_native_zero_consensus_abstention.py",
+                "tests/test_frc_contractnli_native_zero_consensus_abstention.py",
+            ],
+            {
+                "status": contractnli_outcome["status"],
+                "cases": contractnli_metadata["cases"],
+                "label_counts": {
+                    label: sum(row["label_group"] == label for row in contractnli_cases)
+                    for label in ("Entailment", "Contradiction", "NotMentioned")
+                },
+                "candidate_ceiling_complete_rate": 1.0,
+                "query_fallback_rate": contractnli_analysis["query_cache"][
+                    "fallback_rate"
+                ],
+                "strongest_shared_gate_non_frc": contractnli_analysis[
+                    "strongest_shared_gate_non_frc"
+                ],
+                "strongest_ungated_frozen_frc": contractnli_analysis[
+                    "strongest_ungated_frozen_frc"
+                ],
+                "candidate_aggregate": contractnli_aggregates[
+                    "native_zero_consensus_adaptive_frc_v50"
+                ],
+                "family_comparison": contractnli_analysis["family_comparison"],
+                "budget_deltas": contractnli_analysis["budget_deltas"],
+                "supported_stratum_deltas": contractnli_analysis[
+                    "supported_stratum_deltas"
+                ],
+                "all_cases_passed_anchor_gate": True,
+                "all_cases_passed_consensus_gate": True,
+                "support_checks": contractnli_analysis["support_checks"],
+                "schema_repair_confirmation_not_completely_untouched": True,
+                "selector_adoption_authorized": contractnli_outcome[
+                    "selector_adoption_authorized"
+                ],
+                "reuse_v50_for_tuning_or_selection": contractnli_outcome[
+                    "reuse_v50_cases_for_tuning_or_selection"
+                ],
+                "official_leaderboard_result": contractnli_metadata[
+                    "official_leaderboard_result"
+                ],
+                "gate_2": contractnli_outcome["gate_2"],
+            },
+        ),
+        _check(
+            "contractnli_dev_robust_consensus_stop_before_train_boundary",
+            "ContractNLI v51 robust consensus development calibration is reproducible, discloses its pre-outcome execution-order erratum, publishes the failed OOF gates, and stops before train without selector or Gate 2 promotion",
+            contractnli_v51_readiness_passed,
+            [
+                "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_protocol_v51.json",
+                "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_implementation_v51.json",
+                "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_implementation_erratum_v51.json",
+                "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_development_execution_v51.json",
+                "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_development_result_v51.json",
+                "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_closure_v51.json",
+                "output/rag_evaluation/contractnli_dev_calibrated_robust_consensus/development.md",
+                "output/rag_evaluation/contractnli_dev_calibrated_robust_consensus/development_cases.jsonl.gz",
+                "research/frc_rag/contractnli_dev_calibrated_robust_consensus.py",
+                "scripts/run_contractnli_dev_calibrated_robust_consensus.py",
+                "tests/test_frc_contractnli_dev_calibrated_robust_consensus.py",
+            ],
+            {
+                "status": contractnli_v51_outcome["status"],
+                "cases": contractnli_v51_metadata["cases"],
+                "documents": contractnli_v51_metadata["documents"],
+                "label_counts": contractnli_v51_metadata["label_counts"],
+                "query_fallback_rate": 0.0,
+                "candidate_ceiling_complete_rate": 1.0,
+                "ungated_v49_aggregate": contractnli_v51_baseline,
+                "oof_candidate_aggregate": contractnli_v51_oof,
+                "oof_utility_gain_vs_ungated_v49": contractnli_v51_analysis[
+                    "oof_utility_gain_vs_ungated_v49"
+                ],
+                "oof_evidence_f1_drop_vs_ungated_v49": (
+                    contractnli_v51_analysis["oof_evidence_f1_drop_vs_ungated_v49"]
+                ),
+                "development_checks": contractnli_v51_checks,
+                "final_threshold_hex": contractnli_v51_outcome["final_threshold_hex"],
+                "execution_order_erratum_disclosed": True,
+                "train_member_opened": False,
+                "train_open_authorized": contractnli_v51_outcome[
+                    "train_open_authorized"
+                ],
+                "selector_adoption_authorized": contractnli_v51_outcome[
+                    "selector_adoption_authorized"
+                ],
+                "official_leaderboard_result": contractnli_v51_metadata[
+                    "official_leaderboard_result"
+                ],
+                "gate_2": contractnli_v51_outcome["gate_2"],
+            },
+        ),
+        _check(
+            "contractnli_rank_concurrence_confirmation_boundary",
+            "ContractNLI v52 parameter-free rank-concurrence confirmation is reproducible, publishes the failed shared-gate and evidence-retention checks, forbids confirmation reuse, and preserves selector and Gate 2 No-Go",
+            contractnli_v52_readiness_passed,
+            [
+                "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_protocol_v52.json",
+                "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_implementation_v52.json",
+                "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_execution_v52.json",
+                "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_result_v52.json",
+                "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_closure_v52.json",
+                "output/rag_evaluation/contractnli_rank_concurrence_confirmation/report.md",
+                "output/rag_evaluation/contractnli_rank_concurrence_confirmation/cases.jsonl.gz",
+                "research/frc_rag/contractnli_rank_concurrence_confirmation.py",
+                "scripts/run_contractnli_rank_concurrence_confirmation.py",
+                "tests/test_frc_contractnli_rank_concurrence_confirmation.py",
+            ],
+            {
+                "status": contractnli_v52_outcome["status"],
+                "cases": contractnli_v52_metadata["cases"],
+                "documents": contractnli_v52_metadata["documents"],
+                "label_counts": contractnli_v52_metadata["label_counts"],
+                "query_fallback_rate": contractnli_v52_analysis["query_cache"][
+                    "fallback_rate"
+                ],
+                "candidate_ceiling_complete_rate": 1.0,
+                "gate_formula": contractnli_v52_analysis["gate_formula"],
+                "candidate_aggregate": contractnli_v52_candidate,
+                "strongest_shared_gate_non_frc": contractnli_v52_analysis[
+                    "strongest_shared_gate_non_frc"
+                ],
+                "family_comparison": contractnli_v52_analysis["family_comparison"],
+                "evidence_f1_drop_vs_ungated_v49": contractnli_v52_analysis[
+                    "evidence_bearing_macro_f1_drop_vs_ungated_v49"
+                ],
+                "minimum_budget_or_supported_stratum_delta": (
+                    contractnli_v52_analysis[
+                        "minimum_budget_or_supported_stratum_delta"
+                    ]
+                ),
+                "support_checks": contractnli_v52_checks,
+                "parameter_free": True,
+                "v50_test_or_v51_dev_reused": False,
+                "confirmation_train_reuse_for_tuning_or_selection": False,
+                "selector_adoption_authorized": contractnli_v52_outcome[
+                    "selector_adoption_authorized"
+                ],
+                "official_leaderboard_result": contractnli_v52_metadata[
+                    "official_leaderboard_result"
+                ],
+                "gate_2": contractnli_v52_outcome["gate_2"],
+            },
+        ),
+        _check(
+            "cuad_top3_rank_concurrence_role_closure_boundary",
+            "CUAD v53 prospective Top-3 role-closure development is reproducible, publishes the failed retrieval, abstention, shared-gate and long-contract checks, stops before test, and preserves selector and Gate 2 No-Go",
+            cuad_v53_readiness_passed,
+            [
+                "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_protocol_v53.json",
+                "docs/progressive_upgrade/cuad_source_registration_v53.json",
+                "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_implementation_v53.json",
+                "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_execution_v53.json",
+                "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_result_v53.json",
+                "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_closure_v53.json",
+                "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_post_result_formatting_erratum_v53.json",
+                "output/rag_evaluation/cuad_top3_rank_concurrence_role_closure/development/report.md",
+                "output/rag_evaluation/cuad_top3_rank_concurrence_role_closure/development/cases.jsonl.gz",
+                "research/frc_rag/cuad_top3_rank_concurrence_role_closure.py",
+                "scripts/run_cuad_top3_rank_concurrence_role_closure.py",
+                "tests/test_frc_cuad_top3_rank_concurrence_role_closure.py",
+            ],
+            {
+                "status": cuad_v53_outcome["status"],
+                "stage": cuad_v53_metadata["stage"],
+                "cases": cuad_v53_metadata["cases"],
+                "contracts": cuad_v53_metadata["contracts"],
+                "answer_state_counts": cuad_v53_metadata["answer_state_counts"],
+                "query_fallback_rate": cuad_v53_analysis["query_cache"][
+                    "fallback_rate"
+                ],
+                "score_fallback_rate": cuad_v53_source_artifacts["score_fallback_rate"],
+                "candidate_ceiling_complete_rate": cuad_v53_analysis[
+                    "candidate_ceiling_complete_rate"
+                ],
+                "top3_gate_passed_cases": sum(
+                    row["top3_gate"]["top3_rank_concurrence_passed"]
+                    for row in cuad_v53_cases
+                ),
+                "candidate_aggregate": cuad_v53_candidate,
+                "strongest_shared_gate_non_frc": cuad_v53_analysis[
+                    "strongest_shared_gate_non_frc"
+                ],
+                "family_comparison": cuad_v53_analysis["family_comparison"],
+                "answer_recall_drop_vs_ungated_v49": cuad_v53_analysis[
+                    "answer_macro_recall_drop_vs_ungated_v49"
+                ],
+                "minimum_budget_or_supported_stratum_delta": cuad_v53_analysis[
+                    "minimum_budget_or_supported_stratum_delta"
+                ],
+                "support_checks": cuad_v53_checks,
+                "train_reuse_for_tuning_or_selection": False,
+                "test_content_opened": False,
+                "test_open_authorized": cuad_v53_outcome["test_open_authorized"],
+                "post_result_formatting_erratum_disclosed": True,
+                "official_leaderboard_result": cuad_v53_metadata[
+                    "official_leaderboard_result"
+                ],
+                "selector_adoption_authorized": cuad_v53_outcome[
+                    "selector_adoption_authorized"
+                ],
+                "gate_2": cuad_v53_outcome["gate_2"],
+            },
+        ),
+        _check(
+            "doc2dial_v54_source_quota_closure_boundary",
+            "Doc2Dial v54 fixed-source eligibility failure is reproducible, stops before scoring and preserves the unopened confirmation boundary",
+            doc2dial_v54_readiness_passed,
+            [
+                "docs/progressive_upgrade/doc2dial_document_contrastive_role_closure_protocol_v54.json",
+                "docs/progressive_upgrade/doc2dial_source_registration_v54.json",
+                "docs/progressive_upgrade/doc2dial_document_contrastive_role_closure_implementation_v54.json",
+                "docs/progressive_upgrade/doc2dial_document_contrastive_role_closure_development_result_v54.json",
+                "output/rag_evaluation/doc2dial_document_contrastive_role_closure/development/report.md",
+                "research/frc_rag/doc2dial_document_contrastive_role_closure.py",
+                "scripts/run_doc2dial_document_contrastive_role_closure.py",
+                "tests/test_frc_doc2dial_document_contrastive_role_closure.py",
+            ],
+            {
+                "status": doc2dial_v54_outcome["status"],
+                "stage": doc2dial_v54_result["stage"],
+                "phase_reached": doc2dial_v54_result["phase_reached"],
+                "candidate_agent_turns": doc2dial_v54_census["candidate_agent_turns"],
+                "answer_state_counts": doc2dial_v54_census["answer_state_counts"],
+                "registered_quota": doc2dial_v54_result["registered_quota"],
+                "confirmation_opened": False,
+                "blind_cache_written": doc2dial_v54_boundary["blind_cache_written"],
+                "neural_scoring_started": doc2dial_v54_boundary[
+                    "neural_scoring_started"
+                ],
+                "metrics_computed": doc2dial_v54_boundary["metrics_computed"],
+                "selector_adoption_authorized": doc2dial_v54_outcome[
+                    "selector_adoption_authorized"
+                ],
+                "gate_2": doc2dial_v54_outcome["gate_2"],
+            },
+        ),
+        _check(
+            "doc2dial_wood_v55_schema_closure_boundary",
+            "Doc2Dial wOOD v55 schema-adapter failure is disclosed, stops before blind scoring and preserves unopened wOOD confirmation and woOOD siblings",
+            doc2dial_v55_readiness_passed,
+            [
+                "docs/progressive_upgrade/doc2dial_wood_document_contrastive_transfer_protocol_v55.json",
+                "docs/progressive_upgrade/doc2dial_wood_source_registration_v55.json",
+                "docs/progressive_upgrade/doc2dial_wood_document_contrastive_transfer_implementation_v55.json",
+                "docs/progressive_upgrade/doc2dial_wood_document_contrastive_transfer_development_result_v55.json",
+                "output/rag_evaluation/doc2dial_wood_document_contrastive_transfer/development/report.md",
+                "research/frc_rag/doc2dial_wood_document_contrastive_transfer.py",
+                "scripts/run_doc2dial_wood_document_contrastive_transfer.py",
+                "tests/test_frc_doc2dial_wood_document_contrastive_transfer.py",
+            ],
+            {
+                "status": doc2dial_v55_outcome["status"],
+                "stage": doc2dial_v55_result["stage"],
+                "phase_reached": doc2dial_v55_result["phase_reached"],
+                "dialogues": doc2dial_v55_census["dialogues"],
+                "turn_container_shapes": doc2dial_v55_census["turn_container_shapes"],
+                "candidate_user_to_agent_turns": doc2dial_v55_census[
+                    "candidate_user_to_agent_turns"
+                ],
+                "answer_bearing_nonempty_reference": doc2dial_v55_census[
+                    "answer_bearing_nonempty_reference"
+                ],
+                "empty_reference_with_adjacent_ood_act": doc2dial_v55_census[
+                    "empty_reference_with_adjacent_ood_act"
+                ],
+                "empty_reference_without_adjacent_ood_act": doc2dial_v55_census[
+                    "empty_reference_without_adjacent_ood_act"
+                ],
+                "schema_exclusion_rate": doc2dial_v55_census[
+                    "strict_v55_schema_exclusion_rate_if_dict_containers_were_supported"
+                ],
+                "confirmation_opened": False,
+                "woood_sibling_opened": False,
+                "blind_cache_written": doc2dial_v55_boundary["blind_cache_written"],
+                "neural_scoring_started": doc2dial_v55_boundary[
+                    "neural_scoring_started"
+                ],
+                "metrics_computed": doc2dial_v55_boundary["metrics_computed"],
+                "selector_adoption_authorized": doc2dial_v55_outcome[
+                    "selector_adoption_authorized"
+                ],
+                "gate_2": doc2dial_v55_outcome["gate_2"],
+            },
+        ),
+        _check(
+            "doc2dial_wood_v56_schema_corrected_transfer_boundary",
+            "Doc2Dial wOOD v56 schema-corrected development is reproducible, publishes failed coverage, utility and safety checks, stops before confirmation and preserves Gate 2 No-Go",
+            doc2dial_v56_readiness_passed,
+            [
+                "docs/progressive_upgrade/doc2dial_wood_schema_corrected_transfer_protocol_v56.json",
+                "docs/progressive_upgrade/doc2dial_wood_source_registration_v56.json",
+                "docs/progressive_upgrade/doc2dial_wood_schema_corrected_transfer_implementation_v56.json",
+                "docs/progressive_upgrade/doc2dial_wood_schema_corrected_transfer_development_execution_v56.json",
+                "docs/progressive_upgrade/doc2dial_wood_schema_corrected_transfer_development_result_v56.json",
+                "docs/progressive_upgrade/doc2dial_wood_schema_corrected_transfer_development_closure_v56.json",
+                "output/rag_evaluation/doc2dial_wood_schema_corrected_transfer/development/report.md",
+                "output/rag_evaluation/doc2dial_wood_schema_corrected_transfer/development/cases.jsonl.gz",
+                "research/frc_rag/doc2dial_wood_schema_corrected_transfer.py",
+                "scripts/run_doc2dial_wood_schema_corrected_transfer.py",
+                "tests/test_frc_doc2dial_wood_schema_corrected_transfer.py",
+            ],
+            {
+                "status": doc2dial_v56_outcome["status"],
+                "stage": doc2dial_v56_metadata["stage"],
+                "cases": doc2dial_v56_metadata["cases"],
+                "documents": doc2dial_v56_metadata["documents"],
+                "dialogues": doc2dial_v56_metadata["dialogues"],
+                "answer_state_counts": doc2dial_v56_metadata["answer_state_counts"],
+                "no_answer_subtypes": doc2dial_v56_metadata["no_answer_subtypes"],
+                "query_fallback_rate": doc2dial_v56_analysis["query_cache"][
+                    "fallback_rate"
+                ],
+                "score_fallback_rate": doc2dial_v56_source_artifacts[
+                    "score_fallback_rate"
+                ],
+                "candidate_ceiling_complete_rate": doc2dial_v56_analysis[
+                    "candidate_ceiling_complete_rate"
+                ],
+                "candidate_aggregate": doc2dial_v56_candidate,
+                "gate_diagnostics": doc2dial_v56_analysis["gate_diagnostics"],
+                "strongest_shared_gate_non_frc": doc2dial_v56_analysis[
+                    "strongest_shared_gate_non_frc"
+                ],
+                "family_comparison": doc2dial_v56_analysis["family_comparison"],
+                "answer_recall_drop_vs_ungated_v49": doc2dial_v56_analysis[
+                    "answer_macro_recall_drop_vs_ungated_v49"
+                ],
+                "minimum_budget_or_supported_stratum_delta": doc2dial_v56_analysis[
+                    "minimum_budget_or_supported_stratum_delta"
+                ],
+                "support_checks": doc2dial_v56_checks,
+                "pre_outcome_schema_access_disclosed": doc2dial_v56_metadata[
+                    "pre_outcome_schema_access_disclosed"
+                ],
+                "confirmation_opened": False,
+                "confirmation_open_authorized": doc2dial_v56_outcome[
+                    "confirmation_open_authorized"
+                ],
+                "development_reuse_for_tuning_or_selection": False,
+                "official_shared_task_result": doc2dial_v56_metadata[
+                    "official_shared_task_result"
+                ],
+                "selector_adoption_authorized": doc2dial_v56_outcome[
+                    "selector_adoption_authorized"
+                ],
+                "gate_2": doc2dial_v56_outcome["gate_2"],
+            },
+        ),
+        _check(
+            "quac_v57_anchor_safe_consensus_slot_boundary",
+            "QuAC v57 prospective development is reproducible, preserves the anchor floor, publishes failed utility and abstention gates, stops before validation and preserves Gate 2 No-Go",
+            quac_v57_readiness_passed,
+            [
+                "docs/progressive_upgrade/quac_anchor_safe_consensus_slot_protocol_v57.json",
+                "docs/progressive_upgrade/quac_source_registration_v57.json",
+                "docs/progressive_upgrade/quac_anchor_safe_consensus_slot_implementation_v57.json",
+                "docs/progressive_upgrade/quac_anchor_safe_consensus_slot_development_execution_v57.json",
+                "docs/progressive_upgrade/quac_anchor_safe_consensus_slot_development_result_v57.json",
+                "docs/progressive_upgrade/quac_anchor_safe_consensus_slot_development_closure_v57.json",
+                "output/rag_evaluation/quac_anchor_safe_consensus_slot/development/report.md",
+                "output/rag_evaluation/quac_anchor_safe_consensus_slot/development/cases.jsonl.gz",
+                "research/frc_rag/quac_anchor_safe_consensus_slot.py",
+                "scripts/run_quac_anchor_safe_consensus_slot.py",
+                "tests/test_frc_quac_anchor_safe_consensus_slot.py",
+            ],
+            {
+                "status": quac_v57_outcome["status"],
+                "stage": quac_v57_metadata["stage"],
+                "cases": quac_v57_metadata["cases"],
+                "documents": quac_v57_metadata["documents"],
+                "dialogues": quac_v57_metadata["dialogues"],
+                "answer_state_counts": quac_v57_metadata["answer_state_counts"],
+                "schema_exclusion_rate": quac_v57_source_artifacts["sampling"][
+                    "schema_exclusion_rate"
+                ],
+                "query_fallback_rate": quac_v57_analysis["query_cache"][
+                    "fallback_rate"
+                ],
+                "score_fallback_rate": quac_v57_source_artifacts["score_fallback_rate"],
+                "decoy_fallback_rate": quac_v57_source_artifacts["structural_census"][
+                    "decoy_fallback_rate"
+                ],
+                "candidate_ceiling_complete_rate": quac_v57_analysis[
+                    "candidate_ceiling_complete_rate"
+                ],
+                "single_slot_trigger_rate": quac_v57_analysis[
+                    "single_slot_trigger_rate"
+                ],
+                "candidate_aggregate": quac_v57_candidate,
+                "gate_diagnostics": quac_v57_analysis["gate_diagnostics"],
+                "strongest_shared_gate_non_frc": quac_v57_analysis[
+                    "strongest_shared_gate_non_frc"
+                ],
+                "strongest_same_gate_frc": quac_v57_analysis["strongest_same_gate_frc"],
+                "family_comparison": quac_v57_analysis["family_comparison"],
+                "answer_recall_drop_vs_exact_anchor_ablation": quac_v57_analysis[
+                    "answer_recall_drop_vs_exact_anchor_ablation"
+                ],
+                "minimum_budget_or_supported_stratum_delta": quac_v57_analysis[
+                    "minimum_budget_or_supported_stratum_delta"
+                ],
+                "support_checks": quac_v57_checks,
+                "validation_opened": False,
+                "validation_open_authorized": quac_v57_outcome[
+                    "validation_open_authorized"
+                ],
+                "development_reuse_for_tuning_or_selection": False,
+                "official_quac_answer_result": quac_v57_metadata[
+                    "official_quac_answer_result"
+                ],
+                "selector_adoption_authorized": quac_v57_outcome[
+                    "selector_adoption_authorized"
+                ],
+                "gate_2": quac_v57_outcome["gate_2"],
+            },
+        ),
+        *[
+            _check_squad2_support_iteration(repo_root, config)
+            for config in SQUAD2_SUPPORT_ITERATIONS
+        ],
+        _check_quac_roberta_qa_support_transfer_v62(repo_root),
+        _check_quac_target_trained_qa_support_v63(repo_root),
+        _check_squad2_calibrated_roberta_support_v64(repo_root),
+        _check_musique_full_roberta_transfer_v65(repo_root),
+        _check_musique_sequential_chain_support_v66(repo_root),
+        _check_musique_calibrated_chain_support_v67(repo_root),
+        _check_musique_multisignal_chain_support_v68(repo_root),
+        _check_musique_monotone_interaction_support_v69(repo_root),
+        _check_musique_paragraph_competition_support_v70(repo_root),
+        _check_musique_bridge_counterfactual_dependence_v71(repo_root),
+        _check_musique_in_domain_rival_bridge_v72(repo_root),
+        _check_musique_context_bridge_erasure_v73(repo_root),
+        _check_twowiki_support_path_closure_v74(repo_root),
+        _check_twowiki_question_router_v75(repo_root),
+        _check_hotpot_graph_router_v76(repo_root),
+        _check_musique_graph_router_transfer_v77(repo_root),
+        _check_musique_mean_calibrated_three_route_v78(repo_root),
+        _check_musique_target_three_route_v79(repo_root),
+        _check_musique_anchor_default_terminal_v80(repo_root),
+        _check_twowiki_residual_three_route_v81(repo_root),
+        _check_twowiki_cascaded_style_residual_v82(repo_root),
+        _check_twowiki_bridge_aware_precision_trim_v83(repo_root),
+        _check_hotpot_question_type_cardinality_v84(repo_root),
         _check(
             "controlled_performance",
             "全部冻结的受控 API 性能预算通过",

@@ -1,0 +1,178 @@
+{
+  "analysis": {
+    "by_budget": {
+      "1024": {
+        "anchor_feasible_configurations": 360,
+        "configurations": 360,
+        "mean_v44_selected_units": 3.236111,
+        "mean_v45_selected_units": 3.236111,
+        "ordered_selection_equality_rate": 0.866667,
+        "target_cardinality_equality_rate": 1.0,
+        "unordered_selection_equality_rate": 1.0,
+        "v44_anchor_retention_rate_when_feasible": 1.0,
+        "v44_first_selection_equals_anchor_rate_when_feasible": 0.866667
+      },
+      "1500": {
+        "anchor_feasible_configurations": 360,
+        "configurations": 360,
+        "mean_v44_selected_units": 3.236111,
+        "mean_v45_selected_units": 3.236111,
+        "ordered_selection_equality_rate": 0.866667,
+        "target_cardinality_equality_rate": 1.0,
+        "unordered_selection_equality_rate": 1.0,
+        "v44_anchor_retention_rate_when_feasible": 1.0,
+        "v44_first_selection_equals_anchor_rate_when_feasible": 0.866667
+      },
+      "512": {
+        "anchor_feasible_configurations": 360,
+        "configurations": 360,
+        "mean_v44_selected_units": 3.236111,
+        "mean_v45_selected_units": 3.236111,
+        "ordered_selection_equality_rate": 0.866667,
+        "target_cardinality_equality_rate": 1.0,
+        "unordered_selection_equality_rate": 1.0,
+        "v44_anchor_retention_rate_when_feasible": 1.0,
+        "v44_first_selection_equals_anchor_rate_when_feasible": 0.866667
+      }
+    },
+    "by_target_cardinality": {
+      "3": {
+        "anchor_feasible_configurations": 861,
+        "configurations": 861,
+        "mean_v44_selected_units": 3.0,
+        "mean_v45_selected_units": 3.0,
+        "ordered_selection_equality_rate": 0.888502,
+        "target_cardinality_equality_rate": 1.0,
+        "unordered_selection_equality_rate": 1.0,
+        "v44_anchor_retention_rate_when_feasible": 1.0,
+        "v44_first_selection_equals_anchor_rate_when_feasible": 0.888502
+      },
+      "4": {
+        "anchor_feasible_configurations": 183,
+        "configurations": 183,
+        "mean_v44_selected_units": 4.0,
+        "mean_v45_selected_units": 4.0,
+        "ordered_selection_equality_rate": 0.786885,
+        "target_cardinality_equality_rate": 1.0,
+        "unordered_selection_equality_rate": 1.0,
+        "v44_anchor_retention_rate_when_feasible": 1.0,
+        "v44_first_selection_equals_anchor_rate_when_feasible": 0.786885
+      },
+      "5": {
+        "anchor_feasible_configurations": 36,
+        "configurations": 36,
+        "mean_v44_selected_units": 5.0,
+        "mean_v45_selected_units": 5.0,
+        "ordered_selection_equality_rate": 0.75,
+        "target_cardinality_equality_rate": 1.0,
+        "unordered_selection_equality_rate": 1.0,
+        "v44_anchor_retention_rate_when_feasible": 1.0,
+        "v44_first_selection_equals_anchor_rate_when_feasible": 0.75
+      }
+    },
+    "outcome": {
+      "gate_2": "NO-GO/SHADOW",
+      "reuse_v45_for_tuning_or_selection": false,
+      "selector_adoption_authorized": false,
+      "status": "FINQA_V45_V44_SET_EQUIVALENT_ORDER_DIFFERENT_ON_FROZEN_SCORES",
+      "v45_locked_outcome_changed": false
+    },
+    "overall": {
+      "anchor_feasible_configurations": 1080,
+      "configurations": 1080,
+      "mean_v44_selected_units": 3.236111,
+      "mean_v45_selected_units": 3.236111,
+      "ordered_selection_equality_rate": 0.866667,
+      "target_cardinality_equality_rate": 1.0,
+      "unordered_selection_equality_rate": 1.0,
+      "v44_anchor_retention_rate_when_feasible": 1.0,
+      "v44_first_selection_equals_anchor_rate_when_feasible": 0.866667
+    }
+  },
+  "experiment_id": "FRC-FINQA-ANCHOR-EQUIVALENCE-DIAGNOSTIC-V45",
+  "limitations": [
+    "This is a post-result descriptive diagnostic on the revealed FinQA score cache.",
+    "Behavioral equivalence on this cache does not prove general equivalence on other datasets or scores.",
+    "No supporting-fact labels, questions, candidate text, answers, programs, or source modes are used."
+  ],
+  "metadata": {
+    "budgets": [
+      512,
+      1024,
+      1500
+    ],
+    "case_budget_configurations": 1080,
+    "cases": 360,
+    "gold_joined": false,
+    "integrity": {
+      "diagnostic_module_sha256": "b3ef22083f7f3d1a6aef047dc217e49d5bd6509b406ac6c3696d84d091b415ce",
+      "diagnostic_runner_sha256": "9f26e4b7705758ae4ebbe956f07c1f6e0b7afee38ef89d6c7b69d28aab20b01c",
+      "diagnostic_test_sha256": "d5976a457692db3350c0c06320166ddf9ff4e89dcb6ae3360b1ee8dde4bab87e",
+      "locked_result_sha256": "53f2e6ca555184bb0d5e473f7c4d4df19e102a9bceed42f930ae85ee20a6ed84",
+      "protocol": {
+        "allowed_fields": [
+          "case id",
+          "candidate id and source id",
+          "candidate token count",
+          "cross-encoder and dynamic-role scores"
+        ],
+        "experiment_id": "FRC-FINQA-ANCHOR-EQUIVALENCE-DIAGNOSTIC-V45",
+        "forbidden_inputs": [
+          "qa.gold_inds or mapped gold candidate ids",
+          "answer, program or execution answer",
+          "source mode or gold count",
+          "question or candidate text content",
+          "supporting-fact metric or method outcome"
+        ],
+        "frozen_inputs": {
+          "budgets": [
+            512,
+            1024,
+            1500
+          ],
+          "cases": 360,
+          "expected_case_budget_configurations": 1080,
+          "frozen_selector_module_sha256": "7f3c60e7aec7d93951fd3b12b52d12c2258f00daec324d448abe7e5de2ec2c7d",
+          "locked_result_sha256": "53f2e6ca555184bb0d5e473f7c4d4df19e102a9bceed42f930ae85ee20a6ed84",
+          "scored_blind_cache_sha256": "7ecba0f941c26f332caf042a692f4370012b77d60a0fa623aae8895b7b5136dc"
+        },
+        "frozen_metrics": [
+          "v44 and v45 target-cardinality equality rate",
+          "ordered-selection equality rate",
+          "unordered-selection equality rate",
+          "v44 final-set retention rate of the highest feasible cross-encoder anchor",
+          "v44 first-selected-candidate equality rate with that anchor",
+          "configuration counts by budget and target cardinality",
+          "all preceding rates repeated by budget and target cardinality"
+        ],
+        "interpretation_rules": {
+          "all_ordered_selections_equal": "The explicit v45 anchor operation is behaviorally redundant with v44 on the frozen FinQA score cache; this explains zero metric delta but does not prove general redundancy.",
+          "any_alignment_or_blindness_failure": "Stop without a diagnostic result.",
+          "sets_equal_but_orders_differ": "The two selectors choose the same evidence sets but traverse them differently; set-valued metrics cannot detect the ordering difference.",
+          "some_sets_differ": "The zero aggregate metric delta is coincidental at the locked endpoint and cannot be attributed to selector equivalence."
+        },
+        "publication_boundary": {
+          "gate_2": "NO-GO/SHADOW",
+          "no_new_support_check": true,
+          "no_reuse_of_v45_for_tuning": true,
+          "no_selector_adoption": true,
+          "publish_null_or_non_equivalent_result": true
+        },
+        "registered_at": "2026-08-02T16:10:00+08:00",
+        "schema_version": "frc-finqa-anchor-equivalence-diagnostic-protocol-v45",
+        "timing_and_scope": {
+          "confirmatory_or_causal_claim_authorized": false,
+          "diagnostic_only": true,
+          "method_selection_or_threshold_tuning_authorized": false,
+          "registered_after_locked_v45_result": true,
+          "v45_outcome_may_change": false
+        }
+      },
+      "protocol_sha256": "2364924ba8210d4d818d6493cb1a02c021bf472a7c4595ed6ec8ecfa2fce29a3",
+      "scored_blind_cache_sha256": "7ecba0f941c26f332caf042a692f4370012b77d60a0fa623aae8895b7b5136dc"
+    },
+    "post_result_diagnostic": true,
+    "question_or_candidate_text_used": false
+  },
+  "schema_version": "frc-finqa-anchor-equivalence-diagnostic-v45"
+}

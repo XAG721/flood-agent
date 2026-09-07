@@ -1,0 +1,148 @@
+{
+  "schema_version": "frc-scifact-v42-result-record-v1",
+  "closed_at": "2026-08-01T22:42:54.8942836+08:00",
+  "experiment_id": "FRC-SCIFACT-DYNAMIC-ATOMIC-ROLES-V42",
+  "status": "SCIFACT_DYNAMIC_ATOMIC_ROLE_SUPPORT_NOT_ESTABLISHED",
+  "artifact_sha256": {
+    "protocol": "62987d6430cef9ef91c0de1f15f8f192749f5ab6b5341117da99933d3b7892ab",
+    "implementation_registration": "1cc0a7cbe572b3332c2a9f879495ca939aa019928cb64ede6d7cb9905b459a62",
+    "execution_registration": "81664c78d757154cdfe1a1f87dd2c0d5c9d948721b4c081aad5dfe5b106827a8",
+    "prepared_blind_cache": "c937155aec761b6cfed5718ef7d5cec33de9d9ca2a2cc8d9bcd60c970559de53",
+    "atomic_query_cache": "326166e8fa6ff1cd96bdb9bcbd8f35a0a46fbfda3e77222963f9a096b5fd2325",
+    "blind_score_cache": "f97d8482f2b730ff3f1dc7cdf4f38773a20030e4366a531d798857c3b15ff529",
+    "report_json": "f003a63d335d7ce026a7cb9bbffeb326af73aad9c2007b60b088ee91baac7865",
+    "report_markdown": "5fa8fb9df49398d3560f6a372642689014ea48c476bb896dc41d694658a510ed",
+    "public_case_evidence": "e21ffeef07a7cb0896adc77f17ef71be5d6f7549629a2b57a98af8ab9d858271"
+  },
+  "boundary_verification": {
+    "implementation_registered_before_download": true,
+    "source_and_blind_cache_registered_before_generation_or_scoring": true,
+    "prepared_rows": 187,
+    "query_rows": 187,
+    "score_rows": 187,
+    "ordered_alignment": true,
+    "forbidden_query_or_score_cache_rows": 0,
+    "candidate_score_cardinality_valid": true,
+    "all_scores_finite": true,
+    "gold_joined_only_after_complete_blind_score_cache": true,
+    "report_second_write_byte_deterministic": true,
+    "raw_claim_title_abstract_evidence_or_document_ids_committed": false
+  },
+  "source_census": {
+    "corpus_documents": 5183,
+    "dev_claims": 300,
+    "documentation_examples_excluded": 1,
+    "empty_evidence_structurally_non_evaluable": 112,
+    "primary_cases": 187,
+    "candidate_documents_per_case": 20,
+    "candidate_chunks": 5701,
+    "candidate_ceiling_complete_cases": 173,
+    "candidate_ceiling_incomplete_cases": 14,
+    "mean_candidate_ceiling": 0.942246,
+    "support_cases": 123,
+    "contradict_cases": 64,
+    "mixed_cases": 0,
+    "one_gold_document_cases": 177,
+    "two_or_more_gold_document_cases": 10
+  },
+  "query_generation": {
+    "model": "Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4",
+    "rows": 187,
+    "fallback_count": 1,
+    "fallback_rate": 0.005348,
+    "fallback_limit": 0.05,
+    "fallback_check_passed": true,
+    "gold_fields_visible_to_generator": false,
+    "elapsed_seconds": 1296.1
+  },
+  "gold_free_mechanism_diagnostic": {
+    "static_within_family_mean_spearman": 0.933879,
+    "dynamic_within_family_mean_spearman": 0.615457,
+    "spearman_reduction": 0.318422,
+    "static_mean_distinct_role_argmax": 1.26738,
+    "dynamic_mean_distinct_role_argmax": 1.919786,
+    "distinct_argmax_gain": 0.652406,
+    "static_dynamic_ordered_selection_identity": 0.56328,
+    "all_v41_mechanism_checks_passed": true,
+    "interpretation": "Dynamic atomic queries create materially less-correlated role signals and different selections on SciFact, so the negative utility result is not explained by static-role signal collapse."
+  },
+  "primary_results": {
+    "metric": "document_evidence_f1",
+    "means_over_cases_and_512_1024_1500_token_budgets": {
+      "bm25_topk": 0.373394,
+      "dense_topk": 0.460616,
+      "hybrid_topk": 0.437297,
+      "cross_encoder_topk": 0.442744,
+      "cross_encoder_knapsack": 0.435839,
+      "static_threshold_frc_v39_replay": 0.441734,
+      "static_rank_coverage_frc_v41": 0.401088,
+      "dynamic_rank_coverage_frc_v41": 0.403909
+    },
+    "observed_strongest_non_frc": "dense_topk",
+    "dynamic_minus_static_rank": {
+      "point": 0.002821,
+      "ci_low": -0.007003,
+      "ci_high": 0.012092,
+      "resamples": 10000,
+      "seed": 20260802
+    },
+    "dynamic_minus_bootstrap_strongest_non_frc": {
+      "point": -0.056707,
+      "ci_low": -0.078099,
+      "ci_high": -0.036516,
+      "resamples": 10000,
+      "seed": 20260802
+    },
+    "budget_deltas_vs_strongest_non_frc": {
+      "512": -0.025847,
+      "1024": -0.074217,
+      "1500": -0.072248
+    }
+  },
+  "supported_safety_strata": {
+    "label=SUPPORT": {
+      "cases": 123,
+      "dynamic_minus_strongest_non_frc": -0.041173
+    },
+    "label=CONTRADICT": {
+      "cases": 64,
+      "dynamic_minus_strongest_non_frc": -0.086562
+    },
+    "gold_documents=1": {
+      "cases": 177,
+      "dynamic_minus_strongest_non_frc": -0.058569
+    },
+    "candidate_ceiling_complete": {
+      "cases": 173,
+      "dynamic_minus_strongest_non_frc": -0.06428
+    }
+  },
+  "support_checks": {
+    "dynamic_minus_static_point_at_least_0_005": false,
+    "dynamic_minus_static_ci_low_above_0": false,
+    "dynamic_minus_strongest_point_at_least_0_01": false,
+    "dynamic_minus_strongest_ci_low_above_0": false,
+    "every_budget_and_supported_stratum_at_least_minus_0_02": false,
+    "generation_fallback_rate_at_most_0_05": true,
+    "no_forbidden_field_leak": true,
+    "all_required": false
+  },
+  "diagnostic_interpretation": {
+    "finding": "The role mechanism transferred, but the rank-coverage objective did not transfer to utility.",
+    "evidence": "At 1024 and 1500 tokens the dynamic selector maintained recall near 0.89-0.91 while selecting about 3.84-4.91 documents, which diluted precision on a split where 177 of 187 cases have one gold document. Dense top-k selected fewer documents and achieved the best mean F1.",
+    "causal_claim_authorized": false,
+    "reason": "This is a post-result diagnostic association, not a preregistered causal ablation."
+  },
+  "decision": {
+    "dynamic_atomic_role_support_established": false,
+    "selector_adoption_authorized": false,
+    "gate_2": "NO-GO/SHADOW",
+    "gate_2_change": false,
+    "canary_or_default_authorized": false,
+    "setr_reproduced": false,
+    "flood_domain_effectiveness_established": false,
+    "scifact_reuse_for_tuning_or_selection": false,
+    "negative_result_published": true
+  },
+  "next_step": "Do not retune or re-evaluate on SciFact. If the selector is changed to condition role coverage on evidence multiplicity or precision risk, freeze that change using synthetic invariants only and evaluate once on another untouched public dataset under a new preregistration."
+}

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..v2.models import AgentResult, AgentTask, AgentTaskEvent, SharedMemorySnapshot
+from ..compat.legacy_platform.models import AgentResult, AgentTask, AgentTaskEvent, SharedMemorySnapshot
 
 
 class AgentRepositoryMixin:

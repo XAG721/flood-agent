@@ -1,0 +1,184 @@
+{
+  "analysis": {
+    "direct_composed_question": {
+      "answerable_rows": 300,
+      "answerable_support_pass_rate": 0.61,
+      "balanced_accuracy": 0.568333,
+      "rows": 600,
+      "unanswerable_rejection_rate": 0.526667,
+      "unanswerable_rows": 300
+    },
+    "direct_passed_unanswerable_traps": {
+      "cases": 142,
+      "sequential_rejection_rate": 0.697183
+    },
+    "invalid_chain_output_count": 0,
+    "oracle_plan_sequential_chain": {
+      "answerable_rows": 300,
+      "answerable_support_pass_rate": 0.39,
+      "balanced_accuracy": 0.603333,
+      "rows": 600,
+      "unanswerable_rejection_rate": 0.816667,
+      "unanswerable_rows": 300
+    },
+    "outcome": {
+      "canary_or_default_authorized": false,
+      "confirmation_open_authorized": false,
+      "gate_2": "NO-GO/SHADOW",
+      "reuse_failed_stage_for_tuning_threshold_rule_gate_or_selection": false,
+      "selector_adoption_authorized": false,
+      "selector_or_retrieval_scoring_part_of_v66": false,
+      "stage_gate_passed": false,
+      "status": "MUSIQUE_V66_SEQUENTIAL_CHAIN_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+    },
+    "paired_correctness_delta": {
+      "ci_high": 0.085,
+      "ci_low": -0.015,
+      "point": 0.035,
+      "resamples": 10000,
+      "seed": 20260820
+    },
+    "support_checks": {
+      "direct_passed_unanswerable_trap_cases_at_least_100": true,
+      "every_observed_unanswerable_hop_stratum_rejection_rate_at_least_0_75": true,
+      "exact_answer_state_balance": true,
+      "exact_cases_equals_600": true,
+      "invalid_chain_output_rate_equals_0": true,
+      "schema_exclusion_rate_at_most_0_01": true,
+      "selected_squad2_exact_question_overlap_equals_0": true,
+      "selected_v65_source_overlap_equals_0": true,
+      "sequential_chain_answerable_pass_rate_at_least_0_60": false,
+      "sequential_chain_balanced_accuracy_at_least_0_72": false,
+      "sequential_chain_trap_rejection_rate_at_least_0_65": true,
+      "sequential_chain_unanswerable_rejection_rate_at_least_0_80": true,
+      "sequential_minus_direct_balanced_accuracy_at_least_0_10": false,
+      "sequential_minus_direct_correctness_ci_low_above_0_05": false
+    },
+    "unanswerable_hop_strata": {
+      "2": {
+        "cases": 231,
+        "rejection_rate": 0.779221
+      },
+      "3": {
+        "cases": 54,
+        "rejection_rate": 0.944444
+      },
+      "4": {
+        "cases": 15,
+        "rejection_rate": 0.933333
+      }
+    }
+  },
+  "experiment_id": "FRC-MUSIQUE-SEQUENTIAL-CHAIN-SUPPORT-V66",
+  "metadata": {
+    "answer_state_counts": {
+      "answerable": 300,
+      "unanswerable": 300
+    },
+    "automatic_decomposer_result": false,
+    "cases": 600,
+    "dataset_id": "musique_full_v1.0_train_v66_case_disjoint_successor",
+    "official_musique_leaderboard_result": false,
+    "source_artifacts": {
+      "candidate_map_sha256": "51149c2f3d16bb1b666881b3d22c1f36e7d6d41d4f56013afc3be6889c4348fe",
+      "chain_decisions_sha256": "fbc41e66b80ede8c0672c0aae12a7e90c2e76bfe5eb0b81371a802f054ff6f34",
+      "direct_decisions_sha256": "44aef96ab96a9325b53064b1a84f9e415d89a1446a695f0e4ba883970fefa87c",
+      "direct_qa_input_sha256": "eff6ec2f8a2f457f0285d2f6a43eb65f4e47b6faae95be1690390af7b9dd448f",
+      "direct_raw_qa_sha256": "31ba72f27b12bda65cbfec763dbe5110a8cc06e5cf7d23710e41675539ad0f4d",
+      "execution_registration_sha256": "ab7c2f394661306cd8e9193c2b9cc44a3b51c86b441eb9f0845bba8ccf1713a6",
+      "gold_joined_after_complete_direct_and_sequential_qa": true,
+      "hop_artifacts": {
+        "1": {
+          "decisions": "a0574468d733d987d574944f25cab5a8128e4a82441d7929c3b1c43aef0163dd",
+          "input": "5fe01d2caccb784fbe51cf72b41f75ea7f9b9bf1fd9804cc3071cc4842eb5da5",
+          "raw": "1d8454255eff1a9bd188530ed9236d0dd5e823ff0da6d40b9677b20492a413f9"
+        },
+        "2": {
+          "decisions": "384bf810c197df8c25cccc2dfb4a87906ac1514c5da013c7a80c2c9348a2d71a",
+          "input": "3dd9a879d7c2e903f713b3720b63695cc523a2e0a498e3dbff24026946165e0a",
+          "raw": "554a7eab39ae77049f65db2d456eae21c78e219b68ed300e451d961f75026e04"
+        },
+        "3": {
+          "decisions": "c6157950d97d818e65d9838446d22a80d2ec493c8be161fa3e30890e5b252f3c",
+          "input": "78ce41becdae04665fbb4d741c29794b534d7a20e233bd0e49ff28b585c17a86",
+          "raw": "aa4b114fa56079e1fae4438afd76383ac2a84c3d510e2e2aaee1a74a71126e6f"
+        },
+        "4": {
+          "decisions": "44056260cfa80f1bbfaccd13d049757f8b43eb17a56f3ae0845ff71eda02a99b",
+          "input": "678e8926b1f128f34fc5cd7b9db9c3ed10f84c8053624b7977aec0b9813e7fdd",
+          "raw": "eccd4de74afa268bbf0632baf287fb87d80340a20397d72f993284ca42882695"
+        }
+      },
+      "implementation_registration_sha256": "0b4ca1e51a404d9449c9c3f4704fa48eec51ee6b832fcba1905a88a002563cb7",
+      "model_registration_sha256": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+      "prepared_blind_sha256": "c28af459f345708169cb6e292764bb8645ab47525ca10bbde3b65f2553f6fd43",
+      "protocol_sha256": "518bb128745521677e3e5b33e42cfd7484aab8163c1fb3441fb4192c1aa70456",
+      "retrieval_scoring_started": false,
+      "runtime": {
+        "cuda_available": true,
+        "cuda_runtime": "12.4",
+        "gpu": "NVIDIA GeForce RTX 4060 Ti",
+        "gpu_memory_mib": 16380,
+        "numpy": "2.2.6",
+        "parameters": {
+          "device": "cuda",
+          "fp16": true,
+          "locked_threshold": 0.974609375,
+          "offline_model_loading": true,
+          "qa_batch_size": 16,
+          "qa_chunk_rows": 64,
+          "qa_doc_stride": 128,
+          "qa_max_length": 384,
+          "qa_maximum_answer_tokens": 30
+        },
+        "platform": "Windows-10-10.0.19045-SP0",
+        "python": "3.10.20",
+        "torch": "2.4.1+cu124",
+        "transformers": "4.46.3"
+      },
+      "sampling": {
+        "duplicate_assigned_source_rows_excluded": 0,
+        "eligible_answer_state_counts_after_exclusion": {
+          "answerable": 8097,
+          "unanswerable": 8246
+        },
+        "excluded_source_commitment_rows": 1800,
+        "pair_assignment_excluded_rows": 16344,
+        "schema_excluded_cases": 1,
+        "schema_exclusion_rate": 2.507774099709098e-05,
+        "schema_exclusion_reasons": {
+          "insufficient_paragraphs": 1
+        },
+        "selected_answer_state_counts": {
+          "answerable": 300,
+          "unanswerable": 300
+        },
+        "selected_cases": 600,
+        "selected_excluded_source_commitment_overlap": 0,
+        "selected_source_id_commitment": "f807485528872a53223038d305041c8d15ea22f22a31b92c0c12c1f7ec154242",
+        "selected_squad2_exact_question_overlap": 0,
+        "source_rows": 39876,
+        "squad2_exact_question_overlap_excluded": 5388,
+        "stage": "development",
+        "target_cases": 600
+      },
+      "source_registration_sha256": "0febdc4c8ae7e495c7f79d826444633a154feeac64017d5d22095dbd6494dd3f",
+      "structural_census": {
+        "direct_qa_input_rows": 12000,
+        "gold_fields_exported_to_blind_caches": false,
+        "hop_count_distribution": {
+          "2": 460,
+          "3": 114,
+          "4": 26
+        },
+        "maximum_paragraphs": 20,
+        "mean_paragraphs": 20.0,
+        "minimum_paragraphs": 20,
+        "prepared_cases": 600
+      }
+    },
+    "stage": "development",
+    "strict_independent_model_training_confirmation": false
+  },
+  "schema_version": "frc-musique-v66-stage-result-v1"
+}

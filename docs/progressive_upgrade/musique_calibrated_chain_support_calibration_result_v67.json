@@ -1,0 +1,233 @@
+{
+  "analysis": {
+    "direct_composed_question": {
+      "crossfit": {
+        "answerable_pass_rate": 0.594,
+        "balanced_accuracy": 0.593,
+        "folds": [
+          {
+            "fold": 0,
+            "held_out_cases": 200,
+            "threshold_exact": 1.318359375,
+            "train_cases": 800,
+            "training_safety_constraints_met": false
+          },
+          {
+            "fold": 1,
+            "held_out_cases": 189,
+            "threshold_exact": 1.16015625,
+            "train_cases": 811,
+            "training_safety_constraints_met": false
+          },
+          {
+            "fold": 2,
+            "held_out_cases": 216,
+            "threshold_exact": 1.318359375,
+            "train_cases": 784,
+            "training_safety_constraints_met": false
+          },
+          {
+            "fold": 3,
+            "held_out_cases": 185,
+            "threshold_exact": 1.318359375,
+            "train_cases": 815,
+            "training_safety_constraints_met": false
+          },
+          {
+            "fold": 4,
+            "held_out_cases": 210,
+            "threshold_exact": 1.0400390625,
+            "train_cases": 790,
+            "training_safety_constraints_met": false
+          }
+        ],
+        "held_out_cases": 1000,
+        "unanswerable_rejection_rate": 0.592
+      },
+      "pooled": {
+        "answerable_pass_rate": 0.6,
+        "answerable_rows": 500,
+        "balanced_accuracy": 0.595,
+        "candidate_threshold_count": 967,
+        "rows": 1000,
+        "safety_constraints_met": false,
+        "threshold_exact": 1.216796875,
+        "unanswerable_rejection_rate": 0.59,
+        "unanswerable_rows": 500
+      }
+    },
+    "oracle_plan_chain_bottleneck": {
+      "crossfit": {
+        "answerable_pass_rate": 0.59,
+        "balanced_accuracy": 0.662,
+        "folds": [
+          {
+            "fold": 0,
+            "held_out_cases": 200,
+            "threshold_exact": -1.0703125,
+            "train_cases": 800,
+            "training_safety_constraints_met": false
+          },
+          {
+            "fold": 1,
+            "held_out_cases": 189,
+            "threshold_exact": -1.08648681640625,
+            "train_cases": 811,
+            "training_safety_constraints_met": false
+          },
+          {
+            "fold": 2,
+            "held_out_cases": 216,
+            "threshold_exact": -0.9901123046875,
+            "train_cases": 784,
+            "training_safety_constraints_met": false
+          },
+          {
+            "fold": 3,
+            "held_out_cases": 185,
+            "threshold_exact": -1.0703125,
+            "train_cases": 815,
+            "training_safety_constraints_met": false
+          },
+          {
+            "fold": 4,
+            "held_out_cases": 210,
+            "threshold_exact": -1.0703125,
+            "train_cases": 790,
+            "training_safety_constraints_met": false
+          }
+        ],
+        "held_out_cases": 1000,
+        "unanswerable_rejection_rate": 0.734
+      },
+      "pooled": {
+        "answerable_pass_rate": 0.592,
+        "answerable_rows": 500,
+        "balanced_accuracy": 0.664,
+        "candidate_threshold_count": 966,
+        "rows": 1000,
+        "safety_constraints_met": false,
+        "threshold_exact": -1.0703125,
+        "unanswerable_rejection_rate": 0.736,
+        "unanswerable_rows": 500
+      }
+    }
+  },
+  "experiment_id": "FRC-MUSIQUE-CALIBRATED-CHAIN-SUPPORT-V67",
+  "metadata": {
+    "answer_state_counts": {
+      "answerable": 500,
+      "unanswerable": 500
+    },
+    "cases": 1000,
+    "gold_joined_after_complete_direct_and_chain_qa": true,
+    "learned_parameter_count": 2,
+    "sampling": {
+      "duplicate_assigned_source_rows_excluded": 0,
+      "eligible_answer_state_counts_after_exclusion": {
+        "answerable": 7957,
+        "unanswerable": 7786
+      },
+      "excluded_source_commitment_rows": 3000,
+      "pair_assignment_excluded_rows": 15744,
+      "schema_excluded_cases": 1,
+      "schema_exclusion_rate": 2.507774099709098e-05,
+      "schema_exclusion_reasons": {
+        "insufficient_paragraphs": 1
+      },
+      "selected_answer_state_counts": {
+        "answerable": 500,
+        "unanswerable": 500
+      },
+      "selected_cases": 1000,
+      "selected_excluded_source_commitment_overlap": 0,
+      "selected_source_id_commitment": "e485efa54d36e2a90627f08f2a36a8b329b0c8a01fd9fcbb0209ace25857ad22",
+      "selected_squad2_exact_question_overlap": 0,
+      "source_rows": 39876,
+      "source_split": "train",
+      "squad2_exact_question_overlap_excluded": 5388,
+      "stage": "calibration",
+      "target_cases": 1000
+    },
+    "source_artifacts": {
+      "candidate_map_sha256": "374e9402a9ff030494756ed52913ea491f7e1bfb6279ae3b12dcbfcda363748f",
+      "chain_decisions_sha256": "4467f03c6fb779ba4abd20b7551a4825c9dd59ad6e2331c3dcf9405e45f6163e",
+      "direct_decisions_sha256": "0e37f4b2304f4cf191cc2215518c84360c65737f4e777b06248caae408356599",
+      "direct_qa_input_sha256": "60d4b751e4eea2d07645f461a9e1dfdfac6be98a5c806db17586ad2e964aea05",
+      "direct_raw_qa_sha256": "2a5aa9d4a193e1ee09dc181186269965dd99a5baf7bb941e59ee23de01855f92",
+      "execution_registration_sha256": "b03bd3ac26d0c927fdc43db983304b26886579ff5a2786631446707ba88fe5f6",
+      "hop_artifacts": {
+        "1": {
+          "decisions": "5dfcd46cae551bd87972fd15f8b679d448819a17ef0bf2cf6ade322c82b5507c",
+          "input": "a7b214ed800fb568ecd007dcb52561a6064b306f1a6b9a408e79cdb7e386d0c3",
+          "raw": "53bf0fe4d24540483ff7a8468336c3214568def5a5eaaf89751e03801fd44a4e"
+        },
+        "2": {
+          "decisions": "6d648672c00718d810fdabad82ce2a5f5a65d97f381a113fe30d77eb40f69f31",
+          "input": "835981df472b97abfa95c6d5f73899f60ef6ff6cfdae00b891265f9c75315490",
+          "raw": "263c9c1642820837e82c5a7aa5e1b0180cfd1432ebbeec0a23b34bb238a0b509"
+        },
+        "3": {
+          "decisions": "483051cf665cb7a0eb3567f72ce1b4e14bfac11bdab2872cd4649751e0895d40",
+          "input": "58dbadb57eae4d58fac53d7d65a21d2215566955272e778529e53509c8193fed",
+          "raw": "8def45a3041570b5b8c555600910298cea48a36f6fce266c730993412f23f847"
+        },
+        "4": {
+          "decisions": "37d1f4e8ac70d538dfc4a55566c263515ddebae061622b5e318235de7d4e68dc",
+          "input": "8ec3ff83d1dfca552c4300622da7002d88d25a9732e0b09eacd0b06e884d92e8",
+          "raw": "0bde623156800c327d3d2e3489d7ac17aaf59572ff9ecc03bd2e7df3865f1075"
+        }
+      },
+      "implementation_registration_sha256": "0ddf775604f4f19fb941859453fd0e135aacf6a8dc561407d188c8d71d33546a",
+      "model_registration_sha256": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+      "prepared_blind_sha256": "3e49802feba4a369d5ca2c40d577ff2df17c033930f2cf2dc1380a57d9354e37",
+      "protocol_sha256": "e1e89f88daa6f5c213f86d32e3394bd12c5fa62516cf4cf4e107a677219cfa45",
+      "retrieval_scoring_started": false,
+      "runtime": {
+        "cuda_available": true,
+        "cuda_runtime": "12.4",
+        "gpu": "NVIDIA GeForce RTX 4060 Ti",
+        "gpu_memory_mib": 16379,
+        "numpy": "2.2.6",
+        "parameters": {
+          "device": "cuda",
+          "fp16": true,
+          "intermediate_margin_threshold": null,
+          "learned_calibration_threshold_count": 2,
+          "offline_model_loading": true,
+          "qa_batch_size": 16,
+          "qa_chunk_rows": 64,
+          "qa_doc_stride": 128,
+          "qa_max_length": 384,
+          "qa_maximum_answer_tokens": 30
+        },
+        "platform": "Windows-10-10.0.19045-SP0",
+        "python": "3.10.20",
+        "torch": "2.4.1+cu124",
+        "transformers": "4.46.3"
+      },
+      "source_registration_sha256": "5582a96af68c9aeb65e53ee2b44e9c84b12779d9a56f70b3eb9cac03244c7b77"
+    },
+    "stage": "calibration",
+    "structural_census": {
+      "direct_qa_input_rows": 19998,
+      "gold_fields_exported_to_blind_caches": false,
+      "hop_count_distribution": {
+        "2": 742,
+        "3": 220,
+        "4": 38
+      },
+      "maximum_paragraphs": 20,
+      "mean_paragraphs": 19.998,
+      "minimum_paragraphs": 18,
+      "prepared_cases": 1000
+    }
+  },
+  "outcome": {
+    "calibration_alone_authorizes_adoption": false,
+    "development_open_authorized": true,
+    "gate_2": "NO-GO/SHADOW",
+    "status": "MUSIQUE_V67_THRESHOLDS_FROZEN_OPEN_DEVELOPMENT"
+  },
+  "schema_version": "frc-musique-v67-calibration-result-v1"
+}

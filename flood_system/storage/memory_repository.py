@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..v2.models import (
+from ..compat.legacy_platform.models import (
     DailyReportRecord,
     DailyReportRunRecord,
     EventEpisodeSummaryRecord,

@@ -1,0 +1,116 @@
+{
+  "schema_version": "frc-twowiki-question-router-protocol-v75",
+  "experiment_id": "FRC-2WIKI-QUESTION-ROUTED-SUPPORT-PATH-V75",
+  "frozen_on": "2026-08-04",
+  "research_question": "Can a question-text-only learned router choose between the frozen v74 soft-title-link and alternating-anchor selectors more accurately than every same-resource static control on case-disjoint 2WikiMultiHopQA examples?",
+  "history_boundary": {
+    "router_model_artifact": "docs/progressive_upgrade/twowiki_question_router_model_development_v75.json",
+    "router_history_cases": 800,
+    "all_1000_earlier_history_and_800_v74_development_ids_excluded": true,
+    "no_v75_target_case_id_row_score_or_metric_used_to_choose_features_model_threshold_gate_or_stage_size": true
+  },
+  "stages": {
+    "development": {
+      "source_split": "dev",
+      "cases": 800,
+      "question_type_quota": {"bridge_comparison": 200, "comparison": 200, "compositional": 200, "inference": 200},
+      "ordering": "SHA-256('FRC-2WIKI-V75-DEVELOPMENT|' + case id), then case id",
+      "exclude_all_1800_prior_ids": true
+    },
+    "confirmation": {
+      "source_split": "dev",
+      "cases": 800,
+      "question_type_quota": {"bridge_comparison": 200, "comparison": 200, "compositional": 200, "inference": 200},
+      "ordering": "SHA-256('FRC-2WIKI-V75-CONFIRMATION|' + case id), then case id",
+      "exclude_all_prior_and_v75_development_ids": true,
+      "open_only_if_every_development_gate_passes": true
+    }
+  },
+  "common_resources": {
+    "top_k": 5,
+    "token_budget": 1500,
+    "embedding_model": "BAAI/bge-large-en-v1.5@d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "score_calibration": "per-case min-max",
+    "role_relevance_mix": 0.15,
+    "rrf_k": 60
+  },
+  "router": {
+    "name": "learned_question_routed_support_path_v75",
+    "model_artifact_sha256": "b12c128f06c4ab14851d2f24538a15e76f5f9ff7336a7968c7b01d7c5062cbc0",
+    "model_payload_sha256": "31562661eacb70f3881dad0a6b17a70d272d7012d938187ef59a29336af5aa7b",
+    "runtime_input": "question text only",
+    "features": "length, punctuation, initial interrogative, 23 frozen lexical indicators, SHA-256 hashed binary unigrams and bigrams",
+    "hash_dimension": 64,
+    "model": "L2-regularized logistic regression",
+    "l2": 8.0,
+    "threshold": 0.5,
+    "threshold_semantics": "probability at least 0.5 routes to alternating_anchor_link_control; otherwise routes to soft_title_link_support_path_closure_v74",
+    "official_question_type_answer_or_gold_used_at_runtime": false,
+    "historical_selection": "finite 27-configuration five-fold cross-validation on permanently excluded v74 development history"
+  },
+  "controls": [
+    "cross_encoder_topk",
+    "frc_select",
+    "soft_title_link_support_path_closure_v74",
+    "alternating_anchor_link_control",
+    "lexical_question_router_control"
+  ],
+  "metrics": {
+    "primary": "evidence_macro_f1",
+    "secondary": [
+      "router_balanced_accuracy",
+      "comparison_route_rate",
+      "complete_evidence_recall",
+      "mean_selected_tokens",
+      "per_question_type_evidence_macro_f1"
+    ],
+    "paired_uncertainty": "10000 case bootstrap resamples",
+    "development_seed": 20261011,
+    "confirmation_seed": 20261012
+  },
+  "development_gates": {
+    "exact_cases": 800,
+    "exact_question_type_balance": true,
+    "prior_or_stage_overlap": 0,
+    "invalid_selector_output_rate": 0.0,
+    "router_balanced_accuracy_at_least": 0.90,
+    "comparison_route_rate_between_inclusive": [0.35, 0.65],
+    "candidate_evidence_macro_f1_at_least": 0.53,
+    "candidate_complete_evidence_recall_at_least": 0.55,
+    "candidate_minus_strongest_static_control_f1_at_least": 0.01,
+    "candidate_minus_strongest_static_control_ci_low_above": 0.0,
+    "candidate_minus_frc_select_f1_at_least": 0.05,
+    "candidate_minus_frc_select_ci_low_above": 0.0,
+    "every_question_type_delta_vs_better_of_two_routed_static_selectors_at_least": -0.01,
+    "mean_selected_tokens_not_above_strongest_static_control_by_more_than_fraction": 0.05
+  },
+  "confirmation_policy": {
+    "all_development_gates_required": true,
+    "no_target_stage_tuning": true,
+    "confirmation_uses_identical_router_selectors_controls_metrics_and_thresholds": true,
+    "confirmation_success_does_not_authorize_production_or_gate_2_promotion": true
+  },
+  "leakage_controls": {
+    "stage_selection_uses_only_case_id_and_question_type_for_balanced_sampling": true,
+    "runtime_router_uses_question_text_only": true,
+    "model_side_blind_rows_exclude_answer_gold_evidence_ids_gold_flags_and_gold_roles": true,
+    "selection_outputs_written_before_gold_join": true,
+    "audited_case_evidence_excludes_question_context_answer_and_candidate_text": true
+  },
+  "stopping_and_outcomes": {
+    "development_failure": "2WIKI_V75_QUESTION_ROUTER_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+    "development_success": "2WIKI_V75_QUESTION_ROUTER_DEVELOPMENT_SUPPORT_ESTABLISHED_OPEN_CONFIRMATION",
+    "confirmation_failure": "2WIKI_V75_QUESTION_ROUTER_CONFIRMATION_SUPPORT_NOT_ESTABLISHED",
+    "confirmation_success": "2WIKI_V75_QUESTION_ROUTER_CASE_DISJOINT_SUPPORT_ESTABLISHED",
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "claim_limits": [
+    "Not an official 2WikiMultiHopQA leaderboard result.",
+    "Not an independent-dataset result because router history and target stages share the public dataset.",
+    "Not strict independent model-training confirmation.",
+    "Not automatic decomposition, answer generation, flood-domain expert validation, production, CANARY, or DEFAULT evidence."
+  ]
+}

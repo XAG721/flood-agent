@@ -1,0 +1,59 @@
+{
+  "schema_version": "frc-musique-in-domain-rival-bridge-implementation-v72",
+  "experiment_id": "FRC-MUSIQUE-IN-DOMAIN-RIVAL-BRIDGE-V72",
+  "registered_at": "2026-08-04T12:08:00+08:00",
+  "hashes": {
+    "protocol": "9a8c2c059d25847d0fe8f87907902d8ece55cb619398bf8f9a6a9e3100bb7322",
+    "source_registration": "b121331cbd31c46252109a6112b3d3c2df6a269ca58feeb6ce2e86dc34fd7b2b",
+    "model_registration": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "module": "2053001b914275f36d6e9f1aea7698cd35334de73dd18059a063f60954551b24",
+    "runner": "03c217846a4b98cf21cc9931e2ea8b5ea40fe3d3b6c518b5628d8366af1b4c3e",
+    "tests": "4e4cddb9820996101cf625b6cb8cbd5c336f4c860b8200a6414f1af74b4873d1"
+  },
+  "target_files_were_previously_parsed": true,
+  "target_rows_read_for_v72_before_registration": 0,
+  "v72_source_commitments_selected_before_registration": 0,
+  "v72_model_outputs_or_joined_metrics_seen_before_registration": false,
+  "source_independent_synthetic_fixtures_only": true,
+  "synthetic_tests": {
+    "passed": 16,
+    "failed": 0,
+    "target_source_used": false,
+    "model_files_used": false
+  },
+  "frozen_behaviors": [
+    "v65 invalid through v71 development source-commitment union exclusion",
+    "pair assignment before balanced deterministic stage ordering",
+    "exact normalized SQuAD2 question exclusion",
+    "gold-free factual direct and sequential chain execution identical to v70/v71",
+    "deterministic different-paragraph normalized-different rival span selection",
+    "one-at-a-time rival dependency replacement with all other placeholders resolved factually",
+    "same-data v71 fixed-sentinel control with zero-placeholder compatibility semantics",
+    "six bounded monotone in-domain rival features",
+    "nine-base-plus-six-rival candidate and all frozen same-data controls",
+    "five-fold source-independent crossfit diagnostics",
+    "development and confirmation all-must-pass gates",
+    "fail-closed retention and zero-invalid-output requirement",
+    "confirmation authorization only after every development gate passes"
+  ],
+  "model_weights_architecture_or_tokenizer_changed": false,
+  "learned_parameter_count_on_calibration": {
+    "direct_and_bottleneck_thresholds": 2,
+    "base_control_including_threshold": 11,
+    "additive_control_including_threshold": 29,
+    "interaction_control_including_threshold": 34,
+    "paragraph_competition_control_including_threshold": 17,
+    "fixed_sentinel_control_including_threshold": 17,
+    "rival_only_control_including_threshold": 8,
+    "rival_candidate_including_threshold": 17
+  },
+  "total_learned_scalars_across_reported_methods": 135,
+  "development_or_confirmation_used_for_feature_model_threshold_gate_or_method_selection": false,
+  "official_decomposition_is_oracle_plan": true,
+  "automatic_decomposer_result_claimed": false,
+  "strict_independent_model_training_confirmation_claimed": false,
+  "selector_or_retrieval_scoring_part_of_v72": false,
+  "selector_adoption_authorized": false,
+  "canary_or_default_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

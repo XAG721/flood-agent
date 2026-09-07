@@ -1,0 +1,169 @@
+{
+  "schema_version": "frc-musique-graph-router-transfer-protocol-v77",
+  "experiment_id": "FRC-MUSIQUE-FROZEN-HOTPOT-GRAPH-ROUTER-TRANSFER-V77",
+  "frozen_on": "2026-08-04",
+  "research_question": "Can the complete v76 graph-score router, trained only on permanently excluded HotpotQA history and frozen without MuSiQue target tuning, transfer to previously untouched MuSiQue answerable cases and outperform every same-resource registered control across 2-hop, 3-hop and 4-hop strata?",
+  "prospective_boundary": {
+    "v76_router_features_model_hyperparameters_override_threshold_selectors_and_controls_changed": false,
+    "v77_target_training_or_tuning_cases": 0,
+    "v77_target_ids_selected_before_protocol_and_implementation_lock": 0,
+    "v77_target_questions_paragraphs_support_flags_model_scores_or_metrics_seen_before_protocol_and_implementation_lock": false,
+    "metadata_only_capacity_census_before_lock": [
+      "source file path, bytes, sha256 and row count",
+      "source id",
+      "answerable eligibility flag",
+      "hop count parsed only from the public id prefix",
+      "prior source-id commitments and aggregate untouched capacity"
+    ],
+    "known_broader_musique_method_development": "v36 and v65-v73 used other MuSiQue cases; every such source-id commitment is permanently excluded from v77, but this prevents a claim that the broader research program is dataset-independent"
+  },
+  "stages": {
+    "development": {
+      "source_split": "musique_full_v1.0_train answerable member of each paired source id",
+      "cases": 800,
+      "hop_quota": {
+        "2": 400,
+        "3": 250,
+        "4": 150
+      },
+      "ordering": "Within each hop stratum, SHA-256('FRC-MUSIQUE-V77-DEVELOPMENT|' + source id), then source id",
+      "exclude_all_v65_through_v73_source_commitments": true
+    },
+    "confirmation": {
+      "source_split": "musique_full_v1.0_train answerable member of each paired source id",
+      "cases": 800,
+      "hop_quota": {
+        "2": 400,
+        "3": 250,
+        "4": 150
+      },
+      "ordering": "Within each hop stratum, SHA-256('FRC-MUSIQUE-V77-CONFIRMATION|' + source id), then source id",
+      "exclude_all_prior_and_v77_development_source_ids": true,
+      "open_only_if_every_development_gate_passes": true
+    }
+  },
+  "common_resources": {
+    "top_k": 5,
+    "token_budget": 1500,
+    "embedding_model": "BAAI/bge-large-en-v1.5@d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "score_calibration": "per-case min-max",
+    "role_relevance_mix": 0.15,
+    "rrf_k": 60
+  },
+  "candidate": {
+    "name": "graph_gbr_soft_override_router_v76",
+    "frozen_source_experiment": "FRC-HOTPOT-GRAPH-SOFT-OVERRIDE-ROUTER-V76",
+    "model_artifact": "docs/progressive_upgrade/hotpot_graph_router_model_development_v76.json",
+    "model_artifact_sha256": "5bdcf7a229d4208d472b33478c073f29dba082bc012b48c0d2aadad47ad4ecfb",
+    "model_payload_sha256": "8923f0315e24f38e0552e8140377fe18f8647e76c0cac33f534b451f850eddf0",
+    "model_type": "gradient_boosting_regressor_export",
+    "feature_count": 71,
+    "feature_names_sha256": "51e029bb0b26995989365a7420275d27c78253fb0151c8a0183bd0811dc55548",
+    "override_threshold": 0.0,
+    "default_route": "cross_encoder_topk",
+    "positive_route": "soft_title_link_support_path_closure_v74",
+    "target_training_or_tuning_cases": 0,
+    "official_hop_answer_decomposition_support_flags_or_gold_used_at_runtime": false
+  },
+  "adapter": {
+    "retrieval_unit": "one official MuSiQue paragraph",
+    "candidate_text": "paragraph title + '. ' + paragraph_text",
+    "candidate_source": "paragraph title",
+    "gold_evidence": "official is_supporting paragraph ids, sealed until selection output is written",
+    "hop_count": "parsed from public source id prefix for balanced sampling and reporting only; never a v76 router feature",
+    "answer_and_question_decomposition": "never exported to blind model input",
+    "paragraph_order": "official source order",
+    "no_adapter_parameter_selected_from_target": true
+  },
+  "controls": [
+    "cross_encoder_topk",
+    "frc_select",
+    "soft_title_link_support_path_closure_v74",
+    "alternating_anchor_link_control",
+    "lexical_question_router_control",
+    "zero_shot_v75_question_router_control"
+  ],
+  "metrics": {
+    "primary": "evidence_macro_f1",
+    "secondary": [
+      "complete_evidence_recall",
+      "evidence_macro_recall",
+      "soft_override_rate",
+      "mean_selected_tokens",
+      "per_hop_evidence_macro_f1"
+    ],
+    "paired_uncertainty": "10000 case bootstrap resamples",
+    "development_seed": 20261101,
+    "confirmation_seed": 20261102
+  },
+  "development_gates": {
+    "exact_cases": 800,
+    "exact_hop_quota": {
+      "2": 400,
+      "3": 250,
+      "4": 150
+    },
+    "prior_or_stage_overlap": 0,
+    "invalid_selector_output_rate": 0.0,
+    "candidate_evidence_macro_f1_at_least": 0.55,
+    "candidate_complete_evidence_recall_at_least": 0.55,
+    "candidate_minus_strongest_registered_control_f1_at_least": 0.005,
+    "candidate_minus_strongest_registered_control_ci_low_above": 0.0,
+    "candidate_minus_cross_encoder_f1_at_least": 0.005,
+    "candidate_minus_cross_encoder_ci_low_above": 0.0,
+    "every_hop_delta_vs_best_control_at_least": -0.005,
+    "soft_override_rate_between_inclusive": [
+      0.15,
+      0.55
+    ],
+    "mean_selected_tokens_not_above_strongest_control_by_more_than_fraction": 0.05
+  },
+  "gate_rationale": {
+    "source": "unchanged v76 target gates, replacing HotpotQA question-type balance with capacity-safe MuSiQue 2/3/4-hop quotas",
+    "v76_development_candidate_f1": 0.568959,
+    "v76_confirmation_candidate_f1": 0.570916,
+    "v76_development_delta_vs_strongest": 0.008119,
+    "v76_confirmation_delta_vs_strongest": 0.00646,
+    "v76_development_override_rate": 0.22,
+    "v76_confirmation_override_rate": 0.23625,
+    "v77_target_data_used": false
+  },
+  "noninferiority_envelope": {
+    "candidate_minus_strongest_control_point_at_least": -0.005,
+    "candidate_minus_strongest_control_ci_low_at_least": -0.01,
+    "every_hop_delta_vs_best_control_at_least": -0.02,
+    "invalid_selector_output_rate": 0.0
+  },
+  "noninferiority_interpretation": "Reported only as a secondary safety characterization. It cannot open confirmation, establish transfer advantage, authorize selector adoption, or change Gate 2.",
+  "confirmation_policy": {
+    "all_development_gates_required": true,
+    "noninferiority_alone_cannot_open_confirmation": true,
+    "no_target_stage_tuning": true,
+    "confirmation_uses_identical_router_adapter_selectors_controls_metrics_thresholds_and_quotas": true,
+    "confirmation_success_does_not_authorize_production_or_gate_2_promotion": true
+  },
+  "leakage_controls": {
+    "stage_selection_uses_only_source_id_answerable_eligibility_and_id_derived_hop": true,
+    "hop_count_not_used_by_runtime_router": true,
+    "blind_rows_exclude_answer_question_decomposition_support_flags_and_gold_ids": true,
+    "selection_outputs_written_before_gold_join": true,
+    "audited_case_evidence_excludes_question_paragraph_answer_and_candidate_text": true
+  },
+  "stopping_and_outcomes": {
+    "development_failure": "MUSIQUE_V77_FROZEN_V76_ROUTER_TRANSFER_ADVANTAGE_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+    "development_success": "MUSIQUE_V77_FROZEN_V76_ROUTER_TRANSFER_ADVANTAGE_ESTABLISHED_OPEN_CONFIRMATION",
+    "confirmation_failure": "MUSIQUE_V77_FROZEN_V76_ROUTER_CONFIRMATION_ADVANTAGE_NOT_ESTABLISHED",
+    "confirmation_success": "MUSIQUE_V77_FROZEN_V76_ROUTER_CASE_DISJOINT_TRANSFER_ADVANTAGE_ESTABLISHED",
+    "reuse_failed_target_stage_for_feature_model_threshold_adapter_gate_quota_or_selection": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "claim_limits": [
+    "Not an official MuSiQue leaderboard result.",
+    "The v76 router itself was trained only on HotpotQA and receives zero MuSiQue tuning, but the broader research program previously used disjoint MuSiQue cases in v36 and v65-v73.",
+    "The v77 target cases are source-id disjoint from all recorded prior project MuSiQue exposure, but this is not strict independent model-training or research-team confirmation.",
+    "Not answer generation, automatic decomposition, real SetR comparison, flood-domain expert validation, production, CANARY, or DEFAULT evidence."
+  ]
+}

@@ -1,0 +1,139 @@
+{
+  "experiment_id": "FRC-CONTRACTNLI-NATIVE-ZERO-CONSENSUS-ABSTENTION-V50",
+  "hashes": {
+    "blind_census_sha256": "ddd2a2da3ab9e852e18d3497af5ab7e712b734fabc2047762326a940cdde7a84",
+    "candidate_coverage_sha256": "e27310b4d9e4c37c37a9e4ca681f3c5506144dbd286bb9f5d0aca16bd71fb3a3",
+    "candidate_map_sha256": "28f625929926fe47f83e79597256ca7150e6896473ee552b0f79be73ac27f092",
+    "implementation_registration_sha256": "79709ade1c1b31865d392821c0b2c3b81d5930904816a3f503d7889478265b9f",
+    "prepared_blind_sha256": "562f544f4cb855ea2d710cfcc3a8e1e9cc4040044fbf56a8216e646fc0b77674",
+    "source_archive_sha256": "e03fc77bbf8b53e2976a250e81d8a294bc3d5e5fb014521e477dee9340d6287b"
+  },
+  "implementation_registration": {
+    "archive_downloaded_before_erratum": true,
+    "archive_downloaded_before_registration": false,
+    "archive_downloaded_before_registration_field_meaning": "The base implementation was registered before archive download; the archive had been downloaded before this explicitly disclosed schema erratum.",
+    "canary_or_default_authorized_by_registration": false,
+    "case_level_sample_membership_score_selection_or_metric_seen_before_erratum": false,
+    "experiment_id": "FRC-CONTRACTNLI-NATIVE-ZERO-CONSENSUS-ABSTENTION-V50",
+    "frozen_runtime_defaults": {
+      "bootstrap_resamples": 10000,
+      "bootstrap_seed": 20260810,
+      "case_batch_size": 4,
+      "embedding_batch_size": 64,
+      "embedding_model": "BAAI/bge-large-en-v1.5",
+      "embedding_revision": "refs/pr/5",
+      "native_zero_boundary": 0.0,
+      "offline_model_loading": true,
+      "query_generator": "none",
+      "reranker_batch_size": 256,
+      "reranker_model": "BAAI/bge-reranker-large",
+      "reranker_revision": "refs/pr/4",
+      "same_span_consensus_required": true,
+      "score_calibration": "per-case independent min-max plus separately retained raw dynamic-role logits",
+      "token_budgets": [
+        256,
+        512,
+        1024
+      ]
+    },
+    "gate_2": "NO-GO/SHADOW",
+    "hashes": {
+      "module_sha256": "cf7bdde47b711c8142b3f7cb0e47ae239b2051d6eb3b26a9ae26361ea7e5e1ff",
+      "protocol_sha256": "519b6105cade0869dde3a5b0805bb06022319ab0b8234ade6e8e77f28efebc86",
+      "runner_sha256": "92c0d59d98d5c3195f00254dfcf865a9294b2a47f7ce9b644fa56867ed4c5457",
+      "test_sha256": "0cbe45f91d0a449c4b4d5f8814f11c471033734700d1270ffcdd913939dde725"
+    },
+    "implementation_boundary": "The effective implementation differs from the original registration only by the schema erratum that skips exact whitespace-only official spans without renumbering any retained canonical span id. The correction and its synthetic test were frozen after the first fail-closed structural read but before any blind cache, query, neural score, selection or metric existed.",
+    "method_query_threshold_or_sampling_change_after_erratum_forbidden": true,
+    "negative_null_or_inconclusive_result_must_be_published": true,
+    "protocol_erratum_sha256": "02b229b4d3258c2448be299c6c105c1b9de1e04e0fe348c2843eac0bfb9c038d",
+    "registered_at": "2026-08-02T18:35:00+08:00",
+    "schema_repair_confirmation_not_completely_untouched_dataset_confirmation": true,
+    "schema_version": "frc-contractnli-native-zero-consensus-abstention-implementation-erratum-v50",
+    "selector_adoption_authorized_by_registration": false,
+    "superseded_registration_sha256": "82b19c79278a7bdf4bea0eeac9cb41e822fcdcca22cdfc4a4eb01a5bb3906262",
+    "synthetic_invariants_verified": {
+      "anchor_only_signal_does_not_open_consensus_gate": true,
+      "balanced_sampling_is_input_order_invariant": true,
+      "balanced_sampling_meets_two_hundred_per_label_and_six_per_document_cap": true,
+      "blind_cache_contains_no_document_label_gold_offset_or_sampling_fields": true,
+      "candidate_and_shared_non_frc_controls_use_the_same_consensus_gate": true,
+      "candidate_reuses_unchanged_v43_selector_after_gate_passes": true,
+      "candidate_selection_is_permutation_invariant": true,
+      "deterministic_queries_match_registered_templates_without_fallback": true,
+      "different_span_anchor_and_polarity_signals_do_not_open_consensus_gate": true,
+      "gold_join_fails_closed_if_an_evidence_id_is_absent": true,
+      "late_gold_join_maps_official_evidence_indices_to_retained_canonical_span_ids": true,
+      "locked_evaluation_and_cluster_bootstrap_are_deterministic": true,
+      "native_zero_uses_strict_greater_than_zero": true,
+      "official_half_open_character_spans_round_trip_exactly": true,
+      "protocol_hash_native_zero_formula_queries_and_split_exclusions_validate": true,
+      "published_evidence_contains_no_raw_text_or_gold_candidate_ids": true,
+      "same_span_anchor_and_polarity_signals_open_consensus_gate": true,
+      "selector_adoption_and_canary_remain_unauthorized": true,
+      "whitespace_only_official_spans_are_skipped_without_renumbering": true,
+      "zip_adapter_opens_exactly_test_json_and_does_not_open_train_or_dev": true
+    },
+    "synthetic_test_result": {
+      "command": "python -m pytest tests/test_frc_contractnli_native_zero_consensus_abstention.py -q",
+      "failed": 0,
+      "passed": 9
+    },
+    "test_member_structurally_read_before_erratum": true,
+    "train_or_dev_content_used": false,
+    "v49_case_level_artifact_used_for_v50_design": false
+  },
+  "method_or_threshold_change_after_registration_forbidden": true,
+  "metrics_computed": false,
+  "negative_null_or_inconclusive_result_must_be_published": true,
+  "neural_scoring_started": false,
+  "query_generation_started": false,
+  "registered_at": "2026-08-02T19:00:00+08:00",
+  "runtime": {
+    "cuda_available": true,
+    "cuda_runtime": "12.4",
+    "gpu": "NVIDIA GeForce RTX 4060 Ti",
+    "gpu_memory_mib": 16379,
+    "numpy": "2.2.6",
+    "parameters": {
+      "bootstrap_resamples": 10000,
+      "bootstrap_seed": 20260810,
+      "case_batch_size": 4,
+      "device": "cuda",
+      "embedding_batch_size": 64,
+      "fp16": true,
+      "offline_model_loading": true,
+      "query_generator": "none",
+      "reranker_batch_size": 256,
+      "token_budgets": [
+        256,
+        512,
+        1024
+      ]
+    },
+    "platform": "Windows-10-10.0.19045-SP0",
+    "python": "3.10.20",
+    "torch": "2.4.1+cu124",
+    "transformers": "4.46.3"
+  },
+  "schema_version": "frc-contractnli-native-zero-consensus-execution-v50",
+  "source_artifacts": {
+    "archive_bytes": 65362913,
+    "archive_members": {
+      "dev_member_name_seen_but_content_opened": false,
+      "regular_files": 613,
+      "test_member": {
+        "bytes": 2260203,
+        "path": "contract-nli/test.json"
+      },
+      "train_member_name_seen_but_content_opened": false
+    },
+    "archive_sha256": "e03fc77bbf8b53e2976a250e81d8a294bc3d5e5fb014521e477dee9340d6287b",
+    "dataset_repository_revision": "eced6528dd3c1d14d73f9a87df8f7bdbc03126f9",
+    "dev_member_opened": false,
+    "license_identifier": "CC-BY-4.0",
+    "license_sha256": "9e5f1b3c610b9c2da5c313bf81d577a7d1acec686bdb0384edefa6df0f90cd94",
+    "test_member_opened": false,
+    "train_member_opened": false
+  }
+}

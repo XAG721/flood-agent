@@ -1,0 +1,49 @@
+{
+  "schema_version": "frc-conformal-cross-dataset-protocol-v1",
+  "registered_on": "2026-07-31",
+  "reference_dataset": "ConditionalQA",
+  "confirmation_sequence": [
+    {
+      "dataset": "HotpotQA",
+      "state_at_registration": "RESULT_ALREADY_REVEALED",
+      "role": "first_cross_dataset_confirmation"
+    },
+    {
+      "dataset": "MultiHop-RAG",
+      "state_at_registration": "OUTCOME_NOT_USED_FOR_PROTOCOL_SELECTION",
+      "role": "second_independent_cross_dataset_confirmation",
+      "source_path_label": "role_scores_multihoprag.jsonl",
+      "source_sha256": "de5333ecea96ed274afd5d28b4d69af5a63e975fc75c9fa991ade9ce52f296e7",
+      "expected_rows": 2556
+    }
+  ],
+  "frozen_protocol": {
+    "model": "class-balanced logistic sufficiency head",
+    "feature_transform": "linear",
+    "l2": 4.0,
+    "primary_alpha": 0.1,
+    "split_versions_source": "ConditionalQA conformal robustness report",
+    "repeat_count": 10,
+    "missing_ratios": [
+      0.0,
+      0.25,
+      0.5,
+      0.75
+    ],
+    "confirmation_feature_or_model_selection": false
+  },
+  "per_dataset_confirmation_rule": {
+    "required_safety_reduction_repeats": 10,
+    "required_alpha_control_repeats": 7,
+    "max_mean_case_family_false_complete_rate": 0.1,
+    "full_confirmation": "all checks pass",
+    "partial_confirmation": "safety reduction, mean risk, dataset independence and frozen split checks pass but at least one remaining check fails",
+    "not_confirmed": "the mean safety signal or protocol-independence checks fail"
+  },
+  "series_rule": {
+    "full_confirmation": "every confirmation dataset achieves FULL_CONFIRMATION",
+    "partial_confirmation": "every confirmation dataset achieves FULL_CONFIRMATION or PARTIAL_CONFIRMATION, but at least one is not full",
+    "not_confirmed": "at least one confirmation dataset is NOT_CONFIRMED"
+  },
+  "gate_policy": "No public cross-dataset result alone changes Gate 2 from NO-GO/SHADOW or authorizes production use."
+}

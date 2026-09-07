@@ -1,0 +1,69 @@
+{
+  "schema_version": "frc-twowiki-question-router-implementation-lock-v75",
+  "experiment_id": "FRC-2WIKI-QUESTION-ROUTED-SUPPORT-PATH-V75",
+  "locked_on": "2026-08-04",
+  "target_boundary_at_lock": {
+    "v75_development_ids_selected": 0,
+    "v75_confirmation_ids_selected": 0,
+    "v75_target_rows_read": 0,
+    "v75_target_model_scores_seen": false,
+    "v75_target_gold_metrics_seen": false
+  },
+  "files": {
+    "implementation": {
+      "path": "research/frc_rag/twowiki_question_router.py",
+      "bytes": 35224,
+      "sha256": "baf744b658c676dc26bc37c13ab09f32a7227bc211c8a8d0b88f039dda4b4b65"
+    },
+    "runner": {
+      "path": "scripts/run_twowiki_question_router.py",
+      "bytes": 12297,
+      "sha256": "6059a8f4406459aca6a176990e31d784e993c0faf1a902b6d94a3bc7fdd3e04e"
+    },
+    "tests": {
+      "path": "tests/test_frc_twowiki_question_router.py",
+      "bytes": 10817,
+      "sha256": "0f8f8bf38fb86ff67ed7f47f3692b3e1c4fd84360bb4e0e7e2b54a629b29b7b0"
+    },
+    "router_model": {
+      "path": "docs/progressive_upgrade/twowiki_question_router_model_development_v75.json",
+      "bytes": 44494,
+      "sha256": "b12c128f06c4ab14851d2f24538a15e76f5f9ff7336a7968c7b01d7c5062cbc0",
+      "payload_sha256": "31562661eacb70f3881dad0a6b17a70d272d7012d938187ef59a29336af5aa7b"
+    },
+    "protocol": {
+      "path": "docs/progressive_upgrade/twowiki_question_router_protocol_v75.json",
+      "bytes": 5748,
+      "sha256": "70992f064beadea59e020eb8c85844450e2d5ea4435d51b1dc0f052c2de6bdfe"
+    },
+    "source_registration": {
+      "path": "docs/progressive_upgrade/twowiki_question_router_source_registration_v75.json",
+      "bytes": 2810,
+      "sha256": "5a9433b69b1436ac2a0e7d853979d527cce8688b1168f084a2d204b58f7f4d3a"
+    }
+  },
+  "historical_router_diagnostic": {
+    "permanently_excluded_cases": 800,
+    "finite_configurations": 27,
+    "folds": 5,
+    "selected_hash_dimension": 64,
+    "selected_l2": 8.0,
+    "selected_threshold": 0.5,
+    "crossfit_balanced_accuracy": 1.0,
+    "crossfit_routed_evidence_macro_f1": 0.541198
+  },
+  "verification": {
+    "command": "D:/anaconda3/python.exe -m pytest -q tests/test_frc_twowiki_question_router.py tests/test_frc_twowiki_support_path_closure.py -p no:cacheprovider --basetemp D:/graduation_project/.tmp/pytest-v75-prelock",
+    "v75_tests": 19,
+    "v74_regression_tests": 18,
+    "passed": 37,
+    "failed": 0,
+    "ruff_check": "passed"
+  },
+  "immutability": {
+    "implementation_runner_tests_model_protocol_and_source_registration_must_not_change_after_target_selection": true,
+    "development_failure_stops_before_confirmation": true,
+    "development_or_confirmation_data_must_not_be_reused_to_change_router_features_model_threshold_controls_or_gates": true
+  },
+  "gate_2": "NO-GO/SHADOW"
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": "frc-ottqa-guarded-adaptive-atomic-roles-protocol-erratum2-v44",
+  "experiment_id": "FRC-OTTQA-GUARDED-ADAPTIVE-ATOMIC-ROLES-V44",
+  "registered_at": "2026-08-02T04:43:01+08:00",
+  "base_protocol_sha256": "95116d2af455d1f8792e81cc1ed1f0f48db5fd7ef1274d257f73cec8e5c1e072",
+  "prior_protocol_erratum_sha256": "e7341f3ce645f27ea1fbf3f8bc79691b14a8c4b5655035f83bdb8112ff906019",
+  "trigger": {
+    "stage": "git archive before source tar creation",
+    "observed_error": "Windows Git rejected the same reserved official paths while traversing the tree for git archive",
+    "source_tar_created_before_erratum": false,
+    "question_answer_evidence_or_table_content_parsed_before_erratum": false,
+    "neural_query_generation_started": false,
+    "neural_scoring_started": false,
+    "metrics_computed": false
+  },
+  "correction": {
+    "field": "source archive acquisition mechanism",
+    "original": "Create the registered uncompressed source tar with local git archive at the pinned revision.",
+    "effective": "Download the official GitHub codeload tar.gz for the same pinned revision, stream-copy only LICENSE, preprocessed_data/dev_linked.json, data/traindev_tables_tok, and data/traindev_request_tok into one deterministic uncompressed tar, strip only the codeload top-level directory prefix, preserve every selected member byte, and never extract or parse JSON during copying.",
+    "codeload_url": "https://codeload.github.com/wenhuchen/OTT-QA/tar.gz/b289bcca691db21a5259c3420e6b9819a9be9ba3",
+    "observed_etag": "5f4e48933a5eaa35998b9fedb458ff546d35a1d6b8f0f727250ffc24402bb113",
+    "selected_member_git_blob_and_manifest_validation_remains_required": true,
+    "selection_rule_changed": false,
+    "candidate_construction_changed": false,
+    "candidate_pool_size_changed": false,
+    "model_or_revision_changed": false,
+    "method_or_formula_changed": false,
+    "budget_or_threshold_changed": false,
+    "metric_or_decision_rule_changed": false
+  },
+  "scientific_effect": "none; source acquisition portability only",
+  "scoring_implementation_changed": false,
+  "method_or_threshold_changed": false,
+  "negative_null_or_inconclusive_result_must_still_be_published": true
+}

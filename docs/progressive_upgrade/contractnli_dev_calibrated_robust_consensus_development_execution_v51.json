@@ -1,0 +1,165 @@
+{
+  "candidate_coverage_pending_until_after_complete_scoring": true,
+  "dev_metrics_computed": false,
+  "dev_neural_scoring_started": false,
+  "dev_query_generation_started": false,
+  "experiment_id": "FRC-CONTRACTNLI-DEV-CALIBRATED-ROBUST-CONSENSUS-V51",
+  "gold_joined_for_coverage_or_metrics": false,
+  "hashes": {
+    "blind_census_sha256": "728a22cc8613b5db3af8077a7072b5ac26b965bab39692da71a1f3d0ad07807c",
+    "candidate_map_sha256": "ed15007cba055dc31e5f4417ba28a102975ced25c0e340ffddc9df6da7e66d57",
+    "implementation_erratum_sha256": "1ce8f5cd0ca75f214f9df88873a97c04335b829e5b5d76c608f115c347cec7ec",
+    "original_implementation_registration_sha256": "eb55837d9d2c66fe43b64b45d2c19f58f2f9010f307cb37255b66b324f2fcac8",
+    "prepared_blind_sha256": "1d96b643be248ec11589ab59a71759216fad9ccff7ff6f12ca39ef81cbb0e362",
+    "source_archive_sha256": "e03fc77bbf8b53e2976a250e81d8a294bc3d5e5fb014521e477dee9340d6287b"
+  },
+  "implementation_registration": {
+    "erratum": {
+      "already_frozen_blind_artifacts": {
+        "blind_census_sha256": "728a22cc8613b5db3af8077a7072b5ac26b965bab39692da71a1f3d0ad07807c",
+        "candidate_map_sha256": "ed15007cba055dc31e5f4417ba28a102975ced25c0e340ffddc9df6da7e66d57",
+        "prepared_blind_sha256": "1d96b643be248ec11589ab59a71759216fad9ccff7ff6f12ca39ef81cbb0e362"
+      },
+      "boundary_at_erratum_registration": {
+        "dev_gold_joined_for_coverage_or_metrics": false,
+        "dev_neural_scoring_started": false,
+        "dev_opened_only_for_registered_sampling_and_blind_preparation": true,
+        "dev_queries_generated": false,
+        "test_member_opened_by_v51": false,
+        "train_member_opened": false
+      },
+      "corrected_hashes": {
+        "module_sha256": "6ec0a073b7a358ad1502a2f0f1e925cef19f393750847e7dc874c746727d9ec9",
+        "protocol_sha256": "0904a59ace997919a06fe32a4e839bf1fce5158cb7f4c663567506660421a18b",
+        "runner_sha256": "e20e7713da29f3fdbac14d29defa5a3ea4f9bbbc68fc77dca0c28696ad0ad936",
+        "test_sha256": "2c4a2f92a2098d19d5b298942a3cff543e6fb41aa9e8eda3a3cb86c6bc9dcb3c"
+      },
+      "correction": {
+        "calibration": "Require the post-score coverage gate before any threshold fitting or metric computation.",
+        "candidate_coverage": "Generate only after the deterministic query cache and all 240 neural score rows are complete, then join dev gold once and freeze coverage plus score hashes.",
+        "development_execution_registration": "Register source, blind artifacts, runtime and the pending late-gold boundary before queries; do not hash a coverage artifact that must not exist yet."
+      },
+      "experiment_id": "FRC-CONTRACTNLI-DEV-CALIBRATED-ROBUST-CONSENSUS-V51",
+      "original_implementation_registration_sha256": "eb55837d9d2c66fe43b64b45d2c19f58f2f9010f307cb37255b66b324f2fcac8",
+      "reason": "The frozen runner incorrectly required gold-dependent candidate coverage before query generation and neural scoring, while the frozen protocol requires the blind score cache to be complete before gold is joined. The conflict was detected immediately after registered dev sampling and blind-cache preparation and before coverage, query generation, neural scoring, threshold fitting, or metrics.",
+      "registered_at": "2026-08-02T19:14:00+08:00",
+      "schema_version": "frc-contractnli-v51-implementation-order-erratum-v1",
+      "scientific_boundary": "This is an execution-order correction registered before any outcome-bearing operation. It does not make the development split untouched again and must remain visible in the final report.",
+      "superseded_hashes": {
+        "module_sha256": "6ec0a073b7a358ad1502a2f0f1e925cef19f393750847e7dc874c746727d9ec9",
+        "protocol_sha256": "0904a59ace997919a06fe32a4e839bf1fce5158cb7f4c663567506660421a18b",
+        "runner_sha256": "e517627a51543a383e2fe7aa34c01f25c2e3e2cfaf6d21146f22dc0b0d52f475",
+        "test_sha256": "2c4a2f92a2098d19d5b298942a3cff543e6fb41aa9e8eda3a3cb86c6bc9dcb3c"
+      },
+      "unchanged": {
+        "confirmation_open_rule": true,
+        "gate_2": "NO-GO/SHADOW",
+        "models_queries_and_score_formula": true,
+        "official_test_exclusion": true,
+        "protocol": true,
+        "sample_and_blind_artifacts": true,
+        "selector_adoption_authority": false,
+        "threshold_candidates_constraints_tie_order_and_oof_gates": true
+      }
+    },
+    "original": {
+      "dev_or_train_content_opened_before_registration": false,
+      "experiment_id": "FRC-CONTRACTNLI-DEV-CALIBRATED-ROBUST-CONSENSUS-V51",
+      "frozen_implementation_contract": {
+        "confirmation_split_if_authorized": "official train",
+        "development_cases": 240,
+        "development_folds": 5,
+        "development_split": "official dev",
+        "negative_or_inconclusive_result_must_be_published": true,
+        "official_test_reuse": false,
+        "query_generator": "none",
+        "selector_after_gate": "low_core_divergence_guarded_frc_v49",
+        "threshold_change_after_registration_forbidden": true
+      },
+      "hashes": {
+        "module_sha256": "6ec0a073b7a358ad1502a2f0f1e925cef19f393750847e7dc874c746727d9ec9",
+        "protocol_sha256": "0904a59ace997919a06fe32a4e839bf1fce5158cb7f4c663567506660421a18b",
+        "runner_sha256": "e517627a51543a383e2fe7aa34c01f25c2e3e2cfaf6d21146f22dc0b0d52f475",
+        "test_sha256": "2c4a2f92a2098d19d5b298942a3cff543e6fb41aa9e8eda3a3cb86c6bc9dcb3c"
+      },
+      "official_test_permanently_excluded_from_v51": true,
+      "purpose": "Freeze the v51 development calibration implementation before any official ContractNLI dev or train member content is opened.",
+      "registered_at": "2026-08-02T19:10:00+08:00",
+      "schema_version": "frc-contractnli-v51-implementation-registration-v1",
+      "synthetic_invariants_verified": {
+        "archive_reader_opens_only_requested_dev_or_train_member": true,
+        "balanced_dev_sampling_is_order_invariant_and_document_capped": true,
+        "blind_cache_and_deterministic_queries_are_gold_free": true,
+        "candidate_coverage_requires_exact_registered_structure": true,
+        "document_group_fold_assignment_is_stable": true,
+        "five_fold_oof_calibration_and_report_are_deterministic": true,
+        "protocol_hash_and_split_boundary_frozen": true,
+        "published_case_evidence_contains_no_text_or_gold_candidate_ids": true,
+        "robust_consensus_is_same_span_permutation_and_positive_affine_invariant": true,
+        "threshold_grid_fit_and_tie_order_are_deterministic": true
+      },
+      "synthetic_test_command": "python -m pytest tests/test_frc_contractnli_dev_calibrated_robust_consensus.py -q --basetemp D:\\graduation_project\\output\\pytest-tmp-contractnli-v51-synthetic",
+      "synthetic_test_result": {
+        "duration_seconds": 0.15,
+        "failed": 0,
+        "passed": 9
+      }
+    }
+  },
+  "registered_at": "2026-08-02T19:18:00+08:00",
+  "runtime": {
+    "cuda_available": true,
+    "cuda_runtime": "12.4",
+    "gpu": "NVIDIA GeForce RTX 4060 Ti",
+    "gpu_memory_mib": 16379,
+    "numpy": "2.2.6",
+    "parameters": {
+      "case_batch_size": 4,
+      "development_folds": 5,
+      "device": "cuda",
+      "embedding_batch_size": 64,
+      "fp16": true,
+      "offline_model_loading": true,
+      "query_generator": "none",
+      "reranker_batch_size": 256,
+      "token_budgets": [
+        256,
+        512,
+        1024
+      ]
+    },
+    "platform": "Windows-10-10.0.19045-SP0",
+    "python": "3.10.20",
+    "torch": "2.4.1+cu124",
+    "transformers": "4.46.3"
+  },
+  "schema_version": "frc-contractnli-v51-development-execution-v1",
+  "source_artifacts": {
+    "archive_bytes": 65362913,
+    "archive_sha256": "e03fc77bbf8b53e2976a250e81d8a294bc3d5e5fb014521e477dee9340d6287b",
+    "dev_member_opened": false,
+    "dev_member_opened_for_structural_preparation": true,
+    "license_identifier": "CC-BY-4.0",
+    "license_sha256": "9e5f1b3c610b9c2da5c313bf81d577a7d1acec686bdb0384edefa6df0f90cd94",
+    "regular_files": 613,
+    "split_members": {
+      "dev": {
+        "bytes": 1183107,
+        "path": "contract-nli/dev.json"
+      },
+      "test": {
+        "bytes": 2260203,
+        "path": "contract-nli/test.json"
+      },
+      "train": {
+        "bytes": 7608211,
+        "path": "contract-nli/train.json"
+      }
+    },
+    "test_member_opened_by_v51": false,
+    "train_member_opened": false
+  },
+  "test_member_opened_by_v51": false,
+  "threshold_selection_rule_change_after_registration_forbidden": true,
+  "train_member_opened": false
+}

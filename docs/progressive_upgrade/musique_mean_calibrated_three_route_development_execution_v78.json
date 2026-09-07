@@ -1,0 +1,63 @@
+{
+  "calibration_sha256": "8b0b986416ac29b311fed71ed7553c4f3766024475016a76146a19f18e9b7930",
+  "confirmation_open_authorized": false,
+  "elapsed_seconds": 1648.402595,
+  "experiment_id": "FRC-MUSIQUE-MEAN-CALIBRATED-THREE-ROUTE-TRANSFER-V78",
+  "frozen_resources": {
+    "embedding_model": "BAAI/bge-large-en-v1.5@d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "role_relevance_mix": 0.15,
+    "rrf_k": 60,
+    "score_calibration": "per-case min-max",
+    "token_budget": 1500,
+    "top_k": 5
+  },
+  "history_router_sha256": "8eeef297eacf32e6e2b44fffb4d03428dc9046ea4ea5b367a73d59b98cbf7608",
+  "implementation_lock_sha256": "6e1a59aaa4b874dc72e89d21d73fd0c5e452700c7f8e2179a932b2fe5125603e",
+  "leakage_boundary": {
+    "blind_rows_exclude_answer_decomposition_support_flags_and_gold_ids": true,
+    "gold_metrics_computed": false,
+    "hop_count_is_id_derived_and_not_used_by_runtime_router": true,
+    "selection_outputs_created": false,
+    "v77_used_only_for_registered_aggregate_route_offsets": true
+  },
+  "preparation": {
+    "blind_sha256": "4321560ae88d91e07dabbe6f4fe15c92b0b5bf0cb7e17e98808d69a723c0e859",
+    "candidate_count": 12000,
+    "gold_fields_visible_to_model_or_router": false,
+    "gold_sha256": "44f8d326962363f0d295e42e1570553b974b504b85fca9e407d7929929d4e079",
+    "hop_count_distribution": {
+      "2": 300,
+      "3": 200,
+      "4": 100
+    },
+    "prior_excluded_source_commitments": 16900,
+    "prior_source_overlap": 0,
+    "selected_cases": 600,
+    "selected_ids_sha256": "acc0d7ccc6f1c3326f867905bf9e3424418a7ef08c3dd57019d9a1424cfd8d99",
+    "selected_source_commitments_sha256": "5211858ac65a1e5d150988b84850642ca2721ef10bf95ead349872cff76265e1",
+    "stage": "development",
+    "v77_calibration_excluded_ids": 800,
+    "v77_calibration_overlap": 0
+  },
+  "protocol_sha256": "ad8292649d2b3a1367a200fd4e8ff985f5f0b86068183a702f71c8206cd3563f",
+  "registered_claims": {
+    "independent_training_dataset_confirmation": false,
+    "official_musique_leaderboard_result": false,
+    "real_setr_or_flood_domain_expert_evidence": false,
+    "strict_zero_target_tuning": false,
+    "v77_is_explicit_target_domain_calibration": true,
+    "v78_target_ids_disjoint_from_all_v65_through_v77_project_exposure": true,
+    "v78_target_training_or_tuning_cases": 0
+  },
+  "result_sha256": "cc80f4159bf5bc3e7175772ad77d77b97865d43e8ef0099397de653366cd1a7d",
+  "schema_version": "frc-musique-mean-calibrated-three-route-execution-v78",
+  "scored_blind_sha256": "21d57941246609f36f8389ea7480bd64721425eeb944bd2d4a8340cc64dbe1a4",
+  "scored_cases": 600,
+  "selection_output_sha256": "d4f0eaa1d2b24f25da60c37849c5848657c9629836a4a2a0d12c56bf0321cd85",
+  "source_registration_sha256": "4b1c6ab14fded479b20311f5b9fb5fa7e96ed96505acc8b4f93190a1819d4b4a",
+  "source_sha256": "b1cd998f7e0e2838d6fda024e4ad1eb0e7fc3edefdadb0bd9b5b10b0907f2034",
+  "stage": "development",
+  "stage_gate_passed": false,
+  "status": "EVALUATED_GOLD_JOINED"
+}

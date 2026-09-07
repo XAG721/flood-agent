@@ -1,0 +1,104 @@
+{
+  "aggregates": {
+    "method_primary_means": {
+      "bm25_topk": 0.373976,
+      "cross_encoder_knapsack": 0.423923,
+      "cross_encoder_topk": 0.427388,
+      "dense_topk": 0.406294,
+      "dynamic_rank_coverage_frc_v41": 0.428851,
+      "hybrid_topk": 0.412885,
+      "static_rank_coverage_frc_v41": 0.427258,
+      "static_threshold_frc_v39_replay": 0.427499
+    }
+  },
+  "analysis": {
+    "budget_deltas": {
+      "1024": 0.000948,
+      "1500": 0.000754,
+      "512": 0.002687
+    },
+    "family_comparison": {
+      "dynamic_minus_bootstrap_strongest_non_frc": {
+        "ci_high": 0.002688,
+        "ci_low": 0.000308,
+        "point": 0.001463,
+        "resamples": 10000,
+        "seed": 20260801
+      },
+      "dynamic_minus_static_rank": {
+        "ci_high": 0.002762,
+        "ci_low": 0.000453,
+        "point": 0.001593,
+        "resamples": 10000,
+        "seed": 20260801
+      },
+      "method_primary_means": {
+        "bm25_topk": 0.373976,
+        "cross_encoder_knapsack": 0.423923,
+        "cross_encoder_topk": 0.427388,
+        "dense_topk": 0.406294,
+        "dynamic_rank_coverage_frc_v41": 0.428851,
+        "hybrid_topk": 0.412885,
+        "static_rank_coverage_frc_v41": 0.427258,
+        "static_threshold_frc_v39_replay": 0.427499
+      },
+      "observed_strongest_non_frc": "cross_encoder_topk"
+    },
+    "outcome": {
+      "canary_or_default_authorized": false,
+      "flood_domain_effectiveness_established": false,
+      "gate_2": "NO-GO/SHADOW",
+      "same_dataset_family_confirmation_only": true,
+      "selector_adoption_authorized": false,
+      "setr_reproduced": false,
+      "status": "DYNAMIC_ATOMIC_ROLE_SUPPORT_NOT_ESTABLISHED",
+      "support_established": false
+    },
+    "stratum_deltas": {
+      "2-hop": 0.000248,
+      "3-hop": 0.001364,
+      "4-hop": 0.005259,
+      "candidate_ceiling_complete": 0.00133,
+      "candidate_ceiling_incomplete": 0.001535,
+      "label=NOT_SUPPORTED": 0.002972,
+      "label=SUPPORTED": 0.000508
+    },
+    "support_checks": {
+      "dynamic_minus_static_ci_low_above_0": true,
+      "dynamic_minus_static_point_at_least_0_005": false,
+      "dynamic_minus_strongest_ci_low_above_0": true,
+      "dynamic_minus_strongest_point_at_least_0_01": false,
+      "every_budget_and_stratum_delta_at_least_minus_0_02": true
+    }
+  },
+  "metadata": {
+    "budgets": [
+      512,
+      1024,
+      1500
+    ],
+    "cases": 2000,
+    "experiment_id": "FRC-HOVER-DYNAMIC-ATOMIC-ROLES-V41",
+    "methods": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "cross_encoder_knapsack",
+      "static_threshold_frc_v39_replay",
+      "static_rank_coverage_frc_v41",
+      "dynamic_rank_coverage_frc_v41"
+    ],
+    "primary_metric": "document_evidence_f1",
+    "protocol_sha256": "42486a98c01fd0b9663d3eb9bd0de63634d91605eed06060ac1236ad26997e86",
+    "raw_text_committed": false,
+    "source_artifacts": {
+      "confirmation_prepared_sha256": "3ebde69f7b60fb8c5fde4ac9b8069d703b154360ef31ea63747529349d871d43",
+      "confirmation_queries_sha256": "26928272846b734e3a74ad953c12f8961802dd97b0221f15980ac870abdd99a3",
+      "confirmation_scored_sha256": "46f7d4cdd9dd61f9fa82a1cf524ccc3c2f91ca792dd6accc3898b88ec5fda278",
+      "execution_sha256": "bbad5dab2f06e663ba2d5227e161f290d3c6d4929f9d75e1bf10ca35e186b29f",
+      "implementation_sha256": "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621"
+    }
+  },
+  "schema_version": "frc-hover-dynamic-atomic-confirmation-report-v1"
+}

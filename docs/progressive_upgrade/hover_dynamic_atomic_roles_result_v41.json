@@ -1,0 +1,72 @@
+{
+  "schema_version": "frc-hover-dynamic-atomic-result-record-v1",
+  "recorded_at": "2026-08-01T21:12:00+08:00",
+  "experiment_id": "FRC-HOVER-DYNAMIC-ATOMIC-ROLES-V41",
+  "protocol_sha256": "42486a98c01fd0b9663d3eb9bd0de63634d91605eed06060ac1236ad26997e86",
+  "execution_sha256": "bbad5dab2f06e663ba2d5227e161f290d3c6d4929f9d75e1bf10ca35e186b29f",
+  "integrity": {
+    "confirmation_queries_rows": 2000,
+    "confirmation_queries_unique_ids": 2000,
+    "confirmation_queries_sha256": "26928272846b734e3a74ad953c12f8961802dd97b0221f15980ac870abdd99a3",
+    "generation_fallback_count": 29,
+    "generation_fallback_rate": 0.0145,
+    "generation_gold_fields_visible": false,
+    "confirmation_scored_rows": 2000,
+    "confirmation_scored_sha256": "46f7d4cdd9dd61f9fa82a1cf524ccc3c2f91ca792dd6accc3898b88ec5fda278",
+    "scoring_gold_fields_visible": false,
+    "gold_join_started_after_complete_score_cache": true,
+    "evaluate_rerun": "2/2 byte-identical"
+  },
+  "published_outputs": {
+    "report_json": {
+      "path": "output/rag_evaluation/hover_dynamic_atomic_roles/hover_dynamic_atomic_roles.json",
+      "sha256": "847db650c021f01205afb5fc1593738e78db3bcc06e76cc9ff9b0f832adde980"
+    },
+    "report_markdown": {
+      "path": "output/rag_evaluation/hover_dynamic_atomic_roles/hover_dynamic_atomic_roles.md",
+      "sha256": "5f0d1a17bae7eccdd0e0ee34a38b536ec62f687cc0045fbc9cfcb985177c0188"
+    },
+    "case_evidence": {
+      "path": "output/rag_evaluation/hover_dynamic_atomic_roles/hover_dynamic_atomic_roles_cases.jsonl.gz",
+      "sha256": "6b0370babe745363fd793b3dc5b214b12b04c15b189f4cf711ad8f1dfbd7a1f6",
+      "rows": 2000,
+      "raw_text_committed": false
+    }
+  },
+  "result": {
+    "primary_metric": "document_evidence_f1",
+    "dynamic_rank_coverage_frc_v41": 0.428851,
+    "static_rank_coverage_frc_v41": 0.427258,
+    "strongest_non_frc": "cross_encoder_topk",
+    "strongest_non_frc_value": 0.427388,
+    "dynamic_minus_static": {
+      "point": 0.001593,
+      "ci_low": 0.000453,
+      "ci_high": 0.002762,
+      "minimum_required_point": 0.005,
+      "point_requirement_passed": false,
+      "positive_interval_requirement_passed": true
+    },
+    "dynamic_minus_strongest_non_frc": {
+      "point": 0.001463,
+      "ci_low": 0.000308,
+      "ci_high": 0.002688,
+      "minimum_required_point": 0.01,
+      "point_requirement_passed": false,
+      "positive_interval_requirement_passed": true
+    },
+    "every_budget_and_stratum_delta_at_least_minus_0_02": true,
+    "status": "DYNAMIC_ATOMIC_ROLE_SUPPORT_NOT_ESTABLISHED"
+  },
+  "decision": {
+    "mechanism_improvement_reproduced": true,
+    "preregistered_practical_support_established": false,
+    "selector_adoption_authorized": false,
+    "same_dataset_family_confirmation_only": true,
+    "gate_2": "NO-GO/SHADOW",
+    "canary_or_default_authorized": false,
+    "setr_reproduced": false,
+    "flood_domain_effectiveness_established": false,
+    "stopping_rule": "Publish the small positive result without adopting the selector or tuning further on exposed HoVer partitions. A materially different method requires a new untouched dataset and a new preregistration."
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "confirmation_reuse_forbidden": true,
+  "experiment_id": "FRC-CONTRACTNLI-RANK-CONCURRENCE-CONFIRMATION-V52",
+  "gold_joined_for_coverage_or_metrics": false,
+  "hashes": {
+    "blind_census_sha256": "8ec57b16adb8686be16d45ef52e5a289624d20e5f3ef1901c0c11ad68b998e15",
+    "candidate_map_sha256": "932704016497132cb5355d1edc6b123b9cf6c4e378279bc0c638930abc7787eb",
+    "implementation_registration_sha256": "90bc2a52b5feaf4fd20198e0a9f21ea8da5a71f5e5924fe941c33b215465cb8b",
+    "prepared_blind_sha256": "1524c104949521c180e869a107f883c5df84186c42b77cb5ff28a4ba9fd501c8",
+    "source_archive_sha256": "e03fc77bbf8b53e2976a250e81d8a294bc3d5e5fb014521e477dee9340d6287b"
+  },
+  "implementation_registration": {
+    "experiment_id": "FRC-CONTRACTNLI-RANK-CONCURRENCE-CONFIRMATION-V52",
+    "frozen_implementation_contract": {
+      "confirmation_cases": 600,
+      "confirmation_reuse_forbidden": true,
+      "confirmation_split": "official train",
+      "formula_or_method_change_after_registration_forbidden": true,
+      "gold_join_only_after_complete_score_cache": true,
+      "minimum_documents": 80,
+      "negative_null_or_inconclusive_result_must_be_published": true,
+      "query_generator": "none",
+      "rank_gate": "anchor argmax id equals support argmax id or contradiction argmax id",
+      "selector_after_pass": "low_core_divergence_guarded_frc_v49",
+      "threshold": null
+    },
+    "hashes": {
+      "module_sha256": "2d18cb0ea7a319b6e4ca0c56b84765e66e79deeeaa12b8213ac8833b39564345",
+      "protocol_sha256": "048fe13d87a58e8b6630387c9c0cc8e7c1e72119a54ed8719498d32ef6bc9251",
+      "runner_sha256": "386304650a00f7e42477d4b419e03b94088e16f980ef9add328a916a999c0407",
+      "test_sha256": "d290ca46728119aae6b7d5fd4c8d482b51ab35c6e2ae446a146abc47d124cd81"
+    },
+    "learned_or_dataset_fitted_parameter": false,
+    "purpose": "Freeze the parameter-free rank-concurrence gate, one-split blind confirmation runner and synthetic invariants before official ContractNLI train content is opened.",
+    "registered_at": "2026-08-02T20:21:00+08:00",
+    "schema_version": "frc-contractnli-rank-concurrence-implementation-v52",
+    "synthetic_invariants_verified": {
+      "archive_reader_opens_only_requested_train_member": true,
+      "balanced_sampling_is_order_invariant_and_document_capped": true,
+      "blind_cache_and_deterministic_queries_are_gold_free": true,
+      "candidate_and_non_frc_controls_share_the_identical_gate": true,
+      "candidate_coverage_requires_exact_registered_confirmation_structure": true,
+      "evaluation_bootstrap_and_outputs_are_deterministic": true,
+      "exact_ties_use_canonical_candidate_id": true,
+      "gate_is_candidate_permutation_invariant": true,
+      "gate_is_independently_strictly_monotone_role_score_invariant": true,
+      "protocol_hash_untouched_train_and_parameter_free_boundary_frozen": true,
+      "published_case_evidence_contains_no_text_or_gold_candidate_ids": true,
+      "same_top_span_rank_concurrence_is_required": true
+    },
+    "synthetic_test_command": "python -m pytest tests/test_frc_contractnli_rank_concurrence_confirmation.py -q --basetemp D:\\graduation_project\\output\\pytest-tmp-contractnli-v52-synthetic-2",
+    "synthetic_test_result": {
+      "duration_seconds": 0.22,
+      "failed": 0,
+      "passed": 8
+    },
+    "train_content_opened_before_registration": false,
+    "v50_test_or_v51_dev_case_level_artifact_used": false
+  },
+  "metrics_computed": false,
+  "neural_scoring_started": false,
+  "query_generation_started": false,
+  "rank_gate_formula_change_after_registration_forbidden": true,
+  "registered_at": "2026-08-02T20:25:00+08:00",
+  "runtime": {
+    "cuda_available": true,
+    "cuda_runtime": "12.4",
+    "gpu": "NVIDIA GeForce RTX 4060 Ti",
+    "gpu_memory_mib": 16379,
+    "numpy": "2.2.6",
+    "parameters": {
+      "case_batch_size": 4,
+      "device": "cuda",
+      "embedding_batch_size": 64,
+      "fp16": true,
+      "learned_threshold": null,
+      "offline_model_loading": true,
+      "query_generator": "none",
+      "reranker_batch_size": 256,
+      "token_budgets": [
+        256,
+        512,
+        1024
+      ]
+    },
+    "platform": "Windows-10-10.0.19045-SP0",
+    "python": "3.10.20",
+    "torch": "2.4.1+cu124",
+    "transformers": "4.46.3"
+  },
+  "schema_version": "frc-contractnli-v52-execution-registration-v1",
+  "source_artifacts": {
+    "archive_bytes": 65362913,
+    "archive_sha256": "e03fc77bbf8b53e2976a250e81d8a294bc3d5e5fb014521e477dee9340d6287b",
+    "dev_member_opened_by_v52": false,
+    "dev_or_test_member_opened_by_v52": false,
+    "license_identifier": "CC-BY-4.0",
+    "license_sha256": "9e5f1b3c610b9c2da5c313bf81d577a7d1acec686bdb0384edefa6df0f90cd94",
+    "regular_files": 613,
+    "split_members": {
+      "dev": {
+        "bytes": 1183107,
+        "path": "contract-nli/dev.json"
+      },
+      "test": {
+        "bytes": 2260203,
+        "path": "contract-nli/test.json"
+      },
+      "train": {
+        "bytes": 7608211,
+        "path": "contract-nli/train.json"
+      }
+    },
+    "test_member_opened_by_v52": false,
+    "train_member_opened_by_v52": false,
+    "train_member_opened_for_registered_blind_preparation": true
+  }
+}

@@ -1,0 +1,244 @@
+{
+  "analysis": {
+    "methods": {
+      "alternating_anchor_link_control": {
+        "cases": 600,
+        "complete_evidence_recall": 0.62,
+        "evidence_macro_f1": 0.521316,
+        "evidence_macro_recall": 0.824861,
+        "mean_selected_tokens": 549.883333
+      },
+      "cross_encoder_topk": {
+        "cases": 600,
+        "complete_evidence_recall": 0.611667,
+        "evidence_macro_f1": 0.517758,
+        "evidence_macro_recall": 0.821528,
+        "mean_selected_tokens": 550.931667
+      },
+      "frc_select": {
+        "cases": 600,
+        "complete_evidence_recall": 0.611667,
+        "evidence_macro_f1": 0.517758,
+        "evidence_macro_recall": 0.821528,
+        "mean_selected_tokens": 551.151667
+      },
+      "graph_gbr_soft_override_router_v76": {
+        "cases": 600,
+        "complete_evidence_recall": 0.63,
+        "evidence_macro_f1": 0.522566,
+        "evidence_macro_recall": 0.828611,
+        "mean_selected_tokens": 553.11
+      },
+      "lexical_question_router_control": {
+        "cases": 600,
+        "complete_evidence_recall": 0.545,
+        "evidence_macro_f1": 0.492202,
+        "evidence_macro_recall": 0.780972,
+        "mean_selected_tokens": 549.75
+      },
+      "mean_calibrated_three_route_router_v78": {
+        "cases": 600,
+        "complete_evidence_recall": 0.616667,
+        "evidence_macro_f1": 0.519934,
+        "evidence_macro_recall": 0.8225,
+        "mean_selected_tokens": 551.625
+      },
+      "musique_anchor_default_three_route_router_v80": {
+        "cases": 600,
+        "complete_evidence_recall": 0.643333,
+        "evidence_macro_f1": 0.527817,
+        "evidence_macro_recall": 0.835833,
+        "mean_selected_tokens": 551.835
+      },
+      "musique_target_trained_three_route_router_v79": {
+        "cases": 600,
+        "complete_evidence_recall": 0.63,
+        "evidence_macro_f1": 0.526257,
+        "evidence_macro_recall": 0.832639,
+        "mean_selected_tokens": 552.86
+      },
+      "soft_title_link_support_path_closure_v74": {
+        "cases": 600,
+        "complete_evidence_recall": 0.54,
+        "evidence_macro_f1": 0.488829,
+        "evidence_macro_recall": 0.776111,
+        "mean_selected_tokens": 547.026667
+      },
+      "zero_shot_v75_question_router_control": {
+        "cases": 600,
+        "complete_evidence_recall": 0.571667,
+        "evidence_macro_f1": 0.501759,
+        "evidence_macro_recall": 0.794167,
+        "mean_selected_tokens": 548.99
+      }
+    },
+    "noninferiority_checks": {
+      "candidate_minus_frozen_v79_point_at_least_0": true,
+      "candidate_minus_strongest_control_ci_low_at_least_minus_0_01": true,
+      "candidate_minus_strongest_control_point_at_least_minus_0_005": true,
+      "every_hop_delta_vs_best_control_at_least_minus_0_02": true,
+      "invalid_selector_output_rate_equals_0": true
+    },
+    "outcome": {
+      "canary_or_default_authorized": false,
+      "further_same_source_confirmation_authorized": false,
+      "gate_2": "NO-GO/SHADOW",
+      "holdout_gate_passed": false,
+      "noninferiority_envelope_supported": true,
+      "reuse_v80_holdout_for_model_threshold_gate_or_selection": false,
+      "selector_adoption_authorized": false,
+      "status": "MUSIQUE_V80_ANCHOR_DEFAULT_TERMINAL_HOLDOUT_ADVANTAGE_NOT_ESTABLISHED"
+    },
+    "paired_f1_delta": {
+      "alternating_anchor_link_control": {
+        "ci_high": 0.011587,
+        "ci_low": 0.001594,
+        "point": 0.006501,
+        "resamples": 10000,
+        "seed": 20261164
+      },
+      "cross_encoder_topk": {
+        "ci_high": 0.0167,
+        "ci_low": 0.003479,
+        "point": 0.01006,
+        "resamples": 10000,
+        "seed": 20261161
+      },
+      "frc_select": {
+        "ci_high": 0.01668,
+        "ci_low": 0.003439,
+        "point": 0.01006,
+        "resamples": 10000,
+        "seed": 20261162
+      },
+      "graph_gbr_soft_override_router_v76": {
+        "ci_high": 0.011125,
+        "ci_low": -0.000503,
+        "point": 0.005251,
+        "resamples": 10000,
+        "seed": 20261167
+      },
+      "lexical_question_router_control": {
+        "ci_high": 0.045384,
+        "ci_low": 0.02623,
+        "point": 0.035615,
+        "resamples": 10000,
+        "seed": 20261165
+      },
+      "mean_calibrated_three_route_router_v78": {
+        "ci_high": 0.013935,
+        "ci_low": 0.001991,
+        "point": 0.007884,
+        "resamples": 10000,
+        "seed": 20261168
+      },
+      "musique_target_trained_three_route_router_v79": {
+        "ci_high": 0.005774,
+        "ci_low": -0.002533,
+        "point": 0.001561,
+        "resamples": 10000,
+        "seed": 20261169
+      },
+      "soft_title_link_support_path_closure_v74": {
+        "ci_high": 0.049121,
+        "ci_low": 0.029385,
+        "point": 0.038988,
+        "resamples": 10000,
+        "seed": 20261163
+      },
+      "zero_shot_v75_question_router_control": {
+        "ci_high": 0.034187,
+        "ci_low": 0.018068,
+        "point": 0.026058,
+        "resamples": 10000,
+        "seed": 20261166
+      }
+    },
+    "per_hop_delta_vs_best_control": {
+      "2": {
+        "best_control": "graph_gbr_soft_override_router_v76",
+        "best_control_evidence_macro_f1": 0.508571,
+        "candidate_evidence_macro_f1": 0.512143,
+        "cases": 400,
+        "delta": 0.003571
+      },
+      "3": {
+        "best_control": "musique_target_trained_three_route_router_v79",
+        "best_control_evidence_macro_f1": 0.556667,
+        "candidate_evidence_macro_f1": 0.55,
+        "cases": 150,
+        "delta": -0.006667
+      },
+      "4": {
+        "best_control": "alternating_anchor_link_control",
+        "best_control_evidence_macro_f1": 0.582222,
+        "candidate_evidence_macro_f1": 0.586667,
+        "cases": 50,
+        "delta": 0.004444
+      }
+    },
+    "router": {
+      "material_route_count": 3,
+      "route_counts": {
+        "alternating_anchor_link_control": 273,
+        "cross_encoder_topk": 186,
+        "soft_title_link_support_path_closure_v74": 141
+      },
+      "route_fractions": {
+        "alternating_anchor_link_control": 0.455,
+        "cross_encoder_topk": 0.31,
+        "soft_title_link_support_path_closure_v74": 0.235
+      }
+    },
+    "strongest_registered_control": {
+      "cases": 600,
+      "complete_evidence_recall": 0.63,
+      "evidence_macro_f1": 0.526257,
+      "evidence_macro_recall": 0.832639,
+      "mean_selected_tokens": 552.86,
+      "name": "musique_target_trained_three_route_router_v79"
+    },
+    "support_checks": {
+      "at_least_two_routes_each_cover_at_least_0_05": true,
+      "candidate_complete_evidence_recall_at_least_0_55": true,
+      "candidate_evidence_macro_f1_at_least_0_55": false,
+      "candidate_minus_frozen_v79_ci_low_above_0": false,
+      "candidate_minus_frozen_v79_f1_at_least_0_005": false,
+      "candidate_minus_strongest_control_ci_low_above_0": false,
+      "candidate_minus_strongest_control_f1_at_least_0_005": false,
+      "every_hop_delta_vs_best_control_at_least_minus_0_005": false,
+      "exact_cases_equals_600": true,
+      "exact_hop_quota": true,
+      "invalid_selector_output_rate_equals_0": true,
+      "largest_route_fraction_at_most_0_9": true,
+      "mean_selected_tokens_within_1_05_of_strongest_control": true,
+      "prior_training_overlap_equals_0": true
+    }
+  },
+  "metadata": {
+    "anchor_router_sha256": "c303c68c2f83271bbb3f9f81f75d94defe9135676d7cea02ada1ff28a75df506",
+    "cases": 600,
+    "experiment_id": "FRC-MUSIQUE-ANCHOR-DEFAULT-TERMINAL-HOLDOUT-V80",
+    "gold_or_official_hop_used_by_runtime_router": false,
+    "hop_count_distribution": {
+      "2": 400,
+      "3": 150,
+      "4": 50
+    },
+    "invalid_selector_output_count": 0,
+    "model_development_experiment_id": "FRC-MUSIQUE-ANCHOR-DEFAULT-THREE-ROUTE-ROUTER-V80",
+    "official_musique_leaderboard_result": false,
+    "overlap_counts": {
+      "prior_source_overlap": 0,
+      "v77_calibration_overlap": 0,
+      "v78_training_overlap": 0,
+      "v79_training_overlap": 0
+    },
+    "schema_version": "frc-musique-anchor-default-terminal-holdout-v80",
+    "selection_output_sha256": "c76032326278ad4e8b1a7e6d466ef4e7114dc654585fc710b5cafe7b6392a345",
+    "selection_written_before_gold_join": true,
+    "stage": "terminal_holdout",
+    "terminal_holdout_due_remaining_four_hop_capacity": true,
+    "v78_v79_used_for_target_domain_model_selection": true
+  }
+}

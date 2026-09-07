@@ -1,0 +1,163 @@
+{
+  "aggregates": {
+    "method_means": {
+      "cross_encoder_topk": {
+        "objective": 3.921506,
+        "selected_count": 4.719901,
+        "selected_token_cost": 619.914632,
+        "support_evidence_f1": 0.530399,
+        "support_precision": 0.42222,
+        "support_recall": 0.761389
+      },
+      "frc_cost_aware_v35": {
+        "objective": 3.914117,
+        "selected_count": 4.781961,
+        "selected_token_cost": 579.477865,
+        "support_evidence_f1": 0.524143,
+        "support_precision": 0.414343,
+        "support_recall": 0.758424
+      },
+      "frc_dual_resource_v36": {
+        "objective": 3.927592,
+        "selected_count": 4.758378,
+        "selected_token_cost": 604.471245,
+        "support_evidence_f1": 0.528545,
+        "support_precision": 0.418963,
+        "support_recall": 0.762596
+      },
+      "frc_exact_objective_v37": {
+        "objective": 3.931666,
+        "selected_count": 4.746104,
+        "selected_token_cost": 619.357054,
+        "support_evidence_f1": 0.529945,
+        "support_precision": 0.420756,
+        "support_recall": 0.763228
+      },
+      "frc_select_v34": {
+        "objective": 3.923162,
+        "selected_count": 4.718659,
+        "selected_token_cost": 619.91284,
+        "support_evidence_f1": 0.530801,
+        "support_precision": 0.422827,
+        "support_recall": 0.761746
+      }
+    },
+    "objective_gap": {
+      "mean_absolute_regret": 0.004074,
+      "mean_normalized_regret": 0.000809,
+      "near_zero_regret_rate_at_1e_9": 0.8494,
+      "regret_above_0_01_rate": 0.019859,
+      "selection_disagreement_rate": 0.155565
+    }
+  },
+  "analysis": {
+    "budget_deltas": {
+      "1024": 0.000799,
+      "1500": 0.000401,
+      "512": 0.002998
+    },
+    "exact_minus_cross_encoder_topk_support_f1": {
+      "ci_high": 0.00071,
+      "ci_low": -0.001583,
+      "point": -0.000455,
+      "resamples": 10000,
+      "seed": 20260801
+    },
+    "exact_minus_v36_support_f1": {
+      "ci_high": 0.003008,
+      "ci_low": -0.000208,
+      "point": 0.001399,
+      "resamples": 10000,
+      "seed": 20260801
+    },
+    "hop_deltas": {
+      "2-hop": 0.003568,
+      "3-hop": -0.002072,
+      "4-hop": 0.00121
+    },
+    "outcome": {
+      "adoption_eligible": false,
+      "canary_or_default_authorized": false,
+      "flood_domain_effectiveness_established": false,
+      "gate_2": "NO-GO/SHADOW",
+      "next_action": "REQUIRE_SEPARATELY_FROZEN_STUDY",
+      "post_result_diagnostic": true,
+      "selector_changed": false,
+      "setr_reproduced": false,
+      "status": "MIXED_OPTIMIZATION_AND_ALIGNMENT_DIAGNOSTIC"
+    },
+    "predeclared_checks": {
+      "every_budget_and_hop_delta_at_least_minus_0_01": true,
+      "exact_minus_v36_f1_at_least_0_005": false,
+      "exact_minus_v36_f1_ci_low_above_0": false,
+      "mean_normalized_regret_at_least_0_005": false,
+      "mean_normalized_regret_at_most_0_001": true,
+      "regret_above_0_01_rate_at_most_0_01": false
+    },
+    "worst_budget_or_hop_delta": -0.002072
+  },
+  "development_boundary": {
+    "musique_results_known_before_diagnostic": true,
+    "no_formula_score_threshold_prompt_or_weight_tuning": true,
+    "raw_question_answer_or_candidate_text_exported": false
+  },
+  "metadata": {
+    "budgets": [
+      512,
+      1024,
+      1500
+    ],
+    "candidate_chunks": 48656,
+    "cases": 2417,
+    "dataset": "MuSiQue-Answerable dev",
+    "deterministic_output_rerun": "2/2 byte-identical",
+    "evidence_artifact": {
+      "path": "musique_objective_gap_cases.jsonl.gz",
+      "raw_question_answer_or_candidate_text_exported": false,
+      "rows": 2417,
+      "sha256": "3d01b2c7a16241aaf8eb0d233c6e9522ef3b010795d7009cb17bda27d5af8f70"
+    },
+    "gold_visible_during_selection": false,
+    "hop_distribution": {
+      "2": 1252,
+      "3": 760,
+      "4": 405
+    },
+    "methods": [
+      "cross_encoder_topk",
+      "frc_select_v34",
+      "frc_cost_aware_v35",
+      "frc_dual_resource_v36",
+      "frc_exact_objective_v37"
+    ],
+    "neural_rescoring": false,
+    "protocol_sha256": "dd617c7aa5c22db359fc8944363389438d53ca04704a26a28a0f209eb71254f4",
+    "raw_text_committed": false,
+    "scored_blind_sha256": "e2c688063e694ef0df7df7f6052cb5e68c9739f26a59db8a24c1a54413ce9242",
+    "selection_runs": 36255,
+    "source_artifacts": {
+      "implementation": {
+        "path_label": "musique_objective_gap.py",
+        "sha256": "b03edc529c89d14de4a390ee832f4a45a59afa3ad04c5b89ef2e09f9adbc12ad"
+      },
+      "protocol": {
+        "path_label": "musique_objective_gap_diagnostic_protocol.json",
+        "sha256": "dd617c7aa5c22db359fc8944363389438d53ca04704a26a28a0f209eb71254f4"
+      },
+      "raw_source": {
+        "path_label": "musique_ans_v1.0_dev.jsonl",
+        "sha256": "15fa63794d18a94ce12411aca6e2327e65b6e83b0b1490efab3f1962e48abf3b"
+      },
+      "scored_blind": {
+        "path_label": "scored_dual_resource_blind.jsonl",
+        "sha256": "e2c688063e694ef0df7df7f6052cb5e68c9739f26a59db8a24c1a54413ce9242"
+      },
+      "v36_report": {
+        "path_label": "musique_dual_resource.json",
+        "sha256": "27cdba122f94be27991768363cef23d860834d198a6d029ea07f7a9fdc0d22a8"
+      }
+    },
+    "v36_report_sha256": "27cdba122f94be27991768363cef23d860834d198a6d029ea07f7a9fdc0d22a8"
+  },
+  "schema_version": "frc-musique-objective-gap-diagnostic-v1"
+}

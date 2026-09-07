@@ -1,0 +1,78 @@
+{
+  "schema_version": "frc-doc2dial-wood-v56-development-closure-v1",
+  "experiment_id": "FRC-DOC2DIAL-WOOD-SCHEMA-CORRECTED-TRANSFER-V56",
+  "closed_at": "2026-08-03T00:50:00+08:00",
+  "stage": "development",
+  "status": "DOC2DIAL_WOOD_V56_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+  "registered_evidence": {
+    "protocol_sha256": "f3a5282189b5a8bc4e730d880dd17fb9f296bde21ddfa8e0fea0c85e7fa27c90",
+    "source_registration_sha256": "4f231951d9e2769b292ad6557a3abcbe6794990bbc1a55c3a3bc5b6ebf448669",
+    "implementation_registration_sha256": "01e8178e75f1af32619b96cc3aeb03fefdca9a7a65a8f07967ce11f3f998a447",
+    "execution_registration_sha256": "a9f4e60a2000b8a669b4c5187f00d4ba4b017c43f881f1dfa7a64f34e8a2f035",
+    "development_result_sha256": "3375b8895db827d39dc3a64316306c26daa9efec4b59eae62e57927c78a206c6",
+    "development_report_sha256": "d0084c2d5d3245c93dbde1bb72b43a9147b2581b635687e47299c256cedec52e",
+    "development_evidence_sha256": "1885287c082820bfe1189f40f901ecc09a90bd7fe0b1de37ac2be07781cdb045",
+    "scored_cache_sha256": "d1861b563b9fa266777dc1eb577e39998e80f93a7bd3744087f00e8bab91e200"
+  },
+  "development_summary": {
+    "cases": 400,
+    "documents": 261,
+    "dialogues": 386,
+    "answer_state_counts": {
+      "answer_bearing": 200,
+      "no_answer": 200
+    },
+    "no_answer_subtypes": {
+      "ood_act": 176,
+      "other_empty": 24
+    },
+    "candidate_ceiling_complete_rate": 0.805,
+    "candidate_utility_f1": 0.517417,
+    "candidate_answer_f1": 0.159833,
+    "candidate_answer_recall": 0.12375,
+    "candidate_abstention_rate": 0.6125,
+    "no_answer_abstention_accuracy": 0.875,
+    "answer_bearing_gate_pass_rate": 0.65,
+    "no_answer_gate_pass_rate": 0.125,
+    "candidate_minus_strongest_shared_gate_non_frc": {
+      "point": -0.008827,
+      "ci_low": -0.021324,
+      "ci_high": 0.003586
+    },
+    "candidate_minus_same_gate_frc_ablation": {
+      "point": -0.000381,
+      "ci_low": -0.004858,
+      "ci_high": 0.003528
+    },
+    "answer_macro_recall_drop_vs_ungated_v49": 0.049167,
+    "minimum_budget_or_supported_stratum_delta": -0.038932
+  },
+  "failed_support_checks": [
+    "candidate_ceiling_complete_rate_at_least_0_99",
+    "candidate_minus_strongest_shared_gate_non_frc_point_at_least_0_01",
+    "candidate_minus_strongest_shared_gate_non_frc_ci_low_above_0",
+    "candidate_minus_same_gate_frc_ablation_point_at_least_0_005",
+    "candidate_minus_same_gate_frc_ablation_ci_low_above_0",
+    "answer_macro_recall_drop_vs_ungated_v49_at_most_0_03",
+    "every_budget_and_supported_stratum_delta_at_least_minus_0_03"
+  ],
+  "integrity_boundary": {
+    "pre_outcome_train_schema_access_from_v55_is_disclosed": true,
+    "retrieval_gate_selector_models_queries_budgets_and_support_thresholds_changed_from_v54_v55": false,
+    "gold_joined_only_after_complete_score_cache": true,
+    "confirmation_member_opened_or_parsed": false,
+    "confirmation_open_authorized": false,
+    "development_reuse_for_tuning_selection_or_reevaluation": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "interpretation": {
+    "official_shared_task_result": false,
+    "setr_reproduction": false,
+    "open_corpus_retrieval_result": false,
+    "flood_domain_validation": false,
+    "production_rollout_authorization": false,
+    "conclusion": "The schema-corrected wOOD development run validates the reproducible answer/no-answer protocol but does not establish utility support over the strongest shared-gate baselines. Stop before confirmation."
+  }
+}

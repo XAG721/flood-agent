@@ -1,0 +1,11 @@
+{
+  "canary_or_default_authorized": false,
+  "confirmation_dev_parsed_or_opened": false,
+  "confirmation_execution_started": false,
+  "development_result_sha256": "ff2c7f9031a9523f4841bc0dfc899baae88d3f7047afb5ee4315ea51ab51bad9",
+  "experiment_id": "FRC-SQUAD2-STRUCTURED-SPAN-GATE-V60",
+  "gate_2": "NO-GO/SHADOW",
+  "schema_version": "frc-squad2-v60-development-closure-v1",
+  "selector_adoption_authorized": false,
+  "status": "SQUAD2_V60_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+}

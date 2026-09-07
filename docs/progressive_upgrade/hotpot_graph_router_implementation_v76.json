@@ -1,0 +1,82 @@
+{
+  "schema_version": "frc-hotpot-graph-router-implementation-lock-v76",
+  "experiment_id": "FRC-HOTPOT-GRAPH-SOFT-OVERRIDE-ROUTER-V76",
+  "locked_on": "2026-08-04",
+  "target_boundary_at_lock": {
+    "v76_development_ids_selected": 0,
+    "v76_confirmation_ids_selected": 0,
+    "v76_target_rows_read": 0,
+    "v76_target_model_scores_seen": false,
+    "v76_target_gold_metrics_seen": false
+  },
+  "files": {
+    "implementation": {
+      "path": "research/frc_rag/hotpot_graph_router.py",
+      "bytes": 48463,
+      "sha256": "43af0af06f792e82d2643bf00b8e3b4a66513c400df35c4a8f7560d60c521df2"
+    },
+    "runner": {
+      "path": "scripts/run_hotpot_graph_router.py",
+      "bytes": 12765,
+      "sha256": "d796b8657e92d91a86e9659b880de3f0427fcdb2bfb9f8b56ae04e42b1288b77"
+    },
+    "tests": {
+      "path": "tests/test_frc_hotpot_graph_router.py",
+      "bytes": 14972,
+      "sha256": "ad2f5866e5b34b9e43145c36e024d7b12fc90150ea6a4e5a015d56697b9d058e"
+    },
+    "router_model": {
+      "path": "docs/progressive_upgrade/hotpot_graph_router_model_development_v76.json",
+      "bytes": 30275,
+      "sha256": "5bdcf7a229d4208d472b33478c073f29dba082bc012b48c0d2aadad47ad4ecfb",
+      "payload_sha256": "8923f0315e24f38e0552e8140377fe18f8647e76c0cac33f534b451f850eddf0"
+    },
+    "protocol": {
+      "path": "docs/progressive_upgrade/hotpot_graph_router_protocol_v76.json",
+      "bytes": 6470,
+      "sha256": "a4299a17594f80158e9eb198ffdb39e29fefb3e4b751f263d0044e05ac77adf4"
+    },
+    "source_registration": {
+      "path": "docs/progressive_upgrade/hotpot_graph_router_source_registration_v76.json",
+      "bytes": 2767,
+      "sha256": "8f1cd7f7f406721e4af3e4d5e856cc060a0cef1d395225bc1462be4851141aac"
+    }
+  },
+  "historical_router_diagnostic": {
+    "permanently_excluded_cases": 1000,
+    "finite_historical_configurations": 1089,
+    "folds": 5,
+    "selected_model": "25-tree depth-2 Huber gradient boosting regressor",
+    "selected_runtime_route": "cross_encoder_topk unless predicted soft-title-link gain is above 0",
+    "crossfit_evidence_macro_f1": 0.562448,
+    "crossfit_delta_vs_cross_encoder": 0.011694,
+    "crossfit_delta_ci": [
+      0.006596,
+      0.01691
+    ],
+    "crossfit_complete_evidence_recall": 0.722,
+    "crossfit_soft_override_rate": 0.346
+  },
+  "verification": {
+    "command": "D:/anaconda3/python.exe -m pytest -q tests/test_frc_hotpot_graph_router.py tests/test_frc_twowiki_question_router.py tests/test_frc_twowiki_support_path_closure.py -p no:cacheprovider --basetemp D:/graduation_project/.tmp/pytest-v76-prelock-final",
+    "v76_tests": 23,
+    "frozen_dependency_regression_tests": 37,
+    "passed": 60,
+    "failed": 0,
+    "ruff_check": "passed"
+  },
+  "immutability": {
+    "implementation_runner_tests_model_protocol_and_source_registration_must_not_change_after_target_selection": true,
+    "development_failure_stops_before_confirmation": true,
+    "development_or_confirmation_data_must_not_be_reused_to_change_router_features_model_hyperparameters_threshold_controls_gates_or_stage_size": true
+  },
+  "claim_boundary": {
+    "independent_public_dataset_from_v75_2wiki": true,
+    "case_disjoint_from_v76_hotpot_history": true,
+    "independent_dataset_from_v76_hotpot_history": false,
+    "strict_independent_model_training_confirmation": false,
+    "official_hotpotqa_leaderboard_result": false,
+    "real_setr_or_flood_domain_expert_evidence": false
+  },
+  "gate_2": "NO-GO/SHADOW"
+}

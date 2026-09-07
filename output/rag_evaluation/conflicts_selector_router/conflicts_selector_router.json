@@ -1,0 +1,581 @@
+{
+  "metadata": {
+    "schema_version": "frc-conflicts-selector-routing-discovery-v1",
+    "status": "RUN_PUBLIC_RETROSPECTIVE_CROSSFIT_DISCOVERY",
+    "dataset": "Google CONFLICTS",
+    "cases": 458,
+    "methods": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "coverage_greedy_proxy",
+      "frc_select"
+    ],
+    "fold_namespace": "frc-router-v1",
+    "fold_count": 5,
+    "logistic_l2": 1.0,
+    "logistic_max_iterations": 100,
+    "bootstrap_resamples": 10000,
+    "source_artifacts": {
+      "scored_cases": {
+        "path_label": "scored_cases.jsonl",
+        "sha256": "45973a7fa91c83119858dbe67d28c5b959a9ee79b0a6606abeb62ebdce4c4072",
+        "record_count": 458
+      },
+      "selected_evidence": {
+        "path_label": "selected_evidence.jsonl",
+        "sha256": "8241ee7d1592e4b4b8fa58baebfa43b59ebe78a6b09627ceac6cf36a9d21d728",
+        "record_count": 2748
+      },
+      "conflict_predictions": {
+        "path_label": "conflict_predictions.jsonl",
+        "sha256": "be739f8d649e7cb841e99c6d318400a536f76cc84d0b44a072d0fbe2c1c39db8",
+        "record_count": 2748
+      }
+    },
+    "evidence_artifact": {
+      "path_label": "conflicts_selector_router_cases.jsonl.gz",
+      "sha256": "5a26e45db06954d7f645263345f2b688e75aede254811bb0ed438c2d65396af7",
+      "record_count": 458
+    }
+  },
+  "development_boundary": {
+    "retrospective_discovery": true,
+    "pre_registered_confirmation": false,
+    "prior_aggregate_probe_disclosed": true,
+    "prior_exposure": {
+      "disclosed_before_canonical_artifact_generation": true,
+      "aggregate_oracle_accuracy_seen": 0.545852,
+      "sklearn_probe_version": "1.7.2",
+      "sklearn_probe_all_router_accuracy_seen": 0.395197,
+      "sklearn_probe_all_router_gain_seen": 0.050218,
+      "sklearn_probe_paired_ci_seen": [
+        0.008734,
+        0.091703
+      ],
+      "strict_no_frc_router_accuracy_seen": 0.393013,
+      "dependency_free_newton_reproduction_correct_counts_seen": {
+        "all_methods": 181,
+        "without_frc": 180
+      },
+      "canonical_diagnostic_first_run_seen_before_final_status": {
+        "all_router_outdated_conflict_recall": 0.258065,
+        "static_outdated_conflict_recall": 0.693548,
+        "folds_with_negative_accuracy_gain": 2
+      },
+      "interpretation": "These values were visible before this protocol file and canonical output were written. The experiment is therefore a transparent retrospective discovery and must not be described as preregistered confirmation."
+    },
+    "feature_whitelist_only": true,
+    "gold_used_only_as_train_target_and_reporting_label": true,
+    "case_grouped_crossfit": true,
+    "independent_confirmation": false,
+    "gate_evidence": false
+  },
+  "feature_contract": {
+    "all_methods": [
+      "method=bm25_topk",
+      "method=dense_topk",
+      "method=hybrid_topk",
+      "method=cross_encoder_topk",
+      "method=coverage_greedy_proxy",
+      "method=frc_select",
+      "predicted_label=No conflict",
+      "predicted_label=Complementary information",
+      "predicted_label=Conflicting opinions and research outcomes",
+      "predicted_label=Conflict due to outdated information",
+      "predicted_label=Conflict due to misinformation",
+      "own_prediction_vote_share",
+      "distinct_prediction_share",
+      "selected_count",
+      "selected_token_cost",
+      "selected_domain_coverage",
+      "selected_lexical_diversity",
+      "bm25_mean",
+      "bm25_std",
+      "bm25_max",
+      "bm25_top_margin",
+      "dense_mean",
+      "dense_std",
+      "dense_max",
+      "dense_top_margin",
+      "hybrid_mean",
+      "hybrid_std",
+      "hybrid_max",
+      "hybrid_top_margin",
+      "cross_encoder_mean",
+      "cross_encoder_std",
+      "cross_encoder_max",
+      "cross_encoder_top_margin",
+      "answer_claim_mean",
+      "answer_claim_max",
+      "source_attribution_mean",
+      "source_attribution_max",
+      "alternative_claim_mean",
+      "alternative_claim_max",
+      "temporal_validity_mean",
+      "temporal_validity_max",
+      "selection_jaccard=bm25_topk",
+      "selection_jaccard=dense_topk",
+      "selection_jaccard=hybrid_topk",
+      "selection_jaccard=cross_encoder_topk",
+      "selection_jaccard=coverage_greedy_proxy",
+      "selection_jaccard=frc_select"
+    ],
+    "without_frc": [
+      "method=bm25_topk",
+      "method=dense_topk",
+      "method=hybrid_topk",
+      "method=cross_encoder_topk",
+      "method=coverage_greedy_proxy",
+      "predicted_label=No conflict",
+      "predicted_label=Complementary information",
+      "predicted_label=Conflicting opinions and research outcomes",
+      "predicted_label=Conflict due to outdated information",
+      "predicted_label=Conflict due to misinformation",
+      "own_prediction_vote_share",
+      "distinct_prediction_share",
+      "selected_count",
+      "selected_token_cost",
+      "selected_domain_coverage",
+      "selected_lexical_diversity",
+      "bm25_mean",
+      "bm25_std",
+      "bm25_max",
+      "bm25_top_margin",
+      "dense_mean",
+      "dense_std",
+      "dense_max",
+      "dense_top_margin",
+      "hybrid_mean",
+      "hybrid_std",
+      "hybrid_max",
+      "hybrid_top_margin",
+      "cross_encoder_mean",
+      "cross_encoder_std",
+      "cross_encoder_max",
+      "cross_encoder_top_margin",
+      "answer_claim_mean",
+      "answer_claim_max",
+      "source_attribution_mean",
+      "source_attribution_max",
+      "alternative_claim_mean",
+      "alternative_claim_max",
+      "temporal_validity_mean",
+      "temporal_validity_max",
+      "selection_jaccard=bm25_topk",
+      "selection_jaccard=dense_topk",
+      "selection_jaccard=hybrid_topk",
+      "selection_jaccard=cross_encoder_topk",
+      "selection_jaccard=coverage_greedy_proxy"
+    ],
+    "banned_runtime_features": [
+      "gold_label",
+      "correct_answer",
+      "classification_correct",
+      "conflict_type",
+      "answer_token_recall",
+      "exact_answer_support"
+    ],
+    "raw_question_or_answer_exported_to_evidence": false
+  },
+  "analysis": {
+    "classification": {
+      "coverage_greedy_proxy": {
+        "cases": 458,
+        "parsed_predictions": 457,
+        "parse_rate": 0.997817,
+        "correct": 158,
+        "accuracy": 0.344978,
+        "macro_f1": 0.244282,
+        "per_label": {
+          "No conflict": {
+            "precision": 0.508982,
+            "recall": 0.52795,
+            "f1": 0.518293,
+            "support": 161
+          },
+          "Complementary information": {
+            "precision": 0.210526,
+            "recall": 0.173913,
+            "f1": 0.190476,
+            "support": 115
+          },
+          "Conflicting opinions and research outcomes": {
+            "precision": 0.909091,
+            "recall": 0.086957,
+            "f1": 0.15873,
+            "support": 115
+          },
+          "Conflict due to outdated information": {
+            "precision": 0.237569,
+            "recall": 0.693548,
+            "f1": 0.353909,
+            "support": 62
+          },
+          "Conflict due to misinformation": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 5
+          }
+        }
+      },
+      "majority_vote": {
+        "cases": 458,
+        "parsed_predictions": 458,
+        "parse_rate": 1.0,
+        "correct": 164,
+        "accuracy": 0.358079,
+        "macro_f1": 0.248738,
+        "per_label": {
+          "No conflict": {
+            "precision": 0.533333,
+            "recall": 0.596273,
+            "f1": 0.56305,
+            "support": 161
+          },
+          "Complementary information": {
+            "precision": 0.209877,
+            "recall": 0.147826,
+            "f1": 0.173469,
+            "support": 115
+          },
+          "Conflicting opinions and research outcomes": {
+            "precision": 0.923077,
+            "recall": 0.104348,
+            "f1": 0.1875,
+            "support": 115
+          },
+          "Conflict due to outdated information": {
+            "precision": 0.214286,
+            "recall": 0.629032,
+            "f1": 0.319672,
+            "support": 62
+          },
+          "Conflict due to misinformation": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 5
+          }
+        }
+      },
+      "all_methods": {
+        "cases": 458,
+        "parsed_predictions": 458,
+        "parse_rate": 1.0,
+        "correct": 181,
+        "accuracy": 0.395197,
+        "macro_f1": 0.268784,
+        "per_label": {
+          "No conflict": {
+            "precision": 0.441176,
+            "recall": 0.745342,
+            "f1": 0.554273,
+            "support": 161
+          },
+          "Complementary information": {
+            "precision": 0.210526,
+            "recall": 0.13913,
+            "f1": 0.167539,
+            "support": 115
+          },
+          "Conflicting opinions and research outcomes": {
+            "precision": 0.878788,
+            "recall": 0.252174,
+            "f1": 0.391892,
+            "support": 115
+          },
+          "Conflict due to outdated information": {
+            "precision": 0.207792,
+            "recall": 0.258065,
+            "f1": 0.230216,
+            "support": 62
+          },
+          "Conflict due to misinformation": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 5
+          }
+        }
+      },
+      "without_frc": {
+        "cases": 458,
+        "parsed_predictions": 458,
+        "parse_rate": 1.0,
+        "correct": 180,
+        "accuracy": 0.393013,
+        "macro_f1": 0.269048,
+        "per_label": {
+          "No conflict": {
+            "precision": 0.431159,
+            "recall": 0.73913,
+            "f1": 0.544622,
+            "support": 161
+          },
+          "Complementary information": {
+            "precision": 0.194444,
+            "recall": 0.121739,
+            "f1": 0.149733,
+            "support": 115
+          },
+          "Conflicting opinions and research outcomes": {
+            "precision": 0.878788,
+            "recall": 0.252174,
+            "f1": 0.391892,
+            "support": 115
+          },
+          "Conflict due to outdated information": {
+            "precision": 0.233766,
+            "recall": 0.290323,
+            "f1": 0.258993,
+            "support": 62
+          },
+          "Conflict due to misinformation": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 5
+          }
+        }
+      }
+    },
+    "paired_all_router_minus_static": {
+      "cases": 458,
+      "mean_difference": 0.050218,
+      "ci_low": 0.008734,
+      "ci_high": 0.091703,
+      "wins": 61,
+      "ties": 359,
+      "losses": 38
+    },
+    "paired_all_router_minus_without_frc": {
+      "cases": 458,
+      "mean_difference": 0.002183,
+      "ci_low": -0.00655,
+      "ci_high": 0.010917,
+      "wins": 3,
+      "ties": 453,
+      "losses": 2
+    },
+    "oracle": {
+      "all_methods_correct": 250,
+      "all_methods_accuracy": 0.545852,
+      "without_frc_correct": 248,
+      "without_frc_accuracy": 0.541485,
+      "frc_unique_correct_cases": 2,
+      "frc_unique_accuracy_gain": 0.004367
+    },
+    "folds": [
+      {
+        "fold": 0,
+        "cases": 83,
+        "coverage_greedy_proxy_accuracy": 0.277108,
+        "all_methods_accuracy": 0.409639,
+        "without_frc_accuracy": 0.39759,
+        "all_minus_static": 0.132531
+      },
+      {
+        "fold": 1,
+        "cases": 94,
+        "coverage_greedy_proxy_accuracy": 0.425532,
+        "all_methods_accuracy": 0.404255,
+        "without_frc_accuracy": 0.404255,
+        "all_minus_static": -0.021277
+      },
+      {
+        "fold": 2,
+        "cases": 96,
+        "coverage_greedy_proxy_accuracy": 0.333333,
+        "all_methods_accuracy": 0.322917,
+        "without_frc_accuracy": 0.322917,
+        "all_minus_static": -0.010416
+      },
+      {
+        "fold": 3,
+        "cases": 89,
+        "coverage_greedy_proxy_accuracy": 0.359551,
+        "all_methods_accuracy": 0.449438,
+        "without_frc_accuracy": 0.449438,
+        "all_minus_static": 0.089887
+      },
+      {
+        "fold": 4,
+        "cases": 96,
+        "coverage_greedy_proxy_accuracy": 0.322917,
+        "all_methods_accuracy": 0.395833,
+        "without_frc_accuracy": 0.395833,
+        "all_minus_static": 0.072916
+      }
+    ],
+    "choice_counts": {
+      "all_methods": {
+        "coverage_greedy_proxy": 120,
+        "dense_topk": 113,
+        "bm25_topk": 77,
+        "cross_encoder_topk": 94,
+        "hybrid_topk": 33,
+        "frc_select": 21
+      },
+      "without_frc": {
+        "coverage_greedy_proxy": 118,
+        "dense_topk": 120,
+        "bm25_topk": 84,
+        "cross_encoder_topk": 110,
+        "hybrid_topk": 26
+      }
+    },
+    "safety_and_stability": {
+      "per_label_recall_delta_all_router_minus_static": {
+        "No conflict": 0.217392,
+        "Complementary information": -0.034783,
+        "Conflicting opinions and research outcomes": 0.165217,
+        "Conflict due to outdated information": -0.435483,
+        "Conflict due to misinformation": 0.0
+      },
+      "worst_recall_delta": {
+        "label": "Conflict due to outdated information",
+        "delta": -0.435483
+      },
+      "folds_with_positive_accuracy_gain": 3,
+      "folds_with_nonnegative_accuracy_gain": 3
+    },
+    "execution_cost": {
+      "static_classifier_inputs_per_case": 1,
+      "router_method_inputs_per_case": 6,
+      "mean_unique_selection_signatures_per_case": 5.165939,
+      "maximum_unique_selection_signatures_per_case": 6,
+      "requires_all_method_predictions_at_inference": true
+    },
+    "model_audit": {
+      "all_methods": [
+        {
+          "fold": 0,
+          "training_cases": 375,
+          "training_rows": 2250,
+          "positive_rows": 769,
+          "evaluation_cases": 83,
+          "feature_count": 47,
+          "iterations": 10,
+          "model_sha256": "156872db5531f2e18bb0f88f7b734ea693e6bf385fa7804016fd551f2f6f311a"
+        },
+        {
+          "fold": 1,
+          "training_cases": 364,
+          "training_rows": 2184,
+          "positive_rows": 715,
+          "evaluation_cases": 94,
+          "feature_count": 47,
+          "iterations": 10,
+          "model_sha256": "b051b8ee5e41d1e868614f51191358b11a99801cf80f6b10b1a11a3a7bc6ace7"
+        },
+        {
+          "fold": 2,
+          "training_cases": 362,
+          "training_rows": 2172,
+          "positive_rows": 755,
+          "evaluation_cases": 96,
+          "feature_count": 47,
+          "iterations": 10,
+          "model_sha256": "d073fcf1f65cb911696fa587e64ffb54b60094995063240049c551634ea3d0b9"
+        },
+        {
+          "fold": 3,
+          "training_cases": 369,
+          "training_rows": 2214,
+          "positive_rows": 726,
+          "evaluation_cases": 89,
+          "feature_count": 47,
+          "iterations": 10,
+          "model_sha256": "4e0aaafaca0cea95025c99a5d49fc607bae5e2390ea4810541431bdd35d729d0"
+        },
+        {
+          "fold": 4,
+          "training_cases": 362,
+          "training_rows": 2172,
+          "positive_rows": 731,
+          "evaluation_cases": 96,
+          "feature_count": 47,
+          "iterations": 10,
+          "model_sha256": "32deb35fd92c88030e4f52114e9d9cd8b40c788a693e2991664a1982ae599f0e"
+        }
+      ],
+      "without_frc": [
+        {
+          "fold": 0,
+          "training_cases": 375,
+          "training_rows": 1875,
+          "positive_rows": 640,
+          "evaluation_cases": 83,
+          "feature_count": 45,
+          "iterations": 10,
+          "model_sha256": "3cac3eba496108199987db27c1ca9cab8844802d1fbe2dc1b9fae363d70c7c8c"
+        },
+        {
+          "fold": 1,
+          "training_cases": 364,
+          "training_rows": 1820,
+          "positive_rows": 597,
+          "evaluation_cases": 94,
+          "feature_count": 45,
+          "iterations": 10,
+          "model_sha256": "dc844e30bcdf6b6530afedbe2a8dc09df99d9b10c02c5e8252c2b1592fc58c8b"
+        },
+        {
+          "fold": 2,
+          "training_cases": 362,
+          "training_rows": 1810,
+          "positive_rows": 630,
+          "evaluation_cases": 96,
+          "feature_count": 45,
+          "iterations": 10,
+          "model_sha256": "86b19c2feb29b7a997c7aefd270a6cf9b95b4323fc8dbfc179c8579ea2fbff33"
+        },
+        {
+          "fold": 3,
+          "training_cases": 369,
+          "training_rows": 1845,
+          "positive_rows": 608,
+          "evaluation_cases": 89,
+          "feature_count": 45,
+          "iterations": 10,
+          "model_sha256": "15d38573132cdb6d19319d41c2f1ef1a6addf7880a6ac4cbff4f34605939e163"
+        },
+        {
+          "fold": 4,
+          "training_cases": 362,
+          "training_rows": 1810,
+          "positive_rows": 609,
+          "evaluation_cases": 96,
+          "feature_count": 45,
+          "iterations": 10,
+          "model_sha256": "e15c747e31e186351cacee0ae19cedcd6e4c482e3c467faaa09ea4c8a52f2ee5"
+        }
+      ]
+    },
+    "outcome": {
+      "status": "DISCOVERY_ROUTING_SIGNAL_NOT_ADOPTED_FRC_CONTRIBUTION_NOT_ESTABLISHED",
+      "checks": {
+        "all_router_point_gain_at_least_0_05": true,
+        "all_router_paired_ci_low_above_zero": true,
+        "all_router_paired_ci_low_at_least_0_05": false,
+        "frc_crossfit_contribution_at_least_0_01": false,
+        "frc_unique_oracle_gain_at_least_0_05": false,
+        "all_folds_nonnegative_accuracy_gain": false,
+        "outdated_conflict_recall_not_lower_than_static": false,
+        "misinformation_recall_above_zero": false
+      },
+      "replace_frc_selector": false,
+      "router_adopted": false,
+      "independent_confirmation_required": true,
+      "gate_2": "NO-GO/SHADOW"
+    }
+  },
+  "interpretation": {
+    "system_routing_headroom": "Cross-fitted observable routing improves the point estimate over the frozen strongest static baseline, but the gain is not stable across every fold and safety-critical recall regresses.",
+    "frc_contribution": "The strict without-FRC router is nearly identical and the FRC selector contributes only a small number of unique oracle wins; FRC-specific superiority is not established.",
+    "production": "The router multiplies inference work, is not adopted, and does not authorize CANARY, DEFAULT, or any Gate 2 change."
+  }
+}

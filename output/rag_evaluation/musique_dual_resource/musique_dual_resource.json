@@ -1,0 +1,631 @@
+{
+  "aggregates": {
+    "budget": {
+      "1024": {
+        "dual_minus_strongest": -0.00092,
+        "methods": {
+          "bm25_topk": {
+            "budget_utilization": 0.645633,
+            "complete_support_coverage": 0.186181,
+            "non_support_selection_rate": 0.717977,
+            "selected_count": 4.983864,
+            "selected_token_cost": 661.128258,
+            "support_evidence_f1": 0.363396,
+            "support_precision": 0.282023,
+            "support_recall": 0.539581
+          },
+          "coverage_greedy_proxy": {
+            "budget_utilization": 0.670494,
+            "complete_support_coverage": 0.537443,
+            "non_support_selection_rate": 0.59136,
+            "selected_count": 4.986347,
+            "selected_token_cost": 686.585436,
+            "support_evidence_f1": 0.528438,
+            "support_precision": 0.40864,
+            "support_recall": 0.78565
+          },
+          "cross_encoder_density": {
+            "budget_utilization": 0.617183,
+            "complete_support_coverage": 0.524204,
+            "non_support_selection_rate": 0.596173,
+            "selected_count": 4.994208,
+            "selected_token_cost": 631.995449,
+            "support_evidence_f1": 0.522487,
+            "support_precision": 0.403827,
+            "support_recall": 0.777031
+          },
+          "cross_encoder_knapsack": {
+            "budget_utilization": 0.668585,
+            "complete_support_coverage": 0.536616,
+            "non_support_selection_rate": 0.591829,
+            "selected_count": 4.99007,
+            "selected_token_cost": 684.630534,
+            "support_evidence_f1": 0.528007,
+            "support_precision": 0.408171,
+            "support_recall": 0.785305
+          },
+          "cross_encoder_topk": {
+            "budget_utilization": 0.669052,
+            "complete_support_coverage": 0.537443,
+            "non_support_selection_rate": 0.591318,
+            "selected_count": 4.98676,
+            "selected_token_cost": 685.10964,
+            "support_evidence_f1": 0.528316,
+            "support_precision": 0.408682,
+            "support_recall": 0.785374
+          },
+          "dense_topk": {
+            "budget_utilization": 0.651093,
+            "complete_support_coverage": 0.458006,
+            "non_support_selection_rate": 0.618225,
+            "selected_count": 4.989243,
+            "selected_token_cost": 666.719073,
+            "support_evidence_f1": 0.495724,
+            "support_precision": 0.381775,
+            "support_recall": 0.741415
+          },
+          "frc_cost_aware_v35": {
+            "budget_utilization": 0.617473,
+            "complete_support_coverage": 0.525445,
+            "non_support_selection_rate": 0.595594,
+            "selected_count": 4.994208,
+            "selected_token_cost": 632.292511,
+            "support_evidence_f1": 0.52327,
+            "support_precision": 0.404406,
+            "support_recall": 0.778272
+          },
+          "frc_dual_resource_v36": {
+            "budget_utilization": 0.648357,
+            "complete_support_coverage": 0.538271,
+            "non_support_selection_rate": 0.592167,
+            "selected_count": 4.991725,
+            "selected_token_cost": 663.917253,
+            "support_evidence_f1": 0.527518,
+            "support_precision": 0.407833,
+            "support_recall": 0.784375
+          },
+          "frc_select_v34": {
+            "budget_utilization": 0.669059,
+            "complete_support_coverage": 0.537857,
+            "non_support_selection_rate": 0.591174,
+            "selected_count": 4.987174,
+            "selected_token_cost": 685.11626,
+            "support_evidence_f1": 0.528493,
+            "support_precision": 0.408826,
+            "support_recall": 0.785581
+          },
+          "hybrid_topk": {
+            "budget_utilization": 0.65747,
+            "complete_support_coverage": 0.331403,
+            "non_support_selection_rate": 0.653103,
+            "selected_count": 4.986347,
+            "selected_token_cost": 673.249483,
+            "support_evidence_f1": 0.448798,
+            "support_precision": 0.346897,
+            "support_recall": 0.667908
+          }
+        },
+        "strongest_baseline": "coverage_greedy_proxy"
+      },
+      "1500": {
+        "dual_minus_strongest": -0.000194,
+        "methods": {
+          "bm25_topk": {
+            "budget_utilization": 0.449256,
+            "complete_support_coverage": 0.189905,
+            "non_support_selection_rate": 0.717832,
+            "selected_count": 5.0,
+            "selected_token_cost": 673.884154,
+            "support_evidence_f1": 0.364147,
+            "support_precision": 0.282168,
+            "support_recall": 0.541443
+          },
+          "coverage_greedy_proxy": {
+            "budget_utilization": 0.465448,
+            "complete_support_coverage": 0.540753,
+            "non_support_selection_rate": 0.591146,
+            "selected_count": 5.0,
+            "selected_token_cost": 698.172528,
+            "support_evidence_f1": 0.529017,
+            "support_precision": 0.408854,
+            "support_recall": 0.787374
+          },
+          "cross_encoder_density": {
+            "budget_utilization": 0.426,
+            "complete_support_coverage": 0.529582,
+            "non_support_selection_rate": 0.595532,
+            "selected_count": 5.0,
+            "selected_token_cost": 638.999586,
+            "support_evidence_f1": 0.523473,
+            "support_precision": 0.404468,
+            "support_recall": 0.779099
+          },
+          "cross_encoder_knapsack": {
+            "budget_utilization": 0.464613,
+            "complete_support_coverage": 0.541167,
+            "non_support_selection_rate": 0.591146,
+            "selected_count": 5.0,
+            "selected_token_cost": 696.920149,
+            "support_evidence_f1": 0.528984,
+            "support_precision": 0.408854,
+            "support_recall": 0.787305
+          },
+          "cross_encoder_topk": {
+            "budget_utilization": 0.464615,
+            "complete_support_coverage": 0.541167,
+            "non_support_selection_rate": 0.591063,
+            "selected_count": 5.0,
+            "selected_token_cost": 696.922631,
+            "support_evidence_f1": 0.529102,
+            "support_precision": 0.408937,
+            "support_recall": 0.787512
+          },
+          "dense_topk": {
+            "budget_utilization": 0.45092,
+            "complete_support_coverage": 0.462557,
+            "non_support_selection_rate": 0.61688,
+            "selected_count": 5.0,
+            "selected_token_cost": 676.37981,
+            "support_evidence_f1": 0.497456,
+            "support_precision": 0.38312,
+            "support_recall": 0.744415
+          },
+          "frc_cost_aware_v35": {
+            "budget_utilization": 0.426161,
+            "complete_support_coverage": 0.53041,
+            "non_support_selection_rate": 0.595035,
+            "selected_count": 5.0,
+            "selected_token_cost": 639.241622,
+            "support_evidence_f1": 0.524152,
+            "support_precision": 0.404965,
+            "support_recall": 0.780203
+          },
+          "frc_dual_resource_v36": {
+            "budget_utilization": 0.451494,
+            "complete_support_coverage": 0.542408,
+            "non_support_selection_rate": 0.591229,
+            "selected_count": 5.0,
+            "selected_token_cost": 677.240794,
+            "support_evidence_f1": 0.528908,
+            "support_precision": 0.408771,
+            "support_recall": 0.787133
+          },
+          "frc_select_v34": {
+            "budget_utilization": 0.464608,
+            "complete_support_coverage": 0.541167,
+            "non_support_selection_rate": 0.591063,
+            "selected_count": 5.0,
+            "selected_token_cost": 696.912702,
+            "support_evidence_f1": 0.529087,
+            "support_precision": 0.408937,
+            "support_recall": 0.787443
+          },
+          "hybrid_topk": {
+            "budget_utilization": 0.457019,
+            "complete_support_coverage": 0.33223,
+            "non_support_selection_rate": 0.652793,
+            "selected_count": 5.0,
+            "selected_token_cost": 685.528755,
+            "support_evidence_f1": 0.449522,
+            "support_precision": 0.347207,
+            "support_recall": 0.669735
+          }
+        },
+        "strongest_baseline": "cross_encoder_topk"
+      },
+      "512": {
+        "dual_minus_strongest": -0.00457,
+        "methods": {
+          "bm25_topk": {
+            "budget_utilization": 0.92795,
+            "complete_support_coverage": 0.142739,
+            "non_support_selection_rate": 0.698773,
+            "selected_count": 4.206454,
+            "selected_token_cost": 475.110468,
+            "support_evidence_f1": 0.355703,
+            "support_precision": 0.301227,
+            "support_recall": 0.477658
+          },
+          "coverage_greedy_proxy": {
+            "budget_utilization": 0.933317,
+            "complete_support_coverage": 0.394704,
+            "non_support_selection_rate": 0.554496,
+            "selected_count": 4.155978,
+            "selected_token_cost": 477.858089,
+            "support_evidence_f1": 0.527568,
+            "support_precision": 0.445504,
+            "support_recall": 0.702041
+          },
+          "cross_encoder_density": {
+            "budget_utilization": 0.912143,
+            "complete_support_coverage": 0.419115,
+            "non_support_selection_rate": 0.568618,
+            "selected_count": 4.371535,
+            "selected_token_cost": 467.017377,
+            "support_evidence_f1": 0.523531,
+            "support_precision": 0.431382,
+            "support_recall": 0.71597
+          },
+          "cross_encoder_knapsack": {
+            "budget_utilization": 0.930628,
+            "complete_support_coverage": 0.417873,
+            "non_support_selection_rate": 0.557261,
+            "selected_count": 4.262722,
+            "selected_token_cost": 476.481589,
+            "support_evidence_f1": 0.530964,
+            "support_precision": 0.442739,
+            "support_recall": 0.715729
+          },
+          "cross_encoder_topk": {
+            "budget_utilization": 0.933031,
+            "complete_support_coverage": 0.412495,
+            "non_support_selection_rate": 0.550958,
+            "selected_count": 4.172942,
+            "selected_token_cost": 477.711626,
+            "support_evidence_f1": 0.53378,
+            "support_precision": 0.449042,
+            "support_recall": 0.711281
+          },
+          "dense_topk": {
+            "budget_utilization": 0.924924,
+            "complete_support_coverage": 0.348779,
+            "non_support_selection_rate": 0.591277,
+            "selected_count": 4.199421,
+            "selected_token_cost": 473.561026,
+            "support_evidence_f1": 0.490181,
+            "support_precision": 0.408723,
+            "support_recall": 0.662495
+          },
+          "frc_cost_aware_v35": {
+            "budget_utilization": 0.911913,
+            "complete_support_coverage": 0.420356,
+            "non_support_selection_rate": 0.566343,
+            "selected_count": 4.351676,
+            "selected_token_cost": 466.899462,
+            "support_evidence_f1": 0.525006,
+            "support_precision": 0.433657,
+            "support_recall": 0.716798
+          },
+          "frc_dual_resource_v36": {
+            "budget_utilization": 0.922374,
+            "complete_support_coverage": 0.422838,
+            "non_support_selection_rate": 0.559716,
+            "selected_count": 4.283409,
+            "selected_token_cost": 472.255689,
+            "support_evidence_f1": 0.52921,
+            "support_precision": 0.440284,
+            "support_recall": 0.716281
+          },
+          "frc_select_v34": {
+            "budget_utilization": 0.933026,
+            "complete_support_coverage": 0.412909,
+            "non_support_selection_rate": 0.549283,
+            "selected_count": 4.168804,
+            "selected_token_cost": 477.709557,
+            "support_evidence_f1": 0.534823,
+            "support_precision": 0.450717,
+            "support_recall": 0.712212
+          },
+          "hybrid_topk": {
+            "budget_utilization": 0.927954,
+            "complete_support_coverage": 0.247414,
+            "non_support_selection_rate": 0.61979,
+            "selected_count": 4.154324,
+            "selected_token_cost": 475.112536,
+            "support_evidence_f1": 0.446546,
+            "support_precision": 0.38021,
+            "support_recall": 0.594642
+          }
+        },
+        "strongest_baseline": "cross_encoder_topk"
+      }
+    },
+    "family_equal_budget_weight": {
+      "bm25_topk": {
+        "budget_utilization": 0.67428,
+        "complete_support_coverage": 0.172942,
+        "non_support_selection_rate": 0.711527,
+        "selected_count": 4.730106,
+        "selected_token_cost": 603.374293,
+        "support_evidence_f1": 0.361082,
+        "support_precision": 0.288473,
+        "support_recall": 0.519561
+      },
+      "coverage_greedy_proxy": {
+        "budget_utilization": 0.689753,
+        "complete_support_coverage": 0.490967,
+        "non_support_selection_rate": 0.579001,
+        "selected_count": 4.714108,
+        "selected_token_cost": 620.872018,
+        "support_evidence_f1": 0.528341,
+        "support_precision": 0.420999,
+        "support_recall": 0.758355
+      },
+      "cross_encoder_density": {
+        "budget_utilization": 0.651775,
+        "complete_support_coverage": 0.490967,
+        "non_support_selection_rate": 0.586774,
+        "selected_count": 4.788581,
+        "selected_token_cost": 579.337471,
+        "support_evidence_f1": 0.523164,
+        "support_precision": 0.413226,
+        "support_recall": 0.757367
+      },
+      "cross_encoder_knapsack": {
+        "budget_utilization": 0.687942,
+        "complete_support_coverage": 0.498552,
+        "non_support_selection_rate": 0.580079,
+        "selected_count": 4.750931,
+        "selected_token_cost": 619.344091,
+        "support_evidence_f1": 0.529318,
+        "support_precision": 0.419921,
+        "support_recall": 0.76278
+      },
+      "cross_encoder_topk": {
+        "budget_utilization": 0.688899,
+        "complete_support_coverage": 0.497035,
+        "non_support_selection_rate": 0.57778,
+        "selected_count": 4.719901,
+        "selected_token_cost": 619.914632,
+        "support_evidence_f1": 0.530399,
+        "support_precision": 0.42222,
+        "support_recall": 0.761389
+      },
+      "dense_topk": {
+        "budget_utilization": 0.675646,
+        "complete_support_coverage": 0.423114,
+        "non_support_selection_rate": 0.608794,
+        "selected_count": 4.729555,
+        "selected_token_cost": 605.553303,
+        "support_evidence_f1": 0.494454,
+        "support_precision": 0.391206,
+        "support_recall": 0.716108
+      },
+      "frc_cost_aware_v35": {
+        "budget_utilization": 0.651849,
+        "complete_support_coverage": 0.49207,
+        "non_support_selection_rate": 0.585657,
+        "selected_count": 4.781961,
+        "selected_token_cost": 579.477865,
+        "support_evidence_f1": 0.524143,
+        "support_precision": 0.414343,
+        "support_recall": 0.758424
+      },
+      "frc_dual_resource_v36": {
+        "budget_utilization": 0.674075,
+        "complete_support_coverage": 0.501172,
+        "non_support_selection_rate": 0.581037,
+        "selected_count": 4.758378,
+        "selected_token_cost": 604.471245,
+        "support_evidence_f1": 0.528545,
+        "support_precision": 0.418963,
+        "support_recall": 0.762596
+      },
+      "frc_select_v34": {
+        "budget_utilization": 0.688898,
+        "complete_support_coverage": 0.497311,
+        "non_support_selection_rate": 0.577173,
+        "selected_count": 4.718659,
+        "selected_token_cost": 619.91284,
+        "support_evidence_f1": 0.530801,
+        "support_precision": 0.422827,
+        "support_recall": 0.761745
+      },
+      "hybrid_topk": {
+        "budget_utilization": 0.680814,
+        "complete_support_coverage": 0.303682,
+        "non_support_selection_rate": 0.641895,
+        "selected_count": 4.713557,
+        "selected_token_cost": 611.296925,
+        "support_evidence_f1": 0.448289,
+        "support_precision": 0.358105,
+        "support_recall": 0.644095
+      }
+    },
+    "hop_strata": {
+      "2-hop": {
+        "cases": 1252,
+        "dual_minus_strongest": -0.004806,
+        "method_primary_means": {
+          "bm25_topk": 0.335396,
+          "coverage_greedy_proxy": 0.492988,
+          "cross_encoder_density": 0.484208,
+          "cross_encoder_knapsack": 0.492813,
+          "cross_encoder_topk": 0.494698,
+          "dense_topk": 0.475739,
+          "frc_cost_aware_v35": 0.485966,
+          "frc_dual_resource_v36": 0.489892,
+          "frc_select_v34": 0.495032,
+          "hybrid_topk": 0.417311
+        },
+        "strongest_baseline": "cross_encoder_topk"
+      },
+      "3-hop": {
+        "cases": 760,
+        "dual_minus_strongest": 0.003234,
+        "method_primary_means": {
+          "bm25_topk": 0.400176,
+          "coverage_greedy_proxy": 0.595047,
+          "cross_encoder_density": 0.590491,
+          "cross_encoder_knapsack": 0.596206,
+          "cross_encoder_topk": 0.596078,
+          "dense_topk": 0.526233,
+          "frc_cost_aware_v35": 0.591317,
+          "frc_dual_resource_v36": 0.59944,
+          "frc_select_v34": 0.59705,
+          "hybrid_topk": 0.498534
+        },
+        "strongest_baseline": "cross_encoder_knapsack"
+      },
+      "4-hop": {
+        "cases": 405,
+        "dual_minus_strongest": -0.002514,
+        "method_primary_means": {
+          "bm25_topk": 0.367124,
+          "coverage_greedy_proxy": 0.512455,
+          "cross_encoder_density": 0.517244,
+          "cross_encoder_knapsack": 0.516651,
+          "cross_encoder_topk": 0.517515,
+          "dense_topk": 0.492669,
+          "frc_cost_aware_v35": 0.516107,
+          "frc_dual_resource_v36": 0.515001,
+          "frc_select_v34": 0.517058,
+          "hybrid_topk": 0.449764
+        },
+        "strongest_baseline": "cross_encoder_topk"
+      }
+    }
+  },
+  "analysis": {
+    "budget_deltas": {
+      "1024": -0.00092,
+      "1500": -0.000194,
+      "512": -0.00457
+    },
+    "family_comparison": {
+      "dual_minus_bootstrap_strongest_simultaneous": {
+        "ci_high": -2e-05,
+        "ci_low": -0.003784,
+        "resamples": 10000,
+        "seed": 20260801
+      },
+      "dual_minus_observed_strongest": {
+        "baseline": "cross_encoder_topk",
+        "point": -0.001854
+      },
+      "dual_minus_old_frc": {
+        "ci_high": -0.000403,
+        "ci_low": -0.004128,
+        "comparator": "frc_select_v34",
+        "point": -0.002256,
+        "resamples": 10000,
+        "seed": 20260801
+      },
+      "dual_minus_v35": {
+        "ci_high": 0.006613,
+        "ci_low": 0.002244,
+        "comparator": "frc_cost_aware_v35",
+        "point": 0.004402,
+        "resamples": 10000,
+        "seed": 20260801
+      },
+      "method_primary_means": {
+        "bm25_topk": 0.361082,
+        "coverage_greedy_proxy": 0.528341,
+        "cross_encoder_density": 0.523163,
+        "cross_encoder_knapsack": 0.529318,
+        "cross_encoder_topk": 0.530399,
+        "dense_topk": 0.494453,
+        "frc_cost_aware_v35": 0.524143,
+        "frc_dual_resource_v36": 0.528545,
+        "frc_select_v34": 0.530801,
+        "hybrid_topk": 0.448289
+      },
+      "observed_strongest_baseline": "cross_encoder_topk"
+    },
+    "hop_deltas": {
+      "2-hop": -0.004806,
+      "3-hop": 0.003234,
+      "4-hop": -0.002514
+    },
+    "outcome": {
+      "canary_or_default_authorized": false,
+      "flood_domain_effectiveness_established": false,
+      "gate_2": "NO-GO/SHADOW",
+      "selector_changed": false,
+      "setr_reproduced": false,
+      "status": "MUSIQUE_DUAL_RESOURCE_FRC_SUPPORT_NOT_ESTABLISHED"
+    },
+    "primary_metric": "support_evidence_f1",
+    "support_checks": {
+      "dual_minus_old_frc_ci_low_above_0": false,
+      "dual_minus_old_frc_point_at_least_0_01": false,
+      "dual_minus_strongest_point_at_least_0_01": false,
+      "dual_minus_strongest_simultaneous_ci_low_above_0": false,
+      "dual_minus_v35_ci_low_above_0": true,
+      "dual_minus_v35_point_at_least_0_01": false,
+      "every_budget_delta_at_least_minus_0_02": true,
+      "every_hop_delta_at_least_minus_0_02": true
+    },
+    "worst_budget_delta": -0.00457,
+    "worst_hop_delta": -0.004806
+  },
+  "development_boundary": {
+    "cross_domain_selection_evidence_only": true,
+    "gate_evidence": false,
+    "independent_confirmation": true,
+    "no_musique_tuning": true,
+    "raw_question_answer_or_candidate_text_exported": false
+  },
+  "metadata": {
+    "budgets": [
+      512,
+      1024,
+      1500
+    ],
+    "candidate_chunks": 48656,
+    "cases": 2417,
+    "dataset": "MuSiQue-Answerable dev",
+    "deterministic_output_rerun": "2/2 byte-identical",
+    "evidence_artifact": {
+      "path": "musique_dual_resource_cases.jsonl.gz",
+      "raw_question_answer_or_candidate_text_exported": false,
+      "rows": 2417,
+      "sha256": "e737b97b09b75414ee6b134399ad99220ffd752c222da76bf93c465db8a465d2"
+    },
+    "execution_sha256": "b5dbc90be69c0341a95a5b1b2c81b440fe6e33d9507c1ec0bac89b83d6f199c8",
+    "gold_visible_to_scorer": false,
+    "hop_distribution": {
+      "2": 1252,
+      "3": 760,
+      "4": 405
+    },
+    "methods": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "cross_encoder_density",
+      "cross_encoder_knapsack",
+      "coverage_greedy_proxy",
+      "frc_select_v34",
+      "frc_cost_aware_v35",
+      "frc_dual_resource_v36"
+    ],
+    "protocol_sha256": "812cf844b1650713220f89f534bf45227f229b3fa767cdc1ff87cffc5ba505d4",
+    "raw_text_committed": false,
+    "selection_runs": 72510,
+    "source_artifacts": {
+      "archive": {
+        "path_label": "musique_v1.0.zip",
+        "sha256": "98f839bf2fd5319f5c688aed77901a6d5c30b3b9f9f691ab9a8ecafb045ee0cd"
+      },
+      "execution": {
+        "path_label": "musique_dual_resource_execution.json",
+        "sha256": "b5dbc90be69c0341a95a5b1b2c81b440fe6e33d9507c1ec0bac89b83d6f199c8"
+      },
+      "implementation": {
+        "path_label": "musique_dual_resource.py",
+        "sha256": "2c102c594d81fa11b1dfbeb23d61ae3b7b87bc46660fb0a890a7e5e737ee3657"
+      },
+      "prepared_blind": {
+        "path_label": "prepared_dual_resource_blind.jsonl",
+        "sha256": "b9a987875dbc7aeaef4720c6df02265d0368b49f344b8a24b933a10ca0cfc28b"
+      },
+      "protocol": {
+        "path_label": "musique_dual_resource_protocol.json",
+        "sha256": "812cf844b1650713220f89f534bf45227f229b3fa767cdc1ff87cffc5ba505d4"
+      },
+      "raw_source": {
+        "path_label": "musique_ans_v1.0_dev.jsonl",
+        "sha256": "15fa63794d18a94ce12411aca6e2327e65b6e83b0b1490efab3f1962e48abf3b"
+      },
+      "scored_blind": {
+        "path_label": "scored_dual_resource_blind.jsonl",
+        "sha256": "e2c688063e694ef0df7df7f6052cb5e68c9739f26a59db8a24c1a54413ce9242"
+      }
+    },
+    "source_revision": "922ac98f19a201998dbdae6d7f2887a5258dbdeb"
+  },
+  "schema_version": "frc-musique-dual-resource-v1"
+}

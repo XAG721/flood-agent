@@ -1,0 +1,33 @@
+{
+  "schema_version": "frc-ottqa-guarded-adaptive-atomic-roles-protocol-erratum-v44",
+  "experiment_id": "FRC-OTTQA-GUARDED-ADAPTIVE-ATOMIC-ROLES-V44",
+  "registered_at": "2026-08-02T04:31:06+08:00",
+  "base_protocol_sha256": "95116d2af455d1f8792e81cc1ed1f0f48db5fd7ef1274d257f73cec8e5c1e072",
+  "trigger": {
+    "stage": "pinned sparse checkout before data parsing",
+    "platform": "Windows",
+    "observed_error": "git checkout rejected official paths containing Windows-reserved characters such as double quote, colon, and asterisk",
+    "question_answer_evidence_or_table_content_parsed_before_erratum": false,
+    "neural_query_generation_started": false,
+    "neural_scoring_started": false,
+    "metrics_computed": false
+  },
+  "correction": {
+    "field": "source_access_order and physical source representation",
+    "original": "Sparse-checkout the registered LICENSE, dev_linked, table-directory, and linked-passage-directory paths into the Windows worktree.",
+    "effective": "Use git archive at the same pinned revision to write one uncompressed tar containing exactly LICENSE, preprocessed_data/dev_linked.json, data/traindev_tables_tok, and data/traindev_request_tok. Read registered members directly through Python tarfile without extracting Windows-invalid names.",
+    "archive_member_paths_remain_original_git_paths": true,
+    "official_git_blob_identity_verification_remains_required": true,
+    "official_directory_file_count_byte_count_and_manifest_sha256_verification_remains_required": true,
+    "selection_rule_changed": false,
+    "candidate_construction_changed": false,
+    "candidate_pool_size_changed": false,
+    "model_or_revision_changed": false,
+    "method_or_formula_changed": false,
+    "budget_or_threshold_changed": false,
+    "metric_or_decision_rule_changed": false
+  },
+  "scientific_effect": "none; storage portability only",
+  "method_or_threshold_changed": false,
+  "negative_null_or_inconclusive_result_must_still_be_published": true
+}

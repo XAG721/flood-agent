@@ -1,0 +1,54 @@
+{
+  "schema_version": "frc-ottqa-guarded-adaptive-atomic-roles-implementation-v44",
+  "experiment_id": "FRC-OTTQA-GUARDED-ADAPTIVE-ATOMIC-ROLES-V44",
+  "registered_at": "2026-08-02T04:26:25+08:00",
+  "protocol_frozen_before_implementation": true,
+  "data_content_accessed_before_registration": false,
+  "repository_tree_filenames_accessed_before_registration": true,
+  "official_parser_retriever_preprocessor_and_answer_tracing_code_accessed_before_registration": true,
+  "question_answer_answer_node_table_or_passage_content_accessed_before_registration": false,
+  "implementation_scope": [
+    "deterministic source-mode-balanced sampling",
+    "oracle-table row and linked-passage token chunking",
+    "official-anchor plus lexical bounded candidate construction",
+    "opaque blind generator and scorer caches with recursive forbidden-key checks",
+    "frozen v41 neural scoring and baseline selectors",
+    "v43 adaptive-cardinality replay control",
+    "v44 one-step guarded adaptive-cardinality selector",
+    "post-score answer-node gold mapping and candidate coverage registration",
+    "paired bootstrap, safety checks, deterministic JSON, Markdown, and gzip reports"
+  ],
+  "frozen_formula": "target_cardinality = min(5, max(3, distinct_role_argmax + 1))",
+  "synthetic_invariants_verified": {
+    "distinct_argmax_1_to_target_3": true,
+    "distinct_argmax_2_to_target_3": true,
+    "distinct_argmax_3_to_target_4": true,
+    "distinct_argmax_4_to_target_5": true,
+    "empty_pool_to_target_0": true,
+    "budget_can_only_reduce_selected_count": true,
+    "canonical_id_tie_break_is_deterministic": true,
+    "blind_cache_excludes_registered_gold_fields": true,
+    "candidate_pool_never_exceeds_128": true,
+    "gold_join_occurs_after_blind_cache_construction": true,
+    "gate_2_remains_no_go_shadow": true
+  },
+  "verification": {
+    "targeted_pytest": "7 passed in 0.12s",
+    "full_pytest": "376 passed, 1 warning in 301.30s",
+    "warning": "Existing StarletteDeprecationWarning from fastapi.testclient/httpx compatibility; unrelated to v44.",
+    "ruff": "All checks passed",
+    "python_compile": "passed",
+    "test_data": "synthetic only",
+    "ottqa_data_content_used_by_tests": false
+  },
+  "hashes": {
+    "protocol_sha256": "95116d2af455d1f8792e81cc1ed1f0f48db5fd7ef1274d257f73cec8e5c1e072",
+    "module_sha256": "f0a4671d2d707aad518bcf809c60ec6e90c45686b007408fadcf2362835743d8",
+    "runner_sha256": "da8ed0b379f32830b0032c9ab8e051afbe5546d57efdc56192d8c9d7ff037660",
+    "test_sha256": "96c0298229248b7f1e917c889d00310e52ebe00eb1e5d2df6713cc220a76f45d",
+    "inherited_v41_module_sha256": "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621"
+  },
+  "next_authorized_access": "Checkout only the pinned OTT-QA paths registered in the protocol, verify Git objects and manifests, prepare blind caches, and publish candidate coverage before neural query generation or scoring.",
+  "method_or_threshold_change_after_this_registration_forbidden": true,
+  "negative_null_or_inconclusive_result_must_be_published": true
+}

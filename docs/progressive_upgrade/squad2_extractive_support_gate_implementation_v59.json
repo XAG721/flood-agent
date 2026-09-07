@@ -1,0 +1,23 @@
+{
+  "schema_version": "frc-squad2-v59-implementation-registration-v1",
+  "experiment_id": "FRC-SQUAD2-EXTRACTIVE-SUPPORT-GATE-V59",
+  "registered_at": "2026-08-03T17:22:00+08:00",
+  "hashes": {
+    "protocol": "d9c3350f9f54db473bbd1d521bfd1d052832712f9e554b31aed3e3e866b570f7",
+    "source_registration": "85f1e206ab0ef1d566f398974ad665045d98789bc2130b81adb9cf1eac6a331c",
+    "module": "2f285e760f6a4c0e78a4e0ca1b68033f0019af9ab9ed1c58f7c3be056b543cad",
+    "runner": "90ebb856a81ed519ba36fc47005becb80125dcc09e436a4ab23c97a7710568d6",
+    "tests": "2c990537e0b005770ff69e9c3c2431f71b65ae29bce04e1eaeedc380eaa54c95"
+  },
+  "v59_sample_constructed_before_registration": false,
+  "dev_content_read": false,
+  "v58_case_level_artifact_reused": false,
+  "v58_source_case_commitments_authorized_for_exclusion_only": true,
+  "exact_extractive_prompt_and_parser_frozen": true,
+  "candidate_reuses_adaptive_argmax_cardinality_frc_v43": true,
+  "synthetic_tests": {
+    "passed": 7,
+    "failed": 0,
+    "source_content_used": false
+  }
+}

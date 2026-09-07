@@ -1,0 +1,127 @@
+{
+  "schema_version": "frc-musique-anchor-default-terminal-holdout-protocol-v80",
+  "experiment_id": "FRC-MUSIQUE-ANCHOR-DEFAULT-TERMINAL-HOLDOUT-V80",
+  "registered_on": "2026-08-04",
+  "research_question": "Can an anchor-default three-route router selected only on permanently excluded v78+v79 MuSiQue evidence prospectively outperform every registered control on one terminal, case-disjoint holdout?",
+  "candidate": {
+    "name": "musique_anchor_default_three_route_router_v80",
+    "model_development_experiment_id": "FRC-MUSIQUE-ANCHOR-DEFAULT-THREE-ROUTE-ROUTER-V80",
+    "target_domain_training_cases": 1070,
+    "v80_target_training_or_tuning_cases": 0,
+    "feature_count": 71,
+    "feature_names_sha256": "51e029bb0b26995989365a7420275d27c78253fb0151c8a0183bd0811dc55548",
+    "routes": [
+      "cross_encoder_topk",
+      "soft_title_link_support_path_closure_v74",
+      "alternating_anchor_link_control"
+    ],
+    "default_route": "alternating_anchor_link_control",
+    "targets": [
+      "cross_encoder_f1_minus_anchor_f1",
+      "soft_f1_minus_anchor_f1"
+    ],
+    "model_configurations": 216,
+    "thresholds_per_model": 7,
+    "route_policy_configurations": 1512,
+    "selected_model_configuration_index": 131,
+    "selected_threshold": 0.0025,
+    "selection_metric": "combined v78+v79 five-fold out-of-fold evidence_macro_f1 subject to registered hop and route coverage safeguards",
+    "selected_oof_model_selection_f1": 0.554843,
+    "selected_oof_minus_anchor_point": 0.005544,
+    "selected_oof_minus_anchor_ci": [
+      0.002129,
+      0.009068
+    ],
+    "selected_oof_is_unbiased_confirmation": false,
+    "official_hop_answer_decomposition_support_flags_or_gold_used_at_runtime": false
+  },
+  "controls": [
+    "cross_encoder_topk",
+    "frc_select",
+    "soft_title_link_support_path_closure_v74",
+    "alternating_anchor_link_control",
+    "lexical_question_router_control",
+    "zero_shot_v75_question_router_control",
+    "graph_gbr_soft_override_router_v76",
+    "mean_calibrated_three_route_router_v78",
+    "musique_target_trained_three_route_router_v79"
+  ],
+  "common_resources": {
+    "top_k": 5,
+    "token_budget": 1500,
+    "embedding_model": "BAAI/bge-large-en-v1.5@d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "score_calibration": "per-case min-max",
+    "role_relevance_mix": 0.15,
+    "rrf_k": 60
+  },
+  "stage": {
+    "name": "terminal_holdout",
+    "cases": 600,
+    "hop_quota": {
+      "2": 400,
+      "3": 150,
+      "4": 50
+    },
+    "selection_salt": "FRC-MUSIQUE-V80-TERMINAL-HOLDOUT|",
+    "excludes_v65_through_v79": true,
+    "may_change_candidate_after_result": false,
+    "further_same_source_confirmation_authorized": false,
+    "terminal_because_remaining_four_hop_capacity_cannot_support_two_comparable_stages": true
+  },
+  "metric_seed": 20261161,
+  "metrics": {
+    "primary": "evidence_macro_f1",
+    "secondary": [
+      "evidence_macro_recall",
+      "complete_evidence_recall",
+      "mean_selected_tokens",
+      "route_distribution"
+    ],
+    "paired_uncertainty": "10000 case bootstrap resamples"
+  },
+  "holdout_gates": {
+    "exact_cases": 600,
+    "exact_hop_quota": {
+      "2": 400,
+      "3": 150,
+      "4": 50
+    },
+    "prior_training_overlap": 0,
+    "invalid_selector_output_rate": 0.0,
+    "candidate_evidence_macro_f1_at_least": 0.55,
+    "candidate_complete_evidence_recall_at_least": 0.55,
+    "candidate_minus_strongest_registered_control_f1_at_least": 0.005,
+    "candidate_minus_strongest_registered_control_ci_low_above": 0.0,
+    "candidate_minus_frozen_v79_f1_at_least": 0.005,
+    "candidate_minus_frozen_v79_ci_low_above": 0.0,
+    "every_hop_delta_vs_best_control_at_least": -0.005,
+    "at_least_two_routes_each_cover_at_least_fraction": 0.05,
+    "largest_route_fraction_at_most": 0.9,
+    "mean_selected_tokens_not_above_strongest_control_by_more_than_fraction": 0.05
+  },
+  "noninferiority_envelope": {
+    "candidate_minus_strongest_control_point_at_least": -0.005,
+    "candidate_minus_strongest_control_ci_low_at_least": -0.01,
+    "candidate_minus_frozen_v79_point_at_least": 0.0,
+    "every_hop_delta_vs_best_control_at_least": -0.02,
+    "invalid_selector_output_rate": 0.0
+  },
+  "decision_policy": {
+    "terminal_advantage": "record prospective same-dataset terminal holdout advantage only; do not authorize selector adoption, CANARY, DEFAULT or Gate 2",
+    "terminal_noninferiority_only": "record bounded noninferiority and close v80 without another same-source stage",
+    "terminal_failure": "close v80; do not modify the model, threshold, features, gates or sample using v80 evidence",
+    "post_result": "never reuse v80 holdout metrics for model, threshold, feature, gate or selector development"
+  },
+  "claim_limits": {
+    "v78_v79_are_target_domain_training_and_model_selection_not_independent_confirmation": true,
+    "v80_is_prospective_new_sample_same_dataset_terminal_holdout": true,
+    "strict_zero_target_tuning": false,
+    "independent_training_dataset_confirmation": false,
+    "official_musique_leaderboard_result": false,
+    "answer_generation_evaluation": false,
+    "real_setr_comparison": false,
+    "flood_domain_expert_or_production_evidence": false,
+    "selector_canary_default_or_gate2_authorized": false
+  }
+}

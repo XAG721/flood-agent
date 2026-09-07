@@ -1,0 +1,58 @@
+{
+  "experiment_id": "FRC-QASPER-TOP2-PROPOSAL-GUARDED-ATOMIC-ROLES-V48",
+  "hashes": {
+    "blind_census_sha256": "d842d7bfaaedac62f90580954bebf8cfbf037d19648cf24bd747e1c1e0283924",
+    "candidate_coverage_sha256": "b3ed456d3fd438b330c6325cae724a0dddc2e9b629bc6b10ba4cf5a58614bc4c",
+    "candidate_map_sha256": "471bbba96c6098dfdb7551dceb3a080c97cbb4947ad13fcc2de8096c7ef09176",
+    "implementation_registration_sha256": "051895e3ae32b5b1a679220b939447150bda955cee087216dd4d16ac98045006",
+    "prepared_blind_sha256": "0962a241d2dd49c447331230aa3b7e7f0a7a19be8bfacb25b5a65fb9b8f5523e",
+    "source_archive_sha256": "a28fdf966db827bcee3d873107d6b6669864fb7ca8fbf73a192f5e39191bdb5a",
+    "source_card_sha256": "da348d3f8277f8a93ca397941f6a525433e282858b1c0562aed3f667d8e55b05"
+  },
+  "method_or_threshold_change_after_registration_forbidden": true,
+  "metrics_computed": false,
+  "negative_null_or_inconclusive_result_must_be_published": true,
+  "neural_scoring_started": false,
+  "query_generation_started": false,
+  "registered_at": "2026-08-02T11:00:00+08:00",
+  "runtime": {
+    "cuda_available": true,
+    "cuda_runtime": "12.4",
+    "gpu": "NVIDIA GeForce RTX 4060 Ti",
+    "gpu_memory_mib": 16380,
+    "numpy": "2.2.6",
+    "parameters": {
+      "bootstrap_resamples": 10000,
+      "bootstrap_seed": 20260808,
+      "case_batch_size": 4,
+      "device": "cuda",
+      "embedding_batch_size": 64,
+      "fp16": true,
+      "generator_batch_size": 8,
+      "generator_max_input_tokens": 512,
+      "generator_max_new_tokens": 160,
+      "offline_model_loading": true,
+      "reranker_batch_size": 256
+    },
+    "platform": "Windows-10-10.0.19045-SP0",
+    "python": "3.10.20",
+    "torch": "2.4.1+cu124",
+    "transformers": "4.46.3"
+  },
+  "schema_version": "frc-qasper-top2-proposal-guarded-atomic-roles-execution-v48",
+  "source_artifacts": {
+    "archive_bytes": 10835856,
+    "archive_sha256": "a28fdf966db827bcee3d873107d6b6669864fb7ca8fbf73a192f5e39191bdb5a",
+    "dataset_repository_revision": "fdc9d8214fbab5dd782958601db4d678e6934a54",
+    "dataset_version": "0.3.0",
+    "development_member": {
+      "bytes": 11398686,
+      "path": "qasper-dev-v0.3.json"
+    },
+    "license_checked_before_dev_member_opened": true,
+    "license_identifier": "CC-BY-4.0",
+    "source_card_bytes": 9639,
+    "source_card_sha256": "da348d3f8277f8a93ca397941f6a525433e282858b1c0562aed3f667d8e55b05",
+    "train_member_opened": false
+  }
+}

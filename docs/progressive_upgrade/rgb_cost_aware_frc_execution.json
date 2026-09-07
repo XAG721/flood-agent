@@ -1,0 +1,221 @@
+{
+  "schema_version": "frc-rgb-cost-aware-execution-v1",
+  "registered_at": "2026-08-01T08:45:33.2657763+08:00",
+  "experiment_id": "FRC-RGB-COST-AWARE-V35",
+  "registration_boundary": {
+    "protocol_path": "docs/progressive_upgrade/rgb_cost_aware_frc_protocol.json",
+    "protocol_sha256": "c370f83ada7df1c16b8249e05aad929d0a0dc439efa48594ca03ec04e7e420a4",
+    "rgb_neural_scores_generated_before_registration": false,
+    "rgb_selection_metrics_known_before_registration": false,
+    "purpose": "Register source fingerprints, structural census, runtime, and deterministic interpretations before loading either frozen neural model for RGB scoring."
+  },
+  "source_checkout": {
+    "repository": "https://github.com/chen700564/RGB",
+    "revision": "65ec39e40e7dc9abb50e9bf1b4f32be3f6f16615",
+    "checkout_clean": true,
+    "cache_root": ".cache/benchmarks/rgb",
+    "license": "CC-BY-NC-SA-4.0",
+    "raw_source_committed": false,
+    "files": [
+      {
+        "dataset_id": "rgb_en_refine",
+        "path": "data/en_refine.json",
+        "sha256": "ad6468eb2d14496a6a2d9961d35b60924739e21a0c6e7811552f1ac31e3423f3",
+        "source_rows": 300,
+        "valid_rows": 300
+      },
+      {
+        "dataset_id": "rgb_en_int",
+        "path": "data/en_int.json",
+        "sha256": "797a6fc39a75d0cfb88d9c1b57f27277a959870eba3d56f26cf2dad482cd7725",
+        "source_rows": 100,
+        "valid_rows": 100
+      },
+      {
+        "dataset_id": "rgb_en_fact",
+        "path": "data/en_fact.json",
+        "sha256": "27b5a3ae2d3cd0c5c12282b3bbab659708dbd46c58e5890fd787f86f5530c28e",
+        "source_rows": 100,
+        "valid_rows": 98
+      }
+    ]
+  },
+  "structural_census": {
+    "total_source_rows": 500,
+    "total_valid_rows": 498,
+    "total_excluded_rows": 2,
+    "exclusions": {
+      "rgb_en_refine": {},
+      "rgb_en_int": {},
+      "rgb_en_fact": {
+        "cross_label_duplicate_conflict": 2
+      }
+    },
+    "cross_label_conflicting_candidate_count": 2,
+    "candidate_normalization": "Collapse Unicode whitespace with Python re \\s+ and trim.",
+    "source_deduplication": "Deduplicate complete normalized source documents within each case before chunking; union source labels and en_int gold-group memberships.",
+    "source_order": "Sort deduplicated source documents by normalized-text SHA-256 before assigning neutral source ordinals, so original positive/negative list order cannot influence deterministic tie breaks.",
+    "chunk_deduplication": "Do not deduplicate partial chunks after source-document deduplication; a chunk retains the identity and memberships of its unique source document.",
+    "datasets": {
+      "rgb_en_refine": {
+        "case_ids_sha256": "c8a9c1cad7b4a3101e9789a851f686d026556cfbc20a92bfa4dbcf2552851f2b",
+        "unique_source_documents": {
+          "total": 7904,
+          "minimum_per_case": 13,
+          "mean_per_case": 26.346667,
+          "median_per_case": 27.0,
+          "p95_per_case": 35,
+          "maximum_per_case": 40
+        },
+        "candidate_chunks": {
+          "total": 7907,
+          "minimum_per_case": 13,
+          "mean_per_case": 26.356667,
+          "median_per_case": 27.0,
+          "p95_per_case": 35,
+          "maximum_per_case": 40
+        },
+        "chunk_token_cost": {
+          "total": 1682766,
+          "minimum": 2,
+          "mean": 212.81978,
+          "median": 285,
+          "p95": 337,
+          "maximum": 384
+        }
+      },
+      "rgb_en_int": {
+        "case_ids_sha256": "129c6b9093540f8850b451aac484bfddf9ffddc2451405ba873c51f40fe0b0ea",
+        "unique_source_documents": {
+          "total": 5323,
+          "minimum_per_case": 10,
+          "mean_per_case": 53.23,
+          "median_per_case": 57.0,
+          "p95_per_case": 80,
+          "maximum_per_case": 80
+        },
+        "candidate_chunks": {
+          "total": 5323,
+          "minimum_per_case": 10,
+          "mean_per_case": 53.23,
+          "median_per_case": 57.0,
+          "p95_per_case": 80,
+          "maximum_per_case": 80
+        },
+        "chunk_token_cost": {
+          "total": 1129943,
+          "minimum": 2,
+          "mean": 212.275596,
+          "median": 283,
+          "p95": 337,
+          "maximum": 384
+        }
+      },
+      "rgb_en_fact": {
+        "case_ids_sha256": "1d8c5fc79377c729507c7f77031b39faf9f2097694b48389b401ce047492354b",
+        "unique_source_documents": {
+          "total": 1350,
+          "minimum_per_case": 7,
+          "mean_per_case": 13.77551,
+          "median_per_case": 13.5,
+          "p95_per_case": 18,
+          "maximum_per_case": 19
+        },
+        "candidate_chunks": {
+          "total": 1350,
+          "minimum_per_case": 7,
+          "mean_per_case": 13.77551,
+          "median_per_case": 13.5,
+          "p95_per_case": 18,
+          "maximum_per_case": 19
+        },
+        "chunk_token_cost": {
+          "total": 51474,
+          "minimum": 4,
+          "mean": 38.128889,
+          "median": 38.0,
+          "p95": 47,
+          "maximum": 69
+        }
+      }
+    }
+  },
+  "frozen_adapter_interpretation": {
+    "case_id": "dataset_id + '::' + public integer id; public IDs are non-empty and unique within every file.",
+    "candidate_pool": "Correct-positive, negative, and, for en_fact, positive_wrong source documents are all selectable after blind-field removal.",
+    "normal_gold_units": "Each deduplicated correct-positive source document is one gold unit.",
+    "integration_gold_units": "Each top-level en_int positive group is one gold unit; selecting a chunk from any member source document covers that unit.",
+    "chunking": "Encode normalized source text without special tokens; emit token windows [start:start+384] at stride 320; decode each window with skip_special_tokens=true and clean_up_tokenization_spaces=false.",
+    "candidate_id": "case_id + source-label-neutral SHA-256-sorted source ordinal + zero-based chunk ordinal; labels and gold memberships are never encoded in IDs.",
+    "token_cost": "Number of pre-decode content token IDs in the chunk.",
+    "blind_cache": "Prepared and scored caches contain query, candidate text/ID/source ID/token count, public dataset/capability, and neural scores only. Answers, labels, and gold memberships are absent.",
+    "gold_join": "Selectors emit candidate IDs for all methods and budgets before the raw source is reopened and labels are joined for evaluation."
+  },
+  "frozen_scoring_execution": {
+    "device": "cuda",
+    "embedding_batch_size": 64,
+    "reranker_batch_size": 256,
+    "case_batch_size": 8,
+    "use_fp16": true,
+    "offline_model_loading": true,
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "tokenizer_class": "XLMRobertaTokenizerFast",
+    "tokenizer_vocab_size": 250002,
+    "per_case_minmax": "Apply independent min-max calibration across the candidates of one case for each query/prompt score vector; map a constant vector to zeros.",
+    "dense": "Normalized embedding dot product followed by per-case min-max.",
+    "cross_encoder": "Query-candidate logits followed by per-case min-max.",
+    "role_score": "0.85 * calibrated role-prompt cross-encoder score + 0.15 * calibrated direct-query cross-encoder score.",
+    "bm25": "In-case BM25 over lowercase English alphanumeric/apostrophe tokens with k1=1.5, b=0.75, followed by per-case min-max.",
+    "hybrid": "Reciprocal-rank fusion of calibrated BM25 and dense ranks with RRF k=60, followed by per-case min-max."
+  },
+  "frozen_selector_execution": {
+    "top_k": 5,
+    "budgets": [512, 1024, 1500],
+    "strongest_baseline_candidates": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "cross_encoder_density",
+      "cross_encoder_knapsack",
+      "coverage_greedy_proxy"
+    ],
+    "cross_encoder_density": "Greedy descending calibrated cross_encoder/token_count; ties by cross_encoder descending, token_count ascending, candidate_id ascending.",
+    "cross_encoder_knapsack": "Exact 0/1 integer-cost dynamic programming for maximum sum of calibrated cross-encoder scores under count and token constraints; ties by lower token cost then lexicographically smaller selected-ID tuple.",
+    "coverage_greedy_proxy": "Select the best feasible remaining candidate once for each registered role in role order, ties by cross-encoder descending then ID; fill by cross-encoder rank.",
+    "frc_select_v34": {
+      "source_path": "research/frc_rag/whoqa_conflict_coverage.py",
+      "source_sha256_at_registration": "6efef7888c968e265ab3992fe6468413b74bbb09ac87ee635002eb738a712ee5",
+      "role_threshold": 0.55,
+      "marginal_role_gain": "For each role, gain 1.0 when the candidate first crosses 0.55; otherwise gain 0.25 * positive score improvement. Average role gains, multiply by 2, then add candidate cross-encoder score.",
+      "ranking": "At each step choose maximum marginal value without dividing by token cost; tie by candidate_id."
+    },
+    "frc_cost_aware_v35": "Use the protocol-registered monotone set objective and marginal-gain-per-token greedy rule with singleton guard exactly as written in the protocol.",
+    "hard_budget_behavior": "Ranked greedy methods skip an infeasible candidate and continue scanning; all methods return no more than five chunks and never exceed the requested token budget."
+  },
+  "runtime": {
+    "python": "3.10.20",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "gpu": "NVIDIA GeForce RTX 4060 Ti",
+    "cuda_available": true,
+    "cuda_runtime": "12.4",
+    "numpy": "2.2.6",
+    "torch": "2.4.1+cu124",
+    "transformers": "4.46.3",
+    "sentence_transformers": "3.3.1"
+  },
+  "stopping_and_output": {
+    "no_formula_threshold_weight_or_prompt_tuning_after_registration": true,
+    "no_case_replacement": true,
+    "all_498_valid_rows_required": true,
+    "resumable_blind_score_cache": ".cache/benchmarks/rgb/scored_blind.jsonl",
+    "prepared_blind_cache": ".cache/benchmarks/rgb/prepared_blind.jsonl",
+    "lock_file": ".cache/benchmarks/rgb/scored_blind.jsonl.lock",
+    "derived_evidence_contains_raw_text": false,
+    "negative_results_published": true,
+    "gate_boundary": "The result cannot by itself change Gate 2, authorize CANARY/DEFAULT, reproduce SetR, or establish flood-domain effectiveness."
+  }
+}

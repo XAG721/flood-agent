@@ -1,11 +1,17 @@
 from __future__ import annotations
+# ruff: noqa: E402 -- research stays outside the runtime wheel.
 
 import argparse
+import sys
 import gc
 import json
 from pathlib import Path
 
-from flood_system.frc_conflicts_evaluation import (
+REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
+if str(REPOSITORY_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPOSITORY_ROOT))
+
+from research.frc_rag.conflicts_evaluation import (
     LocalConflictClassifier,
     build_conflicts_report,
     load_conflicts_cases,

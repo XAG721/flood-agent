@@ -1,0 +1,10 @@
+{
+  "algorithm_model_adapter_baselines_metrics_or_gates_changed": false,
+  "confirmation_content_accessed_before_open": false,
+  "confirmation_open_authorized": true,
+  "development_result_sha256": "558155ce5c714948a7a15f4da0391594a62bbbb02d0a5a9c236b3ad8e1d768b4",
+  "development_status": "IIRC_V88_DEVELOPMENT_SUPPORT_ESTABLISHED_OPEN_CONFIRMATION",
+  "experiment_id": "FRC-IIRC-POOLED-SCORE-GAP-PROSPECTIVE-V88",
+  "gate_2": "NO-GO/SHADOW",
+  "schema_version": "frc-iirc-pooled-score-gap-transfer-confirmation-open-v88"
+}

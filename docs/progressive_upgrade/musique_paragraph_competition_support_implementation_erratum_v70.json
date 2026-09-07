@@ -1,0 +1,48 @@
+{
+  "schema_version": "frc-musique-paragraph-competition-support-implementation-erratum-v70",
+  "experiment_id": "FRC-MUSIQUE-PARAGRAPH-COMPETITION-SUPPORT-V70",
+  "registered_at": "2026-08-04T08:20:00+08:00",
+  "reason": "The first calibration prepare attempt failed before target iteration because the SQuAD2 exact-question guard received a pathlib.Path instead of the parsed registered JSON object.",
+  "failure_boundary": {
+    "command": "prepare --stage calibration",
+    "exception": "AttributeError: 'WindowsPath' object has no attribute 'get'",
+    "target_rows_read": 0,
+    "v70_source_commitments_selected": 0,
+    "v70_model_outputs_seen": false,
+    "v70_joined_metrics_seen": false,
+    "v70_cache_or_output_artifacts_created": false
+  },
+  "correction": {
+    "runner_change": "Parse the registered SQuAD2 file as UTF-8 JSON before passing it to extract_squad2_questions.",
+    "regression_test_added": "test_runner_select_parses_squad2_json_before_question_extraction",
+    "synthetic_tests_after_correction": {
+      "passed": 17,
+      "failed": 0,
+      "target_source_used": false,
+      "model_files_used": false
+    }
+  },
+  "original_registration_hashes": {
+    "protocol": "9b5324f679afcc41259b533a1bedb861cc447224146b97354792c25456f236c6",
+    "source_registration": "161ae62b7f80b2442757edd5bac9fc38fbf5fbc38b6d2f67f09f3c5933b1f6ae",
+    "model_registration": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "module": "a5ccccb60bb2cb91890f32db8b1535682d26ae33bb1cca2ecf411eec4799c7f7",
+    "runner": "4e9ae17b7d34ea18305b412118be8aed3670a35025f7db43e4e7971ac9990765",
+    "tests": "0c539be72a8d415eebc84c969d6d24eba72caa0e42022f2da2c6d9786a844e5b"
+  },
+  "corrected_hashes": {
+    "protocol": "9b5324f679afcc41259b533a1bedb861cc447224146b97354792c25456f236c6",
+    "source_registration": "161ae62b7f80b2442757edd5bac9fc38fbf5fbc38b6d2f67f09f3c5933b1f6ae",
+    "original_implementation": "2910ee6c25297f21c46ca500e336b217b44fc55b939055b5cfbd68cd7435a3eb",
+    "model_registration": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "module": "a5ccccb60bb2cb91890f32db8b1535682d26ae33bb1cca2ecf411eec4799c7f7",
+    "runner": "5b9b5253425e18c4cc5807bd8093747d0af28fead88f571482e1aa4a9e533c53",
+    "tests": "c41084ce976d522af8077229e916b76612723d18a4719f67b1d6c8621f4ffe5c"
+  },
+  "protocol_feature_model_optimizer_threshold_gates_or_stage_sizes_changed": false,
+  "total_learned_scalars_across_reported_methods": 101,
+  "selector_or_retrieval_scoring_part_of_v70": false,
+  "selector_adoption_authorized": false,
+  "canary_or_default_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

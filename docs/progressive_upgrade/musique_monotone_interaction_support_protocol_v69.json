@@ -1,0 +1,261 @@
+{
+  "schema_version": "frc-musique-monotone-interaction-support-protocol-v69",
+  "experiment_id": "FRC-MUSIQUE-MONOTONE-INTERACTION-SUPPORT-V69",
+  "registered_at": "2026-08-04T07:00:00+08:00",
+  "purpose": "Test whether fixed monotone nonlinear response curves and pre-specified chain-consistency interactions close the remaining separation gap after the v68 linear multi-signal model, without using any v68 case-level error analysis.",
+  "prior_boundary": {
+    "v68_status": "MUSIQUE_V68_MULTISIGNAL_CHAIN_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+    "v68_aggregate_result_used": "The pre-registered nine-signal linear candidate achieved a positive paired gain of 0.036667 with confidence interval above zero, but missed balanced-accuracy, answer-pass, rejection and five-point material-gain gates.",
+    "v68_case_level_features_predictions_errors_or_subgroups_used_to_choose_v69_basis_knots_interactions_optimizer_or_gates": false,
+    "v65_through_v68_cases_may_be_reused_for_v69_training_threshold_selection_development_confirmation_or_reporting": false,
+    "target_train_and_dev_files_were_previously_parsed": true,
+    "v69_case_ids_selected_before_this_protocol": false,
+    "v69_model_outputs_or_joined_metrics_seen_before_this_protocol": false
+  },
+  "sources": {
+    "repository": "https://github.com/stonybrooknlp/musique",
+    "repository_revision": "922ac98f19a201998dbdae6d7f2887a5258dbdeb",
+    "license": "CC BY 4.0",
+    "calibration_and_development_file": ".cache/benchmarks/musique/data/musique_full_v1.0_train.jsonl",
+    "calibration_and_development_sha256": "b1cd998f7e0e2838d6fda024e4ad1eb0e7fc3edefdadb0bd9b5b10b0907f2034",
+    "optional_confirmation_file": ".cache/benchmarks/musique/data/musique_full_v1.0_dev.jsonl",
+    "optional_confirmation_sha256": "8cab31d56a3a1c4ef491b205a8dab3f1ac9c66e472098c6cf1de4e20294f7a4a",
+    "official_schema_source": "raw_data_to_official_format.py at the registered repository revision"
+  },
+  "model_overlap_disclosure": {
+    "support_model_repository": "deepset/roberta-base-squad2",
+    "support_model_revision": "adc3b06f79f797d1c575d5479d6f5efe54a9e3b4",
+    "support_model_was_finetuned_on_squad2": true,
+    "exclude_if_composed_or_any_decomposition_question_exactly_matches_a_normalized_squad2_train_question": true,
+    "exact_match_guard_cannot_rule_out_paraphrase_context_or_pretraining_overlap": true,
+    "strict_independent_model_training_confirmation_claimed": false
+  },
+  "frozen_stages": {
+    "calibration": {
+      "source_split": "train",
+      "target_cases": 1600,
+      "target_per_answer_state": 800,
+      "ordering": "SHA-256('FRC-MUSIQUE-V69-CALIBRATION|' + source id), then source id",
+      "bootstrap_seed": 20260828
+    },
+    "development": {
+      "source_split": "train",
+      "target_cases": 800,
+      "target_per_answer_state": 400,
+      "ordering": "SHA-256('FRC-MUSIQUE-V69-DEVELOPMENT|' + source id), then source id",
+      "exclude_all_calibration_source_commitments": true,
+      "bootstrap_seed": 20260829
+    },
+    "confirmation": {
+      "source_split": "dev",
+      "authorized_only_if_every_development_gate_passes": true,
+      "target_cases": 800,
+      "target_per_answer_state": 400,
+      "ordering": "SHA-256('FRC-MUSIQUE-V69-CONFIRMATION|' + source id), then source id",
+      "exclude_all_prior_and_v69_train_source_commitments": true,
+      "bootstrap_seed": 20260830,
+      "no_basis_interaction_model_threshold_gate_or_method_change_after_development": true
+    }
+  },
+  "sampling": {
+    "pair_assignment": "SHA-256('FRC-MUSIQUE-V69-PAIR-ASSIGNMENT|' + source split + '|' + source id) parity assigns each source id to exactly one answer state before stage selection",
+    "maximum_cases_per_source_id_per_split": 1,
+    "minimum_paragraphs_per_case": 3,
+    "minimum_decomposition_hops": 2,
+    "maximum_decomposition_hops": 4,
+    "exclude_v65_invalid_v65_corrected_v66_development_v67_calibration_v67_development_v68_calibration_and_v68_development_source_commitment_union": true,
+    "expected_prior_source_commitment_union_count": 4900,
+    "exclude_exact_normalized_squad2_train_question_overlap": true,
+    "no_replacement": true,
+    "no_balancing_by_hop_count_answer_surface_paragraph_count_feature_or_model_score": true,
+    "no_post_metric_resampling": true,
+    "insufficient_eligible_cases": "MUSIQUE_V69_SCOPE_INCONCLUSIVE_STOP_BEFORE_QA"
+  },
+  "oracle_plan_boundary": {
+    "allowed_decomposition_fields": ["id", "question", "list order"],
+    "forbidden_decomposition_fields": ["answer", "paragraph_support_idx"],
+    "official_decomposition_is_available_at_runtime_for_arbitrary_flood_questions": false,
+    "interpretation": "This remains an oracle-plan component experiment, not an automatic decomposition result."
+  },
+  "blind_execution": {
+    "direct_score": "Maximum finite composed-question null-vs-span margin across paragraphs with deterministic paragraph-order tie breaking.",
+    "chain_execution": [
+      "Process every official decomposition question in list order without an intermediate margin threshold.",
+      "Resolve each #k placeholder only with the fixed model span predicted at prior hop k; never use gold or aliases.",
+      "At every hop select the paragraph/span with maximum finite margin and deterministic paragraph-order tie breaking.",
+      "Fail closed only when a predecessor cannot be resolved or no valid finite span exists."
+    ],
+    "fixed_v66_threshold_exact": 0.974609375,
+    "model_weights_architecture_or_tokenizer_change": false,
+    "gold_fields_visible_to_qa_feature_or_chain_executor": false,
+    "forbidden_before_complete_stage_execution": [
+      "answerable",
+      "answer",
+      "answer_aliases",
+      "decomposition answer",
+      "paragraph_support_idx",
+      "paragraph is_supporting",
+      "aggregate or per-stratum metrics"
+    ]
+  },
+  "base_feature_contract": {
+    "fixed_order": [
+      "direct_margin_scaled",
+      "chain_min_margin_scaled",
+      "chain_mean_margin_scaled",
+      "high_margin_fraction",
+      "transition_entity_match_fraction",
+      "distinct_selected_paragraph_ratio",
+      "direct_final_paragraph_agreement",
+      "hop_count_is_3",
+      "hop_count_is_4"
+    ],
+    "definitions_identical_to_v68": true,
+    "raw_question_context_or_predicted_span_exported_to_public_evidence": false
+  },
+  "nonlinear_basis_contract": {
+    "margin_features": [
+      "direct_margin_scaled",
+      "chain_min_margin_scaled",
+      "chain_mean_margin_scaled"
+    ],
+    "margin_knots": [-0.5, 0.0, 0.5],
+    "bounded_fraction_features": [
+      "high_margin_fraction",
+      "transition_entity_match_fraction",
+      "distinct_selected_paragraph_ratio"
+    ],
+    "bounded_fraction_knots": [0.25, 0.5, 0.75],
+    "hinge_formula": "max(x - knot, 0) / (1 - knot)",
+    "fixed_hinge_order": [
+      "direct_margin_scaled_hinge_m0_5",
+      "direct_margin_scaled_hinge_0_0",
+      "direct_margin_scaled_hinge_p0_5",
+      "chain_min_margin_scaled_hinge_m0_5",
+      "chain_min_margin_scaled_hinge_0_0",
+      "chain_min_margin_scaled_hinge_p0_5",
+      "chain_mean_margin_scaled_hinge_m0_5",
+      "chain_mean_margin_scaled_hinge_0_0",
+      "chain_mean_margin_scaled_hinge_p0_5",
+      "high_margin_fraction_hinge_p0_25",
+      "high_margin_fraction_hinge_p0_5",
+      "high_margin_fraction_hinge_p0_75",
+      "transition_entity_match_fraction_hinge_p0_25",
+      "transition_entity_match_fraction_hinge_p0_5",
+      "transition_entity_match_fraction_hinge_p0_75",
+      "distinct_selected_paragraph_ratio_hinge_p0_25",
+      "distinct_selected_paragraph_ratio_hinge_p0_5",
+      "distinct_selected_paragraph_ratio_hinge_p0_75"
+    ],
+    "hinge_feature_count": 18,
+    "additive_feature_count_including_nine_base_features": 27,
+    "knots_selected_from_fixed_symmetric_quartile_locations_rather_than_target_cases": true,
+    "basis_selected_removed_or_reknotted_after_calibration_or_development": false
+  },
+  "interaction_contract": {
+    "fixed_order": [
+      "weakest_link_x_transition_consistency",
+      "mean_confidence_x_transition_consistency",
+      "strong_hop_x_paragraph_coverage",
+      "transition_x_paragraph_coverage",
+      "direct_confidence_x_final_alignment"
+    ],
+    "definitions": {
+      "weakest_link_x_transition_consistency": "((chain_min_margin_scaled + 1) / 2) * transition_entity_match_fraction",
+      "mean_confidence_x_transition_consistency": "((chain_mean_margin_scaled + 1) / 2) * transition_entity_match_fraction",
+      "strong_hop_x_paragraph_coverage": "high_margin_fraction * distinct_selected_paragraph_ratio",
+      "transition_x_paragraph_coverage": "transition_entity_match_fraction * distinct_selected_paragraph_ratio",
+      "direct_confidence_x_final_alignment": "((direct_margin_scaled + 1) / 2) * direct_final_paragraph_agreement"
+    },
+    "candidate_feature_count": 32,
+    "interactions_selected_removed_or_changed_after_calibration_or_development": false
+  },
+  "model_contract": {
+    "linear_control": "projected_monotone_logistic_on_nine_v68_base_features",
+    "additive_control": "projected_monotone_logistic_on_nine_base_plus_eighteen_fixed_hinges",
+    "interaction_candidate": "projected_monotone_logistic_on_additive_features_plus_five_fixed_interactions",
+    "optimizer": "deterministic full-batch projected gradient descent",
+    "iterations": 5000,
+    "learning_rate": 0.1,
+    "l2_weight": 0.01,
+    "initialization": "all coefficients and intercept exactly zero",
+    "nonnegative_coefficients": "all coefficients except hop_count_is_3 and hop_count_is_4",
+    "unconstrained_coefficients": ["hop_count_is_3", "hop_count_is_4", "intercept"],
+    "labels": "answerable=1, unanswerable=0; calibration only",
+    "linear_control_learned_scalars_including_threshold": 11,
+    "additive_control_learned_scalars_including_threshold": 29,
+    "interaction_candidate_learned_scalars_including_threshold": 34,
+    "direct_and_bottleneck_threshold_learned_scalars": 2,
+    "total_learned_scalars_across_all_reported_methods": 76
+  },
+  "threshold_selection": {
+    "methods": [
+      "calibrated_direct_composed_question",
+      "calibrated_chain_bottleneck",
+      "linear_nine_signal_control",
+      "monotone_additive_spline_control",
+      "monotone_interaction_candidate"
+    ],
+    "candidate_thresholds": "Every unique finite calibration score plus nextafter(minimum score, -infinity); decisions always use score > threshold.",
+    "safety_constraints": {
+      "answerable_pass_rate_at_least": 0.60,
+      "unanswerable_rejection_rate_at_least": 0.80
+    },
+    "selection_rule": "If any threshold meets both constraints, maximize balanced accuracy, then answerable pass rate, unanswerable rejection rate, and threshold. Otherwise minimize total safety shortfall, then maximize balanced accuracy, unanswerable rejection rate, and threshold.",
+    "crossfit_diagnostic": "Five folds assigned by SHA-256('FRC-MUSIQUE-V69-CROSSFIT|' + case id) modulo 5; model weights and threshold for each held-out fold are learned only from the other four folds.",
+    "development_or_confirmation_used_for_basis_interaction_model_or_threshold_selection": false
+  },
+  "fair_comparators": [
+    "calibrated direct composed-question margin",
+    "fixed-v66-threshold complete chain",
+    "calibrated chain bottleneck",
+    "nine-signal linear projected logistic",
+    "fixed-basis monotone additive projected logistic without pair interactions"
+  ],
+  "primary_metric": {
+    "name": "answerability balanced accuracy",
+    "strongest_fair_baseline": "the single comparator with highest aggregate balanced accuracy; ties use the ordered comparator list above",
+    "paired_delta": "interaction candidate correctness minus strongest fair baseline correctness",
+    "interval": "10000-resample case bootstrap percentile interval using the stage seed"
+  },
+  "interaction_mechanism_metric": {
+    "paired_delta": "interaction candidate correctness minus additive-control correctness",
+    "interval": "10000-resample case bootstrap percentile interval using stage seed plus 1000"
+  },
+  "stage_gates": {
+    "exact_cases": 800,
+    "exact_answer_state_balance": true,
+    "schema_exclusion_rate_at_most": 0.01,
+    "selected_prior_or_calibration_source_overlap": 0,
+    "selected_squad2_exact_question_overlap": 0,
+    "invalid_feature_output_rate": 0.0,
+    "candidate_balanced_accuracy_at_least": 0.72,
+    "candidate_answerable_pass_rate_at_least": 0.60,
+    "candidate_unanswerable_rejection_rate_at_least": 0.80,
+    "candidate_minus_strongest_fair_baseline_at_least": 0.05,
+    "strongest_baseline_paired_correctness_ci_low_above": 0.0,
+    "candidate_minus_additive_control_at_least": 0.02,
+    "additive_control_paired_correctness_ci_low_above": 0.0,
+    "every_observed_unanswerable_hop_stratum_rejection_rate_at_least": 0.75,
+    "all_must_pass": true
+  },
+  "stopping_and_outcomes": {
+    "calibration": "Freeze all reported model weights and thresholds; calibration alone never authorizes adoption.",
+    "development_failure": "MUSIQUE_V69_MONOTONE_INTERACTION_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+    "development_pass": "MUSIQUE_V69_MONOTONE_INTERACTION_DEVELOPMENT_FEASIBILITY_ESTABLISHED_OPEN_CONFIRMATION",
+    "confirmation_failure": "MUSIQUE_V69_MONOTONE_INTERACTION_CONFIRMATION_NOT_ESTABLISHED",
+    "confirmation_pass": "MUSIQUE_V69_ORACLE_PLAN_MONOTONE_INTERACTION_COMPONENT_FEASIBILITY_ESTABLISHED",
+    "selector_or_retrieval_scoring_part_of_v69": false,
+    "reuse_failed_stage_for_basis_interaction_model_threshold_rule_gate_or_selection": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "interpretation_limits": [
+    "Not an official MuSiQue leaderboard result.",
+    "Not an automatic decomposition result because the official decomposition question plan is supplied.",
+    "Not strict independent model-training confirmation.",
+    "Not an FRC retrieval comparison, SetR reproduction, flood-domain evaluation or production result.",
+    "A positive confirmation establishes only calibrated oracle-plan monotone interaction support-gate component feasibility."
+  ]
+}

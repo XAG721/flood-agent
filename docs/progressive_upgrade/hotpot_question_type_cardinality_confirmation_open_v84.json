@@ -1,0 +1,9 @@
+{
+  "confirmation_open_authorized": true,
+  "development_result_sha256": "0889476fe76143c4f8bff1fc9514dcc8bad281f8b283d31f7a99defe02c5a4c9",
+  "experiment_id": "FRC-HOTPOT-QUESTION-TYPE-CARDINALITY-PROSPECTIVE-V84",
+  "gate_2": "NO-GO/SHADOW",
+  "model_feature_threshold_safety_floor_or_gates_changed": false,
+  "schema_version": "frc-hotpot-question-type-cardinality-confirmation-open-v84",
+  "status": "HOTPOT_V84_CARDINALITY_DEVELOPMENT_CONSTRAINED_ADVANTAGE_ESTABLISHED_OPEN_CONFIRMATION"
+}

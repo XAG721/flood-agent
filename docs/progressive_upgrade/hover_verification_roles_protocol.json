@@ -1,0 +1,159 @@
+{
+  "schema_version": "frc-hover-verification-roles-protocol-v1",
+  "registered_at": "2026-08-01T11:39:25.8589344+08:00",
+  "experiment_id": "FRC-HOVER-VERIFICATION-ROLES-V39",
+  "purpose": "Prospectively test whether task-specific support, refutation, bridge, and cross-document role prompts add evidence-selection value beyond generic FRC roles and reproducible retrieval baselines.",
+  "hypothesis_origin": {
+    "v38_result_known": true,
+    "v38_status": "CROSSFIT_SUPPORT_SIGNAL_NOT_ESTABLISHED",
+    "v38_full_minus_base": 0.000548,
+    "interpretation": "Generic role scores were almost redundant with generic retrieval features on MuSiQue; a new independent dataset and task-specific role prompts are required.",
+    "hover_repository_or_dataset_used_in_prior_project_experiments": false,
+    "hover_dataset_content_accessed_before_registration": false,
+    "hover_tfidf_candidate_content_accessed_before_registration": false,
+    "hover_wikipedia_database_content_accessed_before_registration": false,
+    "method_parameters_tuned_on_hover": false
+  },
+  "source": {
+    "name": "HoVer: A Dataset for Many-Hop Fact Extraction and Claim Verification",
+    "homepage": "https://hover-nlp.github.io/",
+    "repository": "https://github.com/hover-nlp/hover",
+    "repository_revision": "39b84697f196308f398a251a7aea9b82ae0f0562",
+    "paper": "https://aclanthology.org/2020.findings-emnlp.309/",
+    "data_license": "CC-BY-SA-4.0",
+    "code_license": "MIT",
+    "split": "dev release v1.1",
+    "dataset_url": "https://raw.githubusercontent.com/hover-nlp/hover/39b84697f196308f398a251a7aea9b82ae0f0562/data/hover/hover_dev_release_v1.1.json",
+    "official_tfidf_candidates_url": "https://nlp.cs.unc.edu/data/hover/dev_tfidf_doc_retrieval_results.json",
+    "official_wikipedia_database_url": "https://nlp.cs.unc.edu/data/hover/wiki_wo_links.db",
+    "observed_http_content_lengths_before_registration": {
+      "dataset": 2153439,
+      "official_tfidf_candidates": 19247010,
+      "official_wikipedia_database": 2156273664
+    },
+    "all_rows_policy": "Use every structurally valid dev row without sampling or replacement.",
+    "post_download_registration": "Before neural scoring, freeze exact file hashes, schema census, case/hop/label counts, top-20 candidate resolution, gold-document candidate ceiling, database schema, chunk distributions, and exclusions."
+  },
+  "frozen_adapter": {
+    "query": "The public HoVer claim text only.",
+    "official_candidate_pool": "Take the first 20 official TF-IDF retrieved document titles in released order before any gold join; do not add missing gold documents.",
+    "candidate_source_text": "Normalized Wikipedia title plus normalized full article text from the official HoVer SQLite database.",
+    "candidate_identity": "After top-20 membership is fixed, deduplicate resolved titles and sort source documents by SHA-256 of normalized title before assigning label-neutral source ordinals.",
+    "gold_unit": "Each unique normalized supporting-document title referenced by public supporting facts is one required evidence unit; all chunks of that source inherit the unit only during evaluation.",
+    "candidate_ceiling": "Report per-case and aggregate fraction of gold supporting-document units present among resolved official top-20 candidates.",
+    "structural_exclusions": "Exclude only invalid required field types, empty claim/id, duplicate public IDs, no supporting-document gold, fewer than two resolved candidate documents, or cross-label title ambiguity; never replace excluded rows.",
+    "chunking": {
+      "tokenizer": "BAAI/bge-reranker-large frozen tokenizer revision",
+      "content_tokens": 384,
+      "overlap_tokens": 64,
+      "special_tokens_excluded_from_cost": true
+    },
+    "fields_forbidden_before_scoring_or_selection": [
+      "label",
+      "num_hops",
+      "supporting_facts",
+      "gold_document_titles",
+      "gold_unit_ids",
+      "candidate_gold"
+    ]
+  },
+  "frozen_scoring": {
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "score_calibration": "per_case_minmax independently for query relevance and every role prompt",
+    "generic_role_prompts": {
+      "direct_answer_support": "Find evidence that directly supports a correct answer to the question.",
+      "entity_and_scope": "Find evidence that identifies the relevant entity, scope, time, or conditions for the answer.",
+      "corroborating_evidence": "Find independent evidence that corroborates or completes the answer.",
+      "contradiction_detection": "Find evidence useful for detecting conflicting, false, or misleading claims about the answer."
+    },
+    "verification_role_prompts": {
+      "claim_support": "Find evidence that directly supports this claim as true.",
+      "claim_refutation": "Find evidence that directly contradicts or refutes this claim as false.",
+      "entity_bridge": "Find evidence that identifies an entity or relation needed to connect this claim to another document.",
+      "cross_document_chain": "Find evidence that corroborates or completes a multi-document reasoning chain for this claim."
+    },
+    "role_relevance_mix": 0.0,
+    "reason_for_zero_mix": "Keep task-specific role logits distinct from direct query relevance so the experiment measures role-prompt increment rather than a built-in copy of the baseline score.",
+    "gold_visible_to_scorer": false
+  },
+  "frozen_methods": [
+    "bm25_topk",
+    "dense_topk",
+    "hybrid_topk",
+    "cross_encoder_topk",
+    "cross_encoder_knapsack",
+    "frc_generic_roles_v39",
+    "frc_verification_roles_v39"
+  ],
+  "frozen_selector": {
+    "top_k": 5,
+    "token_budgets": [512, 1024, 1500],
+    "shared_frc_rule": "Use the identical v34 thresholded role-coverage greedy rule for generic and verification role families; threshold 0.55, identical relevance term, feasibility scan, and candidate-id tie break.",
+    "role_family_is_only_frc_difference": true,
+    "formula_threshold_weight_or_prompt_tuning_after_registration": false,
+    "hard_constraints": "selected chunk count <= 5 and total token_count <= requested budget"
+  },
+  "frozen_metrics": {
+    "statistical_unit": "HoVer dev claim",
+    "primary": "document_evidence_f1",
+    "document_precision": "unique selected candidate documents that are gold supporting documents / unique selected candidate documents",
+    "document_recall": "gold supporting-document units covered by at least one selected chunk / all gold supporting-document units",
+    "document_evidence_f1": "harmonic mean of document precision and recall, zero when both are zero",
+    "secondary": [
+      "complete_gold_document_coverage",
+      "candidate_gold_document_ceiling",
+      "selected_chunk_count",
+      "selected_document_count",
+      "selected_token_cost",
+      "duplicate_document_selection_rate"
+    ],
+    "predeclared_strata": [
+      "label=SUPPORTED",
+      "label=NOT_SUPPORTED",
+      "2-hop",
+      "3-hop",
+      "4-hop",
+      "candidate_ceiling_complete",
+      "candidate_ceiling_incomplete"
+    ],
+    "paired_bootstrap": {
+      "resamples": 10000,
+      "seed": 20260801,
+      "confidence_level": 0.95,
+      "resample_claims": true,
+      "strongest_non_frc_baseline_selected_inside_each_resample": true
+    }
+  },
+  "frozen_outcome_rules": {
+    "verification_role_support_established": {
+      "verification_minus_generic_frc_at_least": 0.01,
+      "verification_minus_generic_frc_ci_low_above": 0.0,
+      "verification_minus_strongest_non_frc_at_least": 0.01,
+      "verification_minus_strongest_simultaneous_ci_low_above": 0.0,
+      "every_budget_and_supported_stratum_delta_at_least": -0.02,
+      "status": "HOVER_VERIFICATION_ROLE_SUPPORT_ESTABLISHED"
+    },
+    "safety_regression": {
+      "any_budget_or_supported_stratum_delta_below": -0.02,
+      "status": "HOVER_VERIFICATION_ROLE_SAFETY_REGRESSION"
+    },
+    "otherwise": "HOVER_VERIFICATION_ROLE_SUPPORT_NOT_ESTABLISHED"
+  },
+  "stopping_rule": {
+    "publish_all_valid_rows_and_negative_results": true,
+    "no_hover_candidate_depth_chunk_prompt_formula_threshold_or_weight_tuning": true,
+    "no_replacement_or_gold_injection": true,
+    "method_adoption_requires_all_support_checks": true,
+    "gate_policy": "This cross-domain document-selection experiment cannot by itself change Gate 2, authorize CANARY/DEFAULT, reproduce SetR, or establish flood-domain effectiveness."
+  },
+  "deliverables": {
+    "execution_registration": "docs/progressive_upgrade/hover_verification_roles_execution.json",
+    "implementation": "research/frc_rag/hover_verification_roles.py",
+    "runner": "scripts/run_hover_verification_roles.py",
+    "tests": "tests/test_frc_hover_verification_roles.py",
+    "output_directory": "output/rag_evaluation/hover_verification_roles"
+  }
+}

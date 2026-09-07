@@ -1,0 +1,46 @@
+{
+  "schema_version": "frc-feverous-adaptive-atomic-roles-implementation-erratum-v43",
+  "experiment_id": "FRC-FEVEROUS-ADAPTIVE-ATOMIC-ROLES-V43",
+  "registered_at": "2026-08-01T23:39:02.7819563+08:00",
+  "superseded_registration_sha256": "50887b302cea7e707a1e3339abac1b16145d30c80eeac701aa05d3148ce51b9c",
+  "trigger": {
+    "stage": "first schema-only eligibility read after implementation registration and before sample selection completed",
+    "observed_error": "ValueError: invalid FEVEROUS id: ''",
+    "cause": "The official JSONL header row contains an empty id string instead of omitting the id key.",
+    "sample_ids_emitted": false,
+    "challenge_counts_emitted": false,
+    "gold_metrics_computed": false,
+    "neural_generation_or_scoring_started": false
+  },
+  "correction": "Treat a missing or whitespace-only id as a header/non-case row everywhere an official development or baseline JSONL index is built. Nonempty malformed ids still fail closed.",
+  "protocol_alignment": "The frozen protocol already requires an integer id for eligibility, so skipping an empty-id header implements the registered rule and does not change the sample definition.",
+  "method_or_threshold_changed": false,
+  "unchanged": [
+    "dataset and split",
+    "documentation example exclusions",
+    "challenge strata and hash sampling salt",
+    "candidate page and evidence-unit construction",
+    "all model revisions and scores",
+    "adaptive argmax-cardinality formula",
+    "budgets, baselines, bootstrap seed, metrics, and support thresholds"
+  ],
+  "original_hashes": {
+    "protocol_sha256": "2591f23a9edc498c800a4dfcad680c5e2df36e8178cb30df7214ac7ed7264b57",
+    "module_sha256": "121e208d427fc5f9853ca40d3c07ae358c824a9d71526a4cd8bdf159e857deed",
+    "runner_sha256": "92cf2b040de469b84e4fdf16bf2c1574bec42ac44607d3be0c0b799cbd0e1e7b",
+    "test_sha256": "da28550e457e3d14e7c857bb2327cc3b3d79aff5348f8e53b439f9e41e00b92d",
+    "inherited_v41_module_sha256": "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621"
+  },
+  "effective_hashes": {
+    "protocol_sha256": "2591f23a9edc498c800a4dfcad680c5e2df36e8178cb30df7214ac7ed7264b57",
+    "module_sha256": "fa089b7b3eb45c01b90e1b59fec81a7c305323e67bbbc1d6c11e6dadcc37e097",
+    "runner_sha256": "3147b588096280fdc3243e2f15efd1a0c8f891d9bf393d030272bb99b25aaba3",
+    "test_sha256": "95b1bf56da02423e799700cfcb0809e3f3fd02de9995baaa544681e2d7930ec1",
+    "inherited_v41_module_sha256": "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621"
+  },
+  "verification": {
+    "synthetic_tests": "5 passed",
+    "ruff": "PASS",
+    "compileall": "PASS"
+  }
+}

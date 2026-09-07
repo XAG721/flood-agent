@@ -4,13 +4,13 @@ from pathlib import Path
 
 import pytest
 
-from flood_system.frc_controlled_sensitivity import (
+from research.frc_rag.controlled_sensitivity import (
     CONTROLLED_SENSITIVITY_SCHEMA,
     evaluate_controlled_sensitivity,
     render_controlled_sensitivity_markdown,
     write_controlled_sensitivity,
 )
-from flood_system.frc_public_evidence import load_controlled_domain_sensitivity
+from research.frc_rag.public_evidence import load_controlled_domain_sensitivity
 from flood_system.models import CorpusType, RAGDocument
 from flood_system.rag import EvidenceSelectionPolicy, SimpleRAGStore
 from flood_system.rag_evaluation import RAGBaselineEvaluator

@@ -1,0 +1,12 @@
+{
+  "calibration_or_confirmation_reuse_for_additional_tuning_or_selection": false,
+  "canary_or_default_authorized": false,
+  "confirmation_result_sha256": "240f9ba217bc56dfdc5b6266f1a5ffb4120675cd6ad2694c4e31325a6bc12532",
+  "experiment_id": "FRC-SQUAD2-CALIBRATED-ROBERTA-SUPPORT-V64",
+  "gate_2": "NO-GO/SHADOW",
+  "independent_model_training_confirmation_claimed": false,
+  "schema_version": "frc-squad2-v64-confirmation-closure-v1",
+  "selector_adoption_authorized": false,
+  "self_domain_held_out_component_feasibility_only": true,
+  "status": "SQUAD2_V64_CALIBRATED_QA_FRC_COMPONENT_FEASIBILITY_ESTABLISHED"
+}

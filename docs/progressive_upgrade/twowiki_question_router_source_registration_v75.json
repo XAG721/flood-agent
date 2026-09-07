@@ -1,0 +1,61 @@
+{
+  "schema_version": "frc-twowiki-question-router-source-registration-v75",
+  "experiment_id": "FRC-2WIKI-QUESTION-ROUTED-SUPPORT-PATH-V75",
+  "registered_on": "2026-08-04",
+  "source": {
+    "dataset": "2WikiMultiHopQA",
+    "split": "dev",
+    "path": ".cache/benchmarks/2wikimultihopqa/dev.parquet",
+    "bytes": 30056098,
+    "sha256": "c0d8b60b9026b728fb07ad74c5252a0f188f6942e8ba5c02df4dfa369502ea8d",
+    "expected_rows": 12576,
+    "schema_fields": ["_id", "type", "question", "context", "supporting_facts", "evidences", "answer"]
+  },
+  "prior_exclusions": {
+    "history_pool_path": ".cache/benchmarks/frc_public_reference/candidate_pool_2wikimultihopqa.jsonl",
+    "history_pool_bytes": 12046987,
+    "history_pool_sha256": "3398c12efbfbddb1ca726edbe317d74846e122e4f97c105c5226f19b7ef3b8a2",
+    "history_unique_ids": 1000,
+    "v74_blind_path": ".cache/benchmarks/twowiki_support_path_closure_v74/development/blind_cases.jsonl",
+    "v74_blind_bytes": 8429870,
+    "v74_blind_sha256": "f43210300bd8eaf96561c8c093dc0bf7765d0f64a21783c66bbc52e30d65419f",
+    "v74_unique_ids": 800,
+    "expected_total_unique_ids": 1800,
+    "history_v74_overlap": 0,
+    "all_ids_excluded_from_every_v75_stage": true
+  },
+  "router_history": {
+    "source": "v74 development only",
+    "scored_path": ".cache/benchmarks/twowiki_support_path_closure_v74/development/scored_blind.jsonl",
+    "scored_bytes": 15837921,
+    "scored_sha256": "02d2298af02b41e4bd26b42d2e232137ca9798033e7185693f50b75248fc885a",
+    "audited_cases_path": "output/rag_evaluation/twowiki_support_path_closure_v74/development/cases.jsonl.gz",
+    "audited_cases_bytes": 46005,
+    "audited_cases_sha256": "5d4d6493ecbeed135dffffdc0bb17ad912d3f2b844e46264269605aa023bc667",
+    "cases": 800,
+    "runtime_feature_source": "question text only",
+    "official_question_type_use": "history training label only"
+  },
+  "pre_registration_access_boundary": {
+    "raw_schema_and_parquet_metadata_read": true,
+    "raw_case_rows_read_for_v75_selection": 0,
+    "v75_development_ids_selected": 0,
+    "v75_confirmation_ids_selected": 0,
+    "v75_model_scores_seen": false,
+    "v75_gold_metrics_seen": false,
+    "router_model_feature_threshold_and_gates_frozen_before_target_selection": true
+  },
+  "frozen_model_resources": {
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "offline_snapshot_required": true
+  },
+  "claims": {
+    "case_disjoint_from_all_prior_2wiki_history": true,
+    "independent_dataset_from_prior_2wiki_history": false,
+    "official_2wiki_leaderboard_result": false,
+    "strict_independent_model_training_confirmation": false
+  }
+}

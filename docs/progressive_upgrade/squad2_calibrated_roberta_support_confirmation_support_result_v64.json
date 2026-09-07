@@ -1,0 +1,93 @@
+{
+  "analysis": {
+    "locked_threshold": 0.974609,
+    "outcome": {
+      "calibration_or_confirmation_reuse_for_additional_tuning_or_selection": false,
+      "canary_or_default_authorized": false,
+      "gate_2": "NO-GO/SHADOW",
+      "independent_model_training_confirmation_claimed": false,
+      "retrieval_scoring_open_authorized": true,
+      "selector_adoption_authorized": false,
+      "status": "SQUAD2_V64_CONFIRMATION_SUPPORT_ESTABLISHED_OPEN_RETRIEVAL",
+      "support_gate_passed": true
+    },
+    "support_checks": {
+      "answer_bearing_pass_rate_at_least_0_8": true,
+      "balanced_accuracy_at_least_0_8": true,
+      "exact_answer_state_balance": true,
+      "exact_cases_equals_600": true,
+      "minimum_articles_at_least_25": true,
+      "minimum_paragraphs_at_least_250": true,
+      "no_answer_rejection_rate_at_least_0_7": true,
+      "qa_invalid_rate_equals_0": true,
+      "schema_exclusion_rate_at_most_0_01": true
+    },
+    "support_verifier": {
+      "answer_bearing_rows": 300,
+      "answer_bearing_support_pass_rate": 0.886667,
+      "balanced_accuracy": 0.873333,
+      "gold_fields_visible_to_verifier": false,
+      "invalid_output_count": 0,
+      "invalid_output_rate": 0.0,
+      "no_answer_rejection_rate": 0.86,
+      "no_answer_rows": 300,
+      "rows": 600
+    }
+  },
+  "experiment_id": "FRC-SQUAD2-CALIBRATED-ROBERTA-SUPPORT-V64",
+  "metadata": {
+    "answer_state_counts": {
+      "answer_bearing": 300,
+      "no_answer": 300
+    },
+    "articles": 35,
+    "cases": 600,
+    "dataset_id": "squad2_calibrated_roberta_support_v64",
+    "gold_joined_after_complete_qa_cache": true,
+    "model_training_independent_confirmation": false,
+    "official_squad2_answer_string_result": false,
+    "paragraphs": 492,
+    "source_artifacts": {
+      "calibration_open_sha256": "385408ebd91f548fb3f6651abba2fdbe3de838392b269af8f9255de412e57874",
+      "calibration_result_sha256": "eace7c801253ee9868061c9a718924fac9e40ba64be17b02bbf76b82b09a0355",
+      "candidate_map_sha256": "51b48e32e502314d667fb1046c3645ae6c3e4412fd6d8ec167bfb755b950700a",
+      "execution_registration_sha256": "fe63e1a5a0d1ea33a6cc0559c8847678044afc8de86f0a81a0ba0360f580bd0c",
+      "gold_joined_after_complete_qa_cache": true,
+      "implementation_registration_sha256": "d1f1a85c446bf5a02e93f5f022fb87cec6fd0616be5ed77d74742344166facfb",
+      "model_registration_sha256": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+      "prepared_blind_sha256": "cdd546918a029d63d557a0bd89305a974380c72732ebf61af460a57c8921a1d8",
+      "protocol_sha256": "2585d468c257de8912c380718d3ea27b7dbd96b6a61d75ff09d5a0901f8f0835",
+      "qa_input_sha256": "66a11186f05d833db409dcc292df0dd712a62650c203538929ecc2b78007f311",
+      "query_or_retrieval_scoring_started": false,
+      "raw_qa_cache_sha256": "421fa1d1f3397df9ad946025abc0371fb8e33daa7cb5476a65dbd9e6127ad95a",
+      "sampling": {
+        "candidate_qas": 11873,
+        "eligible_answer_state_counts_after_exclusion": {
+          "answer_bearing": 5928,
+          "no_answer": 5945
+        },
+        "eligible_cases": 11873,
+        "maximum_cases_per_article_per_answer_state": 12,
+        "maximum_cases_per_paragraph": 2,
+        "prior_excluded_commitment_count": 0,
+        "schema_excluded_cases": 0,
+        "schema_exclusion_rate": 0.0,
+        "schema_exclusion_reasons": {},
+        "selected_answer_state_counts": {
+          "answer_bearing": 300,
+          "no_answer": 300
+        },
+        "selected_articles": 35,
+        "selected_cases": 600,
+        "selected_paragraphs": 492,
+        "selected_prior_commitment_overlap": 0,
+        "stage": "confirmation",
+        "target_cases": 600
+      },
+      "source_registration_sha256": "85f1e206ab0ef1d566f398974ad665045d98789bc2130b81adb9cf1eac6a331c",
+      "thresholded_support_cache_sha256": "85ea9824c61536926985219ac19c7bb3684b4658d9acae8e9c491de5c8719d37"
+    },
+    "stage": "confirmation_support_gate"
+  },
+  "schema_version": "frc-squad2-v64-confirmation-support-result-v1"
+}

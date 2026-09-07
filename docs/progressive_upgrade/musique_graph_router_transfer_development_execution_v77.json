@@ -1,0 +1,59 @@
+{
+  "cases_sha256": "7f2b42cae75a50bd253a07bc1086cb478145a0af1d276c83df57c00c7ff1d821",
+  "elapsed_seconds": 2169.977131,
+  "experiment_id": "FRC-MUSIQUE-FROZEN-HOTPOT-GRAPH-ROUTER-TRANSFER-V77",
+  "frozen_resources": {
+    "embedding_model": "BAAI/bge-large-en-v1.5@d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "role_relevance_mix": 0.15,
+    "rrf_k": 60,
+    "score_calibration": "per-case min-max",
+    "token_budget": 1500,
+    "top_k": 5
+  },
+  "implementation_lock_sha256": "a335f2b14209b4dcb415b10a93b16af0b4935a5bae16ae227463c7db36d32ce3",
+  "leakage_boundary": {
+    "blind_rows_exclude_answer_decomposition_support_flags_and_gold_ids": true,
+    "gold_metrics_computed": true,
+    "hop_count_is_id_derived_and_not_used_by_runtime_router": true,
+    "selection_outputs_created_before_gold_join": true
+  },
+  "preparation": {
+    "blind_sha256": "dd9649f90ecf9865b3654d500eba44a60a90b3ef585790f4cb151b36b024c01e",
+    "candidate_count": 15999,
+    "gold_fields_visible_to_model_or_router": false,
+    "gold_sha256": "f0354359d52b6e5f082426cc4a91afb8537269e3bd4fec190cf48a1d338013b8",
+    "hop_count_distribution": {
+      "2": 400,
+      "3": 250,
+      "4": 150
+    },
+    "prior_excluded_source_commitments": 16900,
+    "prior_source_overlap": 0,
+    "selected_cases": 800,
+    "selected_ids_sha256": "7b08805ba5c31f8645a24af176f69307057f8d583253fd0afa202b4c757ed2d8",
+    "selected_source_commitments_sha256": "948187ca2e2dbcbdaca3d18eee71aacc7eb0fde0543e8e3bf09f719e12f8fdb4",
+    "stage": "development"
+  },
+  "protocol_sha256": "faff8858902a8c3177625df8798a8c1fd89d220093e5fd983c51d54f494922c4",
+  "registered_claims": {
+    "broader_research_program_independent_of_musique": false,
+    "official_musique_leaderboard_result": false,
+    "real_setr_or_flood_domain_expert_evidence": false,
+    "strict_independent_model_training_confirmation": false,
+    "v76_router_model_trained_only_on_hotpotqa_history": true,
+    "v77_target_case_ids_disjoint_from_all_recorded_prior_project_musique_exposure": true,
+    "zero_musique_target_training_or_tuning": true
+  },
+  "report_sha256": "863aa24ad03f8723cccc7bb4dbd0e01b3a194b0458973cac2c3c18a7624bf305",
+  "result_sha256": "28f35bf13b42bcd50a378a39bd9643b3a21bd69009b04516176f9146763a0af8",
+  "router_model_sha256": "5bdcf7a229d4208d472b33478c073f29dba082bc012b48c0d2aadad47ad4ecfb",
+  "schema_version": "frc-musique-graph-router-transfer-execution-v77",
+  "scored_blind_sha256": "117f3b101571fce1a3ace20052b0fb83d335d1c9f615b3f1efed893db6232e2e",
+  "scored_cases": 800,
+  "selection_output_sha256": "d8a185101b1a38051fdda96333b94c83d88051664a17db1d7bc4e393e13e332c",
+  "source_registration_sha256": "2de07a8f4740cdc6834bdc4dfdbab685a2b2c0aad1b940378374d07152ac342b",
+  "source_sha256": "b1cd998f7e0e2838d6fda024e4ad1eb0e7fc3edefdadb0bd9b5b10b0907f2034",
+  "stage": "development",
+  "status": "EVALUATED"
+}

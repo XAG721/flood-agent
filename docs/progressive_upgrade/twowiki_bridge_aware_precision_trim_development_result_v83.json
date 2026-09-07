@@ -1,0 +1,302 @@
+{
+  "analysis": {
+    "methods": {
+      "alternating_anchor_link_control": {
+        "cases": 800,
+        "complete_evidence_recall": 0.57,
+        "evidence_macro_f1": 0.521147,
+        "evidence_macro_recall": 0.807625,
+        "mean_selected_tokens": 123.9175
+      },
+      "cross_encoder_topk": {
+        "cases": 800,
+        "complete_evidence_recall": 0.40375,
+        "evidence_macro_f1": 0.444389,
+        "evidence_macro_recall": 0.703,
+        "mean_selected_tokens": 121.93625
+      },
+      "frc_select": {
+        "cases": 800,
+        "complete_evidence_recall": 0.40375,
+        "evidence_macro_f1": 0.444389,
+        "evidence_macro_recall": 0.703,
+        "mean_selected_tokens": 121.93625
+      },
+      "graph_gbr_soft_override_router_v76": {
+        "cases": 800,
+        "complete_evidence_recall": 0.4275,
+        "evidence_macro_f1": 0.45173,
+        "evidence_macro_recall": 0.7155,
+        "mean_selected_tokens": 121.92125
+      },
+      "history_three_route_graph_router_v78": {
+        "cases": 800,
+        "complete_evidence_recall": 0.46,
+        "evidence_macro_f1": 0.463238,
+        "evidence_macro_recall": 0.73425,
+        "mean_selected_tokens": 121.8375
+      },
+      "learned_question_routed_support_path_v75": {
+        "cases": 800,
+        "complete_evidence_recall": 0.6375,
+        "evidence_macro_f1": 0.540075,
+        "evidence_macro_recall": 0.84075,
+        "mean_selected_tokens": 125.37
+      },
+      "lexical_question_router_control": {
+        "cases": 800,
+        "complete_evidence_recall": 0.63,
+        "evidence_macro_f1": 0.537933,
+        "evidence_macro_recall": 0.837,
+        "mean_selected_tokens": 125.29875
+      },
+      "musique_anchor_default_three_route_router_v80": {
+        "cases": 800,
+        "complete_evidence_recall": 0.5475,
+        "evidence_macro_f1": 0.513635,
+        "evidence_macro_recall": 0.795187,
+        "mean_selected_tokens": 123.83375
+      },
+      "musique_target_trained_three_route_router_v79": {
+        "cases": 800,
+        "complete_evidence_recall": 0.5275,
+        "evidence_macro_f1": 0.504202,
+        "evidence_macro_recall": 0.782313,
+        "mean_selected_tokens": 123.24125
+      },
+      "soft_title_link_support_path_closure_v74": {
+        "cases": 800,
+        "complete_evidence_recall": 0.5925,
+        "evidence_macro_f1": 0.512139,
+        "evidence_macro_recall": 0.801063,
+        "mean_selected_tokens": 125.2875
+      },
+      "twowiki_bridge_aware_precision_trim_v83": {
+        "cases": 800,
+        "complete_evidence_recall": 0.6325,
+        "evidence_macro_f1": 0.556329,
+        "evidence_macro_recall": 0.836437,
+        "mean_selected_tokens": 119.7375
+      },
+      "twowiki_cascaded_style_residual_router_v82": {
+        "cases": 800,
+        "complete_evidence_recall": 0.6475,
+        "evidence_macro_f1": 0.544679,
+        "evidence_macro_recall": 0.846375,
+        "mean_selected_tokens": 125.73875
+      },
+      "twowiki_residual_three_route_router_v81": {
+        "cases": 800,
+        "complete_evidence_recall": 0.6475,
+        "evidence_macro_f1": 0.544956,
+        "evidence_macro_recall": 0.846688,
+        "mean_selected_tokens": 125.33125
+      }
+    },
+    "noninferiority_checks": {
+      "candidate_minus_strongest_control_ci_low_at_least_minus_0_005": true,
+      "candidate_minus_strongest_control_point_at_least_0": true,
+      "complete_evidence_recall_delta_vs_strongest_at_least_minus_0_03": true,
+      "every_question_type_delta_vs_best_control_at_least_minus_0_01": true,
+      "invalid_selector_output_rate_equals_0": true
+    },
+    "outcome": {
+      "canary_or_default_authorized": false,
+      "confirmation_open_authorized": true,
+      "further_same_source_confirmation_authorized": true,
+      "gate_2": "NO-GO/SHADOW",
+      "noninferiority_envelope_supported": true,
+      "reuse_stage_for_model_feature_threshold_gate_or_selection": false,
+      "selector_adoption_authorized": false,
+      "status": "2WIKI_V83_PRECISION_TRIM_DEVELOPMENT_ADVANTAGE_ESTABLISHED_OPEN_CONFIRMATION",
+      "strict_gate_passed": true
+    },
+    "paired_f1_delta": {
+      "alternating_anchor_link_control": {
+        "ci_high": 0.041404,
+        "ci_low": 0.028922,
+        "point": 0.035183,
+        "resamples": 10000,
+        "seed": 20261207
+      },
+      "cross_encoder_topk": {
+        "ci_high": 0.123265,
+        "ci_low": 0.100454,
+        "point": 0.11194,
+        "resamples": 10000,
+        "seed": 20261204
+      },
+      "frc_select": {
+        "ci_high": 0.123374,
+        "ci_low": 0.100699,
+        "point": 0.11194,
+        "resamples": 10000,
+        "seed": 20261205
+      },
+      "graph_gbr_soft_override_router_v76": {
+        "ci_high": 0.11586,
+        "ci_low": 0.093189,
+        "point": 0.104599,
+        "resamples": 10000,
+        "seed": 20261210
+      },
+      "history_three_route_graph_router_v78": {
+        "ci_high": 0.104271,
+        "ci_low": 0.081865,
+        "point": 0.093091,
+        "resamples": 10000,
+        "seed": 20261211
+      },
+      "learned_question_routed_support_path_v75": {
+        "ci_high": 0.019582,
+        "ci_low": 0.012896,
+        "point": 0.016254,
+        "resamples": 10000,
+        "seed": 20261209
+      },
+      "lexical_question_router_control": {
+        "ci_high": 0.022111,
+        "ci_low": 0.01471,
+        "point": 0.018397,
+        "resamples": 10000,
+        "seed": 20261208
+      },
+      "musique_anchor_default_three_route_router_v80": {
+        "ci_high": 0.049431,
+        "ci_low": 0.036037,
+        "point": 0.042694,
+        "resamples": 10000,
+        "seed": 20261213
+      },
+      "musique_target_trained_three_route_router_v79": {
+        "ci_high": 0.060214,
+        "ci_low": 0.044095,
+        "point": 0.052127,
+        "resamples": 10000,
+        "seed": 20261212
+      },
+      "soft_title_link_support_path_closure_v74": {
+        "ci_high": 0.05253,
+        "ci_low": 0.036134,
+        "point": 0.04419,
+        "resamples": 10000,
+        "seed": 20261206
+      },
+      "twowiki_cascaded_style_residual_router_v82": {
+        "ci_high": 0.015118,
+        "ci_low": 0.008184,
+        "point": 0.011651,
+        "resamples": 10000,
+        "seed": 20261215
+      },
+      "twowiki_residual_three_route_router_v81": {
+        "ci_high": 0.014985,
+        "ci_low": 0.007802,
+        "point": 0.011373,
+        "resamples": 10000,
+        "seed": 20261214
+      }
+    },
+    "per_question_type_delta_vs_best_control": {
+      "bridge_comparison": {
+        "best_control": "twowiki_residual_three_route_router_v81",
+        "best_control_evidence_macro_f1": 0.684111,
+        "candidate_evidence_macro_f1": 0.727222,
+        "cases": 200,
+        "delta": 0.043111
+      },
+      "comparison": {
+        "best_control": "cross_encoder_topk",
+        "best_control_evidence_macro_f1": 0.565714,
+        "candidate_evidence_macro_f1": 0.568095,
+        "cases": 200,
+        "delta": 0.002381
+      },
+      "compositional": {
+        "best_control": "soft_title_link_support_path_closure_v74",
+        "best_control_evidence_macro_f1": 0.497143,
+        "candidate_evidence_macro_f1": 0.497143,
+        "cases": 200,
+        "delta": 0.0
+      },
+      "inference": {
+        "best_control": "twowiki_residual_three_route_router_v81",
+        "best_control_evidence_macro_f1": 0.432857,
+        "candidate_evidence_macro_f1": 0.432857,
+        "cases": 200,
+        "delta": 0.0
+      }
+    },
+    "precision_trim": {
+      "action_counts": {
+        "bridge_aware_trim_to_four": 202,
+        "keep_frozen_v82_selection": 598
+      },
+      "bridge_classifier_balanced_accuracy": 0.988333,
+      "complete_evidence_recall_delta_vs_strongest": -0.015,
+      "evidence_macro_recall_delta_vs_strongest": -0.010251,
+      "retained_count_distribution": {
+        "4": 202,
+        "5": 598
+      },
+      "retained_count_fractions": {
+        "4": 0.2525,
+        "5": 0.7475
+      },
+      "route_counts": {
+        "alternating_anchor_link_control": 141,
+        "cross_encoder_topk": 170,
+        "soft_title_link_support_path_closure_v74": 489
+      },
+      "trim_action_fraction": 0.2525
+    },
+    "strict_gate_checks": {
+      "both_retained_counts_each_cover_at_least_0_05": true,
+      "bridge_classifier_balanced_accuracy_at_least_0_95": true,
+      "candidate_complete_evidence_recall_at_least_0_58": true,
+      "candidate_evidence_macro_f1_at_least_0_55": true,
+      "candidate_minus_frozen_v82_ci_low_above_0": true,
+      "candidate_minus_frozen_v82_f1_at_least_0_005": true,
+      "candidate_minus_strongest_control_ci_low_above_0": true,
+      "candidate_minus_strongest_control_f1_at_least_0_005": true,
+      "complete_evidence_recall_delta_vs_strongest_at_least_minus_0_03": true,
+      "every_question_type_delta_vs_best_control_at_least_minus_0_005": true,
+      "evidence_macro_recall_delta_vs_strongest_at_least_minus_0_03": true,
+      "exact_cases_equals_800": true,
+      "exact_question_type_quota": true,
+      "invalid_selector_output_rate_equals_0": true,
+      "mean_selected_tokens_not_above_strongest_control": true,
+      "prior_or_stage_overlap_equals_0": true,
+      "trim_action_fraction_at_least_0_15": true,
+      "trim_action_fraction_at_most_0_35": true
+    },
+    "strongest_registered_control": {
+      "cases": 800,
+      "complete_evidence_recall": 0.6475,
+      "evidence_macro_f1": 0.544956,
+      "evidence_macro_recall": 0.846688,
+      "mean_selected_tokens": 125.33125,
+      "name": "twowiki_residual_three_route_router_v81"
+    }
+  },
+  "metadata": {
+    "cases": 800,
+    "experiment_id": "FRC-2WIKI-BRIDGE-AWARE-PRECISION-TRIM-PROSPECTIVE-V83",
+    "invalid_selector_output_count": 0,
+    "model_development_experiment_id": "FRC-2WIKI-BRIDGE-AWARE-PRECISION-TRIM-ROUTER-V83",
+    "official_2wiki_leaderboard_result": false,
+    "official_question_type_answer_or_gold_used_by_runtime_router": false,
+    "prior_overlap": 0,
+    "question_type_distribution": {
+      "bridge_comparison": 200,
+      "comparison": 200,
+      "compositional": 200,
+      "inference": 200
+    },
+    "same_dataset_case_disjoint_target": true,
+    "schema_version": "frc-twowiki-bridge-aware-precision-trim-prospective-v83",
+    "selection_written_before_gold_join": true,
+    "stage": "development",
+    "stage_overlap": 0
+  }
+}

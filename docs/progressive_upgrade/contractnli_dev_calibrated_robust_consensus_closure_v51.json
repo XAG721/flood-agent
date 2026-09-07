@@ -1,0 +1,67 @@
+{
+  "schema_version": "frc-contractnli-v51-development-closure-v1",
+  "experiment_id": "FRC-CONTRACTNLI-DEV-CALIBRATED-ROBUST-CONSENSUS-V51",
+  "closed_at": "2026-08-02T19:51:00+08:00",
+  "status": "CONTRACTNLI_V51_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_TRAIN",
+  "development_result": {
+    "cases": 240,
+    "documents": 60,
+    "label_counts": {
+      "Entailment": 80,
+      "Contradiction": 80,
+      "NotMentioned": 80
+    },
+    "query_fallback_rate": 0.0,
+    "candidate_ceiling_complete_rate_on_evidence_cases": 1.0,
+    "not_mentioned_official_empty_evidence_rate": 1.0,
+    "ungated_v49": {
+      "evidence_or_abstention_macro_f1": 0.154504,
+      "evidence_bearing_macro_f1": 0.231756,
+      "not_mentioned_abstention_accuracy": 0.0,
+      "abstention_rate": 0.0
+    },
+    "five_fold_oof_candidate": {
+      "evidence_or_abstention_macro_f1": 0.191845,
+      "evidence_bearing_macro_f1": 0.194018,
+      "not_mentioned_abstention_accuracy": 0.1875,
+      "abstention_rate": 0.141667
+    },
+    "oof_utility_gain_vs_ungated_v49": 0.037341,
+    "oof_evidence_f1_drop_vs_ungated_v49": 0.037738,
+    "final_all_dev_threshold_hex": "0x1.3c887b71d53bcp+3"
+  },
+  "failed_development_gates": {
+    "oof_evidence_bearing_f1_drop_at_most_0_03": false,
+    "observed_evidence_f1_drop": 0.037738,
+    "oof_not_mentioned_abstention_accuracy_at_least_0_2": false,
+    "observed_not_mentioned_abstention_accuracy": 0.1875
+  },
+  "passed_development_gates": {
+    "exact_cases_and_per_label_quota": true,
+    "minimum_documents_and_all_five_folds": true,
+    "oof_utility_gain_at_least_0_02": true,
+    "oof_abstention_rate_between_0_05_and_0_8": true,
+    "deterministic_query_fallback_rate_equals_0": true
+  },
+  "artifacts": {
+    "protocol_sha256": "0904a59ace997919a06fe32a4e839bf1fce5158cb7f4c663567506660421a18b",
+    "original_implementation_registration_sha256": "eb55837d9d2c66fe43b64b45d2c19f58f2f9010f307cb37255b66b324f2fcac8",
+    "implementation_order_erratum_sha256": "1ce8f5cd0ca75f214f9df88873a97c04335b829e5b5d76c608f115c347cec7ec",
+    "development_execution_sha256": "636ebeb4b63ea9c58ed48ddd1c69bed8614f0852900cf653564cd89db2d7a18a",
+    "candidate_coverage_sha256": "80731c1d9a8984a25c613979263499a843fc794d09b8242180130ed4b0187dc9",
+    "queries_sha256": "16316fa331a847d3b95bc7cd83c26a3ce9d091bfb48ae91118fea5ee972db489",
+    "scored_sha256": "e802cf128200918d5cf3a477d3bdcc0ad9e3c748ecd67a4783bc1925446edbc6",
+    "development_result_sha256": "307ab4c4c659748e6c3e79447a785a4ff1985fee532eee62ed9fc15e6e1d7ec2",
+    "development_markdown_sha256": "413ba0cf3997f131bda028862b35480cb5ede7d52597ad8e5c2a0abc0d8ede14",
+    "development_case_evidence_sha256": "5d1dab9b44a9c50d315be86a6a2727a92de6228aed196efa532188d71868aceb"
+  },
+  "execution_order_erratum_disclosed": true,
+  "train_member_opened": false,
+  "train_confirmation_started": false,
+  "official_test_reused_by_v51": false,
+  "final_threshold_authorizes_train_open": false,
+  "selector_adoption_authorized": false,
+  "canary_or_default_authorized": false,
+  "gate_2": "NO-GO/SHADOW",
+  "next_step_boundary": "Do not open official train for v51 and do not reuse v51 dev or v50 test for post-hoc threshold tuning. A later experiment requires a new preregistered hypothesis and an independent development source."
+}

@@ -1,0 +1,98 @@
+{
+  "schema_version": "frc-doc2dial-source-registration-v54",
+  "experiment_id": "FRC-DOC2DIAL-DOCUMENT-CONTRASTIVE-ROLE-CLOSURE-V54",
+  "registered_at": "2026-08-02T23:27:00+08:00",
+  "protocol_sha256_before_download": "4e5b348ab823d16f60e2d92b4dcf92dcca02e3eb9d11ffba3e8228138d68e23c",
+  "source": {
+    "repository": "https://github.com/doc2dial/sharedtask-dialdoc2021",
+    "revision": "7584ac0c1c617496d644f1ea34a6b812a5771539",
+    "dataset_version": "v1.0.1",
+    "cache_path": ".cache/benchmarks/doc2dial/v54_source",
+    "cache_is_git_ignored": true,
+    "download_transport": "Exact fixed-revision raw.githubusercontent.com URLs; no JSON parser was invoked during download or hashing."
+  },
+  "files": [
+    {
+      "path": "DATA_README.md",
+      "repository_path": "data/doc2dial/DATA_README.md",
+      "git_blob_sha1": "3f284c8e887681c1186a5a3c6c225b5a222ecb6f",
+      "bytes": 2829,
+      "sha256": "d38cfe10afaa4337b87877e4b03e14c321bdc8ec8452f518266e669279499ed7",
+      "content_read_before_protocol_freeze": true,
+      "content_role": "schema documentation only"
+    },
+    {
+      "path": "doc2dial_doc.json",
+      "repository_path": "data/doc2dial/v1.0.1/doc2dial_doc.json",
+      "git_blob_sha1": "2fdd064889da3fd2c39b64b35ba33c8fdf5554bd",
+      "bytes": 46216432,
+      "sha256": "547ed8ee5bfd7babdadfb6246b1b3fc5fa107a4abdef972bc63c9b717000f56f",
+      "content_read_or_parsed": false,
+      "stage_role": "shared document source"
+    },
+    {
+      "path": "doc2dial_dial_train.json",
+      "repository_path": "data/doc2dial/v1.0.1/doc2dial_dial_train.json",
+      "git_blob_sha1": "f502fd2c358f442b415274f384f0b24b6fa139ca",
+      "bytes": 29657809,
+      "sha256": "c5e66816b28137ae4ba82e310cdc691b7608b123eda23f1f8f7021f3df8a4dff",
+      "content_read_or_parsed": false,
+      "stage_role": "development dialogue source"
+    },
+    {
+      "path": "doc2dial_dial_validation.json",
+      "repository_path": "data/doc2dial/v1.0.1/doc2dial_dial_validation.json",
+      "git_blob_sha1": "2826ae7d1301545c1a5f1e462237a3eb660c11e0",
+      "bytes": 5746065,
+      "sha256": "9b4118e345af47451c84e8e27c1dba2844fcaafeacb059380b4ac8fbb9b62a16",
+      "content_read_or_parsed": false,
+      "stage_role": "untouched conditional confirmation dialogue source"
+    }
+  ],
+  "official_schema_contract": {
+    "document_keys": [
+      "domain",
+      "doc_id",
+      "title",
+      "doc_text",
+      "spans"
+    ],
+    "span_keys": [
+      "sp_id",
+      "start_sp",
+      "end_sp",
+      "text_sp",
+      "id_sec",
+      "start_sec",
+      "end_sec",
+      "text_sec",
+      "title",
+      "parent_titles"
+    ],
+    "dialogue_keys": [
+      "dial_id",
+      "doc_id",
+      "domain",
+      "turns"
+    ],
+    "turn_keys": [
+      "turn_id",
+      "role",
+      "da",
+      "references",
+      "utterance"
+    ],
+    "empty_reference_semantics": "The fixed official DATA_README states that references is empty when a turn indicates that the previous user query is not answerable or irrelevant to the document."
+  },
+  "license_provenance": {
+    "fixed_official_repository_declares_spdx_license": false,
+    "official_project_page_declares_license": false,
+    "huggingface_ibm_doc2dial_dataset_card_identifier": "cc-by-3.0",
+    "redistribution_policy_for_v54": "Do not commit or publish source text. Commit only source hashes, opaque commitments, aggregate metrics and gold-minimal evidence."
+  },
+  "dialogue_or_document_json_content_read_before_registration": false,
+  "development_sample_distribution_or_gold_read": false,
+  "validation_content_read": false,
+  "neural_scoring_started": false,
+  "metrics_computed": false
+}

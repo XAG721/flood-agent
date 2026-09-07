@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230f2742'/%3E%3Cpath d='M10 39c8-8 14 8 23 0s14 8 21 0' fill='none' stroke='%23f07b32' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E"
+    />
+    <title>CONFLICTS 独立盲评工作台</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div id="app" class="app-shell" aria-busy="true">
+      <header class="topbar">
+        <div class="brand-block">
+          <p>FRC-RAG 研究评审</p>
+          <h1>CONFLICTS 独立盲评工作台</h1>
+        </div>
+        <div class="topbar-status" aria-label="工作台隐私状态">
+          <span>仅限本机</span>
+          <strong id="save-status" role="status" aria-live="polite">正在读取冻结批次</strong>
+        </div>
+      </header>
+
+      <div class="workspace">
+        <aside class="review-rail" aria-label="评审批次导航">
+          <section class="identity-section" aria-labelledby="identity-title">
+            <div class="rail-heading">
+              <h2 id="identity-title">本批身份与进度</h2>
+              <span id="batch-label" class="batch-label">—</span>
+            </div>
+            <label class="identity-field" for="annotator-id">
+              <span>私有评审员标识</span>
+              <input
+                id="annotator-id"
+                type="text"
+                maxlength="128"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="三人必须使用不同标识"
+              />
+            </label>
+            <p class="privacy-copy">标识与决定只保存到本机 Git 忽略目录，不会写入公开工件。</p>
+            <div class="progress-copy">
+              <strong id="progress-value">0 / 0</strong>
+              <span id="progress-label">尚未完成</span>
+            </div>
+            <div class="progress-track" aria-hidden="true">
+              <span id="progress-bar"></span>
+            </div>
+          </section>
+
+          <nav class="task-navigation" aria-labelledby="task-navigation-title">
+            <div class="rail-heading">
+              <h2 id="task-navigation-title">本批任务</h2>
+              <span class="legend"><i></i> 已完成</span>
+            </div>
+            <ol id="task-list"></ol>
+          </nav>
+        </aside>
+
+        <main id="review-main" class="review-main" tabindex="-1">
+          <section id="finalized-banner" class="finalized-banner" hidden>
+            <div>
+              <strong>本批已完成并生成私有收据</strong>
+              <p>任何继续修改都会撤销完成标记，重新验证后才能参与八批合并。</p>
+            </div>
+            <button id="reopen-button" type="button" class="secondary-button">继续修订</button>
+          </section>
+
+          <section class="task-context" aria-labelledby="question-title">
+            <div class="context-meta">
+              <span id="task-position">任务 —</span>
+              <span id="conflict-type">—</span>
+            </div>
+            <h2 id="question-title">正在载入问题……</h2>
+            <dl class="expectation-list">
+              <div>
+                <dt>该冲突类型的期望行为</dt>
+                <dd id="expected-behavior">—</dd>
+              </div>
+              <div>
+                <dt>官方答案</dt>
+                <dd id="correct-answer">—</dd>
+              </div>
+            </dl>
+          </section>
+
+          <section aria-labelledby="comparison-title">
+            <div class="section-heading">
+              <div>
+                <h2 id="comparison-title">独立评价两个匿名回答</h2>
+                <p>先核对回答与其可见来源，再分别填写四项评分和简要理由。</p>
+              </div>
+              <span class="method-blind-badge">方法身份隐藏</span>
+            </div>
+            <div id="response-comparison" class="response-comparison"></div>
+          </section>
+
+          <section class="pair-decision" aria-labelledby="pair-decision-title">
+            <div>
+              <h2 id="pair-decision-title">成对结论</h2>
+              <p>偏好用于比较回答质量，不代表你知道其检索方法。</p>
+            </div>
+            <fieldset id="preference-fieldset" class="preference-fieldset">
+              <legend>整体偏好</legend>
+              <div id="preference-options" class="segmented-options"></div>
+            </fieldset>
+            <label class="notes-field" for="decision-notes">
+              <span>补充说明（可选）</span>
+              <textarea id="decision-notes" rows="3" maxlength="4000"></textarea>
+            </label>
+          </section>
+        </main>
+      </div>
+
+      <footer class="action-bar">
+        <div class="task-actions">
+          <button id="previous-button" type="button" class="secondary-button">上一项</button>
+          <button id="next-button" type="button" class="primary-button">保存并前往下一项</button>
+        </div>
+        <div class="batch-actions">
+          <button id="save-button" type="button" class="secondary-button">立即保存</button>
+          <button id="export-button" type="button" class="secondary-button">导出当前草稿</button>
+          <button id="finalize-button" type="button" class="finalize-button">验证并完成本批</button>
+        </div>
+      </footer>
+    </div>
+
+    <section id="fatal-error" class="fatal-error" role="alert" hidden>
+      <h1>工作台无法启动</h1>
+      <p id="fatal-error-message"></p>
+      <p>请停止本地进程，核对冻结批次与清单后重新启动。</p>
+    </section>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

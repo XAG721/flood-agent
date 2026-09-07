@@ -1,0 +1,162 @@
+{
+  "schema_version": "frc-ottqa-v44-result-record-v1",
+  "experiment_id": "FRC-OTTQA-GUARDED-ADAPTIVE-ATOMIC-ROLES-V44",
+  "status": "OTTQA_GUARDED_ADAPTIVE_SUPPORT_NOT_ESTABLISHED",
+  "dataset": {
+    "name": "OTT-QA",
+    "scope": "oracle-table linked-answer-evidence bounded confirmation",
+    "official_repository": "https://github.com/wenhuchen/OTT-QA",
+    "official_revision": "b289bcca691db21a5259c3420e6b9819a9be9ba3",
+    "cases": 240,
+    "source_modes": {
+      "passage": 120,
+      "table": 120
+    },
+    "official_leaderboard_result": false,
+    "open_domain_table_retrieval_evaluated": false
+  },
+  "integrity": {
+    "protocol_sha256": "95116d2af455d1f8792e81cc1ed1f0f48db5fd7ef1274d257f73cec8e5c1e072",
+    "protocol_erratum_sha256": "e7341f3ce645f27ea1fbf3f8bc79691b14a8c4b5655035f83bdb8112ff906019",
+    "protocol_erratum2_sha256": "1bcbb7ee99e974b80624bdc24392d1c6eb403e2dfdd86b4681afbab55a9b6fbc",
+    "protocol_erratum3_sha256": "aa237afc9062211cc090247285fb8cc3f2f4fb92e6a8f8c190e1c4a77923ee38",
+    "implementation_registration_sha256": "797aeb50d6fabaf931ba41325c9f9723d44bc6b5b3e66aca04cb5b73aba3df87",
+    "implementation_erratum_sha256": "282622aece3610da4e98868c954c7203fbf42a4df5ce75593fe6589e83b38aa4",
+    "implementation_erratum2_sha256": "8287e4895e28286ddb26ef27222ed7e5432d11f0a3177a92fad614bc9782f76c",
+    "execution_registration_sha256": "e9bc5d20eb00786f054fd318714ee2448338f140f0f64c16031c62a7351b25f4",
+    "module_sha256": "ce195a5bc68031f4cc38cb819b086bef891df7bad6ecf459746ce33356bf73f8",
+    "runner_sha256": "c8a83479ca2b278d7c5fa47079efc84c847d24e27d280b08d06aacae93c033b6",
+    "test_sha256": "51814d44624fdfd7d0c9ba4c466b3c6c7e7a694a82cc0aa6d51d6ff12d26f197",
+    "source_archive_sha256": "0746c60de6bcd5a5628db743235fb2664efdb3c6aead0858941827801d3db10b",
+    "selected_source_manifest_sha256": "9acedd3e535c1726b3f476ebb0b17a3dbe217c5bc2645ac7b7ceaa4c4ce037ef",
+    "prepared_blind_sha256": "f7f13e6268f5816f9498f72fe4d50ebb3b1c9aafe0af6b6bc2c99e88afba3d23",
+    "candidate_map_sha256": "491913b3d152ca07de649ed5242969eef019b49c4311f7be2f370da96258e05f",
+    "candidate_coverage_sha256": "08be25ddcdaee8224cbdc5200a6312cb06aa70d36b29616117a059505cbd1c16",
+    "queries_sha256": "38e54e580ac8e788a293fe72c43f73de56f28860182d3d34e53e4b130f89525e",
+    "scored_sha256": "eb196119ff6803cbf699ce0a17cd683a0210135863d8c82e4e9c5d69a8ecb01b",
+    "report_json_sha256": "8a936ef33410ba38c2bc8c870256086a558aba2170798df1cb0a80890650f684",
+    "report_markdown_sha256": "49125560b5aa4e062ae34ff01fa778a24cb5183932226cfabfd667f224aa743a",
+    "case_evidence_gzip_sha256": "3f38e8ed50af7bb65c6252a8e631cbcda7350b0833871a20b0694bd36c3dc097"
+  },
+  "protocol": {
+    "budgets": [512, 1024, 1500],
+    "top_k": 5,
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 20260804,
+    "guarded_target_rule": "min(5, max(3, distinct_role_argmax + 1))",
+    "gold_joined_after_complete_score_cache": true,
+    "query_fallback_count": 7,
+    "query_fallback_rate": 0.029167,
+    "candidate_ceiling_complete_rate": 0.995833
+  },
+  "primary_aggregates": {
+    "guarded_adaptive_cardinality_frc_v44": {
+      "answer_evidence_macro_f1": 0.189960,
+      "macro_precision": 0.123773,
+      "answer_evidence_recall": 0.408333,
+      "mean_selected_unit_count": 3.723611,
+      "mean_selected_token_cost": 424.659722
+    },
+    "dynamic_rank_coverage_frc_v41": {
+      "answer_evidence_macro_f1": 0.173866,
+      "macro_precision": 0.106435,
+      "answer_evidence_recall": 0.475000,
+      "mean_selected_unit_count": 4.848611,
+      "mean_selected_token_cost": 534.695833
+    },
+    "adaptive_argmax_cardinality_frc_v43": {
+      "answer_evidence_macro_f1": 0.169364,
+      "macro_precision": 0.119329,
+      "answer_evidence_recall": 0.291667,
+      "mean_selected_unit_count": 2.676389,
+      "mean_selected_token_cost": 315.005556
+    },
+    "official_anchor_topk": {
+      "answer_evidence_macro_f1": 0.205021,
+      "macro_precision": 0.132454,
+      "answer_evidence_recall": 0.454167,
+      "mean_selected_unit_count": 4.231944,
+      "mean_selected_token_cost": 449.219444
+    }
+  },
+  "paired_bootstrap": {
+    "guarded_minus_dynamic": {
+      "point": 0.016093,
+      "ci_low": 0.001488,
+      "ci_high": 0.029713
+    },
+    "guarded_minus_strongest_non_frc": {
+      "strongest_non_frc": "official_anchor_topk",
+      "point": -0.015061,
+      "ci_low": -0.058018,
+      "ci_high": 0.014180
+    },
+    "guarded_minus_v43": {
+      "point": 0.020596,
+      "ci_low": -0.000110,
+      "ci_high": 0.042439
+    }
+  },
+  "resource_and_recall": {
+    "mean_selected_unit_reduction_vs_dynamic": 1.125000,
+    "answer_evidence_recall_drop_vs_dynamic": 0.066667,
+    "answer_evidence_recall_gain_vs_v43": 0.116666,
+    "target_cardinality_distribution": {
+      "3": 103,
+      "4": 90,
+      "5": 47
+    }
+  },
+  "safety_deltas_vs_strongest_non_frc": {
+    "by_budget": {
+      "512": -0.030552,
+      "1024": -0.007315,
+      "1500": -0.007315
+    },
+    "by_source_mode": {
+      "passage": {
+        "cases": 120,
+        "strongest_non_frc": "cross_encoder_knapsack",
+        "delta": 0.029029
+      },
+      "table": {
+        "cases": 120,
+        "strongest_non_frc": "official_anchor_topk",
+        "delta": -0.158409
+      }
+    }
+  },
+  "support_checks": {
+    "minimum_total_cases_met": true,
+    "minimum_cases_per_source_mode_met": true,
+    "candidate_ceiling_complete_rate_at_least_0_60": true,
+    "query_parser_fallback_rate_at_most_0_05": true,
+    "guarded_minus_dynamic_point_at_least_0_005": true,
+    "guarded_minus_dynamic_ci_low_above_0": true,
+    "guarded_minus_strongest_point_at_least_0_01": false,
+    "guarded_minus_strongest_ci_low_above_0": false,
+    "guarded_minus_v43_recall_at_least_0_02": true,
+    "guarded_minus_v43_f1_at_least_minus_0_005": true,
+    "mean_selected_unit_reduction_at_least_0_50": true,
+    "answer_evidence_recall_drop_at_most_0_02": false,
+    "every_budget_and_supported_source_mode_delta_at_least_minus_0_02": false
+  },
+  "interpretation": {
+    "supported": "The one-step multiplicity guard repairs much of v43 over-compression and produces a statistically positive bounded-pool F1 difference versus the frozen v41 dynamic selector, with fewer selected units.",
+    "not_supported": "The method does not outperform the strongest fair non-FRC baseline, exceeds the allowed recall loss versus the dynamic selector, and has a severe table-source safety regression.",
+    "source_heterogeneity": "The positive passage delta and negative table delta are a prespecified safety result, not permission to tune or route on these revealed cases."
+  },
+  "decision": {
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW",
+    "reuse_v44_cases_for_tuning_or_selection": false,
+    "next_experiment_boundary": "Any source-aware or anchor-prior revision must be frozen using synthetic invariants and evaluated once on an untouched dataset or partition."
+  },
+  "limitations": [
+    "The official table_id is an oracle boundary; this is not open-domain OTT-QA retrieval.",
+    "Answer-node traces cover answer-bearing cells or passages, not every intermediate multi-hop fact.",
+    "Unavailable official full-corpus artifacts prevent official leaderboard reproduction.",
+    "This experiment cannot establish real SetR reproduction, flood-domain validity, or production readiness."
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "schema_version": "frc-twowiki-support-path-closure-source-registration-v74",
+  "experiment_id": "FRC-2WIKI-SUPPORT-PATH-CLOSURE-V74",
+  "registered_on": "2026-08-04",
+  "source": {
+    "dataset": "2WikiMultiHopQA",
+    "split": "dev",
+    "path": ".cache/benchmarks/2wikimultihopqa/dev.parquet",
+    "bytes": 30056098,
+    "sha256": "c0d8b60b9026b728fb07ad74c5252a0f188f6942e8ba5c02df4dfa369502ea8d",
+    "expected_rows": 12576,
+    "schema_fields": ["_id", "type", "question", "context", "supporting_facts", "evidences", "answer"]
+  },
+  "prior_history_exclusion": {
+    "candidate_pool_path": ".cache/benchmarks/frc_public_reference/candidate_pool_2wikimultihopqa.jsonl",
+    "candidate_pool_bytes": 12046987,
+    "candidate_pool_sha256": "3398c12efbfbddb1ca726edbe317d74846e122e4f97c105c5226f19b7ef3b8a2",
+    "scored_source_path": ".cache/benchmarks/frc_public_reference/role_scores_2wikimultihopqa.jsonl",
+    "scored_source_bytes": 21825399,
+    "scored_source_sha256": "7add5a5ec5206a33848de0eecc76a8697dc321e03946fcfefee20df0525a6104",
+    "provenance_path": ".cache/benchmarks/frc_public_reference/2wikimultihopqa_provenance.json",
+    "provenance_bytes": 1803,
+    "provenance_sha256": "518ce886a70dcd1e0effa47a621e6eb84afa6f300c7ae46b8942e12205daf546",
+    "expected_unique_ids": 1000,
+    "all_ids_excluded_from_every_v74_stage": true
+  },
+  "pre_registration_access_boundary": {
+    "raw_schema_and_parquet_metadata_read": true,
+    "raw_case_rows_read_for_v74_selection": 0,
+    "v74_development_ids_selected": 0,
+    "v74_confirmation_ids_selected": 0,
+    "v74_model_scores_seen": false,
+    "v74_gold_metrics_seen": false
+  },
+  "frozen_model_resources": {
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "offline_snapshot_required": true
+  },
+  "claims": {
+    "case_disjoint_from_prior_2wiki_history": true,
+    "independent_dataset_from_prior_2wiki_history": false,
+    "official_2wiki_leaderboard_result": false,
+    "strict_independent_model_training_confirmation": false
+  }
+}

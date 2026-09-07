@@ -1,0 +1,62 @@
+{
+  "schema_version": "frc-musique-paragraph-competition-support-implementation-registration-v70",
+  "experiment_id": "FRC-MUSIQUE-PARAGRAPH-COMPETITION-SUPPORT-V70",
+  "registered_at": "2026-08-04T08:10:00+08:00",
+  "hashes": {
+    "protocol": "9b5324f679afcc41259b533a1bedb861cc447224146b97354792c25456f236c6",
+    "source_registration": "161ae62b7f80b2442757edd5bac9fc38fbf5fbc38b6d2f67f09f3c5933b1f6ae",
+    "model_registration": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "module": "a5ccccb60bb2cb91890f32db8b1535682d26ae33bb1cca2ecf411eec4799c7f7",
+    "runner": "4e9ae17b7d34ea18305b412118be8aed3670a35025f7db43e4e7971ac9990765",
+    "tests": "0c539be72a8d415eebc84c969d6d24eba72caa0e42022f2da2c6d9786a844e5b"
+  },
+  "target_files_were_previously_parsed": true,
+  "target_rows_read_for_v70_before_registration": 0,
+  "v70_source_commitments_selected_before_registration": 0,
+  "v70_model_outputs_or_joined_metrics_seen_before_registration": false,
+  "source_independent_synthetic_fixtures_only": true,
+  "synthetic_tests": {
+    "passed": 16,
+    "failed": 0,
+    "target_source_used": false,
+    "model_files_used": false
+  },
+  "frozen_behaviors": [
+    "v65 invalid, v65 corrected, v66 development, v67 calibration and development, v68 calibration and development, and v69 calibration and development source-commitment union exclusion",
+    "SQuAD2 normalized exact-question exclusion",
+    "split-aware paired source-id answer-state assignment",
+    "calibration, development and conditional confirmation deterministic balanced sampling",
+    "gold-free direct composed-question score, winning span and six fixed paragraph-competition features",
+    "oracle decomposition question plan with gold answers and supporting indices removed",
+    "prior predicted-span-only placeholder substitution without intermediate thresholding",
+    "nine v68 base features, eighteen fixed normalized hinge features and five fixed v69 interactions",
+    "direct top-one versus top-two clipped gap and fixed-temperature softmax winner mass",
+    "chain minimum and mean aggregation of both paragraph-competition statistics",
+    "fail closed when any question has fewer than two finite valid paragraph margins",
+    "all coefficients except the two hop indicators projected to nonnegative values after every optimizer step",
+    "same-data same-optimizer nine-signal, additive, interaction and competition-only controls",
+    "identical deterministic safety-constrained threshold selection across learned methods",
+    "five-fold calibration-only model-and-threshold crossfit diagnostic",
+    "single strongest fair comparator selection before paired bootstrap",
+    "candidate-versus-strongest, candidate-versus-strongest-prior-feature-control and candidate-versus-competition-only independent paired bootstrap gates",
+    "development failure closure or immutable confirmation authorization"
+  ],
+  "model_weights_architecture_or_tokenizer_changed": false,
+  "learned_parameter_count_on_calibration": {
+    "direct_and_chain_thresholds": 2,
+    "linear_control_including_threshold": 11,
+    "additive_control_including_threshold": 29,
+    "interaction_control_including_threshold": 34,
+    "competition_only_control_including_threshold": 8,
+    "competition_candidate_including_threshold": 17
+  },
+  "total_learned_scalars_across_reported_methods": 101,
+  "development_or_confirmation_used_for_basis_feature_model_threshold_gate_or_method_selection": false,
+  "official_decomposition_is_oracle_plan": true,
+  "automatic_decomposer_result_claimed": false,
+  "strict_independent_model_training_confirmation_claimed": false,
+  "selector_or_retrieval_scoring_part_of_v70": false,
+  "selector_adoption_authorized": false,
+  "canary_or_default_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

@@ -1,0 +1,12 @@
+{
+  "confirmation_open_authorized": false,
+  "experiment_id": "FRC-2WIKI-RESIDUAL-THREE-ROUTE-PROSPECTIVE-V81",
+  "further_same_source_confirmation_authorized": false,
+  "gate_2": "NO-GO/SHADOW",
+  "result_sha256": "7d745656bc712617f329285671783fc2dcd1849271354c91e3c31722707d37e1",
+  "reuse_stage_for_model_feature_threshold_gate_or_selection": false,
+  "schema_version": "frc-twowiki-residual-three-route-closure-v81",
+  "selector_adoption_authorized": false,
+  "stage": "development",
+  "status": "2WIKI_V81_RESIDUAL_ROUTER_DEVELOPMENT_ADVANTAGE_NOT_ESTABLISHED_STOP"
+}

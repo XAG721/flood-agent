@@ -1,0 +1,55 @@
+{
+  "cases_sha256": "c495d5c19b38528678b20fd4defd3cb438ea93538aefd0a9c0f445a569b9eab8",
+  "elapsed_seconds": 1127.726354,
+  "experiment_id": "FRC-2WIKI-QUESTION-ROUTED-SUPPORT-PATH-V75",
+  "frozen_resources": {
+    "embedding_model": "BAAI/bge-large-en-v1.5@d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "role_relevance_mix": 0.15,
+    "rrf_k": 60,
+    "score_calibration": "per-case min-max",
+    "token_budget": 1500,
+    "top_k": 5
+  },
+  "implementation_lock_sha256": "943a3b7033e069537a269b0b6b94a3cae4119588ccc56240e8beff9c16f4dea5",
+  "leakage_boundary": {
+    "blind_rows_exclude_answer_gold_ids_gold_flags_and_gold_roles": true,
+    "gold_metrics_computed": true,
+    "official_type_used_by_router": false,
+    "selection_outputs_created_before_gold_join": true
+  },
+  "model_artifact_sha256": "b12c128f06c4ab14851d2f24538a15e76f5f9ff7336a7968c7b01d7c5062cbc0",
+  "preparation": {
+    "blind_sha256": "722965c18be96806c1dac2318fb6b458efee3e533349c929bc63fecfd5f26fd1",
+    "candidate_count": 24993,
+    "gold_sha256": "6df25a70bc32985c5c49d714793ca4a0a89c15ca8d99bbd39fe42acc48f73b46",
+    "prior_excluded_ids": 1800,
+    "prior_overlap": 0,
+    "question_type_counts": {
+      "bridge_comparison": 200,
+      "comparison": 200,
+      "compositional": 200,
+      "inference": 200
+    },
+    "selected_cases": 800,
+    "selected_ids_sha256": "1c83fe9a002e7a21db61a699f6bf707eff8feedf128db71633ae7d2cc65720c4",
+    "stage": "development"
+  },
+  "protocol_sha256": "70992f064beadea59e020eb8c85844450e2d5ea4435d51b1dc0f052c2de6bdfe",
+  "registered_claims": {
+    "case_disjoint_from_all_prior_2wiki_history": true,
+    "independent_dataset_from_prior_2wiki_history": false,
+    "official_2wiki_leaderboard_result": false,
+    "strict_independent_model_training_confirmation": false
+  },
+  "report_sha256": "4817fdd4da1813f8b6df682ce703416715bcfaf0de74541269d9be661147338f",
+  "result_sha256": "4aa6eaaf9fa228232e569df1aca315cb46930b349f88fe60484809c110f1fab6",
+  "schema_version": "frc-twowiki-question-router-execution-v75",
+  "scored_blind_sha256": "092bf695c89d4403a0be195ad7bece64aa77814a2dbd877c1e713997af3c2820",
+  "scored_cases": 800,
+  "selection_output_sha256": "05eca2f47ef534858ce96ebc9f2d1d6c4f63ed0022d87f58c715f31268cd7286",
+  "source_registration_sha256": "5a9433b69b1436ac2a0e7d853979d527cce8688b1168f084a2d204b58f7f4d3a",
+  "source_sha256": "c0d8b60b9026b728fb07ad74c5252a0f188f6942e8ba5c02df4dfa369502ea8d",
+  "stage": "development",
+  "status": "EVALUATED"
+}

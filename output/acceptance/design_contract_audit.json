@@ -2,9 +2,9 @@
   "schema_version": "progressive-design-contract-audit-v1",
   "metadata": {
     "source_document": "洪水预警响应系统_渐进式迭代开发与升级设计.md",
-    "source_contract_sha256": "629534dcf060ae6f4fc7908b25ffbd38b5872538793e20b8f05531e6dc6c36a5",
+    "source_contract_sha256": "0f0bdffb61c711cd02a36b80791a7ae9201c1b775bb33323d08e68af50a7e0e2",
     "policy": "docs/progressive_upgrade/design_contract_evidence_policy.json",
-    "policy_sha256": "b91aeaf972912b47d396f0e86bfdc64e636bda83cd31dde799abb6b627afa088",
+    "policy_sha256": "36637770f94a2e51bab02e59c78c7c515f61fb9335a733979effe32ad1bbb1ff",
     "baseline_manifest": "output/acceptance/legacy_baseline_manifest.json",
     "baseline_manifest_sha256": "f950ac1274207a32650813d288beb91302392e60d96f762346f579d7f4c46230",
     "scope": "sections 18.3-18.6, 22 and 23 controlled acceptance contract"
@@ -63,7 +63,7 @@
         {
           "path": "docs/progressive_upgrade/asset_inventory.md",
           "contains": "2db016a",
-          "sha256": "6bb264ce40a2cd54e7559bce01a85dbf45bb68d71ddf2a47ff6857690ef2c15e"
+          "sha256": "228a679f2f3f27f8de623c6e5605bdf4b711143d08164798f4cf8a6ac53d9e66"
         }
       ],
       "assigned_item_count": 2
@@ -74,9 +74,9 @@
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。",
       "evidence": [
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_governance.py",
           "contains": "test_schema_ledger_migration_quarantine_and_legacy_adapter_are_traceable",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "ec897e0d7e2da99a50dc9a79f4a5b1e793247543a17c4def8fd5dee23ab2c8ed"
         },
         {
           "path": "tests/test_postgis_migration.py",
@@ -84,9 +84,9 @@
           "sha256": "d088086865de41d1236f6c774f52005e81c5707c209fbd54010102700026c624"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_resilience.py",
           "contains": "test_database_backup_and_isolated_restore_drill_are_hash_verified",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "917a8305df736af7d9548979d9f8d49e743bcb282c33343a7e46ac2261ff8bb4"
         },
         {
           "path": "infra/migrations/README.md",
@@ -132,14 +132,14 @@
           "sha256": "3f43b3bb6b16d8e4837aaa4a1a7cbb3ed2b53709ff2c04efd68f531eebea0c96"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_tasks.py",
           "contains": "test_rule_engine_hard_blocks_ungrounded_ai_draft_and_optimistic_lock_conflict",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "3d899334924c10b7a57fbbb3f6c89ecf874c759a2884b3a3c56df464a5409a3e"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_dispatch.py",
           "contains": "test_external_service_callback_is_token_bound_idempotent_and_state_safe",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "902bf664fdc869278a92cfe582097ff0def3b5e867d28e5b6b5bc38fc711e44e"
         }
       ],
       "assigned_item_count": 13
@@ -157,7 +157,7 @@
         {
           "path": "docs/progressive_upgrade/completion_traceability_audit.md",
           "contains": "生产旧流量归零和账号撤权",
-          "sha256": "a012777a1adb764f2395a9c17a5726707f41974fe4fb587746b8bd1ec42ed784"
+          "sha256": "8749a2bd96f0c4c01f2c1d47871a56e8afc3703ba8dea9639e2044e5b2d08a6a"
         }
       ],
       "assigned_item_count": 2
@@ -170,7 +170,7 @@
         {
           "path": "frontend/src/pages/ResponseWorkflowPage.tsx",
           "contains": "受控模拟环境",
-          "sha256": "a765617e89f7073b906f3cd3d376608cc52f0e9b9a7aa839a0565e67048fa680"
+          "sha256": "07f4d67a7c473e895640f291ed5dee039730a4461d2816a37c33ac9d382da2cc"
         },
         {
           "path": "frontend/e2e/response-workflow.spec.ts",
@@ -183,9 +183,9 @@
           "sha256": "5e9b401d2f059610dc1037b5fb61a95c2efa99c5c307df91693ebb9b94daa3e8"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_governance.py",
           "contains": "test_task_creation_idempotency_key_prevents_duplicate_formal_tasks",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "ec897e0d7e2da99a50dc9a79f4a5b1e793247543a17c4def8fd5dee23ab2c8ed"
         }
       ],
       "assigned_item_count": 10
@@ -198,7 +198,7 @@
         {
           "path": ".github/workflows/ci.yml",
           "contains": "Compose build and smoke test",
-          "sha256": "b9dcc885baa2a4ff258c1d4530d098040bf34cfef2885e514dbf2fdad9131654"
+          "sha256": "c46643f8d0ef1fc424c0a20b83953e0b87dd96cd8f1c286c12479c523d337ad1"
         },
         {
           "path": "docker-compose.yml",
@@ -206,14 +206,14 @@
           "sha256": "8204abc75a6e82041d16e52d09e94e4f84de19f00f5a9cc9338dcd91ed76a33e"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_dispatch.py",
           "contains": "test_feature_flags_are_scoped_versioned_and_admin_only",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "902bf664fdc869278a92cfe582097ff0def3b5e867d28e5b6b5bc38fc711e44e"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_tasks.py",
           "contains": "test_retrieval_modes_compare_baseline_and_frc_without_shadow_side_effects",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "3d899334924c10b7a57fbbb3f6c89ecf874c759a2884b3a3c56df464a5409a3e"
         },
         {
           "path": "tests/test_simulation_dataset.py",
@@ -241,17 +241,17 @@
         {
           "path": "README.md",
           "contains": "FRC-RAG",
-          "sha256": "13a9af8d54e173d74562d012a52297332e5b69231cba766da903c12f6ea73051"
+          "sha256": "501b22bf56add9de4ded399c35a363b661ee2b8c19d3b85608104c447b17a3ad"
         },
         {
           "path": "docs/V3_upgrade_acceptance_matrix.md",
           "contains": "NO-GO/SHADOW",
-          "sha256": "e65d20f71085364f09da61fac467a6ab7fd889f5a90e79b3c6ec26709106831b"
+          "sha256": "ce79c16785d36fb27abbc10b0a413f6de9cad90286c5c38d34538a2e24abfd1f"
         },
         {
           "path": "docs/progressive_upgrade/completion_traceability_audit.md",
           "contains": "受控模拟",
-          "sha256": "a012777a1adb764f2395a9c17a5726707f41974fe4fb587746b8bd1ec42ed784"
+          "sha256": "8749a2bd96f0c4c01f2c1d47871a56e8afc3703ba8dea9639e2044e5b2d08a6a"
         }
       ],
       "assigned_item_count": 5
@@ -259,7 +259,7 @@
     "data_algorithm_controlled": {
       "status": "PASS_CONTROLLED",
       "scope": "来源/版本/模拟标记、候选解释、两层 Schema、证据三态、冲突与适用性分离及测试隔离",
-      "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。",
+      "limitation": "受控/公开跨域证据、CONFLICTS 回答盲评包和分批质控作业已运行；独立人工评审未完成，FRC 正式切流仍受 Gate 2 阻断。",
       "evidence": [
         {
           "path": "tests/test_simulation_dataset.py",
@@ -267,14 +267,14 @@
           "sha256": "5be3e3b4d6cffabeb666ad13cefecfdf86573d0972589b8a515434509488ab19"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_tasks.py",
           "contains": "test_grounded_task_draft_covers_all_roles_and_keeps_plan_attribution",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "3d899334924c10b7a57fbbb3f6c89ecf874c759a2884b3a3c56df464a5409a3e"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_governance.py",
           "contains": "test_evidence_conflicts_are_separate_from_applicability_and_require_human_resolution",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "ec897e0d7e2da99a50dc9a79f4a5b1e793247543a17c4def8fd5dee23ab2c8ed"
         },
         {
           "path": "flood_system/rag.py",
@@ -289,12 +289,337 @@
         {
           "path": "tests/test_frc_housing_weight_sensitivity.py",
           "contains": "test_public_loader_reaggregates_committed_weight_sensitivity",
-          "sha256": "5dfb104b850c6f06837d529e1af3b7083d0ef91c9cca776d500bdf8b665e0cc4"
+          "sha256": "2cc682e684f7abf3d8ec2310a6dee57a6fb120b1f84d002ddef079188a9b0465"
+        },
+        {
+          "path": "output/rag_evaluation/conformal_sufficiency/conformal_sufficiency.json",
+          "contains": "RUN_PUBLIC_REAL_MODEL_SPLIT_CONFORMAL_ABSTENTION",
+          "sha256": "0a8fe1ac8f0949fc18ea316729278b8294074d4a4dbb2d110b01f9aec55cf0e1"
+        },
+        {
+          "path": "tests/test_frc_conformal_sufficiency.py",
+          "contains": "test_grouped_conformal_experiment_is_deterministic_and_has_no_case_leakage",
+          "sha256": "18fd34a6db8ff7ab03c8fbfddb2b703b5d22048cf6edfa821ff4f05df7f6b5f7"
+        },
+        {
+          "path": "output/rag_evaluation/conformal_robustness/conformal_robustness.json",
+          "contains": "RUN_PUBLIC_REAL_MODEL_REPEATED_GROUP_SPLIT_ROBUSTNESS",
+          "sha256": "344a607a8836ca166acf1d6feae138cb06e3689cd564174c448ae540309d09d3"
+        },
+        {
+          "path": "tests/test_frc_conformal_sufficiency.py",
+          "contains": "test_repeated_group_split_robustness_is_deterministic_and_reaggregated",
+          "sha256": "18fd34a6db8ff7ab03c8fbfddb2b703b5d22048cf6edfa821ff4f05df7f6b5f7"
+        },
+        {
+          "path": "output/rag_evaluation/conformal_model_selection/conformal_model_selection.json",
+          "contains": "RUN_PUBLIC_REAL_MODEL_NESTED_GROUP_SELECTION",
+          "sha256": "c77fc866c1dcf4a5a04b0411c757bde08d05164a13d5fa4fa1b57e80e0bbc69d"
+        },
+        {
+          "path": "tests/test_frc_conformal_sufficiency.py",
+          "contains": "test_nested_model_selection_is_train_only_deterministic_and_reaggregated",
+          "sha256": "18fd34a6db8ff7ab03c8fbfddb2b703b5d22048cf6edfa821ff4f05df7f6b5f7"
+        },
+        {
+          "path": "output/rag_evaluation/conformal_cross_dataset/hotpotqa_confirmation.json",
+          "contains": "RUN_PUBLIC_REAL_MODEL_HOTPOTQA_CONFIRMATION",
+          "sha256": "90ccc359f3a5a8a8c60dd33f8af0599de711fbdb62cc51f93c256137d86ea7aa"
+        },
+        {
+          "path": "output/rag_evaluation/conformal_cross_dataset/multihoprag_confirmation.json",
+          "contains": "RUN_PUBLIC_REAL_MODEL_MULTIHOPRAG_CONFIRMATION",
+          "sha256": "f5ec6f3ba119f5aec1698a5ab6fc8be1ec26781e2775e3d6d1971702136703bc"
+        },
+        {
+          "path": "output/rag_evaluation/conformal_cross_dataset/cross_dataset_confirmation_series.json",
+          "contains": "PARTIAL_CONFIRMATION",
+          "sha256": "07c488fe5f5f080a18fa0ee6f88f44b2c19fac59e52a4c7c4c82106ce8c49f29"
+        },
+        {
+          "path": "output/rag_evaluation/conformal_cross_dataset/source_preparation_benchmark.json",
+          "contains": "\"results_identical\": true",
+          "sha256": "74420ff6d4c90eb429975715199a041979da809113fb42085da693e614e83596"
+        },
+        {
+          "path": "docs/progressive_upgrade/conformal_cross_dataset_protocol.json",
+          "contains": "confirmation_feature_or_model_selection",
+          "sha256": "230ff7e1dd997d47cc2dbbd04d53b3e2a3591fff6d7f55231fb743da4e8dca4e"
+        },
+        {
+          "path": "tests/test_frc_conformal_sufficiency.py",
+          "contains": "test_cross_dataset_series_recomputes_source_report_hashes",
+          "sha256": "18fd34a6db8ff7ab03c8fbfddb2b703b5d22048cf6edfa821ff4f05df7f6b5f7"
+        },
+        {
+          "path": "tests/test_frc_conformal_sufficiency.py",
+          "contains": "test_source_preparation_benchmark_requires_exact_equivalence",
+          "sha256": "18fd34a6db8ff7ab03c8fbfddb2b703b5d22048cf6edfa821ff4f05df7f6b5f7"
+        },
+        {
+          "path": "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_audit.json",
+          "contains": "SUBGROUP_INSTABILITY_DETECTED",
+          "sha256": "e1220102ec39746feb98cd89a52e6be845907984e2cc7e812f4701159f505272"
+        },
+        {
+          "path": "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_cases.jsonl.gz",
+          "contains": null,
+          "sha256": "432f79fa69f7abf216519f99b5cb57122650aca42e87f888a1f9568c09c10b3e"
+        },
+        {
+          "path": "docs/progressive_upgrade/conformal_subgroup_protocol.json",
+          "contains": "subgroup_threshold_or_model_selection",
+          "sha256": "bba57b5c534e66318ff9f5891a71e634f8d6512593cdd3aef5da9db71a3705c1"
+        },
+        {
+          "path": "tests/test_frc_conformal_sufficiency.py",
+          "contains": "test_observable_subgroup_audit_reaggregates_case_artifact",
+          "sha256": "18fd34a6db8ff7ab03c8fbfddb2b703b5d22048cf6edfa821ff4f05df7f6b5f7"
+        },
+        {
+          "path": "output/rag_evaluation/conformal_mondrian/conformal_mondrian.json",
+          "contains": "DO_NOT_ADOPT",
+          "sha256": "9735e794e6ffe706fe97941e7f0c2cf8fdc0901d3ec76f03c454a7f4874b3dc1"
+        },
+        {
+          "path": "output/rag_evaluation/conformal_mondrian/conformal_mondrian_cases.jsonl.gz",
+          "contains": null,
+          "sha256": "1dc0926f87d67d30caf164e3c84d9cae8a49389f874351e04f4204a7d401c557"
+        },
+        {
+          "path": "docs/progressive_upgrade/conformal_mondrian_protocol.json",
+          "contains": "\"post_hoc\": true",
+          "sha256": "91a937d06484cc591758e2f2a733b1c7c3b0961a2f88c436a47623a2e9503c44"
+        },
+        {
+          "path": "tests/test_frc_conformal_sufficiency.py",
+          "contains": "test_hierarchical_mondrian_is_calibration_only_and_reaggregated",
+          "sha256": "18fd34a6db8ff7ab03c8fbfddb2b703b5d22048cf6edfa821ff4f05df7f6b5f7"
+        },
+        {
+          "path": "output/rag_evaluation/conformal_contextual/conformal_contextual.json",
+          "contains": "RUN_PUBLIC_REAL_MODEL_POST_HOC_CONTEXTUAL_HEAD_DEVELOPMENT",
+          "sha256": "03800841cd82dc3c68e1b694e324c4f497df70af2e0e254ff7cbdeb02cd73fa7"
+        },
+        {
+          "path": "output/rag_evaluation/conformal_contextual/conformal_contextual_cases.jsonl.gz",
+          "contains": null,
+          "sha256": "6adc5d5f61de81da99f5cd5ef08fb9f49e970cee2e0a6ca876dedb33a83ce51b"
+        },
+        {
+          "path": "docs/progressive_upgrade/conformal_contextual_protocol.json",
+          "contains": "train case families only",
+          "sha256": "df0b75a203d69e4c1f3d86af6f51c351ba0fb1d6d3e3c9a06fead5ee23de48c3"
+        },
+        {
+          "path": "tests/test_frc_conformal_sufficiency.py",
+          "contains": "test_contextual_head_uses_train_vocabulary_and_reaggregates",
+          "sha256": "18fd34a6db8ff7ab03c8fbfddb2b703b5d22048cf6edfa821ff4f05df7f6b5f7"
+        },
+        {
+          "path": "docs/progressive_upgrade/conflicts_expected_behavior_protocol.json",
+          "contains": "REGISTERED_BEFORE_RESPONSE_GENERATION",
+          "sha256": "7060ca11bb52afdb95925fe47b6a119bced5b0ecf83e3525a85fc31b38452dfc"
+        },
+        {
+          "path": "output/rag_evaluation/conflicts_expected_behavior/manifest.json",
+          "contains": "GENERATED_AWAITING_INDEPENDENT_HUMAN_ANNOTATION",
+          "sha256": "0b998e1dc55ef24745da4ede4d0214073342fca90ab4eb018ae8b00f134b22fa"
+        },
+        {
+          "path": "output/rag_evaluation/conflicts_expected_behavior/package.jsonl.gz",
+          "contains": null,
+          "sha256": "484c27ad8c5dc25c659ac244a5317926fd892ee9c0fb82885370423a1bc54813"
+        },
+        {
+          "path": "tests/test_frc_conflicts_expected_behavior.py",
+          "contains": "test_blinded_package_is_deterministic_and_removes_method_scores",
+          "sha256": "cf6c392ef7b37730c9873362473f2cb52fbb4f67378ed858e1f879e66065430e"
+        },
+        {
+          "path": "docs/progressive_upgrade/conflicts_annotation_operations_protocol.json",
+          "contains": "REGISTERED_BEFORE_HUMAN_ANNOTATION",
+          "sha256": "2f1661b57f01ce590f004ab1b9795e7638ebbb3cd754ed8a9b78c95b1354c541"
+        },
+        {
+          "path": "output/rag_evaluation/conflicts_annotation_operations/manifest.json",
+          "contains": "PREPARED_AWAITING_INDEPENDENT_HUMAN_REVIEW",
+          "sha256": "8af745c52f02c34207559806873d67ec5649104194a590ab82f906dfc0081ae3"
+        },
+        {
+          "path": "tests/test_frc_conflicts_annotation_operations.py",
+          "contains": "test_operations_are_deterministic_balanced_and_method_blind",
+          "sha256": "27e9b43696afccbcbc09684fb83434f47f0002acc16e7987acbfcbafce0226c2"
         },
         {
           "path": "docs/progressive_upgrade/frc_public_evaluation_protocol.md",
           "contains": null,
-          "sha256": "26d50da3ba5337485dbd1012db81a6fafb84caae626c00c3a2eff9e80eda7a98"
+          "sha256": "00a12e5e3fba0ff49b2c8760e71325cda1960ef61621857cb12d2064355f946b"
+        },
+        {
+          "path": "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_protocol_v49.json",
+          "contains": "evidence_inference_train_split_permanently_excluded",
+          "sha256": "e937f230bbb4a359cc2787edd6f33e90e5e6b084c5b7f14a8ca9f4f58c3d5d0c"
+        },
+        {
+          "path": "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_implementation_v49.json",
+          "contains": "qasper_v48_case_level_artifact_used_for_v49_design",
+          "sha256": "f7c7331321e94040067c9734abcc4adbc87e77db83242843d9cb9441a2a3be4b"
+        },
+        {
+          "path": "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_execution_erratum_v49.json",
+          "contains": "independent_validation_passed",
+          "sha256": "382481955ad4f71d7b1bfd04cd872ce8cd9a50cc8864a40fb975fece603f0d72"
+        },
+        {
+          "path": "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_result_v49.json",
+          "contains": "EVIDENCE_INFERENCE_LOW_CORE_DIVERGENCE_SUPPORT_NOT_ESTABLISHED",
+          "sha256": "ff27e0acb17a4b9e6da0a82f6c58df73da8840e1ee24d910a9d6d90e483576a7"
+        },
+        {
+          "path": "output/rag_evaluation/evidence_inference_low_core_divergence_atomic_roles/cases.jsonl.gz",
+          "contains": null,
+          "sha256": "08120e02475274150d7e34b9cac84d462a00d6270a4d32b26cc3b32403280b3d"
+        },
+        {
+          "path": "tests/test_frc_evidence_inference_low_core_divergence_atomic_roles.py",
+          "contains": "test_locked_evaluation_and_report_are_deterministic",
+          "sha256": "4f700226bf98f9c37f4747b7392b0230d9775e4b391e681ce04604d58996591c"
+        },
+        {
+          "path": "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_protocol_v50.json",
+          "contains": "contractnli_train_split_permanently_excluded",
+          "sha256": "519b6105cade0869dde3a5b0805bb06022319ab0b8234ade6e8e77f28efebc86"
+        },
+        {
+          "path": "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_protocol_erratum_v50.json",
+          "contains": "whitespace-only",
+          "sha256": "02b229b4d3258c2448be299c6c105c1b9de1e04e0fe348c2843eac0bfb9c038d"
+        },
+        {
+          "path": "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_implementation_erratum_v50.json",
+          "contains": "schema_repair_confirmation_not_completely_untouched_dataset_confirmation",
+          "sha256": "79709ade1c1b31865d392821c0b2c3b81d5930904816a3f503d7889478265b9f"
+        },
+        {
+          "path": "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_result_v50.json",
+          "contains": "CONTRACTNLI_NATIVE_ZERO_CONSENSUS_SUPPORT_NOT_ESTABLISHED",
+          "sha256": "33289babad9f6871aebbc32853a8512e5f45fe2d992c2885759493f89b3a9af8"
+        },
+        {
+          "path": "output/rag_evaluation/contractnli_native_zero_consensus_abstention/cases.jsonl.gz",
+          "contains": null,
+          "sha256": "d36cf2e53e20a877fdc15da8d2bd6343d686cc71748a45b95ce16ace534f289d"
+        },
+        {
+          "path": "tests/test_frc_contractnli_native_zero_consensus_abstention.py",
+          "contains": "test_locked_evaluation_is_deterministic_and_publishes_gold_free_evidence",
+          "sha256": "0cbe45f91d0a449c4b4d5f8814f11c471033734700d1270ffcdd913939dde725"
+        },
+        {
+          "path": "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_protocol_v51.json",
+          "contains": "development_failure_stops_before_train_content_is_opened",
+          "sha256": "0904a59ace997919a06fe32a4e839bf1fce5158cb7f4c663567506660421a18b"
+        },
+        {
+          "path": "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_implementation_erratum_v51.json",
+          "contains": "execution-order correction registered before any outcome-bearing operation",
+          "sha256": "1ce8f5cd0ca75f214f9df88873a97c04335b829e5b5d76c608f115c347cec7ec"
+        },
+        {
+          "path": "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_development_result_v51.json",
+          "contains": "CONTRACTNLI_V51_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_TRAIN",
+          "sha256": "307ab4c4c659748e6c3e79447a785a4ff1985fee532eee62ed9fc15e6e1d7ec2"
+        },
+        {
+          "path": "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_closure_v51.json",
+          "contains": "\"train_member_opened\": false",
+          "sha256": "037cac6daac494fb4d9240e0eee641a161b4c92d0f0e53d64fa72fc3948e3d2f"
+        },
+        {
+          "path": "output/rag_evaluation/contractnli_dev_calibrated_robust_consensus/development_cases.jsonl.gz",
+          "contains": null,
+          "sha256": "5d1dab9b44a9c50d315be86a6a2727a92de6228aed196efa532188d71868aceb"
+        },
+        {
+          "path": "tests/test_frc_contractnli_dev_calibrated_robust_consensus.py",
+          "contains": "test_oof_calibration_is_deterministic_and_gold_free_in_published_evidence",
+          "sha256": "2c4a2f92a2098d19d5b298942a3cff543e6fb41aa9e8eda3a3cb86c6bc9dcb3c"
+        },
+        {
+          "path": "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_protocol_v52.json",
+          "contains": "official_train_is_an_untouched_one_time_confirmation_for_v52",
+          "sha256": "048fe13d87a58e8b6630387c9c0cc8e7c1e72119a54ed8719498d32ef6bc9251"
+        },
+        {
+          "path": "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_implementation_v52.json",
+          "contains": "learned_or_dataset_fitted_parameter",
+          "sha256": "90bc2a52b5feaf4fd20198e0a9f21ea8da5a71f5e5924fe941c33b215465cb8b"
+        },
+        {
+          "path": "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_execution_v52.json",
+          "contains": "gold_joined_for_coverage_or_metrics",
+          "sha256": "73ff52938f6b86f9844216330875c385af700b5798aa2bce130e82ec15873801"
+        },
+        {
+          "path": "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_result_v52.json",
+          "contains": "CONTRACTNLI_V52_RANK_CONCURRENCE_SUPPORT_NOT_ESTABLISHED",
+          "sha256": "c95d3f271de34387553d19a87469f7cb54281d890fa97b5b84bd9b7c3d9742c2"
+        },
+        {
+          "path": "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_closure_v52.json",
+          "contains": "\"confirmation_train_reuse_for_tuning_or_selection\": false",
+          "sha256": "9748f052fb4e240671bbc003f85c06938ca5e70e2ab2d7917d9e2624c8d94e1c"
+        },
+        {
+          "path": "output/rag_evaluation/contractnli_rank_concurrence_confirmation/cases.jsonl.gz",
+          "contains": null,
+          "sha256": "a5b2ce3ed48836f7de0e22038a5bf733931492ce3125e46adf6b66ddb3fb6996"
+        },
+        {
+          "path": "tests/test_frc_contractnli_rank_concurrence_confirmation.py",
+          "contains": "test_confirmation_evaluation_is_deterministic_and_publishes_no_gold",
+          "sha256": "d290ca46728119aae6b7d5fd4c8d482b51ab35c6e2ae446a146abc47d124cd81"
+        },
+        {
+          "path": "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_protocol_v53.json",
+          "contains": "test_content_open_authorized_only_if_every_development_gate_passes",
+          "sha256": "9390f8f5642fa7be0de265b59e9aef03d76e303e2fa615bd498a93c5a3e6544c"
+        },
+        {
+          "path": "docs/progressive_upgrade/cuad_source_registration_v53.json",
+          "contains": "sample_distribution_or_gold_read_before_registration",
+          "sha256": "4949e1e00ef3176fdaae778da9a77053358efe8b88d52c2d72d2920b190f8bc0"
+        },
+        {
+          "path": "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_implementation_v53.json",
+          "contains": "train_or_test_content_opened_before_registration",
+          "sha256": "680e3ae97a156b153f01e3c2f53463e4b0b9adea1234b1bf0f8841aec9e81e43"
+        },
+        {
+          "path": "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_result_v53.json",
+          "contains": "CUAD_V53_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_TEST",
+          "sha256": "ff6b44a1cc71655a5c955767c49a4e2c7adae948ccb3e56a826574b2c645a8ef"
+        },
+        {
+          "path": "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_closure_v53.json",
+          "contains": "\"test_content_opened\": false",
+          "sha256": "f80f9d5d7b73453bda6c8f57b74a24535a7bb8a521302c898019fc2b43987628"
+        },
+        {
+          "path": "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_post_result_formatting_erratum_v53.json",
+          "contains": "current_formatted_files_must_not_be_used_to_rerun_v53_on_cuad_train_or_open_test_under_the_same_protocol",
+          "sha256": "4d08d98cf10b1f65540a5f02733a85c806d597c128411c96bdc481767c26329f"
+        },
+        {
+          "path": "output/rag_evaluation/cuad_top3_rank_concurrence_role_closure/development/cases.jsonl.gz",
+          "contains": null,
+          "sha256": "9d78bd8f5216c4038053a860b5b076e602022a3164ebd2766be37c44be68880f"
+        },
+        {
+          "path": "tests/test_frc_cuad_top3_rank_concurrence_role_closure.py",
+          "contains": "test_evaluation_and_report_are_deterministic_and_gold_minimal",
+          "sha256": "931c063de14432c8fef2f28ef8a3592ab06bc8bad8394d11514edc8a98ef058c"
         }
       ],
       "assigned_item_count": 8
@@ -305,29 +630,29 @@
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。",
       "evidence": [
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_dispatch.py",
           "contains": "test_full_deterministic_response_loop_and_close",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "902bf664fdc869278a92cfe582097ff0def3b5e867d28e5b6b5bc38fc711e44e"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_dispatch.py",
           "contains": "test_approved_dispatch_uses_idempotent_outbox_and_payload_hash",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "902bf664fdc869278a92cfe582097ff0def3b5e867d28e5b6b5bc38fc711e44e"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_resilience.py",
           "contains": "test_high_risk_task_cannot_be_self_approved_or_approved_by_reviewer",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "917a8305df736af7d9548979d9f8d49e743bcb282c33343a7e46ac2261ff8bb4"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_tasks.py",
           "contains": "test_all_four_deadline_types_escalate_with_explicit_audit",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "3d899334924c10b7a57fbbb3f6c89ecf874c759a2884b3a3c56df464a5409a3e"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_governance.py",
           "contains": "test_read_only_event_replay_requires_integrity_and_returns_traceable_snapshot",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "ec897e0d7e2da99a50dc9a79f4a5b1e793247543a17c4def8fd5dee23ab2c8ed"
         },
         {
           "path": "flood_system/response_workflow/state_machine.py",
@@ -345,17 +670,17 @@
         {
           "path": "docs/progressive_upgrade/asset_inventory.md",
           "contains": null,
-          "sha256": "6bb264ce40a2cd54e7559bce01a85dbf45bb68d71ddf2a47ff6857690ef2c15e"
+          "sha256": "228a679f2f3f27f8de623c6e5605bdf4b711143d08164798f4cf8a6ac53d9e66"
         },
         {
           "path": "output/floodagent_bench/scenario_acceptance_report.json",
           "contains": null,
-          "sha256": "4ffee56ef50bfca5de88d27ea20f5dbb510f0a2c585371e3de9d5e95eebb87d6"
+          "sha256": "be0d3f9a570afe8c0650ade3451da899d285e20dae925d80f16269baebde23bf"
         },
         {
-          "path": "tests/test_response_workflow.py",
+          "path": "tests/test_response_governance.py",
           "contains": "test_task_transition_table_is_exhaustive_and_terminal_states_have_no_outgoing_edges",
-          "sha256": "708603d58580b317ee08b89732ecad888dec91cb192ff8e614ed636f5b52ac69"
+          "sha256": "ec897e0d7e2da99a50dc9a79f4a5b1e793247543a17c4def8fd5dee23ab2c8ed"
         },
         {
           "path": "scripts/run_progressive_completion_audit.py",
@@ -365,12 +690,12 @@
         {
           "path": "tests/test_completion_audit.py",
           "contains": "test_completion_audit_proves_controlled_scope_without_overstating_production",
-          "sha256": "f5629f583e12a0b51da5229678f8ca5e2a89d2bec0170aaf541bb16a694bfca9"
+          "sha256": "c79e1e74a66eed14830361a91e9d5930ce9d8867024aa4ce7c6a6e3738759605"
         },
         {
           "path": "docs/progressive_upgrade/evaluation_and_gate_report.md",
           "contains": null,
-          "sha256": "190bb925c94dacd269268087b62f1e2ef3483ec82a48c6fc1fcdda6148e614ff"
+          "sha256": "d6f4ae7bec07a8a82aa05189ca50a9b7e223c711579ef9e4a437767a4d046416"
         }
       ],
       "assigned_item_count": 11
@@ -381,14 +706,14 @@
       "item_id": "18.3-01",
       "source_section": "18.3",
       "source_heading": "18.3 数据切换检查",
-      "source_line": 2208,
+      "source_line": 2272,
       "requirement": "迁移批次有唯一ID和映射版本",
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -397,14 +722,14 @@
       "item_id": "18.3-02",
       "source_section": "18.3",
       "source_heading": "18.3 数据切换检查",
-      "source_line": 2209,
+      "source_line": 2273,
       "requirement": "旧记录数量、迁移成功、隔离和忽略数量可对账",
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -413,14 +738,14 @@
       "item_id": "18.3-03",
       "source_section": "18.3",
       "source_heading": "18.3 数据切换检查",
-      "source_line": 2210,
+      "source_line": 2274,
       "requirement": "迁移前后关键字段哈希或抽样校验通过",
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -429,14 +754,14 @@
       "item_id": "18.3-04",
       "source_section": "18.3",
       "source_heading": "18.3 数据切换检查",
-      "source_line": 2211,
+      "source_line": 2275,
       "requirement": "外键、唯一约束和业务不变量通过",
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -445,14 +770,14 @@
       "item_id": "18.3-05",
       "source_section": "18.3",
       "source_heading": "18.3 数据切换检查",
-      "source_line": 2212,
+      "source_line": 2276,
       "requirement": "旧数据缺失不通过默认值伪造成正式事实",
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -461,14 +786,14 @@
       "item_id": "18.3-06",
       "source_section": "18.3",
       "source_heading": "18.3 数据切换检查",
-      "source_line": 2213,
+      "source_line": 2277,
       "requirement": "模拟数据没有进入真实或匿名化数据集",
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -477,14 +802,14 @@
       "item_id": "18.3-07",
       "source_section": "18.3",
       "source_heading": "18.3 数据切换检查",
-      "source_line": 2214,
+      "source_line": 2278,
       "requirement": "新Schema备份和恢复已演练",
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -493,14 +818,14 @@
       "item_id": "18.3-08",
       "source_section": "18.3",
       "source_heading": "18.3 数据切换检查",
-      "source_line": 2215,
+      "source_line": 2279,
       "requirement": "回滚不会删除已经产生的审批、任务和审计记录",
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -509,14 +834,14 @@
       "item_id": "18.3-09",
       "source_section": "18.3",
       "source_heading": "18.3 数据切换检查",
-      "source_line": 2216,
+      "source_line": 2280,
       "requirement": "历史事件按原始版本回放",
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -525,14 +850,14 @@
       "item_id": "18.3-10",
       "source_section": "18.3",
       "source_heading": "18.3 数据切换检查",
-      "source_line": 2217,
+      "source_line": 2281,
       "requirement": "新事件不再写入旧正式状态表",
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -541,7 +866,7 @@
       "item_id": "18.4-01",
       "source_section": "18.4",
       "source_heading": "18.4 API切换检查",
-      "source_line": 2221,
+      "source_line": 2285,
       "requirement": "新旧接口契约映射完成",
       "status": "PASS_CONTROLLED",
       "evidence_group": "api_switch_controlled",
@@ -552,8 +877,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -561,7 +886,7 @@
       "item_id": "18.4-02",
       "source_section": "18.4",
       "source_heading": "18.4 API切换检查",
-      "source_line": 2222,
+      "source_line": 2286,
       "requirement": "所有调用方有清单",
       "status": "PASS_CONTROLLED",
       "evidence_group": "api_switch_controlled",
@@ -572,8 +897,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -581,7 +906,7 @@
       "item_id": "18.4-03",
       "source_section": "18.4",
       "source_heading": "18.4 API切换检查",
-      "source_line": 2223,
+      "source_line": 2287,
       "requirement": "Legacy Adapter有调用日志",
       "status": "PASS_CONTROLLED",
       "evidence_group": "api_switch_controlled",
@@ -592,8 +917,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -601,7 +926,7 @@
       "item_id": "18.4-04",
       "source_section": "18.4",
       "source_heading": "18.4 API切换检查",
-      "source_line": 2224,
+      "source_line": 2288,
       "requirement": "新写接口具备权限、幂等、乐观锁和审计",
       "status": "PASS_CONTROLLED",
       "evidence_group": "api_switch_controlled",
@@ -612,8 +937,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -621,7 +946,7 @@
       "item_id": "18.4-05",
       "source_section": "18.4",
       "source_heading": "18.4 API切换检查",
-      "source_line": 2225,
+      "source_line": 2289,
       "requirement": "旧写接口已拒绝或路由到受控命令",
       "status": "PASS_CONTROLLED",
       "evidence_group": "api_switch_controlled",
@@ -632,8 +957,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -641,7 +966,7 @@
       "item_id": "18.4-06",
       "source_section": "18.4",
       "source_heading": "18.4 API切换检查",
-      "source_line": 2226,
+      "source_line": 2290,
       "requirement": "回调不能绕过状态机",
       "status": "PASS_CONTROLLED",
       "evidence_group": "api_switch_controlled",
@@ -652,8 +977,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -661,7 +986,7 @@
       "item_id": "18.4-07",
       "source_section": "18.4",
       "source_heading": "18.4 API切换检查",
-      "source_line": 2227,
+      "source_line": 2291,
       "requirement": "影子请求不会产生外部副作用",
       "status": "PASS_CONTROLLED",
       "evidence_group": "api_switch_controlled",
@@ -672,8 +997,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -681,7 +1006,7 @@
       "item_id": "18.4-08",
       "source_section": "18.4",
       "source_heading": "18.4 API切换检查",
-      "source_line": 2228,
+      "source_line": 2292,
       "requirement": "功能开关支持按事件回退",
       "status": "PASS_CONTROLLED",
       "evidence_group": "api_switch_controlled",
@@ -692,8 +1017,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -701,7 +1026,7 @@
       "item_id": "18.4-09",
       "source_section": "18.4",
       "source_heading": "18.4 API切换检查",
-      "source_line": 2229,
+      "source_line": 2293,
       "requirement": "错误码和前端提示完成",
       "status": "PASS_CONTROLLED",
       "evidence_group": "api_switch_controlled",
@@ -712,8 +1037,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -721,7 +1046,7 @@
       "item_id": "18.4-10",
       "source_section": "18.4",
       "source_heading": "18.4 API切换检查",
-      "source_line": 2230,
+      "source_line": 2294,
       "requirement": "旧接口调用归零后才允许移除",
       "status": "NO_GO_EXTERNAL",
       "evidence_group": "legacy_retirement_external",
@@ -735,7 +1060,7 @@
       "item_id": "18.5-01",
       "source_section": "18.5",
       "source_heading": "18.5 页面切换检查",
-      "source_line": 2234,
+      "source_line": 2298,
       "requirement": "旧页面主要操作和截图已归档",
       "status": "PASS_CONTROLLED",
       "evidence_group": "page_switch_controlled",
@@ -743,7 +1068,7 @@
         "frontend/src/pages/ResponseWorkflowPage.tsx",
         "frontend/e2e/response-workflow.spec.ts",
         "frontend/e2e/response-workflow.spec.ts",
-        "tests/test_response_workflow.py"
+        "tests/test_response_governance.py"
       ],
       "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
     },
@@ -751,7 +1076,7 @@
       "item_id": "18.5-02",
       "source_section": "18.5",
       "source_heading": "18.5 页面切换检查",
-      "source_line": 2235,
+      "source_line": 2299,
       "requirement": "新页面所有字段来自新版API",
       "status": "PASS_CONTROLLED",
       "evidence_group": "page_switch_controlled",
@@ -759,7 +1084,7 @@
         "frontend/src/pages/ResponseWorkflowPage.tsx",
         "frontend/e2e/response-workflow.spec.ts",
         "frontend/e2e/response-workflow.spec.ts",
-        "tests/test_response_workflow.py"
+        "tests/test_response_governance.py"
       ],
       "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
     },
@@ -767,7 +1092,7 @@
       "item_id": "18.5-03",
       "source_section": "18.5",
       "source_heading": "18.5 页面切换检查",
-      "source_line": 2236,
+      "source_line": 2300,
       "requirement": "页面显示数据版本、来源和STALE状态",
       "status": "PASS_CONTROLLED",
       "evidence_group": "page_switch_controlled",
@@ -775,7 +1100,7 @@
         "frontend/src/pages/ResponseWorkflowPage.tsx",
         "frontend/e2e/response-workflow.spec.ts",
         "frontend/e2e/response-workflow.spec.ts",
-        "tests/test_response_workflow.py"
+        "tests/test_response_governance.py"
       ],
       "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
     },
@@ -783,7 +1108,7 @@
       "item_id": "18.5-04",
       "source_section": "18.5",
       "source_heading": "18.5 页面切换检查",
-      "source_line": 2237,
+      "source_line": 2301,
       "requirement": "权限不仅在前端隐藏，也由后端校验",
       "status": "PASS_CONTROLLED",
       "evidence_group": "page_switch_controlled",
@@ -791,7 +1116,7 @@
         "frontend/src/pages/ResponseWorkflowPage.tsx",
         "frontend/e2e/response-workflow.spec.ts",
         "frontend/e2e/response-workflow.spec.ts",
-        "tests/test_response_workflow.py"
+        "tests/test_response_governance.py"
       ],
       "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
     },
@@ -799,7 +1124,7 @@
       "item_id": "18.5-05",
       "source_section": "18.5",
       "source_heading": "18.5 页面切换检查",
-      "source_line": 2238,
+      "source_line": 2302,
       "requirement": "危险操作要求二次确认和理由",
       "status": "PASS_CONTROLLED",
       "evidence_group": "page_switch_controlled",
@@ -807,7 +1132,7 @@
         "frontend/src/pages/ResponseWorkflowPage.tsx",
         "frontend/e2e/response-workflow.spec.ts",
         "frontend/e2e/response-workflow.spec.ts",
-        "tests/test_response_workflow.py"
+        "tests/test_response_governance.py"
       ],
       "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
     },
@@ -815,7 +1140,7 @@
       "item_id": "18.5-06",
       "source_section": "18.5",
       "source_heading": "18.5 页面切换检查",
-      "source_line": 2239,
+      "source_line": 2303,
       "requirement": "模拟数据水印始终可见",
       "status": "PASS_CONTROLLED",
       "evidence_group": "page_switch_controlled",
@@ -823,7 +1148,7 @@
         "frontend/src/pages/ResponseWorkflowPage.tsx",
         "frontend/e2e/response-workflow.spec.ts",
         "frontend/e2e/response-workflow.spec.ts",
-        "tests/test_response_workflow.py"
+        "tests/test_response_governance.py"
       ],
       "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
     },
@@ -831,7 +1156,7 @@
       "item_id": "18.5-07",
       "source_section": "18.5",
       "source_heading": "18.5 页面切换检查",
-      "source_line": 2240,
+      "source_line": 2304,
       "requirement": "页面刷新、重复提交和并发编辑测试通过",
       "status": "PASS_CONTROLLED",
       "evidence_group": "page_switch_controlled",
@@ -839,7 +1164,7 @@
         "frontend/src/pages/ResponseWorkflowPage.tsx",
         "frontend/e2e/response-workflow.spec.ts",
         "frontend/e2e/response-workflow.spec.ts",
-        "tests/test_response_workflow.py"
+        "tests/test_response_governance.py"
       ],
       "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
     },
@@ -847,7 +1172,7 @@
       "item_id": "18.5-08",
       "source_section": "18.5",
       "source_heading": "18.5 页面切换检查",
-      "source_line": 2241,
+      "source_line": 2305,
       "requirement": "地图不可用时列表模式可继续",
       "status": "PASS_CONTROLLED",
       "evidence_group": "page_switch_controlled",
@@ -855,7 +1180,7 @@
         "frontend/src/pages/ResponseWorkflowPage.tsx",
         "frontend/e2e/response-workflow.spec.ts",
         "frontend/e2e/response-workflow.spec.ts",
-        "tests/test_response_workflow.py"
+        "tests/test_response_governance.py"
       ],
       "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
     },
@@ -863,7 +1188,7 @@
       "item_id": "18.5-09",
       "source_section": "18.5",
       "source_heading": "18.5 页面切换检查",
-      "source_line": 2242,
+      "source_line": 2306,
       "requirement": "新页面失败可通过功能开关回退",
       "status": "PASS_CONTROLLED",
       "evidence_group": "page_switch_controlled",
@@ -871,7 +1196,7 @@
         "frontend/src/pages/ResponseWorkflowPage.tsx",
         "frontend/e2e/response-workflow.spec.ts",
         "frontend/e2e/response-workflow.spec.ts",
-        "tests/test_response_workflow.py"
+        "tests/test_response_governance.py"
       ],
       "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
     },
@@ -879,7 +1204,7 @@
       "item_id": "18.5-10",
       "source_section": "18.5",
       "source_heading": "18.5 页面切换检查",
-      "source_line": 2243,
+      "source_line": 2307,
       "requirement": "回退不允许使用旧页面绕过新版状态机",
       "status": "PASS_CONTROLLED",
       "evidence_group": "page_switch_controlled",
@@ -887,7 +1212,7 @@
         "frontend/src/pages/ResponseWorkflowPage.tsx",
         "frontend/e2e/response-workflow.spec.ts",
         "frontend/e2e/response-workflow.spec.ts",
-        "tests/test_response_workflow.py"
+        "tests/test_response_governance.py"
       ],
       "limitation": "浏览器证据来自受控 Compose/Chromium；真实岗位 UAT 和生产浏览器矩阵仍为外部条件。"
     },
@@ -895,15 +1220,15 @@
       "item_id": "18.6-01",
       "source_section": "18.6",
       "source_heading": "18.6 发布与回滚检查",
-      "source_line": 2249,
+      "source_line": 2313,
       "requirement": "数据库备份和迁移预演完成",
       "status": "PASS_CONTROLLED",
       "evidence_group": "release_rollback_controlled",
       "evidence": [
         ".github/workflows/ci.yml",
         "docker-compose.yml",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_tasks.py",
         "tests/test_simulation_dataset.py",
         "docs/progressive_upgrade/operations_and_rollback.md"
       ],
@@ -913,15 +1238,15 @@
       "item_id": "18.6-02",
       "source_section": "18.6",
       "source_heading": "18.6 发布与回滚检查",
-      "source_line": 2250,
+      "source_line": 2314,
       "requirement": "当前可运行版本镜像和配置已保存",
       "status": "PASS_CONTROLLED",
       "evidence_group": "release_rollback_controlled",
       "evidence": [
         ".github/workflows/ci.yml",
         "docker-compose.yml",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_tasks.py",
         "tests/test_simulation_dataset.py",
         "docs/progressive_upgrade/operations_and_rollback.md"
       ],
@@ -931,15 +1256,15 @@
       "item_id": "18.6-03",
       "source_section": "18.6",
       "source_heading": "18.6 发布与回滚检查",
-      "source_line": 2251,
+      "source_line": 2315,
       "requirement": "新旧服务健康检查通过",
       "status": "PASS_CONTROLLED",
       "evidence_group": "release_rollback_controlled",
       "evidence": [
         ".github/workflows/ci.yml",
         "docker-compose.yml",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_tasks.py",
         "tests/test_simulation_dataset.py",
         "docs/progressive_upgrade/operations_and_rollback.md"
       ],
@@ -949,15 +1274,15 @@
       "item_id": "18.6-04",
       "source_section": "18.6",
       "source_heading": "18.6 发布与回滚检查",
-      "source_line": 2252,
+      "source_line": 2316,
       "requirement": "功能开关初始状态已审核",
       "status": "PASS_CONTROLLED",
       "evidence_group": "release_rollback_controlled",
       "evidence": [
         ".github/workflows/ci.yml",
         "docker-compose.yml",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_tasks.py",
         "tests/test_simulation_dataset.py",
         "docs/progressive_upgrade/operations_and_rollback.md"
       ],
@@ -967,15 +1292,15 @@
       "item_id": "18.6-05",
       "source_section": "18.6",
       "source_heading": "18.6 发布与回滚检查",
-      "source_line": 2253,
+      "source_line": 2317,
       "requirement": "模拟端点与未来真实端点隔离",
       "status": "PASS_CONTROLLED",
       "evidence_group": "release_rollback_controlled",
       "evidence": [
         ".github/workflows/ci.yml",
         "docker-compose.yml",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_tasks.py",
         "tests/test_simulation_dataset.py",
         "docs/progressive_upgrade/operations_and_rollback.md"
       ],
@@ -985,15 +1310,15 @@
       "item_id": "18.6-06",
       "source_section": "18.6",
       "source_heading": "18.6 发布与回滚检查",
-      "source_line": 2254,
+      "source_line": 2318,
       "requirement": "baseline与FRC-RAG配置均可复现",
       "status": "PASS_CONTROLLED",
       "evidence_group": "release_rollback_controlled",
       "evidence": [
         ".github/workflows/ci.yml",
         "docker-compose.yml",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_tasks.py",
         "tests/test_simulation_dataset.py",
         "docs/progressive_upgrade/operations_and_rollback.md"
       ],
@@ -1003,15 +1328,15 @@
       "item_id": "18.6-07",
       "source_section": "18.6",
       "source_heading": "18.6 发布与回滚检查",
-      "source_line": 2255,
+      "source_line": 2319,
       "requirement": "审计、告警和Outbox运行正常",
       "status": "PASS_CONTROLLED",
       "evidence_group": "release_rollback_controlled",
       "evidence": [
         ".github/workflows/ci.yml",
         "docker-compose.yml",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_tasks.py",
         "tests/test_simulation_dataset.py",
         "docs/progressive_upgrade/operations_and_rollback.md"
       ],
@@ -1021,15 +1346,15 @@
       "item_id": "18.6-08",
       "source_section": "18.6",
       "source_heading": "18.6 发布与回滚检查",
-      "source_line": 2256,
+      "source_line": 2320,
       "requirement": "回滚负责人、触发条件和操作步骤明确",
       "status": "PASS_CONTROLLED",
       "evidence_group": "release_rollback_controlled",
       "evidence": [
         ".github/workflows/ci.yml",
         "docker-compose.yml",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_tasks.py",
         "tests/test_simulation_dataset.py",
         "docs/progressive_upgrade/operations_and_rollback.md"
       ],
@@ -1039,7 +1364,7 @@
       "item_id": "22.1-01",
       "source_section": "22.1",
       "source_heading": "名称与边界",
-      "source_line": 2428,
+      "source_line": 2492,
       "requirement": "全文统一使用FRC-RAG",
       "status": "PASS_LOCAL",
       "evidence_group": "name_boundary_local",
@@ -1055,7 +1380,7 @@
       "item_id": "22.1-02",
       "source_section": "22.1",
       "source_heading": "名称与边界",
-      "source_line": 2429,
+      "source_line": 2493,
       "requirement": "不宣称系统进行洪水预测",
       "status": "PASS_LOCAL",
       "evidence_group": "name_boundary_local",
@@ -1071,7 +1396,7 @@
       "item_id": "22.1-03",
       "source_section": "22.1",
       "source_heading": "名称与边界",
-      "source_line": 2430,
+      "source_line": 2494,
       "requirement": "不宣称AI替代指挥决策",
       "status": "PASS_LOCAL",
       "evidence_group": "name_boundary_local",
@@ -1087,7 +1412,7 @@
       "item_id": "22.1-04",
       "source_section": "22.1",
       "source_heading": "名称与边界",
-      "source_line": 2431,
+      "source_line": 2495,
       "requirement": "模拟下发不表述为真实跨部门接入",
       "status": "PASS_LOCAL",
       "evidence_group": "name_boundary_local",
@@ -1103,7 +1428,7 @@
       "item_id": "22.1-05",
       "source_section": "22.1",
       "source_heading": "名称与边界",
-      "source_line": 2432,
+      "source_line": 2496,
       "requirement": "已实现与待实现状态明确区分",
       "status": "PASS_LOCAL",
       "evidence_group": "name_boundary_local",
@@ -1119,149 +1444,604 @@
       "item_id": "22.2-01",
       "source_section": "22.2",
       "source_heading": "数据与算法",
-      "source_line": 2436,
+      "source_line": 2500,
       "requirement": "每条数据具有来源、版本和模拟标记",
       "status": "PASS_CONTROLLED",
       "evidence_group": "data_algorithm_controlled",
       "evidence": [
         "tests/test_simulation_dataset.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/rag.py",
         "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
         "tests/test_frc_housing_weight_sensitivity.py",
-        "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
+        "output/rag_evaluation/conformal_sufficiency/conformal_sufficiency.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_robustness/conformal_robustness.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_model_selection/conformal_model_selection.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_cross_dataset/hotpotqa_confirmation.json",
+        "output/rag_evaluation/conformal_cross_dataset/multihoprag_confirmation.json",
+        "output/rag_evaluation/conformal_cross_dataset/cross_dataset_confirmation_series.json",
+        "output/rag_evaluation/conformal_cross_dataset/source_preparation_benchmark.json",
+        "docs/progressive_upgrade/conformal_cross_dataset_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_audit.json",
+        "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_subgroup_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_mondrian/conformal_mondrian.json",
+        "output/rag_evaluation/conformal_mondrian/conformal_mondrian_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_mondrian_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_contextual/conformal_contextual.json",
+        "output/rag_evaluation/conformal_contextual/conformal_contextual_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_contextual_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "docs/progressive_upgrade/conflicts_expected_behavior_protocol.json",
+        "output/rag_evaluation/conflicts_expected_behavior/manifest.json",
+        "output/rag_evaluation/conflicts_expected_behavior/package.jsonl.gz",
+        "tests/test_frc_conflicts_expected_behavior.py",
+        "docs/progressive_upgrade/conflicts_annotation_operations_protocol.json",
+        "output/rag_evaluation/conflicts_annotation_operations/manifest.json",
+        "tests/test_frc_conflicts_annotation_operations.py",
+        "docs/progressive_upgrade/frc_public_evaluation_protocol.md",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_protocol_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_implementation_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_execution_erratum_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_result_v49.json",
+        "output/rag_evaluation/evidence_inference_low_core_divergence_atomic_roles/cases.jsonl.gz",
+        "tests/test_frc_evidence_inference_low_core_divergence_atomic_roles.py",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_protocol_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_protocol_erratum_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_implementation_erratum_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_result_v50.json",
+        "output/rag_evaluation/contractnli_native_zero_consensus_abstention/cases.jsonl.gz",
+        "tests/test_frc_contractnli_native_zero_consensus_abstention.py",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_protocol_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_implementation_erratum_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_development_result_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_closure_v51.json",
+        "output/rag_evaluation/contractnli_dev_calibrated_robust_consensus/development_cases.jsonl.gz",
+        "tests/test_frc_contractnli_dev_calibrated_robust_consensus.py",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_protocol_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_implementation_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_execution_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_result_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_closure_v52.json",
+        "output/rag_evaluation/contractnli_rank_concurrence_confirmation/cases.jsonl.gz",
+        "tests/test_frc_contractnli_rank_concurrence_confirmation.py",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_protocol_v53.json",
+        "docs/progressive_upgrade/cuad_source_registration_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_implementation_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_result_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_closure_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_post_result_formatting_erratum_v53.json",
+        "output/rag_evaluation/cuad_top3_rank_concurrence_role_closure/development/cases.jsonl.gz",
+        "tests/test_frc_cuad_top3_rank_concurrence_role_closure.py"
       ],
-      "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
+      "limitation": "受控/公开跨域证据、CONFLICTS 回答盲评包和分批质控作业已运行；独立人工评审未完成，FRC 正式切流仍受 Gate 2 阻断。"
     },
     {
       "item_id": "22.2-02",
       "source_section": "22.2",
       "source_heading": "数据与算法",
-      "source_line": 2437,
+      "source_line": 2501,
       "requirement": "候选输出包含理由、缺失项和运行模式",
       "status": "PASS_CONTROLLED",
       "evidence_group": "data_algorithm_controlled",
       "evidence": [
         "tests/test_simulation_dataset.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/rag.py",
         "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
         "tests/test_frc_housing_weight_sensitivity.py",
-        "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
+        "output/rag_evaluation/conformal_sufficiency/conformal_sufficiency.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_robustness/conformal_robustness.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_model_selection/conformal_model_selection.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_cross_dataset/hotpotqa_confirmation.json",
+        "output/rag_evaluation/conformal_cross_dataset/multihoprag_confirmation.json",
+        "output/rag_evaluation/conformal_cross_dataset/cross_dataset_confirmation_series.json",
+        "output/rag_evaluation/conformal_cross_dataset/source_preparation_benchmark.json",
+        "docs/progressive_upgrade/conformal_cross_dataset_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_audit.json",
+        "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_subgroup_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_mondrian/conformal_mondrian.json",
+        "output/rag_evaluation/conformal_mondrian/conformal_mondrian_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_mondrian_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_contextual/conformal_contextual.json",
+        "output/rag_evaluation/conformal_contextual/conformal_contextual_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_contextual_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "docs/progressive_upgrade/conflicts_expected_behavior_protocol.json",
+        "output/rag_evaluation/conflicts_expected_behavior/manifest.json",
+        "output/rag_evaluation/conflicts_expected_behavior/package.jsonl.gz",
+        "tests/test_frc_conflicts_expected_behavior.py",
+        "docs/progressive_upgrade/conflicts_annotation_operations_protocol.json",
+        "output/rag_evaluation/conflicts_annotation_operations/manifest.json",
+        "tests/test_frc_conflicts_annotation_operations.py",
+        "docs/progressive_upgrade/frc_public_evaluation_protocol.md",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_protocol_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_implementation_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_execution_erratum_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_result_v49.json",
+        "output/rag_evaluation/evidence_inference_low_core_divergence_atomic_roles/cases.jsonl.gz",
+        "tests/test_frc_evidence_inference_low_core_divergence_atomic_roles.py",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_protocol_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_protocol_erratum_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_implementation_erratum_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_result_v50.json",
+        "output/rag_evaluation/contractnli_native_zero_consensus_abstention/cases.jsonl.gz",
+        "tests/test_frc_contractnli_native_zero_consensus_abstention.py",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_protocol_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_implementation_erratum_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_development_result_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_closure_v51.json",
+        "output/rag_evaluation/contractnli_dev_calibrated_robust_consensus/development_cases.jsonl.gz",
+        "tests/test_frc_contractnli_dev_calibrated_robust_consensus.py",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_protocol_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_implementation_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_execution_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_result_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_closure_v52.json",
+        "output/rag_evaluation/contractnli_rank_concurrence_confirmation/cases.jsonl.gz",
+        "tests/test_frc_contractnli_rank_concurrence_confirmation.py",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_protocol_v53.json",
+        "docs/progressive_upgrade/cuad_source_registration_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_implementation_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_result_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_closure_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_post_result_formatting_erratum_v53.json",
+        "output/rag_evaluation/cuad_top3_rank_concurrence_role_closure/development/cases.jsonl.gz",
+        "tests/test_frc_cuad_top3_rank_concurrence_role_closure.py"
       ],
-      "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
+      "limitation": "受控/公开跨域证据、CONFLICTS 回答盲评包和分批质控作业已运行；独立人工评审未完成，FRC 正式切流仍受 Gate 2 阻断。"
     },
     {
       "item_id": "22.2-03",
       "source_section": "22.2",
       "source_heading": "数据与算法",
-      "source_line": 2438,
+      "source_line": 2502,
       "requirement": "FRC-RAG两层Schema实现",
       "status": "PASS_CONTROLLED",
       "evidence_group": "data_algorithm_controlled",
       "evidence": [
         "tests/test_simulation_dataset.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/rag.py",
         "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
         "tests/test_frc_housing_weight_sensitivity.py",
-        "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
+        "output/rag_evaluation/conformal_sufficiency/conformal_sufficiency.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_robustness/conformal_robustness.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_model_selection/conformal_model_selection.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_cross_dataset/hotpotqa_confirmation.json",
+        "output/rag_evaluation/conformal_cross_dataset/multihoprag_confirmation.json",
+        "output/rag_evaluation/conformal_cross_dataset/cross_dataset_confirmation_series.json",
+        "output/rag_evaluation/conformal_cross_dataset/source_preparation_benchmark.json",
+        "docs/progressive_upgrade/conformal_cross_dataset_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_audit.json",
+        "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_subgroup_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_mondrian/conformal_mondrian.json",
+        "output/rag_evaluation/conformal_mondrian/conformal_mondrian_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_mondrian_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_contextual/conformal_contextual.json",
+        "output/rag_evaluation/conformal_contextual/conformal_contextual_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_contextual_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "docs/progressive_upgrade/conflicts_expected_behavior_protocol.json",
+        "output/rag_evaluation/conflicts_expected_behavior/manifest.json",
+        "output/rag_evaluation/conflicts_expected_behavior/package.jsonl.gz",
+        "tests/test_frc_conflicts_expected_behavior.py",
+        "docs/progressive_upgrade/conflicts_annotation_operations_protocol.json",
+        "output/rag_evaluation/conflicts_annotation_operations/manifest.json",
+        "tests/test_frc_conflicts_annotation_operations.py",
+        "docs/progressive_upgrade/frc_public_evaluation_protocol.md",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_protocol_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_implementation_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_execution_erratum_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_result_v49.json",
+        "output/rag_evaluation/evidence_inference_low_core_divergence_atomic_roles/cases.jsonl.gz",
+        "tests/test_frc_evidence_inference_low_core_divergence_atomic_roles.py",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_protocol_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_protocol_erratum_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_implementation_erratum_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_result_v50.json",
+        "output/rag_evaluation/contractnli_native_zero_consensus_abstention/cases.jsonl.gz",
+        "tests/test_frc_contractnli_native_zero_consensus_abstention.py",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_protocol_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_implementation_erratum_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_development_result_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_closure_v51.json",
+        "output/rag_evaluation/contractnli_dev_calibrated_robust_consensus/development_cases.jsonl.gz",
+        "tests/test_frc_contractnli_dev_calibrated_robust_consensus.py",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_protocol_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_implementation_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_execution_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_result_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_closure_v52.json",
+        "output/rag_evaluation/contractnli_rank_concurrence_confirmation/cases.jsonl.gz",
+        "tests/test_frc_contractnli_rank_concurrence_confirmation.py",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_protocol_v53.json",
+        "docs/progressive_upgrade/cuad_source_registration_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_implementation_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_result_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_closure_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_post_result_formatting_erratum_v53.json",
+        "output/rag_evaluation/cuad_top3_rank_concurrence_role_closure/development/cases.jsonl.gz",
+        "tests/test_frc_cuad_top3_rank_concurrence_role_closure.py"
       ],
-      "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
+      "limitation": "受控/公开跨域证据、CONFLICTS 回答盲评包和分批质控作业已运行；独立人工评审未完成，FRC 正式切流仍受 Gate 2 阻断。"
     },
     {
       "item_id": "22.2-04",
       "source_section": "22.2",
       "source_heading": "数据与算法",
-      "source_line": 2439,
+      "source_line": 2503,
       "requirement": "证据三态贯穿数据库、接口和页面",
       "status": "PASS_CONTROLLED",
       "evidence_group": "data_algorithm_controlled",
       "evidence": [
         "tests/test_simulation_dataset.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/rag.py",
         "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
         "tests/test_frc_housing_weight_sensitivity.py",
-        "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
+        "output/rag_evaluation/conformal_sufficiency/conformal_sufficiency.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_robustness/conformal_robustness.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_model_selection/conformal_model_selection.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_cross_dataset/hotpotqa_confirmation.json",
+        "output/rag_evaluation/conformal_cross_dataset/multihoprag_confirmation.json",
+        "output/rag_evaluation/conformal_cross_dataset/cross_dataset_confirmation_series.json",
+        "output/rag_evaluation/conformal_cross_dataset/source_preparation_benchmark.json",
+        "docs/progressive_upgrade/conformal_cross_dataset_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_audit.json",
+        "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_subgroup_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_mondrian/conformal_mondrian.json",
+        "output/rag_evaluation/conformal_mondrian/conformal_mondrian_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_mondrian_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_contextual/conformal_contextual.json",
+        "output/rag_evaluation/conformal_contextual/conformal_contextual_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_contextual_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "docs/progressive_upgrade/conflicts_expected_behavior_protocol.json",
+        "output/rag_evaluation/conflicts_expected_behavior/manifest.json",
+        "output/rag_evaluation/conflicts_expected_behavior/package.jsonl.gz",
+        "tests/test_frc_conflicts_expected_behavior.py",
+        "docs/progressive_upgrade/conflicts_annotation_operations_protocol.json",
+        "output/rag_evaluation/conflicts_annotation_operations/manifest.json",
+        "tests/test_frc_conflicts_annotation_operations.py",
+        "docs/progressive_upgrade/frc_public_evaluation_protocol.md",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_protocol_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_implementation_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_execution_erratum_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_result_v49.json",
+        "output/rag_evaluation/evidence_inference_low_core_divergence_atomic_roles/cases.jsonl.gz",
+        "tests/test_frc_evidence_inference_low_core_divergence_atomic_roles.py",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_protocol_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_protocol_erratum_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_implementation_erratum_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_result_v50.json",
+        "output/rag_evaluation/contractnli_native_zero_consensus_abstention/cases.jsonl.gz",
+        "tests/test_frc_contractnli_native_zero_consensus_abstention.py",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_protocol_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_implementation_erratum_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_development_result_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_closure_v51.json",
+        "output/rag_evaluation/contractnli_dev_calibrated_robust_consensus/development_cases.jsonl.gz",
+        "tests/test_frc_contractnli_dev_calibrated_robust_consensus.py",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_protocol_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_implementation_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_execution_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_result_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_closure_v52.json",
+        "output/rag_evaluation/contractnli_rank_concurrence_confirmation/cases.jsonl.gz",
+        "tests/test_frc_contractnli_rank_concurrence_confirmation.py",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_protocol_v53.json",
+        "docs/progressive_upgrade/cuad_source_registration_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_implementation_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_result_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_closure_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_post_result_formatting_erratum_v53.json",
+        "output/rag_evaluation/cuad_top3_rank_concurrence_role_closure/development/cases.jsonl.gz",
+        "tests/test_frc_cuad_top3_rank_concurrence_role_closure.py"
       ],
-      "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
+      "limitation": "受控/公开跨域证据、CONFLICTS 回答盲评包和分批质控作业已运行；独立人工评审未完成，FRC 正式切流仍受 Gate 2 阻断。"
     },
     {
       "item_id": "22.2-05",
       "source_section": "22.2",
       "source_heading": "数据与算法",
-      "source_line": 2440,
+      "source_line": 2504,
       "requirement": "冲突检测和适用性裁决明确分离",
       "status": "PASS_CONTROLLED",
       "evidence_group": "data_algorithm_controlled",
       "evidence": [
         "tests/test_simulation_dataset.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/rag.py",
         "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
         "tests/test_frc_housing_weight_sensitivity.py",
-        "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
+        "output/rag_evaluation/conformal_sufficiency/conformal_sufficiency.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_robustness/conformal_robustness.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_model_selection/conformal_model_selection.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_cross_dataset/hotpotqa_confirmation.json",
+        "output/rag_evaluation/conformal_cross_dataset/multihoprag_confirmation.json",
+        "output/rag_evaluation/conformal_cross_dataset/cross_dataset_confirmation_series.json",
+        "output/rag_evaluation/conformal_cross_dataset/source_preparation_benchmark.json",
+        "docs/progressive_upgrade/conformal_cross_dataset_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_audit.json",
+        "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_subgroup_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_mondrian/conformal_mondrian.json",
+        "output/rag_evaluation/conformal_mondrian/conformal_mondrian_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_mondrian_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_contextual/conformal_contextual.json",
+        "output/rag_evaluation/conformal_contextual/conformal_contextual_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_contextual_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "docs/progressive_upgrade/conflicts_expected_behavior_protocol.json",
+        "output/rag_evaluation/conflicts_expected_behavior/manifest.json",
+        "output/rag_evaluation/conflicts_expected_behavior/package.jsonl.gz",
+        "tests/test_frc_conflicts_expected_behavior.py",
+        "docs/progressive_upgrade/conflicts_annotation_operations_protocol.json",
+        "output/rag_evaluation/conflicts_annotation_operations/manifest.json",
+        "tests/test_frc_conflicts_annotation_operations.py",
+        "docs/progressive_upgrade/frc_public_evaluation_protocol.md",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_protocol_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_implementation_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_execution_erratum_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_result_v49.json",
+        "output/rag_evaluation/evidence_inference_low_core_divergence_atomic_roles/cases.jsonl.gz",
+        "tests/test_frc_evidence_inference_low_core_divergence_atomic_roles.py",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_protocol_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_protocol_erratum_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_implementation_erratum_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_result_v50.json",
+        "output/rag_evaluation/contractnli_native_zero_consensus_abstention/cases.jsonl.gz",
+        "tests/test_frc_contractnli_native_zero_consensus_abstention.py",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_protocol_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_implementation_erratum_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_development_result_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_closure_v51.json",
+        "output/rag_evaluation/contractnli_dev_calibrated_robust_consensus/development_cases.jsonl.gz",
+        "tests/test_frc_contractnli_dev_calibrated_robust_consensus.py",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_protocol_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_implementation_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_execution_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_result_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_closure_v52.json",
+        "output/rag_evaluation/contractnli_rank_concurrence_confirmation/cases.jsonl.gz",
+        "tests/test_frc_contractnli_rank_concurrence_confirmation.py",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_protocol_v53.json",
+        "docs/progressive_upgrade/cuad_source_registration_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_implementation_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_result_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_closure_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_post_result_formatting_erratum_v53.json",
+        "output/rag_evaluation/cuad_top3_rank_concurrence_role_closure/development/cases.jsonl.gz",
+        "tests/test_frc_cuad_top3_rank_concurrence_role_closure.py"
       ],
-      "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
+      "limitation": "受控/公开跨域证据、CONFLICTS 回答盲评包和分批质控作业已运行；独立人工评审未完成，FRC 正式切流仍受 Gate 2 阻断。"
     },
     {
       "item_id": "22.2-06",
       "source_section": "22.2",
       "source_heading": "数据与算法",
-      "source_line": 2441,
+      "source_line": 2505,
       "requirement": "不用一次检索失败断言源文件没有规定",
       "status": "PASS_CONTROLLED",
       "evidence_group": "data_algorithm_controlled",
       "evidence": [
         "tests/test_simulation_dataset.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/rag.py",
         "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
         "tests/test_frc_housing_weight_sensitivity.py",
-        "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
+        "output/rag_evaluation/conformal_sufficiency/conformal_sufficiency.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_robustness/conformal_robustness.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_model_selection/conformal_model_selection.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_cross_dataset/hotpotqa_confirmation.json",
+        "output/rag_evaluation/conformal_cross_dataset/multihoprag_confirmation.json",
+        "output/rag_evaluation/conformal_cross_dataset/cross_dataset_confirmation_series.json",
+        "output/rag_evaluation/conformal_cross_dataset/source_preparation_benchmark.json",
+        "docs/progressive_upgrade/conformal_cross_dataset_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_audit.json",
+        "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_subgroup_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_mondrian/conformal_mondrian.json",
+        "output/rag_evaluation/conformal_mondrian/conformal_mondrian_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_mondrian_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_contextual/conformal_contextual.json",
+        "output/rag_evaluation/conformal_contextual/conformal_contextual_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_contextual_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "docs/progressive_upgrade/conflicts_expected_behavior_protocol.json",
+        "output/rag_evaluation/conflicts_expected_behavior/manifest.json",
+        "output/rag_evaluation/conflicts_expected_behavior/package.jsonl.gz",
+        "tests/test_frc_conflicts_expected_behavior.py",
+        "docs/progressive_upgrade/conflicts_annotation_operations_protocol.json",
+        "output/rag_evaluation/conflicts_annotation_operations/manifest.json",
+        "tests/test_frc_conflicts_annotation_operations.py",
+        "docs/progressive_upgrade/frc_public_evaluation_protocol.md",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_protocol_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_implementation_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_execution_erratum_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_result_v49.json",
+        "output/rag_evaluation/evidence_inference_low_core_divergence_atomic_roles/cases.jsonl.gz",
+        "tests/test_frc_evidence_inference_low_core_divergence_atomic_roles.py",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_protocol_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_protocol_erratum_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_implementation_erratum_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_result_v50.json",
+        "output/rag_evaluation/contractnli_native_zero_consensus_abstention/cases.jsonl.gz",
+        "tests/test_frc_contractnli_native_zero_consensus_abstention.py",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_protocol_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_implementation_erratum_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_development_result_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_closure_v51.json",
+        "output/rag_evaluation/contractnli_dev_calibrated_robust_consensus/development_cases.jsonl.gz",
+        "tests/test_frc_contractnli_dev_calibrated_robust_consensus.py",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_protocol_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_implementation_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_execution_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_result_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_closure_v52.json",
+        "output/rag_evaluation/contractnli_rank_concurrence_confirmation/cases.jsonl.gz",
+        "tests/test_frc_contractnli_rank_concurrence_confirmation.py",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_protocol_v53.json",
+        "docs/progressive_upgrade/cuad_source_registration_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_implementation_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_result_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_closure_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_post_result_formatting_erratum_v53.json",
+        "output/rag_evaluation/cuad_top3_rank_concurrence_role_closure/development/cases.jsonl.gz",
+        "tests/test_frc_cuad_top3_rank_concurrence_role_closure.py"
       ],
-      "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
+      "limitation": "受控/公开跨域证据、CONFLICTS 回答盲评包和分批质控作业已运行；独立人工评审未完成，FRC 正式切流仍受 Gate 2 阻断。"
     },
     {
       "item_id": "22.2-07",
       "source_section": "22.2",
       "source_heading": "数据与算法",
-      "source_line": 2442,
+      "source_line": 2506,
       "requirement": "测试集按事件、文档和模板族隔离",
       "status": "PASS_CONTROLLED",
       "evidence_group": "data_algorithm_controlled",
       "evidence": [
         "tests/test_simulation_dataset.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/rag.py",
         "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
         "tests/test_frc_housing_weight_sensitivity.py",
-        "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
+        "output/rag_evaluation/conformal_sufficiency/conformal_sufficiency.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_robustness/conformal_robustness.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_model_selection/conformal_model_selection.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_cross_dataset/hotpotqa_confirmation.json",
+        "output/rag_evaluation/conformal_cross_dataset/multihoprag_confirmation.json",
+        "output/rag_evaluation/conformal_cross_dataset/cross_dataset_confirmation_series.json",
+        "output/rag_evaluation/conformal_cross_dataset/source_preparation_benchmark.json",
+        "docs/progressive_upgrade/conformal_cross_dataset_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_audit.json",
+        "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_subgroup_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_mondrian/conformal_mondrian.json",
+        "output/rag_evaluation/conformal_mondrian/conformal_mondrian_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_mondrian_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_contextual/conformal_contextual.json",
+        "output/rag_evaluation/conformal_contextual/conformal_contextual_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_contextual_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "docs/progressive_upgrade/conflicts_expected_behavior_protocol.json",
+        "output/rag_evaluation/conflicts_expected_behavior/manifest.json",
+        "output/rag_evaluation/conflicts_expected_behavior/package.jsonl.gz",
+        "tests/test_frc_conflicts_expected_behavior.py",
+        "docs/progressive_upgrade/conflicts_annotation_operations_protocol.json",
+        "output/rag_evaluation/conflicts_annotation_operations/manifest.json",
+        "tests/test_frc_conflicts_annotation_operations.py",
+        "docs/progressive_upgrade/frc_public_evaluation_protocol.md",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_protocol_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_implementation_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_execution_erratum_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_result_v49.json",
+        "output/rag_evaluation/evidence_inference_low_core_divergence_atomic_roles/cases.jsonl.gz",
+        "tests/test_frc_evidence_inference_low_core_divergence_atomic_roles.py",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_protocol_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_protocol_erratum_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_implementation_erratum_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_result_v50.json",
+        "output/rag_evaluation/contractnli_native_zero_consensus_abstention/cases.jsonl.gz",
+        "tests/test_frc_contractnli_native_zero_consensus_abstention.py",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_protocol_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_implementation_erratum_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_development_result_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_closure_v51.json",
+        "output/rag_evaluation/contractnli_dev_calibrated_robust_consensus/development_cases.jsonl.gz",
+        "tests/test_frc_contractnli_dev_calibrated_robust_consensus.py",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_protocol_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_implementation_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_execution_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_result_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_closure_v52.json",
+        "output/rag_evaluation/contractnli_rank_concurrence_confirmation/cases.jsonl.gz",
+        "tests/test_frc_contractnli_rank_concurrence_confirmation.py",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_protocol_v53.json",
+        "docs/progressive_upgrade/cuad_source_registration_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_implementation_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_result_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_closure_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_post_result_formatting_erratum_v53.json",
+        "output/rag_evaluation/cuad_top3_rank_concurrence_role_closure/development/cases.jsonl.gz",
+        "tests/test_frc_cuad_top3_rank_concurrence_role_closure.py"
       ],
-      "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
+      "limitation": "受控/公开跨域证据、CONFLICTS 回答盲评包和分批质控作业已运行；独立人工评审未完成，FRC 正式切流仍受 Gate 2 阻断。"
     },
     {
       "item_id": "22.3-01",
       "source_section": "22.3",
       "source_heading": "业务与安全",
-      "source_line": 2446,
+      "source_line": 2510,
       "requirement": "AI服务不能写审批、下发和任务状态表",
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1270,16 +2050,16 @@
       "item_id": "22.3-02",
       "source_section": "22.3",
       "source_heading": "业务与安全",
-      "source_line": 2447,
+      "source_line": 2511,
       "requirement": "通用状态修改接口不存在",
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1288,16 +2068,16 @@
       "item_id": "22.3-03",
       "source_section": "22.3",
       "source_heading": "业务与安全",
-      "source_line": 2448,
+      "source_line": 2512,
       "requirement": "审批后修改必须重新审批",
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1306,16 +2086,16 @@
       "item_id": "22.3-04",
       "source_section": "22.3",
       "source_heading": "业务与安全",
-      "source_line": 2449,
+      "source_line": 2513,
       "requirement": "下发载荷与审批载荷哈希一致",
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1324,16 +2104,16 @@
       "item_id": "22.3-05",
       "source_section": "22.3",
       "source_heading": "业务与安全",
-      "source_line": 2450,
+      "source_line": 2514,
       "requirement": "幂等和Outbox实现",
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1342,16 +2122,16 @@
       "item_id": "22.3-06",
       "source_section": "22.3",
       "source_heading": "业务与安全",
-      "source_line": 2451,
+      "source_line": 2515,
       "requirement": "执行、审批和核验职责分离",
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1360,16 +2140,16 @@
       "item_id": "22.3-07",
       "source_section": "22.3",
       "source_heading": "业务与安全",
-      "source_line": 2452,
+      "source_line": 2516,
       "requirement": "受阻、延期、改派、撤回和部分成功分支实现",
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1378,16 +2158,16 @@
       "item_id": "22.3-08",
       "source_section": "22.3",
       "source_heading": "业务与安全",
-      "source_line": 2453,
+      "source_line": 2517,
       "requirement": "接收、开始、完成和核验四类时限实现",
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1396,16 +2176,16 @@
       "item_id": "22.3-09",
       "source_section": "22.3",
       "source_heading": "业务与安全",
-      "source_line": 2454,
+      "source_line": 2518,
       "requirement": "规则、权限或审计故障时失败关闭",
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1414,16 +2194,16 @@
       "item_id": "22.3-10",
       "source_section": "22.3",
       "source_heading": "业务与安全",
-      "source_line": 2455,
+      "source_line": 2519,
       "requirement": "事件归档后可完整回放",
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1432,7 +2212,7 @@
       "item_id": "22.4-01",
       "source_section": "22.4",
       "source_heading": "工程与验收",
-      "source_line": 2459,
+      "source_line": 2523,
       "requirement": "原系统可运行基线、数据库和索引快照已冻结",
       "status": "PASS_LOCAL",
       "evidence_group": "legacy_baseline",
@@ -1448,14 +2228,14 @@
       "item_id": "22.4-02",
       "source_section": "22.4",
       "source_heading": "工程与验收",
-      "source_line": 2460,
+      "source_line": 2524,
       "requirement": "复用、适配、重构、重建和退役矩阵完成",
       "status": "PASS_CONTROLLED",
       "evidence_group": "engineering_controlled",
       "evidence": [
         "docs/progressive_upgrade/asset_inventory.md",
         "output/floodagent_bench/scenario_acceptance_report.json",
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "scripts/run_progressive_completion_audit.py",
         "tests/test_completion_audit.py",
         "docs/progressive_upgrade/evaluation_and_gate_report.md"
@@ -1466,7 +2246,7 @@
       "item_id": "22.4-03",
       "source_section": "22.4",
       "source_heading": "工程与验收",
-      "source_line": 2461,
+      "source_line": 2525,
       "requirement": "新Core API是正式业务状态唯一写入口",
       "status": "PASS_CONTROLLED",
       "evidence_group": "api_switch_controlled",
@@ -1477,8 +2257,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -1486,7 +2266,7 @@
       "item_id": "22.4-04",
       "source_section": "22.4",
       "source_heading": "工程与验收",
-      "source_line": 2462,
+      "source_line": 2526,
       "requirement": "Legacy Adapter不存在正式状态写入",
       "status": "PASS_CONTROLLED",
       "evidence_group": "api_switch_controlled",
@@ -1497,8 +2277,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -1506,7 +2286,7 @@
       "item_id": "22.4-05",
       "source_section": "22.4",
       "source_heading": "工程与验收",
-      "source_line": 2463,
+      "source_line": 2527,
       "requirement": "新旧ID、状态和接口映射可追溯",
       "status": "PASS_CONTROLLED",
       "evidence_group": "api_switch_controlled",
@@ -1517,8 +2297,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -1526,14 +2306,14 @@
       "item_id": "22.4-06",
       "source_section": "22.4",
       "source_heading": "工程与验收",
-      "source_line": 2464,
+      "source_line": 2528,
       "requirement": "数据库迁移可重复执行",
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -1542,14 +2322,14 @@
       "item_id": "22.4-07",
       "source_section": "22.4",
       "source_heading": "工程与验收",
-      "source_line": 2465,
+      "source_line": 2529,
       "requirement": "数据迁移数量、哈希、外键和业务语义对账通过",
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -1558,14 +2338,14 @@
       "item_id": "22.4-08",
       "source_section": "22.4",
       "source_heading": "工程与验收",
-      "source_line": 2466,
+      "source_line": 2530,
       "requirement": "影子运行和新旧差异报告完成",
       "status": "PASS_CONTROLLED",
       "evidence_group": "engineering_controlled",
       "evidence": [
         "docs/progressive_upgrade/asset_inventory.md",
         "output/floodagent_bench/scenario_acceptance_report.json",
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "scripts/run_progressive_completion_audit.py",
         "tests/test_completion_audit.py",
         "docs/progressive_upgrade/evaluation_and_gate_report.md"
@@ -1576,15 +2356,15 @@
       "item_id": "22.4-09",
       "source_section": "22.4",
       "source_heading": "工程与验收",
-      "source_line": 2467,
+      "source_line": 2531,
       "requirement": "功能开关、切换和回滚演练完成",
       "status": "PASS_CONTROLLED",
       "evidence_group": "release_rollback_controlled",
       "evidence": [
         ".github/workflows/ci.yml",
         "docker-compose.yml",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_tasks.py",
         "tests/test_simulation_dataset.py",
         "docs/progressive_upgrade/operations_and_rollback.md"
       ],
@@ -1594,7 +2374,7 @@
       "item_id": "22.4-10",
       "source_section": "22.4",
       "source_heading": "工程与验收",
-      "source_line": 2468,
+      "source_line": 2532,
       "requirement": "旧写接口关闭且旧链路退役条件满足",
       "status": "NO_GO_EXTERNAL",
       "evidence_group": "legacy_retirement_external",
@@ -1608,14 +2388,14 @@
       "item_id": "22.4-11",
       "source_section": "22.4",
       "source_heading": "工程与验收",
-      "source_line": 2469,
+      "source_line": 2533,
       "requirement": "Docker Compose可启动完整模拟环境",
       "status": "PASS_CONTROLLED",
       "evidence_group": "engineering_controlled",
       "evidence": [
         "docs/progressive_upgrade/asset_inventory.md",
         "output/floodagent_bench/scenario_acceptance_report.json",
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "scripts/run_progressive_completion_audit.py",
         "tests/test_completion_audit.py",
         "docs/progressive_upgrade/evaluation_and_gate_report.md"
@@ -1626,14 +2406,14 @@
       "item_id": "22.4-12",
       "source_section": "22.4",
       "source_heading": "工程与验收",
-      "source_line": 2470,
+      "source_line": 2534,
       "requirement": "模拟数据可一键生成且不可误发真实端点",
       "status": "PASS_CONTROLLED",
       "evidence_group": "engineering_controlled",
       "evidence": [
         "docs/progressive_upgrade/asset_inventory.md",
         "output/floodagent_bench/scenario_acceptance_report.json",
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "scripts/run_progressive_completion_audit.py",
         "tests/test_completion_audit.py",
         "docs/progressive_upgrade/evaluation_and_gate_report.md"
@@ -1644,14 +2424,14 @@
       "item_id": "22.4-13",
       "source_section": "22.4",
       "source_heading": "工程与验收",
-      "source_line": 2471,
+      "source_line": 2535,
       "requirement": "API、规则、模型和状态机均有自动测试",
       "status": "PASS_CONTROLLED",
       "evidence_group": "engineering_controlled",
       "evidence": [
         "docs/progressive_upgrade/asset_inventory.md",
         "output/floodagent_bench/scenario_acceptance_report.json",
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "scripts/run_progressive_completion_audit.py",
         "tests/test_completion_audit.py",
         "docs/progressive_upgrade/evaluation_and_gate_report.md"
@@ -1662,14 +2442,14 @@
       "item_id": "22.4-14",
       "source_section": "22.4",
       "source_heading": "工程与验收",
-      "source_line": 2472,
+      "source_line": 2536,
       "requirement": "状态转换表完成穷举和属性测试",
       "status": "PASS_CONTROLLED",
       "evidence_group": "engineering_controlled",
       "evidence": [
         "docs/progressive_upgrade/asset_inventory.md",
         "output/floodagent_bench/scenario_acceptance_report.json",
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "scripts/run_progressive_completion_audit.py",
         "tests/test_completion_audit.py",
         "docs/progressive_upgrade/evaluation_and_gate_report.md"
@@ -1680,14 +2460,14 @@
       "item_id": "22.4-15",
       "source_section": "22.4",
       "source_heading": "工程与验收",
-      "source_line": 2473,
+      "source_line": 2537,
       "requirement": "监控、日志、备份和恢复验证完成",
       "status": "PASS_CONTROLLED",
       "evidence_group": "engineering_controlled",
       "evidence": [
         "docs/progressive_upgrade/asset_inventory.md",
         "output/floodagent_bench/scenario_acceptance_report.json",
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "scripts/run_progressive_completion_audit.py",
         "tests/test_completion_audit.py",
         "docs/progressive_upgrade/evaluation_and_gate_report.md"
@@ -1698,14 +2478,14 @@
       "item_id": "22.4-16",
       "source_section": "22.4",
       "source_heading": "工程与验收",
-      "source_line": 2474,
+      "source_line": 2538,
       "requirement": "Go/No-Go结果来自真实运行，不填写虚构数值",
       "status": "PASS_CONTROLLED",
       "evidence_group": "engineering_controlled",
       "evidence": [
         "docs/progressive_upgrade/asset_inventory.md",
         "output/floodagent_bench/scenario_acceptance_report.json",
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "scripts/run_progressive_completion_audit.py",
         "tests/test_completion_audit.py",
         "docs/progressive_upgrade/evaluation_and_gate_report.md"
@@ -1716,14 +2496,14 @@
       "item_id": "22.4-17",
       "source_section": "22.4",
       "source_heading": "工程与验收",
-      "source_line": 2475,
+      "source_line": 2539,
       "requirement": "论文结论限定为受控场景中的原型验证",
       "status": "PASS_CONTROLLED",
       "evidence_group": "engineering_controlled",
       "evidence": [
         "docs/progressive_upgrade/asset_inventory.md",
         "output/floodagent_bench/scenario_acceptance_report.json",
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "scripts/run_progressive_completion_audit.py",
         "tests/test_completion_audit.py",
         "docs/progressive_upgrade/evaluation_and_gate_report.md"
@@ -1734,7 +2514,7 @@
       "item_id": "23-01",
       "source_section": "23",
       "source_heading": "系统最终完成标准",
-      "source_line": 2508,
+      "source_line": 2572,
       "requirement": "原系统可复现，复用与退役范围有记录",
       "status": "PASS_LOCAL",
       "evidence_group": "legacy_baseline",
@@ -1750,7 +2530,7 @@
       "item_id": "23-02",
       "source_section": "23",
       "source_heading": "系统最终完成标准",
-      "source_line": 2509,
+      "source_line": 2573,
       "requirement": "不存在新旧系统同时写同一事件",
       "status": "PASS_CONTROLLED",
       "evidence_group": "api_switch_controlled",
@@ -1761,8 +2541,8 @@
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
         "tests/test_response_idempotency.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py"
+        "tests/test_response_tasks.py",
+        "tests/test_response_dispatch.py"
       ],
       "limitation": "证明受控 Core API 边界；真实调用方签字和生产流量观测另行验收。"
     },
@@ -1770,16 +2550,16 @@
       "item_id": "23-03",
       "source_section": "23",
       "source_heading": "系统最终完成标准",
-      "source_line": 2510,
+      "source_line": 2574,
       "requirement": "每个事件固定工作流引擎版本",
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1788,14 +2568,14 @@
       "item_id": "23-04",
       "source_section": "23",
       "source_heading": "系统最终完成标准",
-      "source_line": 2511,
+      "source_line": 2575,
       "requirement": "数据和API迁移经过对账",
       "status": "PASS_CONTROLLED",
       "evidence_group": "migration_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "tests/test_postgis_migration.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_resilience.py",
         "infra/migrations/README.md"
       ],
       "limitation": "仅覆盖模拟数据和本地/CI PostGIS 影子库；生产权威源切换仍为外部 No-Go。"
@@ -1804,15 +2584,15 @@
       "item_id": "23-05",
       "source_section": "23",
       "source_heading": "系统最终完成标准",
-      "source_line": 2512,
+      "source_line": 2576,
       "requirement": "新功能具备开关、回滚和人工接管路径",
       "status": "PASS_CONTROLLED",
       "evidence_group": "release_rollback_controlled",
       "evidence": [
         ".github/workflows/ci.yml",
         "docker-compose.yml",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_tasks.py",
         "tests/test_simulation_dataset.py",
         "docs/progressive_upgrade/operations_and_rollback.md"
       ],
@@ -1822,14 +2602,14 @@
       "item_id": "23-06",
       "source_section": "23",
       "source_heading": "系统最终完成标准",
-      "source_line": 2513,
+      "source_line": 2577,
       "requirement": "baseline仍可复现并作为FRC-RAG比较和降级策略",
       "status": "PASS_CONTROLLED",
       "evidence_group": "engineering_controlled",
       "evidence": [
         "docs/progressive_upgrade/asset_inventory.md",
         "output/floodagent_bench/scenario_acceptance_report.json",
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "scripts/run_progressive_completion_audit.py",
         "tests/test_completion_audit.py",
         "docs/progressive_upgrade/evaluation_and_gate_report.md"
@@ -1840,16 +2620,16 @@
       "item_id": "23-07",
       "source_section": "23",
       "source_heading": "系统最终完成标准",
-      "source_line": 2514,
+      "source_line": 2578,
       "requirement": "AI无正式状态写权限",
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1858,16 +2638,16 @@
       "item_id": "23-08",
       "source_section": "23",
       "source_heading": "系统最终完成标准",
-      "source_line": 2515,
+      "source_line": 2579,
       "requirement": "未审批、越权、重复和载荷不一致任务不能进入执行",
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1876,35 +2656,100 @@
       "item_id": "23-09",
       "source_section": "23",
       "source_heading": "系统最终完成标准",
-      "source_line": 2516,
+      "source_line": 2580,
       "requirement": "关键字段始终显示支持、冲突或缺失",
       "status": "PASS_CONTROLLED",
       "evidence_group": "data_algorithm_controlled",
       "evidence": [
         "tests/test_simulation_dataset.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/rag.py",
         "output/rag_evaluation/housing_weight_sensitivity/housing_weight_sensitivity.json",
         "tests/test_frc_housing_weight_sensitivity.py",
-        "docs/progressive_upgrade/frc_public_evaluation_protocol.md"
+        "output/rag_evaluation/conformal_sufficiency/conformal_sufficiency.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_robustness/conformal_robustness.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_model_selection/conformal_model_selection.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_cross_dataset/hotpotqa_confirmation.json",
+        "output/rag_evaluation/conformal_cross_dataset/multihoprag_confirmation.json",
+        "output/rag_evaluation/conformal_cross_dataset/cross_dataset_confirmation_series.json",
+        "output/rag_evaluation/conformal_cross_dataset/source_preparation_benchmark.json",
+        "docs/progressive_upgrade/conformal_cross_dataset_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_audit.json",
+        "output/rag_evaluation/conformal_subgroup_audit/conformal_subgroup_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_subgroup_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_mondrian/conformal_mondrian.json",
+        "output/rag_evaluation/conformal_mondrian/conformal_mondrian_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_mondrian_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "output/rag_evaluation/conformal_contextual/conformal_contextual.json",
+        "output/rag_evaluation/conformal_contextual/conformal_contextual_cases.jsonl.gz",
+        "docs/progressive_upgrade/conformal_contextual_protocol.json",
+        "tests/test_frc_conformal_sufficiency.py",
+        "docs/progressive_upgrade/conflicts_expected_behavior_protocol.json",
+        "output/rag_evaluation/conflicts_expected_behavior/manifest.json",
+        "output/rag_evaluation/conflicts_expected_behavior/package.jsonl.gz",
+        "tests/test_frc_conflicts_expected_behavior.py",
+        "docs/progressive_upgrade/conflicts_annotation_operations_protocol.json",
+        "output/rag_evaluation/conflicts_annotation_operations/manifest.json",
+        "tests/test_frc_conflicts_annotation_operations.py",
+        "docs/progressive_upgrade/frc_public_evaluation_protocol.md",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_protocol_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_implementation_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_execution_erratum_v49.json",
+        "docs/progressive_upgrade/evidence_inference_low_core_divergence_atomic_roles_result_v49.json",
+        "output/rag_evaluation/evidence_inference_low_core_divergence_atomic_roles/cases.jsonl.gz",
+        "tests/test_frc_evidence_inference_low_core_divergence_atomic_roles.py",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_protocol_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_protocol_erratum_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_implementation_erratum_v50.json",
+        "docs/progressive_upgrade/contractnli_native_zero_consensus_abstention_result_v50.json",
+        "output/rag_evaluation/contractnli_native_zero_consensus_abstention/cases.jsonl.gz",
+        "tests/test_frc_contractnli_native_zero_consensus_abstention.py",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_protocol_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_implementation_erratum_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_development_result_v51.json",
+        "docs/progressive_upgrade/contractnli_dev_calibrated_robust_consensus_closure_v51.json",
+        "output/rag_evaluation/contractnli_dev_calibrated_robust_consensus/development_cases.jsonl.gz",
+        "tests/test_frc_contractnli_dev_calibrated_robust_consensus.py",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_protocol_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_implementation_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_execution_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_result_v52.json",
+        "docs/progressive_upgrade/contractnli_rank_concurrence_confirmation_closure_v52.json",
+        "output/rag_evaluation/contractnli_rank_concurrence_confirmation/cases.jsonl.gz",
+        "tests/test_frc_contractnli_rank_concurrence_confirmation.py",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_protocol_v53.json",
+        "docs/progressive_upgrade/cuad_source_registration_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_implementation_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_result_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_development_closure_v53.json",
+        "docs/progressive_upgrade/cuad_top3_rank_concurrence_role_closure_post_result_formatting_erratum_v53.json",
+        "output/rag_evaluation/cuad_top3_rank_concurrence_role_closure/development/cases.jsonl.gz",
+        "tests/test_frc_cuad_top3_rank_concurrence_role_closure.py"
       ],
-      "limitation": "受控/公开跨域证据已运行；FRC 正式切流仍受 Gate 2 阻断。"
+      "limitation": "受控/公开跨域证据、CONFLICTS 回答盲评包和分批质控作业已运行；独立人工评审未完成，FRC 正式切流仍受 Gate 2 阻断。"
     },
     {
       "item_id": "23-10",
       "source_section": "23",
       "source_heading": "系统最终完成标准",
-      "source_line": 2517,
+      "source_line": 2581,
       "requirement": "每个正式任务可以追溯到预警版本、对象快照、原文证据、规则版本、审批人和执行反馈",
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1913,16 +2758,16 @@
       "item_id": "23-11",
       "source_section": "23",
       "source_heading": "系统最终完成标准",
-      "source_line": 2518,
+      "source_line": 2582,
       "requirement": "模型或外部服务失败时能够安全降级或人工接管",
       "status": "PASS_CONTROLLED",
       "evidence_group": "business_safety_controlled",
       "evidence": [
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
-        "tests/test_response_workflow.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_dispatch.py",
+        "tests/test_response_resilience.py",
+        "tests/test_response_tasks.py",
+        "tests/test_response_governance.py",
         "flood_system/response_workflow/state_machine.py"
       ],
       "limitation": "证明受控模拟工作流安全；真实组织授权源和跨部门执行另行验收。"
@@ -1931,14 +2776,14 @@
       "item_id": "23-12",
       "source_section": "23",
       "source_heading": "系统最终完成标准",
-      "source_line": 2519,
+      "source_line": 2583,
       "requirement": "模拟数据、接口和结果不会与未来真实环境混淆",
       "status": "PASS_CONTROLLED",
       "evidence_group": "engineering_controlled",
       "evidence": [
         "docs/progressive_upgrade/asset_inventory.md",
         "output/floodagent_bench/scenario_acceptance_report.json",
-        "tests/test_response_workflow.py",
+        "tests/test_response_governance.py",
         "scripts/run_progressive_completion_audit.py",
         "tests/test_completion_audit.py",
         "docs/progressive_upgrade/evaluation_and_gate_report.md"

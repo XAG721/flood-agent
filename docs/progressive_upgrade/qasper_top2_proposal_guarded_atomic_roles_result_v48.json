@@ -1,0 +1,356 @@
+{
+  "analysis": {
+    "adaptive_target_below_five_rate": 0.613333,
+    "aggregates": {
+      "adaptive_argmax_cardinality_frc_v43": {
+        "complete_reference_recall": 0.363889,
+        "evidence_macro_f1": 0.316885,
+        "macro_precision": 0.288148,
+        "macro_recall": 0.424941,
+        "mean_selected_token_cost": 300.855,
+        "mean_selected_unit_count": 2.251111
+      },
+      "anchor_guarded_adaptive_cardinality_frc_v45": {
+        "complete_reference_recall": 0.419444,
+        "evidence_macro_f1": 0.27443,
+        "macro_precision": 0.209417,
+        "macro_recall": 0.483365,
+        "mean_selected_token_cost": 405.495556,
+        "mean_selected_unit_count": 3.259444
+      },
+      "bm25_topk": {
+        "complete_reference_recall": 0.313333,
+        "evidence_macro_f1": 0.171542,
+        "macro_precision": 0.122194,
+        "macro_recall": 0.368715,
+        "mean_selected_token_cost": 489.643889,
+        "mean_selected_unit_count": 4.174444
+      },
+      "consensus_guarded_adaptive_cardinality_frc_v46": {
+        "complete_reference_recall": 0.392778,
+        "evidence_macro_f1": 0.297059,
+        "macro_precision": 0.243954,
+        "macro_recall": 0.455707,
+        "mean_selected_token_cost": 351.902778,
+        "mean_selected_unit_count": 2.706111
+      },
+      "cross_encoder_knapsack": {
+        "complete_reference_recall": 0.442778,
+        "evidence_macro_f1": 0.241947,
+        "macro_precision": 0.17412,
+        "macro_recall": 0.508017,
+        "mean_selected_token_cost": 483.062222,
+        "mean_selected_unit_count": 4.252778
+      },
+      "cross_encoder_topk": {
+        "complete_reference_recall": 0.452778,
+        "evidence_macro_f1": 0.247513,
+        "macro_precision": 0.178194,
+        "macro_recall": 0.516838,
+        "mean_selected_token_cost": 485.109444,
+        "mean_selected_unit_count": 4.18
+      },
+      "dense_topk": {
+        "complete_reference_recall": 0.393889,
+        "evidence_macro_f1": 0.213282,
+        "macro_precision": 0.153333,
+        "macro_recall": 0.457473,
+        "mean_selected_token_cost": 453.007778,
+        "mean_selected_unit_count": 4.306111
+      },
+      "dynamic_rank_coverage_frc_v41": {
+        "complete_reference_recall": 0.457222,
+        "evidence_macro_f1": 0.250206,
+        "macro_precision": 0.180917,
+        "macro_recall": 0.52088,
+        "mean_selected_token_cost": 487.575556,
+        "mean_selected_unit_count": 4.15
+      },
+      "guarded_adaptive_cardinality_frc_v44": {
+        "complete_reference_recall": 0.419444,
+        "evidence_macro_f1": 0.275033,
+        "macro_precision": 0.210213,
+        "macro_recall": 0.483457,
+        "mean_selected_token_cost": 405.64,
+        "mean_selected_unit_count": 3.253889
+      },
+      "hybrid_topk": {
+        "complete_reference_recall": 0.388889,
+        "evidence_macro_f1": 0.213391,
+        "macro_precision": 0.153065,
+        "macro_recall": 0.454565,
+        "mean_selected_token_cost": 486.106667,
+        "mean_selected_unit_count": 4.197222
+      },
+      "static_rank_coverage_frc_v41": {
+        "complete_reference_recall": 0.444444,
+        "evidence_macro_f1": 0.242349,
+        "macro_precision": 0.173593,
+        "macro_recall": 0.509977,
+        "mean_selected_token_cost": 484.181667,
+        "mean_selected_unit_count": 4.205
+      },
+      "static_threshold_frc_v39_replay": {
+        "complete_reference_recall": 0.452778,
+        "evidence_macro_f1": 0.246629,
+        "macro_precision": 0.177037,
+        "macro_recall": 0.516811,
+        "mean_selected_token_cost": 484.14,
+        "mean_selected_unit_count": 4.199444
+      },
+      "top2_proposal_guarded_frc_v48": {
+        "complete_reference_recall": 0.412222,
+        "evidence_macro_f1": 0.296239,
+        "macro_precision": 0.245796,
+        "macro_recall": 0.477256,
+        "mean_selected_token_cost": 408.017778,
+        "mean_selected_unit_count": 2.886667
+      }
+    },
+    "budget_deltas": {
+      "1024": 0.0302,
+      "256": 0.059178,
+      "512": 0.05362
+    },
+    "candidate_ceiling_complete_rate": 1.0,
+    "evidence_recall_drop_vs_dynamic": 0.043625,
+    "family_comparison": {
+      "resamples": 10000,
+      "seed": 20260808,
+      "v48_minus_strongest_frozen_frc_control": {
+        "ci_high": -0.006266,
+        "ci_low": -0.034871,
+        "point": -0.020645
+      },
+      "v48_minus_strongest_non_frc": {
+        "ci_high": 0.062649,
+        "ci_low": 0.034631,
+        "point": 0.048726
+      }
+    },
+    "mean_selected_unit_reduction_vs_dynamic": 1.263333,
+    "outcome": {
+      "canary_or_default_authorized": false,
+      "gate_2": "NO-GO/SHADOW",
+      "reuse_v48_cases_for_tuning_or_selection": false,
+      "selector_adoption_authorized": false,
+      "status": "QASPER_TOP2_PROPOSAL_GUARDED_SUPPORT_NOT_ESTABLISHED"
+    },
+    "proposal_union_size_distribution": {
+      "2": 42,
+      "3": 134,
+      "4": 192,
+      "5": 121,
+      "6": 85,
+      "7": 22,
+      "8": 4
+    },
+    "query_cache": {
+      "fallback_count": 3,
+      "fallback_rate": 0.005,
+      "fallback_reasons": {
+        "empty": 3
+      },
+      "gold_fields_visible_to_generator": false,
+      "query_length_codepoints": {
+        "maximum": 133,
+        "mean": 35.697917,
+        "minimum": 4
+      },
+      "rows": 600
+    },
+    "selection_set_difference_rate_vs_dynamic": 0.903889,
+    "selection_set_difference_rate_vs_v46": 0.777222,
+    "strongest_frozen_frc_control": "adaptive_argmax_cardinality_frc_v43",
+    "strongest_non_frc": "cross_encoder_topk",
+    "support_checks": {
+      "adaptive_target_below_five_rate_at_least_0_05": true,
+      "adaptive_target_below_five_rate_at_most_0_95": true,
+      "candidate_ceiling_complete_rate_equals_1": true,
+      "every_budget_and_supported_stratum_delta_at_least_minus_0_02": false,
+      "evidence_recall_drop_at_most_0_01": false,
+      "mean_selected_unit_reduction_at_least_0_25": true,
+      "minimum_cases_met": true,
+      "query_parser_fallback_rate_at_most_0_05": true,
+      "selection_set_difference_rate_vs_dynamic_at_least_0_05": true,
+      "selection_set_difference_rate_vs_v46_at_least_0_05": true,
+      "v48_minus_strongest_frc_ci_low_above_0": false,
+      "v48_minus_strongest_frc_point_at_least_0_005": false,
+      "v48_minus_strongest_non_frc_ci_low_above_0": true,
+      "v48_minus_strongest_non_frc_point_at_least_0_01": true
+    },
+    "supported_stratum_deltas": {
+      "answer_type:extractive": {
+        "cases": 286,
+        "delta": 0.063626,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "answer_type:free_form": {
+        "cases": 116,
+        "delta": 0.014869,
+        "strongest_non_frc": "cross_encoder_knapsack"
+      },
+      "answer_type:yes_no": {
+        "cases": 74,
+        "delta": 0.037098,
+        "strongest_non_frc": "cross_encoder_knapsack"
+      },
+      "candidate_pool_quartile:q1": {
+        "cases": 152,
+        "delta": 0.069359,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "candidate_pool_quartile:q2": {
+        "cases": 148,
+        "delta": 0.030685,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "candidate_pool_quartile:q3": {
+        "cases": 155,
+        "delta": 0.057896,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "candidate_pool_quartile:q4": {
+        "cases": 145,
+        "delta": 0.035708,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "evidence_source_mode:includes_float": {
+        "cases": 115,
+        "delta": -0.023157,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "evidence_source_mode:paragraph_only": {
+        "cases": 485,
+        "delta": 0.06577,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "reference_count_group:multiple": {
+        "cases": 220,
+        "delta": 0.014104,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "reference_count_group:one": {
+        "cases": 380,
+        "delta": 0.06877,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "smallest_reference_count_group:multiple": {
+        "cases": 141,
+        "delta": 0.011859,
+        "strongest_non_frc": "cross_encoder_knapsack"
+      },
+      "smallest_reference_count_group:one": {
+        "cases": 459,
+        "delta": 0.059083,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "target_cardinality_group:below_five": {
+        "cases": 368,
+        "delta": 0.073671,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "target_cardinality_group:five": {
+        "cases": 232,
+        "delta": 0.009158,
+        "strongest_non_frc": "cross_encoder_topk"
+      }
+    },
+    "target_cardinality_distribution": {
+      "2": 42,
+      "3": 134,
+      "4": 192,
+      "5": 232
+    }
+  },
+  "experiment_id": "FRC-QASPER-TOP2-PROPOSAL-GUARDED-ATOMIC-ROLES-V48",
+  "limitations": [
+    "QASPER supplies an attached full paper rather than open-corpus retrieval.",
+    "Evidence is evaluated at paragraph or figure/table-caption granularity.",
+    "The endpoint is evidence selection, not answer generation.",
+    "This cannot establish SetR reproduction, flood-domain validity, or production readiness."
+  ],
+  "metadata": {
+    "budgets": [
+      256,
+      512,
+      1024
+    ],
+    "cases": 600,
+    "dataset_id": "qasper_dev_full_paper_evidence_selection_v48",
+    "full_paper_bounded_pool": true,
+    "gold_joined_after_complete_score_cache": true,
+    "multi_reference_gold_not_unioned": true,
+    "official_leaderboard_result": false,
+    "source_artifacts": {
+      "candidate_coverage_sha256": "b3ed456d3fd438b330c6325cae724a0dddc2e9b629bc6b10ba4cf5a58614bc4c",
+      "candidate_map_sha256": "471bbba96c6098dfdb7551dceb3a080c97cbb4947ad13fcc2de8096c7ef09176",
+      "execution_registration": {
+        "experiment_id": "FRC-QASPER-TOP2-PROPOSAL-GUARDED-ATOMIC-ROLES-V48",
+        "hashes": {
+          "blind_census_sha256": "d842d7bfaaedac62f90580954bebf8cfbf037d19648cf24bd747e1c1e0283924",
+          "candidate_coverage_sha256": "b3ed456d3fd438b330c6325cae724a0dddc2e9b629bc6b10ba4cf5a58614bc4c",
+          "candidate_map_sha256": "471bbba96c6098dfdb7551dceb3a080c97cbb4947ad13fcc2de8096c7ef09176",
+          "implementation_registration_sha256": "051895e3ae32b5b1a679220b939447150bda955cee087216dd4d16ac98045006",
+          "prepared_blind_sha256": "0962a241d2dd49c447331230aa3b7e7f0a7a19be8bfacb25b5a65fb9b8f5523e",
+          "source_archive_sha256": "a28fdf966db827bcee3d873107d6b6669864fb7ca8fbf73a192f5e39191bdb5a",
+          "source_card_sha256": "da348d3f8277f8a93ca397941f6a525433e282858b1c0562aed3f667d8e55b05"
+        },
+        "method_or_threshold_change_after_registration_forbidden": true,
+        "metrics_computed": false,
+        "negative_null_or_inconclusive_result_must_be_published": true,
+        "neural_scoring_started": false,
+        "query_generation_started": false,
+        "registered_at": "2026-08-02T11:00:00+08:00",
+        "runtime": {
+          "cuda_available": true,
+          "cuda_runtime": "12.4",
+          "gpu": "NVIDIA GeForce RTX 4060 Ti",
+          "gpu_memory_mib": 16380,
+          "numpy": "2.2.6",
+          "parameters": {
+            "bootstrap_resamples": 10000,
+            "bootstrap_seed": 20260808,
+            "case_batch_size": 4,
+            "device": "cuda",
+            "embedding_batch_size": 64,
+            "fp16": true,
+            "generator_batch_size": 8,
+            "generator_max_input_tokens": 512,
+            "generator_max_new_tokens": 160,
+            "offline_model_loading": true,
+            "reranker_batch_size": 256
+          },
+          "platform": "Windows-10-10.0.19045-SP0",
+          "python": "3.10.20",
+          "torch": "2.4.1+cu124",
+          "transformers": "4.46.3"
+        },
+        "schema_version": "frc-qasper-top2-proposal-guarded-atomic-roles-execution-v48",
+        "source_artifacts": {
+          "archive_bytes": 10835856,
+          "archive_sha256": "a28fdf966db827bcee3d873107d6b6669864fb7ca8fbf73a192f5e39191bdb5a",
+          "dataset_repository_revision": "fdc9d8214fbab5dd782958601db4d678e6934a54",
+          "dataset_version": "0.3.0",
+          "development_member": {
+            "bytes": 11398686,
+            "path": "qasper-dev-v0.3.json"
+          },
+          "license_checked_before_dev_member_opened": true,
+          "license_identifier": "CC-BY-4.0",
+          "source_card_bytes": 9639,
+          "source_card_sha256": "da348d3f8277f8a93ca397941f6a525433e282858b1c0562aed3f667d8e55b05",
+          "train_member_opened": false
+        }
+      },
+      "execution_registration_sha256": "007ce9a2b44f6ebc42e2e108ed793df84f5ba72518e71f540a83bc48b3311e76",
+      "module_sha256": "2900cc032dbb0864a797f97f830db419d79a125e7b38dd8e59726d1fea5db3f2",
+      "prepared_blind_sha256": "0962a241d2dd49c447331230aa3b7e7f0a7a19be8bfacb25b5a65fb9b8f5523e",
+      "queries_sha256": "333067e79997c20ea46d56d7367ec53bddcf37596c957bbae299a51aab2c0b03",
+      "runner_sha256": "15dada7def13b3682ee520c194cbdafb8ec9ae641ba820fbc2470d40a420c256",
+      "scored_sha256": "2ac92e9461f6acf213194de6355237975fe60374324693364731fde4169537de",
+      "test_sha256": "5aefb70433fcb4bfcfb209fc7eabad7a273bc64348701e52379868d06dd9add9"
+    }
+  },
+  "schema_version": "frc-qasper-top2-proposal-guarded-report-v1"
+}

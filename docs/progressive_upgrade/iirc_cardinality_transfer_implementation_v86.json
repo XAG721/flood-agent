@@ -1,0 +1,75 @@
+{
+  "schema_version": "frc-iirc-cardinality-transfer-implementation-lock-v86",
+  "experiment_id": "FRC-IIRC-CARDINALITY-TRANSFER-PROSPECTIVE-V86",
+  "frozen_on": "2026-08-05",
+  "frozen_before_iirc_train_question_answer_context_or_target_metric_access": true,
+  "files": {
+    "router": {
+      "path": "research/frc_rag/iirc_cardinality_transfer_router.py",
+      "bytes": 23675,
+      "sha256": "2f663c3ba43ac69037102e54b53eed18209735c234cdc9a2ed0150f6a1ed3991"
+    },
+    "transfer": {
+      "path": "research/frc_rag/iirc_cardinality_transfer.py",
+      "bytes": 34367,
+      "sha256": "43d9f7a1b5619a7f46c0626ac3ba5874a0258e70ffca2d73ce58b1d68319df7a"
+    },
+    "model_runner": {
+      "path": "scripts/run_iirc_cardinality_transfer_model.py",
+      "bytes": 1494,
+      "sha256": "303f20d4f07ecd7fc40d6d3d52bbe513445d7792eb16fc215453b73b52e6225e"
+    },
+    "transfer_runner": {
+      "path": "scripts/run_iirc_cardinality_transfer.py",
+      "bytes": 9994,
+      "sha256": "b80eb3cec266f5ddb36634190af2c09156c19e8246dff5c22d85c8effa4318f8"
+    },
+    "router_tests": {
+      "path": "tests/test_frc_iirc_cardinality_transfer_router.py",
+      "bytes": 2450,
+      "sha256": "3ec5b66da82cfa0fb949a6eb01c91b4e9f2ca9acb98caf090b31b61a0baf6b3b"
+    },
+    "transfer_tests": {
+      "path": "tests/test_frc_iirc_cardinality_transfer.py",
+      "bytes": 4363,
+      "sha256": "eb1b4b09f5f0565781f4442b6a23f4bb9692ef7b51b064c5089b22d427bd8d9d"
+    },
+    "protocol": {
+      "path": "docs/progressive_upgrade/iirc_cardinality_transfer_protocol_v86.json",
+      "bytes": 8847,
+      "sha256": "b81e550ede8163464b29e5298fd8f7ba3319152f6bc34b4c0d53a3565dcef48d"
+    },
+    "source_registration": {
+      "path": "docs/progressive_upgrade/iirc_cardinality_transfer_source_registration_v86.json",
+      "bytes": 2850,
+      "sha256": "7729fab320b62b510cbe3a6ebe71e138595db007749d6b6b9c2423cc75dd1509"
+    },
+    "source_fingerprint": {
+      "path": "docs/progressive_upgrade/iirc_cardinality_transfer_source_fingerprint_v86.json",
+      "bytes": 3938,
+      "sha256": "41cd12fd3851ac49d387a6f801c127ddec6f83b082ecbd004b21580f4e4d090c"
+    },
+    "model_artifact": {
+      "path": "docs/progressive_upgrade/iirc_cardinality_transfer_router_model_development_v86.json",
+      "bytes": 140133,
+      "sha256": "3b125e02779d385e63f3cbd47000e2c2fe2882456935150f1e47ec4354a9475c"
+    }
+  },
+  "model_payload_sha256": "91a3250c297958aaa709564bdb3c603f7e3604270722bec4817062ff7ab034a3",
+  "source_sha256": {
+    "train": "00a88b97dbbda56c32c620254eb7f0ac0a41507152c2de21f21164052ffcdaa5",
+    "dev": "49a109c43c902e52f9a8b150f6b9d383261c308384f614ccd2b9990735cb12b1",
+    "train_dev_archive": "adfc34c8180337467105b2f534410c34e4fe43a82e6da03922440387802ca441",
+    "context_archive": "d239390a27ed3f4aa868afe126187e6d108990a7bcc2a3efb6cae5de917264c7",
+    "context_json": "d1b848328f4cef1dbb46f7fbf02eb980f3ad97df67199464f6f55f883bb08bae"
+  },
+  "partition_commitments": {
+    "all": "87e23bb192797d8dfe6a7e51d8c921efb1775ceeb4e46ef72df59ee1c7d49fc5",
+    "development": "e5cf8c245933581c2386c4aefbcff439c4429a66bf679509f2310346fd2224a0",
+    "confirmation": "ca5f157b14ba0dd035fb5efbfa9c6c44d25d0878ce41cf498648d69b434e5c70",
+    "remaining": "d9e86cd22b2ffe43a48357ac4b1a226e026fb4ab742719b9f1743da6ee15d7f4"
+  },
+  "mutation_rule": "Any algorithm, model, adapter, control, metric, gate, source, partition, or locked-file change requires v87 and new untouched IDs from the remaining partition.",
+  "confirmation_rule": "Confirmation remains inaccessible unless every frozen development gate passes and a confirmation-open artifact is created.",
+  "gate_2": "NO-GO/SHADOW"
+}

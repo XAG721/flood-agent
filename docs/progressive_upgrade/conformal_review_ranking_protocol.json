@@ -1,0 +1,103 @@
+{
+  "schema_version": "frc-conformal-review-ranking-protocol-v1",
+  "registered_on": "2026-07-31",
+  "purpose": "Evaluate whether the frozen 64-feature score-stability head can improve human-review ordering while leaving every 37-feature automatic declaration and conformal threshold unchanged.",
+  "development_boundary": {
+    "post_hoc": true,
+    "independent_confirmation": false,
+    "gate_evidence": false,
+    "new_data_used": false,
+    "evaluation_used_to_choose_ranking_or_budget": false,
+    "automatic_decisions_may_change": false,
+    "automatic_thresholds_may_change": false,
+    "review_only": true
+  },
+  "frozen_input": {
+    "source_report_path_label": "conformal_score_stability.json",
+    "source_report_sha256": "a76f4e2cb7a2741e328ad5d0200ecb762201cd7647c931b820e6efdf3ee6147e",
+    "source_cases_path_label": "conformal_score_stability_cases.jsonl.gz",
+    "source_cases_sha256": "98d82a7f5c397d19c570278ddb4ed05f5ce2477ee9fe5f2da5abd6d373d4332b",
+    "source_case_record_count": 53776,
+    "datasets": [
+      "2WikiMultiHopQA",
+      "ConditionalQA",
+      "HotpotQA",
+      "MultiHop-RAG"
+    ],
+    "repeat_count_per_dataset": 10,
+    "automatic_method": "frozen target-fitted 37-feature head at alpha=0.10",
+    "candidate_ranking_signal": "frozen target-fitted 64-feature score-stability head score"
+  },
+  "review_pool": {
+    "unit": "one evaluation evidence-bundle variant",
+    "inclusion": "baseline_declared_complete is false",
+    "automatic_candidates_excluded": true,
+    "complete_label_used_for_reporting_only": true,
+    "automatic_decision_field_copied_unchanged": "baseline_declared_complete"
+  },
+  "frozen_rankings": {
+    "baseline": {
+      "score": "baseline_score descending",
+      "tie_break": "case_id ascending, target_missing_ratio ascending"
+    },
+    "score_stability": {
+      "score": "score_stability_score descending",
+      "tie_break": "case_id ascending, target_missing_ratio ascending"
+    },
+    "review_budget_fractions": [
+      0.05,
+      0.1,
+      0.2
+    ],
+    "review_count_rule": "ceil(review_pool_size * budget_fraction)",
+    "budgets_selected_from_evaluation": false,
+    "ranking_combination_or_weight_search": false
+  },
+  "frozen_metrics": {
+    "ranking": [
+      "average_precision_within_review_pool"
+    ],
+    "per_budget": [
+      "reviewed_count",
+      "review_precision",
+      "capture_rate_of_complete_variants_in_review_pool"
+    ],
+    "subgroup_dimension": [
+      "question_type",
+      "required_role_count",
+      "candidate_count_bucket"
+    ],
+    "subgroup_budget": 0.1,
+    "minimum_subgroup_pool_variants_per_repeat": 30,
+    "minimum_subgroup_complete_variants_per_repeat": 5,
+    "minimum_supported_repeats_per_subgroup": 7
+  },
+  "pre_registered_adoption_checks": {
+    "all_checks_required": true,
+    "automatic_decisions_exactly_unchanged": true,
+    "identical_reviewed_count_at_every_budget": true,
+    "minimum_cross_dataset_mean_average_precision_gain": 0.01,
+    "minimum_datasets_with_positive_average_precision_gain": 3,
+    "minimum_cross_dataset_mean_complete_capture_gain_at_0_05": 0.02,
+    "minimum_cross_dataset_mean_complete_capture_gain_at_0_10": 0.02,
+    "minimum_cross_dataset_mean_complete_capture_gain_at_0_20": 0.01,
+    "minimum_datasets_with_positive_complete_capture_gain_each_budget": 3,
+    "maximum_dataset_complete_capture_decrease_each_budget": 0.01,
+    "maximum_dataset_review_precision_decrease_at_0_10": 0.01,
+    "maximum_dataset_worst_eligible_subgroup_capture_decrease_at_0_10": 0.05,
+    "status_if_all_pass": "POST_HOC_REVIEW_RANKER_CANDIDATE",
+    "status_if_any_fail": "KEEP_BASE_REVIEW_ORDER"
+  },
+  "execution_policy": {
+    "if_all_checks_pass": "Freeze the review-only ordering for validation on a new untouched dataset or independent flood-domain review study; do not change automatic declarations.",
+    "if_any_check_fails": "Keep the baseline review ordering and stop review-ranker development on the revealed evaluation records.",
+    "gate_2": "NO-GO/SHADOW regardless of this review-only result"
+  },
+  "theoretical_scope": {
+    "conformal_guarantee_changed": false,
+    "review_workload_changed_in_comparison": false,
+    "human_review_simulated_by_benchmark_labels": true,
+    "real_reviewer_time_or_behavior_measured": false,
+    "production_authorization": false
+  }
+}

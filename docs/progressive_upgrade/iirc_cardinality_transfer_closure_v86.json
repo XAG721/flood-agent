@@ -1,0 +1,65 @@
+{
+  "schema_version": "frc-iirc-cardinality-transfer-closure-v86",
+  "experiment_id": "FRC-IIRC-CARDINALITY-TRANSFER-PROSPECTIVE-V86",
+  "closed_on": "2026-08-05",
+  "status": "DEVELOPMENT_NO_GO_CONFIRMATION_REMAINS_SEALED",
+  "development": {
+    "cases": 400,
+    "execution_path": "docs/progressive_upgrade/iirc_cardinality_transfer_development_execution_v86.json",
+    "execution_sha256": "b0c6bd18ec594fbbc0c27865841dc6823c27199e8c66de2d3b34ef0a21cca32a",
+    "result_path": "docs/progressive_upgrade/iirc_cardinality_transfer_development_result_v86.json",
+    "result_sha256": "4c05989b1e825184f43127d704f5461b107087ede79e5bbc344b072b96502438",
+    "candidate_f1": 0.616381,
+    "candidate_complete_evidence_recall": 0.4425,
+    "candidate_mean_selected_sources": 2.0075,
+    "strongest_registered_control": "frc_fixed2",
+    "strongest_control_f1": 0.620893,
+    "candidate_minus_strongest_f1": -0.004512,
+    "candidate_minus_strongest_95_percent_ci": [
+      -0.018155,
+      0.001346
+    ],
+    "candidate_action_counts": {
+      "1": 13,
+      "2": 374,
+      "3": 10,
+      "4": 3
+    },
+    "strict_gates_passed": 10,
+    "strict_gates_failed": 5,
+    "failed_gates": [
+      "candidate_minus_strongest_fixed_f1_at_least_0_005",
+      "candidate_minus_strongest_fixed_ci_low_above_0",
+      "candidate_minus_frc_fixed2_f1_at_least_0_005",
+      "candidate_minus_frc_fixed2_ci_low_above_0",
+      "second_largest_action_fraction_at_least_0_05"
+    ]
+  },
+  "interpretation": {
+    "independent_iirc_source_level_pipeline_is_operational": true,
+    "absolute_candidate_quality_floor_passed": true,
+    "cross_dataset_cardinality_transfer_superiority_established": false,
+    "dominant_failure_mode": "The transferred router selected two sources for 93.5 percent of cases and did not improve over the frozen two-source FRC control.",
+    "confirmation_is_not_needed_to_reject_the_v86_hypothesis": true
+  },
+  "confirmation_boundary": {
+    "confirmation_open_artifact_exists": false,
+    "confirmation_cache_exists": false,
+    "confirmation_ids_prepared_scored_selected_or_evaluated": false,
+    "v86_confirmation_commitment_remains_untouched": "ca5f157b14ba0dd035fb5efbfa9c6c44d25d0878ce41cf498648d69b434e5c70"
+  },
+  "next_iteration_boundary": {
+    "v86_development_is_now_exposed_and_may_be_used_for_model_development": true,
+    "v87_must_use_new_ids_from_the_v86_remaining_commitment": true,
+    "v87_must_be_frozen_before_new_target_question_answer_context_or_metric_access": true,
+    "v86_confirmation_ids_must_remain_excluded": true
+  },
+  "claim_limits": {
+    "answer_generation_evaluated": false,
+    "setr_reproduced": false,
+    "flood_domain_effectiveness_established": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  }
+}

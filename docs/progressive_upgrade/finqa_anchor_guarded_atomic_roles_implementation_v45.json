@@ -1,0 +1,61 @@
+{
+  "schema_version": "frc-finqa-anchor-guarded-atomic-roles-implementation-v45",
+  "experiment_id": "FRC-FINQA-ANCHOR-GUARDED-ATOMIC-ROLES-V45",
+  "registered_at": "2026-08-02T15:20:00+08:00",
+  "registration_boundary": {
+    "official_repository_revision": "0f16e2867befa6840783e58be38c9efb9229d742",
+    "official_code_files_downloaded_and_inspected": true,
+    "official_code_access_limited_to_retriever_and_table_conversion_helpers": true,
+    "source_archive_acquired": false,
+    "dataset_dev_json_downloaded": false,
+    "dataset_dev_json_opened": false,
+    "dataset_question_answer_program_gold_or_context_seen": false,
+    "implementation_and_tests_frozen_before_source_archive_acquisition": true
+  },
+  "data_json_downloaded_or_opened_before_registration": false,
+  "hashes": {
+    "protocol_sha256": "17aeb0865234a644640f2672c9f1dc420fe9f1fbd477548ff8e54618755a1c25",
+    "protocol_erratum_sha256": "00f0f76b13e2c973f70c5b2dc7f26b63911164d87b0c809b53306adc1464d29a",
+    "module_sha256": "7f3c60e7aec7d93951fd3b12b52d12c2258f00daec324d448abe7e5de2ec2c7d",
+    "runner_sha256": "bdd9cb357f5526c0508a439d2c0d817609a662e78e73a94141ca992f5b6ca38a",
+    "test_sha256": "1fde4004ebcfe6be831a875fc1dbe3cce430d9f24524113d71a28d026f72e79e",
+    "official_finqa_utils_sha256": "1d9a061b24f33e78b99930f8102f875cd127a986f9eaccf4c715d0e3b602b051",
+    "official_general_utils_sha256": "98bac4efec9f4b56e11fc50564ebdf1a067cdce565232a10430f3e5343c5f4cc"
+  },
+  "synthetic_verification": {
+    "command": "python -m pytest tests/test_frc_finqa_anchor_guarded_atomic_roles.py -q -p no:cacheprovider --basetemp=D:/graduation_project/output/test_artifacts/finqa_v45_freeze2",
+    "result": "8 passed in 0.63s",
+    "dataset_content_used": false
+  },
+  "synthetic_invariants_verified": {
+    "distinct_argmax_1_targets_3": true,
+    "distinct_argmax_2_targets_3": true,
+    "distinct_argmax_3_targets_4": true,
+    "distinct_argmax_4_targets_5": true,
+    "empty_pool_returns_empty": true,
+    "highest_cross_encoder_feasible_anchor_selected": true,
+    "canonical_id_tie_break_is_deterministic": true,
+    "anchor_is_retained_after_role_filling": true,
+    "selection_contains_no_duplicates": true,
+    "budget_can_reduce_only_the_feasible_selected_count": true,
+    "source_kind_does_not_change_the_formula": true,
+    "corrected_official_table_row_template_matches": true,
+    "sealed_sampling_is_balanced_and_order_invariant": true,
+    "readme_example_ids_are_excluded": true,
+    "blind_cache_contains_no_answer_program_gold_or_source_mode": true,
+    "candidate_map_contains_no_raw_record_id": true,
+    "late_gold_join_preserves_full_candidate_ceiling": true,
+    "locked_report_outputs_are_byte_deterministic": true,
+    "gate_2_remains_no_go_shadow": true
+  },
+  "frozen_artifacts": [
+    "protocol and protocol erratum",
+    "candidate construction and sealed sampling",
+    "v45 selector and inherited controls",
+    "model revisions and runtime defaults",
+    "metrics, bootstrap and support thresholds",
+    "blind-cache, late-gold-join and publication controls"
+  ],
+  "method_or_threshold_change_after_registration_forbidden": true,
+  "negative_null_or_inconclusive_result_must_be_published": true
+}

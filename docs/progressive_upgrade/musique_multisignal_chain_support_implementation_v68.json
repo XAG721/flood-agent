@@ -1,0 +1,51 @@
+{
+  "schema_version": "frc-musique-multisignal-chain-support-implementation-registration-v68",
+  "experiment_id": "FRC-MUSIQUE-MULTISIGNAL-CHAIN-SUPPORT-V68",
+  "registered_at": "2026-08-04T06:08:00+08:00",
+  "hashes": {
+    "protocol": "ab149266d74c52c17b4c64784f6ca677f82802a2ec9c60116a4c6d327259b6c9",
+    "source_registration": "9810a70da288046d0735c08f066083307c78b67c8803b60e831afea4c1ef1b1e",
+    "model_registration": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "module": "b5bfee71f6c1a64bdff3c7e73a74e722124929b087b45ae245b2eb0d78c33a8f",
+    "runner": "549e408760bba04c0098d6021d1ce11e89c36a8ac9b00b6f246efbb6a0672a76",
+    "tests": "1d4be2c0abb4e42eede734eb9360649b0cd3645cded66745fddd24c477728534"
+  },
+  "target_files_were_previously_parsed": true,
+  "target_rows_read_for_v68_before_registration": 0,
+  "v68_source_commitments_selected_before_registration": 0,
+  "v68_model_outputs_or_joined_metrics_seen_before_registration": false,
+  "source_independent_synthetic_fixtures_only": true,
+  "synthetic_tests": {
+    "passed": 13,
+    "failed": 0,
+    "target_source_used": false,
+    "model_files_used": false
+  },
+  "frozen_behaviors": [
+    "v65 invalid, v65 corrected, v66 development, v67 calibration and v67 development source-commitment union exclusion",
+    "SQuAD2 normalized exact-question exclusion",
+    "split-aware paired source-id answer-state assignment",
+    "calibration, development and conditional confirmation deterministic balanced sampling",
+    "gold-free direct composed-question score and selected-paragraph extraction",
+    "oracle decomposition question plan with gold answers and supporting indices removed",
+    "prior predicted-span-only placeholder substitution without intermediate thresholding",
+    "nine fixed numeric features with no learned preprocessing",
+    "first seven evidence coefficients projected to nonnegative values after every optimizer step",
+    "two-signal same-optimizer control using direct and chain-min features only",
+    "identical deterministic safety-constrained threshold selection across learned methods",
+    "five-fold calibration-only model-and-threshold crossfit diagnostic",
+    "single strongest fair comparator selection before paired bootstrap",
+    "development failure closure or immutable confirmation authorization"
+  ],
+  "model_weights_architecture_or_tokenizer_changed": false,
+  "learned_parameter_count_on_calibration": 17,
+  "total_learned_scalars_across_reported_methods": 17,
+  "development_or_confirmation_used_for_feature_model_threshold_gate_or_method_selection": false,
+  "official_decomposition_is_oracle_plan": true,
+  "automatic_decomposer_result_claimed": false,
+  "strict_independent_model_training_confirmation_claimed": false,
+  "selector_or_retrieval_scoring_part_of_v68": false,
+  "selector_adoption_authorized": false,
+  "canary_or_default_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

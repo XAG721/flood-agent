@@ -1,0 +1,37 @@
+{
+  "schema_version": "frc-contractnli-native-zero-consensus-abstention-protocol-erratum-v50",
+  "experiment_id": "FRC-CONTRACTNLI-NATIVE-ZERO-CONSENSUS-ABSTENTION-V50",
+  "registered_at": "2026-08-02T18:25:00+08:00",
+  "base_protocol_sha256": "519b6105cade0869dde3a5b0805bb06022319ab0b8234ade6e8e77f28efebc86",
+  "superseded_implementation_registration_sha256": "82b19c79278a7bdf4bea0eeac9cb41e822fcdcca22cdfc4a4eb01a5bb3906262",
+  "trigger": {
+    "stage": "first official test structural preparation after implementation registration and before any blind artifact was written",
+    "observed_error": "ValueError: ContractNLI official span is empty",
+    "schema_only_observation": "The official test split contains 10061 registered span offsets, including 138 whitespace-only spans across 27 of 123 documents. No official annotation references any of those 138 whitespace-only span indices.",
+    "prepared_cache_written": false,
+    "candidate_map_written": false,
+    "sample_ids_or_label_counts_emitted": false,
+    "query_generation_started": false,
+    "neural_scoring_started": false,
+    "gold_metrics_or_method_outputs_computed": false
+  },
+  "correction": {
+    "candidate_unit_rule": "Skip an official span only when its exact half-open text slice is whitespace-only; retain every non-whitespace official span and preserve its original canonical span_NNNN index without renumbering.",
+    "gold_safety_rule": "Fail closed before query generation if any official Entailment or Contradiction evidence index is absent from the retained canonical candidate ids.",
+    "scope": "schema adapter only",
+    "empirical_score_threshold_or_selector_changed": false
+  },
+  "unchanged": [
+    "official dataset archive and test-only split",
+    "balanced frozen-hash sampling salt, quotas, document cap and exact case target",
+    "all non-whitespace official spans and their original canonical ids",
+    "all hypothesis text and deterministic role queries",
+    "embedding and reranker revisions, raw native-zero boundary and same-span gate",
+    "v43 selector, shared-gate controls, baselines, budgets and score calibration",
+    "metrics, document-cluster bootstrap, support thresholds and failure publication rule",
+    "selector adoption and canary remain unauthorized and Gate 2 remains NO-GO/SHADOW"
+  ],
+  "interpretation_limit": "Because this schema correction was derived from aggregate structural inspection of the official test split, v50 is a transparent schema-repair confirmation rather than a completely untouched-dataset confirmation. No case-level sample membership, model score, selection or metric informed the correction.",
+  "negative_null_or_inconclusive_result_must_be_published": true,
+  "gate_2": "NO-GO/SHADOW"
+}

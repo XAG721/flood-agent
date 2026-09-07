@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from flood_system.frc_conflicts_evaluation import (
+from research.frc_rag.conflicts_evaluation import (
     answer_support,
     classification_metrics,
     load_conflicts_cases,

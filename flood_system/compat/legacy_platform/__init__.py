@@ -1,0 +1,41 @@
+"""Legacy platform compatibility modules retained until migration Gate M7."""
+
+from .models import (
+    Advisory,
+    AdvisoryRequest,
+    CopilotStructuredAnswer,
+    EntityImpactView,
+    EntityProfile,
+    EventCreateRequest,
+    EventRecord,
+    EventSnapshot,
+    EventStatus,
+    EventType,
+    HazardState,
+    ObservationBatchRequest,
+    ObservationIngestItem,
+    V2CopilotMessageRequest,
+    V2CopilotSessionRequest,
+    V2CopilotSessionView,
+)
+from .platform import ProductionPlatform
+
+__all__ = [
+    "Advisory",
+    "AdvisoryRequest",
+    "CopilotStructuredAnswer",
+    "EntityImpactView",
+    "EntityProfile",
+    "EventCreateRequest",
+    "EventRecord",
+    "EventSnapshot",
+    "EventStatus",
+    "EventType",
+    "HazardState",
+    "ObservationBatchRequest",
+    "ObservationIngestItem",
+    "ProductionPlatform",
+    "V2CopilotMessageRequest",
+    "V2CopilotSessionRequest",
+    "V2CopilotSessionView",
+]

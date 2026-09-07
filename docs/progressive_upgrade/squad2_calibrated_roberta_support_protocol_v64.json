@@ -1,0 +1,198 @@
+{
+  "schema_version": "frc-squad2-calibrated-roberta-support-protocol-v64",
+  "experiment_id": "FRC-SQUAD2-CALIBRATED-ROBERTA-SUPPORT-V64",
+  "registered_at": "2026-08-03T22:45:00+08:00",
+  "research_question": "Can one scalar null-versus-span threshold, learned with article-disjoint out-of-fold calibration on a fresh SQuAD2 train mechanism sample, provide a useful held-out SQuAD2 dev support gate for frozen FRC and non-FRC evidence selectors?",
+  "prior_boundary": {
+    "v58_v59_v60_v61_development_status": "all failed before confirmation",
+    "dev_v2_content_opened_or_parsed": false,
+    "prior_train_case_level_queries_scores_predictions_labels_or_outputs_reused": false,
+    "prior_source_case_commitments_authorized_for_exclusion_only": true,
+    "expected_prior_exclusion_commitments": 2400,
+    "v62_quac_transfer_result_known": true,
+    "v63_quac_validation_result_known_but_not_reused_for_thresholding_model_selection_or_case_selection": true
+  },
+  "source": {
+    "dataset": "SQuAD 2.0",
+    "official_homepage": "https://rajpurkar.github.io/SQuAD-explorer/",
+    "license": "CC BY-SA 4.0 as stated on the official homepage",
+    "source_registration": "docs/progressive_upgrade/squad2_source_registration_v58.json",
+    "source_registration_sha256": "85f1e206ab0ef1d566f398974ad665045d98789bc2130b81adb9cf1eac6a331c",
+    "calibration_file": {
+      "name": "train-v2.0.json",
+      "sha256": "68dcfbb971bd3e96d5b46c7177b16c1a4e7d4bdef19fb204502738552dede002"
+    },
+    "conditional_confirmation_file": {
+      "name": "dev-v2.0.json",
+      "sha256": "80a5225e94905956a6446d296ca1093975c4d3b3260f1d6c8f68bc2ab77182d8",
+      "content_may_open_only_after_every_calibration_gate_passes": true
+    }
+  },
+  "public_support_model": {
+    "repository": "deepset/roberta-base-squad2",
+    "revision": "adc3b06f79f797d1c575d5479d6f5efe54a9e3b4",
+    "license": "CC-BY-4.0",
+    "model_registration_reused": "docs/progressive_upgrade/quac_roberta_qa_support_transfer_model_registration_v62.json",
+    "model_registration_sha256": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "model_weights_or_architecture_changed": false,
+    "local_finetuning": false,
+    "learned_parameter": "one scalar threshold over best_valid_span_score minus minimum_CLS_null_score",
+    "training_domain_overlap_boundary": "The public model was trained on SQuAD2.0. Confirmation is a held-out component feasibility check, not independent model-training confirmation or an official leaderboard result."
+  },
+  "blind_execution": {
+    "qa_input_fields": [
+      "id",
+      "question",
+      "context"
+    ],
+    "qa_input_forbidden_fields": [
+      "answer_state",
+      "answer_text",
+      "answer_start",
+      "answer_end",
+      "gold_candidate_ids"
+    ],
+    "qa_cache_must_complete_before_gold_join": true,
+    "invalid_or_nonfinite_prediction_fails_closed": true,
+    "confirmation_query_generation_and_neural_scoring_require_support_gate_pass": true,
+    "confirmation_gold_join_for_selector_metrics_requires_complete_retrieval_score_cache": true
+  },
+  "scope": {
+    "calibration": {
+      "cases": 2000,
+      "answer_bearing": 1000,
+      "no_answer": 1000,
+      "maximum_cases_per_paragraph": 2,
+      "maximum_cases_per_article_per_answer_state": 20,
+      "minimum_paragraphs": 700,
+      "minimum_articles": 200,
+      "sample_salt": "FRC-SQUAD2-V64-CALIBRATION|",
+      "source": "train-v2.0.json after excluding all 2,400 v58-v61 commitments"
+    },
+    "confirmation": {
+      "cases": 600,
+      "answer_bearing": 300,
+      "no_answer": 300,
+      "maximum_cases_per_paragraph": 2,
+      "maximum_cases_per_article_per_answer_state": 12,
+      "minimum_paragraphs": 250,
+      "minimum_articles": 25,
+      "sample_salt": "FRC-SQUAD2-V64-CONFIRMATION|",
+      "source": "dev-v2.0.json, unopened at protocol registration"
+    },
+    "balanced_mechanism_samples_not_natural_prevalence": true,
+    "token_budgets": [
+      128,
+      256,
+      512
+    ]
+  },
+  "qa_inference": {
+    "tokenizer_truncation": "only_second",
+    "max_length": 384,
+    "doc_stride": 128,
+    "maximum_answer_tokens": 30,
+    "batch_size": 16,
+    "do_sample": false,
+    "raw_margin": "maximum valid context span start_logit+end_logit minus minimum CLS null start_logit+end_logit across overflow features",
+    "support_rule": "SUPPORTED iff raw_margin is strictly greater than the locked scalar threshold",
+    "tie_rule": "ties are UNSUPPORTED"
+  },
+  "threshold_calibration": {
+    "fold_count": 5,
+    "fold_group": "article commitment",
+    "fold_assignment": "SHA-256('FRC-SQUAD2-V64-FOLD|' + article_commitment) modulo 5",
+    "candidate_thresholds": "negative-infinity edge represented by nextafter(min_margin,-inf), all adjacent finite-margin midpoints, and max_margin",
+    "per_fold_selection": "lexicographically maximize feasibility, balanced accuracy, minimum class rate, closeness to zero, then lower threshold",
+    "per_fold_feasibility": {
+      "answer_bearing_pass_rate_at_least": 0.85,
+      "no_answer_rejection_rate_at_least": 0.75
+    },
+    "global_threshold": "apply the identical deterministic selection rule to all 2,000 calibration rows only after OOF decisions are complete",
+    "learned_parameter_count": 1,
+    "no_model_or_selector_parameter_change": true
+  },
+  "calibration_open_gate": {
+    "exact_cases_and_1000_1000_balance": true,
+    "selected_prior_commitment_overlap_equals": 0,
+    "schema_exclusion_rate_at_most": 0.01,
+    "qa_invalid_rate_equals": 0.0,
+    "five_article_disjoint_nonempty_folds": true,
+    "oof_balanced_accuracy_at_least": 0.85,
+    "oof_answer_bearing_pass_rate_at_least": 0.85,
+    "oof_no_answer_rejection_rate_at_least": 0.75,
+    "minimum_paragraphs_at_least": 700,
+    "minimum_articles_at_least": 200,
+    "all_required": true
+  },
+  "confirmation_support_open_gate": {
+    "exact_cases_and_300_300_balance": true,
+    "schema_exclusion_rate_at_most": 0.01,
+    "qa_invalid_rate_equals": 0.0,
+    "balanced_accuracy_at_least": 0.8,
+    "answer_bearing_pass_rate_at_least": 0.8,
+    "no_answer_rejection_rate_at_least": 0.7,
+    "minimum_paragraphs_at_least": 250,
+    "minimum_articles_at_least": 25,
+    "all_required": true
+  },
+  "retrieval_and_selector_methods_if_confirmation_support_gate_passes": {
+    "shared_case_level_gate": true,
+    "ungated_controls": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "cross_encoder_knapsack",
+      "static_threshold_frc_v39_replay",
+      "static_rank_coverage_frc_v41",
+      "dynamic_rank_coverage_frc_v41",
+      "adaptive_argmax_cardinality_frc_v43",
+      "guarded_adaptive_cardinality_frc_v44",
+      "anchor_guarded_adaptive_cardinality_frc_v45",
+      "consensus_guarded_adaptive_cardinality_frc_v46",
+      "low_core_divergence_guarded_frc_v49"
+    ],
+    "candidate": "calibrated_roberta_supported_adaptive_argmax_cardinality_frc_v43_v64",
+    "gated_exact_anchor": "calibrated_roberta_supported_cross_encoder_topk_v64",
+    "frozen_models": {
+      "dense": "BAAI/bge-large-en-v1.5@refs/pr/5",
+      "reranker": "BAAI/bge-reranker-large@main"
+    },
+    "score_calibration": "per_case_minmax",
+    "selector_parameter_change": false
+  },
+  "final_method_gates_if_confirmation_support_gate_passes": {
+    "candidate_ceiling_complete_rate_at_least": 0.99,
+    "candidate_answer_recall_at_least": 0.75,
+    "candidate_no_answer_abstention_accuracy_at_least": 0.7,
+    "candidate_abstention_rate_range": [
+      0.15,
+      0.7
+    ],
+    "gated_exact_anchor_minus_ungated_exact_anchor_point_at_least": 0.1,
+    "gated_exact_anchor_minus_ungated_exact_anchor_ci_low_above": 0.0,
+    "candidate_minus_gated_exact_anchor_point_at_least": 0.05,
+    "candidate_minus_gated_exact_anchor_ci_low_above": 0.0,
+    "candidate_minus_strongest_shared_gate_non_frc_point_at_least": 0.05,
+    "candidate_minus_strongest_shared_gate_non_frc_ci_low_above": 0.0,
+    "candidate_minus_strongest_same_gate_frc_point_at_least": -0.005,
+    "minimum_budget_or_supported_stratum_delta_at_least": -0.02,
+    "deterministic_query_and_score_fallback_rate_equals": 0.0,
+    "all_required": true
+  },
+  "stopping_and_claim_boundary": {
+    "if_calibration_gate_fails": "STOP_BEFORE_OPENING_DEV",
+    "if_confirmation_support_gate_fails": "STOP_BEFORE_QUERY_GENERATION_AND_RETRIEVAL_SCORING",
+    "if_final_method_gate_fails": "CLOSE_WITHOUT_SELECTOR_ADOPTION",
+    "if_all_gates_pass": "REPORT_SELF_DOMAIN_HELD_OUT_COMPONENT_FEASIBILITY_ONLY",
+    "calibration_or_confirmation_reuse_for_additional_tuning_or_selection": false,
+    "official_squad2_answer_metric_claimed": false,
+    "independent_model_training_confirmation_claimed": false,
+    "real_setr_reproduction_claimed": false,
+    "flood_domain_effectiveness_claimed": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  }
+}

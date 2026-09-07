@@ -1,0 +1,67 @@
+{
+  "experiment_id": "FRC-FETAQA-CONSENSUS-GUARDED-ATOMIC-ROLES-V47",
+  "hashes": {
+    "blind_census_sha256": "be6ee5d6bc803e467e286878482d90370a09db6866fcb60292428e6a768e5d82",
+    "candidate_coverage_sha256": "e1e49a7c044791291bca21880c87612308e1aa1242765b89a576ab20d44dc1d8",
+    "candidate_map_sha256": "9b88dd649dfd4ef04d70b9228ff83592ecb49bf33e12bac2b8414a77d1f07b67",
+    "implementation_registration_sha256": "3f89607c7f9e1f3e06e26d0aeea1fcf7b8e8552da55a0549355efa6df84bb686",
+    "prepared_blind_sha256": "edb4c1e25b2b067b2b09af9674979c390d77a76a0b8d4b956aa195b74f4e79c4",
+    "source_archive_sha256": "cc514ecdde2b7bfd9d7929f1062c95cc80478697d06d1a201146f3da7812e22b"
+  },
+  "method_or_threshold_change_after_registration_forbidden": true,
+  "metrics_computed": false,
+  "negative_null_or_inconclusive_result_must_be_published": true,
+  "neural_scoring_started": false,
+  "query_generation_started": false,
+  "registered_at": "2026-08-02T08:42:22+08:00",
+  "runtime": {
+    "cuda_available": true,
+    "cuda_runtime": "12.4",
+    "gpu": "NVIDIA GeForce RTX 4060 Ti",
+    "gpu_memory_mib": 16380,
+    "numpy": "2.2.6",
+    "parameters": {
+      "bootstrap_resamples": 10000,
+      "bootstrap_seed": 20260807,
+      "case_batch_size": 4,
+      "device": "cuda",
+      "embedding_batch_size": 64,
+      "fp16": true,
+      "generator_batch_size": 8,
+      "generator_max_input_tokens": 512,
+      "generator_max_new_tokens": 160,
+      "offline_model_loading": true,
+      "reranker_batch_size": 256
+    },
+    "platform": "Windows-10-10.0.19045-SP0",
+    "python": "3.10.20",
+    "torch": "2.4.1+cu124",
+    "transformers": "4.46.3"
+  },
+  "schema_version": "frc-fetaqa-consensus-guarded-atomic-roles-execution-v47",
+  "source_artifacts": {
+    "archive_bytes": 39085793,
+    "archive_root": "FeTaQA-bbc441be807212d736c8c35a18146b530dde11d0",
+    "archive_sha256": "cc514ecdde2b7bfd9d7929f1062c95cc80478697d06d1a201146f3da7812e22b",
+    "license_checked_before_data_member_opened": true,
+    "license_identifier": "CC-BY-SA-4.0",
+    "members": {
+      "development": {
+        "bytes": 1768518,
+        "path": "data/fetaQA-v1_dev.jsonl",
+        "sha256": "94ec2dcc2eaec580f4127958cb8847022c6db68ed58cf2c7c16222416d2f117e"
+      },
+      "license": {
+        "bytes": 20131,
+        "path": "LICENSE",
+        "sha256": "7abe19ec9bb73b36141b999b861d24ad855e808bafe0f81e84cce28556f6c297"
+      },
+      "readme": {
+        "bytes": 2585,
+        "path": "README.md",
+        "sha256": "0253427d4fd633bbd82ac6d443237dfa94a95f1b5734b2e7958d26c39d29ca94"
+      }
+    },
+    "repository_revision": "bbc441be807212d736c8c35a18146b530dde11d0"
+  }
+}

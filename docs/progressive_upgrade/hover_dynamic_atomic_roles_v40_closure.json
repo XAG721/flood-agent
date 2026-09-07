@@ -1,0 +1,68 @@
+{
+  "schema_version": "frc-hover-dynamic-atomic-roles-closure-v1",
+  "closed_at": "2026-08-01T14:31:35.3203718+08:00",
+  "experiment_id": "FRC-HOVER-DYNAMIC-ATOMIC-ROLES-V40",
+  "protocol_sha256": "0a3b4302d50dd1d83ff97689e69968effc28abd8ac1c29e682fc4eee6bdbc4f3",
+  "status": "REGISTRATION_BOUNDARY_VIOLATED_BEFORE_SCORING",
+  "source_registration": {
+    "hover_train_release_v1.1.json": {
+      "size_bytes": 9205582,
+      "sha256": "1f1cd57abd616fa00c70bdc575ce77c16fc6cf1a6cffd5ff87c208030a336bb6"
+    },
+    "train_tfidf_doc_retrieval_results.json": {
+      "size_bytes": 87299624,
+      "sha256": "45e03a5e47ce8076981eefc86f28d764f4c2eddf1b94b69d9263675260108462"
+    },
+    "rows": 18171,
+    "unique_dataset_uids": 18171,
+    "unique_tfidf_ids": 18171,
+    "sequence_aligned": true
+  },
+  "violation": {
+    "stage": "post-download structural census before query generation or neural scoring",
+    "cause": "A one-off census command computed and printed label and hop-count distributions for both frozen v40 partitions, although the protocol permitted only partition IDs and counts before the gold-free mechanism gate.",
+    "disclosed_aggregates": {
+      "mechanism_pilot": {
+        "rows": 512,
+        "labels": {
+          "SUPPORTED": 315,
+          "NOT_SUPPORTED": 197
+        },
+        "hops": {
+          "2": 265,
+          "3": 153,
+          "4": 94
+        }
+      },
+      "confirmation": {
+        "rows": 2000,
+        "labels": {
+          "SUPPORTED": 1206,
+          "NOT_SUPPORTED": 794
+        },
+        "hops": {
+          "2": 948,
+          "3": 698,
+          "4": 354
+        }
+      }
+    },
+    "not_accessed_or_generated": [
+      "individual claim text in command output",
+      "candidate title or article text in command output",
+      "individual supporting facts in command output",
+      "dynamic atomic queries",
+      "v40 embedding or reranker scores",
+      "v40 selections",
+      "v40 retrieval metrics"
+    ]
+  },
+  "mandatory_action": {
+    "v40_pilot_or_confirmation_may_be_scored": false,
+    "v40_may_support_any_performance_or_mechanism_claim": false,
+    "v40_partition_ids_permanently_excluded_from_recovery": true,
+    "algorithm_parameters_changed_after_violation": false,
+    "recovery": "Register a new experiment that inherits the already frozen v40 algorithm byte-for-byte and draws both pilot and confirmation only from the remaining train IDs before computing any further content or gold statistic."
+  },
+  "gate_boundary": "This operational closure is a research-integrity record. It cannot change Gate 2, authorize selector adoption, or be omitted from the experiment history."
+}

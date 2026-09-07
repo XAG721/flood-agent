@@ -13,7 +13,7 @@ from flood_system.data_pipeline.beilin_dataset import (
     normalize_beilin_sources,
 )
 from flood_system.sample_data import build_area_profiles
-from flood_system.v2.bootstrap import build_entity_profiles
+from flood_system.compat.legacy_platform.bootstrap import build_entity_profiles
 
 
 def test_build_beilin_dataset_generates_importable_files(tmp_path: Path):

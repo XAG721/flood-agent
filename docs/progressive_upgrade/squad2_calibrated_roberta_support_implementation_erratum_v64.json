@@ -1,0 +1,38 @@
+{
+  "schema_version": "frc-squad2-v64-implementation-erratum-v1",
+  "experiment_id": "FRC-SQUAD2-CALIBRATED-ROBERTA-SUPPORT-V64",
+  "registered_at": "2026-08-03T23:15:00+08:00",
+  "original_implementation_registration": "docs/progressive_upgrade/squad2_calibrated_roberta_support_implementation_v64.json",
+  "original_implementation_registration_sha256": "3658c2077e1b16cd7ed7fa65942cf9d10b1988313e20c332110841b9b77417c6",
+  "observed_after_calibration_result_before_dev_access": true,
+  "calibration_result_sha256": "eace7c801253ee9868061c9a718924fac9e40ba64be17b02bbf76b82b09a0355",
+  "confirmation_open_record_sha256": "385408ebd91f548fb3f6651abba2fdbe3de838392b269af8f9255de412e57874",
+  "issue": {
+    "calibration_result_display_threshold": 0.974609,
+    "confirmation_open_exact_threshold": 0.974609375,
+    "cause": "The deterministic report display normalizer rounds finite floats to six decimals, while the authorization record intentionally preserves the exact selected float.",
+    "old_validation_behavior": "Strict float equality rejected the otherwise matching rounded-display and exact-authorization representations."
+  },
+  "correction": {
+    "validation": "Require round(exact authorization threshold, 6) to equal the frozen report display threshold.",
+    "execution": "Read and apply the exact threshold from the hash-locked confirmation-open authorization record.",
+    "calibration_sample_prediction_folds_threshold_selection_metrics_or_gate_changed": false,
+    "calibration_result_or_open_record_rewritten": false,
+    "dev_content_opened_or_parsed_before_erratum": false
+  },
+  "hashes": {
+    "protocol": "2585d468c257de8912c380718d3ea27b7dbd96b6a61d75ff09d5a0901f8f0835",
+    "source_registration": "85f1e206ab0ef1d566f398974ad665045d98789bc2130b81adb9cf1eac6a331c",
+    "model_registration": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "module": "4e11357d3b1b9dd7e163aba5aacc55e37398e2ab51ba037790196b7582a6646e",
+    "runner": "7b8fff8586e2cd1366fe86910b94511642651d57899d0bfb4f9cb30977956b5a",
+    "tests": "05b6c0275fff2097349e757360caefbd42c8058f3a3190198b9a384a16a76475"
+  },
+  "dev_content_opened_or_parsed": false,
+  "learned_parameter_count": 1,
+  "model_weights_architecture_selector_or_registered_gates_changed": false,
+  "synthetic_tests": {
+    "passed": 10,
+    "failed": 0
+  }
+}

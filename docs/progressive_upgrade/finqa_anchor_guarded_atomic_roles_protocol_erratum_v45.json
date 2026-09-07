@@ -1,0 +1,38 @@
+{
+  "schema_version": "frc-finqa-anchor-guarded-atomic-roles-protocol-erratum-v45",
+  "experiment_id": "FRC-FINQA-ANCHOR-GUARDED-ATOMIC-ROLES-V45",
+  "registered_at": "2026-08-02T14:42:00+08:00",
+  "base_protocol_sha256": "17aeb0865234a644640f2672c9f1dc420fe9f1fbd477548ff8e54618755a1c25",
+  "trigger": {
+    "occurred_after_base_protocol_hash": true,
+    "dev_json_downloaded_or_opened": false,
+    "dataset_sample_content_seen": false,
+    "official_code_viewed": "code/utils/general_utils.py at pinned revision 0f16e2867befa6840783e58be38c9efb9229d742",
+    "observed_issue": "The base protocol named retriever/finqa_utils.py as the corrected table-row conversion source, but the official README link resolves to code/utils/general_utils.py."
+  },
+  "correction": {
+    "original_registered_source_code": "retriever/finqa_utils.py",
+    "effective_registered_source_code": "code/utils/general_utils.py",
+    "effective_table_row_to_text_contract": [
+      "Start with header[0] plus one space when header[0] is nonempty.",
+      "For every zip(header[1:], row[1:]), append 'the ' plus row[0] plus ' of ' plus head plus ' is ' plus cell plus ' ; ' .",
+      "Apply the official remove_space function and strip the result."
+    ],
+    "official_function_content_was_viewed_only_after_base_protocol_hash": true,
+    "source_data_or_sample_content_was_not_viewed": true
+  },
+  "unchanged_contract": [
+    "official repository and revision",
+    "dataset split",
+    "permanent README example exclusions",
+    "sampling and source-mode rules",
+    "candidate membership",
+    "v45 formula and synthetic invariants",
+    "models and revisions",
+    "baselines and controls",
+    "budgets and metrics",
+    "support checks and decision rules",
+    "publication and Gate 2 NO-GO/SHADOW boundary"
+  ],
+  "method_or_threshold_changed": false
+}

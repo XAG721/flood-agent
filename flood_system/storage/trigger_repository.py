@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from ..v2.models import TriggerEvent, TriggerEventStatus
+from ..compat.legacy_platform.models import TriggerEvent, TriggerEventStatus
 
 
 class TriggerRepositoryMixin:

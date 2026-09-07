@@ -1,0 +1,75 @@
+{
+  "schema_version": "frc-conformal-transfer-admission-protocol-v1",
+  "registered_on": "2026-07-31",
+  "purpose": "Develop a fail-closed calibration certificate that rejects unreliable cross-dataset sufficiency-head reuse before evaluation or deployment, without changing the transferred head or conformal threshold.",
+  "development_boundary": {
+    "post_hoc": true,
+    "reason": "The admission guard is proposed after the leave-one-dataset-out transfer audit failed its adoption checks.",
+    "independent_confirmation": false,
+    "gate_evidence": false,
+    "new_data_used": false,
+    "method_change": "Admission-only; transferred scores, thresholds and declarations remain unchanged."
+  },
+  "frozen_input": {
+    "transfer_report_path_label": "conformal_head_transfer.json",
+    "transfer_report_sha256": "aeff1b020006d921e7d7460fcf58f7e1e7d5b2d4e9e4f6a59b8e86b8b1189646",
+    "case_artifact_path_label": "conformal_head_transfer_cases.jsonl.gz",
+    "case_artifact_sha256": "88915c50bf846ab28c1cd8540dbfdba4dc83c2fdab1e4f1d7ae40da8ebf39542",
+    "case_record_count": 179880,
+    "datasets": [
+      "2WikiMultiHopQA",
+      "ConditionalQA",
+      "HotpotQA",
+      "MultiHop-RAG"
+    ],
+    "repeat_count_per_dataset": 10,
+    "primary_alpha": 0.1
+  },
+  "calibration_certificate": {
+    "decision_unit": "One target dataset and one pre-registered split version.",
+    "input_split": "target calibration only",
+    "evaluation_fields_available_to_decision": false,
+    "target_train_fields_available_to_decision": false,
+    "minimum_incomplete_calibration_case_families": 30,
+    "minimum_complete_calibration_variants": 30,
+    "minimum_calibration_auc": 0.75,
+    "minimum_calibration_complete_recall_at_frozen_threshold": 0.15,
+    "all_conditions_required": true,
+    "status_if_pass": "CALIBRATION_CERTIFIED",
+    "status_if_fail": "REJECT_TRANSFER_REQUIRE_TARGET_FIT"
+  },
+  "retrospective_evaluation": {
+    "evaluation_used_to_issue_certificate": false,
+    "safe_certificate_definition": "Certified repeat has evaluation incomplete-case-family false-complete rate at or below alpha=0.10.",
+    "useful_certificate_definition": "Certified repeat has evaluation complete declaration recall at or above 0.10.",
+    "metrics": [
+      "certificate_count",
+      "certificate_count_by_dataset",
+      "unsafe_certificate_count",
+      "low_utility_certificate_count",
+      "certificate_precision_for_safe_and_useful_evaluation"
+    ]
+  },
+  "pre_registered_adoption_checks": {
+    "all_checks_required": true,
+    "certificate_uses_calibration_only": true,
+    "minimum_total_certified_repeats": 8,
+    "minimum_datasets_with_at_least_one_certificate": 2,
+    "maximum_unsafe_certificate_count": 0,
+    "maximum_low_utility_certificate_count": 0,
+    "minimum_safe_and_useful_certificate_precision": 1.0,
+    "status_if_all_pass": "POST_HOC_ADMISSION_GUARD_CANDIDATE",
+    "status_if_any_fail": "DO_NOT_ADOPT"
+  },
+  "execution_policy": {
+    "if_all_checks_pass": "Freeze the admission guard before validating it on any new untouched dataset.",
+    "if_any_check_fails": "Retain the negative result; require a target-fitted head and do not use new data to tune this guard cycle."
+  },
+  "theoretical_scope": {
+    "finite_sample_statement": "The certificate does not strengthen the conformal guarantee; it only rejects some already calibrated transferred heads.",
+    "calibration_reuse_warning": "Calibration recall and AUC are descriptive admission signals on the same calibration split used for the threshold, not independent performance estimates.",
+    "conditional_guarantee": false,
+    "production_authorization": false
+  },
+  "gate_policy": "This post-hoc guard development cannot change Gate 2 from NO-GO/SHADOW or authorize CANARY or DEFAULT."
+}

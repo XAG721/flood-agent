@@ -1,0 +1,158 @@
+{
+  "schema_version": "frc-feverous-v43-result-record-v1",
+  "closed_at": "2026-08-02T03:37:14.4624618+08:00",
+  "experiment_id": "FRC-FEVEROUS-ADAPTIVE-ATOMIC-ROLES-V43",
+  "status": "FEVEROUS_BOUNDED_POOL_INCONCLUSIVE",
+  "artifact_sha256": {
+    "protocol": "2591f23a9edc498c800a4dfcad680c5e2df36e8178cb30df7214ac7ed7264b57",
+    "protocol_erratum": "aec7c5658ee1574a0f8c44a36eb92109cdbfbda6d3cdf4d037257a479191f4db",
+    "implementation_registration": "50887b302cea7e707a1e3339abac1b16145d30c80eeac701aa05d3148ce51b9c",
+    "implementation_erratum1": "f3f2d782364d33bddf84c68baeaf6a18ef79df0562ee543c95201614e9dfcace",
+    "implementation_erratum2": "2c51b2ee4695f5a9200293c62f305e70f2d0ef60ecc09e1b23cb57270b5a9794",
+    "implementation_erratum3": "d00877e6d344ee0b2c12eeadbb38b706b43d69779887a49faa0bb71c1a5a80cd",
+    "implementation_erratum4": "a459b66f93ef83db19f7dfaccf6a70f7c2ab1662723599da3634cb473c817f65",
+    "execution_registration": "887f955c848a8522262654c28fe28072837c044b2e3d893d588117816cde5647",
+    "execution_erratum": "1a3bc129eb6a2f1f126700b0555c8d0006d643da884f749b7c5d58c11bac430a",
+    "prepared_blind_cache": "dde44eeedca3f82e397084cc5097843298bc2e8be0fffee88928b6697c01e01d",
+    "candidate_map": "fbbfc3fa8dc33a546fd84100e447f828933c59a1fd27bbe36b1a00fac5a15327",
+    "atomic_query_cache": "b794514da8b9ddeb7c32dda4da83a836f6c505d1a4a0c6f33e5dcd700762fd9e",
+    "blind_score_cache": "a62b24ec609194f9b9d89a4a54c7359475757d8a8972f11a177fc581068a38f9",
+    "report_json": "d57fb87ad4362f31be01412c176bf6910cb2a6b295798d00eb845dfec9516205",
+    "report_markdown": "caa34f991233beb375e11a9334c79f529ab236adf2c48b7c7b154eb0849a7d4b",
+    "public_case_evidence": "cb45cd0125c210e4a4529e8c2e2dc085838a30238367b25c8023bad191ce7c29"
+  },
+  "boundary_verification": {
+    "protocol_and_initial_implementation_registered_before_official_content_access": true,
+    "capacity_erratum_registered_after_fail_closed_assertion_and_before_any_cache_write": true,
+    "prepared_cache_second_run_byte_deterministic": true,
+    "prepared_rows": 240,
+    "query_rows": 240,
+    "score_rows": 240,
+    "ordered_alignment": true,
+    "forbidden_exact_keys_in_prepared_cache": 0,
+    "candidate_count_minimum": 19,
+    "candidate_count_maximum": 146,
+    "gold_joined_only_after_complete_ordered_query_and_score_caches": true,
+    "first_locked_evaluation_metrics_computed_but_not_emitted_before_schema_fix": true,
+    "schema_fix_changed_method_or_threshold": false,
+    "report_second_write_byte_deterministic": true,
+    "raw_official_source_or_blind_cache_committed": false
+  },
+  "source_and_blind_census": {
+    "official_repository_revision": "32b68ce4e33c53f34ae2e6d88b51cd073ab85ab6",
+    "development_rows": 7891,
+    "eligible_rows": 7890,
+    "selected_rows": 240,
+    "challenge_strata": 6,
+    "cases_per_challenge": 40,
+    "selected_ids_sha256": "9993df020641e867ecb1f245176eefb4453bb4c9296b19d023b12459e322123e",
+    "candidate_pool_minimum": 19,
+    "candidate_pool_mean": 85.291667,
+    "candidate_pool_maximum": 146,
+    "missing_candidate_pages": 87,
+    "invalid_official_predicted_units": 8,
+    "candidate_ceiling_complete_cases": 111,
+    "candidate_ceiling_incomplete_cases": 129,
+    "candidate_ceiling_complete_rate": 0.4625
+  },
+  "query_generation": {
+    "model": "Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4",
+    "rows": 240,
+    "fallback_count": 7,
+    "fallback_rate": 0.029167,
+    "fallback_limit": 0.05,
+    "fallback_check_passed": true,
+    "gold_fields_visible_to_generator": false
+  },
+  "primary_results": {
+    "metric": "element_evidence_macro_f1",
+    "means_over_cases_and_512_1024_1500_token_budgets": {
+      "official_baseline_topk": 0.128629,
+      "bm25_topk": 0.159776,
+      "dense_topk": 0.176751,
+      "hybrid_topk": 0.188746,
+      "cross_encoder_topk": 0.209285,
+      "cross_encoder_knapsack": 0.209285,
+      "static_threshold_frc_v39_replay": 0.208681,
+      "static_rank_coverage_frc_v41": 0.209044,
+      "dynamic_rank_coverage_frc_v41": 0.218379,
+      "adaptive_argmax_cardinality_frc_v43": 0.172505
+    },
+    "observed_strongest_non_frc": "cross_encoder_topk",
+    "adaptive_minus_dynamic": {
+      "point": -0.045874,
+      "ci_low": -0.079872,
+      "ci_high": -0.016021,
+      "resamples": 10000,
+      "seed": 20260803
+    },
+    "adaptive_minus_bootstrap_strongest_non_frc": {
+      "point": -0.03678,
+      "ci_low": -0.073102,
+      "ci_high": -0.005646,
+      "resamples": 10000,
+      "seed": 20260803
+    },
+    "budget_deltas_vs_strongest_non_frc": {
+      "512": -0.036539,
+      "1024": -0.0369,
+      "1500": -0.0369
+    }
+  },
+  "compression_and_recall": {
+    "adaptive_mean_selected_units": 2.770833,
+    "dynamic_mean_selected_units": 4.998611,
+    "mean_selected_unit_reduction": 2.227778,
+    "adaptive_macro_precision": 0.301389,
+    "dynamic_macro_precision": 0.229444,
+    "adaptive_complete_evidence_recall": 0.120833,
+    "dynamic_complete_evidence_recall": 0.208333,
+    "complete_evidence_recall_drop": 0.0875,
+    "adaptive_target_cardinality_distribution": {
+      "1": 12,
+      "2": 75,
+      "3": 109,
+      "4": 44
+    }
+  },
+  "challenge_deltas_vs_strongest_non_frc": {
+    "Numerical Reasoning": 0.00381,
+    "Multi-hop Reasoning": -0.099745,
+    "Entity Disambiguation": 0.020482,
+    "Combining Tables and Text": -0.223885,
+    "Search terms not in claim": -0.008295,
+    "Other": -0.006595
+  },
+  "support_checks": {
+    "minimum_total_cases_met": true,
+    "candidate_ceiling_complete_rate_at_least_0_60": false,
+    "query_parser_fallback_rate_at_most_0_05": true,
+    "adaptive_minus_dynamic_point_at_least_0_01": false,
+    "adaptive_minus_dynamic_ci_low_above_0": false,
+    "adaptive_minus_strongest_point_at_least_0_01": false,
+    "adaptive_minus_strongest_ci_low_above_0": false,
+    "every_budget_and_supported_challenge_delta_at_least_minus_0_02": false,
+    "mean_selected_unit_reduction_at_least_0_50": true,
+    "complete_evidence_recall_drop_at_most_0_02": false,
+    "all_required": false
+  },
+  "diagnostic_interpretation": {
+    "finding": "Distinct-role argmax cardinality reduced evidence count and increased precision, but over-compressed multi-hop and table-plus-text evidence and lost complete-evidence recall.",
+    "candidate_boundary": "Only 46.25% of cases had a complete gold evidence set inside the official-baseline-page bounded pool, below the preregistered 60% informativeness floor.",
+    "causal_claim_authorized": false,
+    "reason": "These are post-result associations on a bounded candidate pool, not preregistered causal ablations or full-corpus retrieval results."
+  },
+  "decision": {
+    "adaptive_atomic_role_support_established": false,
+    "selector_adoption_authorized": false,
+    "gate_2": "NO-GO/SHADOW",
+    "gate_2_change": false,
+    "canary_or_default_authorized": false,
+    "official_feverous_leaderboard_result": false,
+    "setr_reproduced": false,
+    "flood_domain_effectiveness_established": false,
+    "feverous_v43_reuse_for_tuning_or_selection": false,
+    "negative_or_inconclusive_result_published": true
+  },
+  "next_step": "Do not tune or select on these FEVEROUS v43 cases. Any precision-risk or evidence-multiplicity revision must first be frozen with synthetic invariants, then evaluated once on a new untouched public partition or dataset; candidate-retrieval coverage must be validated independently from selector utility."
+}

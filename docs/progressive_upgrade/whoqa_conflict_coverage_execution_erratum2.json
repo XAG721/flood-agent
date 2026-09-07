@@ -1,0 +1,29 @@
+{
+  "schema_version": "frc-whoqa-conflict-coverage-execution-erratum-v2",
+  "registered_on": "2026-08-01",
+  "registered_before_model_scoring": true,
+  "trigger": "The second fail-closed full-source preparation rejected q_id 121236 because the optional context_ids array is shorter than contexts.",
+  "parent_files": {
+    "protocol_sha256": "7a92b637521a8b0ee5d9620b2972c1dfb95a5f0b6c246974171749f7b53c6bb9",
+    "execution_sha256": "ba9df61c8a146901df35a1af6216f694bd1a3b7bcbe9477ecb37c55ee02b57aa",
+    "execution_erratum_sha256": "1e7ac8fe9bf6008fba27c63ed4895d9ff976f6efec407bd682307984bf7212a2"
+  },
+  "blind_structure_audit": {
+    "answer_contents_read": false,
+    "model_scores_generated": false,
+    "context_id_mismatch_records": 10,
+    "mismatch_distribution": {
+      "2_contexts_1_id": 9,
+      "3_contexts_1_id": 1
+    },
+    "answer_context_index_mismatch_records": 0
+  },
+  "corrected_frozen_candidate_id_handling": {
+    "candidate_id": "whoqa::<q_id>::c<context_index>",
+    "context_ids_used_by_scorer_or_selector": false,
+    "context_ids_used_by_evaluator": false,
+    "source_label": "use the distributed context_id when present at the same index; otherwise use context-<index>",
+    "no_record_or_context_dropped": true
+  },
+  "unchanged_contract": "Question text, context text, answer alignment, dataset size, template handling, models, methods, budget, metrics, thresholds, bootstrap, decision policy and Gate 2 boundary remain unchanged."
+}

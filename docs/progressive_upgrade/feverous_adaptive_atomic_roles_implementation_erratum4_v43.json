@@ -1,0 +1,46 @@
+{
+  "schema_version": "frc-feverous-adaptive-atomic-roles-implementation-erratum4-v43",
+  "experiment_id": "FRC-FEVEROUS-ADAPTIVE-ATOMIC-ROLES-V43",
+  "registered_at": "2026-08-02T03:31:59.0711296+08:00",
+  "superseded_erratum_sha256": "d00877e6d344ee0b2c12eeadbb38b706b43d69779887a49faa0bb71c1a5a80cd",
+  "trigger": {
+    "stage": "first locked evaluation after complete ordered query and score caches",
+    "observed_error": "KeyError: 'parser_fallback_rate'",
+    "gold_join_completed": true,
+    "gold_metrics_computed_in_memory": true,
+    "bootstrap_resamples_computed_in_memory": 10000,
+    "metric_values_emitted_or_observed": false,
+    "report_or_result_artifact_written": false,
+    "query_or_score_cache_changed": false
+  },
+  "correction": "Read validate_query_cache's registered output key fallback_rate instead of the nonexistent parser_fallback_rate key when applying the unchanged at-most-0.05 support check.",
+  "method_or_threshold_changed": false,
+  "unchanged": [
+    "all source, sample, blind candidate, query, and score cache bytes",
+    "all selectors, candidate rankings, adaptive cardinalities, and selected evidence ids",
+    "all per-case metrics, aggregate formulas, bootstrap resamples, and bootstrap seed",
+    "the fallback-rate threshold of 0.05 and observed fallback count",
+    "all support checks, status rules, adoption boundary, and Gate 2 NO-GO/SHADOW status"
+  ],
+  "previous_effective_hashes": {
+    "protocol_sha256": "2591f23a9edc498c800a4dfcad680c5e2df36e8178cb30df7214ac7ed7264b57",
+    "protocol_erratum_sha256": "aec7c5658ee1574a0f8c44a36eb92109cdbfbda6d3cdf4d037257a479191f4db",
+    "module_sha256": "4857989cac63eb371c445d6a820c7a8bf03bf3609c51273e72cfa78379fba1ae",
+    "runner_sha256": "03a0b06b9ebf4424cea4d59e31bd67fdf1c8c4e88a6f10f88c85adf703b5c229",
+    "test_sha256": "7c4738e0c09851623501c2bcc8c78a28ffec8e3f987f4ad003f72371e87d663e",
+    "inherited_v41_module_sha256": "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621"
+  },
+  "effective_hashes": {
+    "protocol_sha256": "2591f23a9edc498c800a4dfcad680c5e2df36e8178cb30df7214ac7ed7264b57",
+    "protocol_erratum_sha256": "aec7c5658ee1574a0f8c44a36eb92109cdbfbda6d3cdf4d037257a479191f4db",
+    "module_sha256": "59de7d73abc238d35c3647d47b6834d6b55b91d58a38e8151babd4ac52780b75",
+    "runner_sha256": "e8b48dd22556c34a41104d937cf9022d5da88e13e26637d1e84a06165a693175",
+    "test_sha256": "64f56ea1ba52f2f13159ab8b6d0ba073e298205613f3f6fc69e3d4211380f923",
+    "inherited_v41_module_sha256": "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621"
+  },
+  "verification": {
+    "synthetic_tests": "5 passed with validate_query_cache-compatible fallback_rate input",
+    "ruff": "PASS",
+    "compileall": "PASS"
+  }
+}

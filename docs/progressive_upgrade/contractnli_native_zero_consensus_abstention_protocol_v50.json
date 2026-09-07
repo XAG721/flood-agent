@@ -1,0 +1,217 @@
+{
+  "schema_version": "frc-contractnli-native-zero-consensus-abstention-protocol-v50",
+  "experiment_id": "FRC-CONTRACTNLI-NATIVE-ZERO-CONSENSUS-ABSTENTION-V50",
+  "registered_at": "2026-08-02T18:00:00+08:00",
+  "purpose": "Prospectively test whether a parameter-free, model-native zero-logit same-span consensus guard lets FRC abstain on missing evidence while preserving evidence selection for entailment and contradiction in untouched long contracts.",
+  "development_boundary": {
+    "theory_official_schema_and_synthetic_fixtures_only_for_formula_design": true,
+    "contractnli_archive_or_split_downloaded_listed_or_opened_before_registration": false,
+    "contractnli_document_hypothesis_label_span_score_or_case_level_stratum_used_for_design": false,
+    "v49_case_level_artifact_used_for_v50_design": false,
+    "v49_aggregate_negative_status_was_known": true,
+    "contractnli_train_split_permanently_excluded": true,
+    "contractnli_dev_split_permanently_excluded": true,
+    "v50_test_cases_may_never_be_reused_for_tuning_threshold_selection_or_method_selection": true,
+    "v50_does_not_retroactively_change_v41_through_v49": true
+  },
+  "official_sources": {
+    "dataset_page": "https://stanfordnlp.github.io/contract-nli/",
+    "dataset_archive": "https://stanfordnlp.github.io/contract-nli/resources/contract-nli.zip",
+    "dataset_repository": "https://github.com/stanfordnlp/contract-nli",
+    "dataset_repository_revision": "eced6528dd3c1d14d73f9a87df8f7bdbc03126f9",
+    "paper": "https://aclanthology.org/2021.findings-emnlp.164/",
+    "license_identifier": "CC-BY-4.0",
+    "official_page_declares_607_contracts_17_fixed_hypotheses_three_labels_and_span_evidence": true,
+    "archive_sha256_to_be_registered_after_download_before_archive_listing": true,
+    "raw_archive_must_remain_git_ignored_and_must_not_be_redistributed": true
+  },
+  "pre_registration_access_disclosure": {
+    "official_dataset_page_and_repository_metadata_read": true,
+    "official_schema_example_and_terms_read": true,
+    "download_link_availability_probe_attempted_by_web_reader": true,
+    "probe_result": "The web reader rejected application/x-zip-compressed content and did not expose, save, list or open archive bytes.",
+    "dataset_archive_saved_or_decompressed": false,
+    "test_member_or_content_seen": false,
+    "train_or_dev_member_or_content_seen": false
+  },
+  "source_access_order": [
+    "Freeze this protocol, implementation, runner and synthetic tests and register their SHA-256 values.",
+    "Download the official archive to the ignored benchmark cache without opening it and register byte length and SHA-256.",
+    "List member names only; require exactly one test JSON and permanently refuse to open train or dev JSON.",
+    "Open the test JSON once to perform the frozen structural census and deterministic sampling.",
+    "Create a label-free blind cache and a private commitment map; validate exact evidence ceiling before neural scoring.",
+    "Register the CUDA execution environment and every blind artifact hash before scoring.",
+    "Generate deterministic queries and score every sampled candidate without labels or evidence spans.",
+    "Reopen only the frozen test JSON after the complete score cache exists, join labels and evidence, evaluate once, publish any outcome and forbid v50 reuse for tuning."
+  ],
+  "dataset_scope": {
+    "split": "official test only",
+    "target_cases": 600,
+    "minimum_cases": 500,
+    "labels": [
+      "Entailment",
+      "Contradiction",
+      "NotMentioned"
+    ],
+    "evidence_defined_for": [
+      "Entailment",
+      "Contradiction"
+    ],
+    "not_mentioned_gold_behavior": "empty evidence selection",
+    "sampling": [
+      "Validate that each case has one of the three registered labels, that NotMentioned has no evidence indices, and that Entailment or Contradiction has at least one valid evidence span.",
+      "Within each label, sort cases by SHA-256 of the frozen salt, label, document id and hypothesis key.",
+      "Attempt a quota of 200 cases per label with a maximum of six sampled hypotheses per document.",
+      "If a label has fewer than 200 eligible cases, fill the remaining slots from every unselected eligible case in one global frozen-hash order while preserving the six-per-document cap.",
+      "Fail before query generation if fewer than 500 cases or the exact 600-case target cannot be formed."
+    ],
+    "sample_salt": "FRC-CONTRACTNLI-V50|",
+    "document_cluster_bootstrap": true,
+    "case_level_iid_bootstrap_forbidden": true
+  },
+  "blind_candidate_construction": {
+    "candidate_unit": "Each official ContractNLI span is one indivisible candidate with canonical id span_NNNN and official Python-style half-open character offsets.",
+    "full_document_candidate_pool": true,
+    "candidate_ceiling_required_for_entailment_and_contradiction": 1.0,
+    "not_mentioned_requires_empty_official_evidence": true,
+    "blind_cache_may_contain": [
+      "opaque case id",
+      "hypothesis text as query",
+      "candidate canonical id",
+      "candidate text",
+      "candidate token cost",
+      "source kind"
+    ],
+    "blind_cache_must_not_contain": [
+      "document id or file name",
+      "document URL",
+      "label or label group",
+      "gold evidence span indices",
+      "gold candidate ids",
+      "document type",
+      "sampling quota or stratum",
+      "raw character offsets"
+    ],
+    "score_cache_must_remain_label_and_gold_free": true
+  },
+  "frozen_models": {
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "refs/pr/5",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "refs/pr/4",
+    "offline_model_loading": true,
+    "query_generator": "none",
+    "query_generation_reason": "The fixed ContractNLI hypothesis is already the query; diagnostic role queries are deterministic templates so missing-evidence behavior is not confounded by generative parser failures."
+  },
+  "query_templates": {
+    "anchor": "{hypothesis}",
+    "first_fact": "Find contract language that directly entails or supports the following statement: {hypothesis}",
+    "second_fact_or_bridge": "Find contract language that contradicts, negates, or rules out the following statement: {hypothesis}",
+    "counterevidence": "Find exceptions, exclusions, limitations, or scope conditions relevant to the following statement: {hypothesis}",
+    "query_text_or_template_may_not_change_after_registration": true
+  },
+  "methods": {
+    "shared_candidate_pool": true,
+    "top_k": 5,
+    "token_budgets": [
+      256,
+      512,
+      1024
+    ],
+    "ungated_non_frc_baselines": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "cross_encoder_knapsack"
+    ],
+    "ungated_frc_controls": [
+      "dynamic_rank_coverage_frc_v41",
+      "adaptive_argmax_cardinality_frc_v43",
+      "low_core_divergence_guarded_frc_v49"
+    ],
+    "shared_consensus_gated_non_frc_controls": [
+      "native_zero_consensus_bm25_topk_v50",
+      "native_zero_consensus_dense_topk_v50",
+      "native_zero_consensus_hybrid_topk_v50",
+      "native_zero_consensus_cross_encoder_topk_v50",
+      "native_zero_consensus_cross_encoder_knapsack_v50"
+    ],
+    "anchor_gate_frc_control": "native_zero_anchor_adaptive_frc_v50",
+    "candidate_method": "native_zero_consensus_adaptive_frc_v50",
+    "candidate_method_formula": [
+      "Use the reranker's raw pre-minmax logit; zero is the model-native binary decision boundary and no empirical threshold is fitted.",
+      "For each candidate span, compute the raw anchor, support, contradiction and exception-role logits using the frozen deterministic queries.",
+      "The anchor gate passes if any span has anchor_logit greater than zero.",
+      "The dual-polarity same-span consensus gate passes if any one span has anchor_logit greater than zero and either support_logit or contradiction_logit greater than zero.",
+      "The v50 candidate returns an empty evidence set when the consensus gate fails; when it passes, it uses the unchanged v43 adaptive argmax-cardinality target and unchanged v41 dynamic rank-coverage selector.",
+      "Every shared-consensus non-FRC control uses the identical consensus gate before its unchanged selector; the anchor-gate FRC control uses the identical v43 selector with only the anchor gate.",
+      "The exception role can influence the unchanged dynamic FRC selection but cannot alone open the evidence-existence gate.",
+      "No dataset-derived score quantile, temperature, margin, label prior, document statistic or post-result rule may alter the zero threshold, same-span condition, selector or budget."
+    ],
+    "candidate_is_an_abstention_guard_claim_not_a_new_selector_superiority_claim": true
+  },
+  "evaluation": {
+    "primary_metric": "evidence_or_abstention_macro_f1",
+    "per_case_metric": [
+      "For Entailment and Contradiction, maximum evidence-set F1 against the single official evidence reference.",
+      "For NotMentioned, 1 only when the selected evidence set is empty and 0 otherwise."
+    ],
+    "secondary_metrics": [
+      "evidence-bearing macro F1, precision, recall and complete evidence recall",
+      "NotMentioned exact abstention accuracy",
+      "overall abstention rate",
+      "mean selected unit count and token cost",
+      "paired utility deltas by token budget and supported strata"
+    ],
+    "bootstrap": {
+      "resamples": 10000,
+      "seed": 20260810,
+      "confidence": 0.95,
+      "unit": "document commitment cluster"
+    },
+    "minimum_supported_stratum_cases": 60,
+    "mandatory_strata": [
+      "label group",
+      "candidate-pool quartile",
+      "document-length quartile",
+      "document type",
+      "gate outcome"
+    ],
+    "strongest_baseline_selection_uses_only_frozen_aggregate_primary_metric": true,
+    "official_span_nli_bert": "Paper reference only: no released compatible trained weight is claimed or simulated, and it is not included in executable baseline comparisons.",
+    "official_leaderboard_result": false
+  },
+  "support_checks": {
+    "minimum_cases": 500,
+    "candidate_ceiling_complete_rate_on_evidence_cases": 1.0,
+    "not_mentioned_official_empty_evidence_rate": 1.0,
+    "candidate_minus_strongest_shared_gate_non_frc_point_at_least": 0.01,
+    "candidate_minus_strongest_shared_gate_non_frc_cluster_ci_low_above": 0.0,
+    "candidate_minus_strongest_ungated_frozen_frc_point_at_least": 0.01,
+    "candidate_minus_strongest_ungated_frozen_frc_cluster_ci_low_above": 0.0,
+    "candidate_minus_anchor_gate_frc_point_at_least": 0.005,
+    "candidate_minus_anchor_gate_frc_cluster_ci_low_above": 0.0,
+    "evidence_bearing_macro_f1_drop_vs_ungated_v43_at_most": 0.02,
+    "not_mentioned_abstention_accuracy_improvement_vs_anchor_gate_at_least": 0.05,
+    "candidate_abstention_rate_minimum": 0.05,
+    "candidate_abstention_rate_maximum": 0.95,
+    "every_budget_and_supported_stratum_delta_vs_strongest_shared_gate_non_frc_at_least": -0.02,
+    "deterministic_query_fallback_rate": 0.0
+  },
+  "decision_rules": {
+    "support_established_only_if_every_registered_check_passes": true,
+    "any_failed_check": "CONTRACTNLI_NATIVE_ZERO_CONSENSUS_SUPPORT_NOT_ESTABLISHED",
+    "schema_or_candidate_ceiling_failure_before_scoring": "CONTRACTNLI_SCHEMA_INCONCLUSIVE",
+    "selector_adoption_authorized_by_protocol": false,
+    "canary_or_default_authorized_by_protocol": false,
+    "gate_2_before_and_after_experiment": "NO-GO/SHADOW",
+    "negative_null_or_inconclusive_result_must_be_published": true
+  },
+  "known_scope_limits": [
+    "This is bounded full-contract evidence selection and abstention on fixed NDA hypotheses, not open-corpus retrieval or ContractNLI end-to-end NLI classification.",
+    "The balanced deterministic sample is a mechanism stress test and must not be presented as the natural test-set prevalence.",
+    "ContractNLI is legal-domain evidence and does not replace independent flood-domain expert evaluation.",
+    "A positive result would support only the frozen native-zero abstention guard; it would not reproduce Span NLI BERT, SetR or any unavailable trained model."
+  ]
+}

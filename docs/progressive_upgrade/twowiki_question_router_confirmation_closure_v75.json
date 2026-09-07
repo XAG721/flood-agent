@@ -1,0 +1,15 @@
+{
+  "schema_version": "frc-twowiki-question-router-confirmation-closure-v75",
+  "experiment_id": "FRC-2WIKI-QUESTION-ROUTED-SUPPORT-PATH-V75",
+  "development_result_sha256": "4aa6eaaf9fa228232e569df1aca315cb46930b349f88fe60484809c110f1fab6",
+  "confirmation_result_sha256": "aa066698229b25c7aa56bc119a1419bc1fa569cf23f4128812c1a5ba34533c1d",
+  "status": "2WIKI_V75_QUESTION_ROUTER_CASE_DISJOINT_SUPPORT_ESTABLISHED",
+  "development_gate_passed": true,
+  "confirmation_gate_passed": true,
+  "development_confirmation_overlap": 0,
+  "reuse_target_stages_for_router_feature_model_threshold_gate_or_selection": false,
+  "learned_router_superiority_over_lexical_control_established": false,
+  "selector_adoption_authorized": false,
+  "canary_or_default_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

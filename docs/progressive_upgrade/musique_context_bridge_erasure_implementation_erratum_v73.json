@@ -1,0 +1,54 @@
+{
+  "schema_version": "frc-musique-context-bridge-erasure-implementation-erratum-v73",
+  "experiment_id": "FRC-MUSIQUE-CONTEXT-BRIDGE-ERASURE-V73",
+  "registered_at": "2026-08-04T13:09:00+08:00",
+  "reason": "The first calibration prepare attempt verified registered file hashes but stopped before parsing any target row because validate_source_registration passed a sequence of prior-map Path objects to the inherited load_source_commitments function, whose contract is an iterable of decoded JSON row objects.",
+  "failure_boundary": {
+    "command": "prepare --stage calibration",
+    "exception": "AttributeError: 'WindowsPath' object has no attribute 'get'",
+    "target_source_files_hashed": true,
+    "target_rows_read_for_sampling": 0,
+    "v73_source_commitments_selected": 0,
+    "prepared_blind_rows_written": 0,
+    "candidate_map_rows_written": 0,
+    "qa_inputs_created": false,
+    "model_outputs_seen": false,
+    "feature_decisions_created": false,
+    "gold_join_started": false,
+    "answer_state_labels_or_metrics_seen": false
+  },
+  "correction": {
+    "semantics": "Open each registered prior-map path as UTF-8 JSONL, decode non-empty lines to row objects, pass those rows to the inherited commitment loader, and union the resulting commitments across all fifteen maps.",
+    "source_hash_or_commitment_expectation_changed": false,
+    "regression_test_added": "test_registered_prior_paths_are_loaded_as_jsonl_rows",
+    "synthetic_tests_after_correction": {
+      "passed": 19,
+      "failed": 0,
+      "target_source_used": false,
+      "model_files_used": false
+    }
+  },
+  "original_registration_hashes": {
+    "protocol": "0f77eb125c2f9a23c279e351c9df79b7b054ad17a40893e7a29736608dcf5fab",
+    "source_registration": "25c6280df30d023d9e22dfd86b95ff0b45bf612493cd5c8e9aa937686527c2b9",
+    "model_registration": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "module": "172ee506ba56fcb9a478bda824d950d6a7916c1aa3be0b5f3f7fb4a2af55c74d",
+    "runner": "a0cd5c588b10e17993c3cfe1785125bfc6e4d1a65c9b488b98b4edac07eecaa2",
+    "tests": "5d59a7f0800721f20600165e9910a98bec3472d1f8df8e42c1e674d5b8fa8c37"
+  },
+  "corrected_hashes": {
+    "protocol": "0f77eb125c2f9a23c279e351c9df79b7b054ad17a40893e7a29736608dcf5fab",
+    "source_registration": "25c6280df30d023d9e22dfd86b95ff0b45bf612493cd5c8e9aa937686527c2b9",
+    "original_implementation": "358a04d25f1b28f76e71bcf9e0eb9690af520f64e699d2cc7d0fb430b15a0c52",
+    "model_registration": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "module": "4684c1e13f96afb0cb8b342f4a0ccc82aca930c9f88a82aa136eb5a9349e7b4f",
+    "runner": "57201147b7ba6a54d718c3ef52626af89e5bdbc2a661930eaad8c288e9270a98",
+    "tests": "5bf324233824153506b2ea42384d1d58de4ad009353f7d15812584d7fc59dbdc"
+  },
+  "protocol_sample_erasure_feature_model_optimizer_threshold_gates_or_stage_sizes_changed": false,
+  "total_learned_scalars_across_reported_methods": 152,
+  "selector_or_retrieval_scoring_part_of_v73": false,
+  "selector_adoption_authorized": false,
+  "canary_or_default_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

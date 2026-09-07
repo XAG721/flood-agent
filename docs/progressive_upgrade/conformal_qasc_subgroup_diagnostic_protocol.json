@@ -1,0 +1,63 @@
+{
+  "schema_version": "frc-qasc-subgroup-diagnostic-protocol-v1",
+  "registered_on": "2026-07-31",
+  "registration_state": {
+    "qasc_overall_confirmation_was_known": true,
+    "qasc_question_type_results_were_not_inspected": true,
+    "purpose": "Post-confirmation descriptive localization of QASC failure heterogeneity only."
+  },
+  "frozen_inputs": {
+    "dataset": "QASC",
+    "split": "validation",
+    "score_source_path_label": "role_scores_qasc.jsonl",
+    "score_source_sha256": "6419428623c1c4ed1a5935acf1402331c166e9afa9a80f45441e9e7540c759c0",
+    "confirmation_report_path_label": "qasc_confirmation.json",
+    "confirmation_report_sha256": "54e96f3d1d5d7d5f4f9dbcc2e01496ff26abfe86e96f99f9f1c3be9e26ef3b30",
+    "required_confirmation_status": "NOT_CONFIRMED"
+  },
+  "implementation": {
+    "module_path": "research/frc_rag/qasc_subgroup_diagnostic.py",
+    "module_sha256": "b0fed7b98756929c5382cc3a420970d30159cbd9769fcdb445e1b3387d3dc667",
+    "runner_path": "scripts/run_qasc_subgroup_diagnostic.py",
+    "runner_sha256": "914cc9680287db110fecd4dfa648c394d6dcb1236aaed5a7e420022d7abb07c1"
+  },
+  "frozen_analysis": {
+    "dimension": "question_type",
+    "alpha": 0.1,
+    "split_versions": [
+      "frc-conformal-sufficiency-split-v1",
+      "frc-conformal-sufficiency-split-v1-repeat-01",
+      "frc-conformal-sufficiency-split-v1-repeat-02",
+      "frc-conformal-sufficiency-split-v1-repeat-03",
+      "frc-conformal-sufficiency-split-v1-repeat-04",
+      "frc-conformal-sufficiency-split-v1-repeat-05",
+      "frc-conformal-sufficiency-split-v1-repeat-06",
+      "frc-conformal-sufficiency-split-v1-repeat-07",
+      "frc-conformal-sufficiency-split-v1-repeat-08",
+      "frc-conformal-sufficiency-split-v1-repeat-09"
+    ],
+    "minimum_incomplete_case_families": 30,
+    "minimum_eligible_repeats": 7,
+    "eligible_stability_check": "For every eligible question type, mean case-family false-completion risk must be at most alpha and at least 7 of 10 eligible repeats must be at or below alpha.",
+    "dimensions_explicitly_excluded_as_degenerate": [
+      "required_role_count",
+      "candidate_count_bucket"
+    ]
+  },
+  "decision_rules": {
+    "descriptive_only": true,
+    "may_change_qasc_confirmation_status": false,
+    "may_select_or_tune_method": false,
+    "may_reopen_failed_post_hoc_methods": false,
+    "may_run_review_ranking": false,
+    "may_change_gate_2": false,
+    "gate_2": "NO-GO/SHADOW",
+    "production_policy": "SHADOW_OR_HUMAN_REVIEW_ONLY"
+  },
+  "claim_boundary": [
+    "Question-type repeats share QASC cases and are correlated descriptive checks.",
+    "Globally calibrated conformal thresholds do not provide distribution-free conditional guarantees by question type.",
+    "This diagnostic does not evaluate open-corpus retrieval and is not flood-domain expert validation.",
+    "MuSiQue remains outside this protocol and must not be downloaded or inspected."
+  ]
+}

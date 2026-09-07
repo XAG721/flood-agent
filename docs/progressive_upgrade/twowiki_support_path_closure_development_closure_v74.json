@@ -1,0 +1,10 @@
+{
+  "confirmation_open_authorized": false,
+  "development_result_sha256": "d380c07f9cf5c96b8eedc754536a5ef722fa843bfc262dab557d267d8f4a7e93",
+  "experiment_id": "FRC-2WIKI-SUPPORT-PATH-CLOSURE-V74",
+  "gate_2": "NO-GO/SHADOW",
+  "reuse_development_for_method_weight_gate_or_selection": false,
+  "schema_version": "frc-twowiki-support-path-closure-development-closure-v74",
+  "selector_adoption_authorized": false,
+  "status": "2WIKI_V74_SUPPORT_PATH_CLOSURE_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+}

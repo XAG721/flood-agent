@@ -1,0 +1,54 @@
+{
+  "schema_version": "frc-doc2dial-wood-v56-implementation-registration-v1",
+  "experiment_id": "FRC-DOC2DIAL-WOOD-SCHEMA-CORRECTED-TRANSFER-V56",
+  "registered_at": "2026-08-03T00:44:00+08:00",
+  "hashes": {
+    "protocol_sha256": "f3a5282189b5a8bc4e730d880dd17fb9f296bde21ddfa8e0fea0c85e7fa27c90",
+    "source_registration_sha256": "4f231951d9e2769b292ad6557a3abcbe6794990bbc1a55c3a3bc5b6ebf448669",
+    "module_sha256": "00876c9d83371388ba7c2b970777249798de297d1cc2ac247923b0c46a86cc89",
+    "runner_sha256": "e0eab505fe14132a302523d30b65e4546034cf8e35500144c00f78e91ec972ac",
+    "test_sha256": "f2e5873a897a4fa8820dacee84b4068dbef65929a44c950ac0c2e915e5bcab08"
+  },
+  "outcome_bearing_preparation_started_before_registration": false,
+  "confirmation_member_opened_before_registration": false,
+  "pre_outcome_schema_access_disclosed": true,
+  "v54_or_v55_case_level_artifact_query_candidate_score_or_metric_used": false,
+  "schema_corrections": {
+    "turns_list_supported": true,
+    "turns_keyed_object_supported": true,
+    "keyed_object_requires_integer_keys_and_numeric_order": true,
+    "lexical_fallback_for_noninteger_keys": false,
+    "all_empty_references_are_no_answer_per_official_readme": true,
+    "adjacent_ood_act_is_descriptive_subtype_only": true
+  },
+  "unchanged_mechanism": {
+    "models_queries_candidate_construction_retrieval_pool_probe_pool_gate_selector_budgets_and_support_thresholds_changed": false,
+    "candidate": "v54 anchor Top-1 plus atomic-role Top-1 winners inside anchor Top-3",
+    "gate": "associated document rank one among eight by maximum anchor reranker logit",
+    "learned_parameter": null
+  },
+  "synthetic_verification": {
+    "lint_command": "python -m ruff check research/frc_rag/doc2dial_wood_schema_corrected_transfer.py scripts/run_doc2dial_wood_schema_corrected_transfer.py tests/test_frc_doc2dial_wood_schema_corrected_transfer.py",
+    "lint_result": "All checks passed",
+    "test_command": "python -m pytest tests/test_frc_doc2dial_wood_schema_corrected_transfer.py -q --basetemp D:\\graduation_project\\output\\pytest-tmp-doc2dial-wood-v56-synthetic",
+    "test_result": "6 passed, 1 non-fatal pytest cache ACL warning in 0.14s",
+    "compile_command": "python -m compileall -q research/frc_rag/doc2dial_wood_schema_corrected_transfer.py scripts/run_doc2dial_wood_schema_corrected_transfer.py",
+    "compile_result": "passed"
+  },
+  "synthetic_invariants_verified": {
+    "pre_outcome_schema_access_and_confirmation_boundary_disclosed": true,
+    "list_and_keyed_turn_containers_supported": true,
+    "integer_key_ordering_and_noninteger_rejection": true,
+    "empty_reference_official_semantics_and_ood_subtype": true,
+    "balanced_sample_order_invariance_and_caps": true,
+    "blind_cache_hides_state_subtype_dialogue_acts_references_labels_and_raw_ids": true,
+    "v56_decoy_salt_and_deterministic_queries": true,
+    "transferred_retrieval_gate_and_selector_unchanged": true,
+    "post_score_gold_join_carries_no_answer_subtype": true,
+    "gold_minimal_evaluation_adds_subtype_strata_and_v56_bootstrap_seed": true
+  },
+  "implementation_frozen_before_outcome_bearing_development_preparation": true,
+  "confirmation_source_access_authorized": false,
+  "selector_adoption_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

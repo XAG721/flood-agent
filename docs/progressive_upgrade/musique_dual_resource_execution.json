@@ -1,0 +1,151 @@
+{
+  "schema_version": "frc-musique-dual-resource-execution-v1",
+  "registered_at": "2026-08-01T09:36:28.9765293+08:00",
+  "experiment_id": "FRC-MUSIQUE-DUAL-RESOURCE-V36",
+  "registration_boundary": {
+    "protocol_path": "docs/progressive_upgrade/musique_dual_resource_protocol.json",
+    "protocol_sha256": "812cf844b1650713220f89f534bf45227f229b3fa767cdc1ff87cffc5ba505d4",
+    "musique_neural_scores_generated_before_registration": false,
+    "musique_selection_metrics_known_before_registration": false,
+    "purpose": "Freeze downloaded-source fingerprints, structural census, runtime, and deterministic selector interpretations before loading either neural model for MuSiQue scoring."
+  },
+  "source": {
+    "repository_revision": "922ac98f19a201998dbdae6d7f2887a5258dbdeb",
+    "repository_clean": true,
+    "archive_google_drive_id": "1tGdADlNjWFaHLeZZGShh2IRcpO6Lv24h",
+    "archive_path": ".cache/benchmarks/musique_v1.0.zip",
+    "archive_sha256": "98f839bf2fd5319f5c688aed77901a6d5c30b3b9f9f691ab9a8ecafb045ee0cd",
+    "archive_size_bytes": 272049578,
+    "archive_entry_count": 9,
+    "archive_path_traversal_entries": 0,
+    "dataset_path": ".cache/benchmarks/musique/data/musique_ans_v1.0_dev.jsonl",
+    "dataset_sha256": "15fa63794d18a94ce12411aca6e2327e65b6e83b0b1490efab3f1962e48abf3b",
+    "dataset_size_bytes": 30439728,
+    "license": "CC-BY-4.0",
+    "raw_source_committed": false
+  },
+  "structural_census": {
+    "source_rows": 2417,
+    "valid_rows": 2417,
+    "excluded_rows": 0,
+    "exclusions": {},
+    "duplicate_public_ids": 0,
+    "cross_label_conflicting_candidates": 0,
+    "case_ids_sha256": "7fa3e385401ca9f9bc49e65dbef2a6933578813cf2d246afbfb295182fcc999b",
+    "hop_distribution": {
+      "2": 1252,
+      "3": 760,
+      "4": 405
+    },
+    "paragraphs": {
+      "total": 48315,
+      "minimum_per_case": 17,
+      "mean_per_case": 19.989657,
+      "median_per_case": 20,
+      "p95_per_case": 20,
+      "maximum_per_case": 20
+    },
+    "unique_source_documents": {
+      "total": 48314,
+      "minimum_per_case": 17,
+      "mean_per_case": 19.989243,
+      "median_per_case": 20,
+      "p95_per_case": 20,
+      "maximum_per_case": 20
+    },
+    "support_units": {
+      "total": 6404,
+      "minimum_per_case": 2,
+      "mean_per_case": 2.649566,
+      "median_per_case": 2,
+      "p95_per_case": 4,
+      "maximum_per_case": 4
+    },
+    "candidate_chunks": {
+      "total": 48656,
+      "minimum_per_case": 17,
+      "mean_per_case": 20.130741,
+      "median_per_case": 20,
+      "p95_per_case": 21,
+      "maximum_per_case": 24,
+      "supporting_label_memberships": 6517,
+      "non_supporting_label_memberships": 42139
+    },
+    "chunk_token_cost": {
+      "total": 6101987,
+      "minimum": 26,
+      "mean": 125.410782,
+      "median": 110,
+      "p95": 268,
+      "maximum": 384
+    }
+  },
+  "frozen_adapter_interpretation": {
+    "normalization": "Collapse Unicode whitespace separately in title and paragraph_text, trim, then join non-empty title and paragraph with one newline.",
+    "deduplication": "Deduplicate complete normalized title-plus-paragraph text within each case; union public paragraph indices and supporting labels.",
+    "source_order": "Sort deduplicated source documents by normalized-text SHA-256 before assigning neutral source ordinals, so public paragraph order cannot influence deterministic ties.",
+    "case_id": "'musique::' + public id",
+    "candidate_id": "case_id + SHA-256-sorted neutral source ordinal + zero-based chunk ordinal; support labels and public paragraph indices are absent.",
+    "chunking": "Encode normalized source text without special tokens; emit [start:start+384] at stride 320; decode with skip_special_tokens=true and clean_up_tokenization_spaces=false.",
+    "token_cost": "Number of pre-decode content token IDs in the chunk.",
+    "hop_stratum": "Length of question_decomposition, joined only during evaluation.",
+    "blind_cache": "Prepared and scored caches contain query/candidate text only as ignored runtime inputs; answer, aliases, answerability, decomposition, paragraph idx, is_supporting, and gold units are absent.",
+    "gold_join": "All ten methods emit candidate IDs for every budget before the raw source is reopened and support labels are joined."
+  },
+  "frozen_scoring_execution": {
+    "device": "cuda",
+    "embedding_batch_size": 64,
+    "reranker_batch_size": 256,
+    "case_batch_size": 16,
+    "use_fp16": true,
+    "offline_model_loading": true,
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "tokenizer_class": "XLMRobertaTokenizerFast",
+    "tokenizer_vocab_size": 250002,
+    "score_semantics": "Exactly reuse the v35 per-case BM25, normalized dense, RRF hybrid, calibrated direct cross-encoder, and four mixed role scores."
+  },
+  "frozen_selector_execution": {
+    "top_k": 5,
+    "budgets": [512, 1024, 1500],
+    "strongest_baseline_candidates": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "cross_encoder_density",
+      "cross_encoder_knapsack",
+      "coverage_greedy_proxy"
+    ],
+    "old_frc_comparator": "frc_select_v34",
+    "failed_cost_aware_comparator": "frc_cost_aware_v35",
+    "dual_resource_formula": "marginal_F / (token_count / token_budget + 1 / top_k)",
+    "dual_resource_ties": "larger marginal_F, larger cross-encoder score, lower token_count, ascending candidate_id",
+    "singleton_guard": true,
+    "hard_budget_behavior": "All methods skip infeasible ranked candidates, return at most five chunks, and never exceed the requested token budget."
+  },
+  "runtime": {
+    "python": "3.10.20",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "gpu": "NVIDIA GeForce RTX 4060 Ti",
+    "cuda_available": true,
+    "cuda_runtime": "12.4",
+    "numpy": "2.2.6",
+    "torch": "2.4.1+cu124",
+    "transformers": "4.46.3",
+    "sentence_transformers": "3.3.1"
+  },
+  "stopping_and_output": {
+    "no_formula_threshold_prompt_or_weight_tuning_after_registration": true,
+    "no_case_replacement": true,
+    "all_2417_valid_rows_required": true,
+    "prepared_blind_cache": ".cache/benchmarks/musique/prepared_dual_resource_blind.jsonl",
+    "resumable_blind_score_cache": ".cache/benchmarks/musique/scored_dual_resource_blind.jsonl",
+    "lock_file": ".cache/benchmarks/musique/scored_dual_resource_blind.jsonl.lock",
+    "derived_evidence_contains_raw_text": false,
+    "negative_results_published": true,
+    "gate_boundary": "The result cannot by itself change Gate 2, authorize CANARY/DEFAULT, reproduce SetR, or establish flood-domain effectiveness."
+  }
+}

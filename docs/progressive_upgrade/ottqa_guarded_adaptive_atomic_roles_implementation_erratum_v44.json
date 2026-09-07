@@ -1,0 +1,48 @@
+{
+  "schema_version": "frc-ottqa-guarded-adaptive-atomic-roles-implementation-erratum-v44",
+  "experiment_id": "FRC-OTTQA-GUARDED-ADAPTIVE-ATOMIC-ROLES-V44",
+  "registered_at": "2026-08-02T04:41:11+08:00",
+  "base_implementation_registration_sha256": "797aeb50d6fabaf931ba41325c9f9723d44bc6b5b3e66aca04cb5b73aba3df87",
+  "protocol_erratum_sha256": "e7341f3ce645f27ea1fbf3f8bc79691b14a8c4b5655035f83bdb8112ff906019",
+  "trigger": {
+    "stage": "pinned sparse checkout before data parsing",
+    "error": "Windows rejected official Git paths containing reserved filename characters",
+    "question_answer_evidence_or_table_content_parsed_before_erratum": false,
+    "neural_query_generation_started": false,
+    "neural_scoring_started": false,
+    "metrics_computed": false
+  },
+  "correction": {
+    "summary": "Add a tar-backed source adapter and replace extracted-directory runtime registration with one source-archive commitment.",
+    "archive_members_are_read_without_filesystem_extraction": true,
+    "official_git_blob_and_directory_manifest_validation_preserved": true,
+    "directory_backed_adapter_retained_for_synthetic_tests": true,
+    "selection_rule_changed": false,
+    "candidate_construction_changed": false,
+    "candidate_pool_size_changed": false,
+    "formula_changed": false,
+    "model_or_revision_changed": false,
+    "budget_or_threshold_changed": false,
+    "metric_or_decision_rule_changed": false
+  },
+  "verification": {
+    "targeted_pytest": "8 passed in 0.14s",
+    "full_pytest": "377 passed, 1 warning in 303.77s",
+    "ruff": "All checks passed",
+    "python_compile": "passed",
+    "windows_invalid_git_name_tar_case": "passed",
+    "test_data": "synthetic only",
+    "ottqa_data_content_used_by_tests": false
+  },
+  "hashes": {
+    "protocol_sha256": "95116d2af455d1f8792e81cc1ed1f0f48db5fd7ef1274d257f73cec8e5c1e072",
+    "protocol_erratum_sha256": "e7341f3ce645f27ea1fbf3f8bc79691b14a8c4b5655035f83bdb8112ff906019",
+    "module_sha256": "e5f8977884f5ee87398735eaf1462bc180a9f07f4edbaa04c0d5466761b4e605",
+    "runner_sha256": "0f9a08d5aa65d7af83c4b8db3b3bae84000d24b1e8a4b7a4e0ed6898efa87034",
+    "test_sha256": "e2f7454c85854a827bfe52cf3fcfff7c6b836faae1cd8050cba7823f3dc76ca7",
+    "inherited_v41_module_sha256": "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621"
+  },
+  "scientific_effect": "none; storage portability only",
+  "method_or_threshold_changed": false,
+  "negative_null_or_inconclusive_result_must_still_be_published": true
+}

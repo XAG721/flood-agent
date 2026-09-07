@@ -1,0 +1,724 @@
+{
+  "metadata": {
+    "schema_version": "frc-conformal-sufficiency-v1",
+    "status": "RUN_PUBLIC_REAL_MODEL_SPLIT_CONFORMAL_ABSTENTION",
+    "dataset": "ConditionalQA",
+    "source_path_label": "role_scores_conditionalqa.jsonl",
+    "source_sha256": "feb0d75957c1bb09f07985979bb0816abc761ce6fafc66b40d9d99b02c1374b5",
+    "reference_run": {
+      "status": "VERIFIED_BY_HASHED_REFERENCE_REPORT",
+      "report_path_label": "run_report.md",
+      "report_sha256": "ae7cb9392be2bbfc0e08b0cdb7a9223d4dca247518db0924940e36d9b214bc65",
+      "scoring_backend": "real",
+      "embedding_model": "BAAI/bge-large-en-v1.5",
+      "reranker_model": "BAAI/bge-reranker-large",
+      "score_calibration": "per_case_minmax",
+      "role_relevance_mix": 0.15,
+      "frc_alpha_beta_gamma": [
+        2.0,
+        1.0,
+        0.0
+      ],
+      "generation_outputs_used": false
+    },
+    "eligible_cases": 261,
+    "variant_count": 1044,
+    "split_version": "frc-conformal-sufficiency-split-v1",
+    "split_rule": "SHA-256(case_id): train [0,.4), calibration [.4,.7), evaluation [.7,1)",
+    "missing_ratios": [
+      0.0,
+      0.25,
+      0.5,
+      0.75
+    ],
+    "selector": {
+      "method": "frc_select",
+      "top_k": 5,
+      "token_budget": 1500,
+      "role_threshold": 0.55
+    },
+    "label_definition": "complete only when no gold source evidence was removed and the frozen FRC selector selected every original gold evidence id",
+    "feature_leakage_control": "features use candidate scores, required roles, token counts and selected ids only; gold, gold_roles and gold_evidence_ids are excluded",
+    "paired_test_implementation": "two-sided exact McNemar binomial tail computed with log-sum-exp to avoid large-discordance integer-to-float overflow",
+    "primary_alpha": 0.1
+  },
+  "split_summary": {
+    "train": {
+      "cases": 110,
+      "variants": 440,
+      "complete_variants": 67,
+      "incomplete_variants": 373,
+      "auc": 0.904085
+    },
+    "calibration": {
+      "cases": 76,
+      "variants": 304,
+      "complete_variants": 40,
+      "incomplete_variants": 264,
+      "auc": 0.914205
+    },
+    "evaluation": {
+      "cases": 75,
+      "variants": 300,
+      "complete_variants": 44,
+      "incomplete_variants": 256,
+      "auc": 0.931552
+    }
+  },
+  "model": {
+    "feature_names": [
+      "candidate_count",
+      "selected_count",
+      "selected_token_budget_ratio",
+      "selected_candidate_fraction",
+      "required_role_count",
+      "role_top_mean",
+      "role_top_min",
+      "role_top_max",
+      "role_top_std",
+      "role_second_mean",
+      "role_second_min",
+      "role_second_max",
+      "role_second_std",
+      "role_gap_mean",
+      "role_gap_min",
+      "role_gap_max",
+      "role_gap_std",
+      "role_top_relevance_mean",
+      "role_top_relevance_min",
+      "role_top_relevance_max",
+      "selected_role_top_mean",
+      "selected_role_top_min",
+      "selected_role_top_max",
+      "selected_role_top_std",
+      "selected_relevance_mean",
+      "selected_relevance_min",
+      "selected_relevance_max",
+      "selected_relevance_std",
+      "candidate_top5_relevance_mean",
+      "candidate_top5_relevance_max",
+      "candidate_top5_relevance_std",
+      "role_top_selected_fraction",
+      "unique_role_top_fraction",
+      "selected_overlap_cross_topk",
+      "selected_role_redundancy",
+      "selected_relevance_mass_fraction",
+      "candidate_token_budget_ratio"
+    ],
+    "scaler_mean": [
+      6.384090909091,
+      3.840909090909,
+      0.500845454545,
+      0.759744671635,
+      2.827272727273,
+      0.718904450977,
+      0.683105901152,
+      0.751325372413,
+      0.030171299813,
+      0.276387031618,
+      0.215968482421,
+      0.337131419334,
+      0.053788289143,
+      0.442517419359,
+      0.363561257513,
+      0.5211697268,
+      0.069441352141,
+      0.674975738831,
+      0.644586410739,
+      0.702448279402,
+      0.71884100251,
+      0.682937387722,
+      0.751323953348,
+      0.03024364038,
+      0.32045824443,
+      0.087761595178,
+      0.729665458633,
+      0.26098691789,
+      0.320526326963,
+      0.729665458633,
+      0.260924293484,
+      0.963825757576,
+      0.441590909091,
+      0.963181818182,
+      0.673534534761,
+      0.923494347226,
+      0.829496969697
+    ],
+    "scaler_scale": [
+      4.948390150609,
+      1.518719284286,
+      0.20798383376,
+      0.294630771152,
+      0.761088824216,
+      0.382532184544,
+      0.398523984117,
+      0.377633243722,
+      0.063438263887,
+      0.300570557277,
+      0.259789645851,
+      0.354740157215,
+      0.076713132512,
+      0.339293163078,
+      0.353167707412,
+      0.347314728208,
+      0.085170662494,
+      0.397454515649,
+      0.414230400028,
+      0.402624412302,
+      0.382517692927,
+      0.398491102873,
+      0.377632795739,
+      0.063419867482,
+      0.238463913758,
+      0.215917929126,
+      0.395054688157,
+      0.171614100085,
+      0.23849011819,
+      0.395054688157,
+      0.171581985473,
+      0.184213136721,
+      0.218237300921,
+      0.182430219876,
+      0.35532384612,
+      0.228939115346,
+      0.662829154741
+    ],
+    "intercept": -2.651173225684,
+    "weights": [
+      -0.084035030454,
+      0.358139641912,
+      -0.019776120892,
+      0.596754624785,
+      0.295063738268,
+      0.255075454063,
+      0.383594948567,
+      0.215494524199,
+      -0.461733576173,
+      0.204148309568,
+      0.260994598709,
+      0.23913741134,
+      0.211469044042,
+      0.106732476315,
+      0.149085229477,
+      -0.086827342943,
+      -0.348177663614,
+      -0.167175772711,
+      0.027065478892,
+      0.170314476345,
+      0.256481975728,
+      0.387071088218,
+      0.215528475272,
+      -0.471304598139,
+      -0.196537778284,
+      -0.814868905737,
+      0.409533324901,
+      0.209164569173,
+      -0.197870475663,
+      0.409533324901,
+      0.211123981839,
+      0.074028907123,
+      0.125584057964,
+      0.195322269201,
+      -0.335185036879,
+      0.181470627928,
+      -0.298111093624
+    ],
+    "l2": 4.0,
+    "iterations": 80,
+    "optimizer": "deterministic class-balanced IRLS"
+  },
+  "calibration": {
+    "method": "one-sided split-conformal upper quantile over each calibration case's maximum incomplete-variant score; declarations require score strictly above the threshold",
+    "case_level_calibration_units": 75,
+    "incomplete_calibration_variants": 264,
+    "thresholds": {
+      "0.05": 0.842161689711,
+      "0.1": 0.797547919989,
+      "0.2": 0.733613828121
+    },
+    "alphas": {
+      "0.05": {
+        "alpha": 0.05,
+        "threshold": 0.842161689711,
+        "threshold_order_statistic_rank": 73,
+        "finite_sample_nominal_case_error_upper_bound": 0.039473684211,
+        "evaluation": {
+          "variants": 300,
+          "complete_variants": 44,
+          "incomplete_variants": 256,
+          "source_missing_variants": 204,
+          "declarations": 6,
+          "declaration_rate": 0.02,
+          "abstention_rate": 0.98,
+          "false_complete_count_all_incomplete": 2,
+          "false_complete_rate_all_incomplete": 0.007812,
+          "false_complete_rate_all_incomplete_wilson_95": [
+            0.002145,
+            0.028033
+          ],
+          "false_complete_count_source_missing": 2,
+          "false_complete_rate_source_missing": 0.009804,
+          "false_complete_rate_source_missing_wilson_95": [
+            0.002693,
+            0.035035
+          ],
+          "incomplete_case_families": 74,
+          "false_complete_case_families": 2,
+          "false_complete_case_family_rate": 0.027027,
+          "false_complete_case_family_rate_wilson_95": [
+            0.007443,
+            0.093293
+          ],
+          "source_missing_case_families": 74,
+          "source_missing_false_case_families": 2,
+          "source_missing_false_case_family_rate": 0.027027,
+          "true_complete_declaration_rate": 0.090909,
+          "complete_declaration_precision": 0.666667
+        }
+      },
+      "0.1": {
+        "alpha": 0.1,
+        "threshold": 0.797547919989,
+        "threshold_order_statistic_rank": 69,
+        "finite_sample_nominal_case_error_upper_bound": 0.092105263158,
+        "evaluation": {
+          "variants": 300,
+          "complete_variants": 44,
+          "incomplete_variants": 256,
+          "source_missing_variants": 204,
+          "declarations": 16,
+          "declaration_rate": 0.053333,
+          "abstention_rate": 0.946667,
+          "false_complete_count_all_incomplete": 3,
+          "false_complete_rate_all_incomplete": 0.011719,
+          "false_complete_rate_all_incomplete_wilson_95": [
+            0.003993,
+            0.033882
+          ],
+          "false_complete_count_source_missing": 3,
+          "false_complete_rate_source_missing": 0.014706,
+          "false_complete_rate_source_missing_wilson_95": [
+            0.005014,
+            0.042337
+          ],
+          "incomplete_case_families": 74,
+          "false_complete_case_families": 3,
+          "false_complete_case_family_rate": 0.040541,
+          "false_complete_case_family_rate_wilson_95": [
+            0.013882,
+            0.112547
+          ],
+          "source_missing_case_families": 74,
+          "source_missing_false_case_families": 3,
+          "source_missing_false_case_family_rate": 0.040541,
+          "true_complete_declaration_rate": 0.295455,
+          "complete_declaration_precision": 0.8125
+        }
+      },
+      "0.2": {
+        "alpha": 0.2,
+        "threshold": 0.733613828121,
+        "threshold_order_statistic_rank": 61,
+        "finite_sample_nominal_case_error_upper_bound": 0.197368421053,
+        "evaluation": {
+          "variants": 300,
+          "complete_variants": 44,
+          "incomplete_variants": 256,
+          "source_missing_variants": 204,
+          "declarations": 46,
+          "declaration_rate": 0.153333,
+          "abstention_rate": 0.846667,
+          "false_complete_count_all_incomplete": 17,
+          "false_complete_rate_all_incomplete": 0.066406,
+          "false_complete_rate_all_incomplete_wilson_95": [
+            0.041871,
+            0.103762
+          ],
+          "false_complete_count_source_missing": 15,
+          "false_complete_rate_source_missing": 0.073529,
+          "false_complete_rate_source_missing_wilson_95": [
+            0.045063,
+            0.11776
+          ],
+          "incomplete_case_families": 74,
+          "false_complete_case_families": 11,
+          "false_complete_case_family_rate": 0.148649,
+          "false_complete_case_family_rate_wilson_95": [
+            0.085081,
+            0.246895
+          ],
+          "source_missing_case_families": 74,
+          "source_missing_false_case_families": 10,
+          "source_missing_false_case_family_rate": 0.135135,
+          "true_complete_declaration_rate": 0.659091,
+          "complete_declaration_precision": 0.630435
+        }
+      }
+    }
+  },
+  "evaluation": {
+    "auc": 0.931552,
+    "baseline_role_coverage_heuristic": {
+      "variants": 300,
+      "complete_variants": 44,
+      "incomplete_variants": 256,
+      "source_missing_variants": 204,
+      "declarations": 189,
+      "declaration_rate": 0.63,
+      "abstention_rate": 0.37,
+      "false_complete_count_all_incomplete": 145,
+      "false_complete_rate_all_incomplete": 0.566406,
+      "false_complete_rate_all_incomplete_wilson_95": [
+        0.505161,
+        0.625688
+      ],
+      "false_complete_count_source_missing": 93,
+      "false_complete_rate_source_missing": 0.455882,
+      "false_complete_rate_source_missing_wilson_95": [
+        0.388983,
+        0.524413
+      ],
+      "incomplete_case_families": 74,
+      "false_complete_case_families": 60,
+      "false_complete_case_family_rate": 0.810811,
+      "false_complete_case_family_rate_wilson_95": [
+        0.707124,
+        0.88382
+      ],
+      "source_missing_case_families": 74,
+      "source_missing_false_case_families": 44,
+      "source_missing_false_case_family_rate": 0.594595,
+      "true_complete_declaration_rate": 1.0,
+      "complete_declaration_precision": 0.232804
+    },
+    "split_conformal": {
+      "variants": 300,
+      "complete_variants": 44,
+      "incomplete_variants": 256,
+      "source_missing_variants": 204,
+      "declarations": 16,
+      "declaration_rate": 0.053333,
+      "abstention_rate": 0.946667,
+      "false_complete_count_all_incomplete": 3,
+      "false_complete_rate_all_incomplete": 0.011719,
+      "false_complete_rate_all_incomplete_wilson_95": [
+        0.003993,
+        0.033882
+      ],
+      "false_complete_count_source_missing": 3,
+      "false_complete_rate_source_missing": 0.014706,
+      "false_complete_rate_source_missing_wilson_95": [
+        0.005014,
+        0.042337
+      ],
+      "incomplete_case_families": 74,
+      "false_complete_case_families": 3,
+      "false_complete_case_family_rate": 0.040541,
+      "false_complete_case_family_rate_wilson_95": [
+        0.013882,
+        0.112547
+      ],
+      "source_missing_case_families": 74,
+      "source_missing_false_case_families": 3,
+      "source_missing_false_case_family_rate": 0.040541,
+      "true_complete_declaration_rate": 0.295455,
+      "complete_declaration_precision": 0.8125
+    },
+    "per_missing_ratio": {
+      "0.0": {
+        "target_missing_ratio": 0.0,
+        "baseline_role_coverage_heuristic": {
+          "variants": 75,
+          "complete_variants": 29,
+          "incomplete_variants": 46,
+          "source_missing_variants": 0,
+          "declarations": 75,
+          "declaration_rate": 1.0,
+          "abstention_rate": 0.0,
+          "false_complete_count_all_incomplete": 46,
+          "false_complete_rate_all_incomplete": 1.0,
+          "false_complete_rate_all_incomplete_wilson_95": [
+            0.922926,
+            1.0
+          ],
+          "false_complete_count_source_missing": 0,
+          "false_complete_rate_source_missing": 0.0,
+          "false_complete_rate_source_missing_wilson_95": [
+            0.0,
+            0.0
+          ],
+          "incomplete_case_families": 46,
+          "false_complete_case_families": 46,
+          "false_complete_case_family_rate": 1.0,
+          "false_complete_case_family_rate_wilson_95": [
+            0.922926,
+            1.0
+          ],
+          "source_missing_case_families": 0,
+          "source_missing_false_case_families": 0,
+          "source_missing_false_case_family_rate": 0.0,
+          "true_complete_declaration_rate": 1.0,
+          "complete_declaration_precision": 0.386667
+        },
+        "split_conformal": {
+          "variants": 75,
+          "complete_variants": 29,
+          "incomplete_variants": 46,
+          "source_missing_variants": 0,
+          "declarations": 8,
+          "declaration_rate": 0.106667,
+          "abstention_rate": 0.893333,
+          "false_complete_count_all_incomplete": 0,
+          "false_complete_rate_all_incomplete": 0.0,
+          "false_complete_rate_all_incomplete_wilson_95": [
+            0.0,
+            0.077074
+          ],
+          "false_complete_count_source_missing": 0,
+          "false_complete_rate_source_missing": 0.0,
+          "false_complete_rate_source_missing_wilson_95": [
+            0.0,
+            0.0
+          ],
+          "incomplete_case_families": 46,
+          "false_complete_case_families": 0,
+          "false_complete_case_family_rate": 0.0,
+          "false_complete_case_family_rate_wilson_95": [
+            0.0,
+            0.077074
+          ],
+          "source_missing_case_families": 0,
+          "source_missing_false_case_families": 0,
+          "source_missing_false_case_family_rate": 0.0,
+          "true_complete_declaration_rate": 0.275862,
+          "complete_declaration_precision": 1.0
+        }
+      },
+      "0.25": {
+        "target_missing_ratio": 0.25,
+        "baseline_role_coverage_heuristic": {
+          "variants": 75,
+          "complete_variants": 10,
+          "incomplete_variants": 65,
+          "source_missing_variants": 59,
+          "declarations": 55,
+          "declaration_rate": 0.733333,
+          "abstention_rate": 0.266667,
+          "false_complete_count_all_incomplete": 45,
+          "false_complete_rate_all_incomplete": 0.692308,
+          "false_complete_rate_all_incomplete_wilson_95": [
+            0.572024,
+            0.79113
+          ],
+          "false_complete_count_source_missing": 39,
+          "false_complete_rate_source_missing": 0.661017,
+          "false_complete_rate_source_missing_wilson_95": [
+            0.533725,
+            0.768623
+          ],
+          "incomplete_case_families": 65,
+          "false_complete_case_families": 45,
+          "false_complete_case_family_rate": 0.692308,
+          "false_complete_case_family_rate_wilson_95": [
+            0.572024,
+            0.79113
+          ],
+          "source_missing_case_families": 59,
+          "source_missing_false_case_families": 39,
+          "source_missing_false_case_family_rate": 0.661017,
+          "true_complete_declaration_rate": 1.0,
+          "complete_declaration_precision": 0.181818
+        },
+        "split_conformal": {
+          "variants": 75,
+          "complete_variants": 10,
+          "incomplete_variants": 65,
+          "source_missing_variants": 59,
+          "declarations": 5,
+          "declaration_rate": 0.066667,
+          "abstention_rate": 0.933333,
+          "false_complete_count_all_incomplete": 1,
+          "false_complete_rate_all_incomplete": 0.015385,
+          "false_complete_rate_all_incomplete_wilson_95": [
+            0.002721,
+            0.082133
+          ],
+          "false_complete_count_source_missing": 1,
+          "false_complete_rate_source_missing": 0.016949,
+          "false_complete_rate_source_missing_wilson_95": [
+            0.002998,
+            0.089957
+          ],
+          "incomplete_case_families": 65,
+          "false_complete_case_families": 1,
+          "false_complete_case_family_rate": 0.015385,
+          "false_complete_case_family_rate_wilson_95": [
+            0.002721,
+            0.082133
+          ],
+          "source_missing_case_families": 59,
+          "source_missing_false_case_families": 1,
+          "source_missing_false_case_family_rate": 0.016949,
+          "true_complete_declaration_rate": 0.4,
+          "complete_declaration_precision": 0.8
+        }
+      },
+      "0.5": {
+        "target_missing_ratio": 0.5,
+        "baseline_role_coverage_heuristic": {
+          "variants": 75,
+          "complete_variants": 4,
+          "incomplete_variants": 71,
+          "source_missing_variants": 71,
+          "declarations": 37,
+          "declaration_rate": 0.493333,
+          "abstention_rate": 0.506667,
+          "false_complete_count_all_incomplete": 33,
+          "false_complete_rate_all_incomplete": 0.464789,
+          "false_complete_rate_all_incomplete_wilson_95": [
+            0.353584,
+            0.579608
+          ],
+          "false_complete_count_source_missing": 33,
+          "false_complete_rate_source_missing": 0.464789,
+          "false_complete_rate_source_missing_wilson_95": [
+            0.353584,
+            0.579608
+          ],
+          "incomplete_case_families": 71,
+          "false_complete_case_families": 33,
+          "false_complete_case_family_rate": 0.464789,
+          "false_complete_case_family_rate_wilson_95": [
+            0.353584,
+            0.579608
+          ],
+          "source_missing_case_families": 71,
+          "source_missing_false_case_families": 33,
+          "source_missing_false_case_family_rate": 0.464789,
+          "true_complete_declaration_rate": 1.0,
+          "complete_declaration_precision": 0.108108
+        },
+        "split_conformal": {
+          "variants": 75,
+          "complete_variants": 4,
+          "incomplete_variants": 71,
+          "source_missing_variants": 71,
+          "declarations": 2,
+          "declaration_rate": 0.026667,
+          "abstention_rate": 0.973333,
+          "false_complete_count_all_incomplete": 1,
+          "false_complete_rate_all_incomplete": 0.014085,
+          "false_complete_rate_all_incomplete_wilson_95": [
+            0.002491,
+            0.075561
+          ],
+          "false_complete_count_source_missing": 1,
+          "false_complete_rate_source_missing": 0.014085,
+          "false_complete_rate_source_missing_wilson_95": [
+            0.002491,
+            0.075561
+          ],
+          "incomplete_case_families": 71,
+          "false_complete_case_families": 1,
+          "false_complete_case_family_rate": 0.014085,
+          "false_complete_case_family_rate_wilson_95": [
+            0.002491,
+            0.075561
+          ],
+          "source_missing_case_families": 71,
+          "source_missing_false_case_families": 1,
+          "source_missing_false_case_family_rate": 0.014085,
+          "true_complete_declaration_rate": 0.25,
+          "complete_declaration_precision": 0.5
+        }
+      },
+      "0.75": {
+        "target_missing_ratio": 0.75,
+        "baseline_role_coverage_heuristic": {
+          "variants": 75,
+          "complete_variants": 1,
+          "incomplete_variants": 74,
+          "source_missing_variants": 74,
+          "declarations": 22,
+          "declaration_rate": 0.293333,
+          "abstention_rate": 0.706667,
+          "false_complete_count_all_incomplete": 21,
+          "false_complete_rate_all_incomplete": 0.283784,
+          "false_complete_rate_all_incomplete_wilson_95": [
+            0.193735,
+            0.395173
+          ],
+          "false_complete_count_source_missing": 21,
+          "false_complete_rate_source_missing": 0.283784,
+          "false_complete_rate_source_missing_wilson_95": [
+            0.193735,
+            0.395173
+          ],
+          "incomplete_case_families": 74,
+          "false_complete_case_families": 21,
+          "false_complete_case_family_rate": 0.283784,
+          "false_complete_case_family_rate_wilson_95": [
+            0.193735,
+            0.395173
+          ],
+          "source_missing_case_families": 74,
+          "source_missing_false_case_families": 21,
+          "source_missing_false_case_family_rate": 0.283784,
+          "true_complete_declaration_rate": 1.0,
+          "complete_declaration_precision": 0.045455
+        },
+        "split_conformal": {
+          "variants": 75,
+          "complete_variants": 1,
+          "incomplete_variants": 74,
+          "source_missing_variants": 74,
+          "declarations": 1,
+          "declaration_rate": 0.013333,
+          "abstention_rate": 0.986667,
+          "false_complete_count_all_incomplete": 1,
+          "false_complete_rate_all_incomplete": 0.013514,
+          "false_complete_rate_all_incomplete_wilson_95": [
+            0.002389,
+            0.072654
+          ],
+          "false_complete_count_source_missing": 1,
+          "false_complete_rate_source_missing": 0.013514,
+          "false_complete_rate_source_missing_wilson_95": [
+            0.002389,
+            0.072654
+          ],
+          "incomplete_case_families": 74,
+          "false_complete_case_families": 1,
+          "false_complete_case_family_rate": 0.013514,
+          "false_complete_case_family_rate_wilson_95": [
+            0.002389,
+            0.072654
+          ],
+          "source_missing_case_families": 74,
+          "source_missing_false_case_families": 1,
+          "source_missing_false_case_family_rate": 0.013514,
+          "true_complete_declaration_rate": 0.0,
+          "complete_declaration_precision": 0.0
+        }
+      }
+    },
+    "paired_false_complete_test": {
+      "scope": "evaluation variants whose selected set is actually incomplete",
+      "baseline_error_conformal_correct": 142,
+      "baseline_correct_conformal_error": 0,
+      "discordant_pairs": 142,
+      "two_sided_exact_p_value": 3.587324068671557e-43
+    }
+  },
+  "decision": {
+    "finding": "The calibrated head is evaluated as a safety abstention mechanism, not as a retrieval-quality improvement.",
+    "gate_2": "NO-GO/SHADOW",
+    "production_policy": "SHADOW_OR_HUMAN_REVIEW_ONLY",
+    "limitations": [
+      "ConditionalQA is cross-domain rather than a real district flood corpus.",
+      "Missingness is deterministic synthetic removal from a frozen candidate pool.",
+      "Completeness labels are derived from benchmark evidence ids, not double-expert flood-domain judgments.",
+      "The evaluation is a single grouped split and does not authorize CANARY or DEFAULT."
+    ]
+  }
+}

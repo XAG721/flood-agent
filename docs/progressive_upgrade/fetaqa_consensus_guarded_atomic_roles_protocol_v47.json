@@ -1,0 +1,220 @@
+{
+  "schema_version": "frc-fetaqa-consensus-guarded-atomic-roles-protocol-v47",
+  "experiment_id": "FRC-FETAQA-CONSENSUS-GUARDED-ATOMIC-ROLES-V47",
+  "registered_at": "2026-08-02T08:30:21+08:00",
+  "purpose": "Independently evaluate the unchanged v46 rank-only role-consensus cardinality rule on an untouched public dataset with explicit supporting table-cell annotations.",
+  "development_boundary": {
+    "tatqa_v46_status": "TATQA_FULL_CONTEXT_POOL_INCONCLUSIVE",
+    "tatqa_v46_neural_scores_or_metrics_exist": false,
+    "candidate_formula_changed_after_tatqa_access": false,
+    "candidate_method_replayed_unchanged": "consensus_guarded_adaptive_cardinality_frc_v46",
+    "tatqa_answers_derivations_or_rel_paragraphs_used_for_v47": false,
+    "fetaqa_sample_content_seen_before_this_protocol": false,
+    "v47_formula_is_already_frozen_by_v46_synthetic_invariants": true
+  },
+  "official_sources": {
+    "repository": "https://github.com/Yale-LILY/FeTaQA",
+    "revision": "bbc441be807212d736c8c35a18146b530dde11d0",
+    "paper": "https://aclanthology.org/2022.tacl-1.3/",
+    "registered_split": "data/fetaQA-v1_dev.jsonl",
+    "registered_source_members": [
+      "data/fetaQA-v1_dev.jsonl",
+      "README.md",
+      "LICENSE"
+    ],
+    "dataset_license": "CC-BY-SA-4.0 as stated by the official repository; verify the frozen LICENSE before opening the data member"
+  },
+  "pre_registration_access_disclosure": {
+    "allowed_metadata_seen": [
+      "official repository name, task summary, data directory filenames and public branch commit id",
+      "official paper abstract and dataset-level count",
+      "official description of question, table, free-form answer and supporting table-cell pairs",
+      "repository license identifier"
+    ],
+    "sample_content_seen": false,
+    "dev_jsonl_downloaded_or_opened_before_protocol_hash": false,
+    "question_answer_table_or_supporting_cell_content_seen_before_protocol_hash": false
+  },
+  "source_access_order": [
+    "Write and hash this protocol.",
+    "Implement and test the FeTaQA schema adapter, candidate construction, sealed sampling, blind-cache boundary and evaluation using synthetic fixtures only while reusing the unchanged v46 selector.",
+    "Register implementation and test hashes before acquiring the frozen official source archive.",
+    "Acquire the archive without printing or browsing the registered dev JSONL member.",
+    "Verify revision, archive, LICENSE and registered member hashes before opening the dev JSONL.",
+    "Run a structural census and sealed candidate-ceiling check; stop before neural work if schema, minimum scope or exact supporting-cell alignment fails.",
+    "Generate all queries and neural scores without answer or highlighted-cell fields, then join supporting cells once for a locked evaluation.",
+    "Publish favorable, null, negative or inconclusive results and never tune on v47 cases."
+  ],
+  "dataset_scope": {
+    "evaluation_name": "FeTaQA full-table supporting-cell selection",
+    "split": "official data/fetaQA-v1_dev.jsonl at the frozen revision",
+    "eligible_row": [
+      "stable feta id and nonempty question",
+      "rectangular or ragged nonempty table array with at least three nonempty cells",
+      "nonempty highlighted supporting-cell coordinate list",
+      "every highlighted coordinate maps exactly to a nonempty canonical cell candidate"
+    ],
+    "sampling_rule": "Sort eligible ids by SHA-256 of 'FRC-FETAQA-V47|' plus id and then id; select the first 600 without replacement. If 400 to 599 are eligible, use all. If fewer than 400 are eligible, stop before query generation.",
+    "target_cases": 600,
+    "minimum_cases": 400,
+    "no_replacement": true,
+    "no_post_access_resampling": true,
+    "no_gold_count_or_table_size_balancing": true
+  },
+  "blind_candidate_construction": {
+    "table_units": "One candidate per nonempty table cell; canonical id cell_<row>_<column> preserves the official zero-based coordinate and candidate text includes page/section metadata plus row and column headers when available.",
+    "pool": "Every nonempty cell from the attached table; no highlighted-cell pruning, answer matching or learned first-stage truncation.",
+    "stored_fields": [
+      "case id",
+      "opaque official-id commitment",
+      "candidate canonical id",
+      "candidate text",
+      "candidate token cost",
+      "question text only until query generation completes"
+    ],
+    "forbidden_blind_fields": [
+      "answer",
+      "highlighted_cell_ids",
+      "gold candidate ids",
+      "gold count",
+      "answer-derived strings",
+      "official split labels or retrieval scores"
+    ],
+    "candidate_ceiling_registration": "After sealed sampling and candidate construction, highlighted_cell_ids may be used only to verify exact coordinate coverage and registered strata counts. No method, formula, threshold, query or candidate member may change afterward.",
+    "protective_behavior": "Any unmapped highlighted coordinate, duplicate id, forbidden blind field, alignment mismatch or nondeterministic rerun stops before query generation and writes no score cache."
+  },
+  "frozen_models": {
+    "atomic_query_generator": "Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4",
+    "atomic_query_generator_revision": "e9c932ac1893a49ae0fc497ad6e1e86e2e39af20",
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "offline_loading": true,
+    "score_calibration": "per-case independent min-max inherited from v41",
+    "rank_coverage_weight": 0.5
+  },
+  "methods": {
+    "shared_candidate_pool": true,
+    "top_k": 5,
+    "token_budgets": [
+      256,
+      512,
+      1024
+    ],
+    "non_frc_baselines": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "cross_encoder_knapsack"
+    ],
+    "frc_controls": [
+      "static_threshold_frc_v39_replay",
+      "static_rank_coverage_frc_v41",
+      "dynamic_rank_coverage_frc_v41",
+      "adaptive_argmax_cardinality_frc_v43",
+      "guarded_adaptive_cardinality_frc_v44",
+      "anchor_guarded_adaptive_cardinality_frc_v45"
+    ],
+    "candidate_method": "consensus_guarded_adaptive_cardinality_frc_v46",
+    "candidate_method_formula_unchanged_from_v46": [
+      "Rank every candidate independently for each of the unchanged four v41 dynamic atomic roles, using canonical id as the only tie-breaker.",
+      "Let A be the distinct role-rank-1 candidate ids.",
+      "Give one runner-up vote per role to its rank-2 candidate only when that candidate is not in A.",
+      "Expand by one exactly when a non-argmax candidate receives at least two runner-up votes.",
+      "Set target_cardinality = min(5, max(1, abs(A) + consensus_expansion)).",
+      "Select with the unchanged v41 dynamic rank-coverage greedy objective under the frozen token budget, with no duplicates.",
+      "No score threshold, table position, answer, highlighted coordinate, gold count, dataset statistic or post-result rule may alter the target or selection."
+    ],
+    "synthetic_invariants_inherited_from_v46": {
+      "protocol_sha256": "107ceca66c00bb70e424923c7ea879f16a24004debfe90f738ee7d89d8903ce8",
+      "implementation_registration_sha256": "2a2cfda4ffbe93d40b58aa8c3e80eed2d8409ae216f50e222723cd9868276d25",
+      "tests_passed": 6,
+      "method_change_authorized": false
+    }
+  },
+  "query_generation": {
+    "input": "question text only",
+    "output_keys": [
+      "anchor",
+      "first_fact",
+      "second_fact_or_bridge",
+      "counterevidence"
+    ],
+    "do_sample": false,
+    "max_input_tokens": 512,
+    "max_new_tokens": 160,
+    "batch_size": 8,
+    "fallback": "frozen label-neutral templates plus the original question",
+    "gold_fields_visible_to_generator": false
+  },
+  "evaluation": {
+    "gold_join": "After complete ordered query and score caches validate, map highlighted_cell_ids to canonical cell ids.",
+    "primary_metric": "mean across budgets of supporting-cell macro F1",
+    "macro_precision": "Mean per-case fraction of selected cell ids in highlighted cell ids; empty prediction precision is 1.",
+    "macro_recall": "Mean per-case fraction of highlighted cell ids selected.",
+    "macro_f1": "Mean per-case harmonic mean of supporting-cell precision and recall.",
+    "paired_bootstrap": {
+      "resamples": 10000,
+      "seed": 20260807,
+      "unit": "official FeTaQA id",
+      "interval": "percentile 95%",
+      "strongest_non_frc_selected_inside_each_resample": true,
+      "strongest_frozen_frc_control_selected_inside_each_resample": true
+    },
+    "mandatory_strata": [
+      "one versus two versus three-or-more highlighted cells",
+      "single-row versus multi-row highlighted evidence",
+      "table candidate-count quartiles determined before neural scoring",
+      "token budget",
+      "consensus expansion triggered versus not triggered"
+    ],
+    "secondary_metrics": [
+      "macro precision and recall",
+      "complete supporting-cell recall",
+      "selected unit count and token cost",
+      "consensus trigger rate",
+      "target-cardinality distribution",
+      "selection-set difference rates versus v43, v44 and v45",
+      "candidate pool size"
+    ]
+  },
+  "support_checks": {
+    "minimum_cases_met": ">= 400",
+    "candidate_ceiling_complete_rate": "= 1.00",
+    "query_parser_fallback_rate": "<= 0.05",
+    "consensus_trigger_rate": ">= 0.05 and <= 0.95",
+    "selection_set_difference_rate_vs_v43": ">= 0.05",
+    "selection_set_difference_rate_vs_v44": ">= 0.05",
+    "v47_minus_strongest_frozen_frc_control_point": ">= 0.005",
+    "v47_minus_strongest_frozen_frc_control_ci_low": "> 0",
+    "v47_minus_strongest_non_frc_point": ">= 0.01",
+    "v47_minus_strongest_non_frc_ci_low": "> 0",
+    "every_budget_and_supported_gold_count_or_row_dispersion_stratum_delta_vs_strongest_non_frc": ">= -0.02",
+    "mean_selected_unit_reduction_vs_dynamic": ">= 0.50",
+    "supporting_cell_recall_drop_vs_dynamic": "<= 0.02"
+  },
+  "decision_rules": {
+    "all_support_checks_pass": "FETAQA_CONSENSUS_GUARDED_SUPPORT_ESTABLISHED_ON_FULL_TABLE_POOL",
+    "informative_but_any_support_check_fails": "FETAQA_CONSENSUS_GUARDED_SUPPORT_NOT_ESTABLISHED",
+    "minimum_scope_schema_license_or_ceiling_fails": "FETAQA_FULL_TABLE_POOL_INCONCLUSIVE",
+    "gate_2": "Always remains NO-GO/SHADOW in v47; one public table-cell selection experiment cannot authorize CANARY or DEFAULT.",
+    "publication": "Publish favorable, null, negative or inconclusive results with source, protocol, implementation, cache and result hashes.",
+    "claims_forbidden": [
+      "official FeTaQA answer-generation leaderboard result",
+      "free-form answer superiority",
+      "table-text or open-corpus retrieval superiority",
+      "retroactive TAT-QA or FinQA improvement",
+      "real SetR reproduction",
+      "flood-domain validity",
+      "production readiness"
+    ]
+  },
+  "known_scope_limits": [
+    "FeTaQA supplies attached tables rather than open-corpus retrieval.",
+    "The endpoint is supporting-cell selection, not free-form answer generation.",
+    "The dataset tests structured table evidence only and does not cover text-table routing.",
+    "Wikipedia table evidence cannot replace district flood-domain expert evaluation."
+  ]
+}

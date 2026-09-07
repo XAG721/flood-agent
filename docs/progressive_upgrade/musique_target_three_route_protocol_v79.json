@@ -1,0 +1,134 @@
+{
+  "schema_version": "frc-musique-target-trained-three-route-protocol-v79",
+  "experiment_id": "FRC-MUSIQUE-TARGET-TRAINED-THREE-ROUTE-TRANSFER-V79",
+  "registered_on": "2026-08-04",
+  "research_question": "Can a finite-grid target-domain three-route router selected only on frozen v78 evidence generalize to case-disjoint new MuSiQue samples and beat every registered selector?",
+  "candidate": {
+    "name": "musique_target_trained_three_route_router_v79",
+    "model_development_experiment_id": "FRC-MUSIQUE-TARGET-TRAINED-THREE-ROUTE-ROUTER-V79",
+    "v78_target_domain_training_cases": 600,
+    "v79_target_training_or_tuning_cases": 0,
+    "feature_count": 71,
+    "feature_names_sha256": "51e029bb0b26995989365a7420275d27c78253fb0151c8a0183bd0811dc55548",
+    "routes": [
+      "cross_encoder_topk",
+      "soft_title_link_support_path_closure_v74",
+      "alternating_anchor_link_control"
+    ],
+    "targets": [
+      "soft_f1_minus_cross_encoder_f1",
+      "anchor_f1_minus_cross_encoder_f1"
+    ],
+    "model_configurations": 108,
+    "thresholds_per_model": 4,
+    "route_policy_configurations": 432,
+    "selected_model_configuration_index": 95,
+    "selected_threshold": 0.005,
+    "selection_metric": "v78 five-fold out-of-fold evidence_macro_f1",
+    "selected_oof_model_selection_f1": 0.551733,
+    "selected_oof_minus_v78_point": 0.005351,
+    "selected_oof_is_unbiased_confirmation": false,
+    "official_hop_answer_decomposition_support_flags_or_gold_used_at_runtime": false
+  },
+  "controls": [
+    "cross_encoder_topk",
+    "frc_select",
+    "soft_title_link_support_path_closure_v74",
+    "alternating_anchor_link_control",
+    "lexical_question_router_control",
+    "zero_shot_v75_question_router_control",
+    "graph_gbr_soft_override_router_v76",
+    "mean_calibrated_three_route_router_v78"
+  ],
+  "common_resources": {
+    "top_k": 5,
+    "token_budget": 1500,
+    "embedding_model": "BAAI/bge-large-en-v1.5@d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "score_calibration": "per-case min-max",
+    "role_relevance_mix": 0.15,
+    "rrf_k": 60
+  },
+  "stages": {
+    "development": {
+      "cases": 470,
+      "hop_quota": {
+        "2": 250,
+        "3": 150,
+        "4": 70
+      },
+      "selection_salt": "FRC-MUSIQUE-V79-DEVELOPMENT|",
+      "excludes_v65_through_v78": true,
+      "may_change_candidate_after_result": false
+    },
+    "confirmation": {
+      "cases": 470,
+      "hop_quota": {
+        "2": 250,
+        "3": 150,
+        "4": 70
+      },
+      "selection_salt": "FRC-MUSIQUE-V79-CONFIRMATION|",
+      "excludes_v65_through_v78_and_v79_development": true,
+      "open_only_if_every_development_gate_passes": true,
+      "noninferiority_alone_cannot_open_confirmation": true
+    }
+  },
+  "metrics": {
+    "primary": "evidence_macro_f1",
+    "secondary": [
+      "evidence_macro_recall",
+      "complete_evidence_recall",
+      "mean_selected_tokens",
+      "route_distribution"
+    ],
+    "paired_uncertainty": "10000 case bootstrap resamples",
+    "development_seed": 20261141,
+    "confirmation_seed": 20261142
+  },
+  "development_gates": {
+    "exact_cases": 470,
+    "exact_hop_quota": {
+      "2": 250,
+      "3": 150,
+      "4": 70
+    },
+    "prior_training_or_stage_overlap": 0,
+    "invalid_selector_output_rate": 0.0,
+    "candidate_evidence_macro_f1_at_least": 0.55,
+    "candidate_complete_evidence_recall_at_least": 0.55,
+    "candidate_minus_strongest_registered_control_f1_at_least": 0.005,
+    "candidate_minus_strongest_registered_control_ci_low_above": 0.0,
+    "candidate_minus_frozen_v78_f1_at_least": 0.005,
+    "candidate_minus_frozen_v78_ci_low_above": 0.0,
+    "every_hop_delta_vs_best_control_at_least": -0.005,
+    "at_least_two_routes_each_cover_at_least_fraction": 0.05,
+    "largest_route_fraction_at_most": 0.9,
+    "mean_selected_tokens_not_above_strongest_control_by_more_than_fraction": 0.05
+  },
+  "noninferiority_envelope": {
+    "candidate_minus_strongest_control_point_at_least": -0.005,
+    "candidate_minus_strongest_control_ci_low_at_least": -0.01,
+    "candidate_minus_frozen_v78_point_at_least": 0.0,
+    "every_hop_delta_vs_best_control_at_least": -0.02,
+    "invalid_selector_output_rate": 0.0
+  },
+  "decision_policy": {
+    "development_advantage": "open confirmation only when every strict gate passes",
+    "development_noninferiority_only": "stop before confirmation and preserve diagnostic result",
+    "development_failure": "stop before confirmation; do not modify model, threshold, features, gates or sample",
+    "confirmation_success": "record case-disjoint same-dataset generalization only; do not authorize selector adoption, CANARY, DEFAULT or Gate 2",
+    "confirmation_failure": "close v79 and prohibit post-hoc repair on confirmation cases"
+  },
+  "claim_limits": {
+    "v78_is_target_domain_training_and_model_selection_not_independent_confirmation": true,
+    "v79_is_prospective_new_sample_same_dataset_generalization": true,
+    "strict_zero_target_tuning": false,
+    "independent_training_dataset_confirmation": false,
+    "official_musique_leaderboard_result": false,
+    "answer_generation_evaluation": false,
+    "real_setr_comparison": false,
+    "flood_domain_expert_or_production_evidence": false,
+    "selector_canary_default_or_gate2_authorized": false
+  }
+}

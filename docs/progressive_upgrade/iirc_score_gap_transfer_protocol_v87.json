@@ -1,0 +1,217 @@
+{
+  "schema_version": "frc-iirc-score-gap-transfer-protocol-v87",
+  "experiment_id": "FRC-IIRC-SCORE-GAP-ROUTER-PROSPECTIVE-V87",
+  "registered_on": "2026-08-05",
+  "objective": "Prospectively test whether a safety-constrained IIRC score-gap router trained on the exposed v86 development cohort can improve source-level evidence F1 over every frozen registered control on new case-disjoint IIRC partitions.",
+  "research_design": {
+    "claim_type": "case-disjoint same-dataset prospective evaluation",
+    "independent_cross_dataset_transfer_claim": false,
+    "v86_development_used_for_training": true,
+    "v86_development_cases": 400,
+    "v86_confirmation_used_or_accessed": false,
+    "v86_confirmation_permanently_excluded": true,
+    "v87_targets_drawn_only_from_v86_remaining_pool": true,
+    "v87_target_questions_answers_contexts_or_metrics_known_before_freeze": false
+  },
+  "partitions": {
+    "source_train_questions": 10839,
+    "v86_remaining_pool_cases": 9639,
+    "v86_remaining_pool_ordered_commitment": "d9e86cd22b2ffe43a48357ac4b1a226e026fb4ab742719b9f1743da6ee15d7f4",
+    "v87_eligible_pool_sorted_commitment": "adf053155b954245052da5854d3ba239f6f01ae8de6cdad4ba98423a7438ca2e",
+    "partition_salt": "FRC-IIRC-V87-REMAINING-PARTITION|",
+    "development": {
+      "cases": 400,
+      "commitment": "b72274afdc26ff3c817a2a8456503567f767b80f828afc7f4a3926ad2e971167",
+      "paired_bootstrap_seed": 20260809,
+      "single_evaluation_only": true,
+      "opens_confirmation_only_if_every_strict_gate_passes": true
+    },
+    "confirmation": {
+      "cases": 800,
+      "commitment": "08ff51fe0917291bcc2a1dbf1b6ebdb1d724bc968d00ca4a3accd03f05abcc86",
+      "paired_bootstrap_seed": 20260810,
+      "single_evaluation_only": true,
+      "requires_development_confirmation_open_artifact": true
+    },
+    "remaining_after_both_stages": {
+      "cases": 8439,
+      "commitment": "0681233dd79b5a21d717fd9e541b404b166673b6d08b24154825b321249a2d64"
+    },
+    "overlap_with_v86_development_or_confirmation": 0
+  },
+  "model_development": {
+    "artifact": "docs/progressive_upgrade/iirc_score_gap_router_model_development_v87.json",
+    "artifact_sha256": "e4a32857ca60ff7fa92c0f14a129b5101c4817fd95856f78e66012457792de70",
+    "model_payload_sha256": "ed9e8ee4804c8a05e36c6c7725cdb6dac2e90bbd3be00b0cd59558121cc29ebc",
+    "training_cases": 400,
+    "training_scored_sha256": "f7b54f2873a85f623e4d42d6a990323ee1429f1f70ece9c16362a339e5a4477f",
+    "training_gold_sha256": "29a350a3ada1cb4362abed8ae4a2d8bfd9796ad3fd143ca87c047ac7e4427e61",
+    "training_case_ids_sha256": "0432f2be129c4d69ff055825a8121d355706c54c2ff37e31db09f9c05e79f2f2",
+    "feature_dimension": 154,
+    "runtime_features": [
+      "question length, punctuation, conjunction, and 20 frozen surface cues",
+      "blind candidate count",
+      "top-eight and distribution summaries for BM25, dense, hybrid, and cross-encoder scores",
+      "frozen FRC top-four cross-encoder and five-role score summaries",
+      "adjacent frozen FRC cross-encoder and role-mean gaps"
+    ],
+    "model_grid": {
+      "kinds": [
+        "extra_trees",
+        "random_forest"
+      ],
+      "max_depth": [
+        3,
+        5,
+        null
+      ],
+      "min_samples_leaf": [
+        5,
+        10,
+        20
+      ],
+      "estimators": 150,
+      "max_features": 0.8,
+      "configurations": 18,
+      "crossfit_folds": 5,
+      "crossfit_salt": "FRC-IIRC-V87-CROSSFIT|"
+    },
+    "policy_grid": {
+      "action_1_bias": "-0.10 through 0.10 inclusive in 0.01 steps",
+      "action_2_bias": 0.0,
+      "action_3_bias": "-0.06 through 0.06 inclusive in 0.02 steps",
+      "action_4_bias": "-0.06 through 0.06 inclusive in 0.02 steps",
+      "configurations_per_model": 1029,
+      "total_model_policy_configurations": 18522
+    },
+    "crossfit_safety_constraints": {
+      "evidence_recall_delta_vs_fixed2_at_least": -0.01,
+      "complete_evidence_recall_delta_vs_fixed2_at_least": -0.01,
+      "mean_selected_sources_at_most": 2.5,
+      "second_largest_action_count_at_least": 20
+    },
+    "selected_model": {
+      "kind": "random_forest",
+      "max_depth": null,
+      "min_samples_leaf": 5,
+      "biases_for_actions_1_to_4": [
+        -0.07,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "crossfit_diagnostic": {
+      "candidate_f1": 0.638071,
+      "fixed2_f1": 0.620893,
+      "delta": 0.017179,
+      "delta_95_percent_ci": [
+        0.006476,
+        0.028119
+      ],
+      "candidate_evidence_recall": 0.689208,
+      "candidate_complete_evidence_recall": 0.4425,
+      "candidate_mean_selected_sources": 1.92,
+      "candidate_action_counts": {
+        "1": 59,
+        "2": 314,
+        "3": 27
+      },
+      "is_model_development_not_v87_target_evidence": true
+    }
+  },
+  "candidate": {
+    "name": "iirc_score_gap_frc_v87",
+    "source_order": "The unchanged v86 FRC greedy source order.",
+    "cardinality": "Argmax of four serialized random-forest predicted F1 utilities after frozen action biases.",
+    "maximum_sources": 4,
+    "runtime_gold_or_answer_inputs": false
+  },
+  "controls": [
+    "bm25_fixed2",
+    "dense_fixed2",
+    "hybrid_fixed2",
+    "cross_encoder_fixed1",
+    "cross_encoder_fixed2",
+    "cross_encoder_fixed3",
+    "cross_encoder_fixed4",
+    "frc_fixed1",
+    "frc_fixed2",
+    "frc_fixed3",
+    "frc_fixed4",
+    "cross_dataset_question_cardinality_frc_v86"
+  ],
+  "adapter_and_scoring": {
+    "identical_to_v86": true,
+    "candidate_unit": "One gold-free question-BM25 representative chunk per main or resolvable original linked source.",
+    "content_tokens": 384,
+    "overlap_tokens": 64,
+    "embedding_model": "BAAI/bge-large-en-v1.5@d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "score_calibration": "per-case min-max",
+    "role_relevance_mix": 0.15,
+    "rrf_k": 60,
+    "blind_cache_forbidden_fields": [
+      "answer",
+      "answer_type",
+      "context",
+      "question_links",
+      "gold_evidence_sources"
+    ]
+  },
+  "metrics": {
+    "primary": "source-level evidence macro F1",
+    "secondary": [
+      "source-level evidence macro precision",
+      "source-level evidence macro recall",
+      "complete-evidence recall",
+      "mean selected sources",
+      "candidate action distribution",
+      "answer-type, gold-cardinality, and candidate-ceiling strata"
+    ],
+    "paired_bootstrap_resamples": 10000,
+    "confidence_interval": 0.95,
+    "strongest_control_selected_inside_each_bootstrap_resample": true
+  },
+  "strict_gates": {
+    "exact_stage_cases": true,
+    "prior_or_stage_overlap": 0,
+    "invalid_selector_output_rate_at_most": 0.0,
+    "candidate_evidence_macro_f1_at_least": 0.62,
+    "candidate_complete_evidence_recall_at_least": 0.42,
+    "candidate_minus_strongest_registered_control_f1_at_least": 0.005,
+    "candidate_minus_strongest_registered_control_f1_ci_low_above": 0.0,
+    "candidate_minus_frc_fixed2_f1_at_least": 0.005,
+    "candidate_minus_frc_fixed2_f1_ci_low_above": 0.0,
+    "candidate_complete_evidence_recall_delta_vs_strongest_at_least": -0.02,
+    "candidate_evidence_macro_recall_delta_vs_strongest_at_least": -0.02,
+    "candidate_mean_selected_sources_above_strongest_at_most": 0.25,
+    "distinct_candidate_actions_at_least": 2,
+    "second_largest_candidate_action_fraction_at_least": 0.05,
+    "each_supported_stratum_min_cases": 40,
+    "each_supported_stratum_f1_delta_vs_global_strongest_at_least": -0.03
+  },
+  "decision_rules": {
+    "development_all_strict_gates_pass": "Create the confirmation-open artifact, then prepare, score, select, and evaluate confirmation exactly once.",
+    "development_any_strict_gate_fails": "Stop v87 without preparing or accessing confirmation content.",
+    "confirmation_all_strict_gates_pass": "Record case-disjoint IIRC source-selection support only; do not authorize adoption or deployment.",
+    "confirmation_any_strict_gate_fails": "Close v87 without adoption and do not repackage confirmation.",
+    "any_algorithm_model_adapter_control_metric_gate_or_partition_change": "Requires v88 and new untouched IDs from the v87 remaining commitment."
+  },
+  "artifact_and_license_boundary": {
+    "raw_iirc_archives_text_blind_scored_and_gold_rows": "Ignored cache only.",
+    "published_reports": "Aggregates and ID-level metrics without source text.",
+    "source_text_redistribution": false
+  },
+  "claim_limits": {
+    "case_disjoint_same_dataset_prospective_test": true,
+    "independent_cross_dataset_transfer": false,
+    "answer_generation_evaluated": false,
+    "setr_reproduced": false,
+    "flood_domain_effectiveness_established": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "production_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  }
+}

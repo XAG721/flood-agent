@@ -1,0 +1,64 @@
+{
+  "schema_version": "frc-musique-bridge-counterfactual-dependence-source-registration-v71",
+  "experiment_id": "FRC-MUSIQUE-BRIDGE-COUNTERFACTUAL-DEPENDENCE-V71",
+  "registered_at": "2026-08-04T10:02:00+08:00",
+  "targets": {
+    "train": {
+      "path": ".cache/benchmarks/musique/data/musique_full_v1.0_train.jsonl",
+      "bytes": 476696984,
+      "sha256": "b1cd998f7e0e2838d6fda024e4ad1eb0e7fc3edefdadb0bd9b5b10b0907f2034",
+      "previously_parsed": true,
+      "authorized_stages": ["calibration", "development"]
+    },
+    "dev": {
+      "path": ".cache/benchmarks/musique/data/musique_full_v1.0_dev.jsonl",
+      "bytes": 59422562,
+      "sha256": "8cab31d56a3a1c4ef491b205a8dab3f1ac9c66e472098c6cf1de4e20294f7a4a",
+      "previously_parsed": true,
+      "authorized_stages": ["confirmation_after_development_pass_only"]
+    },
+    "v71_source_commitments_selected_before_registration": 0,
+    "v71_model_outputs_or_joined_metrics_seen_before_registration": false
+  },
+  "official_repository": {
+    "path": ".cache/benchmarks/musique_repo",
+    "revision": "922ac98f19a201998dbdae6d7f2887a5258dbdeb",
+    "readme_sha256": "be0c6ebbd2f192c647633bdec79429b3d027bebfd37182f7d8f1d49fb53b3829",
+    "license_sha256": "8a5e40e360ca75413c65917144f6055537bee03e95f727c1bb55a7aff9d8d4e2",
+    "license": "CC BY 4.0",
+    "schema_source": "raw_data_to_official_format.py"
+  },
+  "model_registration": {
+    "path": "docs/progressive_upgrade/quac_roberta_qa_support_transfer_model_registration_v62.json",
+    "sha256": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "weights_architecture_or_tokenizer_change": false
+  },
+  "leakage_guard_source": {
+    "path": ".cache/benchmarks/squad2_v2/train-v2.0.json",
+    "bytes": 42123633,
+    "sha256": "68dcfbb971bd3e96d5b46c7177b16c1a4e7d4bdef19fb204502738552dede002",
+    "authorized_use": "normalized exact-question exclusion only"
+  },
+  "prior_exclusion_sources": {
+    "v65_invalid": {"path": ".cache/benchmarks/musique_full_roberta_transfer_v65/candidate_map.jsonl", "bytes": 1614348, "sha256": "bd26514fc68009b4f39ca94991d03c8cd980b84df363024d4b9a1f9c434dcbba", "expected_unique_source_commitments": 300},
+    "v65_corrected": {"path": ".cache/benchmarks/musique_full_roberta_transfer_v65_corrected/candidate_map.jsonl", "bytes": 1614474, "sha256": "d5095960ffcf38f4491830e19d5af0ac3c877edb5cd4ca5d5fd73d0f7179a965", "expected_unique_source_commitments": 600},
+    "v66_development": {"path": ".cache/benchmarks/musique_sequential_chain_support_v66/development/candidate_map.jsonl", "bytes": 1368000, "sha256": "51149c2f3d16bb1b666881b3d22c1f36e7d6d41d4f56013afc3be6889c4348fe", "expected_unique_source_commitments": 600},
+    "v67_calibration": {"path": ".cache/benchmarks/musique_calibrated_chain_support_v67/calibration/candidate_map.jsonl", "bytes": 2279790, "sha256": "374e9402a9ff030494756ed52913ea491f7e1bfb6279ae3b12dcbfcda363748f", "expected_unique_source_commitments": 1000},
+    "v67_development": {"path": ".cache/benchmarks/musique_calibrated_chain_support_v67/development/candidate_map.jsonl", "bytes": 1367895, "sha256": "49fb860203848374d9fbbc6decb3690efd7acfd0e1fe9ef0d912cfcf95af31dd", "expected_unique_source_commitments": 600},
+    "v68_calibration": {"path": ".cache/benchmarks/musique_multisignal_chain_support_v68/calibration/candidate_map.jsonl", "bytes": 2735685, "sha256": "524146e4d4a260126511b521b424476c2cb76747b18244b87f2ecfa34c8aa057", "expected_unique_source_commitments": 1200},
+    "v68_development": {"path": ".cache/benchmarks/musique_multisignal_chain_support_v68/development/candidate_map.jsonl", "bytes": 1367370, "sha256": "cf6f8075d903ce2c8141ea84f278933de181f6a1f4ead71279976fbc0960bd6c", "expected_unique_source_commitments": 600},
+    "v69_calibration": {"path": ".cache/benchmarks/musique_monotone_interaction_support_v69/calibration/candidate_map.jsonl", "bytes": 3647580, "sha256": "0ee5e37efd3661679a3ed4fe8b0a3f78e4ba58856161fd3c0130ee019a38e9e2", "expected_unique_source_commitments": 1600},
+    "v69_development": {"path": ".cache/benchmarks/musique_monotone_interaction_support_v69/development/candidate_map.jsonl", "bytes": 1823580, "sha256": "32c8ae4a7d75b07d1d6c829109b49f42e7470ab37bf412e7fd1f4062eba99de2", "expected_unique_source_commitments": 800},
+    "v70_calibration": {"path": ".cache/benchmarks/musique_paragraph_competition_support_v70/calibration/candidate_map.jsonl", "bytes": 3647790, "sha256": "7ac70e9be2038289230d9f09ec870c537ca0ed361e73d6bc47f5da93d1e539f3", "expected_unique_source_commitments": 1600},
+    "v70_development": {"path": ".cache/benchmarks/musique_paragraph_competition_support_v70/development/candidate_map.jsonl", "bytes": 1824000, "sha256": "ce6ec059c8121f7c720815623d451fa9c7a2b7529a3b26d4292e0b2e9d26f087", "expected_unique_source_commitments": 800},
+    "expected_union_source_commitments": 9700
+  },
+  "oracle_plan_access": {
+    "allowed_fields": ["question_decomposition[].id", "question_decomposition[].question", "decomposition list order"],
+    "forbidden_fields": ["question_decomposition[].answer", "question_decomposition[].paragraph_support_idx"]
+  },
+  "strict_independent_model_training_confirmation_claimed": false,
+  "selector_adoption_authorized": false,
+  "canary_or_default_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

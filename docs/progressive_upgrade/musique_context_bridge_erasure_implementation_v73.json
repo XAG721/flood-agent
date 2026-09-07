@@ -1,0 +1,62 @@
+{
+  "schema_version": "frc-musique-context-bridge-erasure-implementation-v73",
+  "experiment_id": "FRC-MUSIQUE-CONTEXT-BRIDGE-ERASURE-V73",
+  "registered_at": "2026-08-04T13:08:00+08:00",
+  "hashes": {
+    "protocol": "0f77eb125c2f9a23c279e351c9df79b7b054ad17a40893e7a29736608dcf5fab",
+    "source_registration": "25c6280df30d023d9e22dfd86b95ff0b45bf612493cd5c8e9aa937686527c2b9",
+    "model_registration": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "module": "172ee506ba56fcb9a478bda824d950d6a7916c1aa3be0b5f3f7fb4a2af55c74d",
+    "runner": "a0cd5c588b10e17993c3cfe1785125bfc6e4d1a65c9b488b98b4edac07eecaa2",
+    "tests": "5d59a7f0800721f20600165e9910a98bec3472d1f8df8e42c1e674d5b8fa8c37"
+  },
+  "target_files_were_previously_parsed": true,
+  "target_rows_read_for_v73_before_registration": 0,
+  "v73_source_commitments_selected_before_registration": 0,
+  "v73_model_outputs_or_joined_metrics_seen_before_registration": false,
+  "source_independent_synthetic_fixtures_only": true,
+  "synthetic_tests": {
+    "passed": 18,
+    "failed": 0,
+    "target_source_used": false,
+    "model_files_used": false
+  },
+  "frozen_behaviors": [
+    "v65 invalid through v72 development source-commitment union exclusion",
+    "pair assignment before balanced deterministic stage ordering",
+    "exact normalized SQuAD2 question exclusion",
+    "gold-free factual direct and sequential chain execution identical to v70 through v72",
+    "same-data v71 fixed-sentinel and v72 in-domain-rival controls",
+    "factual downstream query held unchanged during context intervention",
+    "case-insensitive bounded exact bridge-surface matching",
+    "all matching context mentions replaced by the registered RoBERTa <mask> token",
+    "six bounded monotone context-erasure features",
+    "nine-base-plus-six-erasure candidate and all frozen same-data controls",
+    "five-fold source-independent crossfit diagnostics",
+    "minimum mean dependency coverage gate of 0.50",
+    "development and confirmation all-must-pass gates",
+    "fail-closed retention and zero-invalid-output requirement",
+    "confirmation authorization only after every development gate passes"
+  ],
+  "model_weights_architecture_or_tokenizer_changed": false,
+  "learned_parameter_count_on_calibration": {
+    "direct_and_bottleneck_thresholds": 2,
+    "base_control_including_threshold": 11,
+    "additive_control_including_threshold": 29,
+    "interaction_control_including_threshold": 34,
+    "paragraph_competition_control_including_threshold": 17,
+    "fixed_sentinel_control_including_threshold": 17,
+    "in_domain_rival_control_including_threshold": 17,
+    "erasure_only_control_including_threshold": 8,
+    "erasure_candidate_including_threshold": 17
+  },
+  "total_learned_scalars_across_reported_methods": 152,
+  "development_or_confirmation_used_for_feature_model_threshold_gate_or_method_selection": false,
+  "official_decomposition_is_oracle_plan": true,
+  "automatic_decomposer_result_claimed": false,
+  "strict_independent_model_training_confirmation_claimed": false,
+  "selector_or_retrieval_scoring_part_of_v73": false,
+  "selector_adoption_authorized": false,
+  "canary_or_default_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

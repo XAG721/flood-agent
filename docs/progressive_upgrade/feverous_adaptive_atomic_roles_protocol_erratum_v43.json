@@ -1,0 +1,35 @@
+{
+  "schema_version": "frc-feverous-adaptive-atomic-roles-protocol-erratum-v43",
+  "experiment_id": "FRC-FEVEROUS-ADAPTIVE-ATOMIC-ROLES-V43",
+  "registered_at": "2026-08-02T02:29:10.6620044+08:00",
+  "base_protocol_sha256": "2591f23a9edc498c800a4dfcad680c5e2df36e8178cb30df7214ac7ed7264b57",
+  "trigger": {
+    "stage": "first blind preparation attempt before any cache file was written",
+    "observed_error": "AssertionError: FEVEROUS candidate pool exceeds frozen maximum",
+    "schema_only_observation": "Official raw baseline predicted_evidence contains at most 109 serialized evidence ids, whereas the protocol capacity assumed the official scorer's later 5 sentence plus 25 structured-element truncation.",
+    "prepared_cache_written": false,
+    "sample_ids_emitted_by_prepare": false,
+    "query_generation_started": false,
+    "neural_scoring_started": false,
+    "gold_metrics_computed": false
+  },
+  "correction": {
+    "field": "blind_candidate_construction.maximum_pool_size",
+    "original": 110,
+    "effective": 189,
+    "derivation": "lexical_pool_size 80 plus at most 109 official raw predicted evidence ids",
+    "selection_rule_changed": false,
+    "rule_priority": "Preserve the already registered union of BM25 top 80 and every valid official baseline predicted evidence unit; do not silently truncate the official seed set."
+  },
+  "unchanged": [
+    "dataset, split, exclusions, six challenge strata, sample salt, and sample size",
+    "BM25 lexical_pool_size=80",
+    "candidate pages and all candidate unit types",
+    "all model revisions and score calibration",
+    "adaptive argmax-cardinality formula",
+    "top_k, token budgets, baselines, metrics, bootstrap, and every support threshold",
+    "Gate 2 remains NO-GO/SHADOW"
+  ],
+  "method_or_threshold_changed": false,
+  "interpretation": "This raises only a fail-closed capacity assertion to the exact theoretical maximum implied by the pre-existing union rule; it does not add, remove, rank, or truncate a candidate beyond that rule."
+}

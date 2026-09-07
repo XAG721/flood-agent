@@ -1,0 +1,58 @@
+{
+  "checks": {
+    "dynamic_distinct_argmax_gain_at_least_0_25": true,
+    "dynamic_spearman_reduction_at_least_0_05": true,
+    "generation_fallback_rate_at_most_0_05": true,
+    "no_forbidden_field_leak": true,
+    "ordered_selection_identity_at_most_0_90": true
+  },
+  "mechanism": {
+    "distinct_argmax_gain": 1.076172,
+    "dynamic_mean_distinct_role_argmax": 2.230469,
+    "dynamic_within_family_mean_spearman": 0.521314,
+    "spearman_reduction": 0.424158,
+    "static_dynamic_ordered_selection_identity": 0.432292,
+    "static_mean_distinct_role_argmax": 1.154297,
+    "static_within_family_mean_spearman": 0.945471
+  },
+  "metadata": {
+    "budgets": [
+      512,
+      1024,
+      1500
+    ],
+    "cases": 512,
+    "experiment_id": "FRC-HOVER-DYNAMIC-ATOMIC-ROLES-V41",
+    "gold_fields_joined": false,
+    "protocol_sha256": "42486a98c01fd0b9663d3eb9bd0de63634d91605eed06060ac1236ad26997e86",
+    "source_artifacts": {
+      "implementation_sha256": "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621",
+      "pilot_prepared_sha256": "3efe81bb06653757c86554c779e2ef213d2a2d445615c3ed886654cb1b068dd0",
+      "pilot_queries_sha256": "53273aa56f7fe05bc36b3d326c8fe661e604f327391bb42fa73799f880aaebea",
+      "pilot_scored_sha256": "d8554ae139106c96714050330509670bf4bec052d8ab95f2490aa0b2750938fd"
+    }
+  },
+  "outcome": {
+    "all_mechanism_checks_pass": true,
+    "confirmation_open_authorized": true,
+    "gate_2": "NO-GO/SHADOW",
+    "selector_adoption_authorized": false,
+    "status": "MECHANISM_ESTABLISHED_OPEN_CONFIRMATION"
+  },
+  "query_generation": {
+    "fallback_count": 2,
+    "fallback_rate": 0.003906,
+    "fallback_reasons": {
+      "Expecting ',' delimiter: line 2 column 48 (char 49)": 1,
+      "Unterminated string starting at: line 5 column 24 (char 494)": 1
+    },
+    "gold_fields_visible_to_generator": false,
+    "query_length_codepoints": {
+      "maximum": 376,
+      "mean": 55.908203,
+      "minimum": 1
+    },
+    "rows": 512
+  },
+  "schema_version": "frc-hover-dynamic-atomic-mechanism-report-v1"
+}

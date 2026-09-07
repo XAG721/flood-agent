@@ -1,0 +1,11 @@
+{
+  "canary_or_default_authorized": false,
+  "confirmation_execution_started": false,
+  "development_result_sha256": "866e1f2d803b0ddfc68b8c78ced82de45dbb722a856b841417fa90dd7b539dc3",
+  "experiment_id": "FRC-QUAC-ROBERTA-QA-SUPPORT-TRANSFER-V62",
+  "gate_2": "NO-GO/SHADOW",
+  "quac_validation_content_opened_or_parsed": false,
+  "schema_version": "frc-quac-v62-development-closure-v1",
+  "selector_adoption_authorized": false,
+  "status": "QUAC_V62_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_VALIDATION"
+}

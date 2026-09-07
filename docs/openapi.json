@@ -5,6 +5,68 @@
     "version": "3.0.0"
   },
   "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "operations",
+          "operations"
+        ],
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ready": {
+      "get": {
+        "tags": [
+          "operations",
+          "operations"
+        ],
+        "summary": "Readiness",
+        "operationId": "readiness_ready_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/metrics": {
+      "get": {
+        "tags": [
+          "operations",
+          "operations"
+        ],
+        "summary": "Metrics",
+        "operationId": "metrics_metrics_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v3/events/{event_id}/twin-overview": {
       "get": {
         "tags": [
@@ -3871,67 +3933,11 @@
         }
       }
     },
-    "/health": {
-      "get": {
-        "tags": [
-          "operations"
-        ],
-        "summary": "Health",
-        "operationId": "health_health_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          }
-        }
-      }
-    },
-    "/ready": {
-      "get": {
-        "tags": [
-          "operations"
-        ],
-        "summary": "Readiness",
-        "operationId": "readiness_ready_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          }
-        }
-      }
-    },
-    "/metrics": {
-      "get": {
-        "tags": [
-          "operations"
-        ],
-        "summary": "Metrics",
-        "operationId": "metrics_metrics_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/v2/security/capabilities": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Get V2 Operator Capabilities",
         "operationId": "get_v2_operator_capabilities_v2_security_capabilities_get",
         "parameters": [
@@ -3976,6 +3982,9 @@
     },
     "/v2/supervisor/status": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Get V2 Supervisor Status",
         "operationId": "get_v2_supervisor_status_v2_supervisor_status_get",
         "responses": {
@@ -3992,6 +4001,9 @@
     },
     "/v2/alerts": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "List V2 Operational Alerts",
         "operationId": "list_v2_operational_alerts_v2_alerts_get",
         "parameters": [
@@ -4110,6 +4122,9 @@
     },
     "/v2/audit/records": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "List V2 Audit Records",
         "operationId": "list_v2_audit_records_v2_audit_records_get",
         "parameters": [
@@ -4228,6 +4243,9 @@
     },
     "/v2/archive/status": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Get V2 Archive Status",
         "operationId": "get_v2_archive_status_v2_archive_status_get",
         "responses": {
@@ -4244,6 +4262,9 @@
     },
     "/v2/archive/run": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Run V2 Archive Cycle",
         "operationId": "run_v2_archive_cycle_v2_archive_run_post",
         "parameters": [
@@ -4288,6 +4309,9 @@
     },
     "/v2/admin/dataset/status": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Get V2 Dataset Status",
         "operationId": "get_v2_dataset_status_v2_admin_dataset_status_get",
         "responses": {
@@ -4304,6 +4328,9 @@
     },
     "/v2/admin/dataset/jobs": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "List V2 Dataset Jobs",
         "operationId": "list_v2_dataset_jobs_v2_admin_dataset_jobs_get",
         "responses": {
@@ -4320,6 +4347,9 @@
     },
     "/v2/admin/dataset/fetch": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Fetch V2 Dataset Sources",
         "operationId": "fetch_v2_dataset_sources_v2_admin_dataset_fetch_post",
         "parameters": [
@@ -4374,6 +4404,9 @@
     },
     "/v2/admin/dataset/build": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Build V2 Dataset",
         "operationId": "build_v2_dataset_v2_admin_dataset_build_post",
         "parameters": [
@@ -4428,6 +4461,9 @@
     },
     "/v2/admin/dataset/validate": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Validate V2 Dataset",
         "operationId": "validate_v2_dataset_v2_admin_dataset_validate_post",
         "parameters": [
@@ -4472,6 +4508,9 @@
     },
     "/v2/admin/dataset/sync-demo-db": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Sync V2 Dataset",
         "operationId": "sync_v2_dataset_v2_admin_dataset_sync_demo_db_post",
         "parameters": [
@@ -4526,6 +4565,9 @@
     },
     "/v2/admin/dataset/jobs/{job_id}/cancel": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Cancel V2 Dataset Job",
         "operationId": "cancel_v2_dataset_job_v2_admin_dataset_jobs__job_id__cancel_post",
         "parameters": [
@@ -4579,6 +4621,9 @@
     },
     "/v2/admin/dataset/jobs/{job_id}/retry": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Retry V2 Dataset Job",
         "operationId": "retry_v2_dataset_job_v2_admin_dataset_jobs__job_id__retry_post",
         "parameters": [
@@ -4632,6 +4677,9 @@
     },
     "/v2/events": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Create V2 Event",
         "operationId": "create_v2_event_v2_events_post",
         "parameters": [
@@ -4657,7 +4705,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/flood_system__v2__models__EventCreateRequest"
+                "$ref": "#/components/schemas/flood_system__compat__legacy_platform__models__EventCreateRequest"
               }
             }
           }
@@ -4686,6 +4734,9 @@
     },
     "/v2/events/{event_id}/observations": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Ingest V2 Observations",
         "operationId": "ingest_v2_observations_v2_events__event_id__observations_post",
         "parameters": [
@@ -4749,6 +4800,9 @@
     },
     "/v2/events/{event_id}/simulation-updates": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Ingest V2 Simulation Update",
         "operationId": "ingest_v2_simulation_update_v2_events__event_id__simulation_updates_post",
         "parameters": [
@@ -4812,6 +4866,9 @@
     },
     "/v2/events/{event_id}/hazard-state": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Get V2 Hazard State",
         "operationId": "get_v2_hazard_state_v2_events__event_id__hazard_state_get",
         "parameters": [
@@ -4849,6 +4906,9 @@
     },
     "/v2/proposals/pending": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "List V2 Pending Regional Proposals",
         "operationId": "list_v2_pending_regional_proposals_v2_proposals_pending_get",
         "responses": {
@@ -4865,6 +4925,9 @@
     },
     "/v2/events/{event_id}/regional-proposals": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "List V2 Regional Proposals",
         "operationId": "list_v2_regional_proposals_v2_events__event_id__regional_proposals_get",
         "parameters": [
@@ -4918,6 +4981,9 @@
     },
     "/v2/events/{event_id}/regional-analysis-packages": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "List V2 Regional Analysis Packages",
         "operationId": "list_v2_regional_analysis_packages_v2_events__event_id__regional_analysis_packages_get",
         "parameters": [
@@ -4965,6 +5031,9 @@
     },
     "/v2/events/{event_id}/regional-analysis-packages/pending": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Get V2 Pending Regional Analysis Package",
         "operationId": "get_v2_pending_regional_analysis_package_v2_events__event_id__regional_analysis_packages_pending_get",
         "parameters": [
@@ -5002,6 +5071,9 @@
     },
     "/v2/proposals/{proposal_id}/draft": {
       "patch": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Update V2 Regional Proposal Draft",
         "operationId": "update_v2_regional_proposal_draft_v2_proposals__proposal_id__draft_patch",
         "parameters": [
@@ -5049,6 +5121,9 @@
     },
     "/v2/proposals/{proposal_id}/approve": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Approve V2 Regional Proposal",
         "operationId": "approve_v2_regional_proposal_v2_proposals__proposal_id__approve_post",
         "parameters": [
@@ -5096,6 +5171,9 @@
     },
     "/v2/proposals/{proposal_id}/reject": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Reject V2 Regional Proposal",
         "operationId": "reject_v2_regional_proposal_v2_proposals__proposal_id__reject_post",
         "parameters": [
@@ -5143,6 +5221,9 @@
     },
     "/v2/regional-analysis-packages/{package_id}/approve": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Approve V2 Regional Analysis Package",
         "operationId": "approve_v2_regional_analysis_package_v2_regional_analysis_packages__package_id__approve_post",
         "parameters": [
@@ -5190,6 +5271,9 @@
     },
     "/v2/regional-analysis-packages/{package_id}/reject": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Reject V2 Regional Analysis Package",
         "operationId": "reject_v2_regional_analysis_package_v2_regional_analysis_packages__package_id__reject_post",
         "parameters": [
@@ -5237,6 +5321,9 @@
     },
     "/v2/proposals/stream": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Stream V2 Pending Regional Proposals",
         "operationId": "stream_v2_pending_regional_proposals_v2_proposals_stream_get",
         "responses": {
@@ -5253,6 +5340,9 @@
     },
     "/v2/entities/{entity_id}/impact": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Get V2 Entity Impact",
         "operationId": "get_v2_entity_impact_v2_entities__entity_id__impact_get",
         "parameters": [
@@ -5306,6 +5396,9 @@
     },
     "/v2/advisories/generate": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Generate V2 Advisory",
         "operationId": "generate_v2_advisory_v2_advisories_generate_post",
         "requestBody": {
@@ -5342,6 +5435,9 @@
     },
     "/v2/copilot/sessions/bootstrap": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Bootstrap V2 Copilot Session",
         "operationId": "bootstrap_v2_copilot_session_v2_copilot_sessions_bootstrap_post",
         "requestBody": {
@@ -5378,6 +5474,9 @@
     },
     "/v2/copilot/sessions/{session_id}": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Get V2 Copilot Session",
         "operationId": "get_v2_copilot_session_v2_copilot_sessions__session_id__get",
         "parameters": [
@@ -5415,6 +5514,9 @@
     },
     "/v2/events/{event_id}/daily-reports": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "List V2 Daily Reports",
         "operationId": "list_v2_daily_reports_v2_events__event_id__daily_reports_get",
         "parameters": [
@@ -5452,6 +5554,9 @@
     },
     "/v2/events/{event_id}/episode-summaries": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "List V2 Event Episode Summaries",
         "operationId": "list_v2_event_episode_summaries_v2_events__event_id__episode_summaries_get",
         "parameters": [
@@ -5489,6 +5594,9 @@
     },
     "/v2/events/{event_id}/long-term-memory": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "List V2 Long Term Memory",
         "operationId": "list_v2_long_term_memory_v2_events__event_id__long_term_memory_get",
         "parameters": [
@@ -5526,6 +5634,9 @@
     },
     "/v2/copilot/sessions/{session_id}/memory": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Get V2 Copilot Session Memory",
         "operationId": "get_v2_copilot_session_memory_v2_copilot_sessions__session_id__memory_get",
         "parameters": [
@@ -5563,6 +5674,9 @@
     },
     "/v2/copilot/sessions/{session_id}/messages": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Send V2 Copilot Message",
         "operationId": "send_v2_copilot_message_v2_copilot_sessions__session_id__messages_post",
         "parameters": [
@@ -5610,6 +5724,9 @@
     },
     "/v2/copilot/sessions/{session_id}/proposals/{proposal_id}/approve": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Approve V2 Copilot Proposal",
         "operationId": "approve_v2_copilot_proposal_v2_copilot_sessions__session_id__proposals__proposal_id__approve_post",
         "parameters": [
@@ -5666,6 +5783,9 @@
     },
     "/v2/copilot/sessions/{session_id}/proposals/{proposal_id}/reject": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Reject V2 Copilot Proposal",
         "operationId": "reject_v2_copilot_proposal_v2_copilot_sessions__session_id__proposals__proposal_id__reject_post",
         "parameters": [
@@ -5722,6 +5842,9 @@
     },
     "/v2/copilot/sessions/{session_id}/proposals/batch-approve": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Batch Approve V2 Copilot Proposals",
         "operationId": "batch_approve_v2_copilot_proposals_v2_copilot_sessions__session_id__proposals_batch_approve_post",
         "parameters": [
@@ -5769,6 +5892,9 @@
     },
     "/v2/copilot/sessions/{session_id}/proposals/batch-reject": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Batch Reject V2 Copilot Proposals",
         "operationId": "batch_reject_v2_copilot_proposals_v2_copilot_sessions__session_id__proposals_batch_reject_post",
         "parameters": [
@@ -5816,6 +5942,9 @@
     },
     "/v2/admin/entity-profiles": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "List V2 Entity Profiles",
         "operationId": "list_v2_entity_profiles_v2_admin_entity_profiles_get",
         "parameters": [
@@ -5874,6 +6003,9 @@
         }
       },
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Create V2 Admin Entity Profile",
         "operationId": "create_v2_admin_entity_profile_v2_admin_entity_profiles_post",
         "requestBody": {
@@ -5910,6 +6042,9 @@
     },
     "/v2/admin/entity-profiles/{entity_id}": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Get V2 Admin Entity Profile",
         "operationId": "get_v2_admin_entity_profile_v2_admin_entity_profiles__entity_id__get",
         "parameters": [
@@ -5945,6 +6080,9 @@
         }
       },
       "put": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Update V2 Admin Entity Profile",
         "operationId": "update_v2_admin_entity_profile_v2_admin_entity_profiles__entity_id__put",
         "parameters": [
@@ -5990,6 +6128,9 @@
         }
       },
       "delete": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Delete V2 Admin Entity Profile",
         "operationId": "delete_v2_admin_entity_profile_v2_admin_entity_profiles__entity_id__delete",
         "parameters": [
@@ -6043,6 +6184,9 @@
     },
     "/v2/admin/areas/{area_id}/resource-status": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Get V2 Area Resource Status",
         "operationId": "get_v2_area_resource_status_v2_admin_areas__area_id__resource_status_get",
         "parameters": [
@@ -6078,6 +6222,9 @@
         }
       },
       "put": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Update V2 Area Resource Status",
         "operationId": "update_v2_area_resource_status_v2_admin_areas__area_id__resource_status_put",
         "parameters": [
@@ -6125,6 +6272,9 @@
     },
     "/v2/admin/events/{event_id}/resource-status": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Get V2 Event Resource Status",
         "operationId": "get_v2_event_resource_status_v2_admin_events__event_id__resource_status_get",
         "parameters": [
@@ -6160,6 +6310,9 @@
         }
       },
       "put": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Update V2 Event Resource Status",
         "operationId": "update_v2_event_resource_status_v2_admin_events__event_id__resource_status_put",
         "parameters": [
@@ -6205,6 +6358,9 @@
         }
       },
       "delete": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Delete V2 Event Resource Status",
         "operationId": "delete_v2_event_resource_status_v2_admin_events__event_id__resource_status_delete",
         "parameters": [
@@ -6258,6 +6414,9 @@
     },
     "/v2/admin/rag-documents": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "List V2 Rag Documents",
         "operationId": "list_v2_rag_documents_v2_admin_rag_documents_get",
         "responses": {
@@ -6274,6 +6433,9 @@
     },
     "/v2/admin/rag-documents/import": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Import V2 Rag Documents",
         "operationId": "import_v2_rag_documents_v2_admin_rag_documents_import_post",
         "requestBody": {
@@ -6310,6 +6472,9 @@
     },
     "/v2/admin/rag-documents/reload": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Reload V2 Rag Documents",
         "operationId": "reload_v2_rag_documents_v2_admin_rag_documents_reload_post",
         "parameters": [
@@ -6354,6 +6519,9 @@
     },
     "/v2/events/{event_id}/agent-status": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Get V2 Agent Status",
         "operationId": "get_v2_agent_status_v2_events__event_id__agent_status_get",
         "parameters": [
@@ -6391,6 +6559,9 @@
     },
     "/v2/events/{event_id}/experience-context": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Get V2 Experience Context",
         "operationId": "get_v2_experience_context_v2_events__event_id__experience_context_get",
         "parameters": [
@@ -6428,6 +6599,9 @@
     },
     "/v2/entities/{entity_id}/strategy-history": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Get V2 Strategy History",
         "operationId": "get_v2_strategy_history_v2_entities__entity_id__strategy_history_get",
         "parameters": [
@@ -6465,6 +6639,9 @@
     },
     "/v2/agent-metrics": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Get V2 Agent Metrics",
         "operationId": "get_v2_agent_metrics_v2_agent_metrics_get",
         "responses": {
@@ -6481,6 +6658,9 @@
     },
     "/v2/events/{event_id}/decision-report": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Get V2 Decision Report",
         "operationId": "get_v2_decision_report_v2_events__event_id__decision_report_get",
         "parameters": [
@@ -6518,6 +6698,9 @@
     },
     "/v2/evaluation/benchmarks": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "List V2 Evaluation Benchmarks",
         "operationId": "list_v2_evaluation_benchmarks_v2_evaluation_benchmarks_get",
         "responses": {
@@ -6534,6 +6717,9 @@
     },
     "/v2/evaluation/run": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Run V2 Evaluation",
         "operationId": "run_v2_evaluation_v2_evaluation_run_post",
         "parameters": [
@@ -6578,6 +6764,9 @@
     },
     "/v2/evaluation/reports/{report_id}": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Get V2 Evaluation Report",
         "operationId": "get_v2_evaluation_report_v2_evaluation_reports__report_id__get",
         "parameters": [
@@ -6615,6 +6804,9 @@
     },
     "/v2/evaluation/reports/{report_id}/replay": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Replay V2 Evaluation Report",
         "operationId": "replay_v2_evaluation_report_v2_evaluation_reports__report_id__replay_post",
         "parameters": [
@@ -6668,6 +6860,9 @@
     },
     "/v2/events/{event_id}/agent-tasks": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "List V2 Agent Tasks",
         "operationId": "list_v2_agent_tasks_v2_events__event_id__agent_tasks_get",
         "parameters": [
@@ -6705,6 +6900,9 @@
     },
     "/v2/events/{event_id}/shared-memory": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Get V2 Shared Memory",
         "operationId": "get_v2_shared_memory_v2_events__event_id__shared_memory_get",
         "parameters": [
@@ -6742,6 +6940,9 @@
     },
     "/v2/events/{event_id}/trigger-events": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "List V2 Trigger Events",
         "operationId": "list_v2_trigger_events_v2_events__event_id__trigger_events_get",
         "parameters": [
@@ -6779,6 +6980,9 @@
     },
     "/v2/events/{event_id}/agent-timeline": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "List V2 Agent Timeline",
         "operationId": "list_v2_agent_timeline_v2_events__event_id__agent_timeline_get",
         "parameters": [
@@ -6816,6 +7020,9 @@
     },
     "/v2/events/{event_id}/supervisor-runs": {
       "get": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "List V2 Supervisor Runs",
         "operationId": "list_v2_supervisor_runs_v2_events__event_id__supervisor_runs_get",
         "parameters": [
@@ -6853,6 +7060,9 @@
     },
     "/v2/agent-tasks/{task_id}/replay": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Replay V2 Agent Task",
         "operationId": "replay_v2_agent_task_v2_agent_tasks__task_id__replay_post",
         "parameters": [
@@ -6916,6 +7126,9 @@
     },
     "/v2/supervisor/tick": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Run V2 Supervisor Tick",
         "operationId": "run_v2_supervisor_tick_v2_supervisor_tick_post",
         "parameters": [
@@ -6976,6 +7189,9 @@
     },
     "/v2/events/{event_id}/supervisor/run": {
       "post": {
+        "tags": [
+          "legacy-platform-compatibility"
+        ],
         "summary": "Run V2 Supervisor For Event",
         "operationId": "run_v2_supervisor_for_event_v2_events__event_id__supervisor_run_post",
         "parameters": [
@@ -11552,43 +11768,7 @@
         ],
         "title": "ValidationError"
       },
-      "flood_system__response_workflow__models__EventCreateRequest": {
-        "properties": {
-          "title": {
-            "type": "string",
-            "title": "Title"
-          },
-          "area_id": {
-            "type": "string",
-            "title": "Area Id"
-          },
-          "alert": {
-            "$ref": "#/components/schemas/AlertInput"
-          },
-          "operator_id": {
-            "type": "string",
-            "title": "Operator Id"
-          },
-          "operator_role": {
-            "$ref": "#/components/schemas/OperatorRole"
-          },
-          "terminal_id": {
-            "type": "string",
-            "title": "Terminal Id",
-            "default": "unknown-terminal"
-          }
-        },
-        "type": "object",
-        "required": [
-          "title",
-          "area_id",
-          "alert",
-          "operator_id",
-          "operator_role"
-        ],
-        "title": "EventCreateRequest"
-      },
-      "flood_system__v2__models__EventCreateRequest": {
+      "flood_system__compat__legacy_platform__models__EventCreateRequest": {
         "properties": {
           "area_id": {
             "type": "string",
@@ -11622,6 +11802,42 @@
         "required": [
           "area_id",
           "title"
+        ],
+        "title": "EventCreateRequest"
+      },
+      "flood_system__response_workflow__models__EventCreateRequest": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "area_id": {
+            "type": "string",
+            "title": "Area Id"
+          },
+          "alert": {
+            "$ref": "#/components/schemas/AlertInput"
+          },
+          "operator_id": {
+            "type": "string",
+            "title": "Operator Id"
+          },
+          "operator_role": {
+            "$ref": "#/components/schemas/OperatorRole"
+          },
+          "terminal_id": {
+            "type": "string",
+            "title": "Terminal Id",
+            "default": "unknown-terminal"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "area_id",
+          "alert",
+          "operator_id",
+          "operator_role"
         ],
         "title": "EventCreateRequest"
       }

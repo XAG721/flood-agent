@@ -1,0 +1,43 @@
+{
+  "schema_version": "frc-fetaqa-consensus-guarded-atomic-roles-implementation-v47",
+  "experiment_id": "FRC-FETAQA-CONSENSUS-GUARDED-ATOMIC-ROLES-V47",
+  "registered_at": "2026-08-02T08:39:05+08:00",
+  "data_jsonl_downloaded_or_opened_before_registration": false,
+  "fetaqa_sample_content_seen_before_registration": false,
+  "v46_selector_replayed_without_change": true,
+  "v46_selector_registration": {
+    "protocol_sha256": "107ceca66c00bb70e424923c7ea879f16a24004debfe90f738ee7d89d8903ce8",
+    "implementation_registration_sha256": "2a2cfda4ffbe93d40b58aa8c3e80eed2d8409ae216f50e222723cd9868276d25",
+    "selector_module_sha256": "535726c01badae90bc6cf8e5f42395375472b79ba9374b2bf0576106ebd957ad"
+  },
+  "hashes": {
+    "protocol_sha256": "29e10028399535034b5384186565660ac4d051d2cd37d4990b7bdcc175540a7d",
+    "module_sha256": "88dd626d24635ceb74671a1e0395c8fae7c241541e26547955cbad1cec9fb655",
+    "runner_sha256": "d41b761d90eb347554cbdaa8c8650f358c8ba342c82fe45f65864b8c3018f113",
+    "test_sha256": "761856f2a8f143e4657f2b2e3dfa564c7a618b3d912cd36251c793849ea5afc2"
+  },
+  "synthetic_invariants_verified": {
+    "v46_consensus_targets_replayed": true,
+    "v46_candidate_permutation_invariant": true,
+    "v46_monotone_rank_transform_invariant": true,
+    "v46_source_kind_invariant": true,
+    "v46_selection_respects_budget_and_uniqueness": true,
+    "fetaqa_cell_coordinates_map_exactly": true,
+    "full_table_pool_excludes_empty_cells_only": true,
+    "sealed_hash_sampling_is_deterministic": true,
+    "blind_cache_excludes_answer_and_highlighted_cells": true,
+    "official_id_is_replaced_by_commitment": true,
+    "gold_join_occurs_after_blind_cache_construction": true,
+    "candidate_pool_quartiles_are_frozen_before_neural_scoring": true,
+    "locked_report_is_byte_deterministic": true
+  },
+  "synthetic_test_result": {
+    "command": "python -m pytest tests/test_frc_tatqa_consensus_guarded_atomic_roles.py tests/test_frc_fetaqa_consensus_guarded_atomic_roles.py -q -p no:cacheprovider",
+    "passed": 11,
+    "failed": 0
+  },
+  "method_or_threshold_change_after_registration_forbidden": true,
+  "source_access_order_must_be_followed": true,
+  "negative_null_or_inconclusive_result_must_be_published": true,
+  "gate_2": "NO-GO/SHADOW"
+}

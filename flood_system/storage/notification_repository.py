@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from ..v2.models import ExecutionLogEntry, NotificationDraft
-from ..v3.models import AudienceWarningDraft
+from ..compat.legacy_platform.models import ExecutionLogEntry, NotificationDraft
+from ..compat.agent_twin.models import AudienceWarningDraft
 
 
 class NotificationRepositoryMixin:

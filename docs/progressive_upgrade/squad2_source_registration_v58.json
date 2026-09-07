@@ -1,0 +1,30 @@
+{
+  "schema_version": "frc-squad2-v58-source-registration-v1",
+  "experiment_id": "FRC-SQUAD2-GENERATIVE-ANSWERABILITY-GATE-V58",
+  "registered_at": "2026-08-03T16:39:00+08:00",
+  "protocol_sha256_before_download": "fc84cadc924ce091999ddfaa6419aad52d73fe420806310f65dae9a383f79b84",
+  "predownload_freeze_sha256": "719e52859672287906087e3ee030a28ddacc9f73219f5ffb7d6a7ca8e3f85d33",
+  "official_homepage": "https://rajpurkar.github.io/SQuAD-explorer/",
+  "license": "CC BY-SA 4.0 as stated on the official SQuAD homepage",
+  "downloaded_as_opaque_bytes": true,
+  "json_content_parsed_before_registration": false,
+  "train_content_read_before_registration": false,
+  "dev_content_read": false,
+  "files": [
+    {
+      "stage": "development",
+      "path": "train-v2.0.json",
+      "url": "https://rajpurkar.github.io/SQuAD-explorer/dataset/train-v2.0.json",
+      "bytes": 42123633,
+      "sha256": "68dcfbb971bd3e96d5b46c7177b16c1a4e7d4bdef19fb204502738552dede002"
+    },
+    {
+      "stage": "confirmation",
+      "path": "dev-v2.0.json",
+      "url": "https://rajpurkar.github.io/SQuAD-explorer/dataset/dev-v2.0.json",
+      "bytes": 4370528,
+      "sha256": "80a5225e94905956a6446d296ca1093975c4d3b3260f1d6c8f68bc2ab77182d8"
+    }
+  ],
+  "boundary": "Only byte length and SHA-256 were computed before this registration. Neither JSON file was decoded, searched, previewed or parsed."
+}

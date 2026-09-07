@@ -1,0 +1,45 @@
+{
+  "schema_version": "frc-feverous-v43-execution-erratum-v1",
+  "experiment_id": "FRC-FEVEROUS-ADAPTIVE-ATOMIC-ROLES-V43",
+  "registered_at": "2026-08-02T03:32:35.6413276+08:00",
+  "base_execution_sha256": "887f955c848a8522262654c28fe28072837c044b2e3d893d588117816cde5647",
+  "trigger": {
+    "stage": "first locked evaluation after complete ordered blind caches",
+    "observed_error": "KeyError: 'parser_fallback_rate'",
+    "gold_join_completed": true,
+    "gold_metrics_computed_in_memory": true,
+    "bootstrap_resamples_computed_in_memory": 10000,
+    "metric_values_emitted_or_observed": false,
+    "report_or_result_artifact_written": false
+  },
+  "correction": "Authorize only the implementation erratum that maps the query cache validator's fallback_rate field into the already registered at-most-0.05 support check.",
+  "method_or_threshold_changed": false,
+  "previous_execution_hashes": {
+    "implementation_registration_sha256": "50887b302cea7e707a1e3339abac1b16145d30c80eeac701aa05d3148ce51b9c",
+    "implementation_erratum_sha256": "f3f2d782364d33bddf84c68baeaf6a18ef79df0562ee543c95201614e9dfcace",
+    "implementation_erratum2_sha256": "2c51b2ee4695f5a9200293c62f305e70f2d0ef60ecc09e1b23cb57270b5a9794",
+    "implementation_erratum3_sha256": "d00877e6d344ee0b2c12eeadbb38b706b43d69779887a49faa0bb71c1a5a80cd",
+    "protocol_sha256": "2591f23a9edc498c800a4dfcad680c5e2df36e8178cb30df7214ac7ed7264b57",
+    "protocol_erratum_sha256": "aec7c5658ee1574a0f8c44a36eb92109cdbfbda6d3cdf4d037257a479191f4db",
+    "development_sha256": "1ac8cfd964d4dcedc5de3375850fe3f93d39b89a73a475734bde864da1701f8f",
+    "baseline_prediction_sha256": "0f2a60ea6bcaf5fc56be5652c471c1000109380706144f923bb4311adb7b5556",
+    "database_archive_sha256": "e25e034d9848c75ab3311a7a7ad8e80e769240b5a36b055da475f20071314881",
+    "database_sha256": "a980581f55d46a252090b29269954503735b6f00274d05225476a650ab940276",
+    "prepared_blind_sha256": "dde44eeedca3f82e397084cc5097843298bc2e8be0fffee88928b6697c01e01d",
+    "candidate_map_sha256": "fbbfc3fa8dc33a546fd84100e447f828933c59a1fd27bbe36b1a00fac5a15327",
+    "census_sha256": "684e0e923bc8ba1ec73274df8bc7139e38de08ebda8c2e7fad52c3bbf7ca600f"
+  },
+  "effective_hashes": {
+    "implementation_erratum4_sha256": "a459b66f93ef83db19f7dfaccf6a70f7c2ab1662723599da3634cb473c817f65",
+    "queries_sha256": "b794514da8b9ddeb7c32dda4da83a836f6c505d1a4a0c6f33e5dcd700762fd9e",
+    "scored_sha256": "a62b24ec609194f9b9d89a4a54c7359475757d8a8972f11a177fc581068a38f9"
+  },
+  "unchanged": [
+    "all base execution hashes and runtime parameters",
+    "all query and score cache bytes and order",
+    "all selectors, selected evidence ids, metric formulas, and bootstrap samples",
+    "the query fallback threshold of 0.05",
+    "all outcome rules and Gate 2 NO-GO/SHADOW boundary"
+  ],
+  "retry_authorization": "Repeat only the locked deterministic evaluation with the complete frozen caches; do not regenerate, rescore, replace cases, or tune any method."
+}

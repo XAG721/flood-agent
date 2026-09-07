@@ -1,0 +1,12 @@
+{
+  "confirmation_open_authorized": false,
+  "experiment_id": "FRC-MUSIQUE-IN-DOMAIN-RIVAL-BRIDGE-V72",
+  "gate_2": "NO-GO/SHADOW",
+  "retrieval_scoring_started": false,
+  "reuse_failed_stage_for_feature_model_threshold_rule_gate_or_selection": false,
+  "schema_version": "frc-musique-v72-stage-closure-v1",
+  "selector_adoption_authorized": false,
+  "stage": "development",
+  "stage_result_sha256": "3557333779e5acbe700f4433a80f3325a10afa1da9c6b028ff06e17597a265d1",
+  "status": "MUSIQUE_V72_IN_DOMAIN_RIVAL_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+}

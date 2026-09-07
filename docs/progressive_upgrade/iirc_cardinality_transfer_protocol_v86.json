@@ -1,0 +1,195 @@
+{
+  "schema_version": "frc-iirc-cardinality-transfer-protocol-v86",
+  "experiment_id": "FRC-IIRC-CARDINALITY-TRANSFER-PROSPECTIVE-V86",
+  "registered_on": "2026-08-05",
+  "objective": "Prospectively test whether a question-only evidence-cardinality model trained on already exposed non-IIRC histories transfers to an untouched IIRC train partition and improves source-level evidence F1 over frozen fixed-cardinality retrieval controls.",
+  "independence_boundary": {
+    "target_dataset_not_used_in_prior_project_experiments": true,
+    "iirc_dev_used_only_for_adapter_admission_and_permanently_excluded": true,
+    "iirc_train_before_protocol_freeze": "Only file hashes, counts, and question IDs were read; no question, answer, answer type, gold context, gold-cardinality aggregate, or target metric was inspected.",
+    "target_results_known_before_freeze": false,
+    "algorithm_model_adapter_baselines_metrics_gates_and_partitions_frozen_before_target_gold_access": true
+  },
+  "source": {
+    "dataset": "IIRC",
+    "target_split": "train",
+    "train_articles": 4754,
+    "train_questions": 10839,
+    "context_articles": 56550,
+    "partition_salt": "FRC-IIRC-V86-TRAIN-PARTITION|",
+    "all_ids_commitment": "87e23bb192797d8dfe6a7e51d8c921efb1775ceeb4e46ef72df59ee1c7d49fc5",
+    "development_ids_commitment": "e5cf8c245933581c2386c4aefbcff439c4429a66bf679509f2310346fd2224a0",
+    "confirmation_ids_commitment": "ca5f157b14ba0dd035fb5efbfa9c6c44d25d0878ce41cf498648d69b434e5c70",
+    "remaining_ids_commitment": "d9e86cd22b2ffe43a48357ac4b1a226e026fb4ab742719b9f1743da6ee15d7f4"
+  },
+  "model_development": {
+    "artifact": "docs/progressive_upgrade/iirc_cardinality_transfer_router_model_development_v86.json",
+    "artifact_sha256": "3b125e02779d385e63f3cbd47000e2c2fe2882456935150f1e47ec4354a9475c",
+    "model_payload_sha256": "91a3250c297958aaa709564bdb3c603f7e3604270722bec4817062ff7ab034a3",
+    "training_cases": 5270,
+    "training_cohort_counts": {
+      "hotpot_v84_development": 600,
+      "hotpot_v84_confirmation": 600,
+      "musique_v77_development": 800,
+      "musique_v78_development": 600,
+      "musique_v79_development": 470,
+      "musique_v80_terminal_holdout": 600,
+      "twowiki_v83_development": 800,
+      "twowiki_v83_confirmation": 800
+    },
+    "all_training_rows_permanently_exposed_and_non_iirc": true,
+    "features": "Question-text lexical and hashed features only.",
+    "ordinal_targets": [
+      "gold source cardinality at least 2",
+      "gold source cardinality at least 3",
+      "gold source cardinality at least 4"
+    ],
+    "selected_hash_dimension": 512,
+    "selected_l2": 32.0,
+    "selected_thresholds": {
+      "2": 0.3,
+      "3": 0.7,
+      "4": 0.7
+    },
+    "crossfit_diagnostic_candidate_f1": 0.763036,
+    "crossfit_diagnostic_strongest_fixed2_f1": 0.751569,
+    "crossfit_diagnostic_is_not_iirc_target_evidence": true
+  },
+  "adapter": {
+    "candidate_unit": "One source-level representative chunk for the main article and each unique resolvable original IIRC article link.",
+    "linked_title_normalization": "URL-decode, replace underscores with spaces, collapse whitespace, lowercase.",
+    "main_source_identity": "sha256(main|pid) truncated to 16 hex characters with s prefix.",
+    "linked_source_identity": "sha256(link|normalized_title) truncated to 16 hex characters with s prefix.",
+    "chunking": {
+      "content_tokens": 384,
+      "overlap_tokens": 64,
+      "stride_tokens": 320,
+      "representative_chunk": "Highest question-BM25 chunk per source, tie-broken by paragraph and chunk order, chosen without gold."
+    },
+    "blind_fields": [
+      "id",
+      "dataset",
+      "source",
+      "question",
+      "required_roles",
+      "candidates"
+    ],
+    "forbidden_blind_fields": [
+      "answer",
+      "answer_type",
+      "context",
+      "question_links",
+      "gold_evidence_sources"
+    ],
+    "gold_unit": "Unique IIRC context passage sources; main maps to the main source and linked passages map through original article links.",
+    "minimum_candidate_sources": 4,
+    "maximum_selected_sources": 4,
+    "unresolved_gold_or_out_of_original_links": "Fail closed rather than substitute or drop a case."
+  },
+  "candidate": {
+    "name": "cross_dataset_question_cardinality_frc_v86",
+    "cardinality": "Frozen ordinal question-text model selects one through four sources.",
+    "ordering": "Greedy FRC source order using source-maximum cross-encoder score plus 0.15 times mean positive role-coverage gain.",
+    "required_roles": [
+      "answer",
+      "attribution",
+      "condition",
+      "exception",
+      "procedure"
+    ],
+    "runtime_gold_or_answer_inputs": false
+  },
+  "controls": [
+    "bm25_fixed2",
+    "dense_fixed2",
+    "hybrid_fixed2",
+    "cross_encoder_fixed1",
+    "cross_encoder_fixed2",
+    "cross_encoder_fixed3",
+    "cross_encoder_fixed4",
+    "frc_fixed1",
+    "frc_fixed2",
+    "frc_fixed3",
+    "frc_fixed4"
+  ],
+  "common_resources": {
+    "embedding_model": "BAAI/bge-large-en-v1.5@d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "offline_frozen_snapshots_only": true,
+    "score_calibration": "per-case min-max",
+    "role_relevance_mix": 0.15,
+    "rrf_k": 60
+  },
+  "stages": {
+    "development": {
+      "cases": 400,
+      "partition": "first 400 IDs after ascending sha256(partition_salt + qid)",
+      "paired_bootstrap_seed": 20260806,
+      "single_evaluation_only": true,
+      "opens_confirmation_only_if_every_strict_gate_passes": true
+    },
+    "confirmation": {
+      "cases": 800,
+      "partition": "next 800 IDs after the development partition",
+      "paired_bootstrap_seed": 20260807,
+      "single_evaluation_only": true,
+      "requires_frozen_development_confirmation_open_artifact": true,
+      "must_not_be_prepared_scored_or_evaluated_if_development_fails": true
+    }
+  },
+  "metrics": {
+    "primary": "source-level evidence macro F1",
+    "secondary": [
+      "source-level evidence macro precision",
+      "source-level evidence macro recall",
+      "complete-evidence recall",
+      "mean selected sources",
+      "candidate action distribution",
+      "answer-type, gold-cardinality, and candidate-ceiling strata"
+    ],
+    "paired_bootstrap_resamples": 10000,
+    "confidence_interval": 0.95,
+    "strongest_control_selected_inside_each_bootstrap_resample": true
+  },
+  "strict_gates": {
+    "exact_stage_cases": true,
+    "invalid_selector_output_rate_at_most": 0.0,
+    "candidate_evidence_macro_f1_at_least": 0.35,
+    "candidate_complete_evidence_recall_at_least": 0.30,
+    "candidate_minus_strongest_registered_control_f1_at_least": 0.005,
+    "candidate_minus_strongest_registered_control_f1_ci_low_above": 0.0,
+    "candidate_minus_frc_fixed2_f1_at_least": 0.005,
+    "candidate_minus_frc_fixed2_f1_ci_low_above": 0.0,
+    "candidate_complete_evidence_recall_delta_vs_strongest_at_least": -0.02,
+    "candidate_evidence_macro_recall_delta_vs_strongest_at_least": -0.02,
+    "candidate_mean_selected_sources_above_strongest_at_most": 0.5,
+    "distinct_candidate_actions_at_least": 2,
+    "second_largest_candidate_action_fraction_at_least": 0.05,
+    "each_supported_stratum_min_cases": 40,
+    "each_supported_stratum_f1_delta_vs_global_strongest_at_least": -0.03,
+    "development_confirmation_overlap": 0
+  },
+  "decision_rules": {
+    "development_all_strict_gates_pass": "Create a confirmation-open artifact, then prepare, score, select, and evaluate the frozen confirmation partition exactly once.",
+    "development_any_strict_gate_fails": "Stop v86 without preparing or accessing confirmation content; do not alter or relax the protocol.",
+    "confirmation_all_strict_gates_pass": "Record independent-dataset source-selection transfer support only.",
+    "confirmation_any_strict_gate_fails": "Close v86 without adoption and do not repackage the confirmation set.",
+    "any_algorithm_model_adapter_control_metric_gate_or_partition_change": "Requires v87 and new untouched IDs from the remaining commitment."
+  },
+  "artifact_boundary": {
+    "raw_iirc_archives_and_text": "Ignored cache only; never commit.",
+    "blind_scored_and_sealed_case_rows": "Ignored cache only.",
+    "published_reports": "Aggregates and ID-level metrics without source text.",
+    "license_status": "Official project license page was inaccessible during preparation, so source text redistribution is prohibited for this experiment."
+  },
+  "claim_limits": {
+    "independent_public_dataset_transfer_test": true,
+    "answer_generation_evaluated": false,
+    "setr_reproduced": false,
+    "flood_domain_effectiveness_established": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "production_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  }
+}

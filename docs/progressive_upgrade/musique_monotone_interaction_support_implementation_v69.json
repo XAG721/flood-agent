@@ -1,0 +1,58 @@
+{
+  "schema_version": "frc-musique-monotone-interaction-support-implementation-registration-v69",
+  "experiment_id": "FRC-MUSIQUE-MONOTONE-INTERACTION-SUPPORT-V69",
+  "registered_at": "2026-08-04T07:10:00+08:00",
+  "hashes": {
+    "protocol": "8cb244b5d3efeb183fb34532bf21c8e6916d138375ae110ddbbed30383d12e54",
+    "source_registration": "f91690cd7a13f87866973a81429eb192164547ba18d1f44512672cdf32ec3775",
+    "model_registration": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "module": "83d8e585cb3a37d177805502e423bc2acceb14665c71fd365573df58a8fe62cb",
+    "runner": "89ecfc82f79ceeae94ebf6aca2996dee5657be1428e44fbda15eb7b890614036",
+    "tests": "886dce889159caa00bfed2e8fad83400fe75fdd00ebcff452c287855947302f4"
+  },
+  "target_files_were_previously_parsed": true,
+  "target_rows_read_for_v69_before_registration": 0,
+  "v69_source_commitments_selected_before_registration": 0,
+  "v69_model_outputs_or_joined_metrics_seen_before_registration": false,
+  "source_independent_synthetic_fixtures_only": true,
+  "synthetic_tests": {
+    "passed": 14,
+    "failed": 0,
+    "target_source_used": false,
+    "model_files_used": false
+  },
+  "frozen_behaviors": [
+    "v65 invalid, v65 corrected, v66 development, v67 calibration and development, and v68 calibration and development source-commitment union exclusion",
+    "SQuAD2 normalized exact-question exclusion",
+    "split-aware paired source-id answer-state assignment",
+    "calibration, development and conditional confirmation deterministic balanced sampling",
+    "gold-free direct composed-question score and selected-paragraph extraction",
+    "oracle decomposition question plan with gold answers and supporting indices removed",
+    "prior predicted-span-only placeholder substitution without intermediate thresholding",
+    "nine v68 base features with eighteen fixed normalized hinge features",
+    "five fixed chain-consistency pair interactions",
+    "all coefficients except the two hop indicators projected to nonnegative values after every optimizer step",
+    "same-data same-optimizer nine-signal linear and no-interaction additive controls",
+    "identical deterministic safety-constrained threshold selection across learned methods",
+    "five-fold calibration-only model-and-threshold crossfit diagnostic",
+    "single strongest fair comparator selection before paired bootstrap",
+    "candidate-versus-strongest and candidate-versus-additive independent paired bootstrap gates",
+    "development failure closure or immutable confirmation authorization"
+  ],
+  "model_weights_architecture_or_tokenizer_changed": false,
+  "learned_parameter_count_on_calibration": {
+    "direct_and_chain_thresholds": 2,
+    "linear_control_including_threshold": 11,
+    "additive_control_including_threshold": 29,
+    "interaction_candidate_including_threshold": 34
+  },
+  "total_learned_scalars_across_reported_methods": 76,
+  "development_or_confirmation_used_for_basis_interaction_model_threshold_gate_or_method_selection": false,
+  "official_decomposition_is_oracle_plan": true,
+  "automatic_decomposer_result_claimed": false,
+  "strict_independent_model_training_confirmation_claimed": false,
+  "selector_or_retrieval_scoring_part_of_v69": false,
+  "selector_adoption_authorized": false,
+  "canary_or_default_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

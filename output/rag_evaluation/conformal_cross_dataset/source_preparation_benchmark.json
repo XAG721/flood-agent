@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "schema_version": "frc-conformal-source-preparation-benchmark-v1",
+    "status": "RUN_LOCAL_CONFORMAL_SOURCE_PREPARATION_BENCHMARK",
+    "dataset": "MultiHop-RAG",
+    "source_path_label": "role_scores_multihoprag.jsonl",
+    "source_sha256": "de5333ecea96ed274afd5d28b4d69af5a63e975fc75c9fa991ade9ce52f296e7",
+    "repeat_count": 10,
+    "runtime": {
+      "python": "3.13.9",
+      "platform": "Windows-10-10.0.19045-SP0"
+    }
+  },
+  "comparison": {
+    "legacy": {
+      "jsonl_parse_passes": 10,
+      "elapsed_seconds": 65.687275,
+      "canonical_repeat_sha256": "4b754ef11b4400bd579b756db1371fa7c4144ff689812f3a88eae496af9e578c"
+    },
+    "single_parse": {
+      "jsonl_parse_passes": 1,
+      "elapsed_seconds": 7.297463,
+      "canonical_repeat_sha256": "4b754ef11b4400bd579b756db1371fa7c4144ff689812f3a88eae496af9e578c"
+    },
+    "results_identical": true,
+    "speedup": 9.001385
+  },
+  "interpretation": {
+    "scope": "Measures local repeated-split experiment orchestration only; retriever, reranker and generator inference are not rerun.",
+    "limitations": [
+      "Single-machine wall time is descriptive, not a production SLA.",
+      "Legacy runs first and the optimized run may benefit from OS file cache.",
+      "Canonical repeat hashes, rather than elapsed time, prove equivalence."
+    ]
+  }
+}

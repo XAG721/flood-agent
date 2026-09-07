@@ -1,0 +1,167 @@
+{
+  "schema_version": "frc-twowiki-bridge-aware-precision-trim-protocol-v83",
+  "experiment_id": "FRC-2WIKI-BRIDGE-AWARE-PRECISION-TRIM-PROSPECTIVE-V83",
+  "registered_on": "2026-08-04",
+  "objective": "Test whether a frozen question-text bridge classifier can improve evidence precision by trimming only the fifth item of the frozen v82 selection while preserving complete-evidence safety on new case-disjoint 2Wiki evidence.",
+  "model_development": {
+    "experiment_id": "FRC-2WIKI-BRIDGE-AWARE-PRECISION-TRIM-ROUTER-V83",
+    "training_cases": 3200,
+    "training_cohorts": [
+      "v75_development",
+      "v75_confirmation",
+      "v81_development",
+      "v82_development"
+    ],
+    "all_training_cases_permanently_excluded_from_target_stages": true,
+    "v82_development_treated_as_training_not_confirmation": true,
+    "finite_classifier_configurations": 16,
+    "finite_policy_configurations": 112,
+    "crossfit_folds": 5,
+    "selected_hash_dimension": 64,
+    "selected_l2": 32.0,
+    "selected_bridge_threshold": 0.3,
+    "selected_base_retained_count": 5,
+    "selected_trimmed_retained_count": 4,
+    "model_selection_evidence_is_not_target_confirmation": true
+  },
+  "selector": {
+    "name": "twowiki_bridge_aware_precision_trim_v83",
+    "base": "twowiki_cascaded_style_residual_router_v82",
+    "trim_action": "When the frozen question-text bridge probability is at least 0.3, preserve v82 ordering and retain its first four evidence items.",
+    "keep_action": "Otherwise preserve all five frozen v82 evidence items.",
+    "can_change_route_or_order": false,
+    "runtime_inputs": [
+      "question text",
+      "frozen v82 ordered evidence selection"
+    ],
+    "official_question_type_answer_or_gold_used_at_runtime": false
+  },
+  "target_source": {
+    "dataset": "2WikiMultiHopQA",
+    "split": "dev",
+    "same_dataset_case_disjoint_evaluation": true,
+    "prior_excluded_ids": 5000,
+    "remaining_capacity_before_target_selection": {
+      "bridge_comparison": 1523,
+      "comparison": 1813,
+      "compositional": 3791,
+      "inference": 449
+    }
+  },
+  "stages": {
+    "development": {
+      "cases": 800,
+      "question_type_quota": {
+        "bridge_comparison": 200,
+        "comparison": 200,
+        "compositional": 200,
+        "inference": 200
+      },
+      "salt": "FRC-2WIKI-V83-DEVELOPMENT|",
+      "single_evaluation_only": true,
+      "opens_confirmation_only_if_every_strict_gate_passes": true
+    },
+    "confirmation": {
+      "cases": 800,
+      "question_type_quota": {
+        "bridge_comparison": 200,
+        "comparison": 200,
+        "compositional": 200,
+        "inference": 200
+      },
+      "salt": "FRC-2WIKI-V83-CONFIRMATION|",
+      "single_evaluation_only": true,
+      "requires_development_open_artifact": true,
+      "disjoint_from_development_and_all_5000_prior_ids": true
+    }
+  },
+  "controls": [
+    "cross_encoder_topk",
+    "frc_select",
+    "soft_title_link_support_path_closure_v74",
+    "alternating_anchor_link_control",
+    "lexical_question_router_control",
+    "learned_question_routed_support_path_v75",
+    "graph_gbr_soft_override_router_v76",
+    "history_three_route_graph_router_v78",
+    "musique_target_trained_three_route_router_v79",
+    "musique_anchor_default_three_route_router_v80",
+    "twowiki_residual_three_route_router_v81",
+    "twowiki_cascaded_style_residual_router_v82"
+  ],
+  "common_resources": {
+    "top_k": 5,
+    "token_budget": 1500,
+    "embedding_model": "BAAI/bge-large-en-v1.5@d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "score_calibration": "per-case min-max",
+    "role_relevance_mix": 0.15,
+    "rrf_k": 60
+  },
+  "metrics": {
+    "primary": "evidence_macro_f1",
+    "secondary": [
+      "evidence_macro_recall",
+      "complete_evidence_recall",
+      "mean_selected_tokens",
+      "bridge_classifier_balanced_accuracy"
+    ],
+    "paired_bootstrap_resamples": 10000,
+    "confidence_interval": 0.95,
+    "seeds": {
+      "development": 20261204,
+      "confirmation": 20261205
+    }
+  },
+  "strict_gates": {
+    "exact_cases": 800,
+    "exact_question_type_quota": {
+      "bridge_comparison": 200,
+      "comparison": 200,
+      "compositional": 200,
+      "inference": 200
+    },
+    "prior_or_stage_overlap": 0,
+    "invalid_selector_output_rate": 0.0,
+    "candidate_evidence_macro_f1_at_least": 0.55,
+    "candidate_complete_evidence_recall_at_least": 0.58,
+    "candidate_minus_strongest_registered_control_f1_at_least": 0.005,
+    "candidate_minus_strongest_registered_control_ci_low_above": 0.0,
+    "candidate_minus_frozen_v82_f1_at_least": 0.005,
+    "candidate_minus_frozen_v82_ci_low_above": 0.0,
+    "every_question_type_delta_vs_best_control_at_least": -0.005,
+    "bridge_classifier_balanced_accuracy_at_least": 0.95,
+    "trim_action_fraction_at_least": 0.15,
+    "trim_action_fraction_at_most": 0.35,
+    "both_retained_counts_each_cover_at_least_fraction": 0.05,
+    "mean_selected_tokens_not_above_strongest_control": 0.0,
+    "complete_evidence_recall_delta_vs_strongest_at_least": -0.03,
+    "evidence_macro_recall_delta_vs_strongest_at_least": -0.03
+  },
+  "noninferiority_envelope": {
+    "candidate_minus_strongest_control_point_at_least": 0.0,
+    "candidate_minus_strongest_control_ci_low_at_least": -0.005,
+    "every_question_type_delta_vs_best_control_at_least": -0.01,
+    "complete_evidence_recall_delta_vs_strongest_at_least": -0.03,
+    "invalid_selector_output_rate": 0.0
+  },
+  "decision_rules": {
+    "development_all_strict_gates_pass": "Create the frozen confirmation-open artifact, then select and score confirmation exactly once.",
+    "development_any_strict_gate_fails": "Stop v83, do not select confirmation ids, and treat development as training or diagnostic evidence for any future version.",
+    "confirmation_all_strict_gates_pass": "Record case-disjoint same-dataset mechanism support only; do not authorize selector adoption, CANARY, DEFAULT, or production.",
+    "confirmation_any_strict_gate_fails": "Close v83 without adoption and do not repackage the confirmation set.",
+    "model_feature_threshold_gate_or_sampling_change": "Requires a new experiment version and new untouched target ids."
+  },
+  "outcomes": {
+    "selector_adoption_authorized_by_this_protocol": false,
+    "canary_or_default_authorized_by_this_protocol": false,
+    "production_authorized_by_this_protocol": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "claim_limits": [
+    "Target stages are case-disjoint but share 2WikiMultiHopQA with all training history.",
+    "This is not an independent-dataset or official 2WikiMultiHopQA leaderboard result.",
+    "This is not answer-generation, real SetR, flood-domain expert validation, CANARY, DEFAULT, or production evidence.",
+    "Every result under this protocol leaves Gate 2 at NO-GO/SHADOW."
+  ]
+}

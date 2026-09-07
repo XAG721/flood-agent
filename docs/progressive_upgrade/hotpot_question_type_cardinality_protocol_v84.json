@@ -1,0 +1,166 @@
+{
+  "schema_version": "frc-hotpot-question-type-cardinality-protocol-v84",
+  "experiment_id": "FRC-HOTPOT-QUESTION-TYPE-CARDINALITY-PROSPECTIVE-V84",
+  "registered_on": "2026-08-04",
+  "objective": "Test whether a frozen question-text comparison classifier can choose between three and four leading items from the frozen v76 HotpotQA selector, improving evidence F1 among controls that satisfy a pre-registered complete-evidence recall floor.",
+  "model_development": {
+    "experiment_id": "FRC-HOTPOT-QUESTION-TYPE-CARDINALITY-ROUTER-V84",
+    "training_cases": 2600,
+    "training_cohorts": [
+      "history",
+      "v76_development",
+      "v76_confirmation"
+    ],
+    "all_training_cases_permanently_excluded_from_target_stages": true,
+    "v76_development_and_confirmation_treated_as_training_not_v84_confirmation": true,
+    "finite_classifier_configurations": 16,
+    "finite_policy_configurations": 112,
+    "crossfit_folds": 5,
+    "selected_hash_dimension": 512,
+    "selected_l2": 32.0,
+    "selected_comparison_threshold": 0.3,
+    "selected_comparison_retained_count": 3,
+    "selected_bridge_retained_count": 4,
+    "model_selection_evidence_is_not_target_confirmation": true
+  },
+  "candidate": {
+    "name": "hotpot_question_type_cardinality_router_v84",
+    "base_method": "graph_gbr_soft_override_router_v76",
+    "comparison_action": "When the frozen question-text comparison probability is at least 0.3, preserve v76 ordering and retain its first three evidence items.",
+    "bridge_action": "Otherwise preserve v76 ordering and retain its first four evidence items.",
+    "comparison_retained_count": 3,
+    "bridge_retained_count": 4,
+    "can_change_route_or_order": false,
+    "runtime_inputs": [
+      "question text",
+      "frozen v76 ordered evidence selection"
+    ],
+    "official_question_type_answer_or_gold_used_at_runtime": false
+  },
+  "target_source": {
+    "dataset": "HotpotQA",
+    "configuration": "distractor",
+    "split": "validation",
+    "same_dataset_case_disjoint_evaluation": true,
+    "prior_excluded_ids": 2600,
+    "remaining_capacity_before_target_selection": {
+      "bridge": 4315,
+      "comparison": 490
+    },
+    "remaining_capacity_after_both_registered_stages": {
+      "bridge": 3515,
+      "comparison": 90
+    }
+  },
+  "stages": {
+    "development": {
+      "cases": 600,
+      "question_type_quota": {
+        "bridge": 400,
+        "comparison": 200
+      },
+      "selection_salt": "FRC-HOTPOT-V84-DEVELOPMENT|",
+      "paired_bootstrap_seed": 20261207,
+      "single_evaluation_only": true,
+      "opens_confirmation_only_if_every_strict_gate_passes": true
+    },
+    "confirmation": {
+      "cases": 600,
+      "question_type_quota": {
+        "bridge": 400,
+        "comparison": 200
+      },
+      "selection_salt": "FRC-HOTPOT-V84-CONFIRMATION|",
+      "paired_bootstrap_seed": 20261208,
+      "single_evaluation_only": true,
+      "requires_development_open_artifact": true,
+      "disjoint_from_development_and_all_2600_prior_ids": true
+    }
+  },
+  "controls": [
+    "cross_encoder_topk",
+    "frc_select",
+    "soft_title_link_support_path_closure_v74",
+    "alternating_anchor_link_control",
+    "lexical_question_router_control",
+    "zero_shot_v75_question_router_control",
+    "graph_gbr_soft_override_router_v76",
+    "frozen_v76_prefix3_cardinality_control",
+    "frozen_v76_prefix4_cardinality_control"
+  ],
+  "common_resources": {
+    "top_k": 5,
+    "token_budget": 1500,
+    "embedding_model": "BAAI/bge-large-en-v1.5@d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "score_calibration": "per-case min-max",
+    "role_relevance_mix": 0.15,
+    "rrf_k": 60
+  },
+  "safety_eligibility": {
+    "complete_evidence_recall_at_least": 0.62
+  },
+  "metrics": {
+    "primary": "evidence_macro_f1 among safety-eligible controls",
+    "raw_f1_strongest_control_always_disclosed": true,
+    "secondary": [
+      "evidence_macro_recall",
+      "complete_evidence_recall",
+      "mean_selected_tokens",
+      "comparison_classifier_balanced_accuracy"
+    ],
+    "paired_bootstrap_resamples": 10000,
+    "confidence_interval": 0.95
+  },
+  "strict_gates": {
+    "exact_cases": 600,
+    "exact_question_type_quota": {
+      "bridge": 400,
+      "comparison": 200
+    },
+    "prior_or_stage_overlap": 0,
+    "invalid_selector_output_rate": 0.0,
+    "candidate_evidence_macro_f1_at_least": 0.62,
+    "candidate_complete_evidence_recall_at_least": 0.62,
+    "candidate_minus_strongest_safety_eligible_control_f1_at_least": 0.005,
+    "candidate_minus_strongest_safety_eligible_control_ci_low_above": 0.0,
+    "candidate_minus_fixed_prefix4_f1_at_least": 0.005,
+    "candidate_minus_fixed_prefix4_ci_low_above": 0.0,
+    "every_question_type_delta_vs_best_safety_eligible_control_at_least": -0.005,
+    "comparison_classifier_balanced_accuracy_at_least": 0.88,
+    "comparison_action_fraction_at_least": 0.2,
+    "comparison_action_fraction_at_most": 0.5,
+    "both_actions_each_cover_at_least_fraction": 0.1,
+    "mean_selected_tokens_not_above_strongest_safety_eligible_control": 0.0,
+    "complete_evidence_recall_delta_vs_strongest_safety_eligible_at_least": -0.08,
+    "evidence_macro_recall_delta_vs_strongest_safety_eligible_at_least": -0.08
+  },
+  "noninferiority_envelope": {
+    "candidate_minus_strongest_safety_eligible_control_point_at_least": 0.0,
+    "candidate_minus_strongest_safety_eligible_control_ci_low_at_least": -0.005,
+    "every_question_type_delta_vs_best_safety_eligible_control_at_least": -0.01,
+    "candidate_complete_evidence_recall_at_least": 0.62,
+    "invalid_selector_output_rate": 0.0
+  },
+  "decision_rules": {
+    "development_all_strict_gates_pass": "Create the frozen confirmation-open artifact, then select and score confirmation exactly once.",
+    "development_any_strict_gate_fails": "Stop v84, do not select confirmation ids, and treat development as training or diagnostic evidence for any future version.",
+    "confirmation_all_strict_gates_pass": "Record case-disjoint same-dataset constrained-mechanism support only; do not authorize selector adoption, CANARY, DEFAULT, or production.",
+    "confirmation_any_strict_gate_fails": "Close v84 without adoption and do not repackage the confirmation set.",
+    "raw_f1_strongest_control_fails_safety_floor": "Keep it visible in every report but exclude it from the pre-registered safety-constrained superiority comparison.",
+    "model_feature_threshold_gate_safety_floor_or_sampling_change": "Requires a new experiment version and new untouched target ids."
+  },
+  "outcomes": {
+    "selector_adoption_authorized_by_this_protocol": false,
+    "canary_or_default_authorized_by_this_protocol": false,
+    "production_authorized_by_this_protocol": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "claim_limits": [
+    "Target stages are case-disjoint but share HotpotQA distractor validation with all model-development history.",
+    "Constrained superiority does not mean raw F1 superiority over every registered control; the raw strongest control is always disclosed.",
+    "This is not an independent-dataset or official HotpotQA leaderboard result.",
+    "This is not answer-generation, real SetR, flood-domain expert validation, CANARY, DEFAULT, or production evidence.",
+    "Every result under this protocol leaves Gate 2 at NO-GO/SHADOW."
+  ]
+}

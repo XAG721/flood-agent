@@ -1,0 +1,54 @@
+{
+  "schema_version": "frc-iirc-pooled-score-gap-transfer-closure-v88",
+  "experiment_id": "FRC-IIRC-POOLED-SCORE-GAP-PROSPECTIVE-V88",
+  "closed_on": "2026-08-05",
+  "status": "DEVELOPMENT_PASS_CONFIRMATION_PREPARATION_FAILED_NO_CONFIRMATION_METRICS",
+  "development": {
+    "cases": 800,
+    "execution_sha256": "b39e10d0fb80eb5043a4e9dd680f307ff2a551cf2d8354b5837973f55299747f",
+    "result_sha256": "558155ce5c714948a7a15f4da0391594a62bbbb02d0a5a9c236b3ad8e1d768b4",
+    "all_strict_gates_passed": true,
+    "candidate_f1": 0.634559,
+    "primary_control": "frc_fixed2",
+    "primary_control_f1": 0.605786,
+    "delta": 0.028773,
+    "delta_95_percent_ci": [
+      0.01549,
+      0.041769
+    ],
+    "point_improvement_over_all_13_controls": true
+  },
+  "confirmation": {
+    "open_artifact_sha256": "f44c0617343915ba339b4984f3a4de2d1431f6405097f7cd6e18b23aa482eb88",
+    "preparation_started_after_authorized_open": true,
+    "preparation_status": "FAILED_CLOSED_BEFORE_CACHE_WRITE",
+    "failure_case_position": 46,
+    "failure_public_id": "q_3004",
+    "failure_passage_id": "p_1245",
+    "original_unique_links": 2,
+    "resolved_nonempty_links": 2,
+    "candidate_sources_after_frozen_adapter": 3,
+    "frozen_minimum_candidate_sources": 4,
+    "error": "v86 selected row has fewer than four blind candidate sources",
+    "answer_or_gold_inspected_during_diagnosis": false,
+    "blind_gold_scored_selection_or_result_cache_written": false,
+    "metrics_computed": false,
+    "full_confirmation_commitment_retired_from_future_targets": "48ad6e475eacf913d9de29bdcba6756e9bb8cd0eb228c656ecdac331280238a0"
+  },
+  "interpretation": {
+    "development_mechanism_support_established": true,
+    "confirmation_support_established": false,
+    "failure_is_model_quality_failure": false,
+    "failure_is_adapter_coverage_failure": true,
+    "case_dropping_or_substitution_performed": false,
+    "v88_selector_adoption_authorized": false
+  },
+  "next_iteration_boundary": {
+    "reuse_frozen_v88_model_without_retraining": true,
+    "v89_adapter_may_cap_requested_cardinality_to_available_sources": true,
+    "v89_all_available_sources_selected_when_fewer_than_four_exist": true,
+    "v89_targets_must_use_v88_remaining_commitment": true,
+    "v89_requires_new_protocol_and implementation lock": true
+  },
+  "gate_2": "NO-GO/SHADOW"
+}

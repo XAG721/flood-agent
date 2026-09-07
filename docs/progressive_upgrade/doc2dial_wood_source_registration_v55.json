@@ -1,0 +1,68 @@
+{
+  "schema_version": "frc-doc2dial-wood-source-registration-v55",
+  "experiment_id": "FRC-DOC2DIAL-WOOD-DOCUMENT-CONTRASTIVE-TRANSFER-V55",
+  "registered_at": "2026-08-03T00:04:00+08:00",
+  "protocol_sha256_before_download": "6765c57d535968272fc5b06d75295f876d9eb7e9d202fa884d0e22452e2d9fc5",
+  "source": {
+    "url": "https://doc2dial.github.io/file/doc2dial_v0.9.zip",
+    "dataset_version": "v0.9",
+    "cache_path": ".cache/benchmarks/doc2dial/v55_source/doc2dial_v0.9.zip",
+    "cache_is_git_ignored": true,
+    "bytes": 8228534,
+    "sha256": "9143efd9d12ca30b1c772f65102b1c3e77d625fca03e69d316773acea5406786"
+  },
+  "resolved_members": {
+    "documents": {
+      "path": "doc2dial/v0.9/data/doc2dial_doc.json",
+      "uncompressed_bytes": 46216321,
+      "compressed_bytes": 3787701
+    },
+    "development": {
+      "path": "doc2dial/v0.9/data/wOOD/doc2dial_dial_train.json",
+      "uncompressed_bytes": 33093882,
+      "compressed_bytes": 1863177
+    },
+    "confirmation": {
+      "path": "doc2dial/v0.9/data/wOOD/doc2dial_dial_dev.json",
+      "uncompressed_bytes": 6264675,
+      "compressed_bytes": 382726
+    }
+  },
+  "non_source_siblings": {
+    "without_ood_train": {
+      "path": "doc2dial/v0.9/data/woOOD/doc2dial_dial_train.json",
+      "uncompressed_bytes": 31362174,
+      "opened": false
+    },
+    "without_ood_dev": {
+      "path": "doc2dial/v0.9/data/woOOD/doc2dial_dial_dev.json",
+      "uncompressed_bytes": 5942951,
+      "opened": false
+    },
+    "archive_readme": {
+      "path": "doc2dial/v0.9/README.md",
+      "uncompressed_bytes": 2863,
+      "opened": false
+    }
+  },
+  "member_resolution_checks": {
+    "macos_resource_fork_members_excluded": true,
+    "document_member_unique": true,
+    "wood_train_member_unique": true,
+    "wood_dev_member_unique": true,
+    "wood_and_woood_paths_are_case_sensitive_and_distinct": true,
+    "member_names_and_sizes_listed_from_zip_central_directory_only": true
+  },
+  "license_provenance": {
+    "official_v0_9_project_page_or_archive_link_declares_license": false,
+    "related_ibm_huggingface_v1_0_1_card_identifier": "cc-by-3.0",
+    "v55_redistribution_policy": "Do not commit or publish source text. Commit only source hashes, opaque commitments, aggregate metrics and gold-minimal evidence."
+  },
+  "archive_member_content_read_before_registration": false,
+  "document_content_opened": false,
+  "development_content_opened": false,
+  "confirmation_content_opened": false,
+  "sample_distribution_or_gold_read": false,
+  "neural_scoring_started": false,
+  "metrics_computed": false
+}

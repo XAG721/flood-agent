@@ -1,0 +1,31 @@
+{
+  "schema_version": "frc-feverous-adaptive-atomic-roles-implementation-v43",
+  "experiment_id": "FRC-FEVEROUS-ADAPTIVE-ATOMIC-ROLES-V43",
+  "registered_at": "2026-08-01T23:34:56.0283553+08:00",
+  "registration_stage": "after protocol freeze and synthetic-only tests; before any FEVEROUS development row, baseline prediction row, or Wikipedia database content was downloaded or inspected",
+  "data_content_accessed_before_registration": false,
+  "synthetic_test_result": {
+    "command": "python -m pytest -q tests\\test_frc_feverous_adaptive_atomic_roles.py -p no:cacheprovider",
+    "passed": 5,
+    "failed": 0
+  },
+  "static_validation": {
+    "ruff": "PASS",
+    "compileall": "PASS"
+  },
+  "hashes": {
+    "protocol_sha256": "2591f23a9edc498c800a4dfcad680c5e2df36e8178cb30df7214ac7ed7264b57",
+    "module_sha256": "121e208d427fc5f9853ca40d3c07ae358c824a9d71526a4cd8bdf159e857deed",
+    "runner_sha256": "92cf2b040de469b84e4fdf16bf2c1574bec42ac44607d3be0c0b799cbd0e1e7b",
+    "test_sha256": "da28550e457e3d14e7c857bb2327cc3b3d79aff5348f8e53b439f9e41e00b92d",
+    "inherited_v41_module_sha256": "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621"
+  },
+  "frozen_implementation_claims": [
+    "candidate pages are derived only from official baseline predicted_evidence",
+    "candidate units are deterministically extracted and BM25-pruned without gold",
+    "the v43 target cardinality is exactly the count of distinct dynamic-role argmax candidate ids, clamped to one through five",
+    "the v41 role-coverage objective, models, score calibration, budgets, and tie-breaking remain unchanged",
+    "gold annotations are joined only after complete ordered query and score caches pass validation"
+  ],
+  "post_registration_change_policy": "Any semantic code or test change invalidates this registration and requires a new protocol version before FEVEROUS content access."
+}

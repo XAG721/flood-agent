@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 from datetime import datetime
 
-from ..v2.models import EntityProfile
+from ..compat.legacy_platform.models import EntityProfile
 from .models import (
     AlertSnapshot,
     CandidateFeatureSnapshot,

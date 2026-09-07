@@ -1,0 +1,185 @@
+{
+  "schema_version": "frc-hover-dynamic-atomic-roles-protocol-v1",
+  "registered_at": "2026-08-01T14:24:17.0175462+08:00",
+  "experiment_id": "FRC-HOVER-DYNAMIC-ATOMIC-ROLES-V40",
+  "purpose": "Prospectively test whether claim-conditioned atomic verification queries and a threshold-free rank-coverage objective correct the role-collapse mechanism observed in v39, before any gold-bearing confirmation partition is opened.",
+  "registration_boundary": {
+    "v39_results_known": true,
+    "hover_dev_content_and_scores_known": true,
+    "hover_train_dataset_downloaded_before_registration": false,
+    "hover_train_tfidf_candidates_downloaded_before_registration": false,
+    "hover_train_claims_candidates_labels_or_gold_accessed_before_registration": false,
+    "v40_dynamic_queries_or_neural_scores_generated_before_registration": false,
+    "v40_parameters_tuned_on_hover_dev": false,
+    "interpretation": "v39 is a post-result mechanism-discovery source only. HoVer dev is permanently excluded from v40 performance estimation."
+  },
+  "v39_frozen_evidence": {
+    "implementation_sha256": "50a4a377f912b8d732a7da4e5779fea089b2e5deed08f2dd0982d0e1b3aaf9a0",
+    "report_sha256": "3bf41eeebf0859c7a170db2ba5b07ed700c61f9ef55d83e3e33cdcd1fc1dfa9d",
+    "scored_blind_sha256": "ecf761b27d91165b46eda4992ac151d6e5f018a5ca559e9c1417cd4d1721217a",
+    "verification_minus_generic": -0.000035,
+    "verification_minus_strongest_non_frc": 0.000267,
+    "post_result_mechanism_diagnostic": {
+      "generic_within_family_mean_spearman": 0.947723,
+      "verification_within_family_mean_spearman": 0.946191,
+      "matched_generic_verification_mean_spearman": 0.951934,
+      "generic_all_four_roles_share_argmax_rate": 0.858,
+      "verification_all_four_roles_share_argmax_rate": 0.8425,
+      "generic_verification_ordered_selection_identity": {
+        "512": 0.96325,
+        "1024": 0.9615,
+        "1500": 0.96125
+      },
+      "verification_cross_encoder_mean_set_jaccard": {
+        "512": 0.995303,
+        "1024": 0.998179,
+        "1500": 0.99825
+      },
+      "diagnosis": "Static role instructions produce nearly collinear reranker rankings, so threshold coverage usually collapses to direct cross-encoder ordering."
+    }
+  },
+  "prospective_source": {
+    "repository": "https://github.com/hover-nlp/hover",
+    "repository_revision": "39b84697f196308f398a251a7aea9b82ae0f0562",
+    "dataset_url": "https://raw.githubusercontent.com/hover-nlp/hover/39b84697f196308f398a251a7aea9b82ae0f0562/data/hover/hover_train_release_v1.1.json",
+    "tfidf_candidates_url": "https://nlp.cs.unc.edu/data/hover/train_tfidf_doc_retrieval_results.json",
+    "wikipedia_database": "Reuse the v39 official wiki_wo_links.db only if SHA-256 remains c37ee397916ec0bffacfe8902db454a5cda88a7a188409217b2e15231fe5ee2f.",
+    "license": "CC-BY-SA-4.0 for released data; MIT for official repository code",
+    "raw_sources_committed": false
+  },
+  "frozen_partition": {
+    "eligible_rows": "Every train row with a non-empty unique public uid, claim, label, integer num_hops, and aligned official TF-IDF row with the same id.",
+    "ordering": "Sort eligible rows by SHA-256 of the UTF-8 string 'FRC-HOVER-DYNAMIC-ATOMIC-ROLES-V40|' + uid, then by uid.",
+    "mechanism_pilot": "First 512 rows in frozen ordering.",
+    "confirmation": "Next 2000 rows in frozen ordering; inaccessible to generation, scoring, census beyond row IDs/counts, or gold evaluation unless every mechanism gate passes.",
+    "remaining_rows": "Excluded from v40 and never substituted for failures.",
+    "content_balancing_or_case_replacement": false
+  },
+  "frozen_candidate_adapter": {
+    "candidate_depth": 20,
+    "membership": "Use only doc_retrieval_results[0][0][:20] in official order, normalize Unicode whitespace, and deduplicate titles before exact database lookup.",
+    "source_order": "Sort resolved documents by SHA-256 of normalized title before assigning neutral source ordinals.",
+    "chunking": {
+      "tokenizer": "BAAI/bge-reranker-large tokenizer at frozen revision",
+      "content_tokens": 384,
+      "overlap_tokens": 64,
+      "stride_tokens": 320
+    },
+    "gold_boundary": "Labels, hops, supporting facts, public titles, candidate-gold flags, and candidate ceiling are absent from prepared, query-generation, and scored caches. Missing supporting documents remain in the final recall denominator."
+  },
+  "frozen_dynamic_query_generator": {
+    "repository_id": "Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4",
+    "repository_revision": "e9c932ac1893a49ae0fc497ad6e1e86e2e39af20",
+    "local_path_label": "Qwen2.5-7B-Instruct-GPTQ-Int4",
+    "input": "Normalized public claim only; no candidate text, title, score, label, hop count, supporting fact, answer, or gold field.",
+    "output_schema": {
+      "anchor": "Short search query for entity identity and disambiguating attributes explicitly present in the claim.",
+      "first_fact": "Short search query for the first independently verifiable proposition in the claim.",
+      "second_fact_or_bridge": "Short search query for another proposition or intermediate relation needed to connect the claim across documents.",
+      "counterevidence": "Short search query for evidence that could contradict the key asserted relation without assuming the claim label."
+    },
+    "prompt_contract": "Return one JSON object with exactly the four registered string keys, no markdown and no explanation; do not introduce named entities or factual assertions absent from the claim; each value must be independently useful as an evidence-retrieval query.",
+    "generation": {
+      "do_sample": false,
+      "max_input_tokens": 512,
+      "max_new_tokens": 160,
+      "batch_size": 8
+    },
+    "normalization": "Strict JSON object parse; require exactly four non-empty strings; collapse whitespace; truncate each value to 256 Unicode code points after parsing.",
+    "fallback": "On any parse/schema/empty failure, use four fixed label-neutral templates concatenated with the original claim; report every fallback and its reason.",
+    "cache_boundary": "Ignored cache may contain claims and generated queries. Committed evidence contains only hashes, counts, validation status, and aggregate lengths."
+  },
+  "frozen_neural_scoring": {
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "scores": [
+      "bm25",
+      "dense_cosine",
+      "hybrid_rrf",
+      "direct_cross_encoder",
+      "four_static_v39_verification_role_cross_encoder_scores",
+      "four_dynamic_atomic_query_cross_encoder_scores"
+    ],
+    "calibration": "Per-case independent min-max for BM25, dense, direct cross-encoder, every static role, and every dynamic query; stable candidate-id tie break.",
+    "device": "cuda",
+    "fp16": true,
+    "embedding_batch_size": 64,
+    "reranker_batch_size": 256,
+    "case_batch_size": 8,
+    "offline_model_loading": true
+  },
+  "frozen_methods": [
+    "bm25_topk",
+    "dense_topk",
+    "hybrid_topk",
+    "cross_encoder_topk",
+    "cross_encoder_knapsack",
+    "static_threshold_frc_v39_replay",
+    "static_rank_coverage_frc_v40",
+    "dynamic_rank_coverage_frc_v40"
+  ],
+  "frozen_selector": {
+    "top_k": 5,
+    "token_budgets": [512, 1024, 1500],
+    "source_constraint": "At most one selected chunk per neutral source document for both v40 rank-coverage methods; the v39 replay and non-FRC baselines retain their original behavior.",
+    "rank_utility": "For each role and candidate, 1/log2(2 + zero-based descending role-score rank), with candidate-id tie break.",
+    "rank_coverage_gain": "direct_cross_encoder_score + 0.5 * sum over four roles of max(0, candidate_rank_utility - best_selected_rank_utility_for_role).",
+    "feasibility": "At each step scan all remaining candidates, skip candidates violating token budget or source constraint, choose maximum gain, then candidate-id tie break.",
+    "static_dynamic_isolation": "Static and dynamic v40 methods differ only in the four role/query score columns; rank utility, weight, source constraint, budgets, and ties are identical.",
+    "post_registration_prompt_weight_threshold_or_formula_tuning": false
+  },
+  "mechanism_gate_without_gold": {
+    "scope": "Only the 512-row mechanism pilot scored cache; no label, hop, supporting fact, candidate-gold, or final retrieval metric is joined.",
+    "checks": {
+      "generation_fallback_rate_at_most": 0.05,
+      "dynamic_within_family_mean_spearman_at_least_0_05_below_static": true,
+      "dynamic_mean_distinct_role_argmax_at_least_0_25_above_static": true,
+      "dynamic_static_rank_coverage_ordered_selection_identity_at_most": 0.9,
+      "no_gold_or_forbidden_field_leak": true
+    },
+    "all_checks_required": true,
+    "failure_action": "MECHANISM_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION; do not generate, score, or evaluate the 2000-row confirmation partition."
+  },
+  "confirmation_evaluation": {
+    "open_condition": "Every gold-free mechanism gate passes and a source/census/execution registration is committed before confirmation generation or scoring.",
+    "primary_metric": "document_evidence_f1",
+    "precision_unit": "unique selected source document",
+    "recall_denominator": "all unique supporting-document gold units including units absent from frozen top-20 candidates",
+    "equal_budget_weight": true,
+    "bootstrap": {
+      "resamples": 10000,
+      "seed": 20260801,
+      "strongest_non_frc_selected_inside_each_resample": true
+    },
+    "predeclared_strata": [
+      "label=SUPPORTED",
+      "label=NOT_SUPPORTED",
+      "2-hop",
+      "3-hop",
+      "4-hop",
+      "candidate_ceiling_complete",
+      "candidate_ceiling_incomplete"
+    ],
+    "support_requirements": {
+      "dynamic_minus_static_rank_coverage_point_at_least": 0.005,
+      "dynamic_minus_static_rank_coverage_ci_low_above": 0.0,
+      "dynamic_minus_bootstrap_strongest_non_frc_point_at_least": 0.01,
+      "dynamic_minus_bootstrap_strongest_non_frc_ci_low_above": 0.0,
+      "every_budget_and_supported_stratum_delta_vs_strongest_non_frc_at_least": -0.02
+    },
+    "all_support_requirements_required": true,
+    "negative_results_published": true
+  },
+  "claims_and_boundaries": {
+    "same_dataset_family_confirmation_only": true,
+    "independent_public_dataset_claim_allowed": false,
+    "setr_reproduction_allowed": false,
+    "flood_domain_effectiveness_claim_allowed": false,
+    "gate_2_change_allowed": false,
+    "canary_or_default_authorization_allowed": false,
+    "selector_adoption_allowed": false,
+    "reason": "Even a successful v40 confirmation is a same-family public retrieval study and cannot replace independent flood-domain expert validation or the frozen Gate 2 contract."
+  }
+}

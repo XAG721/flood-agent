@@ -1,0 +1,248 @@
+{
+  "schema_version": "frc-musique-paragraph-competition-support-protocol-v70",
+  "experiment_id": "FRC-MUSIQUE-PARAGRAPH-COMPETITION-SUPPORT-V70",
+  "registered_at": "2026-08-04T08:00:00+08:00",
+  "purpose": "Test whether pre-specified paragraph-competition stability signals distinguish genuine multi-hop support from diffuse high-margin false spans after the v69 monotone interaction family failed to improve on its additive control.",
+  "prior_boundary": {
+    "v69_status": "MUSIQUE_V69_MONOTONE_INTERACTION_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+    "v69_aggregate_result_used": "The fixed interaction candidate achieved 0.687500 balanced accuracy and was 0.002500 below the strongest additive control; its answer pass rate was 0.620000 while unanswerable rejection was 0.755000.",
+    "v69_case_level_features_predictions_errors_raw_qa_or_subgroups_used_to_choose_v70_features_model_optimizer_or_gates": false,
+    "v65_through_v69_cases_may_be_reused_for_v70_training_threshold_selection_development_confirmation_or_reporting": false,
+    "target_train_and_dev_files_were_previously_parsed": true,
+    "v70_case_ids_selected_before_this_protocol": false,
+    "v70_model_outputs_or_joined_metrics_seen_before_this_protocol": false
+  },
+  "mechanism_hypothesis": {
+    "claim": "A genuinely supported question should create a more stable winning paragraph than an unsupported question whose best span is selected from diffuse paragraph competition.",
+    "observable_boundary": "Use only the frozen verifier's per-paragraph null-vs-span margins produced before any gold join.",
+    "no_question_context_title_span_or_source_text_feature": true,
+    "no_target_derived_knot_temperature_feature_sign_or_feature_selection": true,
+    "fixed_softmax_temperature": 1.0,
+    "top1_top2_gap_clip_maximum": 10.0
+  },
+  "sources": {
+    "repository": "https://github.com/stonybrooknlp/musique",
+    "repository_revision": "922ac98f19a201998dbdae6d7f2887a5258dbdeb",
+    "license": "CC BY 4.0",
+    "calibration_and_development_file": ".cache/benchmarks/musique/data/musique_full_v1.0_train.jsonl",
+    "calibration_and_development_sha256": "b1cd998f7e0e2838d6fda024e4ad1eb0e7fc3edefdadb0bd9b5b10b0907f2034",
+    "optional_confirmation_file": ".cache/benchmarks/musique/data/musique_full_v1.0_dev.jsonl",
+    "optional_confirmation_sha256": "8cab31d56a3a1c4ef491b205a8dab3f1ac9c66e472098c6cf1de4e20294f7a4a",
+    "official_schema_source": "raw_data_to_official_format.py at the registered repository revision"
+  },
+  "model_overlap_disclosure": {
+    "support_model_repository": "deepset/roberta-base-squad2",
+    "support_model_revision": "adc3b06f79f797d1c575d5479d6f5efe54a9e3b4",
+    "support_model_was_finetuned_on_squad2": true,
+    "exclude_if_composed_or_any_decomposition_question_exactly_matches_a_normalized_squad2_train_question": true,
+    "exact_match_guard_cannot_rule_out_paraphrase_context_or_pretraining_overlap": true,
+    "strict_independent_model_training_confirmation_claimed": false
+  },
+  "frozen_stages": {
+    "calibration": {
+      "source_split": "train",
+      "target_cases": 1600,
+      "target_per_answer_state": 800,
+      "ordering": "SHA-256('FRC-MUSIQUE-V70-CALIBRATION|' + source id), then source id",
+      "bootstrap_seed": 20260830
+    },
+    "development": {
+      "source_split": "train",
+      "target_cases": 800,
+      "target_per_answer_state": 400,
+      "ordering": "SHA-256('FRC-MUSIQUE-V70-DEVELOPMENT|' + source id), then source id",
+      "exclude_all_calibration_source_commitments": true,
+      "bootstrap_seed": 20260831
+    },
+    "confirmation": {
+      "source_split": "dev",
+      "authorized_only_if_every_development_gate_passes": true,
+      "target_cases": 800,
+      "target_per_answer_state": 400,
+      "ordering": "SHA-256('FRC-MUSIQUE-V70-CONFIRMATION|' + source id), then source id",
+      "exclude_all_prior_and_v70_train_source_commitments": true,
+      "bootstrap_seed": 20260901,
+      "no_feature_model_threshold_gate_or_method_change_after_development": true
+    }
+  },
+  "sampling": {
+    "pair_assignment": "SHA-256('FRC-MUSIQUE-V70-PAIR-ASSIGNMENT|' + source split + '|' + source id) parity assigns each source id to exactly one answer state before stage selection",
+    "maximum_cases_per_source_id_per_split": 1,
+    "minimum_paragraphs_per_case": 3,
+    "minimum_decomposition_hops": 2,
+    "maximum_decomposition_hops": 4,
+    "exclude_v65_invalid_v65_corrected_v66_development_v67_calibration_v67_development_v68_calibration_v68_development_v69_calibration_and_v69_development_source_commitment_union": true,
+    "expected_prior_source_commitment_union_count": 7300,
+    "exclude_exact_normalized_squad2_train_question_overlap": true,
+    "no_replacement": true,
+    "no_balancing_by_hop_count_answer_surface_paragraph_count_feature_or_model_score": true,
+    "no_post_metric_resampling": true,
+    "insufficient_eligible_cases": "MUSIQUE_V70_SCOPE_INCONCLUSIVE_STOP_BEFORE_QA"
+  },
+  "oracle_plan_boundary": {
+    "allowed_decomposition_fields": ["id", "question", "list order"],
+    "forbidden_decomposition_fields": ["answer", "paragraph_support_idx"],
+    "official_decomposition_is_available_at_runtime_for_arbitrary_flood_questions": false,
+    "interpretation": "This remains an oracle-plan component experiment, not an automatic decomposition result."
+  },
+  "blind_execution": {
+    "direct_score": "Maximum finite composed-question null-vs-span margin across paragraphs with deterministic paragraph-order tie breaking.",
+    "chain_execution": [
+      "Process every official decomposition question in list order without an intermediate margin threshold.",
+      "Resolve each #k placeholder only with the fixed model span predicted at prior hop k; never use gold or aliases.",
+      "At every hop select the paragraph/span with maximum finite margin and deterministic paragraph-order tie breaking.",
+      "Fail closed only when a predecessor cannot be resolved or no valid finite span exists."
+    ],
+    "fixed_v66_threshold_exact": 0.974609375,
+    "model_weights_architecture_or_tokenizer_change": false,
+    "gold_fields_visible_to_qa_feature_or_chain_executor": false,
+    "forbidden_before_complete_stage_execution": [
+      "answerable",
+      "answer",
+      "answer_aliases",
+      "decomposition answer",
+      "paragraph_support_idx",
+      "paragraph is_supporting",
+      "aggregate or per-stratum metrics"
+    ]
+  },
+  "base_feature_contract": {
+    "fixed_order": [
+      "direct_margin_scaled",
+      "chain_min_margin_scaled",
+      "chain_mean_margin_scaled",
+      "high_margin_fraction",
+      "transition_entity_match_fraction",
+      "distinct_selected_paragraph_ratio",
+      "direct_final_paragraph_agreement",
+      "hop_count_is_3",
+      "hop_count_is_4"
+    ],
+    "definitions_identical_to_v68": true
+  },
+  "prior_feature_controls": {
+    "additive_feature_order_identical_to_v69": true,
+    "interaction_feature_order_identical_to_v69": true,
+    "same_v70_calibration_rows_optimizer_and_threshold_rule": true,
+    "v69_frozen_coefficients_or_thresholds_reused": false
+  },
+  "paragraph_competition_feature_contract": {
+    "per_question_statistics": {
+      "top1_top2_gap_scaled": "clip(max_margin - second_max_margin, 0, 10) / 10; ties use paragraph order only for the winning span and produce zero gap",
+      "top1_softmax_mass": "exp(max_margin) / sum(exp(each finite paragraph margin)) computed by stable max subtraction at fixed temperature 1.0"
+    },
+    "invalid_if_fewer_than_two_finite_valid_paragraph_margins": true,
+    "fixed_order": [
+      "direct_top1_top2_gap_scaled",
+      "direct_top1_softmax_mass",
+      "chain_min_top1_top2_gap_scaled",
+      "chain_mean_top1_top2_gap_scaled",
+      "chain_min_top1_softmax_mass",
+      "chain_mean_top1_softmax_mass"
+    ],
+    "feature_count": 6,
+    "all_features_bounded_0_to_1": true,
+    "all_features_monotone_nonnegative_in_the_learned_models": true,
+    "candidate_feature_order": "nine base features followed by six paragraph-competition features",
+    "candidate_feature_count": 15,
+    "feature_added_removed_rescaled_or_redefined_after_calibration_or_development": false
+  },
+  "model_contract": {
+    "base_control": "projected monotone logistic on nine v68 base features",
+    "additive_control": "projected monotone logistic on the v69 nine-base-plus-eighteen-hinge features",
+    "interaction_control": "projected monotone logistic on the v69 additive features plus five fixed interactions",
+    "competition_only_control": "projected monotone logistic on the six fixed paragraph-competition features",
+    "competition_candidate": "projected monotone logistic on nine base plus six paragraph-competition features",
+    "optimizer": "deterministic full-batch projected gradient descent",
+    "iterations": 5000,
+    "learning_rate": 0.1,
+    "l2_weight": 0.01,
+    "initialization": "all coefficients and intercept exactly zero",
+    "nonnegative_coefficients": "all coefficients except hop_count_is_3 and hop_count_is_4",
+    "unconstrained_coefficients": ["hop_count_is_3", "hop_count_is_4", "intercept"],
+    "labels": "answerable=1, unanswerable=0; calibration only",
+    "direct_and_bottleneck_threshold_learned_scalars": 2,
+    "base_control_learned_scalars_including_threshold": 11,
+    "additive_control_learned_scalars_including_threshold": 29,
+    "interaction_control_learned_scalars_including_threshold": 34,
+    "competition_only_control_learned_scalars_including_threshold": 8,
+    "competition_candidate_learned_scalars_including_threshold": 17,
+    "total_learned_scalars_across_all_reported_methods": 101
+  },
+  "threshold_selection": {
+    "methods": [
+      "calibrated_direct_composed_question",
+      "calibrated_chain_bottleneck",
+      "linear_nine_signal_control",
+      "monotone_additive_spline_control",
+      "monotone_interaction_control",
+      "paragraph_competition_only_control",
+      "paragraph_competition_candidate"
+    ],
+    "candidate_thresholds": "Every unique finite calibration score plus nextafter(minimum score, -infinity); decisions always use score > threshold.",
+    "safety_constraints": {
+      "answerable_pass_rate_at_least": 0.60,
+      "unanswerable_rejection_rate_at_least": 0.80
+    },
+    "selection_rule": "If any threshold meets both constraints, maximize balanced accuracy, then answerable pass rate, unanswerable rejection rate, and threshold. Otherwise minimize total safety shortfall, then maximize balanced accuracy, unanswerable rejection rate, and threshold.",
+    "crossfit_diagnostic": "Five folds assigned by SHA-256('FRC-MUSIQUE-V70-CROSSFIT|' + case id) modulo 5; model weights and threshold for each held-out fold are learned only from the other four folds.",
+    "development_or_confirmation_used_for_feature_model_or_threshold_selection": false
+  },
+  "fair_comparators": [
+    "calibrated direct composed-question margin",
+    "fixed-v66-threshold complete chain",
+    "calibrated chain bottleneck",
+    "same-data nine-signal linear projected logistic",
+    "same-data v69 fixed-basis additive projected logistic",
+    "same-data v69 fixed-interaction projected logistic",
+    "same-data paragraph-competition-only projected logistic"
+  ],
+  "primary_metric": {
+    "name": "answerability balanced accuracy",
+    "strongest_fair_baseline": "the single comparator with highest aggregate balanced accuracy; ties use the ordered comparator list above",
+    "paired_delta": "competition candidate correctness minus strongest fair baseline correctness",
+    "interval": "10000-resample case bootstrap percentile interval using the stage seed"
+  },
+  "incremental_mechanism_metrics": {
+    "prior_feature_control": "competition candidate correctness minus the strongest of linear, additive and interaction prior-feature controls; interval uses stage seed plus 1000",
+    "competition_only_control": "competition candidate correctness minus competition-only correctness; interval uses stage seed plus 2000"
+  },
+  "stage_gates": {
+    "exact_cases": 800,
+    "exact_answer_state_balance": true,
+    "schema_exclusion_rate_at_most": 0.01,
+    "selected_prior_or_calibration_source_overlap": 0,
+    "selected_squad2_exact_question_overlap": 0,
+    "invalid_feature_output_rate": 0.0,
+    "candidate_balanced_accuracy_at_least": 0.72,
+    "candidate_answerable_pass_rate_at_least": 0.60,
+    "candidate_unanswerable_rejection_rate_at_least": 0.80,
+    "candidate_minus_strongest_fair_baseline_at_least": 0.05,
+    "strongest_baseline_paired_correctness_ci_low_above": 0.0,
+    "candidate_minus_strongest_prior_feature_control_at_least": 0.02,
+    "prior_feature_control_paired_correctness_ci_low_above": 0.0,
+    "candidate_minus_competition_only_control_at_least": 0.02,
+    "competition_only_control_paired_correctness_ci_low_above": 0.0,
+    "every_observed_unanswerable_hop_stratum_rejection_rate_at_least": 0.75,
+    "all_must_pass": true
+  },
+  "stopping_and_outcomes": {
+    "calibration": "Freeze all reported model weights and thresholds; calibration alone never authorizes adoption.",
+    "development_failure": "MUSIQUE_V70_PARAGRAPH_COMPETITION_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION",
+    "development_pass": "MUSIQUE_V70_PARAGRAPH_COMPETITION_DEVELOPMENT_FEASIBILITY_ESTABLISHED_OPEN_CONFIRMATION",
+    "confirmation_failure": "MUSIQUE_V70_PARAGRAPH_COMPETITION_CONFIRMATION_NOT_ESTABLISHED",
+    "confirmation_pass": "MUSIQUE_V70_ORACLE_PLAN_PARAGRAPH_COMPETITION_COMPONENT_FEASIBILITY_ESTABLISHED",
+    "selector_or_retrieval_scoring_part_of_v70": false,
+    "reuse_failed_stage_for_feature_model_threshold_rule_gate_or_selection": false,
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "interpretation_limits": [
+    "Not an official MuSiQue leaderboard result.",
+    "Not an automatic decomposition result because the official decomposition question plan is supplied.",
+    "Not strict independent model-training confirmation.",
+    "Not an FRC retrieval comparison, SetR reproduction, flood-domain evaluation or production result.",
+    "A positive confirmation establishes only calibrated oracle-plan paragraph-competition support-gate component feasibility."
+  ]
+}

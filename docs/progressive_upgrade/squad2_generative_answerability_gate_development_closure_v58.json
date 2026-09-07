@@ -1,0 +1,12 @@
+{
+  "canary_or_default_authorized": false,
+  "confirmation_execution_started": false,
+  "confirmation_source_parsed_or_opened": false,
+  "development_result_sha256": "495537e1d183a42e1eca81b22e51344cd591e802477a1e7c73248737629912ba",
+  "experiment_id": "FRC-SQUAD2-GENERATIVE-ANSWERABILITY-GATE-V58",
+  "gate_2": "NO-GO/SHADOW",
+  "reason": "At least one prospectively registered development gate failed; confirmation remains sealed.",
+  "schema_version": "frc-squad2-v58-development-closure-v1",
+  "selector_adoption_authorized": false,
+  "status": "SQUAD2_V58_DEVELOPMENT_SUPPORT_NOT_ESTABLISHED_STOP_BEFORE_CONFIRMATION"
+}

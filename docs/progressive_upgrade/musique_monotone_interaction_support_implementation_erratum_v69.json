@@ -1,0 +1,74 @@
+{
+  "schema_version": "frc-musique-monotone-interaction-support-implementation-erratum-v69",
+  "experiment_id": "FRC-MUSIQUE-MONOTONE-INTERACTION-SUPPORT-V69",
+  "registered_at": "2026-08-04T07:18:00+08:00",
+  "parent": {
+    "original_implementation_registration_sha256": "30ce7c390bc0e94508aa9ea6a0f3e118dfb90b132ad2b3373084fc7784b8a1ad",
+    "calibration_execution_registration_sha256": "541d581a559d6b6a5bc9120d2a848d3664fbfb21ef2208cbb9564da726332b4a",
+    "calibration_prepared_blind_sha256": "bd543677584571226a38970cdc864abd0f4225742fb36e610e0e3c5d39407643",
+    "calibration_feature_decisions_sha256": "c21ecd6fc80063b0f431427e314fa06d74beeb24bc6903135c3486fb7f282108"
+  },
+  "incident": {
+    "calibration_qa_completed_cases": 1600,
+    "calibration_gold_join_started": true,
+    "calibration_labels_loaded_in_memory_before_failure": true,
+    "failure": "TypeError while converting a null fail-closed raw score to float",
+    "calibration_model_fit_completed": false,
+    "calibration_threshold_selection_completed": false,
+    "calibration_metric_or_crossfit_report_produced": false,
+    "calibration_result_report_or_public_evidence_written": false,
+    "case_level_labels_predictions_errors_or_subgroups_inspected_to_choose_the_correction": false
+  },
+  "correction": {
+    "scope": "Normalize only incomplete blind feature rows during the post-QA gold join so every registered case remains evaluable.",
+    "blind_feature_decision_preserved_with_nulls": true,
+    "invalid_case_removed_or_replaced": false,
+    "frozen_invalid_fail_closed_raw_score": -1000000.0,
+    "frozen_invalid_base_features": {
+      "direct_margin_scaled": -1.0,
+      "chain_min_margin_scaled": -1.0,
+      "chain_mean_margin_scaled": -1.0,
+      "high_margin_fraction": 0.0,
+      "transition_entity_match_fraction": 0.0,
+      "distinct_selected_paragraph_ratio": 0.0,
+      "direct_final_paragraph_agreement": 0.0,
+      "hop_count_is_3": "derived only from registered hop count",
+      "hop_count_is_4": "derived only from registered hop count"
+    },
+    "hinges_and_interactions_recomputed_by_the_original_frozen_formulas": true,
+    "invalid_feature_output_flag_preserved": true,
+    "invalid_feature_output_rate_gate_still_requires_exactly_zero": true,
+    "sample_basis_interaction_optimizer_threshold_rule_gates_or_comparator_changed": false,
+    "model_architecture_weights_or_tokenizer_changed": false,
+    "calibration_qa_rerun_required": false,
+    "development_or_confirmation_data_used": false
+  },
+  "original_registration_hashes": {
+    "protocol": "8cb244b5d3efeb183fb34532bf21c8e6916d138375ae110ddbbed30383d12e54",
+    "source_registration": "f91690cd7a13f87866973a81429eb192164547ba18d1f44512672cdf32ec3775",
+    "model_registration": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "module": "83d8e585cb3a37d177805502e423bc2acceb14665c71fd365573df58a8fe62cb",
+    "runner": "89ecfc82f79ceeae94ebf6aca2996dee5657be1428e44fbda15eb7b890614036",
+    "tests": "886dce889159caa00bfed2e8fad83400fe75fdd00ebcff452c287855947302f4"
+  },
+  "corrected_hashes": {
+    "protocol": "8cb244b5d3efeb183fb34532bf21c8e6916d138375ae110ddbbed30383d12e54",
+    "source_registration": "f91690cd7a13f87866973a81429eb192164547ba18d1f44512672cdf32ec3775",
+    "original_implementation": "30ce7c390bc0e94508aa9ea6a0f3e118dfb90b132ad2b3373084fc7784b8a1ad",
+    "model_registration": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "module": "f128c44fac49eae369730e453423955da4aebb990798744c8877d02027bd7d5d",
+    "runner": "62eb035ef3d10d5b60068854d62d16531b70901085838e4ce7400853c8600676",
+    "tests": "ae87ad7851cb34e30b4d66303fb65ccfce4372124ab2a91204eb93461ec5fbce"
+  },
+  "synthetic_tests": {
+    "passed": 15,
+    "failed": 0,
+    "invalid_blind_output_fail_closed_regression_covered": true,
+    "target_source_or_model_files_used": false
+  },
+  "frozen_invalid_fail_closed_raw_score": -1000000.0,
+  "total_learned_scalars_across_reported_methods": 76,
+  "selector_adoption_authorized": false,
+  "canary_or_default_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

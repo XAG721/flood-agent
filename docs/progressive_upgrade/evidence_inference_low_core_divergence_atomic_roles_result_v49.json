@@ -1,0 +1,394 @@
+{
+  "analysis": {
+    "aggregates": {
+      "adaptive_argmax_cardinality_frc_v43": {
+        "complete_reference_recall": 0.113889,
+        "evidence_macro_f1": 0.223942,
+        "macro_precision": 0.203843,
+        "macro_recall": 0.28748,
+        "mean_selected_token_cost": 165.292778,
+        "mean_selected_unit_count": 2.845
+      },
+      "anchor_guarded_adaptive_cardinality_frc_v45": {
+        "complete_reference_recall": 0.145556,
+        "evidence_macro_f1": 0.20812,
+        "macro_precision": 0.159796,
+        "macro_recall": 0.333749,
+        "mean_selected_token_cost": 219.492778,
+        "mean_selected_unit_count": 3.927778
+      },
+      "bm25_topk": {
+        "complete_reference_recall": 0.115,
+        "evidence_macro_f1": 0.14936,
+        "macro_precision": 0.107491,
+        "macro_recall": 0.2795,
+        "mean_selected_token_cost": 240.735,
+        "mean_selected_unit_count": 4.963889
+      },
+      "consensus_guarded_adaptive_cardinality_frc_v46": {
+        "complete_reference_recall": 0.127778,
+        "evidence_macro_f1": 0.215766,
+        "macro_precision": 0.177935,
+        "macro_recall": 0.305826,
+        "mean_selected_token_cost": 187.02,
+        "mean_selected_unit_count": 3.26
+      },
+      "cross_encoder_knapsack": {
+        "complete_reference_recall": 0.163889,
+        "evidence_macro_f1": 0.18225,
+        "macro_precision": 0.128898,
+        "macro_recall": 0.349736,
+        "mean_selected_token_cost": 263.212778,
+        "mean_selected_unit_count": 4.994444
+      },
+      "cross_encoder_topk": {
+        "complete_reference_recall": 0.166111,
+        "evidence_macro_f1": 0.186549,
+        "macro_precision": 0.132306,
+        "macro_recall": 0.356277,
+        "mean_selected_token_cost": 266.462778,
+        "mean_selected_unit_count": 4.943889
+      },
+      "dense_topk": {
+        "complete_reference_recall": 0.13,
+        "evidence_macro_f1": 0.136561,
+        "macro_precision": 0.097491,
+        "macro_recall": 0.261119,
+        "mean_selected_token_cost": 286.817222,
+        "mean_selected_unit_count": 4.927222
+      },
+      "dynamic_rank_coverage_frc_v41": {
+        "complete_reference_recall": 0.169444,
+        "evidence_macro_f1": 0.190486,
+        "macro_precision": 0.134676,
+        "macro_recall": 0.363762,
+        "mean_selected_token_cost": 267.287222,
+        "mean_selected_unit_count": 4.946667
+      },
+      "guarded_adaptive_cardinality_frc_v44": {
+        "complete_reference_recall": 0.146111,
+        "evidence_macro_f1": 0.207813,
+        "macro_precision": 0.159546,
+        "macro_recall": 0.333472,
+        "mean_selected_token_cost": 220.48,
+        "mean_selected_unit_count": 3.927222
+      },
+      "hybrid_topk": {
+        "complete_reference_recall": 0.138889,
+        "evidence_macro_f1": 0.149591,
+        "macro_precision": 0.105611,
+        "macro_recall": 0.287103,
+        "mean_selected_token_cost": 266.306111,
+        "mean_selected_unit_count": 4.943333
+      },
+      "low_core_divergence_guarded_frc_v49": {
+        "complete_reference_recall": 0.122222,
+        "evidence_macro_f1": 0.220684,
+        "macro_precision": 0.193009,
+        "macro_recall": 0.296191,
+        "mean_selected_token_cost": 173.075556,
+        "mean_selected_unit_count": 2.994444
+      },
+      "static_rank_coverage_frc_v41": {
+        "complete_reference_recall": 0.164444,
+        "evidence_macro_f1": 0.185921,
+        "macro_precision": 0.131769,
+        "macro_recall": 0.356046,
+        "mean_selected_token_cost": 265.494444,
+        "mean_selected_unit_count": 4.951111
+      },
+      "static_threshold_frc_v39_replay": {
+        "complete_reference_recall": 0.166111,
+        "evidence_macro_f1": 0.18659,
+        "macro_precision": 0.132343,
+        "macro_recall": 0.356416,
+        "mean_selected_token_cost": 266.497778,
+        "mean_selected_unit_count": 4.949444
+      }
+    },
+    "argmax_core_size_distribution": {
+      "1": 58,
+      "2": 142,
+      "3": 234,
+      "4": 166
+    },
+    "budget_deltas": {
+      "1024": 0.033239,
+      "256": 0.0356,
+      "512": 0.033564
+    },
+    "candidate_ceiling_complete_rate": 1.0,
+    "expansion_trigger_rate": 0.15,
+    "family_comparison": {
+      "resamples": 10000,
+      "seed": 20260809,
+      "v49_minus_strongest_frozen_frc_control": {
+        "ci_high": 0.001747,
+        "ci_low": -0.008086,
+        "point": -0.003258
+      },
+      "v49_minus_strongest_non_frc": {
+        "ci_high": 0.04682,
+        "ci_low": 0.021521,
+        "point": 0.034135
+      }
+    },
+    "macro_recall_improvement_vs_v43": 0.00871,
+    "mean_selected_unit_reduction_vs_dynamic": 1.952222,
+    "outcome": {
+      "canary_or_default_authorized": false,
+      "gate_2": "NO-GO/SHADOW",
+      "reuse_v49_cases_for_tuning_or_selection": false,
+      "selector_adoption_authorized": false,
+      "status": "EVIDENCE_INFERENCE_LOW_CORE_DIVERGENCE_SUPPORT_NOT_ESTABLISHED"
+    },
+    "query_cache": {
+      "fallback_count": 16,
+      "fallback_rate": 0.026667,
+      "fallback_reasons": {
+        "Unterminated string starting at: line 4 column 30 (char 342)": 1,
+        "Unterminated string starting at: line 4 column 30 (char 360)": 1,
+        "Unterminated string starting at: line 5 column 22 (char 473)": 1,
+        "Unterminated string starting at: line 5 column 24 (char 421)": 1,
+        "Unterminated string starting at: line 5 column 24 (char 422)": 1,
+        "Unterminated string starting at: line 5 column 24 (char 427)": 1,
+        "Unterminated string starting at: line 5 column 24 (char 428)": 1,
+        "Unterminated string starting at: line 5 column 24 (char 429)": 1,
+        "Unterminated string starting at: line 5 column 24 (char 449)": 1,
+        "Unterminated string starting at: line 5 column 24 (char 459)": 1,
+        "Unterminated string starting at: line 5 column 24 (char 474)": 1,
+        "Unterminated string starting at: line 5 column 24 (char 484)": 1,
+        "Unterminated string starting at: line 5 column 24 (char 515)": 1,
+        "Unterminated string starting at: line 5 column 24 (char 529)": 1,
+        "Unterminated string starting at: line 5 column 24 (char 544)": 1,
+        "Unterminated string starting at: line 5 column 24 (char 704)": 1
+      },
+      "gold_fields_visible_to_generator": false,
+      "query_length_codepoints": {
+        "maximum": 503,
+        "mean": 68.509583,
+        "minimum": 7
+      },
+      "rows": 600
+    },
+    "runner_up_surplus_distribution": {
+      "0": 20,
+      "1": 83,
+      "2": 171,
+      "3": 238,
+      "4": 88
+    },
+    "selection_set_difference_rate_vs_dynamic": 0.984444,
+    "selection_set_difference_rate_vs_v43": 0.149444,
+    "selection_set_difference_rate_vs_v46": 0.401111,
+    "strongest_frozen_frc_control": "adaptive_argmax_cardinality_frc_v43",
+    "strongest_non_frc": "cross_encoder_topk",
+    "support_checks": {
+      "candidate_ceiling_complete_rate_equals_1": true,
+      "every_budget_and_supported_stratum_delta_at_least_minus_0_02": true,
+      "expansion_trigger_rate_at_least_0_05": true,
+      "expansion_trigger_rate_at_most_0_95": true,
+      "macro_recall_improvement_vs_v43_at_least_0_01": false,
+      "mean_selected_unit_reduction_at_least_1": true,
+      "minimum_cases_met": true,
+      "query_parser_fallback_rate_at_most_0_05": true,
+      "selection_set_difference_rate_vs_v43_at_least_0_05": true,
+      "v49_minus_strongest_frc_ci_low_above_0": false,
+      "v49_minus_strongest_frc_point_at_least_0_005": false,
+      "v49_minus_strongest_non_frc_ci_low_above_0": true,
+      "v49_minus_strongest_non_frc_point_at_least_0_01": true
+    },
+    "supported_stratum_deltas": {
+      "candidate_pool_quartile:q1": {
+        "cases": 150,
+        "delta": 0.055691,
+        "strongest_non_frc": "cross_encoder_knapsack"
+      },
+      "candidate_pool_quartile:q2": {
+        "cases": 150,
+        "delta": 0.015267,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "candidate_pool_quartile:q3": {
+        "cases": 158,
+        "delta": 0.040505,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "candidate_pool_quartile:q4": {
+        "cases": 142,
+        "delta": 0.02395,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "evidence_location:all_abstract": {
+        "cases": 153,
+        "delta": 0.032529,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "evidence_location:includes_non_abstract": {
+        "cases": 447,
+        "delta": 0.034684,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "expansion_group:not_triggered": {
+        "cases": 510,
+        "delta": 0.030568,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "expansion_group:triggered": {
+        "cases": 90,
+        "delta": 0.054344,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "label_group:no significant difference": {
+        "cases": 269,
+        "delta": 0.024912,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "label_group:significantly decreased": {
+        "cases": 147,
+        "delta": 0.037117,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "label_group:significantly increased": {
+        "cases": 152,
+        "delta": 0.055453,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "reference_count_group:multiple": {
+        "cases": 230,
+        "delta": 0.03859,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "reference_count_group:one": {
+        "cases": 370,
+        "delta": 0.031365,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "smallest_reference_count_group:multiple": {
+        "cases": 454,
+        "delta": 0.024327,
+        "strongest_non_frc": "cross_encoder_topk"
+      },
+      "smallest_reference_count_group:one": {
+        "cases": 146,
+        "delta": 0.064631,
+        "strongest_non_frc": "cross_encoder_topk"
+      }
+    },
+    "target_cardinality_distribution": {
+      "1": 36,
+      "2": 96,
+      "3": 302,
+      "4": 166
+    }
+  },
+  "experiment_id": "FRC-EVIDENCE-INFERENCE-LOW-CORE-DIVERGENCE-GUARDED-ATOMIC-ROLES-V49",
+  "limitations": [
+    "Evidence Inference supplies an attached full article, not open-corpus retrieval.",
+    "Character evidence spans are projected to a preregistered regex sentence split.",
+    "The endpoint is evidence selection, not treatment-effect classification.",
+    "This is not an official ERASER or Evidence Inference leaderboard result.",
+    "This cannot establish SetR reproduction, flood-domain validity, or production readiness."
+  ],
+  "metadata": {
+    "budgets": [
+      256,
+      512,
+      1024
+    ],
+    "cases": 600,
+    "dataset_id": "evidence_inference_v2_validation_full_article_sentence_selection_v49",
+    "eraser_result": false,
+    "full_article_bounded_pool": true,
+    "gold_joined_after_complete_score_cache": true,
+    "multi_reference_gold_not_unioned": true,
+    "official_leaderboard_result": false,
+    "source_artifacts": {
+      "candidate_coverage_sha256": "5dc556a7079d5cc1b1d21b354ba9ba2ecf71695c1c5453a9f4651c044e3b571b",
+      "candidate_map_sha256": "51adbf04399f685aaa6e4d0a7ee0daed143d91a6e9138960f419ef33f056ddd6",
+      "execution_registration": {
+        "experiment_id": "FRC-EVIDENCE-INFERENCE-LOW-CORE-DIVERGENCE-GUARDED-ATOMIC-ROLES-V49",
+        "hashes": {
+          "blind_census_sha256": "0dbd3a5818ab36787f6f888423c0023f8c0a7fb8cc2cdac895ce064f46ad5c5d",
+          "candidate_coverage_sha256": "5dc556a7079d5cc1b1d21b354ba9ba2ecf71695c1c5453a9f4651c044e3b571b",
+          "candidate_map_sha256": "51adbf04399f685aaa6e4d0a7ee0daed143d91a6e9138960f419ef33f056ddd6",
+          "implementation_registration_sha256": "f7c7331321e94040067c9734abcc4adbc87e77db83242843d9cb9441a2a3be4b",
+          "prepared_blind_sha256": "cb8fecea81ed9747d25a098e1d8863d071fc7db5746106143aa44c75056f90e0",
+          "source_archive_sha256": "6abe0d4ec0d331834981c0171c3c79d47515761867f82f1dc6066e43863a1586",
+          "source_card_sha256": "2b5b410bb7c5d147f4a8b7eb683cbde0b0836f8d34b846fe72337f09281882db"
+        },
+        "method_or_threshold_change_after_registration_forbidden": true,
+        "metrics_computed": false,
+        "negative_null_or_inconclusive_result_must_be_published": true,
+        "neural_scoring_started": false,
+        "query_generation_started": false,
+        "registered_at": "2026-08-02T14:00:00+08:00",
+        "runtime": {
+          "cuda_available": true,
+          "cuda_runtime": "12.4",
+          "gpu": "NVIDIA GeForce RTX 4060 Ti",
+          "gpu_memory_mib": 16380,
+          "numpy": "2.2.6",
+          "parameters": {
+            "bootstrap_resamples": 10000,
+            "bootstrap_seed": 20260809,
+            "case_batch_size": 4,
+            "device": "cuda",
+            "embedding_batch_size": 64,
+            "fp16": true,
+            "generator_batch_size": 8,
+            "generator_max_input_tokens": 512,
+            "generator_max_new_tokens": 160,
+            "offline_model_loading": true,
+            "reranker_batch_size": 256
+          },
+          "platform": "Windows-10-10.0.19045-SP0",
+          "python": "3.10.20",
+          "torch": "2.4.1+cu124",
+          "transformers": "4.46.3"
+        },
+        "schema_version": "frc-evidence-inference-low-core-divergence-atomic-roles-execution-v49",
+        "source_artifacts": {
+          "archive_bytes": 36528800,
+          "archive_members": {
+            "plain_text_article_files": 4454,
+            "registered_members": {
+              "annotations_merged.csv": {
+                "bytes": 6457296,
+                "path": "annotations_merged.csv"
+              },
+              "prompts_merged.csv": {
+                "bytes": 1498509,
+                "path": "prompts_merged.csv"
+              },
+              "validation_article_ids.txt": {
+                "bytes": 3981,
+                "path": "splits/validation_article_ids.txt"
+              }
+            },
+            "regular_files": 4467
+          },
+          "archive_sha256": "6abe0d4ec0d331834981c0171c3c79d47515761867f82f1dc6066e43863a1586",
+          "bigbio_repository_revision": "35dce6aba1b3eb9eb9af9bdc38ebeda73dad15b9",
+          "dataset_repository_revision": "a661e8c14f973398380c8865cf2f27a535aaaf6d",
+          "dataset_version": "2.0.0",
+          "license_checked_before_archive_listing_or_validation_open": true,
+          "license_identifier": "MIT",
+          "source_card_bytes": 1824,
+          "source_card_sha256": "2b5b410bb7c5d147f4a8b7eb683cbde0b0836f8d34b846fe72337f09281882db",
+          "test_article_id_member_opened": false,
+          "train_article_id_member_opened": false,
+          "train_or_test_article_text_opened": false
+        }
+      },
+      "execution_registration_sha256": "294e7a63298fc4fba1e2e6d487f00029da999a1be72087b04af8033ef8284b8e",
+      "module_sha256": "148644a6df7b691b0afef88b44d776445b85f9e85a307a39fbf099e71d1e7fce",
+      "prepared_blind_sha256": "cb8fecea81ed9747d25a098e1d8863d071fc7db5746106143aa44c75056f90e0",
+      "queries_sha256": "2f5f3458766d5a75d9e35cb4ee150b7f576422b70ae7b0e1c55ce9fe4b11b516",
+      "runner_sha256": "94923139f461822a1c2472d5b7bb47898ae4571ca59174aaf6466e4384284383",
+      "scored_sha256": "1206974f2d2fc26acfae64faa86f9a890dc478f4bb063ec0c2c89dd21cd99b72",
+      "test_sha256": "4f700226bf98f9c37f4747b7392b0230d9775e4b391e681ce04604d58996591c"
+    }
+  },
+  "schema_version": "frc-evidence-inference-low-core-divergence-report-v1"
+}

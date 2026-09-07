@@ -1,0 +1,61 @@
+{
+  "schema_version": "frc-conformal-observable-subgroup-protocol-v1",
+  "registered_on": "2026-07-31",
+  "purpose": "Stress-test whether the frozen global sufficiency threshold hides observable subgroup instability without selecting a new threshold.",
+  "datasets": [
+    {
+      "dataset": "ConditionalQA",
+      "source_path_label": "role_scores_conditionalqa.jsonl",
+      "source_sha256": "feb0d75957c1bb09f07985979bb0816abc761ce6fafc66b40d9d99b02c1374b5"
+    },
+    {
+      "dataset": "HotpotQA",
+      "source_path_label": "role_scores_hotpotqa.jsonl",
+      "source_sha256": "ac5189e4f64e799ca7915a0eff9a304e6d09e0bbc6c4ef233335b17c6d56e6af"
+    },
+    {
+      "dataset": "MultiHop-RAG",
+      "source_path_label": "role_scores_multihoprag.jsonl",
+      "source_sha256": "de5333ecea96ed274afd5d28b4d69af5a63e975fc75c9fa991ade9ce52f296e7"
+    }
+  ],
+  "frozen_model_protocol": {
+    "feature_transform": "linear",
+    "l2": 4.0,
+    "primary_alpha": 0.1,
+    "repeat_count": 10,
+    "split_versions_source": "ConditionalQA conformal robustness report",
+    "threshold_scope": "global per dataset and repeat",
+    "subgroup_threshold_or_model_selection": false
+  },
+  "observable_subgroup_dimensions": {
+    "question_type": "Dataset-provided question_type; missing values become unspecified.",
+    "required_role_count": "Number of required evidence roles available to the selector.",
+    "candidate_count_bucket": [
+      "lt_20",
+      "20_to_39",
+      "40_to_59",
+      "ge_60"
+    ]
+  },
+  "excluded_assignment_fields": [
+    "gold_evidence_ids",
+    "gold_roles",
+    "complete",
+    "removed_gold_count",
+    "conformal outcome"
+  ],
+  "support_rule": {
+    "min_incomplete_case_families_per_repeat": 30,
+    "min_eligible_repeats": 7
+  },
+  "stability_rule": {
+    "global_nominal_bound": "Every finite-sample marginal nominal bound must be at or below alpha.",
+    "subgroup_mean": "Every eligible subgroup mean case-family false-complete rate must be at or below alpha.",
+    "repeat_consistency": "Every eligible subgroup must have risk at or below alpha in at least 7 repeats.",
+    "status_if_all_pass": "SUBGROUP_STABLE",
+    "status_if_any_fail": "SUBGROUP_INSTABILITY_DETECTED"
+  },
+  "claim_boundary": "Global split-conformal provides a marginal finite-sample statement only under case exchangeability. No distribution-free conditional subgroup guarantee is claimed.",
+  "gate_policy": "The audit cannot change Gate 2 from NO-GO/SHADOW and cannot authorize CANARY or DEFAULT."
+}

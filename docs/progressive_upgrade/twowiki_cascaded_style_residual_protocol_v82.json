@@ -1,0 +1,169 @@
+{
+  "schema_version": "frc-twowiki-cascaded-style-residual-protocol-v82",
+  "experiment_id": "FRC-2WIKI-CASCADED-STYLE-RESIDUAL-PROSPECTIVE-V82",
+  "registered_on": "2026-08-04",
+  "objective": "Test whether a frozen direct-comparison text classifier followed by a conservative v81 safe-flip residual action can exceed the strongest registered control while repairing the v81 comparison-type safety failure on new case-disjoint 2Wiki evidence.",
+  "model_development": {
+    "experiment_id": "FRC-2WIKI-CASCADED-STYLE-RESIDUAL-ROUTER-V82",
+    "training_cases": 2400,
+    "training_cohorts": [
+      "v75_development",
+      "v75_confirmation",
+      "v81_development"
+    ],
+    "all_training_cases_permanently_excluded_from_target_stages": true,
+    "v81_development_treated_as_training_not_confirmation": true,
+    "v81_gain_predictions_out_of_sample_for_every_training_case": true,
+    "finite_classifier_configurations": 16,
+    "finite_route_policy_configurations": 560,
+    "crossfit_folds": 5,
+    "selected_hash_dimension": 256,
+    "selected_l2": 32.0,
+    "selected_direct_threshold": 0.8,
+    "selected_flip_threshold": 0.015,
+    "model_selection_evidence_is_not_target_confirmation": true
+  },
+  "router": {
+    "name": "twowiki_cascaded_style_residual_router_v82",
+    "default": "learned_question_routed_support_path_v75",
+    "action_priority": [
+      "direct_comparison_cross_override",
+      "v81_safe_flip_override",
+      "v75_default"
+    ],
+    "direct_comparison_action": "Route to cross_encoder_topk when the frozen question-text probability is at least 0.8.",
+    "safe_flip_action": "Otherwise flip between the frozen v75 soft and anchor routes only when the frozen v81 flip gain exceeds both its cross gain and 0.015.",
+    "cross_residual_override_outside_direct_comparison": false,
+    "runtime_inputs": [
+      "question text",
+      "candidate text/title graph",
+      "frozen retrieval and reranker scores"
+    ],
+    "official_question_type_answer_or_gold_used_at_runtime": false
+  },
+  "target_source": {
+    "dataset": "2WikiMultiHopQA",
+    "split": "dev",
+    "same_dataset_case_disjoint_evaluation": true,
+    "prior_excluded_ids": 4200,
+    "remaining_capacity_before_target_selection": {
+      "bridge_comparison": 1723,
+      "comparison": 2013,
+      "compositional": 3991,
+      "inference": 649
+    }
+  },
+  "stages": {
+    "development": {
+      "cases": 800,
+      "question_type_quota": {
+        "bridge_comparison": 200,
+        "comparison": 200,
+        "compositional": 200,
+        "inference": 200
+      },
+      "salt": "FRC-2WIKI-V82-DEVELOPMENT|",
+      "single_evaluation_only": true,
+      "opens_confirmation_only_if_every_strict_gate_passes": true
+    },
+    "confirmation": {
+      "cases": 800,
+      "question_type_quota": {
+        "bridge_comparison": 200,
+        "comparison": 200,
+        "compositional": 200,
+        "inference": 200
+      },
+      "salt": "FRC-2WIKI-V82-CONFIRMATION|",
+      "single_evaluation_only": true,
+      "requires_development_open_artifact": true,
+      "disjoint_from_development_and_all_4200_prior_ids": true
+    }
+  },
+  "controls": [
+    "cross_encoder_topk",
+    "frc_select",
+    "soft_title_link_support_path_closure_v74",
+    "alternating_anchor_link_control",
+    "lexical_question_router_control",
+    "learned_question_routed_support_path_v75",
+    "graph_gbr_soft_override_router_v76",
+    "history_three_route_graph_router_v78",
+    "musique_target_trained_three_route_router_v79",
+    "musique_anchor_default_three_route_router_v80",
+    "twowiki_residual_three_route_router_v81"
+  ],
+  "common_resources": {
+    "top_k": 5,
+    "token_budget": 1500,
+    "embedding_model": "BAAI/bge-large-en-v1.5@d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large@55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "score_calibration": "per-case min-max",
+    "role_relevance_mix": 0.15,
+    "rrf_k": 60
+  },
+  "metrics": {
+    "primary": "evidence_macro_f1",
+    "secondary": [
+      "evidence_macro_recall",
+      "complete_evidence_recall",
+      "mean_selected_tokens",
+      "direct_comparison_balanced_accuracy"
+    ],
+    "paired_bootstrap_resamples": 10000,
+    "confidence_interval": 0.95,
+    "seeds": {
+      "development": 20261192,
+      "confirmation": 20261193
+    }
+  },
+  "strict_gates": {
+    "exact_cases": 800,
+    "exact_question_type_quota": {
+      "bridge_comparison": 200,
+      "comparison": 200,
+      "compositional": 200,
+      "inference": 200
+    },
+    "prior_or_stage_overlap": 0,
+    "invalid_selector_output_rate": 0.0,
+    "candidate_evidence_macro_f1_at_least": 0.535,
+    "candidate_complete_evidence_recall_at_least": 0.58,
+    "candidate_minus_strongest_registered_control_f1_at_least": 0.005,
+    "candidate_minus_strongest_registered_control_ci_low_above": 0.0,
+    "candidate_minus_frozen_v75_f1_at_least": 0.005,
+    "candidate_minus_frozen_v75_ci_low_above": 0.0,
+    "every_question_type_delta_vs_best_control_at_least": -0.005,
+    "direct_comparison_balanced_accuracy_at_least": 0.9,
+    "override_action_fraction_at_least": 0.05,
+    "at_least_two_routes_each_cover_at_least_fraction": 0.05,
+    "largest_route_fraction_at_most": 0.9,
+    "mean_selected_tokens_not_above_strongest_control_by_more_than_fraction": 0.05
+  },
+  "noninferiority_envelope": {
+    "candidate_minus_strongest_control_point_at_least": -0.005,
+    "candidate_minus_strongest_control_ci_low_at_least": -0.01,
+    "candidate_minus_frozen_v75_point_at_least": 0.0,
+    "every_question_type_delta_vs_best_control_at_least": -0.02,
+    "invalid_selector_output_rate": 0.0
+  },
+  "decision_rules": {
+    "development_all_strict_gates_pass": "Create the frozen confirmation-open artifact, then select and score confirmation exactly once.",
+    "development_any_strict_gate_fails": "Stop v82, do not select confirmation ids, and treat development as training/diagnostic evidence for any future version.",
+    "confirmation_all_strict_gates_pass": "Record case-disjoint same-dataset mechanism support only; do not authorize selector adoption, CANARY, DEFAULT, or production.",
+    "confirmation_any_strict_gate_fails": "Close v82 without adoption and do not repackage the confirmation set.",
+    "model_feature_threshold_gate_or_sampling_change": "Requires a new experiment version and new untouched target ids."
+  },
+  "outcomes": {
+    "selector_adoption_authorized_by_this_protocol": false,
+    "canary_or_default_authorized_by_this_protocol": false,
+    "production_authorized_by_this_protocol": false,
+    "gate_2": "NO-GO/SHADOW"
+  },
+  "claim_limits": [
+    "Target stages are case-disjoint but share 2WikiMultiHopQA with all training history.",
+    "This is not an independent-dataset or official 2WikiMultiHopQA leaderboard result.",
+    "This is not answer-generation, real SetR, flood-domain expert validation, CANARY, DEFAULT, or production evidence.",
+    "Every result under this protocol leaves Gate 2 at NO-GO/SHADOW."
+  ]
+}

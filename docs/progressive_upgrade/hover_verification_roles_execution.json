@@ -1,0 +1,188 @@
+{
+  "schema_version": "frc-hover-verification-roles-execution-v1",
+  "registered_at": "2026-08-01T12:08:18.7955730+08:00",
+  "experiment_id": "FRC-HOVER-VERIFICATION-ROLES-V39",
+  "registration_boundary": {
+    "protocol_path": "docs/progressive_upgrade/hover_verification_roles_protocol.json",
+    "protocol_sha256": "82ec16abcde6b28a86a9dd6f2fe3da26496cf14d718dcb1e388fb9341e1c8e82",
+    "hover_content_downloaded_after_protocol_registration": true,
+    "hover_neural_scores_generated_before_execution_registration": false,
+    "hover_selection_metrics_known_before_execution_registration": false,
+    "purpose": "Freeze downloaded-source fingerprints, database resolution, structural census, blind preparation, runtime, prompt serialization, and selector interpretations before loading either neural model for HoVer scoring."
+  },
+  "source_hashes": {
+    "dataset": "67c14858f2d7fcdb96b6fe3d538ffcd6f76e3ba594aa2c0cd4359f601101e89d",
+    "official_tfidf_candidates": "b50a961f63a95ff184986af766b15ff6b1d6c98f7e86b39355b64b1a85fb3745",
+    "official_wikipedia_database": "c37ee397916ec0bffacfe8902db454a5cda88a7a188409217b2e15231fe5ee2f"
+  },
+  "source": {
+    "repository_revision": "39b84697f196308f398a251a7aea9b82ae0f0562",
+    "dataset_path": ".cache/benchmarks/hover/hover_dev_release_v1.1.json",
+    "dataset_size_bytes": 2153439,
+    "official_tfidf_candidates_path": ".cache/benchmarks/hover/dev_tfidf_doc_retrieval_results.json",
+    "official_tfidf_candidates_size_bytes": 19247010,
+    "official_wikipedia_database_path": ".cache/benchmarks/hover/wiki_wo_links.db",
+    "official_wikipedia_database_size_bytes": 2156273664,
+    "data_license": "CC-BY-SA-4.0",
+    "code_license": "MIT",
+    "raw_sources_committed": false
+  },
+  "database_registration": {
+    "schema": {
+      "quick_check": "ok",
+      "tables": [
+        {
+          "columns": [
+            {
+              "name": "id",
+              "primary_key": true,
+              "type": ""
+            },
+            {
+              "name": "text",
+              "primary_key": false,
+              "type": ""
+            }
+          ],
+          "name": "documents",
+          "sql_sha256": "793a205b912e69c71f5010a14bf4515c44bcc82f17101866226657c28da25d89"
+        }
+      ]
+    },
+    "requested_top20_unique_titles": 42260,
+    "resolved_requested_titles": 42260
+  },
+  "structural_census": {
+    "source_rows": 4000,
+    "official_tfidf_rows": 4000,
+    "valid_rows": 4000,
+    "exclusions": {},
+    "case_ids_sha256": "86db1cf5996ef207265373cbfc2e1053d5ffc9449973719e5ffcad227c5cc549",
+    "candidate_chunks": {
+      "total": 81224,
+      "minimum": 20,
+      "mean": 20.306,
+      "maximum": 26
+    },
+    "resolved_candidate_documents": {
+      "total": 80000,
+      "minimum": 20,
+      "mean": 20.0,
+      "maximum": 20
+    },
+    "chunk_token_cost": {
+      "total": 11421900,
+      "minimum": 10,
+      "mean": 140.62223,
+      "maximum": 384
+    },
+    "label_distribution": {
+      "NOT_SUPPORTED": 2000,
+      "SUPPORTED": 2000
+    },
+    "hop_distribution": {
+      "2": 1126,
+      "3": 1835,
+      "4": 1039
+    },
+    "candidate_ceiling": {
+      "mean": 0.6085,
+      "complete_cases": 1060,
+      "incomplete_cases": 2940
+    },
+    "gold_fields_visible_to_scorer": false
+  },
+  "prepared_blind_sha256": "321a5a677217ad88eb6385624ba25e43e63687e35d275d1e51f62a4cdd5d5063",
+  "frozen_adapter_interpretation": {
+    "normalization": "Collapse Unicode whitespace and trim titles, claims, and article text; title and article are joined with one newline before tokenization.",
+    "top20_membership": "Read only doc_retrieval_results[0][0][:20], normalize titles, and deduplicate in released order before any gold join.",
+    "database_resolution": "Resolve normalized official titles by exact documents.id lookup; all 42,260 requested unique titles resolved and no title is replaced.",
+    "source_order": "Sort resolved documents by SHA-256 of normalized title before assigning neutral source ordinals.",
+    "case_id": "'hover::' + public uid",
+    "candidate_id": "case_id + SHA-256-sorted neutral source ordinal + zero-based chunk ordinal; labels, hops, public titles, and gold units are absent.",
+    "chunking": "Encode normalized title-plus-article without special tokens; emit [start:start+384] at stride 320; decode with skip_special_tokens=true and clean_up_tokenization_spaces=false.",
+    "token_cost": "Number of pre-decode content token IDs in the chunk.",
+    "gold_unit": "One unique normalized supporting-document title; assign a neutral gold ordinal after SHA-256 sorting only in the gold object.",
+    "candidate_ceiling": "Gold supporting-document fraction present among resolved frozen top-20 titles; missing gold remains in the recall denominator.",
+    "blind_cache": "Prepared and scored caches contain claim/candidate text only as ignored runtime inputs; label, num_hops, supporting_facts, public titles, gold units, and candidate-gold flags are absent.",
+    "gold_join": "All seven methods emit candidate IDs for every budget before label, hop, supporting-document units, or candidate ceiling are joined for evaluation."
+  },
+  "frozen_scoring_execution": {
+    "device": "cuda",
+    "embedding_batch_size": 64,
+    "reranker_batch_size": 256,
+    "case_batch_size": 8,
+    "use_fp16": true,
+    "offline_model_loading": true,
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "tokenizer_class": "XLMRobertaTokenizerFast",
+    "tokenizer_vocab_size": 250002,
+    "score_calibration": "Per-case min-max independently for BM25, dense, hybrid, direct cross-encoder, and each role prompt.",
+    "role_pair_query_template": "{registered role prompt} + one space + 'Claim: ' + normalized public claim",
+    "role_relevance_mix": 0.0,
+    "generic_role_prompt_count": 4,
+    "verification_role_prompt_count": 4,
+    "gold_visible_to_scorer": false
+  },
+  "frozen_selector_execution": {
+    "top_k": 5,
+    "budgets": [512, 1024, 1500],
+    "methods": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "cross_encoder_knapsack",
+      "frc_generic_roles_v39",
+      "frc_verification_roles_v39"
+    ],
+    "frc_rule": "Identical v34 thresholded role-coverage greedy rule for both role families; threshold 0.55, role coverage weight 2, direct cross-encoder relevance weight 1, ascending candidate-id final tie break.",
+    "only_frc_difference": "The four registered role prompts and resulting role-score keys; all selector operations, thresholds, relevance scores, budgets, feasibility scans, and ties are identical.",
+    "hard_budget_behavior": "All methods skip infeasible ranked candidates, return at most five chunks, and never exceed the requested token budget."
+  },
+  "frozen_evaluation_execution": {
+    "primary": "document_evidence_f1",
+    "precision_unit": "unique selected source document",
+    "recall_denominator": "all unique public supporting-document gold units, including units missing from the frozen top-20 candidate pool",
+    "equal_budget_weight": true,
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 20260801,
+    "strongest_non_frc_selected_inside_each_resample": true,
+    "predeclared_strata": [
+      "label=SUPPORTED",
+      "label=NOT_SUPPORTED",
+      "2-hop",
+      "3-hop",
+      "4-hop",
+      "candidate_ceiling_complete",
+      "candidate_ceiling_incomplete"
+    ],
+    "safety_delta": "frc_verification_roles_v39 minus the strongest non-FRC baseline within each budget or supported stratum"
+  },
+  "runtime": {
+    "python": "3.10.20",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "gpu": "NVIDIA GeForce RTX 4060 Ti",
+    "gpu_memory_mib": 16380,
+    "cuda_available": true,
+    "cuda_runtime": "12.4",
+    "numpy": "2.2.6",
+    "torch": "2.4.1+cu124",
+    "transformers": "4.46.3",
+    "sentence_transformers": "3.3.1"
+  },
+  "stopping_and_output": {
+    "no_hover_candidate_depth_chunk_prompt_formula_threshold_or_weight_tuning": true,
+    "no_case_replacement_or_gold_injection": true,
+    "all_4000_valid_rows_required": true,
+    "prepared_blind_cache": ".cache/benchmarks/hover/prepared_verification_roles_blind.jsonl",
+    "resumable_blind_score_cache": ".cache/benchmarks/hover/scored_verification_roles_blind.jsonl",
+    "lock_file": ".cache/benchmarks/hover/scored_verification_roles_blind.jsonl.lock",
+    "derived_evidence_contains_raw_text": false,
+    "negative_results_published": true,
+    "gate_boundary": "The result cannot by itself change Gate 2, authorize CANARY/DEFAULT, reproduce SetR, or establish flood-domain effectiveness."
+  }
+}

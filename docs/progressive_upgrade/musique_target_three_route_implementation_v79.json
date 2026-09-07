@@ -1,0 +1,111 @@
+{
+  "schema_version": "frc-musique-target-trained-three-route-implementation-lock-v79",
+  "experiment_id": "FRC-MUSIQUE-TARGET-TRAINED-THREE-ROUTE-TRANSFER-V79",
+  "locked_on": "2026-08-04",
+  "files": {
+    "target_router_implementation": {
+      "path": "research/frc_rag/musique_target_three_route_router.py",
+      "bytes": 15458,
+      "sha256": "3f979d0d3bfb0033294b4a86c785409fa9be30c2acfb3e420a5e4152310e596d"
+    },
+    "target_transfer_implementation": {
+      "path": "research/frc_rag/musique_target_three_route_transfer.py",
+      "bytes": 28390,
+      "sha256": "c6659b7f25893633af176cd0f72658be7658efcfe90f710099005dd7dec7f0c1"
+    },
+    "target_router_model_runner": {
+      "path": "scripts/run_musique_target_three_route_model.py",
+      "bytes": 1677,
+      "sha256": "79e4ad2700af9c06d8ff9dbd19bc574c7fc1f8392952240a625fb0d7141ba8d7"
+    },
+    "target_transfer_runner": {
+      "path": "scripts/run_musique_target_three_route_transfer.py",
+      "bytes": 14559,
+      "sha256": "024a3ba4bb6be8ff72a28a14947bc0ecf9547098b82d1e35632b53b75f0fa780"
+    },
+    "tests": {
+      "path": "tests/test_frc_musique_target_three_route.py",
+      "bytes": 10028,
+      "sha256": "c7c662dd8d601313611b19aeb0d2711beb81c05123dab5b317d08676a8b09e25"
+    },
+    "protocol": {
+      "path": "docs/progressive_upgrade/musique_target_three_route_protocol_v79.json",
+      "bytes": 5375,
+      "sha256": "36569d38ae814fbdb151b1eb0f155fd674167ba725d1cf459e8a321a475f1926"
+    },
+    "source_registration": {
+      "path": "docs/progressive_upgrade/musique_target_three_route_source_registration_v79.json",
+      "bytes": 5014,
+      "sha256": "5ed1426c283d2597f3ba255aaceb462f04c14e90852c755398114b693a1ff961"
+    },
+    "target_router_model": {
+      "path": "docs/progressive_upgrade/musique_target_three_route_router_model_development_v79.json",
+      "bytes": 107902,
+      "sha256": "a2d02754ca1fd7f24aabe30a5457f3cec5d29a0d227758924b2f814962c91f2b"
+    }
+  },
+  "target_model_development": {
+    "training_dataset": "MuSiQue",
+    "frozen_v78_training_cases": 600,
+    "gold_free_runtime_features": 71,
+    "learned_gain_heads": 2,
+    "model_configurations": 108,
+    "thresholds_per_model": 4,
+    "finite_route_policy_configurations": 432,
+    "deterministic_folds": 5,
+    "selected_model_configuration_index": 95,
+    "selected_threshold": 0.005,
+    "selected_oof_evidence_macro_f1": 0.551733,
+    "selected_oof_minus_anchor_point": 0.003651,
+    "selected_oof_minus_anchor_ci": [
+      -0.001085,
+      0.008598
+    ],
+    "selected_oof_minus_v78_point": 0.005351,
+    "selected_oof_minus_v78_ci": [
+      -0.000833,
+      0.011607
+    ],
+    "selected_routes": {
+      "alternating_anchor_link_control": 215,
+      "cross_encoder_topk": 215,
+      "soft_title_link_support_path_closure_v74": 170
+    },
+    "interpretation": "The selected OOF score is a model-selection diagnostic on v78 and both paired confidence intervals cross zero; only untouched v79 cases can provide prospective same-dataset evidence."
+  },
+  "registered_target_capacity": {
+    "prior_commitment_union": 16900,
+    "v77_calibration_ids": 800,
+    "v78_training_ids": 600,
+    "total_excluded_ids": 18300,
+    "remaining_untouched_cases": 1638,
+    "remaining_by_hop": {
+      "2": 1028,
+      "3": 467,
+      "4": 143
+    },
+    "stage_cases": 470,
+    "stage_hop_quota": {
+      "2": 250,
+      "3": 150,
+      "4": 70
+    }
+  },
+  "pre_target_verification": {
+    "ruff": "PASS",
+    "targeted_tests": "9 passed",
+    "synthetic_selection_and_reaggregation": "PASS",
+    "portable_model_payload_hash_validation": "PASS",
+    "v79_target_ids_selected": 0,
+    "v79_target_questions_paragraphs_scores_gold_or_metrics_seen": false
+  },
+  "frozen_boundaries": {
+    "v78_training_rows_features_gold_targets_folds_grid_and_selection_metric": true,
+    "v79_model_features_heads_hyperparameters_and_threshold": true,
+    "v79_stage_sizes_hop_quotas_salts_controls_metrics_gates_and_noninferiority": true,
+    "implementation_protocol_source_registration_model_and_tests": true,
+    "confirmation_requires_every_strict_development_gate": true,
+    "noninferiority_alone_cannot_open_confirmation": true,
+    "gate_2_canary_default_or_selector_adoption_authorized": false
+  }
+}

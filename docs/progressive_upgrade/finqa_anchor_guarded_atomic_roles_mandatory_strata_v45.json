@@ -1,0 +1,100 @@
+{
+  "schema_version": "frc-finqa-anchor-guarded-atomic-roles-mandatory-strata-v45",
+  "experiment_id": "FRC-FINQA-ANCHOR-GUARDED-ATOMIC-ROLES-V45",
+  "created_after_locked_result": true,
+  "purpose": "Complete the preregistered descriptive single-versus-multiple supporting-fact stratum from the immutable per-case evidence artifact.",
+  "integrity": {
+    "primary_result_sha256": "53f2e6ca555184bb0d5e473f7c4d4df19e102a9bceed42f930ae85ee20a6ed84",
+    "primary_markdown_sha256": "df06a66ec98fbab87b10c9664fe3fd37fa66835029c8a99ad8509437bd05fddd",
+    "case_evidence_gzip_sha256": "8dfd79ceb72998243aec549d004a9e48e8263b45529c33fb6a5c96242f0648bf",
+    "case_count": 360,
+    "all_cases_accounted_for": true
+  },
+  "strata": {
+    "single_gold_fact": {
+      "cases": 151,
+      "all_method_supporting_fact_macro_f1": {
+        "bm25_topk": 0.300220,
+        "dense_topk": 0.301692,
+        "hybrid_topk": 0.304635,
+        "cross_encoder_topk": 0.312730,
+        "cross_encoder_knapsack": 0.313907,
+        "static_threshold_frc_v39_replay": 0.313465,
+        "static_rank_coverage_frc_v41": 0.311258,
+        "dynamic_rank_coverage_frc_v41": 0.312730,
+        "adaptive_argmax_cardinality_frc_v43": 0.709492,
+        "guarded_adaptive_cardinality_frc_v44": 0.442826,
+        "anchor_guarded_adaptive_cardinality_frc_v45": 0.442826
+      },
+      "v45_metrics": {
+        "supporting_fact_macro_f1": 0.442826,
+        "macro_precision": 0.294039,
+        "macro_recall": 0.900662,
+        "complete_recall": 0.900662,
+        "mean_selected_unit_count": 3.112583,
+        "mean_selected_token_cost": 149.377483
+      },
+      "strongest_non_frc": "cross_encoder_knapsack",
+      "v45_minus_strongest_non_frc": 0.128919,
+      "v45_minus_dynamic_v41": 0.130096,
+      "v45_minus_adaptive_v43": -0.266667,
+      "v45_minus_guarded_v44": 0.000000
+    },
+    "multiple_gold_facts": {
+      "cases": 209,
+      "all_method_supporting_fact_macro_f1": {
+        "bm25_topk": 0.458665,
+        "dense_topk": 0.464105,
+        "hybrid_topk": 0.474890,
+        "cross_encoder_topk": 0.477601,
+        "cross_encoder_knapsack": 0.478569,
+        "static_threshold_frc_v39_replay": 0.476537,
+        "static_rank_coverage_frc_v41": 0.477601,
+        "dynamic_rank_coverage_frc_v41": 0.484155,
+        "adaptive_argmax_cardinality_frc_v43": 0.562140,
+        "guarded_adaptive_cardinality_frc_v44": 0.559272,
+        "anchor_guarded_adaptive_cardinality_frc_v45": 0.559272
+      },
+      "v45_metrics": {
+        "supporting_fact_macro_f1": 0.559272,
+        "macro_precision": 0.497528,
+        "macro_recall": 0.676407,
+        "complete_recall": 0.387560,
+        "mean_selected_unit_count": 3.325359,
+        "mean_selected_token_cost": 155.004785
+      },
+      "strongest_non_frc": "cross_encoder_knapsack",
+      "v45_minus_strongest_non_frc": 0.080703,
+      "v45_minus_dynamic_v41": 0.075117,
+      "v45_minus_adaptive_v43": -0.002868,
+      "v45_minus_guarded_v44": 0.000000
+    }
+  },
+  "reporting_replay": {
+    "first_attempt_metrics_computed": true,
+    "first_attempt_primary_json_written": true,
+    "first_attempt_metric_values_printed_or_inspected_before_retry": false,
+    "first_attempt_failure": "FileNotFoundError while opening the preregistered Markdown output because its parent directory did not exist",
+    "only_change_before_replay": "Create the preregistered output directory",
+    "query_cache_changed": false,
+    "score_cache_changed": false,
+    "sample_method_threshold_metric_or_seed_changed": false,
+    "final_report_written_twice_with_identical_hashes": true
+  },
+  "interpretation": {
+    "v45_and_v44_are_identical_in_both_gold_count_strata": true,
+    "adaptive_v43_has_the_highest_f1_in_both_gold_count_strata": true,
+    "single_fact_precision_cost_explains_part_of_the_overall_v45_recall_tradeoff": true,
+    "descriptive_only": true,
+    "new_support_check_added": false,
+    "method_formula_or_threshold_changed": false,
+    "locked_outcome_changed": false
+  },
+  "decision": {
+    "status": "FINQA_ANCHOR_GUARDED_SUPPORT_NOT_ESTABLISHED",
+    "selector_adoption_authorized": false,
+    "reuse_v45_cases_for_tuning_or_selection": false,
+    "canary_or_default_authorized": false,
+    "gate_2": "NO-GO/SHADOW"
+  }
+}

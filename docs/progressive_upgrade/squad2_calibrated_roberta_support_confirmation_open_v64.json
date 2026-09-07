@@ -1,0 +1,11 @@
+{
+  "calibration_result_sha256": "eace7c801253ee9868061c9a718924fac9e40ba64be17b02bbf76b82b09a0355",
+  "canary_or_default_authorized": false,
+  "confirmation_dev_open_authorized": true,
+  "experiment_id": "FRC-SQUAD2-CALIBRATED-ROBERTA-SUPPORT-V64",
+  "gate_2": "NO-GO/SHADOW",
+  "locked_threshold": 0.974609375,
+  "schema_version": "frc-squad2-v64-confirmation-open-v1",
+  "selector_adoption_authorized": false,
+  "status": "SQUAD2_V64_CALIBRATION_ESTABLISHED_OPEN_DEV"
+}

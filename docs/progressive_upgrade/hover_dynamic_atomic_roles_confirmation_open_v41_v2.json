@@ -1,0 +1,74 @@
+{
+  "schema_version": "frc-hover-dynamic-atomic-confirmation-open-v2",
+  "registered_at": "2026-08-01T16:04:18.1595659+08:00",
+  "experiment_id": "FRC-HOVER-DYNAMIC-ATOMIC-ROLES-V41",
+  "protocol_sha256": "42486a98c01fd0b9663d3eb9bd0de63634d91605eed06060ac1236ad26997e86",
+  "supersession": {
+    "record": "docs/progressive_upgrade/hover_dynamic_atomic_roles_confirmation_open_v41.json",
+    "sha256": "a5c90b464c081990238dc93fd404ab3fdfe15e218b31c3f3aa55a962f3ab851d",
+    "status": "SUPERSEDED_BEFORE_CONFIRMATION_ACCESS",
+    "reason": "The preparation guard read confirmation_content_accessed_before_registration from the JSON root instead of registration_boundary and rejected before loading any source file. The only code change fixes that field path and changes the default registration filename to this v2 record.",
+    "confirmation_content_accessed_before_supersession": false,
+    "algorithm_prompt_model_score_selector_or_threshold_changed": false
+  },
+  "registration_boundary": {
+    "confirmation_content_accessed_before_registration": false,
+    "confirmation_claims_candidates_labels_hops_supporting_facts_or_scores_known": false,
+    "pilot_gold_fields_accessed": false,
+    "pilot_performance_metrics_computed": false,
+    "pilot_mechanism_metrics_known": true,
+    "purpose": "Authorize blind confirmation preparation only. Query generation, neural scoring, gold joining, and performance evaluation remain closed until the final execution registration is written."
+  },
+  "source_sha256": {
+    "hover_train_release_v1.1.json": "1f1cd57abd616fa00c70bdc575ce77c16fc6cf1a6cffd5ff87c208030a336bb6",
+    "train_tfidf_doc_retrieval_results.json": "45e03a5e47ce8076981eefc86f28d764f4c2eddf1b94b69d9263675260108462",
+    "wiki_wo_links.db": "c37ee397916ec0bffacfe8902db454a5cda88a7a188409217b2e15231fe5ee2f"
+  },
+  "partition_commitments": {
+    "v40_excluded": {
+      "count": 2512,
+      "sha256": "e4463bad2be6032bb3975e21d31a7410b2e8585ce73abc64be9aa4a6ba2301a9"
+    },
+    "eligible": {
+      "count": 15659,
+      "sha256": "57b177af86ebfd69e6b021661190804da42705ec11f7b0c54edd21fdf6a3491e"
+    },
+    "pilot": {
+      "count": 512,
+      "sha256": "6e656a0d552e1112c084be45cbf32477bfd1257d3b8ae9272c0e6f1a5cb7bf42"
+    },
+    "confirmation": {
+      "count": 2000,
+      "sha256": "c82067a82bc0482fb20d715e915d52780748e4699ba5b462a49c8f598dcde3cc"
+    }
+  },
+  "artifact_sha256": {
+    "pilot_report": "9229f6c0e643655fd97b830b13e0195f48ea997d8204021209ff6e2917feb668",
+    "pilot_prepared": "3efe81bb06653757c86554c779e2ef213d2a2d445615c3ed886654cb1b068dd0",
+    "pilot_queries": "53273aa56f7fe05bc36b3d326c8fe661e604f327391bb42fa73799f880aaebea",
+    "pilot_scored": "d8554ae139106c96714050330509670bf4bec052d8ab95f2490aa0b2750938fd",
+    "implementation": "d4d484a5eb16ea49095149c38011ab3ee267ece3c727a2d0c700dd8896a03621",
+    "runner": "ad6da5b42e864ad2bd528b2293674523390f7a72f5f1a61dc67d3202a64f51e3"
+  },
+  "pilot_mechanism_result": {
+    "generation_fallback_rate": 0.003906,
+    "static_within_family_mean_spearman": 0.945471,
+    "dynamic_within_family_mean_spearman": 0.521314,
+    "spearman_reduction": 0.424158,
+    "static_mean_distinct_role_argmax": 1.154297,
+    "dynamic_mean_distinct_role_argmax": 2.230469,
+    "distinct_argmax_gain": 1.076172,
+    "static_dynamic_ordered_selection_identity": 0.432292,
+    "all_preregistered_checks_pass": true,
+    "status": "MECHANISM_ESTABLISHED_OPEN_CONFIRMATION"
+  },
+  "confirmation_preparation_authorized": true,
+  "confirmation_generation_scoring_or_gold_join_authorized": false,
+  "gate_boundary": {
+    "gate_2": "NO-GO/SHADOW",
+    "selector_adoption_authorized": false,
+    "canary_or_default_authorized": false,
+    "setr_reproduced": false,
+    "flood_domain_effectiveness_established": false
+  }
+}

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import sqlite3
-import hashlib
 import os
 import socket
 from contextlib import contextmanager
@@ -18,7 +17,7 @@ from .storage.notification_repository import NotificationRepositoryMixin
 from .storage.proposal_repository import ProposalRepositoryMixin
 from .storage.runtime_repository import RuntimeRepositoryMixin
 from .storage.response_repository import ResponseRepositoryMixin
-from .storage.schema import REPOSITORY_SCHEMA_SQL
+from .storage.migrations import apply_repository_migrations
 from .storage.trigger_repository import TriggerRepositoryMixin
 from .security import BackupManifestSigner, DataProtectionError, DataProtector
 
@@ -70,20 +69,7 @@ class SQLiteRepository(
 
     def _initialize(self) -> None:
         with self._connect() as conn:
-            conn.executescript(REPOSITORY_SCHEMA_SQL)
-            checksum = hashlib.sha256(REPOSITORY_SCHEMA_SQL.encode("utf-8")).hexdigest()
-            version = f"schema-{checksum[:16]}"
-            existing = conn.execute(
-                "SELECT checksum FROM response_schema_migrations WHERE version = ?",
-                (version,),
-            ).fetchone()
-            if existing is not None and existing["checksum"] != checksum:
-                raise RuntimeError("repository schema migration checksum mismatch")
-            conn.execute(
-                "INSERT OR IGNORE INTO response_schema_migrations(version, checksum, applied_at) "
-                "VALUES (?, ?, CURRENT_TIMESTAMP)",
-                (version, checksum),
-            )
+            apply_repository_migrations(conn)
 
     def _migrate_response_payload_encryption(self) -> None:
         tables = (

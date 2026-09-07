@@ -1,0 +1,9 @@
+{
+  "confirmation_open_authorized": true,
+  "development_result_sha256": "4aa6eaaf9fa228232e569df1aca315cb46930b349f88fe60484809c110f1fab6",
+  "experiment_id": "FRC-2WIKI-QUESTION-ROUTED-SUPPORT-PATH-V75",
+  "gate_2": "NO-GO/SHADOW",
+  "router_model_threshold_or_gates_changed": false,
+  "schema_version": "frc-twowiki-question-router-confirmation-open-v75",
+  "status": "2WIKI_V75_QUESTION_ROUTER_DEVELOPMENT_SUPPORT_ESTABLISHED_OPEN_CONFIRMATION"
+}

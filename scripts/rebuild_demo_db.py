@@ -13,7 +13,7 @@ if str(ROOT) not in sys.path:
 
 from flood_system.models import ResourceStatus, RiskLevel, Stage
 from flood_system.system import FloodWarningSystem
-from flood_system.v2.models import (
+from flood_system.compat.legacy_platform.models import (
     ActionProposal,
     AgentName,
     AgentResult,
@@ -40,7 +40,7 @@ from flood_system.v2.models import (
     SupervisorRunRecord,
     SupervisorRunStatus,
 )
-from flood_system.v3.models import AudienceWarningDraft
+from flood_system.compat.agent_twin.models import AudienceWarningDraft
 
 DEFAULT_DB_PATH = ROOT / "data" / "flood_warning_system_demo.db"
 DEMO_EVENT_ID = "event_demo_beilin_primary"

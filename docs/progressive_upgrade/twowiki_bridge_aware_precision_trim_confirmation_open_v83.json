@@ -1,0 +1,9 @@
+{
+  "confirmation_open_authorized": true,
+  "development_result_sha256": "ceb7b3019e018a02c005994caa2c08cf242c503c1e4a654ca605f0790e54931c",
+  "experiment_id": "FRC-2WIKI-BRIDGE-AWARE-PRECISION-TRIM-PROSPECTIVE-V83",
+  "gate_2": "NO-GO/SHADOW",
+  "model_feature_threshold_or_gates_changed": false,
+  "schema_version": "frc-twowiki-bridge-aware-precision-trim-confirmation-open-v83",
+  "status": "2WIKI_V83_PRECISION_TRIM_DEVELOPMENT_ADVANTAGE_ESTABLISHED_OPEN_CONFIRMATION"
+}

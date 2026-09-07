@@ -1,0 +1,108 @@
+{
+  "metadata": {
+    "schema_version": "frc-qasc-global-batch-scoring-benchmark-v1",
+    "status": "RUN_REAL_MODEL_QASC_GLOBAL_BATCH_SCORING_BENCHMARK",
+    "benchmark_case_count": 32,
+    "benchmark_candidate_count": 1280,
+    "selected_case_ids_sha256": "870d336ff99b07d00a8d93bef328a3e3c90f99f2dff22098cef35224a0350490",
+    "device": "cuda",
+    "python": "3.10.20",
+    "torch": "2.4.1+cu124",
+    "sentence_transformers": "3.3.1",
+    "cuda_available": true,
+    "gpu": "NVIDIA GeForce RTX 4060 Ti"
+  },
+  "provenance": {
+    "protocol_path_label": "qasc_scoring_optimization_protocol.json",
+    "protocol_sha256": "de4ddb1925614ec0c803662f9465d32cd9943e7a1a7788fec474b538eb6bc51b",
+    "prepared_source_path_label": "candidate_pool_qasc.jsonl",
+    "prepared_source_sha256": "cd5989187087bccae1d28fbf71ec443a51d63945ec72f4ae60047ea3386e81e8",
+    "reference_scores_path_label": "role_scores_qasc.jsonl",
+    "reference_scores_sha256": "6419428623c1c4ed1a5935acf1402331c166e9afa9a80f45441e9e7540c759c0",
+    "reference_case_count": 926
+  },
+  "baseline": {
+    "pipeline": "frozen_per_case",
+    "rerank_batch_size": 8,
+    "elapsed_seconds": 52.413108,
+    "seconds_per_case": 1.63791,
+    "peak_gpu_memory_mb": 3471.968,
+    "equivalence": {
+      "case_count": 32,
+      "candidate_count": 1280,
+      "tolerance": 1e-06,
+      "max_absolute_score_delta": 7.804549737588928e-07,
+      "max_absolute_role_score_delta": 0.0,
+      "score_ranking_mismatches": 0,
+      "role_ranking_mismatches": 0,
+      "frc_selection_mismatches": 0,
+      "passed": true
+    }
+  },
+  "candidates": [
+    {
+      "rerank_batch_size": 8,
+      "elapsed_seconds": 50.841583,
+      "seconds_per_case": 1.588799,
+      "speedup_vs_per_case": 1.03091,
+      "peak_gpu_memory_mb": 3522.096,
+      "equivalence": {
+        "case_count": 32,
+        "candidate_count": 1280,
+        "tolerance": 1e-06,
+        "max_absolute_score_delta": 8.451320343549895e-07,
+        "max_absolute_role_score_delta": 0.0,
+        "score_ranking_mismatches": 0,
+        "role_ranking_mismatches": 0,
+        "frc_selection_mismatches": 0,
+        "passed": true
+      }
+    },
+    {
+      "rerank_batch_size": 16,
+      "elapsed_seconds": 50.560933,
+      "seconds_per_case": 1.580029,
+      "speedup_vs_per_case": 1.036633,
+      "peak_gpu_memory_mb": 3522.096,
+      "equivalence": {
+        "case_count": 32,
+        "candidate_count": 1280,
+        "tolerance": 1e-06,
+        "max_absolute_score_delta": 2.395023204398994e-05,
+        "max_absolute_role_score_delta": 1.1611775780018263e-05,
+        "score_ranking_mismatches": 0,
+        "role_ranking_mismatches": 0,
+        "frc_selection_mismatches": 0,
+        "passed": false
+      }
+    },
+    {
+      "rerank_batch_size": 32,
+      "elapsed_seconds": 51.230346,
+      "seconds_per_case": 1.600948,
+      "speedup_vs_per_case": 1.023087,
+      "peak_gpu_memory_mb": 3612.18,
+      "equivalence": {
+        "case_count": 32,
+        "candidate_count": 1280,
+        "tolerance": 1e-06,
+        "max_absolute_score_delta": 2.3346952791936104e-05,
+        "max_absolute_role_score_delta": 2.190265709478556e-05,
+        "score_ranking_mismatches": 0,
+        "role_ranking_mismatches": 0,
+        "frc_selection_mismatches": 0,
+        "passed": false
+      }
+    }
+  ],
+  "decision": {
+    "status": "KEEP_FROZEN_PER_CASE_SCORING_ENTRYPOINT",
+    "selected_rerank_batch_size": null,
+    "minimum_speedup": 1.1,
+    "all_equivalence_checks_required": true,
+    "frozen_confirmation_changed": false,
+    "existing_reference_scores_rewritten": false,
+    "gate_2": "NO-GO/SHADOW",
+    "musique_downloaded_or_inspected": false
+  }
+}

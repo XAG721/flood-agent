@@ -1,0 +1,251 @@
+{
+  "schema_version": "frc-qasper-top2-proposal-guarded-atomic-roles-protocol-v48",
+  "experiment_id": "FRC-QASPER-TOP2-PROPOSAL-GUARDED-ATOMIC-ROLES-V48",
+  "registered_at": "2026-08-02T10:32:09+08:00",
+  "purpose": "Prospectively test whether preserving the union of the unchanged four atomic roles' top-two proposals can avoid the recall loss of aggressive adaptive cardinality while retaining a measurable evidence-cost reduction on an untouched long-document evidence-selection dataset.",
+  "development_boundary": {
+    "fetaqa_v47_status": "FETAQA_CONSENSUS_GUARDED_SUPPORT_NOT_ESTABLISHED",
+    "fetaqa_v47_reuse_for_tuning_or_selection_authorized": false,
+    "v47_case_level_rows_scores_queries_candidate_text_gold_and_strata_used_for_v48": false,
+    "aggregate_failure_signal_known": "The published v47 candidate reduced evidence units but exceeded the frozen recall-loss limit.",
+    "v48_formula_source": "A rank-only proposal-preservation invariant and synthetic counterexamples; no QASPER validation content, score distribution, label frequency or metric was used.",
+    "v48_does_not_retroactively_change_v46_or_v47": true,
+    "qasper_train_split_permanently_excluded": true
+  },
+  "official_sources": {
+    "dataset_home": "https://allenai.org/data/qasper",
+    "dataset_repository": "https://huggingface.co/datasets/allenai/qasper",
+    "dataset_repository_revision": "fdc9d8214fbab5dd782958601db4d678e6934a54",
+    "paper": "https://aclanthology.org/2021.naacl-main.365/",
+    "baseline_repository": "https://github.com/allenai/qasper-led-baseline",
+    "baseline_repository_revision": "afd0fb96bf78ce8cd8157639c6f6a6995e4f9089",
+    "dataset_version": "0.3.0",
+    "archive_url": "https://qasper-dataset.s3.us-west-2.amazonaws.com/qasper-train-dev-v0.3.tgz",
+    "archive_sha256_from_frozen_dataset_infos": "a28fdf966db827bcee3d873107d6b6669864fb7ca8fbf73a192f5e39191bdb5a",
+    "archive_bytes_from_frozen_dataset_infos": 10835856,
+    "registered_split_member": "qasper-dev-v0.3.json",
+    "license": "CC-BY-4.0 as stated by the frozen official dataset card; verify the frozen repository README and source archive hash before opening the dev member"
+  },
+  "pre_registration_access_disclosure": {
+    "allowed_metadata_seen": [
+      "official dataset name, task summary, paper-level and question-level counts",
+      "official schema documentation for full_text, figures_and_tables, questions, answers and paragraph-level evidence",
+      "official license, source URL, archive checksum and public repository revisions",
+      "official paper statement that separate NLP practitioners supplied supporting evidence"
+    ],
+    "incidental_content_disclosure": "The public Hugging Face dataset-card page rendered a preview of several training rows while license and schema metadata were checked.",
+    "training_preview_used_for_formula_sampling_mapping_threshold_or_query_design": false,
+    "validation_row_id_question_answer_evidence_paragraph_or_caption_seen": false,
+    "validation_member_downloaded_or_opened_before_protocol_hash": false,
+    "train_split_may_be_used_later": false
+  },
+  "source_access_order": [
+    "Write and hash this protocol.",
+    "Implement and test the selector, QASPER adapter, multi-reference metric, sealed sampling, blind-cache boundary and report writer using synthetic fixtures only.",
+    "Register protocol, module, runner and test hashes before acquiring the official archive or opening validation content.",
+    "Acquire the registered archive without printing or browsing the validation member.",
+    "Verify archive hash, frozen repository metadata and CC-BY-4.0 declaration before opening the validation member.",
+    "Run a structural census and exact evidence-to-candidate alignment audit; stop before query generation if scope, ambiguity or candidate-ceiling rules fail.",
+    "Generate every query and neural score without answer, evidence, annotation, answer type or gold-reference fields.",
+    "Join all eligible answer-level gold evidence references once after complete ordered query and score caches validate.",
+    "Publish favorable, null, negative or inconclusive results and never tune or select a method on v48 cases."
+  ],
+  "dataset_scope": {
+    "evaluation_name": "QASPER full-paper paragraph-and-float evidence selection",
+    "split": "official qasper-dev-v0.3.json from dataset version 0.3.0",
+    "eligible_question": [
+      "paper has a stable id, nonempty question id and nonempty question text",
+      "paper contains at least three nonempty full-text paragraph or figure/table caption candidates",
+      "at least one answer annotation is answerable and supplies a nonempty evidence list",
+      "every evidence string in every retained answer-level reference maps after frozen whitespace normalization to exactly one canonical paragraph or float candidate",
+      "duplicate or ambiguous normalized candidate text makes that question ineligible rather than changing the mapping rule"
+    ],
+    "sampling_rule": "Sort eligible validation question ids by SHA-256 of 'FRC-QASPER-V48|' plus question_id and then question_id; select the first 600 without replacement. If 500 to 599 are eligible, use all. If fewer than 500 are eligible, stop before query generation.",
+    "target_cases": 600,
+    "minimum_cases": 500,
+    "no_replacement": true,
+    "no_post_access_resampling": true,
+    "no_gold_count_answer_type_paper_size_or_annotation_count_balancing": true,
+    "multi_reference_gold": "Retain each distinct nonempty answer-level evidence set as an alternative gold reference; do not union references. Per-case precision, recall and F1 use the reference with maximum F1, with canonical reference tuple as the deterministic tie-breaker."
+  },
+  "blind_candidate_construction": {
+    "paragraph_units": "One candidate per nonempty full_text paragraph, canonical id paragraph_<section_index>_<paragraph_index>; candidate text includes the section name and paragraph.",
+    "float_units": "One candidate per nonempty figures_and_tables caption, canonical id float_<index>; evidence may match either the normalized caption or the normalized 'FLOAT SELECTED: ' plus caption form, but both forms must resolve to the same unique candidate.",
+    "pool": "Every nonempty paragraph and figure/table caption from the attached paper; no evidence-driven pruning, answer matching, training retrieval or first-stage truncation.",
+    "stored_blind_fields": [
+      "opaque case id and paper commitment",
+      "question text",
+      "candidate canonical id",
+      "candidate text",
+      "candidate source kind",
+      "candidate token cost"
+    ],
+    "forbidden_blind_fields": [
+      "answer",
+      "answers",
+      "annotation_id",
+      "worker_id",
+      "unanswerable",
+      "extractive_spans",
+      "free_form_answer",
+      "yes_no",
+      "evidence",
+      "highlighted_evidence",
+      "gold reference ids",
+      "gold count",
+      "answer type",
+      "answer-derived strings"
+    ],
+    "candidate_ceiling_registration": "After sealed sampling and blind candidate construction, gold references may be used only to verify exact candidate coverage and freeze pre-neural strata. No method, threshold, prompt, sample member or candidate member may change afterward.",
+    "protective_behavior": "Any unmapped or ambiguous evidence, duplicate canonical id, forbidden blind key, case-order mismatch, nondeterministic rerun or candidate-ceiling failure stops before neural work and writes no score cache."
+  },
+  "frozen_models": {
+    "atomic_query_generator": "Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4",
+    "atomic_query_generator_revision": "e9c932ac1893a49ae0fc497ad6e1e86e2e39af20",
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_revision": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "reranker_model": "BAAI/bge-reranker-large",
+    "reranker_revision": "55611d7bca2a7133960a6d3b71e083071bbfc312",
+    "offline_loading": true,
+    "score_calibration": "per-case independent min-max inherited from v41",
+    "rank_coverage_weight": 0.5
+  },
+  "methods": {
+    "shared_candidate_pool": true,
+    "top_k": 5,
+    "token_budgets": [
+      256,
+      512,
+      1024
+    ],
+    "non_frc_baselines": [
+      "bm25_topk",
+      "dense_topk",
+      "hybrid_topk",
+      "cross_encoder_topk",
+      "cross_encoder_knapsack"
+    ],
+    "frc_controls": [
+      "static_threshold_frc_v39_replay",
+      "static_rank_coverage_frc_v41",
+      "dynamic_rank_coverage_frc_v41",
+      "adaptive_argmax_cardinality_frc_v43",
+      "guarded_adaptive_cardinality_frc_v44",
+      "anchor_guarded_adaptive_cardinality_frc_v45",
+      "consensus_guarded_adaptive_cardinality_frc_v46"
+    ],
+    "candidate_method": "top2_proposal_guarded_frc_v48",
+    "candidate_method_formula": [
+      "Compute the unchanged four v41 dynamic atomic-role score columns for every candidate.",
+      "For each role, rank candidates by descending role score with canonical id as the only tie-breaker.",
+      "Let P be the union of each role's available rank-1 and rank-2 candidate ids.",
+      "Set target_cardinality = min(5, max(1, abs(P))).",
+      "Restrict candidate eligibility to P and select up to target_cardinality candidates with the unchanged v41 dynamic rank-coverage greedy objective and deterministic tie-breaking under the frozen token budget.",
+      "When abs(P) is at most five and the budget can hold all proposals, the selected set must equal P; when P is larger, the rank-coverage objective resolves which five proposals are retained.",
+      "No score magnitude threshold, source kind, paragraph position, answer, evidence, annotation count, gold count, answer type, dataset statistic or post-result rule may alter P, the target or selection."
+    ],
+    "synthetic_invariants": {
+      "all_roles_share_top2_proposal_count": 2,
+      "two_role_pairs_have_disjoint_top2_proposal_count": 4,
+      "four_roles_have_disjoint_top2_proposal_count": 8,
+      "proposal_count_two_target": 2,
+      "proposal_count_four_target": 4,
+      "proposal_count_eight_target": 5,
+      "every_selected_candidate_is_a_top2_proposal": true,
+      "all_proposals_selected_when_count_at_most_five_and_budget_feasible": true,
+      "candidate_permutation_invariant": true,
+      "strictly_monotone_per_role_transform_invariant": true,
+      "canonical_id_tie_breaking": true,
+      "no_duplicate_selection": true,
+      "budget_can_only_reduce_feasible_selected_count": true,
+      "source_kind_never_changes_the_formula": true
+    }
+  },
+  "query_generation": {
+    "input": "question text only",
+    "output_keys": [
+      "anchor",
+      "first_fact",
+      "second_fact_or_bridge",
+      "counterevidence"
+    ],
+    "do_sample": false,
+    "max_input_tokens": 512,
+    "max_new_tokens": 160,
+    "batch_size": 8,
+    "fallback": "frozen label-neutral templates plus the original question",
+    "gold_fields_visible_to_generator": false
+  },
+  "evaluation": {
+    "gold_join": "After complete ordered query and score caches validate, attach alternative answer-level evidence-reference id sets and pre-neural strata to the opaque cases.",
+    "primary_metric": "mean across budgets of maximum-reference evidence macro F1",
+    "macro_precision": "Mean per-case precision against the alternative reference that maximizes case F1.",
+    "macro_recall": "Mean per-case recall against the same deterministically selected reference.",
+    "macro_f1": "Mean per-case maximum F1 over distinct answer-level evidence references.",
+    "complete_reference_recall": "A case is complete when at least one alternative evidence reference is a subset of the selected ids.",
+    "paired_bootstrap": {
+      "resamples": 10000,
+      "seed": 20260808,
+      "unit": "QASPER question_id",
+      "interval": "percentile 95%",
+      "strongest_non_frc_selected_inside_each_resample": true,
+      "strongest_frozen_frc_control_selected_inside_each_resample": true
+    },
+    "mandatory_strata": [
+      "one versus multiple evidence units in the smallest alternative reference",
+      "one versus multiple alternative evidence references",
+      "paragraph-only versus includes-float evidence",
+      "extractive versus free-form versus yes/no answer type when unambiguous across retained references",
+      "paper candidate-count quartiles frozen before neural scoring",
+      "token budget",
+      "target cardinality below five versus equal to five"
+    ],
+    "secondary_metrics": [
+      "macro precision and recall",
+      "complete alternative-reference recall",
+      "selected unit count and token cost",
+      "proposal-union size and target-cardinality distributions",
+      "adaptive target-below-five rate",
+      "selection-set difference rates versus dynamic v41, v44 and v46",
+      "candidate pool size"
+    ]
+  },
+  "support_checks": {
+    "minimum_cases_met": ">= 500",
+    "candidate_ceiling_complete_rate": "= 1.00",
+    "query_parser_fallback_rate": "<= 0.05",
+    "adaptive_target_below_five_rate": ">= 0.05 and <= 0.95",
+    "selection_set_difference_rate_vs_dynamic_v41": ">= 0.05",
+    "selection_set_difference_rate_vs_v46": ">= 0.05",
+    "v48_minus_strongest_frozen_frc_control_point": ">= 0.005",
+    "v48_minus_strongest_frozen_frc_control_ci_low": "> 0",
+    "v48_minus_strongest_non_frc_point": ">= 0.01",
+    "v48_minus_strongest_non_frc_ci_low": "> 0",
+    "every_budget_and_supported_stratum_delta_vs_strongest_non_frc": ">= -0.02",
+    "mean_selected_unit_reduction_vs_dynamic": ">= 0.25",
+    "evidence_recall_drop_vs_dynamic": "<= 0.01"
+  },
+  "decision_rules": {
+    "all_support_checks_pass": "QASPER_TOP2_PROPOSAL_GUARDED_SUPPORT_ESTABLISHED_ON_FULL_PAPER_POOL",
+    "informative_but_any_support_check_fails": "QASPER_TOP2_PROPOSAL_GUARDED_SUPPORT_NOT_ESTABLISHED",
+    "minimum_scope_schema_license_alignment_or_ceiling_fails": "QASPER_FULL_PAPER_POOL_INCONCLUSIVE",
+    "gate_2": "Always remains NO-GO/SHADOW in v48; one public scientific-paper evidence-selection result cannot authorize CANARY or DEFAULT.",
+    "publication": "Publish favorable, null, negative or inconclusive results with source, protocol, implementation, cache and result hashes.",
+    "claims_forbidden": [
+      "official QASPER answer-generation or evidence-selection leaderboard result",
+      "answer quality superiority",
+      "open-corpus scientific-document retrieval superiority",
+      "retroactive improvement on FeTaQA v47",
+      "real SetR reproduction",
+      "flood-domain validity",
+      "production readiness"
+    ]
+  },
+  "known_scope_limits": [
+    "QASPER supplies the full paper attached to each question rather than an open-corpus retrieval task.",
+    "Evidence strings are evaluated at paragraph or figure/table-caption granularity, not highlighted-sentence granularity.",
+    "Alternative answer annotations are treated as alternative gold references rather than unioned evidence.",
+    "The endpoint is evidence selection, not answer generation or scientific claim verification.",
+    "Scientific-paper evidence cannot replace district flood-domain expert evaluation."
+  ]
+}

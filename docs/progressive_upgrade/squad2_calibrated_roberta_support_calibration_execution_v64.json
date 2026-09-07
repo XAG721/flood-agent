@@ -1,0 +1,79 @@
+{
+  "experiment_id": "FRC-SQUAD2-CALIBRATED-ROBERTA-SUPPORT-V64",
+  "gold_joined_for_metrics": false,
+  "hashes": {
+    "blind_census_sha256": "8e23905b878cd9e80b709d2bbddeb005a5013c01064622364e46f14f06e15e16",
+    "candidate_map_sha256": "4fc53ba5faaa939706982d580eb72e6c8dc7c0433e7ee6571ca082997285bc76",
+    "implementation_registration_sha256": "3658c2077e1b16cd7ed7fa65942cf9d10b1988313e20c332110841b9b77417c6",
+    "model_registration_sha256": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "prepared_blind_sha256": "3cdba4dad0bc357705d11833a28035c6a9be034b4eb58e52946f4ebd97027880",
+    "prior_exclusion_map_sha256": [
+      "9c18ac46a311ba441358a0815c01ad3373b333cff4b92b8fd381e3777364471e",
+      "c442280066aa519e84e0aa973d2dc0e1c415bd8d55fa5f1614b32a1d3be7cdf7",
+      "8ddd0a03e054a36df1cc8fc467ec772e1b6364f05c5ce6cac37cc0326bc3a9e1",
+      "572160cc45d4da3f1730c361bf0f91517b10d67739b7dc97bee8d06f2695ebbc"
+    ],
+    "prior_exclusion_union_sha256": "67646a78f8517ea274de4de1c292c67fcd063ed51966e388cc89eea20baf6e20",
+    "qa_input_sha256": "4bf80fc06d56a8c94d332ecbae56ccf532fef00e38e54dff7e648b26bdab0782",
+    "stage_source_sha256": "68dcfbb971bd3e96d5b46c7177b16c1a4e7d4bdef19fb204502738552dede002"
+  },
+  "other_stage_source_content_read": false,
+  "qa_query_or_retrieval_started": false,
+  "registered_at": "2026-08-03T23:10:00+08:00",
+  "runtime": {
+    "cuda_available": true,
+    "cuda_runtime": "12.4",
+    "gpu": "NVIDIA GeForce RTX 4060 Ti",
+    "gpu_memory_mib": 16379,
+    "numpy": "2.2.6",
+    "parameters": {
+      "case_batch_size": 2,
+      "device": "cuda",
+      "embedding_batch_size": 64,
+      "fp16": true,
+      "offline_model_loading": true,
+      "qa_batch_size": 16,
+      "qa_doc_stride": 128,
+      "qa_max_length": 384,
+      "qa_maximum_answer_tokens": 30,
+      "reranker_batch_size": 256,
+      "threshold_learned_parameter_count": 1,
+      "token_budgets": [
+        128,
+        256,
+        512
+      ]
+    },
+    "platform": "Windows-10-10.0.19045-SP0",
+    "python": "3.10.20",
+    "torch": "2.4.1+cu124",
+    "transformers": "4.46.3"
+  },
+  "sampling": {
+    "candidate_qas": 130319,
+    "eligible_answer_state_counts_after_exclusion": {
+      "answer_bearing": 85621,
+      "no_answer": 42298
+    },
+    "eligible_cases": 130319,
+    "maximum_cases_per_article_per_answer_state": 14,
+    "maximum_cases_per_paragraph": 2,
+    "prior_excluded_commitment_count": 2400,
+    "schema_excluded_cases": 0,
+    "schema_exclusion_rate": 0.0,
+    "schema_exclusion_reasons": {},
+    "selected_answer_state_counts": {
+      "answer_bearing": 1000,
+      "no_answer": 1000
+    },
+    "selected_articles": 426,
+    "selected_cases": 2000,
+    "selected_paragraphs": 1889,
+    "selected_prior_commitment_overlap": 0,
+    "stage": "calibration",
+    "target_cases": 2000
+  },
+  "schema_version": "frc-squad2-v64-execution-registration-v1",
+  "stage": "calibration",
+  "target_cases": 2000
+}

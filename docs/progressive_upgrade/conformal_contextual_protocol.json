@@ -1,0 +1,82 @@
+{
+  "schema_version": "frc-conformal-contextual-head-development-protocol-v1",
+  "registered_on": "2026-07-31",
+  "purpose": "Post-hoc method development after the global-threshold subgroup audit and hierarchical Mondrian negative adoption result: test whether train-only observable context features improve subgroup stability without group-specific calibration thresholds.",
+  "development_boundary": {
+    "post_hoc": true,
+    "independent_confirmation": false,
+    "gate_evidence": false,
+    "reason": "The contextual head was designed after subgroup and Mondrian evaluation results had been inspected.",
+    "required_next_confirmation": "Any positive candidate must be frozen and confirmed on new untouched data or independently judged flood-domain data."
+  },
+  "datasets": [
+    {
+      "dataset": "ConditionalQA",
+      "source_path_label": "role_scores_conditionalqa.jsonl",
+      "source_sha256": "feb0d75957c1bb09f07985979bb0816abc761ce6fafc66b40d9d99b02c1374b5"
+    },
+    {
+      "dataset": "HotpotQA",
+      "source_path_label": "role_scores_hotpotqa.jsonl",
+      "source_sha256": "ac5189e4f64e799ca7915a0eff9a304e6d09e0bbc6c4ef233335b17c6d56e6af"
+    },
+    {
+      "dataset": "MultiHop-RAG",
+      "source_path_label": "role_scores_multihoprag.jsonl",
+      "source_sha256": "de5333ecea96ed274afd5d28b4d69af5a63e975fc75c9fa991ade9ce52f296e7"
+    }
+  ],
+  "frozen_model_protocol": {
+    "base_feature_count": 37,
+    "base_feature_transform": "linear",
+    "context_dimensions": [
+      "question_type",
+      "required_role_count",
+      "question_type_x_required_role_count"
+    ],
+    "context_encoding": "One-hot categories learned from outer train case families only; each dimension has an explicit other bucket.",
+    "minimum_train_case_families_per_category": 10,
+    "l2": 4.0,
+    "optimizer": "deterministic class-balanced IRLS",
+    "primary_alpha": 0.1,
+    "repeat_count": 10,
+    "split_versions_source": "ConditionalQA conformal robustness report",
+    "evaluation_feature_or_model_selection": false
+  },
+  "calibration": {
+    "scope": "global",
+    "calibration_unit": "Maximum contextual-head score among incomplete variants in each calibration case family.",
+    "declaration_rule": "Declare complete only when the contextual score is strictly greater than the calibration threshold.",
+    "evaluation_data_used_for_threshold": false,
+    "group_specific_thresholds": false
+  },
+  "reporting_support_rule": {
+    "dimensions": [
+      "question_type",
+      "required_role_count",
+      "candidate_count_bucket"
+    ],
+    "min_incomplete_case_families_per_repeat": 30,
+    "min_eligible_repeats": 7
+  },
+  "pre_registered_adoption_checks": {
+    "all_checks_required": true,
+    "no_evaluation_selection": true,
+    "context_vocabulary_train_only": true,
+    "threshold_calibration_only": true,
+    "minimum_mean_complete_recall_gain": 0.02,
+    "maximum_dataset_complete_recall_decrease": 0.01,
+    "maximum_dataset_overall_case_risk_increase": 0.01,
+    "minimum_mean_worst_eligible_subgroup_risk_reduction": 0.02,
+    "all_eligible_subgroup_mean_risks_at_or_below_alpha": true,
+    "all_eligible_subgroup_repeat_consistency_targets_met": true,
+    "status_if_all_pass": "CONTEXTUAL_HEAD_CANDIDATE",
+    "status_if_any_fail": "DO_NOT_ADOPT"
+  },
+  "theoretical_scope": {
+    "global_statement": "With the score function fixed from train only, the global calibration order statistic retains the same marginal finite-sample interpretation under case exchangeability.",
+    "conditional_guarantee": false,
+    "subgroup_reporting": "Observable subgroup results remain repeated descriptive stress checks rather than distribution-free conditional guarantees."
+  },
+  "gate_policy": "This post-hoc development experiment cannot change Gate 2 from NO-GO/SHADOW and cannot authorize CANARY or DEFAULT."
+}

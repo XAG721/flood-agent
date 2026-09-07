@@ -1,0 +1,47 @@
+{
+  "schema_version": "frc-musique-sequential-chain-support-implementation-registration-v66",
+  "experiment_id": "FRC-MUSIQUE-SEQUENTIAL-CHAIN-SUPPORT-V66",
+  "registered_at": "2026-08-04T01:08:00+08:00",
+  "hashes": {
+    "protocol": "518bb128745521677e3e5b33e42cfd7484aab8163c1fb3441fb4192c1aa70456",
+    "source_registration": "0febdc4c8ae7e495c7f79d826444633a154feeac64017d5d22095dbd6494dd3f",
+    "model_registration": "b80ee8b127713e1440c25eee58974fe5699a808fdec37980f9729d239d048325",
+    "module": "b437dff0881df1d0a974a5120a7425dc6f8b3348a852f8d195007b9dc8fa5690",
+    "runner": "25227db736d809bfc59b05122f6b81a31e5b721c987dcb8448ac358f11e943cf",
+    "tests": "e68187e4b9d838a22b120c081632e21bd9f9b11fafe6b3afe6a95fcbc571bf25"
+  },
+  "target_file_was_previously_parsed_for_v65": true,
+  "target_rows_read_for_v66_before_registration": 0,
+  "v66_source_commitments_selected_before_registration": 0,
+  "remaining_target_prediction_or_joined_metric_seen": false,
+  "source_independent_synthetic_fixtures_only": true,
+  "synthetic_tests": {
+    "passed": 11,
+    "failed": 0,
+    "target_source_used": false,
+    "model_files_used": false
+  },
+  "frozen_behaviors": [
+    "v65 invalid and corrected source-commitment union exclusion",
+    "SQuAD2 normalized exact-question exclusion",
+    "paired source-id answer-state assignment",
+    "stage-specific deterministic balanced sampling",
+    "gold-free direct composed-question QA",
+    "oracle decomposition question plan with gold answers and supporting indices removed",
+    "prior predicted-span-only placeholder substitution",
+    "per-hop all-paragraph maximum-margin decision",
+    "unsupported predecessor fail-closed propagation",
+    "all-hop conjunction chain decision",
+    "paired case bootstrap and precommitted stage gates",
+    "development failure closure or immutable confirmation authorization"
+  ],
+  "model_weights_architecture_tokenizer_threshold_rule_or_gate_changed": false,
+  "learned_or_adjusted_parameter_count_on_musique_v66": 0,
+  "official_decomposition_is_oracle_plan": true,
+  "automatic_decomposer_result_claimed": false,
+  "strict_independent_model_training_confirmation_claimed": false,
+  "selector_or_retrieval_scoring_part_of_v66": false,
+  "selector_adoption_authorized": false,
+  "canary_or_default_authorized": false,
+  "gate_2": "NO-GO/SHADOW"
+}

@@ -1,0 +1,11 @@
+{
+  "confirmation_open_authorized": true,
+  "development_result_sha256": "533c0dea3201eb536d2d85e5a59a18d073ac13004faa341c084fddd2de10f4bf",
+  "experiment_id": "FRC-HOTPOT-GRAPH-SOFT-OVERRIDE-ROUTER-V76",
+  "feature_model_threshold_controls_or_gates_changed": false,
+  "gate_2": "NO-GO/SHADOW",
+  "reuse_development_for_feature_model_threshold_gate_or_selection": false,
+  "schema_version": "frc-hotpot-graph-router-development-decision-v76",
+  "selector_adoption_authorized": false,
+  "status": "HOTPOT_V76_GRAPH_ROUTER_DEVELOPMENT_SUPPORT_ESTABLISHED_OPEN_CONFIRMATION"
+}
