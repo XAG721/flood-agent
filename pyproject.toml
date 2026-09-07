@@ -57,6 +57,11 @@ flood_system = [
 [tool.ruff]
 target-version = "py312"
 
+[tool.pytest.ini_options]
+markers = [
+  "local_evidence: requires ignored local benchmark caches and is not part of portable CI",
+]
+
 [tool.ruff.lint.per-file-ignores]
 "scripts/inspect_demo_db.py" = ["E402"]
 "scripts/rebuild_demo_db.py" = ["E402"]

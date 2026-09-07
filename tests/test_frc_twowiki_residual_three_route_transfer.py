@@ -291,3 +291,4 @@ def test_registered_protocol_matches_code_constants() -> None:
     validate_registered_protocol(protocol)
     assert protocol["strict_gates"] == STRICT_GATES
     assert protocol["noninferiority_envelope"] == NONINFERIORITY_ENVELOPE
+

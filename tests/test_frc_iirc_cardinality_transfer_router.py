@@ -70,3 +70,4 @@ def test_training_case_derivation_maps_chunks_to_sources_and_rejects_iirc() -> N
         assert "cannot accept IIRC" in str(error)
     else:
         raise AssertionError("IIRC model-development leakage was not rejected")
+

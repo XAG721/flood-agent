@@ -127,3 +127,4 @@ def test_all_methods_share_blind_candidates() -> None:
     assert methods["cross_dataset_question_cardinality_frc_v86"]["cardinality"] == 1
     assert methods["frc_fixed4"]["selected_sources"] == ["sa", "sb", "sc", "sd"]
     assert json.dumps(methods, sort_keys=True)
+

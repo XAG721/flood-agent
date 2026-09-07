@@ -1,11 +1,16 @@
-# 本地模型资源说明
+# 三维模型资源说明
 
-本目录中的 CityEngine `.glb` 模型文件体积较大，不再纳入 Git 仓库历史。
+主 CityEngine 场景通过 Git LFS 发布，普通 Git 历史只保存 LFS 指针。克隆后需安装 Git LFS 并执行：
 
-如需本地运行三维展示端，请在本目录自行放置以下文件：
+```powershell
+git lfs install
+git lfs pull
+```
 
-- `cityengine_scene.glb`
-- `cityengine_scene.small-backup.glb`
+默认场景文件：
+
+- `cityengine_scene.glb`，SHA-256 `c7ad86b8a3688aa6e25ef0871e6d7c55260091f9fd9fd8a66498b549a5e528ec`；
+- `cityengine_scene.small-backup.glb` 仅是本地回退副本，不随仓库发布。
 
 默认配置文件 [`scene-config.json`](../scene-config.json) 仍会从 `/models/cityengine_scene.glb` 加载模型。
 

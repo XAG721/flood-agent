@@ -196,6 +196,8 @@ npm.cmd run dev --prefix frontend
 
 ## 复现实验与验证
 
+在另一台电脑恢复代码、Git LFS 三维场景、Python/CUDA 环境和冻结模型 revision 时，先阅读[跨电脑续研说明](docs/experiment_resume.md)。密钥、CONFLICTS 解盲映射和人工评审草稿不进入公开仓库。
+
 日常代码验证：
 
 ```powershell

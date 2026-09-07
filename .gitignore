@@ -35,6 +35,9 @@ tmp-edge-debug/
 agent-twin-bigscreen-*.png
 data_sources/beilin/raw/geofabrik_shaanxi_osm/download.pbf
 3D_visual/public/models/*.glb
+!3D_visual/public/models/cityengine_scene.glb
+/graduation_project.rar
+/3D_visual/public.rar
 /output/doc/
 /output/test_artifacts/
 /output/pytest*/

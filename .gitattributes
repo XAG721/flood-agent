@@ -1,0 +1,22 @@
+3D_visual/public/models/cityengine_scene.glb filter=lfs diff=lfs merge=lfs -text
+
+# Historical implementation locks were recorded against these Windows CRLF
+# model snapshots. Preserve those exact worktree bytes on every platform.
+docs/progressive_upgrade/twowiki_question_router_model_development_v75.json text eol=crlf
+docs/progressive_upgrade/hotpot_graph_router_model_development_v76.json text eol=crlf
+docs/progressive_upgrade/hotpot_three_route_router_model_development_v78.json text eol=crlf
+docs/progressive_upgrade/musique_target_three_route_router_model_development_v79.json text eol=crlf
+docs/progressive_upgrade/musique_anchor_default_router_model_development_v80.json text eol=crlf
+docs/progressive_upgrade/twowiki_residual_three_route_router_model_development_v81.json text eol=crlf
+docs/progressive_upgrade/twowiki_cascaded_style_residual_router_model_development_v82.json text eol=crlf
+docs/progressive_upgrade/twowiki_bridge_aware_precision_trim_router_model_development_v83.json text eol=crlf
+docs/progressive_upgrade/hotpot_question_type_cardinality_router_model_development_v84.json text eol=crlf
+output/rag_evaluation/conformal_cross_dataset/qasc_confirmation.json text eol=crlf
+
+# These files are themselves frozen evidence and intentionally retain their
+# registered terminal blank line bytes.
+research/frc_rag/twowiki_confirmation.py text eol=lf whitespace=-blank-at-eof
+scripts/run_iirc_cardinality_transfer_model.py text eol=lf whitespace=-blank-at-eof
+tests/test_frc_iirc_cardinality_transfer.py text eol=lf whitespace=-blank-at-eof
+tests/test_frc_iirc_cardinality_transfer_router.py text eol=lf whitespace=-blank-at-eof
+tests/test_frc_twowiki_residual_three_route_transfer.py text eol=lf whitespace=-blank-at-eof

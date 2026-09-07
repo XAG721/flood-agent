@@ -176,6 +176,7 @@ def prepare_case(row: dict[str, Any]) -> dict[str, Any]:
         "candidates": candidates,
     }
 
+
 def prepare_cases(
     rows: Iterable[dict[str, Any]],
     *,
@@ -436,3 +437,4 @@ def preparation_summary(cases: list[dict[str, Any]]) -> dict[str, Any]:
         },
         "question_types": dict(sorted(question_types.items())),
     }
+
