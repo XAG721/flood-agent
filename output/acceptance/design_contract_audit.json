@@ -198,7 +198,7 @@
         {
           "path": ".github/workflows/ci.yml",
           "contains": "Compose build and smoke test",
-          "sha256": "ad67229a58865d5bdd203b4a999b832e3fedd289e4feae6bfbfcf9d9470c7f49"
+          "sha256": "c46643f8d0ef1fc424c0a20b83953e0b87dd96cd8f1c286c12479c523d337ad1"
         },
         {
           "path": "docker-compose.yml",
@@ -241,7 +241,7 @@
         {
           "path": "README.md",
           "contains": "FRC-RAG",
-          "sha256": "958b70ae894ceeaf25901390358bb09634cd5292da0df35a18eacfba778a5388"
+          "sha256": "501b22bf56add9de4ded399c35a363b661ee2b8c19d3b85608104c447b17a3ad"
         },
         {
           "path": "docs/V3_upgrade_acceptance_matrix.md",
